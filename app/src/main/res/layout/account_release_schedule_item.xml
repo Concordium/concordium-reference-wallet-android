@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/account_release_schedule_inner_list_padding_sides"
+    android:paddingRight="@dimen/account_release_schedule_inner_list_padding_sides"
+    android:paddingTop="@dimen/account_release_schedule_inner_list_padding_top_bottom"
+    android:paddingBottom="@dimen/account_release_schedule_inner_list_padding_top_bottom">
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_alignParentTop="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_black"
+        tools:text="12-12-2020 13:40"/>
+
+    <LinearLayout
+        android:id="@+id/identifier_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/date"
+        android:orientation="vertical">
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/amount"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/text_black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="G123.0004"/>
+</RelativeLayout>

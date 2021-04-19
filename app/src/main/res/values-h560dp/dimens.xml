@@ -1,0 +1,10 @@
+<resources>
+
+    <!--Account overview -->
+    <dimen name="account_overview_balance_height">160dp</dimen><!-- In multiple dimens file-->
+
+    <!--Account details -->
+    <dimen name="account_details_balance_height">120dp</dimen><!-- In multiple dimens file-->
+    <dimen name="account_details_button_height">70dp</dimen><!-- In multiple dimens file-->
+
+</resources>

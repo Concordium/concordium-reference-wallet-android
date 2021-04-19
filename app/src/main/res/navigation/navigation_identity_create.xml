@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_identity_create"
+    app:startDestination="@id/nav_identity_create_info">
+
+    <fragment
+        android:id="@+id/nav_identity_create_info"
+        android:name="com.concordium.wallet.ui.identity.identitycreate.IdentityCreateInfoFragment"
+        android:label="@string/identity_create_title"
+        tools:layout="@layout/fragment_identity_create_info" >
+        <action
+            android:id="@+id/action_nav_identity_create_info_to_nav_identity_create_account_name"
+            app:destination="@id/nav_identity_create_account_name" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_identity_create_account_name"
+        android:name="com.concordium.wallet.ui.identity.identitycreate.IdentityCreateAccountNameFragment"
+        android:label="@string/identity_create_title"
+        tools:layout="@layout/fragment_identity_create_account_name" >
+        <action
+            android:id="@+id/action_nav_identity_create_account_name_to_nav_identity_create_identity_name"
+            app:destination="@id/nav_identity_create_identity_name" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_identity_create_identity_name"
+        android:name="com.concordium.wallet.ui.identity.identitycreate.IdentityCreateIdentityNameFragment"
+        android:label="@string/identity_create_title"
+        tools:layout="@layout/fragment_identity_create_identity_name" />
+
+</navigation>

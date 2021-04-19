@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    style="@style/Layout.Root">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/balance_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:background="@drawable/background_rounded_black"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/generalTextView"
+                    style="@style/TextView.BalanceInfo"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/accounts_overview_total_balance" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="top"
+                        android:layout_gravity="top"
+                        android:orientation="vertical">
+                        <TextView
+                            style="@style/TextView.BlueValueHuge"
+                            android:text="@string/app_gstroke"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginTop="10dp"
+                            android:gravity="top"
+                            android:layout_gravity="top"
+                            android:lines="1"
+                            android:textSize="18dp"
+                            />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/total_balance_textview"
+                        style="@style/TextView.BlueValueHuge"
+                        android:text=""
+                        tools:text="1.00"
+                        android:gravity="bottom"
+                        android:lines="1"
+                        app:autoSizeTextType="uniform"
+                        app:autoSizeMinTextSize="8sp"
+                        app:autoSizeMaxTextSize="42sp"
+                        app:autoSizeStepGranularity="1sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/total_balance_shielded_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/TextView.BalanceInfo"
+                        android:layout_gravity="center_vertical"
+                        android:text="+" />
+
+                    <ImageView
+                        style="@style/Image"
+                        android:layout_height="13dp"
+                        android:layout_width="11dp"
+                        android:src="@drawable/ic_shielded_icon"
+                        android:layout_marginLeft="3dp"
+                        android:layout_gravity="center_vertical"
+                        android:tint="@color/theme_white" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/accounts_overview_total_details_side_margins"
+                    android:layout_marginRight="@dimen/accounts_overview_total_details_side_margins"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="15dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/TextView.TotalBalanceDetails"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="@string/accounts_overview_total_details_disposal" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/accounts_overview_total_details_disposal"
+                            style="@style/TextView.TotalBalanceDetails"
+                            android:layout_width="wrap_content"
+                            tools:text="G599.9505" />
+
+                        <LinearLayout
+                            android:id="@+id/accounts_overview_total_details_disposal_shield"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="right"
+                            android:orientation="horizontal">
+                            <TextView
+                                style="@style/TextView.TotalBalanceDetails"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginLeft="6dp"
+                                android:text="+" />
+                            <ImageView
+                                style="@style/Image"
+                                android:layout_height="13dp"
+                                android:layout_width="11dp"
+                                android:src="@drawable/ic_shielded_icon"
+                                android:layout_marginLeft="6dp"
+                                android:layout_gravity="center_vertical"
+                                android:tint="@color/theme_white" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/accounts_overview_total_details_side_margins"
+                    android:layout_marginRight="@dimen/accounts_overview_total_details_side_margins"
+                    android:layout_marginBottom="30dp">
+
+                    <TextView
+                        style="@style/TextView.TotalBalanceDetails"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/accounts_overview_total_details_staked" />
+                    <TextView
+                        android:id="@+id/accounts_overview_total_details_staked"
+                        style="@style/TextView.TotalBalanceDetails"
+                        android:layout_width="match_parent"
+                        android:gravity="right"
+                        tools:text="G33.00" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/account_recyclerview"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/balance_layout"
+            tools:listitem="@layout/item_account"
+            android:scrollbars="vertical"
+            tools:visibility="visible" />
+
+        <ScrollView
+            android:id="@+id/no_accounts_scrollview"
+            style="@style/ScrollView.Standard"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/balance_layout">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <TextView
+                    android:id="@+id/no_accounts_textview"
+                    style="@style/TextView.Standard"
+                    android:layout_width="0dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:gravity="center_horizontal"
+                    android:text="@string/accounts_overview_no_accounts"
+                    tools:visibility="gone"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+                    android:id="@+id/no_identities_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/no_accounts_textview"
+                    app:layout_constraintVertical_bias="1">
+
+                    <TextView
+                        android:id="@+id/no_identities_textview"
+                        style="@style/TextView.Standard.Light"
+                        android:layout_width="260dp"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center_horizontal"
+                        android:text="@string/accounts_overview_no_identities" />
+
+                    <Button
+                        android:id="@+id/create_identity_button"
+                        style="@style/Button.Standard"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="20dp"
+                        android:text="@string/accounts_overview_create_identity" />
+                </LinearLayout>
+
+
+
+                <Button
+                    android:id="@+id/create_account_button"
+                    style="@style/Button.Standard"
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:text="@string/accounts_overview_create_account"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/no_accounts_textview"
+                    app:layout_constraintVertical_bias="1" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+        <include layout="@layout/progress"
+            tools:visibility="gone"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

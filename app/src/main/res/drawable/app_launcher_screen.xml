@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- The android:opacity=”opaque” line — this is critical in preventing a flash of black as your theme transitions. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:opacity="opaque">
+
+    <!-- When set as window background via the theme,
+         some of the background will be hidden behind status bar and button bar -->
+    <item android:drawable="@drawable/launcher_screen_bg" />
+
+    <item
+        android:drawable="@drawable/ic_concordium_logo_no_text"
+        android:width="128dp"
+        android:height="128dp"
+        android:gravity="center" />
+
+    <!-- When set as window background via the theme,
+         the bottom text will have to have extra bottom padding
+         because of the button bar that as placed on top of this background -->
+    <item
+        android:drawable="@drawable/ic_concordium_logo_only_text"
+        android:width="220dp"
+        android:height="21dp"
+        android:gravity="center|bottom"
+        android:bottom="80dp" />
+</layer-list>

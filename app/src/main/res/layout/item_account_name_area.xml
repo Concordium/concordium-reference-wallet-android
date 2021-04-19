@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/status_imageview"
+        style="@style/Image"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginRight="4dp"
+        tools:src="@drawable/ic_status_problem" />
+
+    <TextView
+        android:id="@+id/name_textview"
+        style="@style/TextView.ListItemHeader"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:textStyle="bold"
+        android:maxLines="4"
+        android:singleLine="true"
+        tools:text="Savings account Savings account Savings account Savings account Savings account" />
+
+    <TextView
+        android:id="@+id/initial_textview"
+        style="@style/TextView.ListItemHeader"
+        android:paddingStart="5dp"
+        android:layout_width="wrap_content"
+        android:text="@string/view_account_initial" />
+
+    <ImageView
+        android:id="@+id/status_baker"
+        style="@style/Image"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:layout_margin="4dp"
+        android:src="@drawable/ic_baker" />
+
+    <ImageView
+        android:id="@+id/status_read_only"
+        style="@style/Image"
+        android:layout_width="17dp"
+        android:layout_height="14dp"
+        android:layout_margin="4dp"
+        android:src="@drawable/ic_read_only" />
+
+</LinearLayout>

@@ -1,0 +1,65 @@
+{
+  "identityObject": {
+    "attributeList": {
+      "chosenAttributes": {
+        "countryOfResidence": "DE",
+        "dob": "19800229",
+        "firstName": "John",
+        "idDocExpiresAt": "20291231",
+        "idDocIssuedAt": "20200401",
+        "idDocIssuer": "DK",
+        "idDocNo": "1234567890",
+        "idDocType": "1",
+        "lastName": "Doe",
+        "nationalIdNo": "DK123456789",
+        "nationality": "DK",
+        "sex": "1",
+        "taxIdNo": "DE987654321"
+      },
+      "createdAt": "202004",
+      "maxAccounts": 238,
+      "validTo": "202104"
+    },
+    "preIdentityObject": {
+      "choiceArData": {
+        "arIdentities": [
+          0,
+          1,
+          2
+        ],
+        "threshold": 2
+      },
+      "idCredPub": "8f0af592be0bceebabf1ecb22e4755da412fa4b7fb0d31e4b58f4bf0ba98d3e6d84b6d4faf529ef96e7c922dd438c277",
+      "idCredSecCommitment": "b6d8851cef4a6d510564921e51196468c90d2584c11510d5f58a19403a5043b2ac301a3435a66e268fc5c908954b7cbf",
+      "ipArData": [
+        {
+          "arIdentity": 0,
+          "encPrfKeyShare": "8fe50de964e0e8caa7ae7c2b7cbcc73f6cf609c3054d1fcfbf2df6f2a03a4215c4fff64cf55d77a719aceefad94c9292b074959477318bc51b9d6099c57398dc5747cebf8d2a4a283f646f97def2102c750cc562ae4ba47b705183d75f581251",
+          "prfKeyShareNumber": 1,
+          "proofComEncEq": "6e55125d457a97a692767d4e68cc2321b01747ca5a8bf58e084b5fdd3a6a7f3f56474580d238bf55b9df9c0d07f83bd267990a8b1a1b3de49d230b74cf27014e035197e95538f2db647c0d02e6a04c4c95e6c683d42983e6b4db66e5df8049f22e5d3168c0a4a189634861dda1074718f5c2c45b6846a2087190a42b108446b1"
+        },
+        {
+          "arIdentity": 1,
+          "encPrfKeyShare": "93d463b2c3a2301aee188113186591026791cfc561923a9863d55b972739520f0b0aefdea1e039cfbf82e4425cc0a4938dbf909fe361416be5e3e16083eaccc4a2fbc4651e83611ba84a6fb9d0b599d2fe38011582257163482ad90fd6269482",
+          "prfKeyShareNumber": 2,
+          "proofComEncEq": "692501f034248ff6ad0b83caa2d2c6e4d3f4e18912733a7cddedbcf8945c3efb1670f86fb0371344b9bf8096442a4e7fde41494b64b20144288cb79f609402351626717038697773d052933a97441eb25a877bb6c72bc123ed1e1f48621e9a8a52057f25becb674b2c0e1f6e0b2c061c209e3e95a59a206ab0f17136f9bee714"
+        },
+        {
+          "arIdentity": 2,
+          "encPrfKeyShare": "a7f2c4058d53ec13b17c57f1355db68adbd7568479aec059196b0c3df8df632106c6549748fde8a055d5a1ddf62ae7c8a59876866d1fd0be0957f094dd9901e04b7ae127111b01eba2de2b9b28ba1e4af1e5a9d1beab94273457b0cc8c085ef4",
+          "prfKeyShareNumber": 3,
+          "proofComEncEq": "1e66a0bc37c3fa88938441bc6fed6789e0f1216ef7310ba81297ba9a022ce466636e9773cc74057f407bb7cbf3d0eee9c03a40ed1371ec67c677a78fdb81d8f156e06d39982513752aa50a590dadb076ffbefdb3a6bfee80dec91f7821e52c7962e4e869fd219f380301f5bc5a0f00bb2ea74b7b06977e3e67018fcb3a7b6ad3"
+        }
+      ],
+      "pokSecCred": "0a6f1082a0576c33edd01fccf6ffa2f590ded014e2c723b4b11c37bd7eb40a8d59ce35f4c8e28693da03306d32390ebeffae96e354ee1ffbdc321d761d136d8f",
+      "prfKeyCommitmentWithIP": "93996f5d096a79df757f564af0a821f434f9a7acb344468d36591553c1238cd65fad54e7b8c04b35760f497fc967ef0f",
+      "prfKeySharingCoeffCommitments": [
+        "99b32f8cfb47d661918f73e8b25588ca0ef298ac0cbf9e137c3454bf049218b533b0108097d9df19a26466f474564643",
+        "aa288c3df19920ba15ad5b635aff12b454e920dde2935bb1ca33feb66c17e7e0ea0c6ed7f11c2281402e669f316183d0"
+      ],
+      "proofCommitmentsSame": "29306a606c1720eb4f456fc43363956fd300fcbd1071fb3cdb211a36eae938635bfbbbef7cfbf3d1b969f5afe43e0fd8d4543b9aad4446c3e3aebb855211a3d44643f70abe71534a7492d45ab4b78da865c1432378f5b5ad993b88f3af5eb6c06aa4d1e4fafc84fda6a89ebeefa0b9fb712a93c70f4b6e9f7f06b33aa1348f8d",
+      "proofCommitmentsToIdCredSecSame": "506db75aadd43574a7087d46c932909ab8aa62c12e0ff78db7d0b4229feb31cc000000012dba9c8dc9b795d836a538bc9c0a8a81f5752b469bf02badfa14adc3a00002231c7a7bf3f93e144fec97d04802fcdce72ddd773504a9b6b34e97af70a08b34d2"
+    },
+    "signature": "9030b887914b0ed6ad89728d33c84d712cffbe3697f115d64a5bce838020f673dc5d931a75abc56d2b410cb91a1ba8fbaf5dafdfa7750771722bd3e16b39044d3ad07276a7c162f8db25a449b0374be51ab79129196bb45420cb49eb45cb08c5"
+  }
+}

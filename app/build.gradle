@@ -1,0 +1,295 @@
+import java.text.SimpleDateFormat
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: "androidx.navigation.safeargs.kotlin"
+
+def versionBuildNumber = 36
+
+//def LOCAL_IP = getLocalIPv4()
+def LOCAL_IP = "10.0.2.2"
+
+println("LOCAL_IP is " + LOCAL_IP)
+
+
+def URL_PROXY_BASE_LOCAL = "http://"+LOCAL_IP+":14000"
+def URL_PROXY_BASE_STAGING = "https://wallet-proxy.eu.staging.concordium.com"
+def URL_PROXY_BASE_PROD_TESTNET = "https://wallet-proxy.testnet.concordium.com"
+def URL_PROXY_BASE_PRODUCTION = ""
+
+
+def PROVIDER_AUTHORITY_BASE = "com.concordium.wallet.DataFileProvider"
+def PROVIDER_AUTHORITY_LOCAL = PROVIDER_AUTHORITY_BASE+"-local"
+def PROVIDER_AUTHORITY_MOCK = PROVIDER_AUTHORITY_BASE+"-mock"
+def PROVIDER_AUTHORITY_STAGING = PROVIDER_AUTHORITY_BASE+"-staging"
+def PROVIDER_AUTHORITY_PROD = PROVIDER_AUTHORITY_BASE
+
+def SCHEME_BASE = "concordiumwallet"
+def SCHEME_LOCAL = SCHEME_BASE+"-local"
+def SCHEME_MOCK = SCHEME_BASE+"-mock"
+def SCHEME_STAGING = SCHEME_BASE+"-staging"
+def SCHEME_PROD = SCHEME_BASE
+
+def getLocalIPv4() {
+    def ip4s = []
+    NetworkInterface.getNetworkInterfaces()
+            .findAll { it.isUp() && !it.isLoopback() && !it.isVirtual() }
+            .each {
+                it.getInetAddresses()
+                        .findAll { !it.isLoopbackAddress() && it instanceof Inet4Address }
+                        .each { ip4s << it.getHostAddress() }
+            }
+    return ip4s[0]
+}
+
+def buildTime() {
+    def dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'")
+    dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"))
+    return dateFormat.format(new Date())
+}
+
+def buildTimeTicks() {
+    def time = System.currentTimeMillis()
+    return time;
+}
+
+
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+    defaultConfig {
+        applicationId "com.concordium.wallet"
+        minSdkVersion 26
+        targetSdkVersion 29
+        versionCode versionBuildNumber
+        versionName "0.5.${versionBuildNumber}"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "BUILD_NUMBER", "\"${versionBuildNumber}\"")
+        buildConfigField("String", "BUILD_TIME", "\"${buildTime()}\"")
+        buildConfigField("String", "BUILD_TIME_TICKS", "\"${buildTimeTicks()}\"")
+        buildConfigField("String", "ENV_NAME", "none")
+        buildConfigField("boolean", "USE_BACKEND_MOCK", "false")
+        buildConfigField("boolean", "USE_LIB_MOCK", "false")
+        buildConfigField("boolean", "INCL_DEV_OPTIONS", "false")
+        buildConfigField("boolean", "SHOW_GTU_DROP", "false")
+        buildConfigField("boolean", "USE_LIBRARY_PROVIDED_IDENTITIES", "true")
+        buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [
+                        "room.schemaLocation": "$projectDir/schemas".toString(),
+                        "room.incremental"   : "true"]
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable true
+        }
+    }
+
+    flavorDimensions "default"
+
+    productFlavors {
+
+        mock {
+            applicationIdSuffix ".mock"
+            buildConfigField("String", "ENV_NAME", "\"mock\"")
+            buildConfigField("String", "URL_PROXY_BASE", "\"${URL_PROXY_BASE_STAGING}\"")
+
+            buildConfigField("boolean", "USE_BACKEND_MOCK", "true")
+            buildConfigField("boolean", "USE_LIB_MOCK", "true")
+            buildConfigField("boolean", "INCL_DEV_OPTIONS", "true")
+            buildConfigField("boolean", "SHOW_GTU_DROP", "true")
+            buildConfigField("boolean", "USE_LIBRARY_PROVIDED_IDENTITIES", "false")
+
+            buildConfigField("String", "SCHEME", "\"${SCHEME_MOCK}\"")
+            resValue "string", "scheme", "\"${SCHEME_MOCK}\""
+
+            resValue "string", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_MOCK}\""
+            buildConfigField("String", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_MOCK}\"")
+
+            buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
+
+        }
+
+        local {
+            applicationIdSuffix ".local"
+            buildConfigField("String", "ENV_NAME", "\"local\"")
+            buildConfigField("String", "URL_PROXY_BASE", "\"${URL_PROXY_BASE_LOCAL}\"")
+
+            buildConfigField("boolean", "SHOW_GTU_DROP", "true")
+            buildConfigField("boolean", "USE_LIBRARY_PROVIDED_IDENTITIES", "false")
+
+            buildConfigField("String", "SCHEME", "\"${SCHEME_LOCAL}\"")
+            resValue "string", "scheme", "\"${SCHEME_LOCAL}\""
+
+            resValue "string", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_LOCAL}\""
+            buildConfigField("String", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_LOCAL}\"")
+
+            buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
+        }
+
+        staging {
+            applicationIdSuffix ".staging"
+            buildConfigField("String", "ENV_NAME", "\"staging\"")
+            buildConfigField("String", "URL_PROXY_BASE", "\"${URL_PROXY_BASE_STAGING}\"")
+
+            buildConfigField("boolean", "SHOW_GTU_DROP", "true")
+            buildConfigField("boolean", "USE_LIBRARY_PROVIDED_IDENTITIES", "false")
+
+            buildConfigField("String", "SCHEME", "\"${SCHEME_STAGING}\"")
+            resValue "string", "scheme", "\"${SCHEME_STAGING}\""
+
+            resValue "string", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_STAGING}\""
+            buildConfigField("String", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_STAGING}\"")
+
+            buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
+        }
+
+        prodTestNet {
+            buildConfigField("String", "ENV_NAME", "\"prod_testnet\"")
+            buildConfigField("String", "URL_PROXY_BASE", "\"${URL_PROXY_BASE_PROD_TESTNET}\"")
+
+            buildConfigField("boolean", "SHOW_GTU_DROP", "true")
+            buildConfigField("boolean", "USE_LIBRARY_PROVIDED_IDENTITIES", "false")
+
+            buildConfigField("String", "SCHEME", "\"${SCHEME_PROD}\"")
+            resValue "string", "scheme", "\"${SCHEME_PROD}\""
+
+            resValue "string", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_PROD}\""
+            buildConfigField("String", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_PROD}\"")
+
+            buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
+        }
+
+        prodMainNet {
+            buildConfigField("String", "ENV_NAME", "\"production\"")
+            buildConfigField("String", "URL_PROXY_BASE", "\"${URL_PROXY_BASE_PRODUCTION}\"")
+            buildConfigField("boolean", "SHOW_GTU_DROP", "false")
+            buildConfigField("boolean", "USE_LIBRARY_PROVIDED_IDENTITIES", "false")
+
+            buildConfigField("String", "SCHEME", "\"${SCHEME_PROD}\"")
+            resValue "string", "scheme", "\"${SCHEME_PROD}\""
+
+            resValue "string", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_PROD}\""
+            buildConfigField("String", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_PROD}\"")
+
+            buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
+        }
+
+        // Rename the output file
+        android.applicationVariants.all { variant ->
+            variant.outputs.all {
+                def project = "wallet"
+                def SEPARATOR_LINE = "-"
+                def SEPARATOR = "_"
+                def flavor = variant.productFlavors[0].name
+                def buildType = variant.buildType.name
+                def version = variant.versionCode
+                def applicationId = variant.applicationId   //package name
+                def date = new Date()
+                def formattedDate = date.format('yyyy-MM-dd_HH.mm')
+                outputFileName =
+                        project + SEPARATOR_LINE +
+                                flavor + SEPARATOR_LINE +
+                                buildType + SEPARATOR +
+                                "v" + variant.versionName +
+                                "(" + version + ")" + SEPARATOR +
+                                formattedDate + ".apk";
+            }
+        }
+
+    }
+
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    // Room - exclude the atomic functions module from the package and prevent warnings.
+    packagingOptions {
+        exclude 'META-INF/atomicfu.kotlin_module'
+    }
+}
+
+dependencies {
+    def lifecycle_version = "2.2.0"
+    def room_version = "2.2.5"
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    // Coroutines
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2"
+
+    // Android/Google
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.core:core-ktx:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.biometric:biometric:1.0.1'
+
+    // Lifecycles
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    kapt "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
+    implementation 'androidx.fragment:fragment-ktx:1.1.0'
+
+    // Room
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    androidTestImplementation "androidx.room:room-testing:$room_version"
+
+    // Barcode
+    implementation 'com.google.android.gms:play-services-vision:20.0.0'
+    implementation 'com.google.android.gms:play-services-vision:20.0.0'
+
+    // Chrome custom tabs
+    implementation 'androidx.browser:browser:1.2.0'
+
+    // OkHttp/Retrofit
+    implementation 'com.squareup.okhttp3:okhttp:3.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.6.0'
+
+    // Navigation
+    def navigationVersion = '2.3.1'
+    implementation "androidx.navigation:navigation-fragment:$navigationVersion"
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
+    implementation "androidx.navigation:navigation-ui:$navigationVersion"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
+
+    // Crypto library
+    implementation project(":mobile_wallet_lib-release")
+
+    // Test
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
+    testImplementation "android.arch.persistence.room:testing:1.1.1"
+
+    // Generate QR
+    implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+}

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_item_height_lower"
+    android:background="@drawable/list_item">
+
+    <CheckBox
+        android:id="@+id/attribute_checkbox"
+        style="@style/CheckBox.Standard"
+        android:layout_marginLeft="@dimen/screen_horizontal_margin_checkbox"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:checked="false"
+        tools:text="" />
+
+    <TextView
+        android:id="@+id/attribute_name_textview"
+        style="@style/TextView.ListItemHeader"
+        android:layout_width="0dp"
+        android:layout_marginLeft="@dimen/screen_horizontal_margin_checkbox"
+        android:layout_marginRight="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/attribute_checkbox"
+        app:layout_constraintRight_toLeftOf="@id/attribute_value_textview"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:checked="false"
+        tools:text="Birth date - xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" />
+
+    <TextView
+        android:id="@+id/attribute_value_textview"
+        style="@style/TextView.ListItemHeader"
+        android:layout_marginRight="@dimen/screen_horizontal_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="1989 xxxxx" />
+
+    <View
+        style="@style/Divider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -1,0 +1,90 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/no_transfers_textview"
+        style="@style/TextView.InfoMedium"
+        android:layout_width="0dp"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:gravity="center"
+        android:text="@string/account_details_transfers"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone"
+        android:scrollbars="vertical"
+        tools:listitem="@layout/item_transaction" />
+
+    <ScrollView
+        android:id="@+id/gtu_drop_layout"
+        style="@style/ScrollView.Standard"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:background="@color/background_light_blue"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/TextView.Standard"
+                    android:layout_marginLeft="@dimen/section_gtu_drop"
+                    android:layout_marginTop="@dimen/section_gtu_drop"
+                    android:layout_marginRight="@dimen/section_gtu_drop"
+                    android:text="@string/account_details_gtu_drop_header"
+                    android:textColor="@color/text_blue" />
+
+                <TextView
+                    style="@style/TextView.InfoMedium"
+                    android:layout_marginLeft="@dimen/section_gtu_drop"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="@dimen/section_gtu_drop"
+                    android:gravity="center_horizontal"
+                    android:text="@string/account_details_gtu_drop_info" />
+
+                <Button
+                    android:id="@+id/gtu_drop_button"
+                    style="@style/Button.Standard"
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="@dimen/section_gtu_drop"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="@dimen/section_gtu_drop"
+                    android:layout_marginBottom="@dimen/section_gtu_drop"
+                    android:text="@string/account_details_gtu_drop_button" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

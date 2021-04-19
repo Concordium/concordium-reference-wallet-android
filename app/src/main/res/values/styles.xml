@@ -1,0 +1,354 @@
+<resources>
+
+    <!-- Base application theme. -->
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
+        <item name="colorPrimary">@color/theme_primary</item>
+        <item name="colorPrimaryDark">@color/theme_primary_dark</item>
+        <item name="colorAccent">@color/theme_accent</item>
+    </style>
+
+    <style name="AppTheme.DarkActionbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorPrimary">@color/theme_primary</item>
+        <item name="colorPrimaryDark">@color/theme_primary_dark</item>
+        <item name="colorAccent">@color/theme_accent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar.WithBackground">
+        <item name="android:windowBackground">@drawable/launcher_screen</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar.Launcher">
+        <item name="android:windowBackground">@drawable/app_launcher_screen</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="CircularProgress" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/theme_component</item>
+    </style>
+
+    <!--
+    Below are the general app styles
+    - Do not put layout attributes (except width and height)
+    - If styles are very specific for one screen (there could also be a need to include additional layout attributes), put them in a separate file called styles_[screen].xml
+    - All TextView, EditText and Button elements must have a style (eg. just basic "TextView", "EditText" or "Button") - it makes it easier to identify and define additional general styles later
+    -->
+
+
+    <!--............................................................................-->
+
+    <style name="Layout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Layout.Root">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/theme_white</item>
+    </style>
+
+    <style name="Layout.Root.Transparent">
+        <item name="android:background">@null</item>
+    </style>
+
+    <style name="Layout.TextInputLayout">
+        <item name="android:textColorHint">@color/text_grey</item>
+    </style>
+
+    <style name="Layout.Card">
+        <item name="android:background">@drawable/background_rounded_white</item>
+        <item name="android:elevation">4dp</item>
+    </style>
+
+    <style name="Layout.CardButton">
+        <item name="android:layout_height">100dp</item>
+        <item name="android:background">@drawable/button_rounded</item>
+        <item name="android:elevation">4dp</item>
+    </style>
+
+    <style name="Layout.CardView" parent="Base.CardView">
+        <item name="cardCornerRadius">4dp</item>
+        <item name="cardElevation">4dp</item>
+    </style>
+
+    <!--............................................................................-->
+
+    <style name="ScrollView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="ScrollView.Standard">
+        <item name="android:fillViewport">true</item>
+    </style>
+
+    <!--............................................................................-->
+
+    <style name="TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/text_black</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="TextView.Standard">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextView.Standard.Light">
+        <item name="android:textColor">@color/text_grey</item>
+    </style>
+
+    <style name="TextView.Medium">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="TextView.Small">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextView.MediumLarge">
+        <item name="android:textSize">26sp</item>
+    </style>
+
+    <style name="TextView.Large">
+        <item name="android:textSize">32sp</item>
+    </style>
+
+    <style name="TextView.Standard.Small">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="TextView.SendFundBalance">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/text_grey</item>
+    </style>
+
+    <style name="TextView.SendFundBalance.Small">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="TextView.SingleLine">
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="TextView.ListItemHeader" parent="TextView.SingleLine">
+        <item name="android:textColor">@color/text_black</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextView.ListItemValue" parent="TextView.SingleLine">
+        <item name="android:textColor">@color/text_black</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
+    <style name="TextView.ListItemSubHeader" parent="TextView.SingleLine">
+        <item name="android:textColor">@color/text_grey</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="TextView.ListHeader" parent="TextView.SingleLine">
+        <item name="android:textColor">@color/text_blue</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="TextView.CardButton" parent="TextView.SingleLine">
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/text_grey</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextView.InfoSmall">
+        <item name="android:textColor">@color/text_grey</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextView.InfoMedium">
+        <item name="android:textColor">@color/text_grey</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextView.WarningOnDark">
+        <item name="android:textColor">@color/text_white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextView.ErrorMedium">
+        <item name="android:textColor">@color/text_red</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextView.ErrorSmall">
+        <item name="android:textColor">@color/text_red</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextView.ErrorTiny">
+        <item name="android:textColor">@color/text_red</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="TextView.BalanceInfo">
+        <item name="android:letterSpacing">0.2</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/text_white</item>
+    </style>
+
+    <style name="TextView.TotalBalanceDetails">
+        <item name="android:letterSpacing">0.0</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/text_blue</item>
+    </style>
+
+
+    <style name="TextView.BlueValueHuge">
+        <item name="android:textSize">42sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/theme_component</item>
+    </style>
+
+    <style name="TextView.BlueTiny">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/theme_component</item>
+    </style>
+
+    <style name="TextView.BlueHeader">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/theme_component</item>
+    </style>
+
+    <style name="TextView.MoreMenuItem" parent="TextView.SingleLine">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!--............................................................................-->
+
+    <style name="EditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="EditText.Card">
+        <item name="android:layout_height">50dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:background">@drawable/background_rounded_white</item>
+        <item name="android:elevation">4dp</item>
+    </style>
+
+    <style name="EditText.Name">
+        <item name="android:inputType">textCapSentences</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_black</item>
+        <item name="android:backgroundTint">@color/text_grey</item>
+    </style>
+
+    <style name="EditText.AuthOnDark">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_white</item>
+        <item name="android:textColorHint">@color/text_grey</item>
+        <item name="android:backgroundTint">@color/theme_component_grey</item>
+    </style>
+
+    <style name="EditText.Digit">
+        <item name="android:layout_width">45dp</item>
+        <item name="android:textColor">@color/text_white</item>
+        <item name="android:maxLength">1</item>
+        <item name="android:cursorVisible">false</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:backgroundTint">@color/theme_component_grey</item>
+    </style>
+
+    <!--............................................................................-->
+
+    <style name="Button" parent="TextAppearance.AppCompat.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Button.Standard">
+        <item name="android:layout_height">50dp</item>
+        <item name="android:background">@drawable/button_standard</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:textColor">@color/text_white</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="Button.Standard.White">
+        <item name="android:background">@drawable/button_standard_white</item>
+        <item name="android:textColor">@color/text_grey</item>
+    </style>
+
+    <style name="Button.Standard.Transparent">
+        <item name="android:background">@null</item>
+        <item name="android:textColor">@color/button_invisible_text</item>
+    </style>
+
+
+    <!--............................................................................-->
+
+    <style name="Image">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="Image.CardButton">
+        <item name="android:layout_width">50dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:background">@drawable/button_rounded</item>
+        <item name="android:elevation">4dp</item>
+    </style>
+
+    <!--............................................................................-->
+
+    <style name="CheckBox">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="CheckBox.Standard">
+        <item name="android:textColor">@color/text_black</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+
+    <!--............................................................................-->
+
+    <style name="TabLayout" parent="TextAppearance.Design.Tab">
+        <item name="textAllCaps">false</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/theme_divider</item>
+    </style>
+
+    <style name="DividerHorizontal">
+        <item name="android:layout_width">1dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/theme_divider</item>
+    </style>
+
+</resources>

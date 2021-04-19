@@ -1,0 +1,609 @@
+package com.concordium.wallet.ui.transaction.sendfunds
+
+import android.app.Application
+import android.text.TextUtils
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.App
+import com.concordium.wallet.R
+import com.concordium.wallet.core.arch.Event
+import com.concordium.wallet.core.authentication.AuthenticationManager
+import com.concordium.wallet.core.backend.BackendError
+import com.concordium.wallet.core.backend.BackendErrorException
+import com.concordium.wallet.core.backend.BackendRequest
+import com.concordium.wallet.core.crypto.CryptoLibrary
+import com.concordium.wallet.core.security.KeystoreEncryptionException
+import com.concordium.wallet.data.AccountRepository
+import com.concordium.wallet.data.TransferRepository
+import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.cryptolib.CreateTransferInput
+import com.concordium.wallet.data.cryptolib.CreateTransferOutput
+import com.concordium.wallet.data.cryptolib.StorageAccountData
+import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.Recipient
+import com.concordium.wallet.data.room.Transfer
+import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
+import com.concordium.wallet.ui.common.BackendErrorHandler
+import com.concordium.wallet.util.DateTimeUtil
+import com.concordium.wallet.util.Log
+import com.google.gson.GsonBuilder
+import kotlinx.coroutines.launch
+import java.util.*
+import javax.crypto.Cipher
+
+
+class SendFundsViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val proxyRepository = ProxyRepository()
+    private val accountRepository: AccountRepository
+    private val transferRepository: TransferRepository
+
+    private val gson = App.appCore.gson
+
+    private val accountUpdater = AccountUpdater(application, viewModelScope)
+
+    private var accountNonceRequest: BackendRequest<AccountNonce>? = null
+    private var submitCredentialRequest: BackendRequest<SubmissionData>? = null
+    private var transferSubmissionStatusRequest: BackendRequest<TransferSubmissionStatus>? = null
+    private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
+    private var accountBalanceRequest: BackendRequest<AccountBalance>? = null
+
+    public lateinit var account: Account
+    var isShielded: Boolean = false
+
+    var selectedRecipient: Recipient? = null
+        set(value) {
+            field = value
+            _recipientLiveData.value = value
+            loadTransactionFee()
+            if (value != null && isShielded && !isTransferToSameAccount()) {
+                getAccountEncryptedKey(value.address)
+            }
+        }
+    private var tempData = TempData()
+    var newTransfer: Transfer? = null
+
+    private val _waitingLiveData = MutableLiveData<Boolean>()
+    val waitingLiveData: LiveData<Boolean>
+        get() = _waitingLiveData
+
+    private val _errorLiveData = MutableLiveData<Event<Int>>()
+    val errorLiveData: LiveData<Event<Int>>
+        get() = _errorLiveData
+
+    private val _showAuthenticationLiveData = MutableLiveData<Event<Boolean>>()
+    val showAuthenticationLiveData: LiveData<Event<Boolean>>
+        get() = _showAuthenticationLiveData
+
+    private val _gotoSendFundsConfirmLiveData = MutableLiveData<Event<Boolean>>()
+    val gotoSendFundsConfirmLiveData: LiveData<Event<Boolean>>
+        get() = _gotoSendFundsConfirmLiveData
+
+    private val _gotoFailedLiveData = MutableLiveData<Event<Pair<Boolean, BackendError?>>>()
+    val gotoFailedLiveData: LiveData<Event<Pair<Boolean, BackendError?>>>
+        get() = _gotoFailedLiveData
+
+    private val _transactionFeeLiveData = MutableLiveData<Long>()
+    val transactionFeeLiveData: LiveData<Long>
+        get() = _transactionFeeLiveData
+
+    private val _waitingReceiverAccountPublicKeyLiveData = MutableLiveData<Boolean>()
+    val waitingReceiverAccountPublicKeyLiveData: LiveData<Boolean>
+        get() = _waitingReceiverAccountPublicKeyLiveData
+
+    private val _recipientLiveData = MutableLiveData<Recipient>()
+    val recipientLiveData: LiveData<Recipient>
+        get() = _recipientLiveData
+
+
+    private class TempData {
+        var accountNonce: AccountNonce? = null
+        var toAddress: String? = null
+        var amount: Long? = null
+        var energy: Long? = null
+        var submissionId: String? = null
+        var transferSubmissionStatus: TransferSubmissionStatus? = null
+        var expiry: Long? = null
+        var globalParams: GlobalParams? = null
+        var receiverPublicKey: String? = null
+        var accountBalance: AccountBalance? = null
+        var createTransferInput: CreateTransferInput? = null
+        var createTransferOutput: CreateTransferOutput? = null
+        var newSelfEncryptedamount: String? = null
+    }
+
+    init {
+        val accountDao = WalletDatabase.getDatabase(application).accountDao()
+        accountRepository = AccountRepository(accountDao)
+        val transferDao = WalletDatabase.getDatabase(application).transferDao()
+        transferRepository = TransferRepository(transferDao)
+    }
+
+    fun initialize(account: Account, isShielded: Boolean) {
+        this.account = account
+        this.isShielded = isShielded
+        getGlobalInfo()
+        getAccountBalance()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        accountNonceRequest?.dispose()
+        submitCredentialRequest?.dispose()
+        transferSubmissionStatusRequest?.dispose()
+    }
+
+    private fun handleBackendError(throwable: Throwable) {
+        Log.e("Backend request failed", throwable)
+        if (throwable is BackendErrorException) {
+            _gotoFailedLiveData.value = Event(Pair(true, throwable.error))
+        } else {
+            _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(throwable))
+        }
+    }
+
+    private fun loadTransactionFee() {
+
+        var type =
+            if(isShielded){
+                if(isTransferToSameAccount()){
+                    ProxyRepository.TRANSFER_TO_PUBLIC
+                }
+                else{
+                    ProxyRepository.ENCRYPTED_TRANSFER
+                }
+            }
+            else{
+                if(isTransferToSameAccount()){
+                    ProxyRepository.TRANSFER_TO_SECRET
+                }
+                else{
+                    ProxyRepository.SIMPLE_TRANSFER
+                }
+            }
+
+
+        proxyRepository.getTransferCost(type,
+            {
+                tempData.energy = it.energy
+                _transactionFeeLiveData.value = it.cost.toLong()
+            },
+            {
+                handleBackendError(it)
+            }
+        )
+    }
+
+    fun isTransferToSameAccount(): Boolean {
+        return account.address == selectedRecipient?.address
+    }
+
+    fun getAmount(): Long? {
+        return tempData.amount
+    }
+
+    fun hasSufficientFunds(amount: String): Boolean {
+        val amountValue = CurrencyUtil.toGTUValue(amount)
+        val cost = _transactionFeeLiveData.value
+        if (amountValue == null || cost == null) {
+            return true
+        }
+
+        val totalUnshieldedAtDisposal = account.totalUnshieldedBalance - account.getAtDisposalSubstraction()
+
+        if(isShielded){
+            if(isTransferToSameAccount()){
+                //SEC_TO_PUBLIC_TRANSFER
+                if (amountValue > account.totalShieldedBalance || cost > totalUnshieldedAtDisposal) {
+                    return false
+                }
+            }
+            else{
+                //ENCRYPTED_TRANSFER
+                if (amountValue > account.totalShieldedBalance || cost > totalUnshieldedAtDisposal) {
+                    return false
+                }
+            }
+        }
+        else{
+            if(isTransferToSameAccount()){
+                //PUBLIC_TO_SEC_TRANSFER
+                if (amountValue + cost > totalUnshieldedAtDisposal) {
+                    return false
+                }
+            }
+            else{
+                //REGULAR_TRANSFER
+                if (amountValue + cost > totalUnshieldedAtDisposal) {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+
+    fun sendFunds(amount: String) {
+        val amountValue = CurrencyUtil.toGTUValue(amount)
+        if (amountValue == null) {
+            _errorLiveData.value = Event(R.string.app_error_general)
+            return
+        }
+        tempData.amount = amountValue
+
+        val recipient = selectedRecipient
+        if (recipient == null) {
+            _errorLiveData.value = Event(R.string.app_error_general)
+            return
+        }
+        tempData.toAddress = recipient.address
+        getAccountNonce()
+    }
+
+    private fun getAccountNonce() {
+        _waitingLiveData.value = true
+        accountNonceRequest?.dispose()
+        accountNonceRequest = proxyRepository.getAccountNonce(account.address,
+            {
+                tempData.accountNonce = it
+                _showAuthenticationLiveData.value = Event(true)
+                _waitingLiveData.value = false
+            },
+            {
+                _waitingLiveData.value = false
+                handleBackendError(it)
+            }
+        )
+    }
+
+    fun shouldUseBiometrics(): Boolean {
+        return App.appCore.getCurrentAuthenticationManager().useBiometrics()
+    }
+
+    fun getCipherForBiometrics(): Cipher? {
+        try {
+            val cipher = App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
+            if (cipher == null) {
+                _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
+            }
+            return cipher
+        } catch (e: KeystoreEncryptionException) {
+            _errorLiveData.value = Event(R.string.app_error_keystore)
+            return null
+        }
+    }
+
+    fun continueWithPassword(password: String) = viewModelScope.launch {
+        _waitingLiveData.value = true
+        decryptAndContinue(password)
+    }
+
+    fun checkLogin(cipher: Cipher) = viewModelScope.launch {
+        _waitingLiveData.value = true
+        val password = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
+        if (password != null) {
+            decryptAndContinue(password)
+        } else {
+            _errorLiveData.value = Event(R.string.app_error_encryption)
+            _waitingLiveData.value = false
+        }
+    }
+
+    private suspend fun decryptAndContinue(password: String) {
+        // Decrypt the private data
+        val storageAccountDataEncrypted = account.encryptedAccountData
+        if (TextUtils.isEmpty(storageAccountDataEncrypted)) {
+            _errorLiveData.value = Event(R.string.app_error_general)
+            _waitingLiveData.value = false
+            return
+        }
+        val decryptedJson = App.appCore.getCurrentAuthenticationManager().decryptInBackground(password, storageAccountDataEncrypted)
+
+        if (decryptedJson != null) {
+            val credentialsOutput = gson.fromJson(decryptedJson, StorageAccountData::class.java)
+            createTransfer(credentialsOutput.accountKeys, credentialsOutput.encryptionSecretKey)
+        } else {
+            _errorLiveData.value = Event(R.string.app_error_encryption)
+            _waitingLiveData.value = false
+        }
+    }
+
+    private suspend fun createTransfer(
+        keys: AccountData,
+        encryptionSecretKey: String
+    ) {
+        val toAddress = tempData.toAddress
+        val nonce = tempData.accountNonce
+        val amount = tempData.amount
+        val energy = tempData.energy
+
+        if (toAddress == null || nonce == null || amount == null || energy == null) {
+            _errorLiveData.value = Event(R.string.app_error_general)
+            _waitingLiveData.value = false
+            return
+        }
+
+        //Expiry should me now + 10 minutes (in seconds)
+        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
+        tempData.expiry = expiry
+        val transferInput = CreateTransferInput(
+            account.address,
+            keys,
+            toAddress,
+            expiry,
+            amount.toString(),
+            energy,
+            nonce.nonce,
+            tempData.globalParams,
+            tempData.receiverPublicKey,
+            encryptionSecretKey,
+            calculateInputEncryptedAmount(encryptionSecretKey)
+        )
+
+        var transactionType =
+            if(isShielded){
+                if(isTransferToSameAccount()){
+                    CryptoLibrary.SEC_TO_PUBLIC_TRANSFER
+                }
+                else{
+                    CryptoLibrary.ENCRYPTED_TRANSFER
+                }
+            }
+            else{
+                if(isTransferToSameAccount()){
+                    CryptoLibrary.PUBLIC_TO_SEC_TRANSFER
+                }
+                else{
+                    CryptoLibrary.REGULAR_TRANSFER
+                }
+            }
+        tempData.createTransferInput = transferInput
+
+        val output = App.appCore.cryptoLibrary.createTransfer(transferInput, transactionType)
+        if (output == null) {
+            _errorLiveData.value = Event(R.string.app_error_lib)
+            _waitingLiveData.value = false
+        } else {
+            tempData.createTransferOutput = output
+
+            //Save and update new selfAmount for later lookup
+            viewModelScope.launch {
+                if(output.addedSelfEncryptedAmount != null){
+                    account.finalizedEncryptedBalance?.let { encBalance ->
+                        val newEncryptedAmount = App.appCore.cryptoLibrary.combineEncryptedAmounts(output.addedSelfEncryptedAmount, encBalance.selfAmount).toString()
+                        tempData.newSelfEncryptedamount = newEncryptedAmount
+                        val oldDecryptedAmount = accountUpdater.lookupMappedAmount(encBalance.selfAmount)
+                        oldDecryptedAmount?.let{
+                            accountUpdater.saveDecryptedAmount(newEncryptedAmount, (it.toLong()+amount).toString())
+                        }
+                    }
+                }
+                if(output.remaining != null){
+                    tempData.newSelfEncryptedamount = output.remaining
+                    val remainingAmount = accountUpdater.decryptAndSaveAmount(encryptionSecretKey, output.remaining)
+
+                    account.finalizedEncryptedBalance?.let { encBalance ->
+                        val oldDecryptedAmount = accountUpdater.lookupMappedAmount(encBalance.selfAmount)
+                        oldDecryptedAmount?.let{
+                            accountUpdater.saveDecryptedAmount(output.remaining, remainingAmount.toString())
+                        }
+                    }
+                }
+                submitTransfer(output)
+            }
+
+        }
+    }
+
+    private suspend fun calculateInputEncryptedAmount(encryptionSecretKey: String): InputEncryptedAmount? {
+
+        val lastNounceToInclude = tempData.accountBalance?.finalizedBalance?.accountNonce?:-2
+
+        val allTransfers = transferRepository.getAllByAccountId(account.id)
+        val unfinalisedTransfers = allTransfers?.filter {
+            it.transactionStatus != TransactionStatus.FINALIZED && it.nonce?.nonce?:-1 >= lastNounceToInclude
+        }
+
+        var aggEncryptedAmount = if(unfinalisedTransfers.size >0) {
+            val lastTransaction = unfinalisedTransfers.maxWith(Comparator({a, b -> a.id.compareTo(b.id)}))
+            if(lastTransaction != null){
+                tempData.accountBalance?.finalizedBalance?.let {
+                    val incomingAmounts = it.accountEncryptedAmount.incomingAmounts.filter {
+                        accountUpdater.lookupMappedAmount(it) != null
+                    }
+                    var agg = lastTransaction.newSelfEncryptedAmount?:""
+                    for (i in lastTransaction.newStartIndex..(it.accountEncryptedAmount.startIndex + incomingAmounts.count()-1)){
+                        agg = App.appCore.cryptoLibrary.combineEncryptedAmounts(agg, incomingAmounts[i]).toString()
+                    }
+                    agg
+                }?: ""
+            }
+            else{
+                ""
+            }
+        } else {
+            tempData.accountBalance?.finalizedBalance?.let {
+                var agg = it.accountEncryptedAmount.selfAmount
+                it.accountEncryptedAmount.incomingAmounts.forEach {
+                    if(accountUpdater.lookupMappedAmount(it) != null){
+                        agg = App.appCore.cryptoLibrary.combineEncryptedAmounts(agg, it).toString()
+                    }
+                }
+                agg
+            }?: ""
+        }
+
+        var aggAmount = tempData.accountBalance?.finalizedBalance?.let {
+            var agg = accountUpdater.lookupMappedAmount(it.accountEncryptedAmount.selfAmount)?.toLong()?:0
+            it.accountEncryptedAmount.incomingAmounts.forEach {
+                agg += accountUpdater.lookupMappedAmount(it)?.toLong()?:0
+            }
+            unfinalisedTransfers.forEach{
+                agg -= it.amount
+            }
+            agg
+        }?: ""
+
+
+        val index = tempData.accountBalance?.finalizedBalance?.let {
+            it.accountEncryptedAmount.startIndex + it.accountEncryptedAmount.incomingAmounts.count {
+                accountUpdater.lookupMappedAmount(it) != null
+            }
+        }?:0
+
+        return InputEncryptedAmount(aggEncryptedAmount, aggAmount.toString(), index)
+
+    }
+
+    private fun getGlobalInfo() {
+        // Show waiting state for the full flow, but remove it of any errors occur
+        _waitingLiveData.value = true
+        globalParamsRequest?.dispose()
+        globalParamsRequest = proxyRepository.getIGlobalInfo(
+            {
+                tempData.globalParams = it.value
+                _waitingLiveData.value = false
+            },
+            {
+                _waitingLiveData.value = false
+                handleBackendError(it)
+            }
+        )
+    }
+
+    private fun getAccountEncryptedKey(accountAddress: String) {
+        _waitingReceiverAccountPublicKeyLiveData.value = true
+        proxyRepository.getAccountEncryptedKey(
+            accountAddress,
+            {
+                tempData.receiverPublicKey = it.accountEncryptionKey
+                _waitingReceiverAccountPublicKeyLiveData.value = false
+            },
+            {
+                _waitingReceiverAccountPublicKeyLiveData.value = false
+                handleBackendError(it)
+            }
+        )
+    }
+
+    private fun getAccountBalance() {
+        _waitingLiveData.value = true
+        accountBalanceRequest?.dispose()
+        accountBalanceRequest = proxyRepository.getAccountBalance(account.address,
+            {
+                tempData.accountBalance = it
+                _waitingLiveData.value = false
+            },
+            {
+                _waitingLiveData.value = false
+                handleBackendError(it)
+            }
+        )
+    }
+
+
+    private fun submitTransfer(transfer: CreateTransferOutput) {
+        _waitingLiveData.value = true
+        submitCredentialRequest?.dispose()
+        submitCredentialRequest = proxyRepository.submitTransfer(transfer,
+            {
+                tempData.submissionId = it.submissionId
+                submissionStatus(it.submissionId)
+                // Do not disable waiting state yet
+            },
+            {
+                _waitingLiveData.value = false
+                handleBackendError(it)
+            }
+        )
+    }
+
+    private fun submissionStatus(submissionId: String) {
+        _waitingLiveData.value = true
+        transferSubmissionStatusRequest?.dispose()
+        transferSubmissionStatusRequest = proxyRepository.getTransferSubmissionStatus(submissionId,
+            {
+                tempData.transferSubmissionStatus = it
+                accountUpdater.updateEncryptedAmount(it, submissionId, tempData.amount?.toString())
+                finishTransferCreation()
+                // Do not disable waiting state yet
+            },
+            {
+                _waitingLiveData.value = false
+                _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(it))
+            }
+        )
+    }
+
+    private fun finishTransferCreation() {
+        val amount = tempData.amount
+        val toAddress = tempData.toAddress
+        val submissionId = tempData.submissionId
+        val transferSubmissionStatus = tempData.transferSubmissionStatus
+        val expiry = tempData.expiry
+        val cost = transactionFeeLiveData.value
+
+        if (amount == null || toAddress == null || submissionId == null ||
+            transferSubmissionStatus == null || expiry == null || cost == null
+        ) {
+            _errorLiveData.value = Event(R.string.app_error_general)
+            _waitingLiveData.value = false
+            return
+        }
+        val createdAt = Date().time
+        var newStartIndex: Int = 0
+        tempData.createTransferInput?.let {
+            newStartIndex = it.inputEncryptedAmount?.aggIndex?:0
+        }
+
+        val transfer = Transfer(
+            0,
+            account.id,
+            amount,
+            cost,
+            account.address,
+            toAddress,
+            expiry,
+            createdAt,
+            submissionId,
+            transferSubmissionStatus.status,
+            transferSubmissionStatus.outcome ?: TransactionOutcome.UNKNOWN,
+            if(isShielded){
+                if(isTransferToSameAccount()){
+                    TransactionType.TRANSFER
+                }
+                else{
+                    TransactionType.ENCRYPTEDAMOUNTTRANSFER
+                }
+            }
+            else{
+                if(isTransferToSameAccount()){
+                    TransactionType.TRANSFERTOENCRYPTED
+                }
+                else{
+                    TransactionType.TRANSFERTOPUBLIC
+                }
+            },
+            tempData.newSelfEncryptedamount,
+            newStartIndex,
+            tempData.accountNonce
+        )
+        newTransfer = transfer
+        saveNewTransfer(transfer)
+    }
+
+    private fun saveNewTransfer(transfer: Transfer) = viewModelScope.launch {
+        transferRepository.insert(transfer)
+
+        _gotoSendFundsConfirmLiveData.value = Event(true)
+    }
+
+    fun usePasscode(): Boolean {
+        return App.appCore.getCurrentAuthenticationManager().usePasscode()
+    }
+
+}

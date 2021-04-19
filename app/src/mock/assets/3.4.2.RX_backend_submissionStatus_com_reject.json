@@ -1,0 +1,10 @@
+{
+  "status": "committed",
+  "sender": null,
+  "cost": 0,
+  "transactionHash": "ee9cc0509c1e79f30765e1cd2b2abe36822e02faaf58a412baec84f06e5da44d",
+  "outcome": "reject",
+  "blockHashes": [
+    "884f71aa511807a3a301d6c23ba7b19839197bbc49b5144ac16a3fddaeaafae1"
+  ]
+}

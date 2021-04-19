@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    style="@style/Layout.Root">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/toolbar_layout"
+            layout="@layout/app_toolbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ScrollView
+            style="@style/ScrollView.Standard"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/create_account_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginHorizontal="@dimen/activity_vertical_margin_extended"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toTopOf="@+id/next_button"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="spread_inside">
+
+                    <ImageView
+                        android:id="@+id/create_account_image"
+                        style="@style/Image"
+                        android:layout_width="100dp"
+                        android:layout_height="120dp"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/ic_big_logo_plus" />
+
+                    <TextView
+                        style="@style/TextView.Standard.Light"
+                        android:layout_width="280dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="40dp"
+                        android:gravity="center_horizontal"
+                        android:text="@string/new_account_name_info" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/account_name_layout"
+                        style="@style/Layout.TextInputLayout"
+                        android:layout_marginTop="30dp"
+                        android:hint="@string/new_account_name_account_name_hint"
+                        app:layout_constraintBottom_toTopOf="@+id/next_button"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/create_account_image">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/account_name_edittext"
+                            style="@style/EditText.Name"
+                            android:maxLength="35"
+                            android:imeOptions="actionDone" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/next_button"
+                    style="@style/Button.Standard"
+                    android:layout_width="0dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:layout_marginHorizontal="@dimen/activity_vertical_margin"
+                    android:enabled="false"
+                    android:text="@string/new_account_name_next"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/create_account_layout" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </ScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

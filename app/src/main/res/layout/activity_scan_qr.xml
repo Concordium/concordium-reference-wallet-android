@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    style="@style/Layout.Root"
+    tools:context=".ui.recipient.scanqr.ScanQRActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/toolbar_layout"
+            layout="@layout/app_toolbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.concordium.wallet.ui.recipient.scanqr.CameraSourcePreview
+            android:id="@+id/camera_preview"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/toolbar_layout"></com.concordium.wallet.ui.recipient.scanqr.CameraSourcePreview>
+
+        <ImageView
+            android:id="@+id/overlay_imageview"
+            style="@style/Image"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="20dp"
+            android:src="@drawable/ic_qr_overlay"
+            app:layout_constraintBottom_toBottomOf="@id/camera_preview"
+            app:layout_constraintLeft_toLeftOf="@id/camera_preview"
+            app:layout_constraintRight_toRightOf="@id/camera_preview"
+            app:layout_constraintTop_toTopOf="@id/camera_preview" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

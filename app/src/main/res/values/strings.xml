@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">Concordium ID</string>
+    <string name="app_menu_item_accounts">Accounts</string>
+    <string name="app_menu_item_identities">Identities</string>
+    <string name="app_menu_item_more">More</string>
+    <string name="app_menu_item_add_recipient">Add</string>
+    <string name="app_menu_item_burger">Menu</string>
+    <string name="app_error_general">Unexpected error</string>
+    <string name="app_error_lib">An unexpected error occurred, please try again</string>
+    <string name="app_error_encryption">Unexpected encryption/decryption error</string>
+    <string name="app_error_json">Unexpected json format</string>
+    <string name="app_error_keystore">Unexpected keystore error</string>
+    <string name="app_error_keystore_key_invalidated">Biometrics has been changed and therefore disabled.</string>
+    <string name="app_error_backend_unknown_host_exception">Cannot connect. Please check the internet connection.</string>
+    <string name="app_error_backend_connect_exception">Cannot connect. Please check the internet connection.</string>
+    <string name="app_error_backend_unknown_sockettimeout_exception">Connection to server timed out. Please check the internet connection.</string>
+    <string name="app_error_backend_internal_server">Cannot establish communication with the server.</string>
+    <string name="app_error_backend_unknown_error_code">Cannot establish communication with the server.</string>
+    <string name="app_error_backend_unknown">Unknown backend error.</string>
+    <string name="app_version">Version %1$s</string>
+    <string name="app_gstroke">Ǥ</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_no">No</string>
+    <string name="dialog_initial_account_error_title">Initial account creation failed</string>
+    <string name="dialog_initial_account_error_text">Something went wrong with the initial account creation.\n\nPlease go back and try again, or try at another time.</string>
+    <string name="dialog_initial_account_error_text_first">Something went wrong with the initial account creation.\n\nPlease go back and try again.</string>
+    <string name="dialog_initial_account_error_positive">Try again</string>
+
+    <!-- Main -->
+    <string name="main_title">Wallet</string>
+
+    <!-- ***** Common ***** -->
+
+    <!-- IdentityView -->
+    <string name="view_identity_identity">Identity</string>
+    <string name="view_identity_attributes_expiry_data">Expires %1$s</string>
+
+    <!-- AccountView -->
+    <string name="view_account_initial">(Initial)</string>
+
+    <!-- Failed -->
+    <string name="failed_title">Failed</string>
+    <string name="failed_try_again">Please try again.</string>
+    <string name="failed_confirm">Ok</string>
+    <string name="failed_remove">Remove from list</string>
+
+
+    <!-- ***** Intro ***** -->
+
+    <!-- Intro start-->
+    <string name="intro_start_title">Intro start</string>
+    <string name="intro_start_header">Hi, there!</string>
+    <string name="intro_start_info">Before you can start using Concordium ID, you have to set up your passcode and biometrics, and either create your initial account, or import one or more existing accounts.\n\n\nLet’s get started!</string>
+    <string name="intro_start_confirm">Yes, let’s go!</string>
+
+    <!-- Intro setup-->
+    <string name="intro_setup_title">Getting started</string>
+    <string name="intro_setup_header">Are you new here?</string>
+    <string name="intro_setup_info">If this is your first time using the Concordium blockchain, you must create an initial account.\n\nIn case this is not your first time around, you can also import already existing accounts.\n\nHow would you like to continue?</string>
+    <string name="intro_setup_confirm_create_initial">I want to create my initial account</string>
+    <string name="intro_setup_confirm_import">I want to import existing accounts</string>
+
+
+    <!-- ***** Auth ***** -->
+
+    <!-- Auth -->
+    <string name="auth_password">Password</string>
+    <string name="auth_confirm">Continue</string>
+    <string name="auth_password_warning">Note: you will not be able to recover your account keys if this password is lost!</string>
+    <string name="auth_error_password_setup">Failed to setup password</string>
+    <string name="auth_error_password_not_valid">Password is not valid - minimum length is 6.</string>
+    <string name="auth_error_passcode_not_valid">Passcode is not valid</string>
+    <string name="auth_error_entries_different">Entries do not match! Please try again.</string>
+    <string name="auth_dialog_password_title">Authentication</string>
+    <string name="auth_dialog_passcode_description">Enter app passcode to continue</string>
+    <string name="auth_dialog_passcode">Passcode</string>
+    <string name="auth_dialog_password_description">Enter app password to continue</string>
+    <string name="auth_dialog_password">Password</string>
+    <string name="auth_dialog_passcode_error">Incorrect passcode</string>
+    <string name="auth_dialog_password_error">Incorrect password</string>
+
+    <!-- Auth Login -->
+    <string name="auth_login_title">Login</string>
+    <string name="auth_login_confirm">Continue</string>
+    <string name="auth_login_info_passcode">Enter Passcode</string>
+    <string name="auth_login_info_password">Enter Password</string>
+    <string name="auth_login_passcode_error">Incorrect passcode! Please try again.</string>
+    <string name="auth_login_password_error">Incorrect password! Please try again.</string>
+    <string name="auth_login_biometrics_dialog_title">Authentication</string>
+    <string name="auth_login_biometrics_dialog_subtitle">Use biometrics to authenticate</string>
+    <string name="auth_login_biometrics_dialog_cancel_passcode">Use passcode</string>
+    <string name="auth_login_biometrics_dialog_cancel_password">Use password</string>
+
+    <!-- Auth Setup-->
+    <string name="auth_setup_title">Select Passcode</string>
+    <string name="auth_setup_repeat_title">Re-enter Passcode</string>
+    <string name="auth_setup_info">Select a 6-digit passcode to secure your wallet.</string>
+    <string name="auth_setup_repeat_info">Re-enter your 6-digit passcode to secure your wallet.</string>
+    <string name="auth_setup_full_password">Use full password instead</string>
+
+    <!-- Auth Setup Password-->
+    <string name="auth_setup_password_title">Select Password</string>
+    <string name="auth_setup_password_repeat_title">Re-enter Password</string>
+    <string name="auth_setup_password_info">Select a password with at least 6 characters.</string>
+    <string name="auth_setup_password_repeat_info">Re-enter your password to secure your wallet.</string>
+
+    <!-- Auth Setup Biometrics-->
+    <string name="auth_setup_biometrics_title">Enable Biometrics</string>
+    <string name="auth_setup_biometrics_info">Enable biometrics for more convenient login.</string>
+    <string name="auth_setup_biometrics_confirm">Enable Biometrics</string>
+    <string name="auth_setup_biometrics_cancel">Continue Without</string>
+    <string name="auth_setup_biometrics_dialog_title">Enable biometrics</string>
+    <string name="auth_setup_biometrics_dialog_subtitle">Use biometrics to enable it for this app</string>
+    <string name="auth_setup_biometrics_dialog_cancel">Cancel</string>
+    <string name="auth_setup_biometrics_image">Biometrics image</string>
+
+
+    <!-- ***** Identity ***** -->
+
+    <!-- Identities overview -->
+    <string name="identities_overview_title">Identities</string>
+    <string name="identities_overview_no_identities">You have no identities yet.</string>
+
+    <!-- Identity details -->
+    <string name="identity_details_title">Identity</string>
+    <string name="identity_details_attribute_header">Identity data</string>
+
+    <!-- Identity create -->
+    <string name="identity_create_title">Initial account creation</string>
+    <string name="identity_create_info_header">The initial account</string>
+    <string name="identity_create_info_info">On the following pages you will be guided through the three step process of requesting an initial account and an identity:\n\n1. Naming your initial account.\n2. Naming your identity.\n3. Requesting the initial account and identity from a provider of your choice.</string>
+    <string name="identity_create_info_info_first">The initial account, is an account created by an identity provider of your choice. This account is created at the same time as you request an identity from an identity provider. You will have to request both the identity and the initial account, before you can start using the Concordium block-chain.\n\nOn the following pages you will be guided through the three step process of requesting the initial account and an identity:\n\n1. Naming your initial account.\n2. Naming your identity.\n3. Requesting the initial account and identity from a provider of your choice.</string>
+    <string name="identity_create_info_confirm">Okay, got it!</string>
+    <string name="identity_create_account_name_header">The first step:\nNaming your initial account</string>
+    <string name="identity_create_account_name_info">What would you like to name your initial account?</string>
+    <string name="identity_create_account_name_account_name">Account name</string>
+    <string name="identity_create_account_name_confirm">Continue</string>
+    <string name="identity_create_identity_name_header">The second step:\nNaming your identity</string>
+    <string name="identity_create_identity_name_info">What would you like to name your identity?</string>
+    <string name="identity_create_identity_name_identity_name">Identity name </string>
+    <string name="identity_create_identity_name_confirm">Continue to identity providers</string>
+    <string name="identity_create_identity_provider_header">The third step:\nChoosing an identity provider</string>
+    <string name="identity_create_identity_provider_info">%1$s, good choice!\n\nNext you have to choose what identity provider you will request your initial account and identity from. By choosing an identity provider, you will be taken to their issuance flow, in which the provider will guide you through the issuance process. After finishing their process, you will be taken back here, so we can create your initial account.\n\nNote: More identity providers will be added later.</string>
+    <string name="identity_create_identity_provider_privacy_policy">Privacy Policy</string>
+
+    <!-- Identity provider list -->
+    <string name="identity_provider_list_title">New Identity Verification</string>
+    <string name="identity_provider_list_note">Selecting a 3rd party Identity Issuer will take you to their
+        Identity Issuance flow.You will be returned to the app upon completion.\n\nNote: More Identity Issuers are coming soon!</string>
+
+    <!-- Identity Provider Webview -->
+    <string name="identity_provider_webview_title">Identity Verification</string>
+
+    <!-- Identity confirmed -->
+    <string name="identity_confirmed_title">Account</string>
+    <string name="identity_confirmed_header">That’s it!</string>
+    <string name="identity_confirmed_info">It might take a little while for the identity provider to finish your request.</string>
+    <string name="identity_confirmed_info_first">It might take a little while for the identity provider to finish your request. In the meanwhile, you can have a look at the app.</string>
+    <string name="identity_confirmed_confirm">Finish!</string>
+    <string name="identity_confirmed_failed">Identity issuance failed!</string>
+
+    <!-- Identity attributes -->
+    <string name="identity_attribute_first_name">First name</string>
+    <string name="identity_attribute_last_name">Last name</string>
+    <string name="identity_attribute_sex">Sex</string>
+    <string name="identity_attribute_birth_date">Date of birth</string>
+    <string name="identity_attribute_country_residence">Country of residence</string>
+    <string name="identity_attribute_nationality">Country of nationality</string>
+    <string name="identity_attribute_doc_type">Identity document type</string>
+    <string name="identity_attribute_doc_no">Identity document number</string>
+    <string name="identity_attribute_doc_issuer">Identity document issuer</string>
+    <string name="identity_attribute_doc_issued_at">ID valid from</string>
+    <string name="identity_attribute_doc_expires_at">ID valid to</string>
+    <string name="identity_attribute_national_id_no">National ID number</string>
+    <string name="identity_attribute_tax_id_no">Tax ID number</string>
+    <string name="identity_attribute_sex_male">Male</string>
+    <string name="identity_attribute_sex_female">Female</string>
+    <string name="identity_attribute_doc_type_passport">Passport</string>
+    <string name="identity_attribute_doc_type_national_id">National id card"</string>
+    <string name="identity_attribute_doc_type_driving_license">Driving license</string>
+    <string name="identity_attribute_doc_type_immigration_card">Immigration card</string>
+    <string name="identity_attribute_na">NA</string>
+
+
+    <!-- ***** Account ***** -->
+
+    <!-- Accounts overview -->
+    <string name="accounts_overview_title">Accounts</string>
+    <string name="accounts_overview_create_identity">Create new identity</string>
+    <string name="accounts_overview_create_account">Create account</string>
+    <string name="accounts_overview_total_balance">Wallet Total</string>
+    <string name="accounts_overview_no_identities">You need to create an identity before creating an account.</string>
+    <string name="accounts_overview_no_accounts">You have no accounts yet.</string>
+
+    <string name="accounts_overview_at_disposal">- At disposal:</string>
+    <string name="accounts_overview_staked">- Staked:</string>
+    <string name="accounts_overview_balance">Balance:</string>
+    <string name="accounts_overview_balance_at_disposal">Balance (at disposal):</string>
+    <string name="accounts_overview_shielded_balance">Shielded Balance:</string>
+    <string name="accounts_overview_account_total">Account total</string>
+
+
+    <!-- New account name -->
+    <string name="new_account_name_title">New Account</string>
+    <string name="new_account_name_info">What would you like to name your account?</string>
+    <string name="new_account_name_next">Next</string>
+    <string name="new_account_name_account_name_hint">Account name</string>
+
+    <!-- Identity overview -->
+    <string name="identity_verification_failed">Verification failed</string>
+    <string name="identity_verification_pending">Verification in progress</string>
+
+    <!-- New account identity -->
+    <string name="new_account_identity_title">Add Identity Data</string>
+    <string name="new_account_please_wait">This process may take a while on some phones. Please hang on.</string>
+
+
+
+    <!-- New account setup -->
+    <string name="new_account_setup_title">Reveal Identity Data?</string>
+    <string name="new_account_setup_info">You can choose to reveal a range of attributes on your account, e.g. your name and country of residence. This is not necessary, and you can choose to reveal no attributes at all.</string>
+    <string name="new_account_setup_confirm_reveal">Reveal account attributes</string>
+    <string name="new_account_setup_confirm_submit">Submit account</string>
+
+    <!-- New account identity attributes -->
+    <string name="new_account_identity_attributes_title">Reveal Identity Data</string>
+    <string name="new_account_identity_attributes_confirm">Submit account</string>
+    <string name="new_account_identity_attributes_header">Select identity data</string>
+    <string name="new_account_identity_attributes_error_max_accounts_title">Error</string>
+    <string name="new_account_identity_attributes_error_max_accounts">Ooops! This identity already has too many accounts submitted to the chain. Please select another identity to continue.</string>
+    <string name="new_account_identity_attributes_error_max_accounts_alt">You already have the maximum number of accounts for this identity.</string>
+
+    <!-- New account created -->
+    <string name="new_account_confirmed_title">Account Creation</string>
+    <string name="new_account_confirmed_confirm">Ok, thanks</string>
+    <string name="new_account_confirmed_header">Account submitted</string>
+    <string name="new_account_confirmed_failed">Account creation failed!</string>
+    <string name="new_account_confirmed_info">This may take a few minutes to\nprocess on-chain.</string>
+
+
+    <!--  Account details  -->
+    <string name="account_details_error_msg">Account creation failed in the process of creation.</string>
+    <string name="account_details_transfers">This balance has no transactions yet.</string>
+    <string name="account_details_pending_msg">Account creation in progress.\n\nYou can start using this account once it’s been finalized on the chain.</string>
+    <string name="account_details_title">Account details</string>
+    <string name="account_details_transfers_title">Transfers</string>
+    <string name="account_details_identity_data_title">Identity Data</string>
+    <string name="account_details_send">Send</string>
+    <string name="account_details_unshield">Unshield</string>
+    <string name="account_details_shield">Shield</string>
+    <string name="account_details_address">Address</string>
+    <string name="account_details_retry_button">Retry account creation</string>
+    <string name="account_details_remove_button">Remove account from wallet</string>
+    <string name="account_details_fee">fee</string>
+    <string name="account_details_header_today">Today</string>
+    <string name="account_details_header_yesterday">Yesterday</string>
+    <string name="account_details_gtu_drop_header">TESTNET GTU DROP</string>
+    <string name="account_details_gtu_drop_info">On the Concordium Testnet, you can request 100GTU to be deposited to an account to get you started.</string>
+    <string name="account_details_gtu_drop_button">Request 2000GTU</string>
+    <string name="account_details_shielded_transaction_fee">Shielded transaction fee</string>
+
+    <string name="account_details_empty_identity_data">This account has no identity data revealed.</string>
+
+
+    <string name="account_details_title_shielded_balance">%1$s shielded balance</string>
+    <string name="account_details_title_regular_balance">%1$s balance</string>
+
+    <!--  Account release schedule and filters -->
+    <string name="account_release_schedule">Release schedule</string>
+    <string name="account_transaction_filters">Transaction filters</string>
+
+    <!-- Account QR -->
+    <string name="account_qr_code_title">Address</string>
+    <string name="account_qr_code_share">Share</string>
+    <string name="account_qr_code_copy">Copy</string>
+    <string name="account_qr_code_copied">Address copied</string>
+
+
+    <!-- ***** Transaction / Send funds ***** -->
+
+    <!-- Send funds -->
+    <string name="send_funds_title">Send Funds</string>
+
+    <string name="send_funds_shield_title">Shield amount</string>
+    <string name="send_funds_unshield_title">Unshield amount</string>
+
+    <string name="send_funds_fee_info">Estimated transaction fee:\nǤ%1$s</string>
+    <string name="send_funds_error_insufficient_funds">Insufficient funds</string>
+    <string name="send_funds_select_recipient_or_unshield_amount">Select recipient</string>
+    <string name="send_funds_select_recipient_or_shield_amount">Select recipient</string>
+    <string name="send_funds_recipient_shield">Amount will be shielded</string>
+    <string name="send_funds_recipient_unshield">Amount will be unshielded</string>
+    <string name="send_funds_confirm">Send amount</string>
+    <string name="send_funds_confirm_shield">Shield amount</string>
+    <string name="send_funds_confirm_unshield">Unshield amount</string>
+    <string name="send_funds_confirm_send_shielded">Send shielded amount</string>
+    <string name="send_funds_confirmation">Confirm to transfer\n%1$s to %2$s\nEstimated transaction fee:\n%3$s</string>
+    <string name="send_funds_confirmation_shield">Confirm to shield\n%1$s in account: %2$s\nEstimated transaction fee:\n%3$s</string>
+    <string name="send_funds_confirmation_unshield">Confirm to unshield\n%1$s in account: %2$s\nEstimated transaction fee:\n%3$s</string>
+    <string name="send_funds_confirmation_send_shielded">Confirm to send shielded amount\n%1$s to %2$s\nEstimated transaction fee:\n%3$s</string>
+    <string name="send_funds_error_same_account">Recipient account is not allowed to be the same as sending account.</string>
+
+    <!--  Send funds confirmed  -->
+    <string name="send_funds_confirmed_title">Send funds</string>
+    <string name="send_funds_confirmed_header">Transaction submitted!</string>
+    <string name="send_funds_confirmed_fee_info">Estimated transaction fee:\nǤ%1$s</string>
+    <string name="send_funds_confirmed_failed">Transaction error!</string>
+
+    <!-- Transaction details -->
+    <string name="transaction_details_title">Transaction Details</string>
+    <string name="transaction_details_from_address">From Address: %1$s</string>
+    <string name="transaction_details_to_address">To Address: %1$s</string>
+    <string name="transaction_details_transaction_hash">Transaction Hash</string>
+    <string name="transaction_details_block_hash">Block Hash</string>
+    <string name="transaction_details_block_hash_submitted">Submitted</string>
+    <string name="transaction_details_block_hash_failed">Failed</string>
+    <string name="transaction_details_origin">Origin: %1$s</string>
+    <string name="transaction_details_details">Details</string>
+    <string name="transaction_details_value_copied">Copied full value of %1$s</string>
+
+
+    <!-- ***** More ***** -->
+
+    <!-- More overview -->
+    <string name="more_overview_title">More</string>
+    <string name="more_overview_item_address_book">Address Book</string>
+    <string name="more_overview_item_export">Export</string>
+    <string name="more_overview_item_import">Import</string>
+    <string name="more_overview_item_about">About</string>
+    <string name="more_overview_item_alter_password"><![CDATA[Update Passcode & Biometrics]]></string>
+    <string name="more_overview_item_developer_options">Developer Options</string>
+
+    <!-- Export -->
+    <string name="export_title">Export</string>
+    <string name="export_confirm">Export</string>
+    <string name="export_continue">Continue</string>
+    <string name="export_error_file">Could not write to file.</string>
+    <string name="export_description">Here you can export your identities, accounts and the address book.\n\nThe exported data includes private keys which give access to your identities and accounts. For this reason the data will be encrypted under a password that you will be asked to select during the process. It is important that you store the password safely and securely. The password will be needed for access to exported data (e.g. if you want to import an account into the Concordium Client).</string>
+
+    <string name="export_setup_password_title">Enter Export Password</string>
+    <string name="export_setup_password_repeat_title">Re-enter Export Password</string>
+    <string name="export_setup_password_info">Select an export password.\nThe password will be needed during import.</string>
+    <string name="export_setup_password_repeat_info">Re-enter your export password.</string>
+    <string name="export_password">Export Password</string>
+    <string name="export_error_entries_different">Entries do not match! Please try again.</string>
+    <string name="export_error_password_not_valid">Password is not valid - minimum length is 6.</string>
+    <string name="export_error_password_setup">Failed to setup password</string>
+
+    <string name="export_error_account_not_finalised">The following accounts are either failed or not ready on the chain, so they cannot be exported.\n\n</string>
+    <string name="export_error_account_not_finalised_name">%s. %s\n</string>
+    <string name="export_error_account_not_finalised_cancel">Cancel</string>
+    <string name="export_error_account_not_finalised_continue">Continue</string>
+
+    <!-- About -->
+    <string name="about_title">About</string>
+    <string name="about_support">Support</string>
+    <string name="about_support_text">If you ran into a problem, or need help with something, we have a helpful community on Discord and Telegram. This is typically the fastest way to find an answer to your question, and most questions can be answered by having a look there.\n\n\n<a href="https://discord.com/invite/xWmQ5tp">Discord</a>\n\n\n<a href="https://t.me/concordium_official">Telegram</a>\n\n\nIn case you could not find an answer to your question via the community, you can reach out to us via support@concordium.com</string>
+    <string name="about_contact">Contact</string>
+    <string name="about_contact_text">Should you have any inquiries not related to the support, you can reach out at <a href="contact@concordium.com">contact@concordium.com</a></string>
+
+    <!-- Import -->
+    <string name="import_title">Import</string>
+    <string name="import_confirm">Ok, thanks</string>
+    <string name="import_error_file">Could not read import file</string>
+    <string name="import_error_format">Unexpected import json format</string>
+    <string name="import_error_password_or_file_content">Invalid password or import file corrupted</string>
+
+    <string name="import_password_title">Enter Export Password</string>
+    <string name="import_password_info">Enter the password created when exporting the file.</string>
+    <string name="import_password_confirm">Continue</string>
+    <string name="import_password_error_password_not_valid">Password is not valid - minimum length is 6.</string>
+
+    <string name="import_failed_header">Imported failed</string>
+    <string name="import_confirmed_title">Import</string>
+    <string name="import_confirmed_header">Imported successfully</string>
+    <string name="import_confirmed_header_partially">Import partially succeeded</string>
+    <string name="import_confirmed_info">You have successfully imported:</string>
+    <string name="import_confirmed_id">ID:</string>
+    <string name="import_confirmed_accounts">Accounts:</string>
+    <string name="import_confirmed_address_book">Address Book</string>
+    <string name="import_confirmed_recipient_accounts">Recipient accounts:</string>
+    <string name="import_confirmed_state_id_import_failed">ID import failed</string>
+    <string name="import_confirmed_state_id_import_failed_accounts">Account import failed</string>
+    <string name="import_confirmed_state_duplicate">(Already existed)</string>
+    <plurals name="import_confirmed_state_errors">
+        <item quantity="one">(Imported with %d error)</item>
+        <item quantity="other">(Imported with %d errors)</item>
+    </plurals>
+    <plurals name="import_confirmed_state_recipients_duplicate">
+        <item quantity="one">(%d recipient account was not imported, as it already existed)</item>
+        <item quantity="other">(%d recipient accounts were not imported, as they already existed)</item>
+    </plurals>
+    <plurals name="import_confirmed_state_recipients_failed">
+        <item quantity="one">(%d recipient account import failed)</item>
+        <item quantity="other">(%d recipient account imports failed)</item>
+    </plurals>
+    <plurals name="import_confirmed_state_accounts_failed">
+        <item quantity="one">(%d account import failed)</item>
+        <item quantity="other">(%d account imports failed)</item>
+    </plurals>
+    <string name="import_confirmed_readonly_accounts_header">Accounts found on chain (read only):</string>
+
+    <!-- Change Password -->
+    <string name="alterpassword_title"><![CDATA[Update Passcode & Biometrics]]></string>
+    <string name="alterpassword_desc">By pressing Continue, you will be guided through setting up a new passcode. You will also get the option of enabling biometrics, or to continue without them.</string>
+    <string name="alterpassword_confirm">Continue</string>
+
+
+    <!-- ***** Recipient ***** -->
+
+    <!-- Select recipient -->
+    <string name="recipient_list_default_title">Address Book</string>
+    <string name="recipient_list_select_title">Select Recipient</string>
+    <string name="recipient_list_search_hint">Search recipients</string>
+    <string name="recipient_list_shield_amount">Shield amount</string>
+    <string name="recipient_list_unshield_amount">Unshield amount</string>
+
+    <!-- New recipient -->
+    <string name="recipient_edit_title">Edit Address</string>
+    <string name="recipient_new_title">New Recipient</string>
+    <string name="recipient_name">Recipient name</string>
+    <string name="recipient_address">Recipient address</string>
+    <string name="recipient_save_button">Save</string>
+    <string name="recipient_error_invalid_address">Invalid Address</string>
+
+    <!-- Scan QR code -->
+    <string name="scan_qr_title">Scan QR Code</string>
+    <string name="scan_qr_permission_camera_rationale_title">Permission</string>
+    <string name="scan_qr_permission_camera_rationale">Permission to use the camera is necessary to scan QR codes</string>
+    <string name="scan_qr_error_no_camera_permission_title">Information</string>
+    <string name="scan_qr_error_no_camera_permission">The app does not have permission to use the camera and therefore cannot scan QR codes</string>
+    <string name="scan_qr_error_low_storage">QR scanner components from Google Play Services cannot be downloaded. Not enough space on the device.</string>
+    <string name="scan_qr_error_invalid_qr_code">Invalid QR code</string>
+
+
+    <string name="valid_special_chars_error_text"><![CDATA[The name can only contain letters, numbers, and these special characters: \"-\", \"_\", \",\", \".\", \"!\", \"?\". The name cannot be empty, or start or end with a space.]]></string>
+    <string name="valid_special_chars_for_names"><![CDATA[-_, .!?]]></string>
+
+    <string name="error_adding_account_duplicate">This account was not added to the address book, as it was already there.</string>
+
+
+    <string name="error_database">You need to uninstall the app, and reinstall it, in order to continue</string>
+    <string name="error_database_close">Close</string>
+
+    <string name="accounts_overview_total_details_disposal">At disposal:</string>
+    <string name="accounts_overview_total_details_staked">Staked:</string>
+    <string name="account_details_menu_release_schedule">Release schedule</string>
+    <string name="account_details_menu_transfer_filter">Transfer filters</string>
+    <string name="account_release_schedule_locked_amount">Locked amount:</string>
+    <string name="account_release_schedule_release_date">Release date</string>
+    <string name="account_release_schedule_amount">Amount</string>
+    <string name="account_release_schedule_copied">Address copied</string>
+    <string name="account_release_schedule_copy_title">Account address</string>
+    <string name="account_details_baker_id">Baker ID:</string>
+
+
+    <string name="accounts_overview_readonly_desc">This account is imported without keys, and is read only</string>
+    <string name="transactions_filters_show_rewards">Show rewards</string>
+    <string name="transactions_filters_show_finalizations_rewards">Show finalizations rewards</string>
+    <string name="change_password_initial_error">Data could not be decrypted</string>
+    <string name="change_password_successfully_changed">Passcode was successfully changed</string>
+    <string name="change_password_final_error">Passcode could not successfully be changed</string>
+    <string name="accounts_overview_currently_available_amounts">Currently available amounts:</string>
+
+
+</resources>

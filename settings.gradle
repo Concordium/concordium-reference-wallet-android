@@ -1,0 +1,2 @@
+include ':app', ':mobile_wallet_lib-release'
+rootProject.name='Wallet'

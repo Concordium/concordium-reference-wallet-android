@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/screen_horizontal_margin"
+    android:paddingTop="30dp"
+    android:paddingRight="@dimen/screen_horizontal_margin">
+
+    <TextView
+        android:id="@+id/header_id_textview"
+        style="@style/TextView.InfoMedium"
+        android:paddingRight="5dp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="ID:" />
+
+    <TextView
+        android:id="@+id/header_textview"
+        style="@style/TextView.InfoMedium"
+        android:layout_width="0dp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintLeft_toRightOf="@id/header_id_textview"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text=" Nellie Patrickjkds dsf dsf sd fds fdsf sdf sdfasad " />
+
+    <TextView
+        android:id="@+id/subheader_textview"
+        style="@style/TextView.InfoSmall"
+        android:layout_marginTop="5dp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_textview"
+        tools:text="Accounts:" />
+
+    <TextView
+        android:id="@+id/content_textview"
+        style="@style/TextView.InfoSmall"
+        android:layout_width="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/subheader_textview"
+        tools:text="Savings\nGeneral" />
+
+    <TextView
+        android:id="@+id/readonly_header_textview"
+        style="@style/TextView.InfoSmall"
+        android:layout_marginTop="15dp"
+        android:text="@string/import_confirmed_readonly_accounts_header"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/content_textview" />
+
+    <TextView
+        android:id="@+id/readonly_content_textview"
+        style="@style/TextView.InfoSmall"
+        android:layout_width="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/readonly_header_textview"
+        tools:text="Savings\nGeneral" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
