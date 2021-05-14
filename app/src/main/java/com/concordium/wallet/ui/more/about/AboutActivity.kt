@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.ui.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_about.*
@@ -51,12 +52,12 @@ class AboutActivity : BaseActivity(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        about_support_text.handleUrlClicks { url ->
+        about_contact_text.handleUrlClicks { url ->
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             ContextCompat.startActivity(this, browserIntent, null)
         }
 
-        about_contact_text.handleUrlClicks { url ->
+        about_support_text.handleUrlClicks { url ->
             val emailIntent = Intent(Intent.ACTION_SEND)
             emailIntent.data = Uri.parse("mailto:")
             emailIntent.type = "text/plain"
@@ -69,6 +70,8 @@ class AboutActivity : BaseActivity(
                 //Left empty on purpose
             }
         }
+
+        about_version_text.text = BuildConfig.VERSION_NAME
     }
 
     //endregion

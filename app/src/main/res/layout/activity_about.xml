@@ -70,6 +70,26 @@
                     style="@style/TextView.Small"
                     android:textColor="@color/text_grey"
                     />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/about_version"
+                    android:layout_marginTop="30dp"
+                    style="@style/TextView.Medium"
+                    android:textColor="@color/text_black"
+                    />
+
+                <TextView
+                    android:id="@+id/about_version_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    tools:text="x.y.z"
+                    style="@style/TextView.Small"
+                    android:textColor="@color/text_grey"
+                    />
+
             </LinearLayout>
         </ScrollView>
 

@@ -113,6 +113,9 @@
 
         <!-- Intro -->
         <activity
+            android:name=".ui.intro.introstart.IntroTermsActivity"
+            android:launchMode="singleTop" />
+        <activity
             android:name=".ui.intro.introstart.IntroStartActivity"
             android:launchMode="singleTop" />
         <activity

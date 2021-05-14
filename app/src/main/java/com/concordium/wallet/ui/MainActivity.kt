@@ -17,6 +17,7 @@ import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewFr
 import com.concordium.wallet.ui.identity.identityconfirmed.IdentityErrorData
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.intro.introstart.IntroStartActivity
+import com.concordium.wallet.ui.intro.introstart.IntroTermsActivity
 import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
@@ -204,7 +205,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
 
     private fun showAuthenticationIfRequired() {
         if (viewModel.shouldShowUserSetup()) {
-            val intent = Intent(this, IntroStartActivity::class.java)
+            val intent = Intent(this, IntroTermsActivity::class.java)
             startActivity(intent)
         } else {
             val intent = Intent(this, AuthLoginActivity::class.java)
