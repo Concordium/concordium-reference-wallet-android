@@ -20,7 +20,7 @@ def URL_PROXY_BASE_PROD_TESTNET = "https://wallet-proxy.testnet.concordium.com"
 def URL_PROXY_BASE_PRODUCTION = ""
 
 
-def PROVIDER_AUTHORITY_BASE = "com.concordium.wallet.DataFileProvider"
+def PROVIDER_AUTHORITY_BASE = "software.concordium.mobilewallet.DataFileProvider"
 def PROVIDER_AUTHORITY_LOCAL = PROVIDER_AUTHORITY_BASE+"-local"
 def PROVIDER_AUTHORITY_MOCK = PROVIDER_AUTHORITY_BASE+"-mock"
 def PROVIDER_AUTHORITY_STAGING = PROVIDER_AUTHORITY_BASE+"-staging"
@@ -61,7 +61,7 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
-        applicationId "com.concordium.wallet"
+        applicationId "software.concordium.mobilewallet"
         minSdkVersion 26
         targetSdkVersion 29
         versionCode versionBuildNumber
@@ -157,6 +157,8 @@ android {
         }
 
         prodTestNet {
+            applicationIdSuffix ".testnet"
+
             buildConfigField("String", "ENV_NAME", "\"prod_testnet\"")
             buildConfigField("String", "URL_PROXY_BASE", "\"${URL_PROXY_BASE_PROD_TESTNET}\"")
 
@@ -173,6 +175,8 @@ android {
         }
 
         prodMainNet {
+            applicationIdSuffix ".mainnet"
+
             buildConfigField("String", "ENV_NAME", "\"production\"")
             buildConfigField("String", "URL_PROXY_BASE", "\"${URL_PROXY_BASE_PRODUCTION}\"")
             buildConfigField("boolean", "SHOW_GTU_DROP", "false")
