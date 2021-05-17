@@ -149,7 +149,7 @@
 <p>You can contact Concordium Mobile Wallet support via <a href="mailto:support@concordium.software">support@concordium.software</a>.</p>
 
 <h1>Acceptance</h1>
-<p>By clicking on "I Accept" while downloading the Concordium Mobile Wallet,  you agree to these terms and conditions.</p>
+<p>The first time you open the Concordium Mobile Wallet, you’ll be asked to click "Yes, I Accept" to confirm that you agree to these terms and conditions.</p>
 
     ]]></string>
     <string name="terms_continue">Yes, I accept</string>
