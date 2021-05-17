@@ -6,7 +6,13 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def versionBuildNumber = 38
+def versionBuildNumberSequential = 39 // continuous sequential number - must be incremented for every release
+
+def versionBuildNumberReset = 39 // set this to value of versionBuildNumberSequential when incrementing minor and/or major
+
+def versionBuildNumberMajor = 1
+def versionBuildNumberMinor = 0
+def versionBuildNumberPatch = versionBuildNumberSequential - versionBuildNumberReset
 
 //def LOCAL_IP = getLocalIPv4()
 def LOCAL_IP = "10.0.2.2"
@@ -64,11 +70,11 @@ android {
         applicationId "software.concordium.mobilewallet"
         minSdkVersion 26
         targetSdkVersion 29
-        versionCode versionBuildNumber
-        versionName "0.5.${versionBuildNumber}"
+        versionCode versionBuildNumberSequential
+        versionName "${versionBuildNumberMajor}.${versionBuildNumberMinor}.${versionBuildNumberPatch}"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "BUILD_NUMBER", "\"${versionBuildNumber}\"")
+        buildConfigField("String", "BUILD_NUMBER", "\"${versionBuildNumberSequential}\"")
         buildConfigField("String", "BUILD_TIME", "\"${buildTime()}\"")
         buildConfigField("String", "BUILD_TIME_TICKS", "\"${buildTimeTicks()}\"")
         buildConfigField("String", "ENV_NAME", "none")

@@ -40,6 +40,10 @@ class AlterPasswordViewModel(application: Application) :
     val waitingLiveData: LiveData<Boolean>
         get() = _waitingLiveData
 
+    private val _checkAccountsIdentitiesDoneLiveData = MutableLiveData<Boolean>()
+    val checkAccountsIdentitiesDoneLiveData: LiveData<Boolean>
+        get() = _checkAccountsIdentitiesDoneLiveData
+
     private val _errorLiveData = MutableLiveData<Event<Int>>()
     val errorLiveData: LiveData<Event<Int>>
         get() = _errorLiveData
@@ -246,4 +250,7 @@ class AlterPasswordViewModel(application: Application) :
         }
     }
 
+    fun checkAndStartPasscodeChange() = viewModelScope.launch {
+        _checkAccountsIdentitiesDoneLiveData.value = (identityRepository.getNonDoneCount() + accountRepository.getNonDoneCount()) == 0
+    }
 }

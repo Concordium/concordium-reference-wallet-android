@@ -516,7 +516,7 @@
     <string name="alterpassword_title"><![CDATA[Update Passcode & Biometrics]]></string>
     <string name="alterpassword_desc">By pressing Continue, you will be guided through setting up a new passcode. You will also get the option of enabling biometrics, or to continue without them.</string>
     <string name="alterpassword_confirm">Continue</string>
-
+    <string name="alterpassword_non_finalised_items">All identities and accounts must be finalized before passcode can be changed. Please wait, then try again.</string>
 
     <!-- ***** Recipient ***** -->
 

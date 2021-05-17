@@ -1,6 +1,7 @@
 package com.concordium.wallet.data
 
 import androidx.lifecycle.LiveData
+import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountDao
 import com.concordium.wallet.data.room.AccountWithIdentity
@@ -29,6 +30,10 @@ class AccountRepository(private val accountDao: AccountDao) {
 
     suspend fun getAllByIdentityId(id: Int): List<Account> {
         return accountDao.getAllByIdentityId(id)
+    }
+
+    suspend fun getNonDoneCount(): Int {
+        return accountDao.getStatusCount(TransactionStatus.FINALIZED.ordinal)
     }
 
     suspend fun findById(id: Int): Account? {
@@ -62,4 +67,6 @@ class AccountRepository(private val accountDao: AccountDao) {
     suspend fun deleteAll() {
         accountDao.deleteAll()
     }
+
+
 }

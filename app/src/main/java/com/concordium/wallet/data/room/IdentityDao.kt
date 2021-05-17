@@ -18,6 +18,9 @@ interface IdentityDao {
     @Query("SELECT * FROM identity_table where status='done' ORDER BY id ASC")
     suspend fun getAllDone(): List<Identity>
 
+    @Query("SELECT count(*) FROM identity_table where status != 'done'")
+    suspend fun getNonDoneCount(): Int
+
     @Query("SELECT * FROM identity_table where status='done' ORDER BY id ASC")
     fun getAllDoneAsLiveData(): LiveData<List<Identity>>
 

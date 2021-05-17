@@ -45,22 +45,30 @@ class AlterPasswordActivity : BaseActivity(
         showWaiting(false)
 
         confirm_button.setOnClickListener {
-
-            showAuthentication(null, viewModel.shouldUseBiometrics(), viewModel.usePasscode, object : AuthenticationCallback{
-                override fun getCipherForBiometrics() : Cipher?{
-                    return viewModel.getCipherForBiometrics()
-                }
-                override fun onCorrectPassword(password: String) {
-                    viewModel.checkLogin(password)
-                }
-                override fun onCipher(cipher: Cipher) {
-                    viewModel.checkLogin(cipher)
-                }
-                override fun onCancelled() {
-                }
-            })
-
+            viewModel.checkAndStartPasscodeChange()
         }
+
+
+        viewModel.checkAccountsIdentitiesDoneLiveData.observe(this, Observer<Boolean> { success ->
+            if(success){
+                showAuthentication(null, viewModel.shouldUseBiometrics(), viewModel.usePasscode, object : AuthenticationCallback{
+                    override fun getCipherForBiometrics() : Cipher?{
+                        return viewModel.getCipherForBiometrics()
+                    }
+                    override fun onCorrectPassword(password: String) {
+                        viewModel.checkLogin(password)
+                    }
+                    override fun onCipher(cipher: Cipher) {
+                        viewModel.checkLogin(cipher)
+                    }
+                    override fun onCancelled() {
+                    }
+                })
+            }
+            else{
+                Toast.makeText(this,getString(R.string.alterpassword_non_finalised_items), Toast.LENGTH_LONG).show()
+            }
+        })
 
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let {

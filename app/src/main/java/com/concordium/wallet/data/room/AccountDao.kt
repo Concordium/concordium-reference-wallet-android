@@ -2,6 +2,7 @@ package com.concordium.wallet.data.room
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.concordium.wallet.data.model.TransactionStatus
 
 @Dao
 interface AccountDao {
@@ -23,6 +24,9 @@ interface AccountDao {
 
     @Query("SELECT * FROM account_table ORDER BY name ASC")
     suspend fun getAll(): List<Account>
+
+    @Query("SELECT count(*) FROM account_table WHERE transaction_status != :status")
+    suspend fun getStatusCount(status: Int): Int
 
     @Query("SELECT * FROM account_table WHERE identity_id = :id ORDER BY id ASC")
     suspend fun getAllByIdentityId(id: Int): List<Account>
