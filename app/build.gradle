@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def versionBuildNumberSequential = 40 // continuous sequential number - must be incremented for every release
+def versionBuildNumberSequential = 43 // continuous sequential number - must be incremented for every release
 
 def versionBuildNumberReset = 39 // set this to value of versionBuildNumberSequential when incrementing minor and/or major
 
@@ -109,6 +109,9 @@ android {
 
         mock {
             applicationIdSuffix ".mock"
+
+            buildConfigField("String", "EXPORT_CHAIN", "\"mock\"")
+
             buildConfigField("String", "ENV_NAME", "\"mock\"")
             buildConfigField("String", "URL_PROXY_BASE", "\"${URL_PROXY_BASE_STAGING}\"")
 
@@ -130,6 +133,9 @@ android {
 
         local {
             applicationIdSuffix ".local"
+
+            buildConfigField("String", "EXPORT_CHAIN", "\"local\"")
+
             buildConfigField("String", "ENV_NAME", "\"local\"")
             buildConfigField("String", "URL_PROXY_BASE", "\"${URL_PROXY_BASE_LOCAL}\"")
 
@@ -147,6 +153,8 @@ android {
 
         staging {
             applicationIdSuffix ".staging"
+
+            buildConfigField("String", "EXPORT_CHAIN", "\"staging\"")
             buildConfigField("String", "ENV_NAME", "\"staging\"")
             buildConfigField("String", "URL_PROXY_BASE", "\"${URL_PROXY_BASE_STAGING}\"")
 
@@ -165,6 +173,7 @@ android {
         prodTestNet {
             applicationIdSuffix ".testnet"
 
+            buildConfigField("String", "EXPORT_CHAIN", "\"testnet\"")
             buildConfigField("String", "ENV_NAME", "\"prod_testnet\"")
             buildConfigField("String", "URL_PROXY_BASE", "\"${URL_PROXY_BASE_PROD_TESTNET}\"")
 
@@ -183,6 +192,7 @@ android {
         prodMainNet {
             applicationIdSuffix ".mainnet"
 
+            buildConfigField("String", "EXPORT_CHAIN", "\"mainnet\"")
             buildConfigField("String", "ENV_NAME", "\"production\"")
             buildConfigField("String", "URL_PROXY_BASE", "\"${URL_PROXY_BASE_PRODUCTION}\"")
             buildConfigField("boolean", "SHOW_GTU_DROP", "false")

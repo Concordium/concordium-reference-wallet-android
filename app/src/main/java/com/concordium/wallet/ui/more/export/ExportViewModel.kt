@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.authentication.AuthenticationManager
@@ -231,7 +232,7 @@ class ExportViewModel(application: Application) :
                     }
                 }
                 val exportValue = ExportValue(identityExportList, recipientExportList)
-                val exportData = ExportData("concordium-mobile-wallet-data", 1, exportValue)
+                val exportData = ExportData("concordium-mobile-wallet-data", 1, exportValue, BuildConfig.EXPORT_CHAIN)
                 val jsonOutput = gson.toJson(exportData)
                 Log.d("ExportData: $jsonOutput")
 

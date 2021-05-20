@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.authentication.AuthenticationManager
@@ -210,9 +211,17 @@ class ImportViewModel(application: Application) :
             return
         }
         if (exportData == null || !exportData.hasRequiredData()) {
+            _waitingLiveData.value = false
             _errorAndFinishLiveData.value = Event(R.string.app_error_json)
             return
         }
+        if (BuildConfig.EXPORT_CHAIN != exportData.environment) {
+            _waitingLiveData.value = false
+            _errorAndFinishLiveData.value = Event(R.string.app_error_wrong_environment)
+            return
+        }
+
+
         val exportValue = exportData.value
         importResult = ImportResult()
         // Recipients

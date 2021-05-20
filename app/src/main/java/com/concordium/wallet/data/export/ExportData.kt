@@ -6,7 +6,8 @@ import java.io.Serializable
 data class ExportData(
     val type: String,
     val v: Int,
-    val value: ExportValue
+    val value: ExportValue,
+    val environment: String
 ) : Serializable {
 
     @Suppress("SENSELESS_COMPARISON")
