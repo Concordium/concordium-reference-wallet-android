@@ -76,16 +76,16 @@
 </style>
 <h1>Effective from May 15th 2021</h1>
 <h1>Introduction</h1>
-<p>Concordium Mobile Wallet is a digital wallet that is offered worldwide by Concordium Software ApS (‘Concordium Software’). At developers.concordium.com, you can read about how the app works. Concordium Software may continually change and/or adjust the functions of Concordium Mobile Wallet. Concordium Software’s terms and conditions apply to Concordium Mobile Wallet users worldwide.</p>
+<p>Concordium Mobile Wallet is a digital wallet that is offered worldwide by Concordium Software ApS (‘Concordium Software’). At developer.concordium.software, you can read about how the app works. Concordium Software may continually change and/or adjust the functions of Concordium Mobile Wallet. Concordium Software’s terms and conditions apply to Concordium Mobile Wallet users worldwide.</p>
 <p>The wallet will register and use data about you. Concordium Software will not register or use data about you.</p>
 <h1>Terms and conditions for all services and functions</h1>
 <h2>Parties to the agreement</h2>
 <p>When you register with Concordium Mobile Wallet, you enter into an agreement with:</p>
-<p>Concordium  ApS, Østergade 13, 2., 1100 København K, Denmark. CVR no.: 42334758. Our email address is contact@concordium.software.</p>
+<p>Concordium Software ApS, Østergade 13, 2., 1100 København K, Denmark. CVR no.: 42334758. Our email address is contact@concordium.software.</p>
 <h1>What do you need in order to register with Concordium Mobile Wallet</h1>
 <p>The following is required to register with Concordium Mobile Wallet:</p>
 <ul>
-<li>Have a mobile device (e.g., smartphone or tablet). You can see which operating systems can be used at developers.concordium.com.</li>
+<li>Have a mobile device (e.g., smartphone or tablet). You can see which operating systems can be used at developer.concordium.software.</li>
 <li>Verify your identity with an identity provider. The identity provider will know the identity of the initial account creator.</li>
 </ul>
 <p>You must be at least 18 years old to register.</p>
@@ -139,7 +139,7 @@
 <p>Concordium Software does not undertake any liability for the conduct of the seller/fundraiser in general.</p>
 
 <h1>Privacy</h1>
-<p>When reasonably practicable, Concordium Software will attempt to respect your privacy. Concordium Software will not monitor, edit, or disclose any personal information about you or your account, including its contents or you use of the Concordium Mobile Wallet, without your prior consent unless Concordium Software has a good faith belief that such action is necessary to: (i) comply with legal process or other legal requirements of any governmental authority; (ii) protect and defend the rights or property of Concordium Software; (iii) enforce this Agreement; (iv) protect the interests of users of the Concordium Mobile Wallet other than you or any other person; or (v) operate or conduct maintenance and repair of Concordium’s services or equipment, including the Concordium Mobile Wallet as authorized by law. You have no expectation of privacy with respect to the Internet generally. Your IP address is transmitted and recorded with each message or other information you send from the Concordium Mobile Wallet. When you create an identity with a third party supplier, they store data about you and in this scenario, the third party’s privacy policy and term and conditions apply.</p>
+<p>Concordium Software respects your privacy to the effect that Concordium Software will not monitor, edit, or disclose any personal information about you or your account, including its contents or your use of the Concordium Mobile Wallet, without your prior consent unless Concordium Software in good faith beliefs that such action is necessary to: (i) comply with legal process or other legal requirements of any governmental authority; (ii) protect and defend the rights or property of Concordium Software; (iii) enforce this Agreement; (iv) protect the interests of users of the Concordium Mobile Wallet other than you or any other person; (v) operate or conduct maintenance and repair of Concordium’s services or equipment, including the Concordium Mobile Wallet as authorized by law; or (vi) if your identity is revoked in accordance with the identity revocation process as required to comply with (i). You are assumed to have no expectation of privacy with respect to the Internet generally. Your IP address is transmitted and recorded with each message or other information you send from the Concordium Mobile Wallet. When you create an identity with a third party supplier, you have entered an agreement directly with such a third supplier and such a third party supplier will store data about you and in this case, the third party supplier’s privacy policy and terms and conditions apply.</p>
 
 <h1>Governing law and venue</h1>
 <p>The agreement and any dispute arising out of the agreement are governed by Danish law and such disputes must be heard by Copenhagen District Court or the jurisdiction of the defendant’s domicile unless otherwise provided by absolute consumer rights in Denmark. This applies without consideration for rules in international private law which may lead to the application of other law than Danish law.</p>
@@ -153,7 +153,6 @@
 
 <h1>Acceptance</h1>
 <p>The first time you open the Concordium Mobile Wallet, you’ll be asked to click "Yes, I Accept" to confirm that you agree to these terms and conditions.</p>
-
     ]]></string>
     <string name="terms_continue">Yes, I accept</string>
 
