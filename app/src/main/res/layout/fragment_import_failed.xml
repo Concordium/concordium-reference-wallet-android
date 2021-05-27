@@ -40,7 +40,9 @@
 
                     <ImageView
                         style="@style/Image"
-                        android:src="@drawable/ic_big_logo_ok" />
+                        android:layout_height="100dp"
+                        android:tint="@color/text_pink"
+                        android:src="@drawable/ic_big_logo_plus" />
 
                     <TextView
                         android:id="@+id/import_headline_textview"

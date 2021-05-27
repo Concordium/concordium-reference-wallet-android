@@ -22,6 +22,7 @@
     <color name="text_grey">#969696</color>
     <color name="text_blue">#4486ab</color>
     <color name="text_red">#fe0000</color>
+    <color name="text_pink">#FF8A8A</color>
     <color name="text_green">#00BF94</color>
 
     <!-- Backgrounds -->

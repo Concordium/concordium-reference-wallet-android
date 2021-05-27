@@ -484,7 +484,7 @@
     <string name="import_password_confirm">Continue</string>
     <string name="import_password_error_password_not_valid">Password is not valid - minimum length is 6.</string>
 
-    <string name="import_failed_header">Imported failed</string>
+    <string name="import_failed_header">Import failed</string>
     <string name="import_confirmed_title">Import</string>
     <string name="import_confirmed_header">Imported successfully</string>
     <string name="import_confirmed_header_partially">Import partially succeeded</string>
