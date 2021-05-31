@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def versionBuildNumberSequential = 44 // continuous sequential number - must be incremented for every release
+def versionBuildNumberSequential = 45 // continuous sequential number - must be incremented for every release
 
 def versionBuildNumberReset = 39 // set this to value of versionBuildNumberSequential when incrementing minor and/or major
 
@@ -23,7 +23,7 @@ println("LOCAL_IP is " + LOCAL_IP)
 def URL_PROXY_BASE_LOCAL = "http://"+LOCAL_IP+":14000"
 def URL_PROXY_BASE_STAGING = "https://wallet-proxy.eu.staging.concordium.com"
 def URL_PROXY_BASE_PROD_TESTNET = "https://wallet-proxy.testnet.concordium.com"
-def URL_PROXY_BASE_PRODUCTION = ""
+def URL_PROXY_BASE_PRODUCTION = "https://wallet-proxy.mainnet.concordium.software"
 
 
 def PROVIDER_AUTHORITY_BASE = "software.concordium.mobilewallet.DataFileProvider"

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- App -->
-    <string name="app_name">Concordium ID</string>
+    <string name="app_name">Concordium</string>
     <string name="app_menu_item_accounts">Accounts</string>
     <string name="app_menu_item_identities">Identities</string>
     <string name="app_menu_item_more">More</string>
@@ -160,7 +160,7 @@
     <!-- Intro start-->
     <string name="intro_start_title">Intro start</string>
     <string name="intro_start_header">Hi, there!</string>
-    <string name="intro_start_info">Before you can start using Concordium ID, you have to set up your passcode and biometrics, and either create your initial account, or import one or more existing accounts.\n\n\nLet’s get started!</string>
+    <string name="intro_start_info">Before you can start using Concordium Mobile Wallet, you have to set up your passcode and biometrics, and either create your initial account, or import one or more existing accounts.\n\n\nLet’s get started!</string>
     <string name="intro_start_confirm">Continue</string>
 
     <!-- Intro setup-->
