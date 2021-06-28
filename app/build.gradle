@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def versionBuildNumberSequential = 46 // continuous sequential number - must be incremented for every release
+def versionBuildNumberSequential = 47 // continuous sequential number - must be incremented for every release
 
 def versionBuildNumberReset = 39 // set this to value of versionBuildNumberSequential when incrementing minor and/or major
 
@@ -30,6 +30,7 @@ def PROVIDER_AUTHORITY_BASE = "software.concordium.mobilewallet.DataFileProvider
 def PROVIDER_AUTHORITY_LOCAL = PROVIDER_AUTHORITY_BASE+"-local"
 def PROVIDER_AUTHORITY_MOCK = PROVIDER_AUTHORITY_BASE+"-mock"
 def PROVIDER_AUTHORITY_STAGING = PROVIDER_AUTHORITY_BASE+"-staging"
+def PROVIDER_AUTHORITY_TESTNET = PROVIDER_AUTHORITY_BASE+"-testnet"
 def PROVIDER_AUTHORITY_PROD = PROVIDER_AUTHORITY_BASE
 
 def SCHEME_BASE = "concordiumwallet"
@@ -183,8 +184,8 @@ android {
             buildConfigField("String", "SCHEME", "\"${SCHEME_PROD}\"")
             resValue "string", "scheme", "\"${SCHEME_PROD}\""
 
-            resValue "string", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_PROD}\""
-            buildConfigField("String", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_PROD}\"")
+            resValue "string", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_TESTNET}\""
+            buildConfigField("String", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_TESTNET}\"")
 
             buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
         }
