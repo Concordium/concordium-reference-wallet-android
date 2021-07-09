@@ -14,6 +14,7 @@ class Dialogs {
         val POSITIVE = 0
         val NEGATIVE = 1
         val DISMISSED = 3
+        val CONTACT_SUPPORT = 4
     }
 
     //region OK
@@ -141,8 +142,58 @@ class Dialogs {
                 title,
                 message,
                 positive,
-                negative
+                negative,
+                    null
             )
+        fragment.show(activity.supportFragmentManager, CustomDialogFragment.TAG)
+    }
+
+    //endregion
+
+
+    //region Positive Support
+    //************************************************************
+
+    fun showPositiveSupportDialog(
+            activity: AppCompatActivity,
+            requestCode: Int,
+            titleId: Int,
+            messageId: Int,
+            positive: Int,
+            negative: Int,
+            uri: String
+    ) {
+        val resources = App.appContext.getResources()
+        showPositiveSupportDialog(
+                activity,
+                requestCode,
+                resources.getString(titleId),
+                resources.getString(messageId),
+                resources.getString(positive),
+                resources.getString(negative),
+                uri
+        )
+    }
+
+    fun showPositiveSupportDialog(
+            activity: AppCompatActivity,
+            requestCode: Int,
+            title: String,
+            message: String,
+            positive: String,
+            negative: String,
+            uriSession: String
+    ) {
+        val fragment =
+                CustomDialogFragment.createPositiveSupportDialog(
+                        activity,
+                        requestCode,
+                        title,
+                        message,
+                        positive,
+                        negative,
+                        uriSession
+                )
         fragment.show(activity.supportFragmentManager, CustomDialogFragment.TAG)
     }
 

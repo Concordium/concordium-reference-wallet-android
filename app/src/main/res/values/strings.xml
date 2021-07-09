@@ -28,6 +28,16 @@
     <!-- Dialogs -->
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
+
+    <string name="dialog_support_subject_reference">Issuance reference: %1$s</string>
+    <string name="dialog_support_text">My Concordium identity issuance failed with hashed session ID: %1$s</string>
+
+
+    <string name="dialog_support">Contact Support</string>
+    <string name="dialog_popup_support_text">Something went wrong while creating your identity.\n\nYou can either try again, or contact Notabene’s support.\n\nClicking Contact Support will open your e-mail app, with a reference to your submission as subject.</string>
+
+
+
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
     <string name="dialog_initial_account_error_title">Initial account creation failed</string>
