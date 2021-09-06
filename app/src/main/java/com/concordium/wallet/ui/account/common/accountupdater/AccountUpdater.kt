@@ -7,14 +7,12 @@ import com.concordium.wallet.core.backend.BackendErrorException
 import com.concordium.wallet.core.backend.ErrorParser
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.EncryptedAmountRepository
+import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.DecryptAmountInput
 import com.concordium.wallet.data.model.*
-import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.EncryptedAmount
-import com.concordium.wallet.data.room.Transfer
-import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.data.room.*
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PerformanceUtil
@@ -47,6 +45,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
     private val accountRepository: AccountRepository
     private val encryptedAmountRepository: EncryptedAmountRepository
     private val transferRepository: TransferRepository
+    private val recipientRepository: RecipientRepository
 
     private var accountSubmissionStatusRequestList: MutableList<AccountSubmissionStatusRequestData> =
         ArrayList()
@@ -68,6 +67,9 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         transferRepository = TransferRepository(transferDao)
         val encryptedAmountDao = WalletDatabase.getDatabase(application).encryptedAmountDao()
         encryptedAmountRepository = EncryptedAmountRepository(encryptedAmountDao)
+        val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
+        recipientRepository = RecipientRepository(recipientDao)
+
     }
 
     interface UpdateListener {
@@ -173,6 +175,12 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                 for (request in accountSubmissionStatusRequestList) {
                     Log.d("AccountSubmissionStatus Loop item start")
                     val submissionStatus = request.deferred.await()
+
+                    //If we change state to finalized we save it in address book
+                    if(request.account.transactionStatus != submissionStatus.status && submissionStatus.status == TransactionStatus.FINALIZED){
+                        recipientRepository.insert(Recipient(0, request.account.name, request.account.address))
+                    }
+
                     request.account.transactionStatus = submissionStatus.status
                     Log.d("AccountSubmissionStatus Loop item end - ${request.account.submissionId} ${submissionStatus.status}")
                 }

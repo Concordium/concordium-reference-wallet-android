@@ -391,6 +391,7 @@ open class NewAccountViewModel(application: Application) :
             false,
             null
         )
+
         saveNewAccount(newAccount)
     }
 
@@ -398,7 +399,7 @@ open class NewAccountViewModel(application: Application) :
         val accountId = accountRepository.insert(account)
         account.id = accountId.toInt()
         // Also save a recipient representing this account
-        recipientRepository.insert(Recipient(0, account.name, account.address))
+        // JVE not here, later when we know we are finalised recipientRepository.insert(Recipient(0, account.name, account.address))
         _gotoAccountCreatedLiveData.value = Event(account)
     }
 
