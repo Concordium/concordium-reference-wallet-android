@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -233,13 +234,16 @@ class CustomDialogFragment : DialogFragment() {
         if (type == EDialogType.PositiveSupport) {
             builder.setNegativeButton(resNegative,
                 DialogInterface.OnClickListener { _, _ ->
-                    val intent = Intent(Intent.ACTION_SEND)
-                    val recipients = arrayOf("concordium-idiss@notabene.id")
-                    intent.putExtra(Intent.EXTRA_EMAIL, recipients)
-                    intent.putExtra(Intent.EXTRA_SUBJECT, resources.getString(R.string.dialog_support_subject_reference, uriSession))
-                    intent.putExtra(Intent.EXTRA_TEXT, resources.getString(R.string.dialog_support_text, uriSession))
-                    intent.type = "text/html"
-                    startActivity(Intent.createChooser(intent, "Send email"))
+
+                    val uriText = "mailto:concordium-idiss@notabene.id" +
+                            "?subject=" + Uri.encode(resources.getString(R.string.dialog_support_subject_reference, uriSession)) +
+                            "&body=" + Uri.encode(resources.getString(R.string.dialog_support_text, uriSession))
+                    val uri = Uri.parse(uriText)
+                    val sendIntent = Intent(Intent.ACTION_SENDTO)
+                    sendIntent.data = uri
+                    if (sendIntent.resolveActivity(requireContext().packageManager) != null) {
+                        startActivity(Intent.createChooser(sendIntent, "Send email"))
+                    }
                 })
         }
 
