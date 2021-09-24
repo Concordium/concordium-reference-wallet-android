@@ -1,7 +1,13 @@
 package com.concordium.wallet.data.model
 
+import com.concordium.wallet.CBORUtil
+import com.concordium.wallet.util.Log
 import java.io.Serializable
 import java.util.*
+import com.google.iot.cbor.CborMap
+import com.google.iot.cbor.CborObject
+import java.lang.Exception
+
 
 data class Transaction(
     val source: TransactionSource,
@@ -78,5 +84,13 @@ data class Transaction(
 
     fun isFinalizedReward(): Boolean {
         return details?.type == TransactionType.FINALIZATIONREWARD && isReward()
+    }
+
+    fun getDecryptedMemo(): String{
+        return details?.memo?.let { return CBORUtil.decodeHexAndCBOR(it) } ?: ""
+    }
+
+    fun hasMemo(): Boolean{
+        return details != null && details.memo != null && details.memo.length > 0
     }
 }

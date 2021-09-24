@@ -12,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import com.concordium.wallet.App
 import com.concordium.wallet.R
+import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
+import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
 
 
 class CustomDialogFragment : DialogFragment() {
@@ -24,6 +26,7 @@ class CustomDialogFragment : DialogFragment() {
         val KEY_TITLE = "key_title"
         val KEY_MESSAGE = "key_message"
         val KEY_POSITIVE = "key_positive"
+        val KEY_NEUTRAL = "key_neutral"
         val KEY_NEGATIVE = "key_negative"
         val KEY_SUPPORT = "key_support"
         val KEY_SUPPORT_TIMESTAMP = "key_support_timestamp"
@@ -46,6 +49,7 @@ class CustomDialogFragment : DialogFragment() {
             title: String,
             message: String,
             positiveButton: String?,
+            neutralButton: String?,
             negativeButton: String?,
             uriSession: String?
         ): CustomDialogFragment {
@@ -59,6 +63,7 @@ class CustomDialogFragment : DialogFragment() {
             args.putString(KEY_MESSAGE, message)
             if (dialogType == EDialogType.PositiveSupport) {
                 args.putString(KEY_POSITIVE, positiveButton)
+                args.putString(KEY_NEUTRAL, neutralButton)
                 args.putString(KEY_NEGATIVE, negativeButton)
                 args.putString(KEY_SUPPORT, uriSession)
             }
@@ -88,6 +93,7 @@ class CustomDialogFragment : DialogFragment() {
                 message,
                 positive,
                 null,
+                null,
                     null
 
             )
@@ -107,7 +113,8 @@ class CustomDialogFragment : DialogFragment() {
                 message,
                 null,
                 null,
-                    null
+                null,
+                null
 
             )
         }
@@ -126,7 +133,8 @@ class CustomDialogFragment : DialogFragment() {
                 message,
                 null,
                 null,
-                    null
+                null,
+                null
 
             )
         }
@@ -147,6 +155,7 @@ class CustomDialogFragment : DialogFragment() {
                 title,
                 message,
                 positiveButton,
+                null,
                 negativeButton,
                     uriSession
             )
@@ -158,6 +167,7 @@ class CustomDialogFragment : DialogFragment() {
                 title: String,
                 message: String,
                 positiveButton: String,
+                neutralButton: String,
                 negativeButton: String,
                 uriSession: String?
         ): CustomDialogFragment {
@@ -168,6 +178,7 @@ class CustomDialogFragment : DialogFragment() {
                     title,
                     message,
                     positiveButton,
+                    neutralButton,
                     negativeButton,
                 uriSession
             )
@@ -203,6 +214,7 @@ class CustomDialogFragment : DialogFragment() {
         val title = args.getString(KEY_TITLE, "")
         val message = args.getString(KEY_MESSAGE, "")
         var resPositive = args.getString(KEY_POSITIVE, resources.getString(R.string.dialog_ok))
+        var resNeutral = args.getString(KEY_NEUTRAL, null)
         var resNegative = args.getString(KEY_NEGATIVE, resources.getString(R.string.dialog_cancel))
 
         var uriSession = args.getString(KEY_SUPPORT, null)
@@ -232,19 +244,20 @@ class CustomDialogFragment : DialogFragment() {
                 })
         }
         if (type == EDialogType.PositiveSupport) {
+            builder.setNeutralButton(resNeutral,
+                DialogInterface.OnClickListener { _, _ ->
+                    context?.let{IdentityErrorDialogHelper.openSupportEmail(it, resources, uriSession)}
+                })
             builder.setNegativeButton(resNegative,
                 DialogInterface.OnClickListener { _, _ ->
-
-                    val uriText = "mailto:concordium-idiss@notabene.id" +
-                            "?subject=" + Uri.encode(resources.getString(R.string.dialog_support_subject_reference, uriSession)) +
-                            "&body=" + Uri.encode(resources.getString(R.string.dialog_support_text, uriSession))
-                    val uri = Uri.parse(uriText)
-                    val sendIntent = Intent(Intent.ACTION_SENDTO)
-                    sendIntent.data = uri
-                    if (sendIntent.resolveActivity(requireContext().packageManager) != null) {
-                        startActivity(Intent.createChooser(sendIntent, "Send email"))
-                    }
+                    dismiss()
                 })
+            builder.setPositiveButton(resPositive,
+                DialogInterface.OnClickListener { _, _ ->
+                    val intent = Intent(activity, IdentityCreateActivity::class.java)
+                    startActivity(intent)
+                })
+
         }
 
         val dialog = builder.create()

@@ -223,6 +223,12 @@
             android:parentActivityName=".ui.account.accountdetails.AccountDetailsActivity" />
 
         <!--  Transaction / Send funds -->
+
+        <activity
+            android:name=".ui.transaction.sendfunds.AddMemoActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.transaction.sendfunds.SendFundsActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.transaction.sendfunds.SendFundsActivity"
             android:launchMode="singleTop"

@@ -102,7 +102,8 @@ class AccountDetailsTransfersFragment : Fragment() {
                                         if (transaction.details != null) {
                                             if (transaction.details.type != TransactionType.TRANSFERTOENCRYPTED &&
                                                 transaction.details.type != TransactionType.TRANSFERTOPUBLIC &&
-                                                transaction.details.type != TransactionType.ENCRYPTEDAMOUNTTRANSFER) {
+                                                transaction.details.type != TransactionType.ENCRYPTEDAMOUNTTRANSFER &&
+                                                transaction.details.type != TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO) {
                                                 result = false
                                             }
                                             else{}
@@ -112,7 +113,7 @@ class AccountDetailsTransfersFragment : Fragment() {
                                 } else {  // unshielded balance
                                     if (transaction.isRemoteTransaction()) {
                                         if (transaction.origin != null && transaction.details != null) {
-                                            if (transaction.origin.type != TransactionOriginType.Self && transaction.details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFER) {
+                                            if (transaction.origin.type != TransactionOriginType.Self && (transaction.details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFER || transaction.details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO)) {
                                                 result = false
                                             }
                                             else{

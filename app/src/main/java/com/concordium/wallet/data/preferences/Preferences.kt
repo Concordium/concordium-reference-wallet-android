@@ -87,4 +87,5 @@ open class Preferences {
         return sharedPreferences.getLong(key, 0)
     }
 
+
 }

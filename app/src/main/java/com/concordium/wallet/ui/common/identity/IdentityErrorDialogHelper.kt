@@ -1,10 +1,16 @@
 package com.concordium.wallet.ui.common.identity
 
+import android.app.Activity
+import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
+import android.content.res.Resources
+import android.net.Uri
 import android.text.TextUtils
 import android.util.Base64
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.ui.RequestCodes
@@ -38,6 +44,7 @@ object IdentityErrorDialogHelper {
                     R.string.dialog_popup_support_text,
                     positive,
                     R.string.dialog_support,
+                    R.string.dialog_cancel,
                     hash(identityErrorData.identity.codeUri)
             )
 
@@ -62,7 +69,18 @@ object IdentityErrorDialogHelper {
                 )
             }
         }
+    }
 
+    fun openSupportEmail(context: Context, resources: Resources, uriSession: String) {
+        val uriText = "mailto:concordium-idiss@notabene.id" +
+                "?subject=" + Uri.encode(resources.getString(R.string.dialog_support_subject_reference, uriSession)) +
+                "&body=" + Uri.encode(resources.getString(R.string.dialog_support_text, uriSession))
+        val uri = Uri.parse(uriText)
+        val sendIntent = Intent(Intent.ACTION_SENDTO)
+        sendIntent.data = uri
+        if (sendIntent.resolveActivity(context.packageManager) != null) {
+            context.startActivity(Intent.createChooser(sendIntent, resources.getString(R.string.dialog_send_email)))
+        }
 
     }
 }

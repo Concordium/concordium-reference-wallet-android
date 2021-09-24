@@ -72,6 +72,14 @@
                         tools:text="@string/send_funds_confirmed_fee_info" />
 
                     <TextView
+                        android:id="@+id/memo_confirmation_textview"
+                        style="@style/TextView.InfoMedium"
+                        android:layout_marginTop="15dp"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center_horizontal"
+                        tools:text="@string/send_funds_confirmation_memo_with_linebreak" />
+
+                    <TextView
                         android:id="@+id/recipient_textview"
                         style="@style/TextView.Standard"
                         android:layout_gravity="center_horizontal"

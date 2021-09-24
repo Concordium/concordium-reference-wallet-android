@@ -146,6 +146,18 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
                 IdentityErrorDialogHelper.showIdentityError(this, dialogs, data)
             }
         })
+
+/*
+        dialogs.showPositiveSupportDialog(
+            this,
+            RequestCodes.REQUEST_IDENTITY_ERROR_DIALOG,
+            R.string.dialog_initial_account_error_title,
+            R.string.dialog_popup_support_text,
+            R.string.dialog_initial_account_error_positive,
+            R.string.dialog_support,
+            R.string.dialog_cancel,
+            IdentityErrorDialogHelper.hash("lala"))*/
+
     }
 
     private fun initializeViews() {

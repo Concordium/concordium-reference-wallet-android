@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_root_layout"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/list_item_height"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/list_item_height"
+    android:paddingRight="@dimen/list_item_horizontal_margin"
     android:background="@drawable/list_item">
 
     <ImageView
@@ -25,12 +27,16 @@
         android:layout_width="0dp"
         android:layout_marginLeft="@dimen/list_item_horizontal_margin"
         android:layout_marginRight="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/subheader_textview"
+
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toRightOf="@id/alert_imageview"
         app:layout_constraintRight_toLeftOf="@id/total_textview"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
+
+        app:layout_constraintBottom_toTopOf="@+id/cost_textview"
+        app:layout_constraintRight_toRightOf="parent"
+
         app:layout_goneMarginLeft="@dimen/list_item_horizontal_margin"
         tools:text="John Doe looooooooooooooooooooooo12345678" />
 
@@ -41,7 +47,7 @@
         android:layout_marginLeft="@dimen/list_item_horizontal_margin"
         android:layout_marginRight="30dp"
         app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/memo_textview"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintLeft_toRightOf="@id/alert_imageview"
         app:layout_constraintRight_toLeftOf="@id/amount_textview"
@@ -63,30 +69,31 @@
     <TextView
         android:id="@+id/total_textview"
         style="@style/TextView.ListItemHeader"
-        android:layout_marginRight="@dimen/list_item_horizontal_margin"
         app:layout_constraintBottom_toTopOf="@+id/cost_textview"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:text="- Ǥ1000.65" />
+        tools:text="- Ǥ100000000000.65" />
 
     <TextView
         android:id="@+id/cost_textview"
         style="@style/TextView.ListItemSubHeader"
-        android:layout_marginRight="@dimen/list_item_horizontal_margin"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/total_textview"
-        tools:text="Ǥ0.0059 Fee"
+        app:layout_constraintBottom_toTopOf="@id/memo_textview"
+        app:layout_constraintBottom_toBottomOf="@id/cost_textview"
+        app:layout_constraintRight_toLeftOf="@id/lock_imageview"
+        app:layout_constraintTop_toTopOf="@id/cost_textview"
+        app:layout_constraintRight_toRightOf="@+id/total_textview"
+        tools:text="Ǥ0.059 Fee"
         tools:visibility="visible" />
 
     <TextView
         android:id="@+id/amount_textview"
         style="@style/TextView.ListItemSubHeader"
+        app:layout_constraintBottom_toTopOf="@id/memo_textview"
         app:layout_constraintBottom_toBottomOf="@id/cost_textview"
         app:layout_constraintRight_toLeftOf="@id/cost_textview"
         app:layout_constraintTop_toTopOf="@id/cost_textview"
-        tools:text="Ǥ1000000.30 + "
+        tools:text="Ǥ1.30 + "
         tools:visibility="visible" />
 
     <ImageView
@@ -107,7 +114,6 @@
         style="@style/Image"
         android:layout_width="25dp"
         android:layout_height="25dp"
-        android:layout_marginRight="@dimen/list_item_horizontal_margin"
         android:src="@drawable/ic_lock"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -115,11 +121,28 @@
         android:visibility="gone"
         tools:visibility="visible" />
 
+    <TextView
+        android:id="@+id/memo_textview"
+        style="@style/TextView.ListItemSubHeader"
+        app:layout_constrainedWidth="true"
+        android:layout_width="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/divider"
+        app:layout_constraintEnd_toEndOf="@+id/total_textview"
+        app:layout_constraintLeft_toRightOf="@id/alert_imageview"
+        app:layout_constraintRight_toRightOf="@+id/total_textview"
+        app:layout_constraintStart_toStartOf="@+id/title_textview"
+        app:layout_constraintTop_toBottomOf="@id/subheader_textview"
+        app:layout_constraintHorizontal_bias="0.0"
+        tools:text="Memotext dsf ds fdsfdsf ds fds f dsf dsf ds fds f dsf  sdf ds f dsf"
+        tools:visibility="visible" />
+
     <View
         android:id="@+id/divider"
         style="@style/Divider"
+        android:paddingTop="15dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,6 +27,7 @@ data class Transfer(
     @ColumnInfo(name = "to_address")
     val toAddress: String,
     val expiry: Long,   //seconds
+    val memo: String?,
     @ColumnInfo(name = "created_at")
     val createdAt: Long,    //millis
     @ColumnInfo(name = "submission_id")

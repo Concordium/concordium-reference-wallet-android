@@ -29,6 +29,8 @@
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
 
+    <string name="dialog_send_email">Send email</string>
+
     <string name="dialog_support_subject_reference">Issuance reference: %1$s</string>
     <string name="dialog_support_text">My Concordium identity issuance failed with hashed session ID: %1$s</string>
 
@@ -62,6 +64,7 @@
     <string name="failed_try_again">Please try again.</string>
     <string name="failed_confirm">Ok</string>
     <string name="failed_remove">Remove from list</string>
+    <string name="contact_support">Contact support</string>
 
 
     <!-- ***** Intro ***** -->
@@ -375,7 +378,7 @@
     <string name="account_details_header_today">Today</string>
     <string name="account_details_header_yesterday">Yesterday</string>
     <string name="account_details_gtu_drop_header">TESTNET GTU DROP</string>
-    <string name="account_details_gtu_drop_info">On the Concordium Testnet, you can request 100GTU to be deposited to an account to get you started.</string>
+    <string name="account_details_gtu_drop_info">On the Concordium Testnet, you can request 2000GTU to be deposited to an account to get you started.</string>
     <string name="account_details_gtu_drop_button">Request 2000GTU</string>
     <string name="account_details_shielded_transaction_fee">Shielded transaction fee</string>
 
@@ -414,11 +417,20 @@
     <string name="send_funds_confirm_shield">Shield amount</string>
     <string name="send_funds_confirm_unshield">Unshield amount</string>
     <string name="send_funds_confirm_send_shielded">Send shielded amount</string>
-    <string name="send_funds_confirmation">Confirm to transfer\n%1$s to %2$s\nEstimated transaction fee:\n%3$s</string>
-    <string name="send_funds_confirmation_shield">Confirm to shield\n%1$s in account: %2$s\nEstimated transaction fee:\n%3$s</string>
-    <string name="send_funds_confirmation_unshield">Confirm to unshield\n%1$s in account: %2$s\nEstimated transaction fee:\n%3$s</string>
-    <string name="send_funds_confirmation_send_shielded">Confirm to send shielded amount\n%1$s to %2$s\nEstimated transaction fee:\n%3$s</string>
+    <string name="send_funds_confirmation">Confirm to transfer\n%1$s to %2$s\nEstimated transaction fee:\n%3$s\n%4$s</string>
+    <string name="send_funds_confirmation_shield">Confirm to shield\n%1$s in account: %2$s\nEstimated transaction fee:\n%3$s\n%4$s</string>
+    <string name="send_funds_confirmation_unshield">Confirm to unshield\n%1$s in account: %2$s\nEstimated transaction fee:\n%3$s\n%4$s</string>
+    <string name="send_funds_confirmation_send_shielded">Confirm to send shielded amount\n%1$s to %2$s\nEstimated transaction fee:\n%3$s\n%4$s</string>
+    <string name="send_funds_confirmation_memo">Memo: %1$s</string>
+    <string name="send_funds_confirmation_memo_with_linebreak">Memo:\n%1$s</string>
     <string name="send_funds_error_same_account">Recipient account is not allowed to be the same as sending account.</string>
+
+    <!-- Add Memo -->
+    <string name="add_memo_title">Add memo</string>
+    <string name="add_memo_intro">Enter your memo below.</string>
+    <string name="add_memo_confirm">Add memo to transfer</string>
+    <string name="add_memo_hint">You can enter an optional memo here.</string>
+
 
     <!--  Send funds confirmed  -->
     <string name="send_funds_confirmed_title">Send funds</string>
@@ -573,7 +585,7 @@
     <string name="account_release_schedule_locked_amount">Locked amount:</string>
     <string name="account_release_schedule_release_date">Release date</string>
     <string name="account_release_schedule_amount">Amount</string>
-    <string name="account_release_schedule_copied">Address copied</string>
+    <string name="account_release_schedule_copied">Transaction copied</string>
     <string name="account_release_schedule_copy_title">Account address</string>
     <string name="account_details_baker_id">Baker ID:</string>
 
@@ -585,6 +597,17 @@
     <string name="change_password_successfully_changed">Passcode was successfully changed</string>
     <string name="change_password_final_error">Passcode could not successfully be changed</string>
     <string name="accounts_overview_currently_available_amounts">Currently available amounts:</string>
+
+    <string name="contact_account_removed">The related initial account has been automatically removed.</string>
+    <string name="contact_issuance_reference">Issuance reference:</string>
+    <string name="contact_issuance_hash_value_copied">Copied issuance reference</string>
+
+    <string name="send_fund_optional_memo">You can enter an optional memo here.</string>
+    <string name="transaction_memo_warning_title">Transaction messages</string>
+    <string name="transaction_memo_warning_text">Transaction memos are public and visible to everyone on the blockchain. Any memo sent with a transaction are permament, and will be visible forever, so be careful what you write in the memo.\n\nAdding a memo will increase the transaction fee.</string>
+    <string name="transaction_memo_warning_dont_show">Don’t show again</string>
+    <string name="transaction_memo_warning_ok">Okay</string>
+    <string name="send_funds_optional_add_memo">Optional: Add memo</string>
 
 
 </resources>

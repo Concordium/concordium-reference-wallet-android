@@ -12,6 +12,7 @@ data class TransactionDetails(
     val transferDestination: String?,
     val transferAmount: Long?,
     val newIndex: Int?,
+    val memo: String?,
     val newSelfEncryptedAmount: String?,
     val inputEncryptedAmount: String?,
     val encryptedAmount: String?,

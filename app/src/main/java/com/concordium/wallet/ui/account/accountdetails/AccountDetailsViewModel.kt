@@ -178,16 +178,18 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         val transfer = Transfer(
             0,
             account.id,
-            2000000000,
+            -2000000000,
             0,
             "",
             account.address,
             expiry,
+            "",
             createdAt,
             submissionId,
             TransactionStatus.UNKNOWN,
             TransactionOutcome.UNKNOWN,
-            TransactionType.TRANSFER,
+            TransactionType.TRANSFERTOPUBLIC,   //Not really an outgoing public transfer,
+                                                //but amount is negative so it is listed as incoming positive
             null,
             0,
             null

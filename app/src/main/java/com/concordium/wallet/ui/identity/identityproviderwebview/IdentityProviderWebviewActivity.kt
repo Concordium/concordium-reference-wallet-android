@@ -88,6 +88,7 @@ class IdentityProviderWebviewActivity : BaseActivity(
         }
     }
 
+
     //endregion
 
     //region Initialize
@@ -259,6 +260,7 @@ class IdentityProviderWebviewActivity : BaseActivity(
             customTabsIntent.intent.setPackage("com.android.chrome")
         }
         customTabsIntent.launchUrl(this, Uri.parse(url))
+        finish()
     }
 
     //endregion

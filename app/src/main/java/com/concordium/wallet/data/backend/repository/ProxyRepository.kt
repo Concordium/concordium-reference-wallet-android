@@ -142,8 +142,8 @@ class ProxyRepository() {
     }
 
 
-    fun getTransferCost(type: String, success: (TransferCost) -> Unit, failure: ((Throwable) -> Unit)?): BackendRequest<TransferCost> {
-        val call = backend.transferCost(type)
+    fun getTransferCost(type: String, memoSize: Int, success: (TransferCost) -> Unit, failure: ((Throwable) -> Unit)?): BackendRequest<TransferCost> {
+        val call = backend.transferCost(type, memoSize)
 
         call.enqueue(object : BackendCallback<TransferCost>() {
 

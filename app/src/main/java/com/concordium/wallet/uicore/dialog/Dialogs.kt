@@ -160,6 +160,7 @@ class Dialogs {
             titleId: Int,
             messageId: Int,
             positive: Int,
+            neutral: Int,
             negative: Int,
             uri: String
     ) {
@@ -170,6 +171,7 @@ class Dialogs {
                 resources.getString(titleId),
                 resources.getString(messageId),
                 resources.getString(positive),
+                resources.getString(neutral),
                 resources.getString(negative),
                 uri
         )
@@ -181,6 +183,7 @@ class Dialogs {
             title: String,
             message: String,
             positive: String,
+            neutral: String,
             negative: String,
             uriSession: String
     ) {
@@ -191,6 +194,7 @@ class Dialogs {
                         title,
                         message,
                         positive,
+                        neutral,
                         negative,
                         uriSession
                 )

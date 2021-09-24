@@ -1,12 +1,14 @@
 package com.concordium.wallet.ui.transaction.sendfunds
 
 import android.app.Application
+import android.content.Context
 import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.CBORUtil
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.authentication.AuthenticationManager
@@ -22,6 +24,7 @@ import com.concordium.wallet.data.cryptolib.CreateTransferInput
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.Transfer
@@ -32,7 +35,9 @@ import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.google.gson.GsonBuilder
+import com.google.iot.cbor.CborMap
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.util.*
 import javax.crypto.Cipher
 
@@ -42,6 +47,27 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
     private val proxyRepository = ProxyRepository()
     private val accountRepository: AccountRepository
     private val transferRepository: TransferRepository
+
+    companion object {
+        val PREF_SEND_FUNDS = "PREF_SEND_FUNDS"
+        val KEY_SHOW_MEMO_WARNING = "KEY_SHOW_MEMO_WARNING_V2"
+    }
+
+    class SendFundsPreferences(context: Context, preferenceName: String, preferenceMode: Int) :
+        Preferences(context, preferenceName, preferenceMode) {
+            fun showMemoWarning(): Boolean {
+                return getBoolean(KEY_SHOW_MEMO_WARNING, true)
+            }
+            fun dontShowMemoWarning() {
+                setBoolean(KEY_SHOW_MEMO_WARNING, false)
+            }
+        }
+
+
+    private val preferences: SendFundsPreferences
+        get() {
+            return SendFundsPreferences(getApplication(), PREF_SEND_FUNDS, Context.MODE_PRIVATE)
+        }
 
     private val gson = App.appCore.gson
 
@@ -109,6 +135,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         var submissionId: String? = null
         var transferSubmissionStatus: TransferSubmissionStatus? = null
         var expiry: Long? = null
+        var memo: String = ""
         var globalParams: GlobalParams? = null
         var receiverPublicKey: String? = null
         var accountBalance: AccountBalance? = null
@@ -168,7 +195,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             }
 
 
-        proxyRepository.getTransferCost(type,
+        proxyRepository.getTransferCost(type, tempData.memo.length,
             {
                 tempData.energy = it.energy
                 _transactionFeeLiveData.value = it.cost.toLong()
@@ -226,6 +253,8 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         }
         return true
     }
+
+
 
     fun sendFunds(amount: String) {
         val amountValue = CurrencyUtil.toGTUValue(amount)
@@ -320,6 +349,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         val nonce = tempData.accountNonce
         val amount = tempData.amount
         val energy = tempData.energy
+        val memo = tempData.memo
 
         if (toAddress == null || nonce == null || amount == null || energy == null) {
             _errorLiveData.value = Event(R.string.app_error_general)
@@ -338,6 +368,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             amount.toString(),
             energy,
             nonce.nonce,
+            memo,
             tempData.globalParams,
             tempData.receiverPublicKey,
             encryptionSecretKey,
@@ -542,6 +573,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
     private fun finishTransferCreation() {
         val amount = tempData.amount
         val toAddress = tempData.toAddress
+        val memo = tempData.memo
         val submissionId = tempData.submissionId
         val transferSubmissionStatus = tempData.transferSubmissionStatus
         val expiry = tempData.expiry
@@ -568,16 +600,27 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             account.address,
             toAddress,
             expiry,
+            memo,
             createdAt,
             submissionId,
             transferSubmissionStatus.status,
             transferSubmissionStatus.outcome ?: TransactionOutcome.UNKNOWN,
             if(isShielded){
                 if(isTransferToSameAccount()){
-                    TransactionType.TRANSFER
+                    if(memo.isEmpty()){
+                        TransactionType.TRANSFER
+                    }
+                    else{
+                        TransactionType.TRANSFERWITHMEMO
+                    }
                 }
                 else{
-                    TransactionType.ENCRYPTEDAMOUNTTRANSFER
+                    if(memo.isEmpty()){
+                        TransactionType.ENCRYPTEDAMOUNTTRANSFER
+                    }
+                    else{
+                        TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO
+                    }
                 }
             }
             else{
@@ -602,8 +645,27 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         _gotoSendFundsConfirmLiveData.value = Event(true)
     }
 
+    fun ByteArray.toHexString() = joinToString("") {
+        Integer.toUnsignedString(java.lang.Byte.toUnsignedInt(it), 16).padStart(2, '0')
+    }
+
+    fun setMemo(memo: ByteArray){
+        tempData.memo = memo.toHexString()
+        loadTransactionFee()
+    }
+
     fun usePasscode(): Boolean {
         return App.appCore.getCurrentAuthenticationManager().usePasscode()
     }
 
+    fun showMemoWarning(): Boolean {
+        return preferences.showMemoWarning()
+    }
+    fun dontShowMemoWarning() {
+        return preferences.dontShowMemoWarning()
+    }
+
+    fun getClearTextMemo(): String? {
+        return CBORUtil.decodeHexAndCBOR(tempData.memo)
+    }
 }

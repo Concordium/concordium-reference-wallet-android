@@ -22,6 +22,7 @@ object TransactionViewHelper {
         subHeaderTextView: TextView,
         totalTextView: TextView,
         costTextView: TextView,
+        memoTextView: TextView,
         amountTextView: TextView,
         alertImageView: ImageView,
         statusImageView: ImageView,
@@ -39,6 +40,10 @@ object TransactionViewHelper {
 
         // Title
         titleTextView.text = "${ta.title}"
+
+        memoTextView.text = "${ta.getDecryptedMemo()}"
+        memoTextView.visibility = if(ta.hasMemo()) View.VISIBLE else View.GONE
+
         // Time
         subHeaderTextView.text = if (showDate) {
             DateTimeUtil.formatDateAsLocalMediumWithTime(ta.timeStamp)
