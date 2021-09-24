@@ -240,7 +240,7 @@ open class NewAccountViewModel(application: Application) :
             _waitingLiveData.value = false
         } else {
             tempData.accountAddress = output.accountAddress
-            val jsonToBeEncrypted = gson.toJson(StorageAccountData(output.accountAddress, output.accountKeys, output.encryptionSecretKey))
+            val jsonToBeEncrypted = gson.toJson(StorageAccountData(output.accountAddress, output.accountKeys, output.encryptionSecretKey, output.commitmentsRandomness))
 
             val storageAccountDataEncrypted = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, jsonToBeEncrypted)
             if (storageAccountDataEncrypted != null) {
