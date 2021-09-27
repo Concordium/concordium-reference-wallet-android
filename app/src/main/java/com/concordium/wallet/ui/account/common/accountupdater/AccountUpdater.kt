@@ -296,7 +296,8 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     }
                 }
 
-                for (request in accountBalanceRequestList) {
+                val accountBalanceRequestListCloned = accountBalanceRequestList.toMutableList() // prevent ConcurrentModificationException
+                for (request in accountBalanceRequestListCloned) {
                     Log.d("AccountBalance Loop item start")
                     val accountBalance = request.deferred.await()
                     request.account.finalizedBalance = accountBalance.finalizedBalance?.getAmount() ?: 0
