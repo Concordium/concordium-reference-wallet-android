@@ -5,6 +5,7 @@ import android.os.CountDownTimer
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.arch.Event
@@ -12,6 +13,7 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.AccountWithIdentity
+import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
@@ -29,6 +31,11 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private var _stateLiveData = MutableLiveData<State>()
     val stateLiveData: LiveData<State>
         get() = _stateLiveData
+
+    private var _identityLiveData = MutableLiveData<State>()
+    val identityLiveData: LiveData<State>
+        get() = _identityLiveData
+
     private var _totalBalanceLiveData = MutableLiveData<TotalBalancesData>()
     val totalBalanceLiveData: LiveData<TotalBalancesData>
         get() = _totalBalanceLiveData
@@ -36,10 +43,12 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val identityRepository: IdentityRepository
     private val accountRepository: AccountRepository
     private val accountUpdater = AccountUpdater(application, viewModelScope)
+
     val accountListLiveData: LiveData<List<AccountWithIdentity>>
+    val identityListLiveData: LiveData<List<Identity>>
 
     enum class State {
-        NO_IDENTITIES, NO_ACCOUNTS, DEFAULT
+        NO_IDENTITIES, NO_ACCOUNTS, DEFAULT, VALID_IDENTITIES
     }
 
     init {
@@ -58,6 +67,8 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                 _errorLiveData.value = Event(stringRes)
             }
         })
+        identityListLiveData = identityRepository.allIdentities
+
     }
 
     fun initialize() {
@@ -73,7 +84,16 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         // Decide what state to show (visible buttons based on if there is any identities and accounts)
         // Also update all accounts (and set the overall balance) if any exists.
         viewModelScope.launch {
-            val identityCount = identityRepository.getCount()
+
+            val doneIdentityCount = identityRepository.getAllDone().count()
+            if(doneIdentityCount > 0){
+                _identityLiveData.value = State.VALID_IDENTITIES
+            }
+            else {
+                _identityLiveData.value = State.NO_IDENTITIES
+            }
+
+            val identityCount = identityRepository.getNonFailedCount()
             if (identityCount == 0) {
                 _stateLiveData.value = State.NO_IDENTITIES
                 // Set balance, because we know it will be 0

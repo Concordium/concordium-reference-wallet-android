@@ -10,10 +10,12 @@ import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.MainViewModel
+import com.concordium.wallet.ui.RequestCodes
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.account.newaccountname.NewAccountNameActivity
 import com.concordium.wallet.ui.base.BaseFragment
+import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
 import com.concordium.wallet.util.Log
 import kotlinx.android.synthetic.main.fragment_accounts_overview.*
@@ -57,6 +59,8 @@ class AccountsOverviewFragment : BaseFragment() {
         viewModel.initiateFrequentUpdater()
     }
 
+
+
     override fun onPause() {
         super.onPause()
         viewModel.stopFrequentUpdater()
@@ -73,8 +77,8 @@ class AccountsOverviewFragment : BaseFragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        viewModel.stateLiveData.value?.let { state ->
-            if (state == AccountsOverviewViewModel.State.NO_ACCOUNTS || state == AccountsOverviewViewModel.State.DEFAULT) {
+        viewModel.identityLiveData.value?.let { state ->
+            if (state == AccountsOverviewViewModel.State.VALID_IDENTITIES) {
                 inflater.inflate(R.menu.add_item_menu, menu)
             }
         }
@@ -132,6 +136,16 @@ class AccountsOverviewFragment : BaseFragment() {
                 accountAdapter.setData(it)
             }
         })
+
+        viewModel.identityLiveData.observe(this, Observer { state ->
+            activity?.invalidateOptionsMenu()
+        })
+
+        viewModel.identityListLiveData.observe(this, Observer { identityList ->
+            viewModel.updateState()
+            viewModel.initiateFrequentUpdater()
+        })
+
     }
 
     private fun initializeViews(view: View) {

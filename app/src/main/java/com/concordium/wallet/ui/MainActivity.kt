@@ -156,8 +156,8 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
             R.string.dialog_initial_account_error_positive,
             R.string.dialog_support,
             R.string.dialog_cancel,
-            IdentityErrorDialogHelper.hash("lala"))*/
-
+            IdentityErrorDialogHelper.hash("lala"))
+*/
     }
 
     private fun initializeViews() {
