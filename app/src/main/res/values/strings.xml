@@ -279,8 +279,12 @@
     <string name="identity_confirmed_header">That’s it!</string>
     <string name="identity_confirmed_info">It might take a little while for the identity provider to finish your request.</string>
     <string name="identity_confirmed_info_first">It might take a little while for the identity provider to finish your request. In the meanwhile, you can have a look at the app.</string>
-    <string name="identity_confirmed_confirm">Finish!</string>
+    <string name="identity_confirmed_confirm">Continue</string>
     <string name="identity_confirmed_failed">Identity issuance failed!</string>
+
+    <string name="identity_confirmed_alert_dialog_title">Identity Issuance</string>
+    <string name="identity_confirmed_alert_dialog_text">Please check back in the app regularly, until the response from the identity provider has been received. It’s usually ready within 15 minutes, and can be retrieved for up to seven days.</string>
+    <string name="identity_confirmed_alert_dialog_ok">Okay</string>
 
     <!-- Identity attributes -->
     <string name="identity_attribute_first_name">First name</string>

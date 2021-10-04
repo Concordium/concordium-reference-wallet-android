@@ -1,5 +1,7 @@
 package com.concordium.wallet.ui.identity.identityconfirmed
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -104,7 +106,16 @@ class IdentityConfirmedActivity : BaseActivity(R.layout.activity_identity_confir
         showWaiting(true)
 
         confirm_button.setOnClickListener {
-            gotoIdentityOverview()
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(getString(R.string.identity_confirmed_alert_dialog_title))
+            builder.setMessage(getString(R.string.identity_confirmed_alert_dialog_text))
+            builder.setPositiveButton(getString(R.string.identity_confirmed_alert_dialog_ok), object: DialogInterface.OnClickListener {
+                override fun onClick(dialog: DialogInterface, which:Int) {
+                    gotoIdentityOverview()
+                }
+            })
+            builder.setCancelable(true)
+            builder.create().show()
         }
     }
 
