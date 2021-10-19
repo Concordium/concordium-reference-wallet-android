@@ -33,11 +33,15 @@
     <string name="dialog_send_email">Send email</string>
 
     <string name="dialog_support_subject_reference">Issuance reference: %1$s</string>
-    <string name="dialog_support_text">My Concordium identity issuance failed with hashed session ID: %1$s</string>
+    <string name="dialog_support_text">Hi! My identity issuance failed.\n\nHere is my info:\n\nIssuance reference:\n%1$s\n\nMobile Wallet version:\nv%2$s\n\nPlatform:\nAndroid %3$s</string>
 
 
     <string name="dialog_support">Contact Support</string>
-    <string name="dialog_popup_support_text">Something went wrong while creating your identity.\n\nYou can either try again, or contact Notabene’s support.\n\nClicking Contact Support will open your e-mail app, with a reference to your submission as subject.</string>
+    <string name="dialog_copy">Copy reference</string>
+    <string name="dialog_popup_support_with_email_client_text">The identity issuance failed. You can either try again, or contact Notabene’s support.\n\nClicking Contact Support will open your e-mail app, with a reference to your submission as subject.\n\nConcordium will be CC’ed in the correspondence.</string>
+    <string name="dialog_popup_support_without_email_client_text">The identity issuance failed. You can either try again, or contact Notabene’s support.\n\nYou can copy the reference below, and then contact Notabene at concordium-idiss@notabene.id\n\nOptional: Add Concordium as CC via idiss@concordium.software</string>
+
+
 
 
 
@@ -605,7 +609,11 @@
 
     <string name="contact_account_removed">The related initial account has been automatically removed.</string>
     <string name="contact_issuance_reference">Issuance reference:</string>
-    <string name="contact_issuance_hash_value_copied">Copied issuance reference</string>
+
+    <string name="contact_issuance_no_email_client_reference">You can copy the reference below, and then contact Notabene at concordium-idiss@notabene.id\n\nOptional: Add Concordium as CC via\nidiss@concordium.software</string>
+
+
+    <string name="contact_issuance_hash_value_copied">Reference text copied</string>
 
     <string name="send_fund_optional_memo">You can enter an optional memo here.</string>
     <string name="transaction_memo_warning_title">Transaction messages</string>

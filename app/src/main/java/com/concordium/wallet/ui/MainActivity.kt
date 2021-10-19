@@ -5,6 +5,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -148,16 +149,31 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
         })
 
 /*
-        dialogs.showPositiveSupportDialog(
-            this,
-            RequestCodes.REQUEST_IDENTITY_ERROR_DIALOG,
-            R.string.dialog_initial_account_error_title,
-            R.string.dialog_popup_support_text,
-            R.string.dialog_initial_account_error_positive,
-            R.string.dialog_support,
-            R.string.dialog_cancel,
-            IdentityErrorDialogHelper.hash("lala"))
+        if(IdentityErrorDialogHelper.canOpenSupportEmail(this)){
+            dialogs.showPositiveSupportDialog(
+                this,
+                RequestCodes.REQUEST_IDENTITY_ERROR_DIALOG,
+                R.string.dialog_initial_account_error_title,
+                R.string.dialog_popup_support_with_email_client_text,
+                R.string.dialog_initial_account_error_positive,
+                R.string.dialog_support,
+                R.string.dialog_cancel,
+                IdentityErrorDialogHelper.hash("lala"))
+        }
+        else{
+            dialogs.showPositiveSupportDialog(
+                this,
+                RequestCodes.REQUEST_IDENTITY_ERROR_DIALOG,
+                R.string.dialog_initial_account_error_title,
+                R.string.dialog_popup_support_without_email_client_text,
+                R.string.dialog_initial_account_error_positive,
+                R.string.dialog_copy,
+                R.string.dialog_cancel,
+                IdentityErrorDialogHelper.hash("lala"))
+
+        }
 */
+
     }
 
     private fun initializeViews() {

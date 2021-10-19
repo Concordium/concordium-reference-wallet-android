@@ -107,9 +107,9 @@
                     android:layout_width="@dimen/compact_layout_width"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="7dp"
                     android:layout_marginRight="@dimen/activity_horizontal_margin"
-                    android:layout_marginBottom="15dp"
+                    android:layout_marginBottom="10dp"
                     android:gravity="center_horizontal"
                     android:layout_gravity="center"
                     android:orientation="vertical">
@@ -123,12 +123,23 @@
                         android:gravity="center"
                         tools:text="Error message from API is shown here" />
 
+
+                    <TextView
+                        android:id="@+id/error_issuance_no_email_client_headline"
+                        style="@style/TextView.Small"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="2"
+                        android:gravity="center"
+                        android:layout_above="@+id/error_issuance_reference"
+                        android:text="@string/contact_issuance_no_email_client_reference" />
+
                     <TextView
                         android:id="@+id/error_issuance_reference"
                         style="@style/TextView.Small"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="1"
+                        android:layout_weight="0.4"
                         android:gravity="center"
                         android:layout_above="@+id/error_issuance_reference_hash_container"
                         android:text="@string/contact_issuance_reference" />
@@ -137,7 +148,7 @@
                         android:id="@+id/error_issuance_reference_hash_container"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="1"
+                        android:layout_weight="0.8"
                         android:layout_above="@+id/error_account_removed_textview"
                         android:orientation="horizontal">
                         <TextView
@@ -164,7 +175,7 @@
                         style="@style/TextView.Small"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_weight="1"
+                        android:layout_weight="0.8"
                         android:gravity="center"
                         android:layout_above="@+id/support_button"
                         android:text="@string/contact_account_removed" />

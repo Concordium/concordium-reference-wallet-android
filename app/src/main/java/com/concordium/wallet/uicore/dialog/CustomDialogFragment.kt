@@ -6,11 +6,13 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import com.concordium.wallet.App
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
@@ -246,7 +248,14 @@ class CustomDialogFragment : DialogFragment() {
         if (type == EDialogType.PositiveSupport) {
             builder.setNeutralButton(resNeutral,
                 DialogInterface.OnClickListener { _, _ ->
-                    context?.let{IdentityErrorDialogHelper.openSupportEmail(it, resources, uriSession)}
+                    context?.let{
+                        if(IdentityErrorDialogHelper.canOpenSupportEmail(it)){
+                            IdentityErrorDialogHelper.openSupportEmail(it, resources, uriSession)
+                        }
+                        else{
+                            IdentityErrorDialogHelper.copyToClipboard(it, title.toString(), resources.getString(R.string.dialog_support_text, uriSession, BuildConfig.VERSION_NAME, Build.VERSION.RELEASE))
+                        }
+                    }
                 })
             builder.setNegativeButton(resNegative,
                 DialogInterface.OnClickListener { _, _ ->

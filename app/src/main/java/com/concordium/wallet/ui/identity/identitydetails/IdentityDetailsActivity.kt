@@ -2,9 +2,11 @@ package com.concordium.wallet.ui.identity.identitydetails
 
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.room.Identity
@@ -73,14 +75,15 @@ class IdentityDetailsActivity :
                 }
             })
 
+            error_issuance_no_email_client_headline.visibility = if(IdentityErrorDialogHelper.canOpenSupportEmail(this)) View.GONE else View.VISIBLE
+
             val hash = IdentityErrorDialogHelper.hash(viewModel.identity.codeUri)
             error_issuance_reference_hash.text = hash
             error_issuance_reference_hash_copy.setOnClickListener {
-                val clipboard: ClipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText(title, hash)
-                clipboard.setPrimaryClip(clip)
-                popup.showSnackbar(root_layout, getString(R.string.contact_issuance_hash_value_copied))
+                IdentityErrorDialogHelper.copyToClipboard(this, title.toString(), resources.getString(R.string.dialog_support_text, hash, BuildConfig.VERSION_NAME, Build.VERSION.RELEASE))
             }
+
+            support_button.visibility = if(IdentityErrorDialogHelper.canOpenSupportEmail(this)) View.VISIBLE else View.GONE
 
             support_button.setOnClickListener(View.OnClickListener {
                 GlobalScope.launch {
