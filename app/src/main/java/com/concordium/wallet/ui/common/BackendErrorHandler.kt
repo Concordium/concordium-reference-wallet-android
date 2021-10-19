@@ -30,7 +30,7 @@ object BackendErrorHandler {
             }
             else -> {
                 Log.e("Exception from backend communication", e)
-                return R.string.app_error_backend_unknown
+                return R.string.app_error_backend_unknown2
             }
         }
     }

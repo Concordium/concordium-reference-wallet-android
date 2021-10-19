@@ -156,7 +156,8 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         Log.d("start")
         supervisorScope {
             try {
-                for (account in accountList) {
+                val accountListCloned = accountList.toMutableList() // prevent ConcurrentModificationException
+                for (account in accountListCloned) {
                     if ((account.transactionStatus == TransactionStatus.COMMITTED
                         || account.transactionStatus == TransactionStatus.RECEIVED
                         || account.transactionStatus == TransactionStatus.UNKNOWN) && !TextUtils.isEmpty(account.submissionId)
@@ -172,7 +173,8 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     }
                 }
 
-                for (request in accountSubmissionStatusRequestList) {
+                val accountSubmissionStatusRequestListCloned = accountSubmissionStatusRequestList.toMutableList() // prevent ConcurrentModificationException
+                for (request in accountSubmissionStatusRequestListCloned) {
                     Log.d("AccountSubmissionStatus Loop item start")
                     val submissionStatus = request.deferred.await()
 
@@ -243,6 +245,12 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     if (submissionStatus.cost != null) {
                         request.transfer.cost = submissionStatus.cost
                     }
+
+                    //IF GTU Drop we set cost to 0
+                    if(submissionStatus.status == TransactionStatus.COMMITTED && submissionStatus.sender != request.transfer.fromAddress){
+                        request.transfer.cost = 0
+                    }
+
                     Log.d("TransferSubmissionStatus Loop item end - ${request.transfer.submissionId} ${submissionStatus.status}")
                 }
             } catch (e: Exception) {
@@ -376,6 +384,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                 if (transfer.transactionStatus != TransactionStatus.ABSENT) {
 
                     accountUnshieldedBalance -= transfer.cost
+
                     if (transfer.outcome != TransactionOutcome.Reject) {
 
                         //Unshielding

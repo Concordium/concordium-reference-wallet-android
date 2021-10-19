@@ -22,6 +22,7 @@
     <string name="app_error_backend_internal_server">Cannot establish communication with the server.</string>
     <string name="app_error_backend_unknown_error_code">Cannot establish communication with the server.</string>
     <string name="app_error_backend_unknown">Unknown backend error.</string>
+    <string name="app_error_backend_unknown2">Unknown backend error</string>
     <string name="app_version">Version %1$s</string>
     <string name="app_gstroke">Ǥ</string>
 
