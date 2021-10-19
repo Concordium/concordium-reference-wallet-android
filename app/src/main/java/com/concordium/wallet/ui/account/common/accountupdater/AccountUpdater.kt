@@ -180,7 +180,9 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
 
                     //If we change state to finalized we save it in address book
                     if(request.account.transactionStatus != submissionStatus.status && submissionStatus.status == TransactionStatus.FINALIZED){
-                        recipientRepository.insert(Recipient(0, request.account.name, request.account.address))
+                        viewModelScope.launch(Dispatchers.Default) {
+                            recipientRepository.insert(Recipient(0, request.account.name, request.account.address))
+                        }
                     }
 
                     request.account.transactionStatus = submissionStatus.status

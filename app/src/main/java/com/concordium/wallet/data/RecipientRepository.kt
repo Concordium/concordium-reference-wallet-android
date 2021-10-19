@@ -15,7 +15,10 @@ class RecipientRepository(private val recipientDao: RecipientDao) {
     }
 
     suspend fun insert(recipient: Recipient) {
-        recipientDao.insert(recipient)
+        val existingRecipient = recipientDao.getRecipientByAddressAndName(recipient.name, recipient.address) //prevent adding multiple identical entries
+        if(existingRecipient == null){
+            recipientDao.insert(recipient)
+        }
     }
 
     suspend fun insertAll(recipientList: List<Recipient>) {

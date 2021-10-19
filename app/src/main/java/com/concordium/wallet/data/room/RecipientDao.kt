@@ -15,6 +15,9 @@ interface RecipientDao {
     @Query("SELECT * FROM recipient_table WHERE address = :address")
     suspend fun getRecipientByAddress(address: String): Recipient?
 
+    @Query("SELECT * FROM recipient_table WHERE address = :address AND name = :name")
+    fun getRecipientByAddressAndName(name: String, address: String): Recipient?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg recipient: Recipient)
 
@@ -26,4 +29,5 @@ interface RecipientDao {
 
     @Query("DELETE FROM recipient_table")
     suspend fun deleteAll()
+
 }
