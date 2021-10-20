@@ -150,7 +150,6 @@ class TransactionDetailsActivity :
                 amount_textview,
                 alert_imageview,
                 status_imageview,
-                progress_imageview,
                 lock_imageview,
                 viewModel.isShieldedAccount,
                 showDate = true

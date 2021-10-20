@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.CBORUtil
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
@@ -73,7 +74,7 @@ class SendFundsConfirmedActivity :
             memo_confirmation_textview.visibility = View.VISIBLE
             memo_confirmation_textview.text = getString(
                 R.string.send_funds_confirmation_memo,
-                viewModel.transfer.memo
+                viewModel.transfer?.memo?.let { CBORUtil.decodeHexAndCBOR(it) } ?: ""
             )
         }
 

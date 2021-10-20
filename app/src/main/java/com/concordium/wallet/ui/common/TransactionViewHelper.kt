@@ -25,7 +25,6 @@ object TransactionViewHelper {
         amountTextView: TextView,
         alertImageView: ImageView,
         statusImageView: ImageView,
-        progressImageView: ImageView,
         lockImageView: ImageView,
         isShieldedAccount: Boolean = false,
         showDate: Boolean = false,
@@ -59,7 +58,6 @@ object TransactionViewHelper {
             }
             totalTextView.visibility = View.VISIBLE
             lockImageView.visibility = View.GONE
-            progressImageView.visibility = View.GONE
         }
 
         fun showTransactionFeeText(){
@@ -71,7 +69,6 @@ object TransactionViewHelper {
         fun showDecryptedValueOfEncryptedAmount() {
             //show decrypted value of encrypted amount
             lockImageView.visibility = View.VISIBLE
-            progressImageView.visibility = View.GONE
             totalTextView.visibility = View.GONE
             costTextView.visibility = View.GONE
             amountTextView.visibility = View.GONE

@@ -45,7 +45,6 @@ class TransactionAdapter(
         private val amountTextView: TextView = view.amount_textview
         private val alertImageView: ImageView = view.alert_imageview
         private val statusImageView: ImageView = view.status_imageview
-        private val progressImageView: ImageView = view.progress_imageview
         private val lockImageView: ImageView = view.lock_imageview
 
 
@@ -64,7 +63,6 @@ class TransactionAdapter(
                     amountTextView,
                     alertImageView,
                     statusImageView,
-                    progressImageView,
                     lockImageView,
                     isShieldedAccount,
                     decryptCallback = object : OnClickListenerInterface {
