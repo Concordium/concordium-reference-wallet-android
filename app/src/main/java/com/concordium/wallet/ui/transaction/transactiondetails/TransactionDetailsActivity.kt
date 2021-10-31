@@ -156,6 +156,10 @@ class TransactionDetailsActivity :
             )
         }
 
+        title_textview.setElegantTextHeight(true);
+        title_textview.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        title_textview.setSingleLine(false);
+
         memo_textview.setElegantTextHeight(true);
         memo_textview.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
         memo_textview.setSingleLine(false);

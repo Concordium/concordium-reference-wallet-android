@@ -148,7 +148,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
             }
         })
 
-
+/*
         if(IdentityErrorDialogHelper.canOpenSupportEmail(this)){
             dialogs.showPositiveSupportDialog(
                 this,
@@ -172,7 +172,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
                 IdentityErrorDialogHelper.hash("lala"))
 
         }
-
+*/
 
     }
 
