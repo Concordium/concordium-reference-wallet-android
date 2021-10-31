@@ -92,7 +92,8 @@ object IdentityErrorDialogHelper {
      */
     fun openSupportEmail(context: Context, resources: Resources, uriSession: String, testOnly: Boolean = false): Boolean {
         val uriText = "mailto:concordium-idiss@notabene.id" +
-                "?subject=" + Uri.encode(resources.getString(R.string.dialog_support_subject_reference, uriSession)) +
+                "?cc=" + "idiss@concordium.software" +
+                "&subject=" + Uri.encode(resources.getString(R.string.dialog_support_subject_reference, uriSession)) +
                 "&body=" + Uri.encode(resources.getString(R.string.dialog_support_text, uriSession, BuildConfig.VERSION_NAME, Build.VERSION.RELEASE))
         val uri = Uri.parse(uriText)
         val sendIntent = Intent(Intent.ACTION_SENDTO)

@@ -25,6 +25,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
 
+
+
         <provider
             android:name="com.concordium.wallet.DataFileProvider"
             android:authorities="@string/PROVIDER_AUTHORITY"
@@ -290,5 +292,12 @@
 
 
     </application>
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="*" />
+        </intent>
+    </queries>
 
 </manifest>
