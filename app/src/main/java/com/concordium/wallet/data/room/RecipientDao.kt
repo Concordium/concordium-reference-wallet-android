@@ -2,6 +2,10 @@ package com.concordium.wallet.data.room
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import java.nio.file.Files.delete
+
+
+
 
 @Dao
 interface RecipientDao {
@@ -20,6 +24,14 @@ interface RecipientDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg recipient: Recipient)
+
+    @Transaction
+    suspend fun insertUnique(recipient: Recipient) {
+        val existingRecipient = getRecipientByAddressAndName(recipient.name, recipient.address) //prevent adding multiple identical entries
+        if(existingRecipient == null){
+            insert(recipient)
+        }
+    }
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(vararg recipient: Recipient)
