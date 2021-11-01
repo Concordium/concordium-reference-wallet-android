@@ -53,11 +53,11 @@ class AccountRepository(private val accountDao: AccountDao) {
     }
 
     suspend fun update(account: Account) {
-        accountDao.update(account)
+        accountDao.updateExceptFinalState(account)
     }
 
     suspend fun updateAll(accountList: List<Account>) {
-        accountDao.update(*accountList.toTypedArray())
+        accountDao.updateExceptFinalState(*accountList.toTypedArray())
     }
 
     suspend fun delete(account: Account) {

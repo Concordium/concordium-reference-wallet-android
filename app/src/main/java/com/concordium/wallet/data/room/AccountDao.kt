@@ -43,6 +43,19 @@ interface AccountDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(vararg account: Account)
 
+
+    @Transaction
+    suspend fun updateExceptFinalState(vararg accounts: Account) {
+        for (account in accounts) {
+            // finalized state is final and cannot be changed
+            val accountFromDB = findById(account.id)
+            if(accountFromDB != null && accountFromDB.transactionStatus == TransactionStatus.FINALIZED){
+                account.transactionStatus = TransactionStatus.FINALIZED
+            }
+            update(account)
+        }
+    }
+
     @Delete
     suspend fun delete(account: Account)
 
