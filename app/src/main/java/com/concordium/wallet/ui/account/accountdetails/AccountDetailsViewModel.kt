@@ -79,6 +79,10 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     val waitingLiveData: LiveData<Boolean>
         get() = _waitingLiveData
 
+    private val _newFinalizedAccountLiveData = MutableLiveData<String>()
+    val newFinalizedAccountLiveData: LiveData<String>
+        get() = _newFinalizedAccountLiveData
+
     private val _errorLiveData = MutableLiveData<Event<Int>>()
     val errorLiveData: LiveData<Event<Int>>
         get() = _errorLiveData
@@ -234,6 +238,12 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             override fun onDone(totalBalances: TotalBalancesData) {
                 _totalBalanceLiveData.value = Pair(if(isShielded) account.totalShieldedBalance else account.totalUnshieldedBalance, totalBalances.totalContainsEncrypted)
                 getLocalTransfers()
+            }
+
+            override fun onNewAccountFinalized(accountName: String) {
+                viewModelScope.launch {
+                    _newFinalizedAccountLiveData.value = accountName
+                }
             }
 
             override fun onError(stringRes: Int) {

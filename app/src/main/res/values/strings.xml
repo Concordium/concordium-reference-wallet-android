@@ -622,5 +622,13 @@
     <string name="transaction_memo_warning_ok">Okay</string>
     <string name="send_funds_optional_add_memo">Optional: Add memo</string>
 
+    <string name="finalized_account_title_singular">Your new account is ready!</string>
+    <string name="finalized_account_title_plural">Your new accounts are ready!</string>
+    <string name="finalized_account_message_singular">Your account %1$s has finalized, and is now ready for use.\n\nWe recommend keeping a back-up of all accounts. You can make one now below, or later via the More page.\n\nRemember to store your back-up securely.</string>
+    <string name="finalized_account_message_plural">Your new accounts are now finalized and ready for use.\n\nWe recommend keeping a back-up of all accounts. You can make one now below, or later via the More page.\n\nRemember to store your back-up securely.</string>
+    <string name="finalized_account_backup">Make back-up</string>
+    <string name="finalized_account_ok">Okay</string>
+
+
 
 </resources>

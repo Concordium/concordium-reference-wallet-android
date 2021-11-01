@@ -8,6 +8,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
@@ -16,6 +17,7 @@ import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
+import com.concordium.wallet.ui.more.export.ExportActivity
 
 
 class CustomDialogFragment : DialogFragment() {
@@ -32,6 +34,9 @@ class CustomDialogFragment : DialogFragment() {
         val KEY_NEGATIVE = "key_negative"
         val KEY_SUPPORT = "key_support"
         val KEY_SUPPORT_TIMESTAMP = "key_support_timestamp"
+
+        var dialogAccountFinalized: Dialog? = null;
+        var dialogAccountFinalizedMap: HashMap<String, String> = HashMap<String, String>();
 
         //region Create/cancel dialogs
         //************************************************************
@@ -185,6 +190,44 @@ class CustomDialogFragment : DialogFragment() {
                 uriSession
             )
         }
+
+
+        fun newAccountFinalizedDialog(context:Context, accountName: String) {
+
+            var title = context.getString(R.string.finalized_account_title_singular)
+            var message = context.getString(R.string.finalized_account_message_singular, accountName)
+
+            dialogAccountFinalizedMap.set(accountName, accountName)
+
+            if(dialogAccountFinalized != null && dialogAccountFinalizedMap.count() > 1){ // we are already showing one dialog, meaning we finalised more accounts
+                dialogAccountFinalized?.dismiss()
+                title = context.getString(R.string.finalized_account_title_plural)
+                message = context.getString(R.string.finalized_account_message_plural)
+            }
+
+            val builder = AlertDialog.Builder(context)
+            builder.setCancelable(true)//This have to be set on dialog to have effect
+            builder.setTitle(title)
+            builder.setMessage(message)
+            builder.setPositiveButton(context.getString(R.string.finalized_account_ok),
+                DialogInterface.OnClickListener { _, _ ->
+                    dialogAccountFinalized?.dismiss()
+                    dialogAccountFinalized = null
+                    dialogAccountFinalizedMap.clear()
+                })
+            builder.setNeutralButton(context.getString(R.string.finalized_account_backup),
+                DialogInterface.OnClickListener { _, _ ->
+                    dialogAccountFinalized?.dismiss()
+                    dialogAccountFinalized = null
+                    dialogAccountFinalizedMap.clear()
+
+                    val intent = Intent(context, ExportActivity::class.java)
+                    context.startActivity(intent)
+                })
+            dialogAccountFinalized = builder.create()
+            dialogAccountFinalized?.setCanceledOnTouchOutside(false)
+            dialogAccountFinalized?.show()
+        }
         //endregion
     }
 
@@ -274,6 +317,8 @@ class CustomDialogFragment : DialogFragment() {
         dialog.setCanceledOnTouchOutside(false)
         return dialog
     }
+
+
 
     override fun onCancel(dialog: DialogInterface) {
         super.onCancel(dialog)

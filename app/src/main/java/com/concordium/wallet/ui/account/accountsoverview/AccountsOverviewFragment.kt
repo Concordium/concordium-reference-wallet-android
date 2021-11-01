@@ -17,6 +17,7 @@ import com.concordium.wallet.ui.account.newaccountname.NewAccountNameActivity
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
+import com.concordium.wallet.uicore.dialog.CustomDialogFragment
 import com.concordium.wallet.util.Log
 import kotlinx.android.synthetic.main.fragment_accounts_overview.*
 import kotlinx.android.synthetic.main.fragment_accounts_overview.view.*
@@ -108,13 +109,17 @@ class AccountsOverviewFragment : BaseFragment() {
 
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let {
-                Log.d("waiting:"+waiting)
                 showWaiting(waiting)
             }
         })
         viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
                 showError(value)
+            }
+        })
+        viewModel.newFinalizedAccountLiveData.observe(this, Observer<String> { newAccount ->
+            newAccount?.let {
+                context?.let { CustomDialogFragment.newAccountFinalizedDialog(it, newAccount) }
             }
         })
         viewModel.stateLiveData.observe(this, Observer { state ->

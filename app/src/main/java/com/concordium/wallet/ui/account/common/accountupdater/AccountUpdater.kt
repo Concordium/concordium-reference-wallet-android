@@ -75,6 +75,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
     interface UpdateListener {
         fun onError(stringRes: Int)
         fun onDone(totalBalances: TotalBalancesData)
+        fun onNewAccountFinalized(accountName: String)
     }
 
     fun setUpdateListener(updateListener: UpdateListener) {
@@ -181,6 +182,9 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     //If we change state to finalized we save it in address book
                     if(request.account.transactionStatus != submissionStatus.status && submissionStatus.status == TransactionStatus.FINALIZED){
                         viewModelScope.launch(Dispatchers.Default) {
+
+
+                            updateListener?.onNewAccountFinalized(request.account.name)
                             recipientRepository.insert(Recipient(0, request.account.name, request.account.address))
                         }
                     }
