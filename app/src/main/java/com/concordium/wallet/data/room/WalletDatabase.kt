@@ -7,6 +7,12 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.concordium.wallet.data.room.WalletDatabase.Companion.VERSION_NUMBER
 import com.concordium.wallet.data.room.typeconverter.GlobalTypeConverters
+import androidx.sqlite.db.SupportSQLiteDatabase
+
+import androidx.room.migration.Migration
+
+
+
 
 @Database(
     entities = arrayOf(Identity::class, Account::class, Transfer::class, Recipient::class, EncryptedAmount::class),
@@ -24,7 +30,15 @@ public abstract class WalletDatabase : RoomDatabase() {
 
     companion object {
 
-        const val VERSION_NUMBER = 3
+        const val VERSION_NUMBER = 4
+
+
+        val MIGRATION_3_4: Migration = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE transfer_table "
+                        + " ADD COLUMN memo TEXT");
+            }
+        }
 
         // Singleton prevents multiple instances of database opening at the same time.
         @Volatile
@@ -40,7 +54,9 @@ public abstract class WalletDatabase : RoomDatabase() {
                     context.applicationContext,
                     WalletDatabase::class.java,
                     "wallet_database"
-                ).build()
+                )
+                    .addMigrations(MIGRATION_3_4)
+                    .build()
                 INSTANCE = instance
                 return instance
             }
