@@ -135,7 +135,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         var submissionId: String? = null
         var transferSubmissionStatus: TransferSubmissionStatus? = null
         var expiry: Long? = null
-        var memo: String = ""
+        var memo: String? = null
         var globalParams: GlobalParams? = null
         var receiverPublicKey: String? = null
         var accountBalance: AccountBalance? = null
@@ -195,7 +195,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             }
 
 
-        proxyRepository.getTransferCost(type, tempData.memo.length,
+        proxyRepository.getTransferCost(type, if(tempData.memo == null) 0 else tempData.memo!!.length,
             {
                 tempData.energy = it.energy
                 _transactionFeeLiveData.value = it.cost.toLong()
@@ -607,7 +607,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             transferSubmissionStatus.outcome ?: TransactionOutcome.UNKNOWN,
             if(isShielded){
                 if(isTransferToSameAccount()){
-                    if(memo.isEmpty()){
+                    if(memo == null || memo.isEmpty()){
                         TransactionType.TRANSFER
                     }
                     else{
@@ -615,7 +615,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
                     }
                 }
                 else{
-                    if(memo.isEmpty()){
+                    if(memo == null || memo.isEmpty()){
                         TransactionType.ENCRYPTEDAMOUNTTRANSFER
                     }
                     else{
@@ -649,8 +649,13 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         Integer.toUnsignedString(java.lang.Byte.toUnsignedInt(it), 16).padStart(2, '0')
     }
 
-    fun setMemo(memo: ByteArray){
-        tempData.memo = memo.toHexString()
+    fun setMemo(memo: ByteArray?){
+        if(memo != null){
+            tempData.memo = memo.toHexString()
+        }
+        else{
+            tempData.memo = null
+        }
         loadTransactionFee()
     }
 
@@ -666,6 +671,11 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun getClearTextMemo(): String? {
-        return CBORUtil.decodeHexAndCBOR(tempData.memo)
+        if(tempData.memo == null){
+            return null
+        }
+        else{
+            return CBORUtil.decodeHexAndCBOR(tempData.memo!!)
+        }
     }
 }

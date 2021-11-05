@@ -106,6 +106,7 @@ class SendFundsActivity :
                     setMemoText(memo)
                 }
                 else{
+                    viewModel.setMemo(null)
                     setMemoText("")
                 }
             }
@@ -292,7 +293,7 @@ class SendFundsActivity :
             setMemoText("")
 
             memo_clear.setOnClickListener {
-                viewModel.setMemo(CBORUtil.encodeCBOR(""))
+                viewModel.setMemo(null);//CBORUtil.encodeCBOR(""))
                 setMemoText("")
             }
 

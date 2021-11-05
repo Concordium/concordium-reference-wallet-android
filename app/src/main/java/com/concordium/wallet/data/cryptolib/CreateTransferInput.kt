@@ -10,7 +10,7 @@ data class CreateTransferInput(
     val amount: String,
     val energy: Long,
     val nonce: Int,
-    val memo: String,
+    val memo: String?,
     val global: GlobalParams?,
     val receiverPublicKey: String?,
     val senderSecretKey: String?,
