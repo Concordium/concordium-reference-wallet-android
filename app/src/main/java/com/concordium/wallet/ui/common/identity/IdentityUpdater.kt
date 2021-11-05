@@ -37,6 +37,7 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
     interface UpdateListener {
         fun onError(identity: Identity, account: Account?)
         fun onDone()
+        fun onNewAccountFinalized(accountName: String)
     }
 
     fun setUpdateListener(updateListener: UpdateListener) {
@@ -98,6 +99,7 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
                                     it.credential = accountCredentialWrapper
                                     if (identityTokenContainer.status == IdentityStatus.DONE) {
                                         if(account.transactionStatus != TransactionStatus.FINALIZED){
+                                            updateListener?.onNewAccountFinalized(account.name)
                                             recipientRepository.insert(Recipient(0, account.name, account.address))
                                         }
                                         account.transactionStatus = TransactionStatus.FINALIZED

@@ -122,6 +122,11 @@ class AccountsOverviewFragment : BaseFragment() {
                 context?.let { CustomDialogFragment.newAccountFinalizedDialog(it, newAccount) }
             }
         })
+        viewModel.newFinalizedAccountLiveData.observe(this, Observer<String> { newAccount ->
+            newAccount?.let {
+                context?.let { CustomDialogFragment.newAccountFinalizedDialog(it, newAccount) }
+            }
+        })
         viewModel.stateLiveData.observe(this, Observer { state ->
             when (state) {
                 AccountsOverviewViewModel.State.NO_IDENTITIES -> showStateNoIdentities()

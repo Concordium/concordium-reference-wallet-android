@@ -30,6 +30,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     public var databaseVersionAllowed = true
 
+    private val _newFinalizedAccountLiveData = MutableLiveData<String>()
+    val newFinalizedAccountLiveData: LiveData<String>
+        get() = _newFinalizedAccountLiveData
+
     private val _titleLiveData = MutableLiveData<String>()
     val titleLiveData: LiveData<String>
         get() = _titleLiveData
@@ -93,6 +97,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
 
             override fun onDone() {
+            }
+
+            override fun onNewAccountFinalized(accountName: String) {
+                viewModelScope.launch {
+                    _newFinalizedAccountLiveData.value = accountName
+                }
             }
         }
         identityUpdater.checkPendingIdentities(updateListener)

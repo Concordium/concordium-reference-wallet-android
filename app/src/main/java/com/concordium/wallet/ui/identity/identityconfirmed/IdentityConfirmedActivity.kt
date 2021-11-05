@@ -14,6 +14,7 @@ import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.RequestCodes
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
+import com.concordium.wallet.uicore.dialog.CustomDialogFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
 import kotlinx.android.synthetic.main.activity_identity_confirmed.*
 import kotlinx.android.synthetic.main.progress.*
@@ -99,6 +100,13 @@ class IdentityConfirmedActivity : BaseActivity(R.layout.activity_identity_confir
                 IdentityErrorDialogHelper.showIdentityError(this, dialogs, data)
             }
         })
+
+        viewModel.newFinalizedAccountLiveData.observe(this, Observer<String> { newAccount ->
+            newAccount?.let {
+                CustomDialogFragment.newAccountFinalizedDialog(this, newAccount)
+            }
+        })
+
     }
 
     private fun initializeViews() {

@@ -21,6 +21,7 @@ import com.concordium.wallet.ui.intro.introstart.IntroStartActivity
 import com.concordium.wallet.ui.intro.introstart.IntroTermsActivity
 import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
+import com.concordium.wallet.uicore.dialog.CustomDialogFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -147,6 +148,13 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
                 IdentityErrorDialogHelper.showIdentityError(this, dialogs, data)
             }
         })
+
+        viewModel.newFinalizedAccountLiveData.observe(this, Observer<String> { newAccount ->
+            newAccount?.let {
+                CustomDialogFragment.newAccountFinalizedDialog(this, newAccount)
+            }
+        })
+
 
 /*
         if(IdentityErrorDialogHelper.canOpenSupportEmail(this)){
