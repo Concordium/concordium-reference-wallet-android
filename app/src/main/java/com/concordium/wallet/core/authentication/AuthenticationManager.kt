@@ -252,4 +252,15 @@ class AuthenticationManager(biometricKeyName: String) {
         authPreferences.setUsePasscode(biometricKeyName, passcodeUsed)
     }
 
+    /**
+     * If the secret key cannot be found, we no longer want to try and authenticate with
+     * biometric auth.
+     * This can happen after a restore from a backup.
+     */
+    fun verifyValidBiometricKeyStore() {
+        if(KeystoreHelper().getSecretKey(biometricKeyName) == null){
+            authPreferences.setUseBiometrics(biometricKeyName, false)
+        }
+    }
+
 }

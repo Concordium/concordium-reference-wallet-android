@@ -92,7 +92,7 @@
      color: rgb(68, 134, 171);
   }
 </style>
-<h1>Effective from May 15th 2021</h1>
+<h1>Effective from November 10th 2021</h1>
 <h1>Introduction</h1>
 <p>Concordium Mobile Wallet is a digital wallet that is offered worldwide by Concordium Software ApS (‘Concordium Software’). At developer.concordium.software, you can read about how the app works. Concordium Software may continually change and/or adjust the functions of Concordium Mobile Wallet. Concordium Software’s terms and conditions apply to Concordium Mobile Wallet users worldwide.</p>
 <p>The wallet will register and use data about you. Concordium Software will not register or use data about you.</p>
@@ -158,6 +158,9 @@
 
 <h1>Privacy</h1>
 <p>Concordium Software respects your privacy to the effect that Concordium Software will not monitor, edit, or disclose any personal information about you or your account, including its contents or your use of the Concordium Mobile Wallet, without your prior consent unless Concordium Software in good faith beliefs that such action is necessary to: (i) comply with legal process or other legal requirements of any governmental authority; (ii) protect and defend the rights or property of Concordium Software; (iii) enforce this Agreement; (iv) protect the interests of users of the Concordium Mobile Wallet other than you or any other person; (v) operate or conduct maintenance and repair of Concordium’s services or equipment, including the Concordium Mobile Wallet as authorized by law; or (vi) if your identity is revoked in accordance with the identity revocation process as required to comply with (i). You are assumed to have no expectation of privacy with respect to the Internet generally. Your IP address is transmitted and recorded with each message or other information you send from the Concordium Mobile Wallet. When you create an identity with a third party supplier, you have entered an agreement directly with such a third supplier and such a third party supplier will store data about you and in this case, the third party supplier’s privacy policy and terms and conditions apply.</p>
+
+<h1>Data retention and deletion</h1>
+<p>Concordium as a company does not retain or delete any user identifiable information. However, to get an account you must obtain an identity object issued by an identity provider. The identity object contains some user identifiable information such as your name. By default the identity object is only stored in the wallet and is not visible on the chain. Some data derived from the identity object is sent to the chain, but by default it is not possible to obtain user identifiable information from the information stored in the account on the chain. However, if you choose to reveal any attributes associated with your account, these attributes will be visible on-chain, and can never be deleted.</p>
 
 <h1>Governing law and venue</h1>
 <p>The agreement and any dispute arising out of the agreement are governed by Danish law and such disputes must be heard by Copenhagen District Court or the jurisdiction of the defendant’s domicile unless otherwise provided by absolute consumer rights in Denmark. This applies without consideration for rules in international private law which may lead to the application of other law than Danish law.</p>
@@ -350,7 +353,7 @@
 
     <!-- New account setup -->
     <string name="new_account_setup_title">Reveal Identity Data?</string>
-    <string name="new_account_setup_info">You can choose to reveal a range of attributes on your account, e.g. your name and country of residence. This is not necessary, and you can choose to reveal no attributes at all.</string>
+    <string name="new_account_setup_info">You can choose to reveal a range of attributes on your account, e.g. your country of residence. Revealing attributes means that the information will be public on the Concordium blockchain, and that it cannot be hidden or deleted again.\n\nIf you have no good reason for revealing attributes, we strongly recommend not revealing any.</string>
     <string name="new_account_setup_confirm_reveal">Reveal account attributes</string>
     <string name="new_account_setup_confirm_submit">Submit account</string>
 
@@ -616,7 +619,7 @@
     <string name="contact_issuance_hash_value_copied">Reference text copied</string>
 
     <string name="send_fund_optional_memo">You can enter an optional memo here.</string>
-    <string name="transaction_memo_warning_title">Transaction messages</string>
+    <string name="transaction_memo_warning_title">Transaction memos</string>
     <string name="transaction_memo_warning_text">Transaction memos are public and visible to everyone on the blockchain. Any memo sent with a transaction are permament, and will be visible forever, so be careful what you write in the memo.\n\nAdding a memo will increase the transaction fee.</string>
     <string name="transaction_memo_warning_dont_show">Don’t show again</string>
     <string name="transaction_memo_warning_ok">Okay</string>

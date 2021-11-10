@@ -33,6 +33,7 @@ class AppCore(val context: Context) {
     init {
         cryptoLibrary =
             if (BuildConfig.USE_LIB_MOCK) CryptoLibraryMock(gson) else CryptoLibraryReal(gson)
+        authenticationManager.verifyValidBiometricKeyStore()
     }
 
     fun getProxyBackend(): ProxyBackend {

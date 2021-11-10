@@ -48,6 +48,7 @@
                     <TextView
                         android:id="@+id/info_textview"
                         style="@style/TextView.Standard.Light"
+                        android:textColor="@color/text_black"
                         android:gravity="center_horizontal"
                         android:text="@string/new_account_setup_info" />
 
