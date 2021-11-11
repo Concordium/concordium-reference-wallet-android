@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "86c137967281af493068afe57e5d6ca4",
+    "identityHash": "7a5467f246c2a615c1172b537abc461e",
     "entities": [
       {
         "tableName": "identity_table",
@@ -220,7 +220,7 @@
       },
       {
         "tableName": "transfer_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `account_id` INTEGER NOT NULL, `amount` INTEGER NOT NULL, `cost` INTEGER NOT NULL, `from_address` TEXT NOT NULL, `to_address` TEXT NOT NULL, `expiry` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `submission_id` TEXT NOT NULL, `transaction_status` INTEGER NOT NULL, `outcome` INTEGER NOT NULL, `transactionType` TEXT NOT NULL, `newSelfEncryptedAmount` TEXT, `newStartIndex` INTEGER NOT NULL, `nonce` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `account_id` INTEGER NOT NULL, `amount` INTEGER NOT NULL, `cost` INTEGER NOT NULL, `from_address` TEXT NOT NULL, `to_address` TEXT NOT NULL, `expiry` INTEGER NOT NULL, `memo` TEXT, `created_at` INTEGER NOT NULL, `submission_id` TEXT NOT NULL, `transaction_status` INTEGER NOT NULL, `outcome` INTEGER NOT NULL, `transactionType` TEXT NOT NULL, `newSelfEncryptedAmount` TEXT, `newStartIndex` INTEGER NOT NULL, `nonce` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -263,6 +263,12 @@
             "columnName": "expiry",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "memo",
+            "columnName": "memo",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "createdAt",
@@ -384,7 +390,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '86c137967281af493068afe57e5d6ca4')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7a5467f246c2a615c1172b537abc461e')"
     ]
   }
 }

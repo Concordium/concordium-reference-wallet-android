@@ -9,6 +9,7 @@ import com.google.gson.annotations.JsonAdapter
 data class StorageAccountData(
     val accountAddress: String,
     val accountKeys: AccountData,
-    val encryptionSecretKey: String
-
+    val encryptionSecretKey: String,
+    @JsonAdapter(RawJsonTypeAdapter::class)
+    val commitmentsRandomness: RawJson?
 )

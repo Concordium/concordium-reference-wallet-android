@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_root_layout"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/list_item_height"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/list_item_height"
     android:background="@drawable/list_item">
 
     <ImageView
@@ -12,114 +13,135 @@
         style="@style/Image"
         android:layout_width="25dp"
         android:layout_height="25dp"
+        android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/list_item_horizontal_margin"
         android:src="@drawable/ic_status_problem"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:visibility="visible" />
-
-    <TextView
-        android:id="@+id/title_textview"
-        style="@style/TextView.ListItemHeader"
-        android:layout_width="0dp"
-        android:layout_marginLeft="@dimen/list_item_horizontal_margin"
-        android:layout_marginRight="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/subheader_textview"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintLeft_toRightOf="@id/alert_imageview"
-        app:layout_constraintRight_toLeftOf="@id/total_textview"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:layout_goneMarginLeft="@dimen/list_item_horizontal_margin"
-        tools:text="John Doe looooooooooooooooooooooo12345678" />
-
-    <TextView
-        android:id="@+id/subheader_textview"
-        style="@style/TextView.ListItemSubHeader"
-        android:layout_width="wrap_content"
-        android:layout_marginLeft="@dimen/list_item_horizontal_margin"
-        android:layout_marginRight="30dp"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintLeft_toRightOf="@id/alert_imageview"
-        app:layout_constraintRight_toLeftOf="@id/amount_textview"
-        app:layout_constraintTop_toBottomOf="@+id/title_textview"
-        app:layout_goneMarginLeft="@dimen/list_item_horizontal_margin"
-        tools:text="15:45 dadas dsfdsfdsfsdf"
-        tools:visibility="visible" />
-
-    <ImageView
-        android:id="@+id/status_imageview"
-        style="@style/Image"
-        android:layout_marginLeft="6dp"
-        android:src="@drawable/ic_time"
-        app:layout_constraintBottom_toBottomOf="@id/subheader_textview"
-        app:layout_constraintLeft_toRightOf="@+id/subheader_textview"
-        app:layout_constraintTop_toTopOf="@id/subheader_textview"
-        tools:visibility="visible" />
-
-    <TextView
-        android:id="@+id/total_textview"
-        style="@style/TextView.ListItemHeader"
-        android:layout_marginRight="@dimen/list_item_horizontal_margin"
-        app:layout_constraintBottom_toTopOf="@+id/cost_textview"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        tools:text="- Ǥ1000.65" />
-
-    <TextView
-        android:id="@+id/cost_textview"
-        style="@style/TextView.ListItemSubHeader"
-        android:layout_marginRight="@dimen/list_item_horizontal_margin"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/total_textview"
-        tools:text="Ǥ0.0059 Fee"
-        tools:visibility="visible" />
-
-    <TextView
-        android:id="@+id/amount_textview"
-        style="@style/TextView.ListItemSubHeader"
-        app:layout_constraintBottom_toBottomOf="@id/cost_textview"
-        app:layout_constraintRight_toLeftOf="@id/cost_textview"
-        app:layout_constraintTop_toTopOf="@id/cost_textview"
-        tools:text="Ǥ1000000.30 + "
-        tools:visibility="visible" />
-
-    <ImageView
-        android:id="@+id/progress_imageview"
-        style="@style/Image"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginRight="@dimen/list_item_horizontal_margin"
-        android:src="@drawable/ic_pending"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="gone"
         tools:visibility="gone" />
 
-    <ImageView
-        android:id="@+id/lock_imageview"
-        style="@style/Image"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginRight="@dimen/list_item_horizontal_margin"
-        android:src="@drawable/ic_lock"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="gone"
-        tools:visibility="visible" />
+    <LinearLayout
+        android:id="@+id/main_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/list_item_height"
+        android:paddingStart="@dimen/list_item_horizontal_margin"
+        android:paddingEnd="@dimen/list_item_horizontal_margin"
+        android:layout_toRightOf="@+id/alert_imageview"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/title_textview"
+                style="@style/TextView.ListItemHeader"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_alignParentStart="true"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/total_textview"
+                tools:text="JohnDoelooooooooooooooooooooooo12345678" />
+            <TextView
+                android:id="@+id/total_textview"
+                style="@style/TextView.ListItemHeader"
+                android:layout_alignParentEnd="true"
+                tools:text="- Ǥ1000000000000.65" />
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- time group -->
+            <RelativeLayout
+                android:id="@+id/subheader_container"
+                android:layout_width="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:gravity="center_vertical"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/subheader_textview"
+                    style="@style/TextView.ListItemSubHeader"
+                    android:layout_width="wrap_content"
+                    android:layout_marginRight="4dp"
+                    tools:text="15:45 dadas dsfdsfdsfsdf"
+                    tools:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/status_imageview"
+                    style="@style/Image"
+                    android:layout_marginLeft="6dp"
+                    android:layout_toRightOf="@+id/subheader_textview"
+                    android:src="@drawable/ic_time"
+                    tools:src="@drawable/ic_ok_x2"
+                    android:layout_centerInParent="true"
+                    tools:visibility="visible" />
+            </RelativeLayout>
+            <!-- end time group -->
+
+
+            <!-- fee group -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_alignParentEnd="true">
+                <TextView
+                    android:id="@+id/amount_textview"
+                    style="@style/TextView.ListItemSubHeader"
+                    tools:text="Ǥ1.30 + "
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/cost_textview"
+                    style="@style/TextView.ListItemSubHeader"
+                    tools:text="Ǥ0.059 Fee"
+                    tools:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/lock_imageview"
+                    style="@style/Image"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_lock"
+                    android:visibility="gone"
+                    android:layout_centerInParent="true"
+                    tools:visibility="visible" />
+            </LinearLayout>
+            <!-- end fee group -->
+
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/memo_textview"
+            style="@style/TextView.ListItemSubHeader"
+            app:layout_constrainedWidth="true"
+            android:layout_width="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/divider"
+            app:layout_constraintEnd_toEndOf="@+id/total_textview"
+            app:layout_constraintLeft_toRightOf="@id/alert_imageview"
+            app:layout_constraintRight_toRightOf="@+id/total_textview"
+            app:layout_constraintStart_toStartOf="@+id/title_textview"
+            app:layout_constraintTop_toBottomOf="@id/subheader_textview"
+            app:layout_constraintHorizontal_bias="0.0"
+            tools:text="Memotext dsf ds fdsfdsf ds fds f dsf dsf ds fds f dsf  sdf ds f dsf"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
 
     <View
         android:id="@+id/divider"
         style="@style/Divider"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        android:layout_width="match_parent"
+        android:layout_below="@+id/main_container"
+        />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

@@ -22,12 +22,29 @@
     <string name="app_error_backend_internal_server">Cannot establish communication with the server.</string>
     <string name="app_error_backend_unknown_error_code">Cannot establish communication with the server.</string>
     <string name="app_error_backend_unknown">Unknown backend error.</string>
+    <string name="app_error_backend_unknown2">Unknown backend error</string>
     <string name="app_version">Version %1$s</string>
     <string name="app_gstroke">Ǥ</string>
 
     <!-- Dialogs -->
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
+
+    <string name="dialog_send_email">Send email</string>
+
+    <string name="dialog_support_subject_reference">Issuance reference: %1$s</string>
+    <string name="dialog_support_text">Hi! My identity issuance failed.\n\nHere is my info:\n\nIssuance reference:\n%1$s\n\nMobile Wallet version:\nv%2$s\n\nPlatform:\nAndroid %3$s</string>
+
+
+    <string name="dialog_support">Contact Support</string>
+    <string name="dialog_copy">Copy reference</string>
+    <string name="dialog_popup_support_with_email_client_text">The identity issuance failed. You can either try again, or contact Notabene’s support.\n\nClicking Contact Support will open your e-mail app, with a reference to your submission as subject.\n\nConcordium will be CC’ed in the correspondence.</string>
+    <string name="dialog_popup_support_without_email_client_text">The identity issuance failed. You can either try again, or contact Notabene’s support.\n\nYou can copy the reference below, and then contact Notabene at concordium-idiss@notabene.id\n\nOptional: Add Concordium as CC via idiss@concordium.software</string>
+
+
+
+
+
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
     <string name="dialog_initial_account_error_title">Initial account creation failed</string>
@@ -52,6 +69,7 @@
     <string name="failed_try_again">Please try again.</string>
     <string name="failed_confirm">Ok</string>
     <string name="failed_remove">Remove from list</string>
+    <string name="contact_support">Contact support</string>
 
 
     <!-- ***** Intro ***** -->
@@ -74,7 +92,7 @@
      color: rgb(68, 134, 171);
   }
 </style>
-<h1>Effective from May 15th 2021</h1>
+<h1>Effective from November 10th 2021</h1>
 <h1>Introduction</h1>
 <p>Concordium Mobile Wallet is a digital wallet that is offered worldwide by Concordium Software ApS (‘Concordium Software’). At developer.concordium.software, you can read about how the app works. Concordium Software may continually change and/or adjust the functions of Concordium Mobile Wallet. Concordium Software’s terms and conditions apply to Concordium Mobile Wallet users worldwide.</p>
 <p>The wallet will register and use data about you. Concordium Software will not register or use data about you.</p>
@@ -140,6 +158,9 @@
 
 <h1>Privacy</h1>
 <p>Concordium Software respects your privacy to the effect that Concordium Software will not monitor, edit, or disclose any personal information about you or your account, including its contents or your use of the Concordium Mobile Wallet, without your prior consent unless Concordium Software in good faith beliefs that such action is necessary to: (i) comply with legal process or other legal requirements of any governmental authority; (ii) protect and defend the rights or property of Concordium Software; (iii) enforce this Agreement; (iv) protect the interests of users of the Concordium Mobile Wallet other than you or any other person; (v) operate or conduct maintenance and repair of Concordium’s services or equipment, including the Concordium Mobile Wallet as authorized by law; or (vi) if your identity is revoked in accordance with the identity revocation process as required to comply with (i). You are assumed to have no expectation of privacy with respect to the Internet generally. Your IP address is transmitted and recorded with each message or other information you send from the Concordium Mobile Wallet. When you create an identity with a third party supplier, you have entered an agreement directly with such a third supplier and such a third party supplier will store data about you and in this case, the third party supplier’s privacy policy and terms and conditions apply.</p>
+
+<h1>Data retention and deletion</h1>
+<p>Concordium as a company does not retain or delete any user identifiable information. However, to get an account you must obtain an identity object issued by an identity provider. The identity object contains some user identifiable information such as your name. By default the identity object is only stored in the wallet and is not visible on the chain. Some data derived from the identity object is sent to the chain, but by default it is not possible to obtain user identifiable information from the information stored in the account on the chain. However, if you choose to reveal any attributes associated with your account, these attributes will be visible on-chain, and can never be deleted.</p>
 
 <h1>Governing law and venue</h1>
 <p>The agreement and any dispute arising out of the agreement are governed by Danish law and such disputes must be heard by Copenhagen District Court or the jurisdiction of the defendant’s domicile unless otherwise provided by absolute consumer rights in Denmark. This applies without consideration for rules in international private law which may lead to the application of other law than Danish law.</p>
@@ -266,8 +287,12 @@
     <string name="identity_confirmed_header">That’s it!</string>
     <string name="identity_confirmed_info">It might take a little while for the identity provider to finish your request.</string>
     <string name="identity_confirmed_info_first">It might take a little while for the identity provider to finish your request. In the meanwhile, you can have a look at the app.</string>
-    <string name="identity_confirmed_confirm">Finish!</string>
+    <string name="identity_confirmed_confirm">Continue</string>
     <string name="identity_confirmed_failed">Identity issuance failed!</string>
+
+    <string name="identity_confirmed_alert_dialog_title">Identity Issuance</string>
+    <string name="identity_confirmed_alert_dialog_text">Please check back in the app regularly, until the response from the identity provider has been received. It’s usually ready within 15 minutes, and can be retrieved for up to seven days.</string>
+    <string name="identity_confirmed_alert_dialog_ok">Okay</string>
 
     <!-- Identity attributes -->
     <string name="identity_attribute_first_name">First name</string>
@@ -328,7 +353,7 @@
 
     <!-- New account setup -->
     <string name="new_account_setup_title">Reveal Identity Data?</string>
-    <string name="new_account_setup_info">You can choose to reveal a range of attributes on your account, e.g. your name and country of residence. This is not necessary, and you can choose to reveal no attributes at all.</string>
+    <string name="new_account_setup_info">You can choose to reveal a range of attributes on your account, e.g. your country of residence. Revealing attributes means that the information will be public on the Concordium blockchain, and that it cannot be hidden or deleted again.\n\nIf you have no good reason for revealing attributes, we strongly recommend not revealing any.</string>
     <string name="new_account_setup_confirm_reveal">Reveal account attributes</string>
     <string name="new_account_setup_confirm_submit">Submit account</string>
 
@@ -365,7 +390,7 @@
     <string name="account_details_header_today">Today</string>
     <string name="account_details_header_yesterday">Yesterday</string>
     <string name="account_details_gtu_drop_header">TESTNET GTU DROP</string>
-    <string name="account_details_gtu_drop_info">On the Concordium Testnet, you can request 100GTU to be deposited to an account to get you started.</string>
+    <string name="account_details_gtu_drop_info">On the Concordium Testnet, you can request 2000GTU to be deposited to an account to get you started.</string>
     <string name="account_details_gtu_drop_button">Request 2000GTU</string>
     <string name="account_details_shielded_transaction_fee">Shielded transaction fee</string>
 
@@ -404,11 +429,20 @@
     <string name="send_funds_confirm_shield">Shield amount</string>
     <string name="send_funds_confirm_unshield">Unshield amount</string>
     <string name="send_funds_confirm_send_shielded">Send shielded amount</string>
-    <string name="send_funds_confirmation">Confirm to transfer\n%1$s to %2$s\nEstimated transaction fee:\n%3$s</string>
-    <string name="send_funds_confirmation_shield">Confirm to shield\n%1$s in account: %2$s\nEstimated transaction fee:\n%3$s</string>
-    <string name="send_funds_confirmation_unshield">Confirm to unshield\n%1$s in account: %2$s\nEstimated transaction fee:\n%3$s</string>
-    <string name="send_funds_confirmation_send_shielded">Confirm to send shielded amount\n%1$s to %2$s\nEstimated transaction fee:\n%3$s</string>
+    <string name="send_funds_confirmation">Confirm to transfer\n%1$s to %2$s\nEstimated transaction fee:\n%3$s\n%4$s</string>
+    <string name="send_funds_confirmation_shield">Confirm to shield\n%1$s in account: %2$s\nEstimated transaction fee:\n%3$s\n%4$s</string>
+    <string name="send_funds_confirmation_unshield">Confirm to unshield\n%1$s in account: %2$s\nEstimated transaction fee:\n%3$s\n%4$s</string>
+    <string name="send_funds_confirmation_send_shielded">Confirm to send shielded amount\n%1$s to %2$s\nEstimated transaction fee:\n%3$s\n%4$s</string>
+    <string name="send_funds_confirmation_memo">Memo: %1$s</string>
+    <string name="send_funds_confirmation_memo_with_linebreak">Memo:\n%1$s</string>
     <string name="send_funds_error_same_account">Recipient account is not allowed to be the same as sending account.</string>
+
+    <!-- Add Memo -->
+    <string name="add_memo_title">Add memo</string>
+    <string name="add_memo_intro">Enter your memo below.</string>
+    <string name="add_memo_confirm">Add memo to transfer</string>
+    <string name="add_memo_hint">You can enter an optional memo here.</string>
+
 
     <!--  Send funds confirmed  -->
     <string name="send_funds_confirmed_title">Send funds</string>
@@ -563,7 +597,7 @@
     <string name="account_release_schedule_locked_amount">Locked amount:</string>
     <string name="account_release_schedule_release_date">Release date</string>
     <string name="account_release_schedule_amount">Amount</string>
-    <string name="account_release_schedule_copied">Address copied</string>
+    <string name="account_release_schedule_copied">Transaction copied</string>
     <string name="account_release_schedule_copy_title">Account address</string>
     <string name="account_details_baker_id">Baker ID:</string>
 
@@ -575,6 +609,29 @@
     <string name="change_password_successfully_changed">Passcode was successfully changed</string>
     <string name="change_password_final_error">Passcode could not successfully be changed</string>
     <string name="accounts_overview_currently_available_amounts">Currently available amounts:</string>
+
+    <string name="contact_account_removed">The related initial account has been automatically removed.</string>
+    <string name="contact_issuance_reference">Issuance reference:</string>
+
+    <string name="contact_issuance_no_email_client_reference">You can copy the reference below, and then contact Notabene at concordium-idiss@notabene.id\n\nOptional: Add Concordium as CC via\nidiss@concordium.software</string>
+
+
+    <string name="contact_issuance_hash_value_copied">Reference text copied</string>
+
+    <string name="send_fund_optional_memo">You can enter an optional memo here.</string>
+    <string name="transaction_memo_warning_title">Transaction memos</string>
+    <string name="transaction_memo_warning_text">Transaction memos are public and visible to everyone on the blockchain. Any memo sent with a transaction are permament, and will be visible forever, so be careful what you write in the memo.\n\nAdding a memo will increase the transaction fee.</string>
+    <string name="transaction_memo_warning_dont_show">Don’t show again</string>
+    <string name="transaction_memo_warning_ok">Okay</string>
+    <string name="send_funds_optional_add_memo">Optional: Add memo</string>
+
+    <string name="finalized_account_title_singular">Your new account is ready!</string>
+    <string name="finalized_account_title_plural">Your new accounts are ready!</string>
+    <string name="finalized_account_message_singular">Your account %1$s has finalized, and is now ready for use.\n\nWe recommend keeping a back-up of all accounts. You can make one now below, or later via the More page.\n\nRemember to store your back-up securely.</string>
+    <string name="finalized_account_message_plural">Your new accounts are now finalized and ready for use.\n\nWe recommend keeping a back-up of all accounts. You can make one now below, or later via the More page.\n\nRemember to store your back-up securely.</string>
+    <string name="finalized_account_backup">Make back-up</string>
+    <string name="finalized_account_ok">Okay</string>
+
 
 
 </resources>

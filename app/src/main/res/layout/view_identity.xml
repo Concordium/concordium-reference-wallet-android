@@ -28,8 +28,8 @@
 
         <ImageView
             android:id="@+id/status_imageview"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="12dp"
+            android:layout_height="29dp"
             android:layout_marginStart="10dp"
             android:src="@drawable/ic_pending"
             app:layout_constraintBottom_toBottomOf="@id/logo_imageview"

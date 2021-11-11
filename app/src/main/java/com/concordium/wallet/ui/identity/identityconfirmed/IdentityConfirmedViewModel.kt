@@ -23,6 +23,11 @@ class IdentityConfirmedViewModel(application: Application) : AndroidViewModel(ap
     private val accountRepository: AccountRepository
     private val identityUpdater = IdentityUpdater(application, viewModelScope)
 
+    private val _newFinalizedAccountLiveData = MutableLiveData<String>()
+    val newFinalizedAccountLiveData: LiveData<String>
+        get() = _newFinalizedAccountLiveData
+
+
     private val _waitingLiveData = MutableLiveData<Boolean>()
     val waitingLiveData: LiveData<Boolean>
         get() = _waitingLiveData
@@ -71,6 +76,12 @@ class IdentityConfirmedViewModel(application: Application) : AndroidViewModel(ap
             }
 
             override fun onDone() {
+            }
+
+            override fun onNewAccountFinalized(accountName: String) {
+                viewModelScope.launch {
+                    _newFinalizedAccountLiveData.value = accountName
+                }
             }
         }
         identityUpdater.checkPendingIdentities(updateListener)

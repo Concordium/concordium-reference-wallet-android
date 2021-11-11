@@ -1,8 +1,6 @@
 package com.concordium.wallet.data.cryptolib
 
-import com.concordium.wallet.core.gson.RawJsonTypeAdapter
 import com.concordium.wallet.data.model.*
-import com.google.gson.annotations.JsonAdapter
 
 data class CreateTransferInput(
     val from: String,
@@ -12,6 +10,7 @@ data class CreateTransferInput(
     val amount: String,
     val energy: Long,
     val nonce: Int,
+    val memo: String?,
     val global: GlobalParams?,
     val receiverPublicKey: String?,
     val senderSecretKey: String?,

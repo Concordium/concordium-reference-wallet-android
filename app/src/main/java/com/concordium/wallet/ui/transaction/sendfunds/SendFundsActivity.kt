@@ -1,5 +1,7 @@
 package com.concordium.wallet.ui.transaction.sendfunds
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -9,9 +11,11 @@ import android.text.method.TextKeyListener
 import android.view.Gravity
 import android.view.View
 import android.view.ViewTreeObserver
+import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.CBORUtil
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.backend.BackendError
@@ -27,11 +31,17 @@ import com.concordium.wallet.ui.transaction.sendfundsconfirmed.SendFundsConfirme
 import com.concordium.wallet.uicore.DecimalTextWatcher
 import com.concordium.wallet.uicore.afterTextChanged
 import com.concordium.wallet.util.Log
+import com.google.gson.Gson
+import com.google.iot.cbor.CborMap
 import kotlinx.android.synthetic.main.activity_send_funds.*
 import kotlinx.android.synthetic.main.item_account.view.*
 import kotlinx.android.synthetic.main.progress.*
 import java.text.DecimalFormatSymbols
 import javax.crypto.Cipher
+import com.google.iot.cbor.CborArray
+import com.google.iot.cbor.CborObject
+import org.json.JSONObject
+
 
 class SendFundsActivity :
     BaseActivity(R.layout.activity_send_funds, R.string.send_funds_title) {
@@ -40,6 +50,7 @@ class SendFundsActivity :
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
         const val EXTRA_SHIELDED = "EXTRA_SHIELDED"
         const val EXTRA_RECIPIENT = "EXTRA_RECIPIENT"
+        const val EXTRA_MEMO = "EXTRA_MEMO"
     }
 
     private lateinit var viewModel: SendFundsViewModel
@@ -54,6 +65,8 @@ class SendFundsActivity :
         val isShielded = intent.extras!!.getBoolean(EXTRA_SHIELDED)
         initializeViewModel()
         viewModel.initialize(account, isShielded)
+        handleRecipient(intent)
+        handleMemo(intent)
         initViews()
 
         scrollview_container.viewTreeObserver.addOnGlobalLayoutListener(
@@ -64,12 +77,12 @@ class SendFundsActivity :
                     })
                 }
             });
-        handleRecipient(intent)
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         handleRecipient(intent)
+        handleMemo(intent)
     }
 
     fun handleRecipient(intent: Intent?){
@@ -81,6 +94,33 @@ class SendFundsActivity :
                 select_recipient_layout.visibility = View.GONE
                 setActionBarTitle(if(viewModel.isShielded) R.string.send_funds_unshield_title else R.string.send_funds_shield_title)
             }
+        }
+    }
+
+    fun handleMemo(intent: Intent?){
+        intent?.let {
+            if(it.hasExtra(EXTRA_MEMO)){
+                val memo = it.getStringExtra(EXTRA_MEMO) as? String
+                if(memo != null && memo.isNotEmpty()){
+                    viewModel.setMemo(CBORUtil.encodeCBOR(memo))
+                    setMemoText(memo)
+                }
+                else{
+                    viewModel.setMemo(null)
+                    setMemoText("")
+                }
+            }
+        }
+    }
+
+    fun setMemoText(txt: String){
+        if(txt.isNotEmpty()){
+            memo_textview.text = txt
+            memo_clear.visibility = View.VISIBLE
+        }
+        else{
+            memo_textview.text = getString(R.string.send_funds_optional_add_memo)
+            memo_clear.visibility = View.INVISIBLE
         }
     }
 
@@ -219,6 +259,47 @@ class SendFundsActivity :
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
         })
+
+        if(viewModel.isTransferToSameAccount()){
+            memo_container.visibility = View.GONE
+        }
+        else{
+            memo_container.visibility = View.VISIBLE
+
+            memo_container.setOnClickListener {
+                if(viewModel.showMemoWarning()){
+                    val builder = AlertDialog.Builder(this)
+                    builder.setTitle(getString(R.string.transaction_memo_warning_title))
+                    builder.setMessage(getString(R.string.transaction_memo_warning_text))
+                    builder.setNegativeButton(getString(R.string.transaction_memo_warning_dont_show), object: DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface, which:Int) {
+                            viewModel.dontShowMemoWarning()
+                            gotoEnterMemo()
+                        }
+                    })
+                    builder.setPositiveButton(getString(R.string.transaction_memo_warning_ok), object: DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface, which:Int) {
+                            gotoEnterMemo()
+                        }
+                    })
+                    builder.setCancelable(true)
+                    builder.create().show()
+                }
+                else{
+                    gotoEnterMemo()
+                }
+            }
+
+            setMemoText("")
+
+            memo_clear.setOnClickListener {
+                viewModel.setMemo(null);//CBORUtil.encodeCBOR(""))
+                setMemoText("")
+            }
+
+        }
+
+
         amount_edittext.requestFocus()
 
         select_recipient_textview.setText(if(viewModel.isShielded) R.string.send_funds_select_recipient_or_unshield_amount else R.string.send_funds_select_recipient_or_shield_amount)
@@ -260,6 +341,12 @@ class SendFundsActivity :
         intent.putExtra(RecipientListActivity.EXTRA_SELECT_RECIPIENT_MODE, true)
         intent.putExtra(RecipientListActivity.EXTRA_SHIELDED, viewModel.isShielded)
         intent.putExtra(RecipientListActivity.EXTRA_ACCOUNT, viewModel.account)
+        startActivity(intent)
+    }
+
+    private fun gotoEnterMemo() {
+        val intent = Intent(this, AddMemoActivity::class.java)
+        intent.putExtra(AddMemoActivity.EXTRA_MEMO, viewModel.getClearTextMemo())
         startActivity(intent)
     }
 
@@ -364,17 +451,19 @@ class SendFundsActivity :
         val amountString = CurrencyUtil.formatGTU(amount, withGStroke = true)
         val costString = CurrencyUtil.formatGTU(cost, withGStroke = true)
 
+        val memoText = if(viewModel.getClearTextMemo().isNullOrEmpty()) "" else getString(R.string.send_funds_confirmation_memo, viewModel.getClearTextMemo())
+
         return if(viewModel.isShielded){
             if(viewModel.isTransferToSameAccount()){
-                getString(R.string.send_funds_confirmation_unshield, amountString, recipient.name, costString)
+                getString(R.string.send_funds_confirmation_unshield, amountString, recipient.name, costString, memoText)
             } else {
-                getString(R.string.send_funds_confirmation_send_shielded, amountString, recipient.name, costString)
+                getString(R.string.send_funds_confirmation_send_shielded, amountString, recipient.name, costString, memoText)
             }
         } else {
             if(viewModel.isTransferToSameAccount()){
-                getString(R.string.send_funds_confirmation_shield, amountString, recipient.name, costString)
+                getString(R.string.send_funds_confirmation_shield, amountString, recipient.name, costString, memoText)
             } else {
-                getString(R.string.send_funds_confirmation, amountString, recipient.name, costString)
+                getString(R.string.send_funds_confirmation, amountString, recipient.name, costString, memoText)
             }
         }
     }

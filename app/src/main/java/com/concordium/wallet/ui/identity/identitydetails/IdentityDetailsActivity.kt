@@ -1,13 +1,20 @@
 package com.concordium.wallet.ui.identity.identitydetails
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import kotlinx.android.synthetic.main.activity_identity_details.*
+import kotlinx.android.synthetic.main.activity_identity_details.root_layout
+import kotlinx.android.synthetic.main.activity_transaction_details.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -50,7 +57,7 @@ class IdentityDetailsActivity :
         val attributes = viewModel.identity.identityObject!!.attributeList.chosenAttributes
 
         if(viewModel.identity.status != IdentityStatus.DONE){
-            content_cardview.visibility = View.INVISIBLE
+            content_cardview.visibility = View.GONE
         }
         val adapter = IdentityAttributeAdapter(attributes.toSortedMap())
         recyclerview.adapter = adapter
@@ -67,6 +74,23 @@ class IdentityDetailsActivity :
                     finish()
                 }
             })
+
+            error_issuance_no_email_client_headline.visibility = if(IdentityErrorDialogHelper.canOpenSupportEmail(this)) View.GONE else View.VISIBLE
+
+            val hash = IdentityErrorDialogHelper.hash(viewModel.identity.codeUri)
+            error_issuance_reference_hash.text = hash
+            error_issuance_reference_hash_copy.setOnClickListener {
+                IdentityErrorDialogHelper.copyToClipboard(this, title.toString(), resources.getString(R.string.dialog_support_text, hash, BuildConfig.VERSION_NAME, Build.VERSION.RELEASE))
+            }
+
+            support_button.visibility = if(IdentityErrorDialogHelper.canOpenSupportEmail(this)) View.VISIBLE else View.GONE
+
+            support_button.setOnClickListener(View.OnClickListener {
+                GlobalScope.launch {
+                    IdentityErrorDialogHelper.openSupportEmail(this@IdentityDetailsActivity, resources, hash)
+                }
+            })
+
         }
         else{
             error_wrapper_layout.visibility = View.GONE

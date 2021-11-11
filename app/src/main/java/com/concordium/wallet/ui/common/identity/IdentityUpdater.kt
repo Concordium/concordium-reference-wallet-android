@@ -4,9 +4,11 @@ import android.app.Application
 import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
+import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
+import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.*
@@ -18,6 +20,7 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
     private val gson = App.appCore.gson
     private val identityRepository: IdentityRepository
     private val accountRepository: AccountRepository
+    private val recipientRepository: RecipientRepository
 
     private var updateListener: UpdateListener? = null
     private var run = true
@@ -27,11 +30,14 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
         identityRepository = IdentityRepository(identityDao)
         val accountDao = WalletDatabase.getDatabase(application).accountDao()
         accountRepository = AccountRepository(accountDao)
+        val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
+        recipientRepository = RecipientRepository(recipientDao)
     }
 
     interface UpdateListener {
         fun onError(identity: Identity, account: Account?)
         fun onDone()
+        fun onNewAccountFinalized(accountName: String)
     }
 
     fun setUpdateListener(updateListener: UpdateListener) {
@@ -92,6 +98,10 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
                                     //it.credential = CredentialWrapper(RawJson(gson.toJson(CredentialContentWrapper(accountCredentialWrapper.value))), accountCredentialWrapper.v) //Make up for protocol inconsistency
                                     it.credential = accountCredentialWrapper
                                     if (identityTokenContainer.status == IdentityStatus.DONE) {
+                                        if(account.transactionStatus != TransactionStatus.FINALIZED){
+                                            updateListener?.onNewAccountFinalized(account.name)
+                                            recipientRepository.insert(Recipient(0, account.name, account.address))
+                                        }
                                         account.transactionStatus = TransactionStatus.FINALIZED
                                     } else if (identityTokenContainer.status == IdentityStatus.ERROR) {
                                         account.transactionStatus = TransactionStatus.ABSENT

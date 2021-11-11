@@ -5,12 +5,19 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import com.concordium.wallet.App
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
+import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
+import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
+import com.concordium.wallet.ui.more.export.ExportActivity
 
 
 class CustomDialogFragment : DialogFragment() {
@@ -23,7 +30,13 @@ class CustomDialogFragment : DialogFragment() {
         val KEY_TITLE = "key_title"
         val KEY_MESSAGE = "key_message"
         val KEY_POSITIVE = "key_positive"
+        val KEY_NEUTRAL = "key_neutral"
         val KEY_NEGATIVE = "key_negative"
+        val KEY_SUPPORT = "key_support"
+        val KEY_SUPPORT_TIMESTAMP = "key_support_timestamp"
+
+        var dialogAccountFinalized: Dialog? = null;
+        var dialogAccountFinalizedMap: HashMap<String, String> = HashMap<String, String>();
 
         //region Create/cancel dialogs
         //************************************************************
@@ -43,7 +56,9 @@ class CustomDialogFragment : DialogFragment() {
             title: String,
             message: String,
             positiveButton: String?,
-            negativeButton: String?
+            neutralButton: String?,
+            negativeButton: String?,
+            uriSession: String?
         ): CustomDialogFragment {
             dismissCustomDialog(activity)
 
@@ -53,6 +68,12 @@ class CustomDialogFragment : DialogFragment() {
             args.putInt(KEY_TYPE, dialogType.ordinal)
             args.putString(KEY_TITLE, title)
             args.putString(KEY_MESSAGE, message)
+            if (dialogType == EDialogType.PositiveSupport) {
+                args.putString(KEY_POSITIVE, positiveButton)
+                args.putString(KEY_NEUTRAL, neutralButton)
+                args.putString(KEY_NEGATIVE, negativeButton)
+                args.putString(KEY_SUPPORT, uriSession)
+            }
             if (dialogType == EDialogType.PositiveNegative) {
                 args.putString(KEY_POSITIVE, positiveButton)
                 args.putString(KEY_NEGATIVE, negativeButton)
@@ -78,7 +99,10 @@ class CustomDialogFragment : DialogFragment() {
                 title,
                 message,
                 positive,
-                null
+                null,
+                null,
+                    null
+
             )
         }
 
@@ -95,7 +119,10 @@ class CustomDialogFragment : DialogFragment() {
                 title,
                 message,
                 null,
+                null,
+                null,
                 null
+
             )
         }
 
@@ -112,7 +139,10 @@ class CustomDialogFragment : DialogFragment() {
                 title,
                 message,
                 null,
+                null,
+                null,
                 null
+
             )
         }
 
@@ -122,7 +152,8 @@ class CustomDialogFragment : DialogFragment() {
             title: String,
             message: String,
             positiveButton: String,
-            negativeButton: String
+            negativeButton: String,
+            uriSession: String?
         ): CustomDialogFragment {
             return createCustomDialog(
                 activity,
@@ -131,10 +162,72 @@ class CustomDialogFragment : DialogFragment() {
                 title,
                 message,
                 positiveButton,
-                negativeButton
+                null,
+                negativeButton,
+                    uriSession
             )
         }
 
+        fun createPositiveSupportDialog(
+                activity: AppCompatActivity,
+                requestCode: Int,
+                title: String,
+                message: String,
+                positiveButton: String,
+                neutralButton: String,
+                negativeButton: String,
+                uriSession: String?
+        ): CustomDialogFragment {
+            return createCustomDialog(
+                    activity,
+                    requestCode,
+                    EDialogType.PositiveSupport,
+                    title,
+                    message,
+                    positiveButton,
+                    neutralButton,
+                    negativeButton,
+                uriSession
+            )
+        }
+
+
+        fun newAccountFinalizedDialog(context:Context, accountName: String) {
+
+            var title = context.getString(R.string.finalized_account_title_singular)
+            var message = context.getString(R.string.finalized_account_message_singular, accountName)
+
+            dialogAccountFinalizedMap.set(accountName, accountName)
+
+            if(dialogAccountFinalized != null && dialogAccountFinalizedMap.count() > 1){ // we are already showing one dialog, meaning we finalised more accounts
+                dialogAccountFinalized?.dismiss()
+                title = context.getString(R.string.finalized_account_title_plural)
+                message = context.getString(R.string.finalized_account_message_plural)
+            }
+
+            val builder = AlertDialog.Builder(context)
+            builder.setCancelable(true)//This have to be set on dialog to have effect
+            builder.setTitle(title)
+            builder.setMessage(message)
+            builder.setPositiveButton(context.getString(R.string.finalized_account_ok),
+                DialogInterface.OnClickListener { _, _ ->
+                    dialogAccountFinalized?.dismiss()
+                    dialogAccountFinalized = null
+                    dialogAccountFinalizedMap.clear()
+                })
+            builder.setNeutralButton(context.getString(R.string.finalized_account_backup),
+                DialogInterface.OnClickListener { _, _ ->
+                    dialogAccountFinalized?.dismiss()
+                    dialogAccountFinalized = null
+                    dialogAccountFinalizedMap.clear()
+
+                    val intent = Intent(context, ExportActivity::class.java)
+                    context.startActivity(intent)
+                })
+            dialogAccountFinalized = builder.create()
+            dialogAccountFinalized?.setCanceledOnTouchOutside(false)
+            dialogAccountFinalized?.show()
+        }
         //endregion
     }
 
@@ -142,7 +235,7 @@ class CustomDialogFragment : DialogFragment() {
     private var requestCode: Int? = 0
 
     enum class EDialogType {
-        OK, OKCancel, YesNo, PositiveNegative
+        OK, OKCancel, YesNo, PositiveNegative, PositiveSupport
     }
 
     //region Lifecycle
@@ -166,7 +259,11 @@ class CustomDialogFragment : DialogFragment() {
         val title = args.getString(KEY_TITLE, "")
         val message = args.getString(KEY_MESSAGE, "")
         var resPositive = args.getString(KEY_POSITIVE, resources.getString(R.string.dialog_ok))
+        var resNeutral = args.getString(KEY_NEUTRAL, null)
         var resNegative = args.getString(KEY_NEGATIVE, resources.getString(R.string.dialog_cancel))
+
+        var uriSession = args.getString(KEY_SUPPORT, null)
+        var submissionTime = args.getString(KEY_SUPPORT_TIMESTAMP, null)
         if (type == EDialogType.YesNo) {
             resPositive = resources.getString(R.string.dialog_yes)
             resNegative = resources.getString(R.string.dialog_no)
@@ -181,7 +278,7 @@ class CustomDialogFragment : DialogFragment() {
             DialogInterface.OnClickListener { _, _ ->
                 dialogFragmentListener?.onDialogResult(requestCode!!, Dialogs.POSITIVE, Intent())
             })
-        if (type != EDialogType.OK) {
+        if (type != EDialogType.OK && type != EDialogType.PositiveSupport) {
             builder.setNegativeButton(resNegative,
                 DialogInterface.OnClickListener { _, _ ->
                     dialogFragmentListener?.onDialogResult(
@@ -191,12 +288,37 @@ class CustomDialogFragment : DialogFragment() {
                     )
                 })
         }
+        if (type == EDialogType.PositiveSupport) {
+            builder.setNeutralButton(resNeutral,
+                DialogInterface.OnClickListener { _, _ ->
+                    context?.let{
+                        if(IdentityErrorDialogHelper.canOpenSupportEmail(it)){
+                            IdentityErrorDialogHelper.openSupportEmail(it, resources, uriSession)
+                        }
+                        else{
+                            IdentityErrorDialogHelper.copyToClipboard(it, title.toString(), resources.getString(R.string.dialog_support_text, uriSession, BuildConfig.VERSION_NAME, Build.VERSION.RELEASE))
+                        }
+                    }
+                })
+            builder.setNegativeButton(resNegative,
+                DialogInterface.OnClickListener { _, _ ->
+                    dismiss()
+                })
+            builder.setPositiveButton(resPositive,
+                DialogInterface.OnClickListener { _, _ ->
+                    val intent = Intent(activity, IdentityCreateActivity::class.java)
+                    startActivity(intent)
+                })
+
+        }
 
         val dialog = builder.create()
         //dialog.setOwnerActivity(getActivity());
         dialog.setCanceledOnTouchOutside(false)
         return dialog
     }
+
+
 
     override fun onCancel(dialog: DialogInterface) {
         super.onCancel(dialog)

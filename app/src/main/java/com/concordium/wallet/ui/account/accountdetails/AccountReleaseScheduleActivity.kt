@@ -14,6 +14,7 @@ import com.concordium.wallet.data.model.Schedule
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.util.Log
 import kotlinx.android.synthetic.main.account_release_schedule_item.view.*
 import kotlinx.android.synthetic.main.account_release_schedule_item.view.identifier_container
 import kotlinx.android.synthetic.main.account_release_schedule_transaction_item.view.*
@@ -94,9 +95,12 @@ class AccountReleaseScheduleActivity :
                     val viewTransaction = LayoutInflater.from(this).inflate(R.layout.account_release_schedule_transaction_item, null)
                     viewTransaction.identifier.setText(transaction.subSequence(0,8))
                     view.identifier_container.addView(viewTransaction)
+                    view.copy.tag = transaction
                     view.copy.setOnClickListener {
                         val clipboard: ClipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                        val clip = ClipData.newPlainText(getString(R.string.account_release_schedule_copy_title), transaction)
+                        val clip = ClipData.newPlainText(getString(R.string.account_release_schedule_copy_title),
+                            it.tag.toString()
+                        )
                         clipboard.setPrimaryClip(clip)
                         Toast.makeText(this, getString(R.string.account_release_schedule_copied), Toast.LENGTH_SHORT).show()
                     }

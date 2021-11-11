@@ -15,7 +15,7 @@ class RecipientRepository(private val recipientDao: RecipientDao) {
     }
 
     suspend fun insert(recipient: Recipient) {
-        recipientDao.insert(recipient)
+        recipientDao.insertUnique(recipient)
     }
 
     suspend fun insertAll(recipientList: List<Recipient>) {

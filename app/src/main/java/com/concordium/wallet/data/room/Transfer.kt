@@ -23,10 +23,11 @@ data class Transfer(
     val amount: Long,
     var cost: Long,
     @ColumnInfo(name = "from_address")
-    val fromAddress: String,
+    var fromAddress: String,
     @ColumnInfo(name = "to_address")
     val toAddress: String,
     val expiry: Long,   //seconds
+    val memo: String?,
     @ColumnInfo(name = "created_at")
     val createdAt: Long,    //millis
     @ColumnInfo(name = "submission_id")
@@ -39,4 +40,7 @@ data class Transfer(
     var newStartIndex: Int,
     var nonce: AccountNonce?
 
-) : Serializable
+) : Serializable {
+
+
+}

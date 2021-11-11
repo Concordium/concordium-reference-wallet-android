@@ -258,6 +258,9 @@
         <item name="android:backgroundTint">@color/text_grey</item>
     </style>
 
+    <style name="EditText.Memo" parent="EditText.Name">
+    </style>
+
     <style name="EditText.AuthOnDark">
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/text_white</item>

@@ -41,10 +41,10 @@ class TransactionAdapter(
         private val subHeaderTextView: TextView = view.subheader_textview
         private val totalTextView: TextView = view.total_textview
         private val costTextView: TextView = view.cost_textview
+        private val memoTextView: TextView = view.memo_textview
         private val amountTextView: TextView = view.amount_textview
         private val alertImageView: ImageView = view.alert_imageview
         private val statusImageView: ImageView = view.status_imageview
-        private val progressImageView: ImageView = view.progress_imageview
         private val lockImageView: ImageView = view.lock_imageview
 
 
@@ -59,10 +59,10 @@ class TransactionAdapter(
                     subHeaderTextView,
                     totalTextView,
                     costTextView,
+                    memoTextView,
                     amountTextView,
                     alertImageView,
                     statusImageView,
-                    progressImageView,
                     lockImageView,
                     isShieldedAccount,
                     decryptCallback = object : OnClickListenerInterface {

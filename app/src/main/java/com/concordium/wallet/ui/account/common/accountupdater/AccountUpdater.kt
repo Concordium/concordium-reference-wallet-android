@@ -7,14 +7,12 @@ import com.concordium.wallet.core.backend.BackendErrorException
 import com.concordium.wallet.core.backend.ErrorParser
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.EncryptedAmountRepository
+import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.DecryptAmountInput
 import com.concordium.wallet.data.model.*
-import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.EncryptedAmount
-import com.concordium.wallet.data.room.Transfer
-import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.data.room.*
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PerformanceUtil
@@ -47,6 +45,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
     private val accountRepository: AccountRepository
     private val encryptedAmountRepository: EncryptedAmountRepository
     private val transferRepository: TransferRepository
+    private val recipientRepository: RecipientRepository
 
     private var accountSubmissionStatusRequestList: MutableList<AccountSubmissionStatusRequestData> =
         ArrayList()
@@ -68,11 +67,15 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         transferRepository = TransferRepository(transferDao)
         val encryptedAmountDao = WalletDatabase.getDatabase(application).encryptedAmountDao()
         encryptedAmountRepository = EncryptedAmountRepository(encryptedAmountDao)
+        val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
+        recipientRepository = RecipientRepository(recipientDao)
+
     }
 
     interface UpdateListener {
         fun onError(stringRes: Int)
         fun onDone(totalBalances: TotalBalancesData)
+        fun onNewAccountFinalized(accountName: String)
     }
 
     fun setUpdateListener(updateListener: UpdateListener) {
@@ -154,7 +157,8 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         Log.d("start")
         supervisorScope {
             try {
-                for (account in accountList) {
+                val accountListCloned = accountList.toMutableList() // prevent ConcurrentModificationException
+                for (account in accountListCloned) {
                     if ((account.transactionStatus == TransactionStatus.COMMITTED
                         || account.transactionStatus == TransactionStatus.RECEIVED
                         || account.transactionStatus == TransactionStatus.UNKNOWN) && !TextUtils.isEmpty(account.submissionId)
@@ -170,9 +174,21 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     }
                 }
 
-                for (request in accountSubmissionStatusRequestList) {
+                val accountSubmissionStatusRequestListCloned = accountSubmissionStatusRequestList.toMutableList() // prevent ConcurrentModificationException
+                for (request in accountSubmissionStatusRequestListCloned) {
                     Log.d("AccountSubmissionStatus Loop item start")
                     val submissionStatus = request.deferred.await()
+
+                    //If we change state to finalized we save it in address book
+                    if(request.account.transactionStatus != submissionStatus.status && submissionStatus.status == TransactionStatus.FINALIZED){
+                        viewModelScope.launch(Dispatchers.Default) {
+
+
+                            updateListener?.onNewAccountFinalized(request.account.name)
+                            recipientRepository.insert(Recipient(0, request.account.name, request.account.address))
+                        }
+                    }
+
                     request.account.transactionStatus = submissionStatus.status
                     Log.d("AccountSubmissionStatus Loop item end - ${request.account.submissionId} ${submissionStatus.status}")
                 }
@@ -235,6 +251,12 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     if (submissionStatus.cost != null) {
                         request.transfer.cost = submissionStatus.cost
                     }
+
+                    //IF GTU Drop we set cost to 0
+                    if(submissionStatus.status == TransactionStatus.COMMITTED && submissionStatus.sender != request.transfer.fromAddress){
+                        request.transfer.cost = 0
+                    }
+
                     Log.d("TransferSubmissionStatus Loop item end - ${request.transfer.submissionId} ${submissionStatus.status}")
                 }
             } catch (e: Exception) {
@@ -288,7 +310,8 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     }
                 }
 
-                for (request in accountBalanceRequestList) {
+                val accountBalanceRequestListCloned = accountBalanceRequestList.toMutableList() // prevent ConcurrentModificationException
+                for (request in accountBalanceRequestListCloned) {
                     Log.d("AccountBalance Loop item start")
                     val accountBalance = request.deferred.await()
                     request.account.finalizedBalance = accountBalance.finalizedBalance?.getAmount() ?: 0
@@ -367,6 +390,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                 if (transfer.transactionStatus != TransactionStatus.ABSENT) {
 
                     accountUnshieldedBalance -= transfer.cost
+
                     if (transfer.outcome != TransactionOutcome.Reject) {
 
                         //Unshielding

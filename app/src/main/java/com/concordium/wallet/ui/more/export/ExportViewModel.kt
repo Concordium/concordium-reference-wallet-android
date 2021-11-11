@@ -281,6 +281,7 @@ class ExportViewModel(application: Application) :
             account.address,
             account.submissionId,
             accountData.accountKeys,
+            accountData.commitmentsRandomness,
             mapRevealedAttributes(account.revealedAttributes),
             account.credential ?: CredentialWrapper(RawJson("{}"), 0),
             accountData.encryptionSecretKey

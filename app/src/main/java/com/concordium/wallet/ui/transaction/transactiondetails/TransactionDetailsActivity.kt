@@ -2,7 +2,10 @@ package com.concordium.wallet.ui.transaction.transactiondetails
 
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.res.Resources
 import android.os.Bundle
+import android.text.InputType
+import android.text.TextUtils
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -143,15 +146,24 @@ class TransactionDetailsActivity :
                 subheader_textview,
                 total_textview,
                 cost_textview,
+                memo_textview,
                 amount_textview,
                 alert_imageview,
                 status_imageview,
-                progress_imageview,
                 lock_imageview,
                 viewModel.isShieldedAccount,
                 showDate = true
             )
         }
+
+        title_textview.setElegantTextHeight(true);
+        title_textview.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        title_textview.setSingleLine(false);
+
+        memo_textview.setElegantTextHeight(true);
+        memo_textview.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        memo_textview.setSingleLine(false);
+
     }
 
     private fun showDetailsContent() {

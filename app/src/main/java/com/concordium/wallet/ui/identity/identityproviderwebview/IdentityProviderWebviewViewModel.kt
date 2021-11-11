@@ -211,7 +211,7 @@ class IdentityProviderWebviewViewModel(application: Application) : AndroidViewMo
             null
         )
         accountRepository.insert(account)
-        recipientRepository.insert(Recipient(0, account.name, account.address))
+        //recipientRepository.insert(Recipient(0, account.name, account.address)) - JVE disabled, saved when status is confirmed
         return account
     }
 

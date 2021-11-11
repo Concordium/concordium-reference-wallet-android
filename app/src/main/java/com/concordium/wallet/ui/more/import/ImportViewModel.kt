@@ -420,7 +420,7 @@ class ImportViewModel(application: Application) :
         secretKey: SecretKey
     ): Account? {
 
-        val accountDataJson = gson.toJson(StorageAccountData(accountExport.address, accountExport.accountKeys, accountExport.encryptionSecretKey))
+        val accountDataJson = gson.toJson(StorageAccountData(accountExport.address, accountExport.accountKeys, accountExport.encryptionSecretKey, accountExport.commitmentsRandomness))
         val accountDataEncrypted = App.appCore.getCurrentAuthenticationManager().encryptInBackground(secretKey, accountDataJson)
         if (accountDataEncrypted == null) {
             Log.e("Could not encrypt accountData for account: ${accountExport.name}")

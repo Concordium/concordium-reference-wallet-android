@@ -2,7 +2,9 @@ package com.concordium.wallet.ui.transaction.sendfundsconfirmed
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.CBORUtil
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
@@ -10,7 +12,9 @@ import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.base.BaseActivity
+import kotlinx.android.synthetic.main.activity_send_funds.*
 import kotlinx.android.synthetic.main.activity_send_funds_confirmed.*
+import kotlinx.android.synthetic.main.activity_send_funds_confirmed.confirm_button
 
 class SendFundsConfirmedActivity :
     BaseActivity(R.layout.activity_send_funds_confirmed, R.string.send_funds_confirmed_title) {
@@ -62,6 +66,19 @@ class SendFundsConfirmedActivity :
                 R.string.send_funds_confirmed_fee_info,
                 CurrencyUtil.formatGTU(viewModel.transfer.cost)
             )
+
+        if(viewModel.transfer.memo.isNullOrEmpty()){
+            memo_confirmation_textview.visibility = View.GONE
+        }
+        else{
+            memo_confirmation_textview.visibility = View.VISIBLE
+            memo_confirmation_textview.text = getString(
+                R.string.send_funds_confirmation_memo,
+                viewModel.transfer?.memo?.let { CBORUtil.decodeHexAndCBOR(it) } ?: ""
+            )
+        }
+
+
         recipient_textview.text = viewModel.recipient.name
         address_textview.text = viewModel.transfer.toAddress
 

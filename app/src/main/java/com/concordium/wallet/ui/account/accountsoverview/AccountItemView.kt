@@ -98,7 +98,6 @@ class AccountItemView(context: Context, attrs: AttributeSet?): LinearLayout(cont
 
         balance_staked_textview.text = CurrencyUtil.formatGTU(accountWithIdentitiy.account.totalStaked, withGStroke = true)
         balance_at_disposal_textview.text = CurrencyUtil.formatGTU(accountWithIdentitiy.account.totalBalance - accountWithIdentitiy.account.getAtDisposalSubstraction() - accountWithIdentitiy.account.totalShieldedBalance, withGStroke = true)
-        Log.d("TESTTEST:"+balance_at_disposal_textview.text+" = "+accountWithIdentitiy.account.totalBalance +" - "+ accountWithIdentitiy.account.getAtDisposalSubstraction() +" - "+ accountWithIdentitiy.account.totalShieldedBalance)
 
         account_identity_name_area.text = accountWithIdentitiy.identity.name
 

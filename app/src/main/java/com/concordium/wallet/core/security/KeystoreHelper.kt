@@ -58,10 +58,17 @@ class KeystoreHelper {
         return Cipher.getInstance(cipherString)
     }
 
-    private fun getSecretKey(keyName: String): SecretKey {
+    fun getSecretKey(keyName: String): SecretKey? {
         val keyStore = KeyStore.getInstance(ANDROID_KEY_STORE)
+        if(keyStore == null){
+            return null
+        }
         keyStore.load(null)
-        return keyStore.getKey(keyName, null) as SecretKey
+        val key = keyStore.getKey(keyName, null)
+        if(key == null){
+            return null
+        }
+        return key as SecretKey
     }
 
     fun initCipherForEncryption(keyName: String): Cipher? {

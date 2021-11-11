@@ -4,15 +4,14 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.util.DateTimeUtil
-import com.concordium.wallet.util.Log
 
 object TransactionViewHelper {
     suspend fun show(
@@ -22,10 +21,10 @@ object TransactionViewHelper {
         subHeaderTextView: TextView,
         totalTextView: TextView,
         costTextView: TextView,
+        memoTextView: TextView,
         amountTextView: TextView,
         alertImageView: ImageView,
         statusImageView: ImageView,
-        progressImageView: ImageView,
         lockImageView: ImageView,
         isShieldedAccount: Boolean = false,
         showDate: Boolean = false,
@@ -39,6 +38,10 @@ object TransactionViewHelper {
 
         // Title
         titleTextView.text = "${ta.title}"
+
+        memoTextView.text = "${ta.getDecryptedMemo()}"
+        memoTextView.visibility = if(ta.hasMemo()) View.VISIBLE else View.GONE
+
         // Time
         subHeaderTextView.text = if (showDate) {
             DateTimeUtil.formatDateAsLocalMediumWithTime(ta.timeStamp)
@@ -55,7 +58,6 @@ object TransactionViewHelper {
             }
             totalTextView.visibility = View.VISIBLE
             lockImageView.visibility = View.GONE
-            progressImageView.visibility = View.GONE
         }
 
         fun showTransactionFeeText(){
@@ -67,7 +69,6 @@ object TransactionViewHelper {
         fun showDecryptedValueOfEncryptedAmount() {
             //show decrypted value of encrypted amount
             lockImageView.visibility = View.VISIBLE
-            progressImageView.visibility = View.GONE
             totalTextView.visibility = View.GONE
             costTextView.visibility = View.GONE
             amountTextView.visibility = View.GONE

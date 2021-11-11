@@ -1,7 +1,11 @@
 package com.concordium.wallet.data.model
 
+import com.concordium.wallet.CBORUtil
+import com.concordium.wallet.data.room.Account
 import java.io.Serializable
 import java.util.*
+import java.lang.Exception
+
 
 data class Transaction(
     val source: TransactionSource,
@@ -47,7 +51,7 @@ data class Transaction(
     }
 
     fun isEncryptedTransfer(): Boolean {
-        return details?.type == TransactionType.ENCRYPTEDAMOUNTTRANSFER
+        return details?.type == TransactionType.ENCRYPTEDAMOUNTTRANSFER || details?.type == TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO
     }
 
     fun isOriginSelf(): Boolean {
@@ -55,7 +59,7 @@ data class Transaction(
     }
 
 
-    fun getTotalAmountForRegular() : Long {
+    fun getTotalAmountForRegular(): Long {
         if (transactionStatus == TransactionStatus.ABSENT) {
             return 0
         } else if (outcome == TransactionOutcome.Reject) {
@@ -78,5 +82,13 @@ data class Transaction(
 
     fun isFinalizedReward(): Boolean {
         return details?.type == TransactionType.FINALIZATIONREWARD && isReward()
+    }
+
+    fun getDecryptedMemo(): String{
+        return details?.memo?.let { return CBORUtil.decodeHexAndCBOR(it) } ?: ""
+    }
+
+    fun hasMemo(): Boolean{
+        return details != null && details.memo != null && details.memo.length > 0
     }
 }

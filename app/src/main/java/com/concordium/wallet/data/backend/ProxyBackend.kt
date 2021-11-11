@@ -30,7 +30,9 @@ interface ProxyBackend {
 
     @GET("v0/transactionCost")
     fun transferCost(
-        @Query("type") type: String
+        @Query("type") type: String,
+        @Query("memoSize") memoSize: Int
+
     ): Call<TransferCost>
 
     @GET("v0/accBalance/{accountAddress}")
@@ -39,7 +41,7 @@ interface ProxyBackend {
     @GET("v0/accBalance/{accountAddress}")
     suspend fun accountBalanceSuspended(@Path("accountAddress") accountAddress: String): AccountBalance
 
-    @GET("v0/accTransactions/{accountAddress}")
+    @GET("v1/accTransactions/{accountAddress}")
     fun accountTransactions(
         @Path("accountAddress") accountAddress: String,
         @Query("order") order: String? = null,
