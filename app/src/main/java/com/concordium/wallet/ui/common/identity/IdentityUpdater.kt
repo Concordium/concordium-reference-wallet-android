@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.common.identity
 
 import android.app.Application
 import com.concordium.wallet.App
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
@@ -81,10 +82,13 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
                     Log.d("Identity poll response: $resp")
 
                     val identityTokenContainer = gson.fromJson<IdentityTokenContainer>(resp, IdentityTokenContainer::class.java)
-                    val newStatus = identityTokenContainer.status
+
+                    val newStatus = if(BuildConfig.FAIL_IDENTITY_CREATION) IdentityStatus.ERROR else identityTokenContainer.status
+
                     if (newStatus != IdentityStatus.PENDING) {
                         identity.status = identityTokenContainer.status
                         identity.detail = identityTokenContainer.detail
+
                         if (newStatus == IdentityStatus.DONE && identityTokenContainer.token != null) {
                             val token = identityTokenContainer.token
                             val identityContainer = token.identityObject

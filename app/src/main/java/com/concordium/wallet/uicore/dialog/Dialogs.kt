@@ -143,7 +143,8 @@ class Dialogs {
                 message,
                 positive,
                 negative,
-                    null
+                    null,
+                null
             )
         fragment.show(activity.supportFragmentManager, CustomDialogFragment.TAG)
     }
@@ -162,7 +163,8 @@ class Dialogs {
             positive: Int,
             neutral: Int,
             negative: Int,
-            uri: String
+            uri: String,
+            supportEmail: String
     ) {
         val resources = App.appContext.getResources()
         showPositiveSupportDialog(
@@ -173,7 +175,33 @@ class Dialogs {
                 resources.getString(positive),
                 resources.getString(neutral),
                 resources.getString(negative),
-                uri
+                uri,
+            supportEmail
+        )
+    }
+
+    fun showPositiveSupportDialog(
+        activity: AppCompatActivity,
+        requestCode: Int,
+        titleId: Int,
+        message: String,
+        positive: Int,
+        neutral: Int,
+        negative: Int,
+        uri: String,
+        supportEmail: String
+    ) {
+        val resources = App.appContext.getResources()
+        showPositiveSupportDialog(
+            activity,
+            requestCode,
+            resources.getString(titleId),
+            message,
+            resources.getString(positive),
+            resources.getString(neutral),
+            resources.getString(negative),
+            uri,
+            supportEmail
         )
     }
 
@@ -185,7 +213,8 @@ class Dialogs {
             positive: String,
             neutral: String,
             negative: String,
-            uriSession: String
+            uriSession: String,
+            supportEmail: String
     ) {
         val fragment =
                 CustomDialogFragment.createPositiveSupportDialog(
@@ -196,7 +225,8 @@ class Dialogs {
                         positive,
                         neutral,
                         negative,
-                        uriSession
+                        uriSession,
+                    supportEmail
                 )
         fragment.show(activity.supportFragmentManager, CustomDialogFragment.TAG)
     }

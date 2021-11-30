@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def versionBuildNumberSequential = 55 // continuous sequential number - must be incremented for every release
+def versionBuildNumberSequential = 58 // continuous sequential number - must be incremented for every release
 
 def versionBuildNumberReset = 39 // set this to value of versionBuildNumberSequential when incrementing minor and/or major
 
@@ -86,6 +86,9 @@ android {
         buildConfigField("boolean", "USE_LIBRARY_PROVIDED_IDENTITIES", "true")
         buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
 
+        buildConfigField("boolean", "FAIL_IDENTITY_CREATION", "false")
+        buildConfigField("boolean", "FORCE_NO_EMAIL_CLIENTS", "false")
+
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [
@@ -158,6 +161,9 @@ android {
             buildConfigField("String", "EXPORT_CHAIN", "\"staging\"")
             buildConfigField("String", "ENV_NAME", "\"staging\"")
             buildConfigField("String", "URL_PROXY_BASE", "\"${URL_PROXY_BASE_STAGING}\"")
+
+            buildConfigField("boolean", "FAIL_IDENTITY_CREATION", "false")
+            buildConfigField("boolean", "FORCE_NO_EMAIL_CLIENTS", "false")
 
             buildConfigField("boolean", "SHOW_GTU_DROP", "true")
             buildConfigField("boolean", "USE_LIBRARY_PROVIDED_IDENTITIES", "false")

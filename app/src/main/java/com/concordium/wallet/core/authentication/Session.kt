@@ -93,5 +93,12 @@ class Session {
         authPreferences.setAuthKeyName(resetBiometricKeyNameAppendix)
     }
 
+    fun getTermsHashed(): Int {
+        return authPreferences.getTermsHashed()
+    }
+
+    fun setTermsHashed(key: Int) {
+        return authPreferences.setTermsHashed(key)
+    }
 
 }

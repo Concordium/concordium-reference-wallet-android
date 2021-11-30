@@ -49,7 +49,7 @@
                 android:id="@+id/total_textview"
                 style="@style/TextView.ListItemHeader"
                 android:layout_alignParentEnd="true"
-                tools:text="- Ǥ1000000000000.65" />
+                tools:text="- Ͼ1000000000000.65" />
         </LinearLayout>
 
 
@@ -95,13 +95,13 @@
                 <TextView
                     android:id="@+id/amount_textview"
                     style="@style/TextView.ListItemSubHeader"
-                    tools:text="Ǥ1.30 + "
+                    tools:text="Ͼ1.30 + "
                     tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/cost_textview"
                     style="@style/TextView.ListItemSubHeader"
-                    tools:text="Ǥ0.059 Fee"
+                    tools:text="Ͼ0.059 Fee"
                     tools:visibility="visible" />
 
                 <ImageView

@@ -17,7 +17,6 @@ import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewFragment
 import com.concordium.wallet.ui.identity.identityconfirmed.IdentityErrorData
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
-import com.concordium.wallet.ui.intro.introstart.IntroStartActivity
 import com.concordium.wallet.ui.intro.introstart.IntroTermsActivity
 import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment

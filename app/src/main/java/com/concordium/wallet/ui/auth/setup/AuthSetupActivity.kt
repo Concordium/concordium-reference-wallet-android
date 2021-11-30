@@ -105,9 +105,7 @@ class AuthSetupActivity : BaseActivity(R.layout.activity_auth_setup, R.string.au
         viewModel.finishScreenLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
-                    setResult(Activity.RESULT_OK)
-                    finish()
-                    gotoIntroSetup()
+                    finishSuccess()
                 }
             }
         })

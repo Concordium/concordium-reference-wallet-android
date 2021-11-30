@@ -17,6 +17,7 @@ class AuthPreferences(val context: Context) :
         val PREFKEY_ENCRYPTED_PASSWORD = "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY"
         val PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR = "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR"
         val PREFKEY_BIOMETRIC_KEY = "PREFKEY_BIOMETRIC_KEY"
+        val PREFKEY_TERMS_HASHED = "PREFKEY_TERMS_HASHED"
     }
 
     fun setHasSetupUser(value: Boolean) {
@@ -97,6 +98,14 @@ class AuthPreferences(val context: Context) :
 
     fun setAuthKeyName(key: String) {
         return setString(PREFKEY_BIOMETRIC_KEY, key)
+    }
+
+    fun getTermsHashed(): Int {
+        return getInt(PREFKEY_TERMS_HASHED, 0)
+    }
+
+    fun setTermsHashed(key: Int) {
+        return setInt(PREFKEY_TERMS_HASHED, key)
     }
 
 }

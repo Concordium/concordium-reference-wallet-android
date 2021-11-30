@@ -33,6 +33,8 @@ class CustomDialogFragment : DialogFragment() {
         val KEY_NEUTRAL = "key_neutral"
         val KEY_NEGATIVE = "key_negative"
         val KEY_SUPPORT = "key_support"
+        val KEY_SUPPORT_EMAIL = "key_support_email"
+
         val KEY_SUPPORT_TIMESTAMP = "key_support_timestamp"
 
         var dialogAccountFinalized: Dialog? = null;
@@ -58,7 +60,8 @@ class CustomDialogFragment : DialogFragment() {
             positiveButton: String?,
             neutralButton: String?,
             negativeButton: String?,
-            uriSession: String?
+            uriSession: String?,
+            supportEmail: String?
         ): CustomDialogFragment {
             dismissCustomDialog(activity)
 
@@ -73,6 +76,7 @@ class CustomDialogFragment : DialogFragment() {
                 args.putString(KEY_NEUTRAL, neutralButton)
                 args.putString(KEY_NEGATIVE, negativeButton)
                 args.putString(KEY_SUPPORT, uriSession)
+                args.putString(KEY_SUPPORT_EMAIL, supportEmail)
             }
             if (dialogType == EDialogType.PositiveNegative) {
                 args.putString(KEY_POSITIVE, positiveButton)
@@ -101,7 +105,8 @@ class CustomDialogFragment : DialogFragment() {
                 positive,
                 null,
                 null,
-                    null
+                    null,
+                null
 
             )
         }
@@ -118,6 +123,7 @@ class CustomDialogFragment : DialogFragment() {
                 EDialogType.OKCancel,
                 title,
                 message,
+                null,
                 null,
                 null,
                 null,
@@ -141,6 +147,7 @@ class CustomDialogFragment : DialogFragment() {
                 null,
                 null,
                 null,
+                null,
                 null
 
             )
@@ -153,7 +160,8 @@ class CustomDialogFragment : DialogFragment() {
             message: String,
             positiveButton: String,
             negativeButton: String,
-            uriSession: String?
+            uriSession: String?,
+            supportEmail: String?
         ): CustomDialogFragment {
             return createCustomDialog(
                 activity,
@@ -164,7 +172,8 @@ class CustomDialogFragment : DialogFragment() {
                 positiveButton,
                 null,
                 negativeButton,
-                    uriSession
+                    uriSession,
+                supportEmail
             )
         }
 
@@ -176,7 +185,8 @@ class CustomDialogFragment : DialogFragment() {
                 positiveButton: String,
                 neutralButton: String,
                 negativeButton: String,
-                uriSession: String?
+                uriSession: String?,
+                supportEmail: String?
         ): CustomDialogFragment {
             return createCustomDialog(
                     activity,
@@ -187,7 +197,8 @@ class CustomDialogFragment : DialogFragment() {
                     positiveButton,
                     neutralButton,
                     negativeButton,
-                uriSession
+                uriSession,
+                supportEmail
             )
         }
 
@@ -263,6 +274,7 @@ class CustomDialogFragment : DialogFragment() {
         var resNegative = args.getString(KEY_NEGATIVE, resources.getString(R.string.dialog_cancel))
 
         var uriSession = args.getString(KEY_SUPPORT, null)
+        var supportEmail = args.getString(KEY_SUPPORT_EMAIL, null)
         var submissionTime = args.getString(KEY_SUPPORT_TIMESTAMP, null)
         if (type == EDialogType.YesNo) {
             resPositive = resources.getString(R.string.dialog_yes)
@@ -293,7 +305,7 @@ class CustomDialogFragment : DialogFragment() {
                 DialogInterface.OnClickListener { _, _ ->
                     context?.let{
                         if(IdentityErrorDialogHelper.canOpenSupportEmail(it)){
-                            IdentityErrorDialogHelper.openSupportEmail(it, resources, uriSession)
+                            IdentityErrorDialogHelper.openSupportEmail(it, resources, supportEmail, uriSession)
                         }
                         else{
                             IdentityErrorDialogHelper.copyToClipboard(it, title.toString(), resources.getString(R.string.dialog_support_text, uriSession, BuildConfig.VERSION_NAME, Build.VERSION.RELEASE))

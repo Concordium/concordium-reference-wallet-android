@@ -62,7 +62,7 @@
                         style="@style/TextView.Large"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="40dp"
-                        tools:text="Ǥ0.12" />
+                        tools:text="Ͼ0.12" />
 
                     <TextView
                         android:id="@+id/fee_textview"
