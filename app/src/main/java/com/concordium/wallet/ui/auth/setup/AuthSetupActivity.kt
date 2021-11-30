@@ -60,7 +60,7 @@ class AuthSetupActivity : BaseActivity(R.layout.activity_auth_setup, R.string.au
         }
         if (requestCode == REQUESTCODE_AUTH_SETUP_PASSCODE_REPEAT) {
             if (resultCode == Activity.RESULT_OK) {
-                viewModel.setupPassword(passcode_view.getPasscode())
+                viewModel.setupPassword(passcode_view.getPasscode(), continueFlow)
             } else {
                 passcode_view.clearPasscode()
                 error_textview.setText(R.string.auth_error_entries_different)
@@ -77,6 +77,7 @@ class AuthSetupActivity : BaseActivity(R.layout.activity_auth_setup, R.string.au
     }
 
     private fun finishSuccess() {
+
         setResult(Activity.RESULT_OK)
         finish()
         if(continueFlow){

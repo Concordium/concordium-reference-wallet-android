@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.concordium.wallet.App
 import com.concordium.wallet.core.arch.Event
-import com.concordium.wallet.core.authentication.AuthenticationManager
 import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.util.BiometricsUtil
 
@@ -41,7 +40,7 @@ class AuthSetupViewModel(application: Application) : AndroidViewModel(applicatio
         return (password.length == 6)
     }
 
-    fun setupPassword(password: String) {
+    fun setupPassword(password: String, continueFlow: Boolean) {
         val res = App.appCore.getCurrentAuthenticationManager().createPasswordCheck(password)
         if (res) {
             // Setting up password is done, so login screen should be shown next time app is opened
@@ -49,7 +48,9 @@ class AuthSetupViewModel(application: Application) : AndroidViewModel(applicatio
             if (BiometricsUtil.isBiometricsAvailable()) {
                 _gotoBiometricsSetupLiveData.value = Event(true)
             } else {
-                session.hasFinishedSetupPassword()
+                if(continueFlow){ // if we continue flow (setting up account and identity) we are at the end of the line and we clear stored password
+                    session.hasFinishedSetupPassword()
+                }
                 _finishScreenLiveData.value = Event(true)
             }
         } else {
