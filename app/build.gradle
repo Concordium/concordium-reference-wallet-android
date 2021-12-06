@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def versionBuildNumberSequential = 58 // continuous sequential number - must be incremented for every release
+def versionBuildNumberSequential = 59 // continuous sequential number - must be incremented for every release
 
 def versionBuildNumberReset = 39 // set this to value of versionBuildNumberSequential when incrementing minor and/or major
 
@@ -37,6 +37,7 @@ def SCHEME_BASE = "concordiumwallet"
 def SCHEME_LOCAL = SCHEME_BASE+"-local"
 def SCHEME_MOCK = SCHEME_BASE+"-mock"
 def SCHEME_STAGING = SCHEME_BASE+"-staging"
+def SCHEME_TESTNET = SCHEME_BASE+"-testnet"
 def SCHEME_PROD = SCHEME_BASE
 
 def getLocalIPv4() {
@@ -187,8 +188,8 @@ android {
             buildConfigField("boolean", "SHOW_GTU_DROP", "true")
             buildConfigField("boolean", "USE_LIBRARY_PROVIDED_IDENTITIES", "false")
 
-            buildConfigField("String", "SCHEME", "\"${SCHEME_PROD}\"")
-            resValue "string", "scheme", "\"${SCHEME_PROD}\""
+            buildConfigField("String", "SCHEME", "\"${SCHEME_TESTNET}\"")
+            resValue "string", "scheme", "\"${SCHEME_TESTNET}\""
 
             resValue "string", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_TESTNET}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_TESTNET}\"")
