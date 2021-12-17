@@ -111,6 +111,16 @@ object IdentityErrorDialogHelper {
         }
     }
 
+    fun openGenericSupportEmail(context: Context, resources: Resources, subject: String, text: String) {
+        val uriText = "mailto: support@concordium.software"+
+                "?subject=" + Uri.encode(subject) +
+                "&body=" + Uri.encode(text)
+        val uri = Uri.parse(uriText)
+        val sendIntent = Intent(Intent.ACTION_SENDTO)
+        sendIntent.data = uri
+        context.startActivity(Intent.createChooser(sendIntent, resources.getString(R.string.dialog_send_email)))
+    }
+
     /**
      * Convenience method
      */
@@ -120,6 +130,9 @@ object IdentityErrorDialogHelper {
         }
         return openSupportEmail(context, context.resources, "","", true)
     }
+
+
+
 
     fun copyToClipboard(context: Context, title: String, content: String) {
         val clipboard: ClipboardManager = context.getSystemService(AppCompatActivity.CLIPBOARD_SERVICE) as ClipboardManager

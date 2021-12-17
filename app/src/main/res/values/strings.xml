@@ -34,15 +34,15 @@
 
     <string name="dialog_support_subject_reference">Issuance reference: %1$s</string>
     <string name="dialog_support_text">Hi! My identity issuance failed.\n\nHere is my info:\n\nIssuance reference:\n%1$s\n\nMobile Wallet version:\nv%2$s\n\nPlatform:\nAndroid %3$s</string>
-
+    <string name="dialog_support_creation_data_reference">Identity issuance failed - please try again</string>
 
     <string name="dialog_support">Contact Support</string>
     <string name="dialog_copy">Copy reference</string>
     <string name="dialog_popup_support_with_email_client_text">The identity issuance failed. You can either try again, or contact %1$s’s support.\n\nClicking Contact Support will open your e-mail app, with a reference to your submission as subject.\n\nConcordium will be CC’ed in the correspondence.</string>
     <string name="dialog_popup_support_without_email_client_text">The identity issuance failed. You can either try again, or contact %1$s’s support.\n\nYou can copy the reference below, and then contact %1$s at %2$s\n\nOptional: Add Concordium as CC via idiss@concordium.software</string>
 
-
-
+    <string name="dialog_popup_support_creation_flow_with_email_client_text">The identity issuance failed. You can either try again, or contact Concordium support.\n\nClicking Contact Support will open your e-mail app, with a reference to your submission as subject.\n\n</string>
+    <string name="dialog_popup_support_creation_flow_without_email_client_text">The identity issuance failed. You can either try again, or contact Concordium support.\n\nYou can copy the reference below, and then contact Concordium at support@concordium.software</string>
 
 
     <string name="dialog_yes">Yes</string>
