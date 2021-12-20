@@ -167,7 +167,7 @@ class IdentityProviderWebviewActivity : BaseActivity(
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         // Clear the temp data, we already have it in the view model
-        preferences.setIdentityCreationData(null)
+        // preferences.setIdentityCreationData(null)
         Log.d("New intent")
         intent?.data?.let {
             handleNewIntentData(it, null)
