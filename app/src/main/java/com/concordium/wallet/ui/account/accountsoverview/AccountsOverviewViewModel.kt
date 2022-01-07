@@ -11,6 +11,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.data.AccountRepository
@@ -81,6 +82,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             override fun onNewAccountFinalized(accountName: String) {
                 viewModelScope.launch {
                     _newFinalizedAccountLiveData.value = accountName
+                    App.appCore.session.setAccountsBackedUp(false)
                 }
             }
 

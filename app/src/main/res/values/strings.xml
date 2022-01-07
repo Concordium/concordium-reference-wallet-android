@@ -187,7 +187,7 @@
     <!-- Intro setup-->
     <string name="intro_setup_title">Getting started</string>
     <string name="intro_setup_header">Are you new here?</string>
-    <string name="intro_setup_info">If this is your first time using the Concordium blockchain, you must create an initial account.\n\nIn case this is not your first time around, you can also import already existing accounts.\n\nHow would you like to continue?</string>
+    <string name="intro_setup_info">In case this is not your first time around, you must import existing accounts to get access to them.\n\nIn case this is not your first time around, you can also import already existing accounts.\n\nHow would you like to continue?</string>
     <string name="intro_setup_confirm_create_initial">I want to create my initial account</string>
     <string name="intro_setup_confirm_import">I want to import existing accounts</string>
 
@@ -320,6 +320,7 @@
     <!-- ***** Account ***** -->
 
     <!-- Accounts overview -->
+    <string name="accounts_overview_backup_warning">Some accounts are not backed up. Press here to back them up.</string>
     <string name="accounts_overview_title">Accounts</string>
     <string name="accounts_overview_create_identity">Create new identity</string>
     <string name="accounts_overview_create_account">Create account</string>
@@ -629,9 +630,12 @@
     <string name="finalized_account_title_plural">Your new accounts are ready!</string>
     <string name="finalized_account_message_singular">Your account %1$s has finalized, and is now ready for use.\n\nWe recommend keeping a back-up of all accounts. You can make one now below, or later via the More page.\n\nRemember to store your back-up securely.</string>
     <string name="finalized_account_message_plural">Your new accounts are now finalized and ready for use.\n\nWe recommend keeping a back-up of all accounts. You can make one now below, or later via the More page.\n\nRemember to store your back-up securely.</string>
-    <string name="finalized_account_backup">Make back-up</string>
+    <string name="finalized_account_backup">Make backup</string>
     <string name="finalized_account_ok">Okay</string>
 
+    <string name="finalized_account_no_backup_title_warning">WARNING</string>
+    <string name="finalized_account_no_backup_dismiss">Dismiss</string>
+    <string name="finalized_account_no_backup_message">Are you sure that you do not want to create a backup?\n\nIf you lose your phone and do not have a backup you will no longer have access to your account(s).</string>
 
 
 </resources>

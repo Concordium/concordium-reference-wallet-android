@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.identity.identityconfirmed
 
 import android.app.Application
 import androidx.lifecycle.*
+import com.concordium.wallet.App
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.room.Account
@@ -81,6 +82,7 @@ class IdentityConfirmedViewModel(application: Application) : AndroidViewModel(ap
             override fun onNewAccountFinalized(accountName: String) {
                 viewModelScope.launch {
                     _newFinalizedAccountLiveData.value = accountName
+                    App.appCore.session.setAccountsBackedUp(false)
                 }
             }
         }

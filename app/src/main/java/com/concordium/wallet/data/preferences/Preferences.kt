@@ -10,16 +10,39 @@ open class Preferences {
     protected val editor: android.content.SharedPreferences.Editor
         get() = sharedPreferences.edit()
 
+    private val changeListeners = HashMap<Listener, String>()
+
     constructor() {}
+
+    interface Listener {
+        fun onChange()
+    }
 
     constructor(context: Context, preferenceName: String, preferenceMode: Int) {
         sharedPreferences = context.getSharedPreferences(preferenceName, preferenceMode)
+    }
+
+    // registerOnSharedPreferenceChangeListener doesn't work
+    fun triggerChangeEvent(key: String){
+        for ((listener, value) in changeListeners) {
+            if(value == key){
+                listener.onChange()
+            }
+        }
     }
 
     fun clearAll() {
         val editor = editor
         editor.clear()
         editor.commit()
+    }
+
+    public fun addListener(key: String, listener: Listener){
+        changeListeners.put(listener, key)
+    }
+
+    public fun removeListener(listener: Listener){
+        changeListeners.remove(listener)
     }
 
     protected fun setString(key: String, value: String?) {
@@ -30,6 +53,7 @@ open class Preferences {
             editor.putString(key, value)
         }
         editor.commit()
+        triggerChangeEvent(key)
     }
 
     protected fun getString(key: String, def: String): String {
@@ -47,6 +71,7 @@ open class Preferences {
         editor.remove(key)
         editor.putBoolean(key, value)
         editor.commit()
+        triggerChangeEvent(key)
     }
 
     protected fun getBoolean(key: String, def: Boolean): Boolean {
@@ -62,6 +87,7 @@ open class Preferences {
         editor.remove(key)
         editor.putInt(key, value)
         editor.commit()
+        triggerChangeEvent(key)
     }
 
     protected fun getInt(key: String, def: Int): Int {
@@ -77,6 +103,7 @@ open class Preferences {
         editor.remove(key)
         editor.putLong(key, value)
         editor.commit()
+        triggerChangeEvent(key)
     }
 
     protected fun getLong(key: String, def: Long): Long {
@@ -86,6 +113,8 @@ open class Preferences {
     protected fun getLong(key: String): Long {
         return sharedPreferences.getLong(key, 0)
     }
+
+
 
 
 }
