@@ -215,6 +215,13 @@ class ImportViewModel(application: Application) :
             _errorAndFinishLiveData.value = Event(R.string.app_error_json)
             return
         }
+
+        if (!exportData.hasRequiredIdentities()) {
+            _waitingLiveData.value = false
+            _errorAndFinishLiveData.value = Event(R.string.app_import_missing_identities)
+            return
+        }
+
         if (BuildConfig.EXPORT_CHAIN != exportData.environment) {
             _waitingLiveData.value = false
             _errorAndFinishLiveData.value = Event(R.string.app_error_wrong_environment)

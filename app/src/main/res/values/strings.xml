@@ -11,6 +11,7 @@
     <string name="app_error_lib">An unexpected error occurred, please try again</string>
     <string name="app_error_encryption">Unexpected encryption/decryption error</string>
     <string name="app_error_json">Unexpected json format</string>
+    <string name="app_import_missing_identities">The file imported did not contain any identities. This indicates a corrupted backup file.</string>
 
     <string name="app_error_wrong_environment">Files exported on Concordium Mainnet, TestNet or StageNet are not compatible with the other chains. Please import on the correct chain.</string>
 
