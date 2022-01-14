@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def versionBuildNumberSequential = 64 // continuous sequential number - must be incremented for every release
+def versionBuildNumberSequential = 66 // continuous sequential number - must be incremented for every release
 
 def versionBuildNumberReset = 63 // set this to value of versionBuildNumberSequential when incrementing minor and/or major
 

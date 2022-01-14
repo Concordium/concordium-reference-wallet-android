@@ -231,33 +231,7 @@ class CustomDialogFragment : DialogFragment() {
                     dialogAccountFinalizedMap.clear()
 
                     // Do you really not want to back up?!?!
-                    val builder = AlertDialog.Builder(context)
-                    builder.setCancelable(true)//This have to be set on dialog to have effect
-                    builder.setIcon(android.R.drawable.stat_sys_warning);
-                    builder.setTitle(R.string.finalized_account_no_backup_title_warning)
-                    builder.setMessage(R.string.finalized_account_no_backup_message)
-                    builder.setNeutralButton(context.getString(R.string.finalized_account_no_backup_dismiss),
-                        DialogInterface.OnClickListener { _, _ ->
-                            dialogAccountFinalizedNoBackup?.dismiss()
-                            dialogAccountFinalizedNoBackup = null
-                        })
-                    builder.setPositiveButton(context.getString(R.string.finalized_account_backup),
-                        DialogInterface.OnClickListener { _, _ ->
-                            val intent = Intent(context, ExportActivity::class.java)
-                            context.startActivity(intent)
-                        })
-                    dialogAccountFinalizedNoBackup = builder.create()
-                    dialogAccountFinalizedNoBackup?.setCanceledOnTouchOutside(false)
-                    dialogAccountFinalizedNoBackup?.show()
-                    //dialogAccountFinalizedNoBackup?.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(context.resources.getColor(R.color.text_green));
-                    dialogAccountFinalizedNoBackup?.getButton(AlertDialog.BUTTON_NEUTRAL)?.setTextColor(Color.RED);
-                    dialogAccountFinalizedNoBackup?.let {
-                        val imageView: ImageView? = it.findViewById(android.R.id.icon)
-                        if (imageView != null) imageView.setColorFilter(
-                            context.resources.getColor(R.color.warning_orange),
-                            PorterDuff.Mode.SRC_IN
-                        )
-                    }
+                    showDoYouReallyNotWantToBackUp(context)
 
                 })
             builder.setPositiveButton(context.getString(R.string.finalized_account_backup),
@@ -280,8 +254,80 @@ class CustomDialogFragment : DialogFragment() {
             dialogAccountFinalized?.setCanceledOnTouchOutside(false)
             dialogAccountFinalized?.show()
         }
+
+
+        fun showAppUpdateBackupWarningDialog(context:Context) {
+
+            var title = context.getString(R.string.app_update_account_no_backup_title_warning)
+            var message = context.getString(R.string.app_update_account_no_backup_message)
+
+            val builder = AlertDialog.Builder(context)
+            builder.setCancelable(true)//This have to be set on dialog to have effect
+            builder.setTitle(title)
+            builder.setMessage(message)
+            builder.setNeutralButton(context.getString(R.string.app_update_account_no_backup_dismiss),
+                DialogInterface.OnClickListener { _, _ ->
+                    dialogAccountFinalized?.dismiss()
+                    dialogAccountFinalized = null
+
+                    showDoYouReallyNotWantToBackUp(context)
+                })
+            builder.setPositiveButton(context.getString(R.string.app_update_account_no_backup_now),
+                DialogInterface.OnClickListener { _, _ ->
+                    dialogAccountFinalized?.dismiss()
+                    dialogAccountFinalized = null
+
+                    val intent = Intent(context, ExportActivity::class.java)
+                    context.startActivity(intent)
+                })
+
+            //Clear and dismiss any existing popups
+            if(dialogAccountFinalized != null){
+                dialogAccountFinalized?.dismiss()
+                dialogAccountFinalized = null
+            }
+
+            dialogAccountFinalized = builder.create()
+            dialogAccountFinalized?.setCanceledOnTouchOutside(false)
+            dialogAccountFinalized?.show()
+        }
+
+        fun showDoYouReallyNotWantToBackUp(context:Context) {
+            // Do you really not want to back up?!?!
+            val builder = AlertDialog.Builder(context)
+            builder.setCancelable(true)//This have to be set on dialog to have effect
+            builder.setIcon(android.R.drawable.stat_sys_warning);
+            builder.setTitle(R.string.finalized_account_no_backup_title_warning)
+            builder.setMessage(R.string.finalized_account_no_backup_message)
+            builder.setNeutralButton(context.getString(R.string.finalized_account_no_backup_dismiss),
+                DialogInterface.OnClickListener { _, _ ->
+                    dialogAccountFinalizedNoBackup?.dismiss()
+                    dialogAccountFinalizedNoBackup = null
+                })
+            builder.setPositiveButton(context.getString(R.string.finalized_account_backup),
+                DialogInterface.OnClickListener { _, _ ->
+                    val intent = Intent(context, ExportActivity::class.java)
+                    context.startActivity(intent)
+                })
+            dialogAccountFinalizedNoBackup = builder.create()
+            dialogAccountFinalizedNoBackup?.setCanceledOnTouchOutside(false)
+            dialogAccountFinalizedNoBackup?.show()
+            //dialogAccountFinalizedNoBackup?.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(context.resources.getColor(R.color.text_green));
+            dialogAccountFinalizedNoBackup?.getButton(AlertDialog.BUTTON_NEUTRAL)
+                ?.setTextColor(Color.RED);
+            dialogAccountFinalizedNoBackup?.let {
+                val imageView: ImageView? = it.findViewById(android.R.id.icon)
+                if (imageView != null) imageView.setColorFilter(
+                    context.resources.getColor(R.color.warning_orange),
+                    PorterDuff.Mode.SRC_IN
+                )
+            }
+        }
+
         //endregion
     }
+
+
 
     private var dialogFragmentListener: Dialogs.DialogFragmentListener? = null
     private var requestCode: Int? = 0

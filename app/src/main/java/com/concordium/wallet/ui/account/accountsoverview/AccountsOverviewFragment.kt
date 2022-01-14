@@ -199,6 +199,14 @@ class AccountsOverviewFragment : BaseFragment() {
         }
 
         initializeList(view)
+
+
+        context?.let {
+            if(App.appCore.session.shouldPromptForBackedUp(it)){
+                CustomDialogFragment.showAppUpdateBackupWarningDialog(it)
+                updateMissingBackup(view.missing_backup)
+            }
+        }
     }
 
     private fun updateMissingBackup(view: View){

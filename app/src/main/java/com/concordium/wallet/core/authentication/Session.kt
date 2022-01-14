@@ -5,6 +5,7 @@ import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.concordium.wallet.App
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.preferences.FilterPreferences
 import com.concordium.wallet.data.preferences.Preferences
@@ -116,4 +117,18 @@ class Session {
     fun removeAccountsBackedUpListener(listener: Preferences.Listener) {
         authPreferences.removeListener(listener)
     }
+
+    fun shouldPromptForBackedUp(context: Context): Boolean {
+        val isFirstTimeInstall = with(context.packageManager.getPackageInfo(context.packageName, 0)) {
+            firstInstallTime == lastUpdateTime
+        }
+        val versionBackedUp = authPreferences.getVersionBackedUp()
+        authPreferences.setVersionBackedUp(BuildConfig.VERSION_CODE)
+        if(isFirstTimeInstall){
+            return false
+        }
+        authPreferences.setAccountsBackedUp(false)
+        return versionBackedUp == 0
+    }
+
 }

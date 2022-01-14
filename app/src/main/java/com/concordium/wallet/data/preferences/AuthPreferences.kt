@@ -19,6 +19,7 @@ class AuthPreferences(val context: Context) :
         val PREFKEY_BIOMETRIC_KEY = "PREFKEY_BIOMETRIC_KEY"
         val PREFKEY_TERMS_HASHED = "PREFKEY_TERMS_HASHED"
         val PREFKEY_ACCOUNTS_BACKED_UP = "PREFKEY_ACCOUNTS_BACKED_UP"
+        val PREFKEY_VERSION_BACKED_UP = "PREFKEY_VERSION_BACKED_UP"
     }
 
     fun setHasSetupUser(value: Boolean) {
@@ -119,6 +120,14 @@ class AuthPreferences(val context: Context) :
 
     fun addAccountsBackedUpListener(listener: Listener) {
         addListener(PREFKEY_ACCOUNTS_BACKED_UP, listener)
+    }
+
+    fun getVersionBackedUp(): Int {
+        return getInt(PREFKEY_VERSION_BACKED_UP, 0)
+    }
+
+    fun setVersionBackedUp(value: Int) {
+        return setInt(PREFKEY_VERSION_BACKED_UP, value)
     }
 
 }
