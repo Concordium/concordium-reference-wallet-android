@@ -127,8 +127,11 @@ class Session {
         if(isFirstTimeInstall){
             return false
         }
-        authPreferences.setAccountsBackedUp(false)
-        return versionBackedUp == 0
+        if(versionBackedUp == 0){
+            authPreferences.setAccountsBackedUp(false)
+            return true
+        }
+        return false
     }
 
 }
