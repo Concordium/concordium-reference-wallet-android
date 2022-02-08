@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.concordium.wallet.App
 import com.concordium.wallet.AppCore
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.security.BiometricPromptCallback
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
@@ -33,7 +34,9 @@ abstract open class BaseActivity(private val layout: Int, private val titleId: I
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        if(!BuildConfig.DEBUG){
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        }
 
         setContentView(layout)
 

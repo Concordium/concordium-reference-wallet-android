@@ -1,27 +1,35 @@
 package com.concordium.wallet.ui.identity.identityproviderwebview
 
 //import com.concordium.mobile_wallet_lib.id_object_response
+import android.app.AlertDialog
 import android.content.ActivityNotFoundException
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.concordium.wallet.App
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.backend.BackendError
 import com.concordium.wallet.data.model.IdentityCreationData
+import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.failed.FailedActivity
 import com.concordium.wallet.ui.common.failed.FailedViewModel
+import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import com.concordium.wallet.ui.identity.identityconfirmed.IdentityConfirmedActivity
 import com.concordium.wallet.util.Log
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.activity_identity_provider_webview.*
 import kotlinx.android.synthetic.main.progress.*
+import java.util.*
 
 
 class IdentityProviderWebviewActivity : BaseActivity(
@@ -33,7 +41,44 @@ class IdentityProviderWebviewActivity : BaseActivity(
 
     companion object {
         const val EXTRA_IDENTITY_CREATION_DATA = "EXTRA_IDENTITY_CREATION_DATA"
+        const val KEY_IDENTITY_CREATION_DATA = "KEY_IDENTITY_CREATION_DATA"
+
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_DATAWEREAVAILABLE = 1 // data were available
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_VALIDCALLBACKURI = 2 // valid callback uri
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_NOIDENTITYDATA = 3 // identityCreationData was not null
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_MODELSINITIALISED = 4 // models initialised correctly
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_INCORRECTCALLBACKURI = 5 // incorrect callback URL
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_CODEURISET = 6 // code_uri is set in callback uri
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_TOKENSET = 7 // token is set in callback uri
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_ERRORSET = 8 // error is set (given other errors)
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_NOTHINGSET = 9 // nothing is set in the callback uri
     }
+
+    // Have to keep this intent data in case the Activity is force killed while on the IdentityProvider website
+    class IdentityDataPreferences(context: Context, preferenceName: String, preferenceMode: Int) :
+        Preferences(context, preferenceName, preferenceMode) {
+        fun getIdentityCreationData(): IdentityCreationData? {
+            val json = getString(KEY_IDENTITY_CREATION_DATA)
+            if(json == null) {
+                return null
+            }
+            else {
+                return Gson().fromJson(json, IdentityCreationData::class.java)
+            }
+        }
+        fun setIdentityCreationData(data: IdentityCreationData?) {
+            setString(KEY_IDENTITY_CREATION_DATA, if(data == null){ null } else { Gson().toJson(data) })
+        }
+    }
+
+
+    private val preferences: IdentityDataPreferences
+        get() {
+            return IdentityDataPreferences(getApplication(),
+                KEY_IDENTITY_CREATION_DATA, Context.MODE_PRIVATE)
+        }
+
+
 
     //region Lifecycle
     //************************************************************
@@ -42,18 +87,29 @@ class IdentityProviderWebviewActivity : BaseActivity(
         super.onCreate(savedInstanceState)
 
         var handled = false
-        val identityCreationData = App.appCore.identityCreationData
+
+        var supportCode = BitSet(10) // room for 10 flags
+        var identityCreationData = preferences.getIdentityCreationData()
+
         // In the case where the activity has been force closed, onCreate needs
         // to handle to receive the callbacl uri
         intent.data?.let { uri ->
-            if (hasValidCallbackUri(uri) && identityCreationData != null) {
-                handled = true
-                initializeViewModel()
-                viewModel.initialize(identityCreationData)
-                // Clear the temp data, now that we have set in on the view model
-                App.appCore.identityCreationData = null
-                initViews()
-                handleNewIntentData(uri)
+
+            supportCode.set(IDENTITY_CALLBACK_ERROR_BIT_INDEX_DATAWEREAVAILABLE) // data were available
+
+            if (hasValidCallbackUri(uri)){
+                supportCode.set(IDENTITY_CALLBACK_ERROR_BIT_INDEX_VALIDCALLBACKURI) // valid callback
+                if(identityCreationData != null) {
+                    supportCode.set(IDENTITY_CALLBACK_ERROR_BIT_INDEX_NOIDENTITYDATA) // identityCreationData was not null
+                    handled = true
+                    initializeViewModel()
+                    viewModel.initialize(identityCreationData)
+                    // Clear the temp data, now that we have set in on the view model
+                    preferences.setIdentityCreationData(null)
+                    initViews()
+                    supportCode.set(IDENTITY_CALLBACK_ERROR_BIT_INDEX_MODELSINITIALISED) // models initialised correctly
+                    handleNewIntentData(uri, supportCode)
+                }
             }
         }
         if (!handled) {
@@ -61,7 +117,7 @@ class IdentityProviderWebviewActivity : BaseActivity(
             val tempData =
                 intent.extras!!.getSerializable(EXTRA_IDENTITY_CREATION_DATA) as IdentityCreationData?
             if (tempData != null) {
-                App.appCore.identityCreationData = tempData
+                preferences.setIdentityCreationData(tempData)
                 handled = true
                 initializeViewModel()
                 viewModel.initialize(tempData)
@@ -71,9 +127,39 @@ class IdentityProviderWebviewActivity : BaseActivity(
                 }
             }
         }
+
+
         if (!handled) {
             Log.e("No IdentityCreationData saved - this should not happen")
-            finish()
+
+            val emailFlow = IdentityErrorDialogHelper.canOpenSupportEmail(this)
+            var dialogMsgAction = R.string.dialog_support
+            var dialogMsg = R.string.dialog_popup_support_creation_flow_with_email_client_text
+
+            var errorText = getString(R.string.dialog_support_text, supportCode.toLongArray()[0].toString(), BuildConfig.VERSION_NAME, Build.VERSION.RELEASE)
+
+            if(!emailFlow){
+                dialogMsgAction = R.string.dialog_copy
+                dialogMsg = R.string.dialog_popup_support_creation_flow_without_email_client_text
+            }
+            AlertDialog.Builder(this)
+                .setMessage(dialogMsg)
+                .setPositiveButton(dialogMsgAction) { dialog, which ->
+                    if(emailFlow){
+                        IdentityErrorDialogHelper.openGenericSupportEmail(this, resources,getString(R.string.dialog_initial_account_error_title), errorText)
+                    }
+                    else{
+                        IdentityErrorDialogHelper.copyToClipboard(this, getString(R.string.contact_issuance_hash_value_copied), "")
+                    }
+                    finish()
+                }
+                .setNegativeButton(getString(R.string.dialog_cancel)) { dialog, which ->
+                    finish()
+                }
+                .show()
+
+            //showError(R.string.dialog_support_creation_data_reference)
+            //finish()
         }
 
     }
@@ -81,12 +167,13 @@ class IdentityProviderWebviewActivity : BaseActivity(
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         // Clear the temp data, we already have it in the view model
-        App.appCore.identityCreationData = null
+        // preferences.setIdentityCreationData(null)
         Log.d("New intent")
         intent?.data?.let {
-            handleNewIntentData(it)
+            handleNewIntentData(it, null)
         }
     }
+
 
 
     //endregion
@@ -188,7 +275,7 @@ class IdentityProviderWebviewActivity : BaseActivity(
         return false
     }
 
-    private fun handleNewIntentData(uri: Uri): Boolean {
+    private fun handleNewIntentData(uri: Uri, supportCode: BitSet?): Boolean {
         if (uri.toString().startsWith(IdentityProviderWebviewViewModel.CALLBACK_URL)) {
             // The fragment is the part after # and is specified by the issuer to be one
             // key/value pair: token=[identityObject]
@@ -204,19 +291,26 @@ class IdentityProviderWebviewActivity : BaseActivity(
             */
 
             if (!fragmentParts.isNullOrEmpty() && fragmentParts[0] == "code_uri") {
+                supportCode?.set(IDENTITY_CALLBACK_ERROR_BIT_INDEX_CODEURISET) // code_uri is set
                 viewModel.parseIdentityAndSavePending(uri.toString().split("#code_uri=").last())
             }
             else
             if (!fragmentParts.isNullOrEmpty() && fragmentParts[0] == "token") {
+                supportCode?.set(IDENTITY_CALLBACK_ERROR_BIT_INDEX_TOKENSET) // token is set
                 val identity = fragmentParts[1]
                 viewModel.parseIdentityAndSave(identity)
             }
             else
             if (!fragmentParts.isNullOrEmpty() && fragmentParts[0] == "error") {
+                supportCode?.set(IDENTITY_CALLBACK_ERROR_BIT_INDEX_ERRORSET) // error is set
                 viewModel.parseIdentityError(fragmentParts[1]);
+            }
+            else{
+                supportCode?.set(IDENTITY_CALLBACK_ERROR_BIT_INDEX_NOTHINGSET) // nothing is set
             }
             return true
         }
+        supportCode?.set(IDENTITY_CALLBACK_ERROR_BIT_INDEX_INCORRECTCALLBACKURI) // incorrect callback URL
         return false
     }
 

@@ -193,7 +193,7 @@ class TransactionDetailsActivity :
             from_address_layout.setTitle(
                 getString(
                     R.string.transaction_details_from_address,
-                    ta.fromAddressTitle
+                    viewModel.addressLookup(ta.fromAddress, ta.fromAddressTitle)
                 )
             )
             from_address_layout.setValue(ta.fromAddress, true)
@@ -207,7 +207,7 @@ class TransactionDetailsActivity :
                     from_address_layout.setTitle(
                         getString(
                             R.string.transaction_details_origin,
-                            ta.fromAddressTitle
+                            viewModel.addressLookup(ta.fromAddress, ta.fromAddressTitle)
                         )
                     )
                     from_address_layout.setValue(origin.address, true)
@@ -223,7 +223,7 @@ class TransactionDetailsActivity :
             to_address_layout.setTitle(
                 getString(
                     R.string.transaction_details_to_address,
-                    ta.toAddressTitle
+                    viewModel.addressLookup(ta.toAddress, ta.toAddressTitle)
                 )
             )
             to_address_layout.setValue(ta.toAddress, true)

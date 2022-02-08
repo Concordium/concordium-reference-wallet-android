@@ -6,12 +6,12 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def versionBuildNumberSequential = 55 // continuous sequential number - must be incremented for every release
+def versionBuildNumberSequential = 69 // continuous sequential number - must be incremented for every release
 
-def versionBuildNumberReset = 39 // set this to value of versionBuildNumberSequential when incrementing minor and/or major
+def versionBuildNumberReset = 63 // set this to value of versionBuildNumberSequential when incrementing minor and/or major
 
 def versionBuildNumberMajor = 1
-def versionBuildNumberMinor = 0
+def versionBuildNumberMinor = 2
 def versionBuildNumberPatch = versionBuildNumberSequential - versionBuildNumberReset
 
 //def LOCAL_IP = getLocalIPv4()
@@ -33,10 +33,13 @@ def PROVIDER_AUTHORITY_STAGING = PROVIDER_AUTHORITY_BASE+"-staging"
 def PROVIDER_AUTHORITY_TESTNET = PROVIDER_AUTHORITY_BASE+"-testnet"
 def PROVIDER_AUTHORITY_PROD = PROVIDER_AUTHORITY_BASE
 
-def SCHEME_BASE = "concordiumwallet"
+// We provide a compile time random string for identification in order to prevent
+// other forked apps to collide
+def SCHEME_BASE = "concordiumwallet-"+getRandomString()
 def SCHEME_LOCAL = SCHEME_BASE+"-local"
 def SCHEME_MOCK = SCHEME_BASE+"-mock"
 def SCHEME_STAGING = SCHEME_BASE+"-staging"
+def SCHEME_TESTNET = SCHEME_BASE+"-testnet"
 def SCHEME_PROD = SCHEME_BASE
 
 def getLocalIPv4() {
@@ -49,6 +52,16 @@ def getLocalIPv4() {
                         .each { ip4s << it.getHostAddress() }
             }
     return ip4s[0]
+}
+
+def getRandomString() {
+    def key
+    String alphabet = (('a'..'k')+('m'..'z')+('2'..'9')).join()
+    def length = 10
+    key = new Random().with {
+        (1..length).collect { alphabet[ nextInt( alphabet.length() ) ] }.join()
+    }
+    return key
 }
 
 def buildTime() {
@@ -85,6 +98,9 @@ android {
         buildConfigField("boolean", "SHOW_GTU_DROP", "false")
         buildConfigField("boolean", "USE_LIBRARY_PROVIDED_IDENTITIES", "true")
         buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
+
+        buildConfigField("boolean", "FAIL_IDENTITY_CREATION", "false")
+        buildConfigField("boolean", "FORCE_NO_EMAIL_CLIENTS", "false")
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -159,6 +175,9 @@ android {
             buildConfigField("String", "ENV_NAME", "\"staging\"")
             buildConfigField("String", "URL_PROXY_BASE", "\"${URL_PROXY_BASE_STAGING}\"")
 
+            buildConfigField("boolean", "FAIL_IDENTITY_CREATION", "false")
+            buildConfigField("boolean", "FORCE_NO_EMAIL_CLIENTS", "false")
+
             buildConfigField("boolean", "SHOW_GTU_DROP", "true")
             buildConfigField("boolean", "USE_LIBRARY_PROVIDED_IDENTITIES", "false")
 
@@ -181,8 +200,8 @@ android {
             buildConfigField("boolean", "SHOW_GTU_DROP", "true")
             buildConfigField("boolean", "USE_LIBRARY_PROVIDED_IDENTITIES", "false")
 
-            buildConfigField("String", "SCHEME", "\"${SCHEME_PROD}\"")
-            resValue "string", "scheme", "\"${SCHEME_PROD}\""
+            buildConfigField("String", "SCHEME", "\"${SCHEME_TESTNET}\"")
+            resValue "string", "scheme", "\"${SCHEME_TESTNET}\""
 
             resValue "string", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_TESTNET}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_TESTNET}\"")

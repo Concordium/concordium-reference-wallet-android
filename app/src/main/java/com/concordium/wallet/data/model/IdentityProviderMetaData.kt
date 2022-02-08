@@ -4,5 +4,11 @@ import java.io.Serializable
 
 data class IdentityProviderMetaData(
     val icon: String,
-    val issuanceStart: String
-) : Serializable
+    val issuanceStart: String,
+    val support: String?
+
+) : Serializable {
+    fun getSupportWithDefault(): String {
+        return support ?: "support@concordium.software"
+    }
+}

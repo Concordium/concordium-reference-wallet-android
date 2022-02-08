@@ -27,8 +27,6 @@ class AppCore(val context: Context) {
     private var authenticationManager: AuthenticationManager = authenticationManagerGeneric
     private var resetBiometricKeyNameAppendix: String = ""
 
-    // Have to keep this intent data in case the Activity is force killed while on the IdentityProvider website
-    var identityCreationData: IdentityCreationData? = null
 
     init {
         cryptoLibrary =

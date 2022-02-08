@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.view.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.MainViewModel
@@ -17,6 +19,7 @@ import com.concordium.wallet.ui.account.newaccountname.NewAccountNameActivity
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
+import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.uicore.dialog.CustomDialogFragment
 import com.concordium.wallet.util.Log
 import kotlinx.android.synthetic.main.fragment_accounts_overview.*
@@ -29,6 +32,8 @@ class AccountsOverviewFragment : BaseFragment() {
     companion object {
         private const val REQUESTCODE_ACCOUNT_DETAILS = 2000
     }
+
+    private var eventListener: Preferences.Listener? = null
 
     private lateinit var viewModel: AccountsOverviewViewModel
     private lateinit var mainViewModel: MainViewModel
@@ -60,7 +65,13 @@ class AccountsOverviewFragment : BaseFragment() {
         viewModel.initiateFrequentUpdater()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        eventListener?.let {
+            App.appCore.session.removeAccountsBackedUpListener(it)
+        }
 
+    }
 
     override fun onPause() {
         super.onPause()
@@ -100,11 +111,11 @@ class AccountsOverviewFragment : BaseFragment() {
     private fun initializeViewModel() {
         viewModel = ViewModelProvider(
             this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(activity!!.application)
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         ).get(AccountsOverviewViewModel::class.java)
         mainViewModel = ViewModelProvider(
-            activity!!,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(activity!!.application)
+            requireActivity(),
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         ).get(MainViewModel::class.java)
 
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
@@ -172,7 +183,34 @@ class AccountsOverviewFragment : BaseFragment() {
             gotoCreateAccount()
         }
 
+        view.missing_backup.setOnClickListener {
+            gotoExport()
+        }
+
+        eventListener = object : Preferences.Listener {
+            override fun onChange() {
+                updateMissingBackup(view.missing_backup)
+            }
+        }
+
+        updateMissingBackup(view.missing_backup)
+        eventListener?.let {
+            App.appCore.session.addAccountsBackedUpListener(it)
+        }
+
         initializeList(view)
+
+
+        context?.let {
+            if(App.appCore.session.shouldPromptForBackedUp(it)){
+                CustomDialogFragment.showAppUpdateBackupWarningDialog(it)
+                updateMissingBackup(view.missing_backup)
+            }
+        }
+    }
+
+    private fun updateMissingBackup(view: View){
+        view.visibility = if(App.appCore.session.isAccountsBackedUp()) View.GONE else View.VISIBLE
     }
 
     private fun initializeList(view: View) {
@@ -194,6 +232,11 @@ class AccountsOverviewFragment : BaseFragment() {
 
     //region Control/UI
     //************************************************************
+
+    private fun gotoExport() {
+        val intent = Intent(activity, ExportActivity::class.java)
+        startActivity(intent)
+    }
 
     private fun gotoCreateIdentity() {
         val intent = Intent(activity, IdentityCreateActivity::class.java)

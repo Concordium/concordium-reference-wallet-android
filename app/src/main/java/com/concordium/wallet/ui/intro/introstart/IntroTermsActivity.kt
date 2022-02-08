@@ -4,7 +4,9 @@ import android.content.Intent
 import android.content.res.TypedArray
 import android.graphics.Color
 import android.os.Bundle
+import com.concordium.wallet.App
 import com.concordium.wallet.R
+import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_intro_terms.*
 
@@ -49,9 +51,12 @@ class IntroTermsActivity : BaseActivity(R.layout.activity_intro_terms, R.string.
     //************************************************************
 
     private fun gotoStart() {
+        val oldHash = App.appCore.session.setTermsHashed(App.appContext.getString(R.string.terms_text).hashCode())
+
         finish()
-        val intent = Intent(this, IntroStartActivity::class.java)
+        val intent = if(App.appCore.session.hasSetupPassword) Intent(this, AuthLoginActivity::class.java) else Intent(this, IntroStartActivity::class.java)
         startActivity(intent)
+
     }
 
     override fun loggedOut() {

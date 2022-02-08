@@ -17,6 +17,9 @@ class AuthPreferences(val context: Context) :
         val PREFKEY_ENCRYPTED_PASSWORD = "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY"
         val PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR = "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR"
         val PREFKEY_BIOMETRIC_KEY = "PREFKEY_BIOMETRIC_KEY"
+        val PREFKEY_TERMS_HASHED = "PREFKEY_TERMS_HASHED"
+        val PREFKEY_ACCOUNTS_BACKED_UP = "PREFKEY_ACCOUNTS_BACKED_UP"
+        val PREFKEY_VERSION_BACKED_UP = "PREFKEY_VERSION_BACKED_UP"
     }
 
     fun setHasSetupUser(value: Boolean) {
@@ -97,6 +100,34 @@ class AuthPreferences(val context: Context) :
 
     fun setAuthKeyName(key: String) {
         return setString(PREFKEY_BIOMETRIC_KEY, key)
+    }
+
+    fun getTermsHashed(): Int {
+        return getInt(PREFKEY_TERMS_HASHED, 0)
+    }
+
+    fun setTermsHashed(key: Int) {
+        return setInt(PREFKEY_TERMS_HASHED, key)
+    }
+
+    fun isAccountsBackedUp(): Boolean {
+        return getBoolean(PREFKEY_ACCOUNTS_BACKED_UP, true)
+    }
+
+    fun setAccountsBackedUp(value: Boolean) {
+        return setBoolean(PREFKEY_ACCOUNTS_BACKED_UP, value)
+    }
+
+    fun addAccountsBackedUpListener(listener: Listener) {
+        addListener(PREFKEY_ACCOUNTS_BACKED_UP, listener)
+    }
+
+    fun getVersionBackedUp(): Int {
+        return getInt(PREFKEY_VERSION_BACKED_UP, 0)
+    }
+
+    fun setVersionBackedUp(value: Int) {
+        return setInt(PREFKEY_VERSION_BACKED_UP, value)
     }
 
 }

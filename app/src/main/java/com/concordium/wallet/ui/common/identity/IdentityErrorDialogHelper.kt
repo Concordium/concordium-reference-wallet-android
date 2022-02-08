@@ -43,11 +43,12 @@ object IdentityErrorDialogHelper {
                     activity,
                     RequestCodes.REQUEST_IDENTITY_ERROR_DIALOG,
                     title,
-                    R.string.dialog_popup_support_with_email_client_text,
+                    activity.getString(R.string.dialog_popup_support_with_email_client_text, identityErrorData.identity.identityProvider.ipInfo.ipDescription.name),
                     positive,
                     R.string.dialog_support,
                     R.string.dialog_cancel,
-                    hash(identityErrorData.identity.codeUri)
+                    hash(identityErrorData.identity.codeUri),
+                    identityErrorData.identity.identityProvider.metadata.getSupportWithDefault()
                 )
             }
             else{
@@ -55,11 +56,12 @@ object IdentityErrorDialogHelper {
                     activity,
                     RequestCodes.REQUEST_IDENTITY_ERROR_DIALOG,
                     title,
-                    R.string.dialog_popup_support_without_email_client_text,
+                    activity.getString(R.string.dialog_popup_support_without_email_client_text, identityErrorData.identity.identityProvider.ipInfo.ipDescription.name, identityErrorData.identity.identityProvider.metadata.getSupportWithDefault()),
                     positive,
                     R.string.dialog_copy,
                     R.string.dialog_cancel,
-                    hash(identityErrorData.identity.codeUri)
+                    hash(identityErrorData.identity.codeUri),
+                    identityErrorData.identity.identityProvider.metadata.getSupportWithDefault()
                 )
             }
         }
@@ -90,8 +92,8 @@ object IdentityErrorDialogHelper {
      * @param testOnly if set to true we to not resolve and start activity, we only test
      * @return true if intent can be resolved
      */
-    fun openSupportEmail(context: Context, resources: Resources, uriSession: String, testOnly: Boolean = false): Boolean {
-        val uriText = "mailto:concordium-idiss@notabene.id" +
+    fun openSupportEmail(context: Context, resources: Resources, identityEmail: String, uriSession: String, testOnly: Boolean = false): Boolean {
+        val uriText = "mailto:" +identityEmail+
                 "?cc=" + "idiss@concordium.software" +
                 "&subject=" + Uri.encode(resources.getString(R.string.dialog_support_subject_reference, uriSession)) +
                 "&body=" + Uri.encode(resources.getString(R.string.dialog_support_text, uriSession, BuildConfig.VERSION_NAME, Build.VERSION.RELEASE))
@@ -109,12 +111,28 @@ object IdentityErrorDialogHelper {
         }
     }
 
+    fun openGenericSupportEmail(context: Context, resources: Resources, subject: String, text: String) {
+        val uriText = "mailto: support@concordium.software"+
+                "?subject=" + Uri.encode(subject) +
+                "&body=" + Uri.encode(text)
+        val uri = Uri.parse(uriText)
+        val sendIntent = Intent(Intent.ACTION_SENDTO)
+        sendIntent.data = uri
+        context.startActivity(Intent.createChooser(sendIntent, resources.getString(R.string.dialog_send_email)))
+    }
+
     /**
      * Convenience method
      */
     fun canOpenSupportEmail(context: Context): Boolean {
-        return openSupportEmail(context, context.resources, "", true)
+        if(BuildConfig.FORCE_NO_EMAIL_CLIENTS){
+            return false
+        }
+        return openSupportEmail(context, context.resources, "","", true)
     }
+
+
+
 
     fun copyToClipboard(context: Context, title: String, content: String) {
         val clipboard: ClipboardManager = context.getSystemService(AppCompatActivity.CLIPBOARD_SERVICE) as ClipboardManager

@@ -13,4 +13,8 @@ data class ExportValue(
         return identities != null
                 && recipients != null
     }
+
+    fun hasRequiredIdentities(): Boolean {
+        return identities != null && identities.isNotEmpty()
+    }
 }

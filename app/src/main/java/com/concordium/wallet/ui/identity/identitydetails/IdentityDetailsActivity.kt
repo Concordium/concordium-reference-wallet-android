@@ -64,6 +64,8 @@ class IdentityDetailsActivity :
         recyclerview.isNestedScrollingEnabled = false
     }
 
+
+
     private fun initializeErrorViews() {
         if(viewModel.identity.status == IdentityStatus.ERROR){
             error_wrapper_layout.visibility = View.VISIBLE
@@ -75,7 +77,14 @@ class IdentityDetailsActivity :
                 }
             })
 
-            error_issuance_no_email_client_headline.visibility = if(IdentityErrorDialogHelper.canOpenSupportEmail(this)) View.GONE else View.VISIBLE
+            if(IdentityErrorDialogHelper.canOpenSupportEmail(this)){
+                error_issuance_no_email_client_headline.visibility =  View.GONE
+            }
+            else{
+                error_issuance_no_email_client_headline.visibility =  View.VISIBLE
+                error_issuance_no_email_client_headline.text = getString(R.string.contact_issuance_no_email_client_reference, viewModel.identity.identityProvider.ipInfo.ipDescription.name, viewModel.identity.identityProvider.metadata.getSupportWithDefault())
+            }
+
 
             val hash = IdentityErrorDialogHelper.hash(viewModel.identity.codeUri)
             error_issuance_reference_hash.text = hash
@@ -87,7 +96,7 @@ class IdentityDetailsActivity :
 
             support_button.setOnClickListener(View.OnClickListener {
                 GlobalScope.launch {
-                    IdentityErrorDialogHelper.openSupportEmail(this@IdentityDetailsActivity, resources, hash)
+                    IdentityErrorDialogHelper.openSupportEmail(this@IdentityDetailsActivity, resources, viewModel.identity.identityProvider.metadata.getSupportWithDefault(), hash)
                 }
             })
 

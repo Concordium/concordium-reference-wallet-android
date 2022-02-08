@@ -5,8 +5,10 @@ import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.concordium.wallet.App
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.preferences.FilterPreferences
+import com.concordium.wallet.data.preferences.Preferences
 
 class Session {
 
@@ -93,5 +95,43 @@ class Session {
         authPreferences.setAuthKeyName(resetBiometricKeyNameAppendix)
     }
 
+    fun getTermsHashed(): Int {
+        return authPreferences.getTermsHashed()
+    }
+
+    fun setTermsHashed(key: Int) {
+        return authPreferences.setTermsHashed(key)
+    }
+
+    fun isAccountsBackedUp(): Boolean {
+        return authPreferences.isAccountsBackedUp()
+    }
+
+    fun setAccountsBackedUp(value: Boolean) {
+        return authPreferences.setAccountsBackedUp(value)
+    }
+
+    fun addAccountsBackedUpListener(listener: Preferences.Listener) {
+        authPreferences.addAccountsBackedUpListener(listener)
+    }
+    fun removeAccountsBackedUpListener(listener: Preferences.Listener) {
+        authPreferences.removeListener(listener)
+    }
+
+    fun shouldPromptForBackedUp(context: Context): Boolean {
+        val isFirstTimeInstall = with(context.packageManager.getPackageInfo(context.packageName, 0)) {
+            firstInstallTime == lastUpdateTime
+        }
+        val versionBackedUp = authPreferences.getVersionBackedUp()
+        authPreferences.setVersionBackedUp(BuildConfig.VERSION_CODE)
+        if(isFirstTimeInstall){
+            return false
+        }
+        if(versionBackedUp == 0){
+            authPreferences.setAccountsBackedUp(false)
+            return true
+        }
+        return false
+    }
 
 }

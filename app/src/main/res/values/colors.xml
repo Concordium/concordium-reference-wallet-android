@@ -31,6 +31,7 @@
 
     <color name="background_release">#D9EFFC</color>
     <!-- Other -->
+    <color name="warning_orange">#FF9800</color>
 
 
 </resources>

@@ -34,7 +34,7 @@ class ExportViewModel(application: Application) :
     AndroidViewModel(application) {
 
     companion object {
-        const val FILE_NAME = "export.concordiumwallet"
+        const val FILE_NAME = "concordium-backup.concordiumwallet"
     }
 
     private val identityRepository: IdentityRepository

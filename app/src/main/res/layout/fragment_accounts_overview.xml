@@ -9,6 +9,36 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/missing_backup"
+            style="@style/Layout.CardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/stat_sys_warning"
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center"
+                    android:tint="@color/warning_orange"/>
+                <TextView
+                    style="@style/TextView.Standard"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:paddingRight="5dp"
+                    android:text="@string/accounts_overview_backup_warning" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
         <RelativeLayout
             android:id="@+id/balance_layout"
             android:layout_width="match_parent"
@@ -19,7 +49,8 @@
             android:background="@drawable/background_rounded_black"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/missing_backup"
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
