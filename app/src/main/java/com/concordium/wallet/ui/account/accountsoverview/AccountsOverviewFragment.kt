@@ -14,12 +14,14 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.RequestCodes
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
+import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.account.newaccountname.NewAccountNameActivity
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
+import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.uicore.dialog.CustomDialogFragment
 import com.concordium.wallet.util.Log
 import kotlinx.android.synthetic.main.fragment_accounts_overview.*
@@ -219,11 +221,22 @@ class AccountsOverviewFragment : BaseFragment() {
         view.account_recyclerview.adapter = accountAdapter
 
         accountAdapter.setOnItemClickListener(object : AccountItemView.OnItemClickListener {
-            override fun onRegularBalanceClicked(item: Account) {
-                gotoAccountDetails(item, false)
+
+            override fun onMoreClicked(account: Account) {
+                gotoAccountDetails(account, false)
             }
-            override fun onShieldedBalanceClicked(item: Account) {
-                gotoAccountDetails(item, true)
+
+            override fun onReceiveClicked(account: Account) {
+                val intent = Intent(activity, AccountQRCodeActivity::class.java)
+                intent.putExtra(AccountQRCodeActivity.EXTRA_ACCOUNT, account)
+                startActivity(intent)
+            }
+
+            override fun onSendClicked(account: Account) {
+                val intent = Intent(activity, SendFundsActivity::class.java)
+                intent.putExtra(SendFundsActivity.EXTRA_SHIELDED, false)
+                intent.putExtra(SendFundsActivity.EXTRA_ACCOUNT, account)
+                startActivity(intent)
             }
         })
     }
@@ -232,6 +245,9 @@ class AccountsOverviewFragment : BaseFragment() {
 
     //region Control/UI
     //************************************************************
+
+
+
 
     private fun gotoExport() {
         val intent = Intent(activity, ExportActivity::class.java)

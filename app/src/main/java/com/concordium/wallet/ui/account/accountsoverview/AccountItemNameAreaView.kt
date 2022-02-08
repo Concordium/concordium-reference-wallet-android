@@ -39,6 +39,8 @@ class AccountItemNameAreaView(context: Context, attrs: AttributeSet?): LinearLay
         status_read_only.visibility = if(accountWithIdentitiy.account.readOnly) View.VISIBLE else View.GONE
         status_baker.visibility = if(accountWithIdentitiy.account.isBaker()) View.VISIBLE else View.GONE
 
+        account_identity_name.text = accountWithIdentitiy.identity.name
+
         //Fix for a weird error where name is truncated wrong and at random
         //This fixes it. We expand if text is truncated, else we wrap.
         post {

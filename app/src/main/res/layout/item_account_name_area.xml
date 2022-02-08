@@ -25,9 +25,22 @@
         tools:text="Savings account Savings account Savings account Savings account Savings account" />
 
     <TextView
+        android:id="@+id/account_identity_name"
+        style="@style/TextView.ListItemHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/balance_collapsable_item_height"
+        android:paddingStart="5dp"
+        android:maxWidth="100dp"
+        android:layout_gravity="right"
+        android:textColor="@color/text_grey"
+        android:gravity="right"
+        tools:text="Nellie Patrick Nellie Patrick Nellie Patrick Nellie Patrick" />
+
+    <TextView
         android:id="@+id/initial_textview"
         style="@style/TextView.ListItemHeader"
         android:paddingStart="5dp"
+        android:textColor="@color/text_grey"
         android:layout_width="wrap_content"
         android:text="@string/view_account_initial" />
 
@@ -37,6 +50,7 @@
         android:layout_width="14dp"
         android:layout_height="14dp"
         android:layout_margin="4dp"
+        android:tint="@color/text_grey"
         android:src="@drawable/ic_baker" />
 
     <ImageView

@@ -42,4 +42,7 @@
     <dimen name="account_release_schedule_inner_list_padding_top_bottom">8dp</dimen>
     <dimen name="item_recipient_delete_width">70dp</dimen>
 
+    <dimen name="account_card_margin_vertical">3dp</dimen>
+    <dimen name="account_card_margin_horizontal">11dp</dimen>
+
 </resources>

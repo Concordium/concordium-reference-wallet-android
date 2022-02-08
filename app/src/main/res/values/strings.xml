@@ -329,12 +329,10 @@
     <string name="accounts_overview_no_identities">You need to create an identity before creating an account.</string>
     <string name="accounts_overview_no_accounts">You have no accounts yet.</string>
 
-    <string name="accounts_overview_at_disposal">- At disposal:</string>
-    <string name="accounts_overview_staked">- Staked:</string>
-    <string name="accounts_overview_balance">Balance:</string>
+    <string name="accounts_overview_at_disposal">At disposal:</string>
     <string name="accounts_overview_balance_at_disposal">Balance (at disposal):</string>
     <string name="accounts_overview_shielded_balance">Shielded Balance:</string>
-    <string name="accounts_overview_account_total">Account total</string>
+    <string name="accounts_overview_account_total">Total</string>
 
 
     <!-- New account name -->
@@ -642,6 +640,10 @@
     <string name="app_update_account_no_backup_message">Did you make a backup of your identities and accounts recently?\n\nA backup file is the only way to restore private keys if you lose your phone or re-install the wallet. Without the private keys, you cannot access your accounts. Concordium cannot recover your private keys or export password and you will lose your CCDs. You should export a new backup file EVERY time a new account is created. Protect your export password.\n\nRemember to store the file named concordium-backup.concordiumwallet securely.</string>
     <string name="app_update_account_no_backup_dismiss">Not now</string>
     <string name="app_update_account_no_backup_now">Make backup</string>
+
+    <string name="account_card_action_send">Send</string>
+    <string name="account_card_action_receive">Receive</string>
+    <string name="account_card_action_more">More</string>
 
 
 </resources>
