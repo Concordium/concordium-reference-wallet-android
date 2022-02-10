@@ -34,13 +34,14 @@ class AccountItemView(context: Context, attrs: AttributeSet?): LinearLayout(cont
 
     fun setAccount(accountWithIdentitiy: AccountWithIdentity) {
         this.accountWithIdentitiy = accountWithIdentitiy
-        total_textview.text = CurrencyUtil.formatGTU(accountWithIdentitiy.account.totalBalance, withGStroke = true)
-        balance_at_disposal_textview.text = CurrencyUtil.formatGTU(accountWithIdentitiy.account.totalBalance - accountWithIdentitiy.account.getAtDisposalSubstraction() - accountWithIdentitiy.account.totalShieldedBalance, withGStroke = true)
+        total_textview.text = CurrencyUtil.formatGTU(accountWithIdentitiy.account.totalUnshieldedBalance, withGStroke = true)
+        balance_at_disposal_textview.text = CurrencyUtil.formatGTU(accountWithIdentitiy.account.totalUnshieldedBalance - accountWithIdentitiy.account.getAtDisposalSubstraction() - accountWithIdentitiy.account.totalShieldedBalance, withGStroke = true)
         account_name_area.setData(accountWithIdentitiy)
 
-        accountWithIdentitiy.account.readOnly = true   testtest
         button_area.visibility = if(accountWithIdentitiy.account.readOnly) View.GONE else View.VISIBLE
         root_card_content.setBackgroundColor(if(accountWithIdentitiy.account.readOnly) resources.getColor(R.color.theme_component_background_disabled, null) else resources.getColor(R.color.theme_white, null))
+
+        this.isEnabled = !accountWithIdentitiy.account.readOnly
 
     }
 
@@ -53,6 +54,9 @@ class AccountItemView(context: Context, attrs: AttributeSet?): LinearLayout(cont
                 accountWithIdentitiy?.let { it1 -> onItemClickListener.onReceiveClicked(it1.account) }
             }
             account_card_action_more.setOnClickListener {
+                accountWithIdentitiy?.let { it1 -> onItemClickListener.onMoreClicked(it1.account) }
+            }
+            root_card.setOnClickListener {
                 accountWithIdentitiy?.let { it1 -> onItemClickListener.onMoreClicked(it1.account) }
             }
         }

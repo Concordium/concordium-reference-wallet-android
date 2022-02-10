@@ -37,9 +37,10 @@ class AccountItemNameAreaView(context: Context, attrs: AttributeSet?): LinearLay
         initial_textview.visibility = if(accountWithIdentitiy.account.isInitial()) View.VISIBLE else View.GONE
 
         status_read_only.visibility = if(accountWithIdentitiy.account.readOnly) View.VISIBLE else View.GONE
+        status_read_only_textview.visibility = status_read_only.visibility
         status_baker.visibility = if(accountWithIdentitiy.account.isBaker()) View.VISIBLE else View.GONE
 
-        account_identity_name.text = accountWithIdentitiy.identity.name
+        account_identity_name.text = context.getString(R.string.view_account_name_container,accountWithIdentitiy.identity.name)
 
         //Fix for a weird error where name is truncated wrong and at random
         //This fixes it. We expand if text is truncated, else we wrap.

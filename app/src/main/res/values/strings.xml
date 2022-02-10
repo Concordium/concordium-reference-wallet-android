@@ -63,7 +63,9 @@
     <string name="view_identity_attributes_expiry_data">Expires %1$s</string>
 
     <!-- AccountView -->
-    <string name="view_account_initial">(Initial)</string>
+    <string name="view_account_initial">Initial</string>
+    <string name="view_account_read_only">Read-only</string>
+    <string name="view_account_name_container">(%1$s)</string>
 
     <!-- Failed -->
     <string name="failed_title">Failed</string>
@@ -329,9 +331,8 @@
     <string name="accounts_overview_no_identities">You need to create an identity before creating an account.</string>
     <string name="accounts_overview_no_accounts">You have no accounts yet.</string>
 
-    <string name="accounts_overview_at_disposal">At disposal:</string>
+    <string name="accounts_overview_at_disposal">At disposal</string>
     <string name="accounts_overview_balance_at_disposal">Balance (at disposal):</string>
-    <string name="accounts_overview_shielded_balance">Shielded Balance:</string>
     <string name="accounts_overview_account_total">Total</string>
 
 
@@ -421,8 +422,15 @@
 
     <string name="send_funds_fee_info">Estimated transaction fee:\nϾ%1$s</string>
     <string name="send_funds_error_insufficient_funds">Insufficient funds</string>
+
+    <string name="send_funds_select_scan_qr">Scan QR</string>
+    <string name="send_funds_select_address_book">Address book</string>
+    <string name="send_funds_paste_recipient">Paste recipient address</string>
+    <string name="send_funds_or">or</string>
+
+
     <string name="send_funds_select_recipient_or_unshield_amount">Select recipient</string>
-    <string name="send_funds_select_recipient_or_shield_amount">Select recipient</string>
+    <string name="send_funds_select_recipient">Select recipient</string>
     <string name="send_funds_recipient_shield">Amount will be shielded</string>
     <string name="send_funds_recipient_unshield">Amount will be unshielded</string>
     <string name="send_funds_confirm">Send amount</string>
@@ -644,6 +652,7 @@
     <string name="account_card_action_send">Send</string>
     <string name="account_card_action_receive">Receive</string>
     <string name="account_card_action_more">More</string>
+
 
 
 </resources>

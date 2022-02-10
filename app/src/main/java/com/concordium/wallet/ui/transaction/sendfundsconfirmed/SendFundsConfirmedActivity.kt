@@ -15,6 +15,10 @@ import com.concordium.wallet.ui.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_send_funds.*
 import kotlinx.android.synthetic.main.activity_send_funds_confirmed.*
 import kotlinx.android.synthetic.main.activity_send_funds_confirmed.confirm_button
+import android.app.Activity
+
+
+
 
 class SendFundsConfirmedActivity :
     BaseActivity(R.layout.activity_send_funds_confirmed, R.string.send_funds_confirmed_title) {
@@ -79,7 +83,7 @@ class SendFundsConfirmedActivity :
         }
 
 
-        recipient_textview.text = viewModel.recipient.name
+        recipient_textview.text = if(viewModel.recipient.name.isNullOrEmpty()) { "" } else { viewModel.recipient.name }
         address_textview.text = viewModel.transfer.toAddress
 
         confirm_button.setOnClickListener {
@@ -93,9 +97,12 @@ class SendFundsConfirmedActivity :
     //************************************************************
 
     private fun gotoAccountDetails() {
-        val intent = Intent(this, AccountDetailsActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        startActivity(intent)
+        val returnIntent = Intent()
+        setResult(RESULT_OK, returnIntent)
+        finish()
+//        val intent = Intent(this, AccountDetailsActivity::class.java)
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+//        startActivity(intent)
     }
 
     //endregion

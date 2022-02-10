@@ -234,8 +234,9 @@
         <activity
             android:name=".ui.transaction.sendfunds.SendFundsActivity"
             android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".ui.account.accountdetails.AccountDetailsActivity"
-            android:windowSoftInputMode="adjustResize" />
+            />
         <activity
             android:name=".ui.transaction.sendfundsconfirmed.SendFundsConfirmedActivity"
             android:launchMode="singleTop"
