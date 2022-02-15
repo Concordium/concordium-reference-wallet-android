@@ -12,9 +12,12 @@
     <color name="theme_black">#000000</color>
     <color name="theme_grey">#969696</color>
     <color name="theme_blue">#4486AB</color>
+    <color name="theme_dark_blue">#325D76</color>
+    <color name="theme_light_blue">#C7DBE6</color>
 
     <!-- Theme - Secondary -->
     <color name="theme_component">@color/theme_accent</color>
+    <color name="theme_component_selected">@color/theme_dark_blue</color>
     <color name="theme_component_pressed">#68a7ca</color>
     <color name="theme_component_disabled">#A19F94</color>
     <color name="theme_component_grey">#969696</color>

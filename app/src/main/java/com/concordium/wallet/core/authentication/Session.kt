@@ -111,6 +111,14 @@ class Session {
         return authPreferences.setAccountsBackedUp(value)
     }
 
+    fun isShieldingEnabled(accountAddress: String): Boolean {
+        return authPreferences.isShieldingEnabled(accountAddress)
+    }
+
+    fun setShieldingEnabled(accountAddress: String, value: Boolean) {
+        return authPreferences.setShieldingEnabled(accountAddress, value)
+    }
+
     fun addAccountsBackedUpListener(listener: Preferences.Listener) {
         authPreferences.addAccountsBackedUpListener(listener)
     }

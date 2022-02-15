@@ -20,6 +20,7 @@ class AuthPreferences(val context: Context) :
         val PREFKEY_TERMS_HASHED = "PREFKEY_TERMS_HASHED"
         val PREFKEY_ACCOUNTS_BACKED_UP = "PREFKEY_ACCOUNTS_BACKED_UP"
         val PREFKEY_VERSION_BACKED_UP = "PREFKEY_VERSION_BACKED_UP"
+        val PREFKEY_SHIELDING_ENABLED_ = "PREFKEY_SHIELDING_ENABLED_"
     }
 
     fun setHasSetupUser(value: Boolean) {
@@ -108,6 +109,14 @@ class AuthPreferences(val context: Context) :
 
     fun setTermsHashed(key: Int) {
         return setInt(PREFKEY_TERMS_HASHED, key)
+    }
+
+    fun isShieldingEnabled(accountAddress: String): Boolean {
+        return getBoolean(PREFKEY_SHIELDING_ENABLED_+accountAddress, false)
+    }
+
+    fun setShieldingEnabled(accountAddress: String, value: Boolean) {
+        return setBoolean(PREFKEY_SHIELDING_ENABLED_+accountAddress, value)
     }
 
     fun isAccountsBackedUp(): Boolean {

@@ -26,14 +26,15 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
 
-            <RelativeLayout
+            <androidx.cardview.widget.CardView
+                style="@style/Layout.CardView.Dark"
                 android:id="@+id/balance_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:background="@drawable/background_rounded_black"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -41,169 +42,208 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
+                    style="@style/Layout.CardView.Dark"
                     android:orientation="vertical">
-
-                    <LinearLayout
-                        android:id="@+id/readonly_desc"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="4dp"
-                        android:visibility="gone"
-                        tools:visibility="visible"
-                        android:gravity="center">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="11sp"
-                            android:textColor="@color/text_grey"
-                            android:text="@string/accounts_overview_readonly_desc" />
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_read_only"
-                            android:layout_gravity="center"
-                            android:layout_margin="4dp"
-                            android:tint="@color/text_grey" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="7dp"
-                        android:orientation="horizontal">
-
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="top"
-                            android:layout_gravity="top"
+                            android:layout_centerInParent="true"
                             android:orientation="vertical">
-                            <TextView
-                                style="@style/TextView.BlueValueHuge"
-                                android:text="@string/app_gstroke"
-                                android:layout_marginRight="10dp"
-                                android:layout_marginTop="10dp"
-                                android:gravity="top"
-                                android:layout_gravity="top"
-                                android:lines="1"
-                                android:textSize="18dp"
-                                />
+
+                            <LinearLayout
+                                android:id="@+id/readonly_desc"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginTop="4dp"
+                                android:gravity="center"
+                                android:orientation="horizontal"
+                                android:visibility="gone"
+                                tools:visibility="visible">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/accounts_overview_readonly_desc"
+                                    android:textColor="@color/text_grey"
+                                    android:textSize="11sp" />
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_margin="4dp"
+                                    android:src="@drawable/ic_read_only"
+                                    android:tint="@color/text_grey" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginTop="7dp"
+                                android:orientation="horizontal">
+
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="top"
+                                    android:gravity="top"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        style="@style/TextView.BlueValueHuge"
+                                        android:layout_gravity="top"
+                                        android:layout_marginTop="10dp"
+                                        android:layout_marginRight="10dp"
+                                        android:gravity="top"
+                                        android:lines="1"
+                                        android:text="@string/app_gstroke"
+                                        android:textSize="18dp" />
+                                </LinearLayout>
+
+                                <TextView
+                                    android:id="@+id/balance_textview"
+                                    style="@style/TextView.BlueValueHuge"
+                                    android:layout_gravity="top"
+                                    android:gravity="top"
+                                    android:lines="1"
+                                    android:text=""
+                                    app:autoSizeMaxTextSize="42sp"
+                                    app:autoSizeMinTextSize="8sp"
+                                    app:autoSizeStepGranularity="1sp"
+                                    app:autoSizeTextType="uniform"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    tools:text="10000000000.00" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/accounts_overview_total_details_side_margins"
+                                android:layout_marginTop="3dp"
+                                android:layout_marginRight="@dimen/accounts_overview_total_details_side_margins"
+                                android:layout_marginBottom="3dp"
+                                android:orientation="horizontal">
+
+                                <RelativeLayout
+                                    android:id="@+id/accounts_overview_total_details_disposal_container"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <TextView
+                                        style="@style/TextView.TotalBalanceDetails"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentLeft="true"
+                                        android:text="@string/accounts_overview_total_details_disposal" />
+
+                                    <TextView
+                                        android:id="@+id/accounts_overview_total_details_disposal"
+                                        style="@style/TextView.TotalBalanceDetails"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentRight="true"
+                                        tools:text="G599.9505" />
+
+                                </RelativeLayout>
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/accounts_overview_total_details_staked_container"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="@dimen/accounts_overview_total_details_side_margins"
+                                android:layout_marginRight="@dimen/accounts_overview_total_details_side_margins"
+                                android:layout_marginBottom="15dp">
+
+                                <TextView
+                                    style="@style/TextView.TotalBalanceDetails"
+                                    android:layout_gravity="center_vertical"
+                                    android:text="@string/accounts_overview_total_details_staked" />
+
+                                <TextView
+                                    android:id="@+id/accounts_overview_total_details_staked"
+                                    style="@style/TextView.TotalBalanceDetails"
+                                    android:layout_width="match_parent"
+                                    android:gravity="right"
+                                    tools:text="G33.00" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/accounts_overview_total_details_baker_container"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_marginBottom="10dp"
+                                android:orientation="horizontal"
+                                android:visibility="gone"
+                                tools:visibility="visible">
+
+                                <ImageView
+                                    style="@style/Image"
+                                    android:layout_width="11dp"
+                                    android:layout_height="13dp"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginRight="6dp"
+                                    android:src="@drawable/ic_baker"
+                                    android:tint="@color/text_blue" />
+
+                                <TextView
+                                    style="@style/TextView.TotalBalanceDetails"
+                                    android:layout_width="wrap_content"
+                                    android:layout_marginRight="4dp"
+                                    android:text="@string/account_details_baker_id" />
+
+                                <TextView
+                                    android:id="@+id/accounts_overview_total_details_baker_id"
+                                    style="@style/TextView.TotalBalanceDetails"
+                                    android:layout_width="match_parent"
+                                    tools:text="123456" />
+
+                            </LinearLayout>
+
                         </LinearLayout>
-
-                        <TextView
-                            android:id="@+id/balance_textview"
-                            style="@style/TextView.BlueValueHuge"
-                            android:text=""
-                            tools:text="10000000000.00"
-                            android:gravity="top"
-                            android:layout_gravity="top"
-                            android:lines="1"
-                            app:autoSizeTextType="uniform"
-                            app:autoSizeMinTextSize="8sp"
-                            app:autoSizeMaxTextSize="42sp"
-                            app:autoSizeStepGranularity="1sp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                    </LinearLayout>
-
-
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/accounts_overview_total_details_side_margins"
-                        android:layout_marginRight="@dimen/accounts_overview_total_details_side_margins"
-                        android:layout_marginTop="3dp"
-                        android:layout_marginBottom="3dp"
-                        android:orientation="horizontal">
-
-                        <RelativeLayout
-                            android:id="@+id/accounts_overview_total_details_disposal_container"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <TextView
-                                style="@style/TextView.TotalBalanceDetails"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentLeft="true"
-                                android:text="@string/accounts_overview_total_details_disposal" />
-
-                            <TextView
-                                android:id="@+id/accounts_overview_total_details_disposal"
-                                style="@style/TextView.TotalBalanceDetails"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentRight="true"
-                                tools:text="G599.9505" />
-
-                        </RelativeLayout>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/accounts_overview_total_details_staked_container"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/accounts_overview_total_details_side_margins"
-                        android:layout_marginRight="@dimen/accounts_overview_total_details_side_margins"
-                        android:layout_marginBottom="15dp">
-
-                        <TextView
-                            style="@style/TextView.TotalBalanceDetails"
-                            android:layout_gravity="center_vertical"
-                            android:text="@string/accounts_overview_total_details_staked" />
-                        <TextView
-                            android:id="@+id/accounts_overview_total_details_staked"
-                            style="@style/TextView.TotalBalanceDetails"
-                            android:layout_width="match_parent"
-                            android:gravity="right"
-                            tools:text="G33.00" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/accounts_overview_total_details_baker_container"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:visibility="gone"
-                        tools:visibility="visible"
-                        android:layout_marginBottom="10dp"
-                        android:orientation="horizontal">
-
                         <ImageView
-                            style="@style/Image"
-                            android:layout_height="13dp"
-                            android:layout_width="11dp"
-                            android:src="@drawable/ic_baker"
-                            android:layout_marginRight="6dp"
-                            android:layout_gravity="center_vertical"
-                            android:tint="@color/text_blue" />
-
-                        <TextView
-                            style="@style/TextView.TotalBalanceDetails"
+                            android:id="@+id/shielded_icon"
                             android:layout_width="wrap_content"
-                            android:layout_marginRight="4dp"
-                            android:text="@string/account_details_baker_id" />
+                            android:layout_height="100dp"
+                            android:layout_centerInParent="true"
+                            android:src="@drawable/ic_bg_shield" />
+                    </RelativeLayout>
 
-                        <TextView
-                            android:id="@+id/accounts_overview_total_details_baker_id"
-                            style="@style/TextView.TotalBalanceDetails"
-                            android:layout_width="match_parent"
-                            tools:text="123456" />
-
+                    <LinearLayout
+                        android:id="@+id/toggle_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <RelativeLayout
+                            android:id="@+id/toggle_balance"
+                            style="@style/ActionCardButtonContainer">
+                            <TextView
+                                style="@style/ActionCardButton"
+                                android:textAllCaps="false"
+                                android:text="@string/account_details_toggle_balance" />
+                        </RelativeLayout>
+                        <RelativeLayout
+                            android:id="@+id/toggle_shielded"
+                            style="@style/ActionCardButtonContainer">
+                            <TextView
+                                style="@style/ActionCardButton"
+                                android:textAllCaps="false"
+                                android:text="@string/account_details_toggle_shielded" />
+                        </RelativeLayout>
                     </LinearLayout>
-
 
                 </LinearLayout>
-
-            </RelativeLayout>
+            </androidx.cardview.widget.CardView>
 
 
             <LinearLayout

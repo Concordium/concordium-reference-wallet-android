@@ -46,5 +46,6 @@
     <dimen name="account_card_margin_horizontal">11dp</dimen>
 
     <dimen name="card_corner_radius">10dp</dimen>
+    <dimen name="indicator_size">5dp</dimen>
 
 </resources>

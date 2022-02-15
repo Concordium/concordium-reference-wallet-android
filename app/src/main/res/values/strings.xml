@@ -401,6 +401,16 @@
     <string name="account_details_title_shielded_balance">%1$s shielded balance</string>
     <string name="account_details_title_regular_balance">%1$s balance</string>
 
+
+    <string name="shielding_intro_title">Shielded balance</string>
+    <string name="shielding_intro_subtitle1">Before you continue</string>
+    <string name="shielding_intro_subtitle2">Before you continue</string>
+    <string name="shielding_intro_subtitle3"><![CDATA[The <i>shielding</i> transaction]]></string>
+    <string name="shielding_intro_subtitle4"><![CDATA[The <i>shielded</i> transaction]]></string>
+    <string name="shielding_intro_subtitle5"><![CDATA[The <i>shielded</i> transaction]]></string>
+    <string name="shielding_intro_subtitle6"><![CDATA[The <i>unshielding</i> transaction]]></string>
+    <string name="shielding_intro_subtitle7">Before you continue</string>
+
     <!--  Account release schedule and filters -->
     <string name="account_release_schedule">Release schedule</string>
     <string name="account_transaction_filters">Transaction filters</string>
@@ -602,6 +612,12 @@
     <string name="accounts_overview_total_details_staked">Staked:</string>
     <string name="account_details_menu_release_schedule">Release schedule</string>
     <string name="account_details_menu_transfer_filter">Transfer filters</string>
+    <string name="account_details_menu_show_shielded">Show shielded balance on %1$s</string>
+    <string name="account_details_menu_hide_shielded">Hide shielded balance on %1$s</string>
+
+    <string name="account_details_toggle_shielded">Shielded balance</string>
+    <string name="account_details_toggle_balance">Balance</string>
+
     <string name="account_release_schedule_locked_amount">Locked amount:</string>
     <string name="account_release_schedule_release_date">Release date</string>
     <string name="account_release_schedule_amount">Amount</string>
@@ -652,7 +668,10 @@
     <string name="account_card_action_send">Send</string>
     <string name="account_card_action_receive">Receive</string>
     <string name="account_card_action_more">More</string>
-
+    <string name="shielding_intro_skip">Skip</string>
+    <string name="shielding_intro_back">Back</string>
+    <string name="shielding_intro_next">Next</string>
+    <string name="shielding_intro_continue">Continue</string>
 
 
 </resources>
