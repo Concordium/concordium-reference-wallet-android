@@ -183,16 +183,23 @@
 
     <!-- Intro start-->
     <string name="intro_start_title">Intro start</string>
-    <string name="intro_start_header">Hi, there!</string>
-    <string name="intro_start_info">Before you can start using Concordium Mobile Wallet, you have to set up your passcode and biometrics, and either create your initial account, or import one or more existing accounts.\n\n\nLet’s get started!</string>
+    <string name="intro_start_header">Before you begin</string>
+    <string name="intro_start_info">Before you start using the Concordium Mobile Wallet, you have to set up a passcode and optionally biometrics.\n\nIt is very important to keep your passcode safe, because it is the only way to access your accounts. Concordium is not be able to change your passcode or help you unlock your wallet if you lose your passcode.\n\nSimilarly, if someone gets your passcode, they will be able to access your accounts.\n\nSo remember to keep your passcode safe!</string>
     <string name="intro_start_confirm">Continue</string>
+
+    <string name="intro_start_create_intro_subtitle1">Welcome to Concordium</string>
+    <string name="intro_start_create_intro_subtitle2">Verifying your identity</string>
+    <string name="intro_start_create_intro_subtitle3">The initial account</string>
+    <string name="intro_start_create_intro_subtitle4">Backup your private keys</string>
+    <string name="intro_start_create_intro_subtitle5">You are ready!</string>
 
     <!-- Intro setup-->
     <string name="intro_setup_title">Getting started</string>
-    <string name="intro_setup_header">Are you new here?</string>
-    <string name="intro_setup_info">If this is your first time using the Concordium blockchain, you must create an initial account.\n\nIn case this is not your first time around, you must import existing accounts to get access to them.\n\nHow would you like to continue?</string>
+    <string name="intro_setup_header">Are you new to Concordium?</string>
+    <string name="intro_setup_info">If this is your first time using the Concordium blockchain, you must go through a verification process to obtain your Concordium identity and your initial account. You will be guided through this process in the next pages.\n\nIf you have previously used Concordium Mobile Wallet, you can also import already existing accounts if you have a backup from a previous installation of the Concordium Mobile Wallet.\n\nHow would you like to continue?</string>
     <string name="intro_setup_confirm_create_initial">I want to create my initial account</string>
     <string name="intro_setup_confirm_import">I want to import existing accounts</string>
+    <string name="intro_flow_title">Introduction</string>
 
 
     <!-- ***** Auth ***** -->
@@ -265,16 +272,16 @@
     <string name="identity_create_info_info">On the following pages you will be guided through the three step process of requesting an initial account and an identity:\n\n1. Naming your initial account.\n2. Naming your identity.\n3. Requesting the initial account and identity from a provider of your choice.</string>
     <string name="identity_create_info_info_first">The initial account, is an account created by an identity provider of your choice. This account is created at the same time as you request an identity from an identity provider. You will have to request both the identity and the initial account, before you can start using the Concordium block-chain.\n\nOn the following pages you will be guided through the three step process of requesting the initial account and an identity:\n\n1. Naming your initial account.\n2. Naming your identity.\n3. Requesting the initial account and identity from a provider of your choice.</string>
     <string name="identity_create_info_confirm">Okay, got it!</string>
-    <string name="identity_create_account_name_header">The first step:\nNaming your initial account</string>
-    <string name="identity_create_account_name_info">What would you like to name your initial account?</string>
-    <string name="identity_create_account_name_account_name">Account name</string>
+    <string name="identity_create_account_name_header">Name your initial account</string>
+    <string name="identity_create_account_name_info">For easy identification of accounts in your wallet, all accounts have a name. This name is only visible to you and you can name it whatever you want. It does not have to be your actual name. The name is not the account address.\n\nType the name you want to give your initial account below.</string>
+    <string name="identity_create_account_name_account_name">Initial account name</string>
     <string name="identity_create_account_name_confirm">Continue</string>
-    <string name="identity_create_identity_name_header">The second step:\nNaming your identity</string>
-    <string name="identity_create_identity_name_info">What would you like to name your identity?</string>
-    <string name="identity_create_identity_name_identity_name">Identity name </string>
-    <string name="identity_create_identity_name_confirm">Continue to identity providers</string>
-    <string name="identity_create_identity_provider_header">The third step:\nChoosing an identity provider</string>
-    <string name="identity_create_identity_provider_info">%1$s, good choice!\n\nNext you have to choose what identity provider you will request your initial account and identity from. By choosing an identity provider, you will be taken to their issuance flow, in which the provider will guide you through the issuance process. After finishing their process, you will be taken back here, so we can create your initial account.\n\nNote: More identity providers will be added later.</string>
+    <string name="identity_create_identity_name_header">Name your identity card</string>
+    <string name="identity_create_identity_name_info">You should also give your identity card a name to easily keep track of it. Similar to the name you gave the initial account, this name is only visible to you, and you can name it whatever you want.\n\nType the name you want to give your identity card in your wallet below.</string>
+    <string name="identity_create_identity_name_identity_name">Identity card name</string>
+    <string name="identity_create_identity_name_confirm">Continue</string>
+    <string name="identity_create_identity_provider_header">Choosing an identity provider</string>
+    <string name="identity_create_identity_provider_info"><![CDATA[The identity provider will verify your identity using a government issued identity document, some identity attributes you provide, and a selfie.<br><br>You can pick one from the list below. To read more about them before deciding, click the links below.<br><br>%1$s]]></string>
     <string name="identity_create_identity_provider_privacy_policy">Privacy Policy</string>
 
     <!-- Identity provider list -->
@@ -287,8 +294,8 @@
 
     <!-- Identity confirmed -->
     <string name="identity_confirmed_title">Account</string>
-    <string name="identity_confirmed_header">That’s it!</string>
-    <string name="identity_confirmed_info">It might take a little while for the identity provider to finish your request.</string>
+    <string name="identity_confirmed_header">Verification request submitted!</string>
+    <string name="identity_confirmed_info">Your request has been submitted with the identity provider. Now you just have to wait for a moment for them to process your submission.\n\nYou can press continue to have a look at the app, while you wait.</string>
     <string name="identity_confirmed_info_first">It might take a little while for the identity provider to finish your request. In the meanwhile, you can have a look at the app.</string>
     <string name="identity_confirmed_confirm">Continue</string>
     <string name="identity_confirmed_failed">Identity issuance failed!</string>
@@ -323,6 +330,7 @@
     <!-- ***** Account ***** -->
 
     <!-- Accounts overview -->
+    <string name="accounts_overview_identity_pending_warning">Your identity %1$s is still getting verified.</string>
     <string name="accounts_overview_backup_warning">As your accounts are not backed up, you risk losing your tokens.</string>
     <string name="accounts_overview_title">Accounts</string>
     <string name="accounts_overview_create_identity">Create new identity</string>
@@ -614,6 +622,7 @@
     <string name="account_details_menu_transfer_filter">Transfer filters</string>
     <string name="account_details_menu_show_shielded">Show shielded balance on %1$s</string>
     <string name="account_details_menu_hide_shielded">Hide shielded balance on %1$s</string>
+    <string name="account_details_menu_decrypt">Decrypt</string>
 
     <string name="account_details_toggle_shielded">Shielded balance</string>
     <string name="account_details_toggle_balance">Balance</string>
@@ -673,5 +682,9 @@
     <string name="shielding_intro_next">Next</string>
     <string name="shielding_intro_continue">Continue</string>
 
+    <string name="account_details_shielded_warning_title">Shielded transaction received</string>
+    <string name="account_details_shielded_warning_text">Your account Main has received a shielded transaction, and the shielded balance of Main is currently hidden.\n\nYou can show the shielded balance of the account via the option below, or later via the menu in the upper right corner of the account’s page.</string>
+    <string name="account_details_shielded_warning_enable">Show shielded balance on Main</string>
+    <string name="account_details_shielded_warning_dismiss">Don’t show again</string>
 
 </resources>

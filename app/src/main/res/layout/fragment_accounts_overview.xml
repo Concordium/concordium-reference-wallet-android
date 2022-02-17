@@ -9,35 +9,73 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/missing_backup"
-            style="@style/Layout.CardView"
+
+        <LinearLayout
+            android:id="@+id/warning_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="20dp">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <ImageView
-                    android:layout_width="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/identity_pending"
+                style="@style/Layout.CardView.Warning">
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@android:drawable/stat_sys_warning"
-                    android:layout_margin="10dp"
-                    android:layout_gravity="center"
-                    android:tint="@color/warning_orange"/>
-                <TextView
-                    style="@style/TextView.Standard"
-                    android:layout_gravity="center"
-                    android:layout_margin="5dp"
-                    android:paddingRight="5dp"
-                    android:text="@string/accounts_overview_backup_warning" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:src="@drawable/ic_pending"
+                        android:layout_margin="10dp"
+                        android:layout_gravity="center"
+                        android:tint="@color/theme_blue"/>
+                    <TextView
+                        android:id="@+id/identity_pending_tv"
+                        style="@style/TextView.Standard"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_gravity="center"
+                        android:layout_margin="5dp"
+                        android:paddingRight="5dp"
+                        android:text="@string/accounts_overview_identity_pending_warning" />
+                    <ImageView
+                        android:id="@+id/identity_pending_close"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_close_cross"
+                        android:layout_margin="10dp"
+                        android:layout_gravity="center"
+                        android:clickable="true"
+                        android:tint="@color/theme_black"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/missing_backup"
+                style="@style/Layout.CardView.Warning"
+                app:layout_constraintTop_toBottomOf="@+id/initial_account">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:src="@android:drawable/stat_sys_warning"
+                        android:layout_margin="10dp"
+                        android:layout_gravity="center"
+                        android:tint="@color/warning_orange"/>
+                    <TextView
+                        style="@style/TextView.Standard"
+                        android:layout_gravity="center"
+                        android:layout_margin="5dp"
+                        android:paddingRight="5dp"
+                        android:text="@string/accounts_overview_backup_warning" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/balance_layout"
@@ -49,7 +87,7 @@
             android:background="@drawable/background_rounded_black"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/missing_backup"
+            app:layout_constraintTop_toBottomOf="@+id/warning_container"
             >
 
             <LinearLayout

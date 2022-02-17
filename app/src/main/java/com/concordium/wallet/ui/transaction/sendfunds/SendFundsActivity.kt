@@ -418,7 +418,7 @@ class SendFundsActivity :
         } else {
             if(viewModel.isShielded){
                 if(viewModel.isTransferToSameAccount()){
-                    updateRecipientEditText(getString(R.string.send_funds_recipient_unshield))
+                    recipient_container.visibility = View.GONE
                     confirm_button.setText(R.string.send_funds_confirm_unshield)
                 } else {
                     updateRecipientEditText(recipient.address)
@@ -426,7 +426,7 @@ class SendFundsActivity :
                 }
             } else {
                 if(viewModel.isTransferToSameAccount()){
-                    updateRecipientEditText(getString(R.string.send_funds_recipient_shield))
+                    recipient_container.visibility = View.GONE
                     confirm_button.setText(R.string.send_funds_confirm_shield)
                 } else {
                     updateRecipientEditText(recipient.address)

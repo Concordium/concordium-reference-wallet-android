@@ -21,6 +21,8 @@ class AuthPreferences(val context: Context) :
         val PREFKEY_ACCOUNTS_BACKED_UP = "PREFKEY_ACCOUNTS_BACKED_UP"
         val PREFKEY_VERSION_BACKED_UP = "PREFKEY_VERSION_BACKED_UP"
         val PREFKEY_SHIELDING_ENABLED_ = "PREFKEY_SHIELDING_ENABLED_"
+        val PREFKEY_SHIELDED_WARNING_DISMISSED_ = "PREFKEY_SHIELDED_WARNING_DISMISSED_"
+        val PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED = "PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED_"
     }
 
     fun setHasSetupUser(value: Boolean) {
@@ -119,6 +121,14 @@ class AuthPreferences(val context: Context) :
         return setBoolean(PREFKEY_SHIELDING_ENABLED_+accountAddress, value)
     }
 
+    fun isShieldedWarningDismissed(accountAddress: String): Boolean {
+        return getBoolean(PREFKEY_SHIELDED_WARNING_DISMISSED_+accountAddress, false)
+    }
+
+    fun setShieldedWarningDismissed(accountAddress: String, value: Boolean) {
+        return setBoolean(PREFKEY_SHIELDED_WARNING_DISMISSED_+accountAddress, value)
+    }
+
     fun isAccountsBackedUp(): Boolean {
         return getBoolean(PREFKEY_ACCOUNTS_BACKED_UP, true)
     }
@@ -137,6 +147,14 @@ class AuthPreferences(val context: Context) :
 
     fun setVersionBackedUp(value: Int) {
         return setInt(PREFKEY_VERSION_BACKED_UP, value)
+    }
+
+    fun setIdentityPendingWarningAcknowledged(id: Int) {
+        return setBoolean(PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED+id, true)
+    }
+
+    fun isIdentityPendingWarningAcknowledged(id: Int): Boolean {
+        return getBoolean(PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED+id, false)
     }
 
 }

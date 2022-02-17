@@ -111,6 +111,14 @@ class Session {
         return authPreferences.setAccountsBackedUp(value)
     }
 
+    fun isIdentityPendingWarningAcknowledged(id: Int): Boolean {
+        return authPreferences.isIdentityPendingWarningAcknowledged(id)
+    }
+
+    fun setIdentityPendingWarningAcknowledged(id: Int) {
+        return authPreferences.setIdentityPendingWarningAcknowledged(id)
+    }
+
     fun isShieldingEnabled(accountAddress: String): Boolean {
         return authPreferences.isShieldingEnabled(accountAddress)
     }
@@ -118,6 +126,16 @@ class Session {
     fun setShieldingEnabled(accountAddress: String, value: Boolean) {
         return authPreferences.setShieldingEnabled(accountAddress, value)
     }
+
+    fun isShieldedWarningDismissed(accountAddress: String): Boolean {
+        return authPreferences.isShieldedWarningDismissed(accountAddress)
+    }
+
+    fun setShieldedWarningDismissed(accountAddress: String, value: Boolean) {
+        return authPreferences.setShieldedWarningDismissed(accountAddress, value)
+    }
+
+
 
     fun addAccountsBackedUpListener(listener: Preferences.Listener) {
         authPreferences.addAccountsBackedUpListener(listener)
@@ -141,5 +159,7 @@ class Session {
         }
         return false
     }
+
+
 
 }

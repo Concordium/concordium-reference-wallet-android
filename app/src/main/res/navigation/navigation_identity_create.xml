@@ -3,17 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_identity_create"
-    app:startDestination="@id/nav_identity_create_info">
-
-    <fragment
-        android:id="@+id/nav_identity_create_info"
-        android:name="com.concordium.wallet.ui.identity.identitycreate.IdentityCreateInfoFragment"
-        android:label="@string/identity_create_title"
-        tools:layout="@layout/fragment_identity_create_info" >
-        <action
-            android:id="@+id/action_nav_identity_create_info_to_nav_identity_create_account_name"
-            app:destination="@id/nav_identity_create_account_name" />
-    </fragment>
+    app:startDestination="@id/nav_identity_create_account_name">
 
     <fragment
         android:id="@+id/nav_identity_create_account_name"

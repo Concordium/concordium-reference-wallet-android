@@ -5,6 +5,5 @@
     </declare-styleable>
     <declare-styleable name="AccountItemView">
         <attr name="hide_expand_bar" format="boolean" />
-        <attr name="expanded" format="boolean" />
     </declare-styleable>
 </resources>

@@ -51,7 +51,7 @@
                     android:layout_width="0dp"
                     android:layout_marginHorizontal="@dimen/activity_vertical_margin_extended"
                     android:layout_marginTop="20dp"
-                    android:gravity="center_horizontal"
+                    android:gravity="left"
                     android:paddingBottom="100dp"
                     android:text="@string/intro_start_info"
                     app:layout_constraintBottom_toTopOf="@+id/confirm_button"

@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
+import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewFragment
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseActivity
@@ -24,7 +25,7 @@ import com.concordium.wallet.uicore.dialog.CustomDialogFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), Dialogs.DialogFragmentListener {
+class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), Dialogs.DialogFragmentListener, AccountsOverviewFragment.AccountsOverviewFragmentListener {
 
     companion object {
         const val EXTRA_SHOW_IDENTITIES = "EXTRA_SHOW_IDENTITIES"
@@ -96,10 +97,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
         super.onNewIntent(intent)
         intent?.getBooleanExtra(EXTRA_SHOW_IDENTITIES, false)?.let { showIdentities ->
             if (showIdentities) {
-                viewModel.setState(MainViewModel.State.IdentityOverview)
-                bottom_navigation_view.menu.findItem(R.id.menuitem_identities)?.let { menuItem ->
-                    menuItem.isChecked = true
-                }
+                switchTabToIdentities()
             }
         }
         // MainActivity has launchMode singleTask to not start a new instance (if already running),
@@ -108,6 +106,13 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
             // Save this new intent to handle it in onResume (in case of an import file)
             this.intent = intent
             hasHandledPossibleImportFile = false
+        }
+    }
+
+    private fun switchTabToIdentities() {
+        viewModel.setState(MainViewModel.State.IdentityOverview)
+        bottom_navigation_view.menu.findItem(R.id.menuitem_identities)?.let { menuItem ->
+            menuItem.isChecked = true
         }
     }
 
@@ -271,6 +276,10 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
         }
     }
 
+    /* invoked eg when clicking pending warning */
+    override fun identityClicked(identity: Identity) {
+        switchTabToIdentities()
+    }
 
 
     //endregion

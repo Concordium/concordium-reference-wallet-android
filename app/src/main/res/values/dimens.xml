@@ -48,4 +48,6 @@
     <dimen name="card_corner_radius">10dp</dimen>
     <dimen name="indicator_size">5dp</dimen>
 
+    <dimen name="create_identity_flow_top_margin">20dp</dimen>
+
 </resources>

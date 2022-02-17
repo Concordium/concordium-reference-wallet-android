@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.account.accountdetails
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Animatable
@@ -15,6 +16,7 @@ import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.Transaction
@@ -218,6 +220,26 @@ class AccountDetailsActivity :
         initTabs()
 
         updateShieldEnabledUI()
+
+        if(viewModel.hasTransactionsToDecrypt && !App.appCore.session.isShieldedWarningDismissed(viewModel.account.address) && !App.appCore.session.isShieldingEnabled(viewModel.account.address)){
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(getString(R.string.account_details_shielded_warning_title))
+            builder.setMessage(getString(R.string.account_details_shielded_warning_text))
+            builder.setNegativeButton(getString(R.string.account_details_shielded_warning_enable), object: DialogInterface.OnClickListener {
+                override fun onClick(dialog: DialogInterface, which:Int) {
+                    startShieldedIntroFlow()
+                }
+            })
+            builder.setPositiveButton(getString(R.string.account_details_shielded_warning_dismiss), object: DialogInterface.OnClickListener {
+                override fun onClick(dialog: DialogInterface, which:Int) {
+                    App.appCore.session.setShieldedWarningDismissed(viewModel.account.address, true)
+                }
+            })
+            builder.setCancelable(true)
+            builder.create().show()
+
+        }
+
     }
 
     private fun updateShieldEnabledUI() {
@@ -326,14 +348,7 @@ class AccountDetailsActivity :
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        if(viewModel.isShielded){
-            if(viewModel.hasTransactionsToDecrypt){
-                menuInflater.inflate(R.menu.menu_decrypt, menu)
-            }
-        }
-        else{
-            menuInflater.inflate(R.menu.release_schedule, menu)
-        }
+        menuInflater.inflate(R.menu.release_schedule, menu)
         return true
     }
 
@@ -341,22 +356,6 @@ class AccountDetailsActivity :
         when (item.itemId) {
             android.R.id.home -> {
                 finish()
-            }
-            R.id.item_decrypt -> {
-                showAuthentication(null, viewModel.shouldUseBiometrics(), viewModel.usePasscode(), object : AuthenticationCallback{
-                    override fun getCipherForBiometrics() : Cipher?{
-                        return viewModel.getCipherForBiometrics()
-                    }
-                    override fun onCorrectPassword(password: String) {
-                        viewModel.continueWithPassword(password, true)
-                    }
-                    override fun onCipher(cipher: Cipher) {
-                        viewModel.checkLogin(cipher, true)
-                    }
-                    override fun onCancelled() {
-                        finish()
-                    }
-                })
             }
             R.id.item_menu -> {
                 item.icon = resources.getDrawable(R.drawable.burger_closed_to_open_anim, null)
@@ -371,6 +370,7 @@ class AccountDetailsActivity :
                 val menuView = View.inflate(this, R.layout.burger_menu_content, null)
 
                 val tvReleaseSchedule = menuView.findViewById(R.id.menu_item_release) as TextView
+                tvReleaseSchedule.visibility = if(viewModel.isShielded) View.GONE else View.VISIBLE
                 tvReleaseSchedule.setOnClickListener {
                     mMenuDialog?.dismiss()
                     gotoAccountReleaseSchedule(viewModel.account, viewModel.isShielded)
@@ -378,6 +378,7 @@ class AccountDetailsActivity :
 
                 //Transfer filters settings
                 val tvTransferFilter = menuView.findViewById(R.id.menu_item_filter) as TextView
+                tvTransferFilter.visibility = if(viewModel.isShielded) View.GONE else View.VISIBLE
                 tvTransferFilter.setOnClickListener {
                     mMenuDialog?.dismiss()
                     gotoTransferFilters(viewModel.account, viewModel.isShielded)
@@ -400,6 +401,29 @@ class AccountDetailsActivity :
                     viewModel.disableShielded()
                 }
                 cvHideShieldedTV.text = getString(R.string.account_details_menu_hide_shielded, viewModel.account.name)
+
+                //Decrypt option
+                val cvDecrypt = menuView.findViewById(R.id.menu_decrypt_container) as CardView
+                cvDecrypt.visibility = if(viewModel.isShielded && viewModel.hasTransactionsToDecrypt) View.VISIBLE else View.GONE
+                cvDecrypt.setOnClickListener {
+                    mMenuDialog?.dismiss()
+                    showAuthentication(null, viewModel.shouldUseBiometrics(), viewModel.usePasscode(), object : AuthenticationCallback{
+                        override fun getCipherForBiometrics() : Cipher?{
+                            return viewModel.getCipherForBiometrics()
+                        }
+                        override fun onCorrectPassword(password: String) {
+                            viewModel.continueWithPassword(password, true)
+                        }
+                        override fun onCipher(cipher: Cipher) {
+                            viewModel.checkLogin(cipher, true)
+                        }
+                        override fun onCancelled() {
+                            finish()
+                        }
+                    })
+                }
+
+
 
                 builder.setCustomTitle(menuView)
                 mMenuDialog = builder.show()

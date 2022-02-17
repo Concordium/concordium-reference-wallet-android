@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.LinearLayout
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -15,6 +16,7 @@ import kotlinx.android.synthetic.main.item_account.view.*
 class AccountItemView(context: Context, attrs: AttributeSet?): LinearLayout(context, attrs) {
 
     private var accountWithIdentitiy: AccountWithIdentity? = null
+    private var hideExpandBar: Boolean = false
 
     init {
         inflate(context, R.layout.item_account, this)
@@ -23,8 +25,7 @@ class AccountItemView(context: Context, attrs: AttributeSet?): LinearLayout(cont
         if (attrs != null) {
             val ta = context.obtainStyledAttributes(attrs, R.styleable.AccountItemView, 0, 0)
             try {
-                //hideExpandedBar(ta.getBoolean(R.styleable.AccountItemView_hide_expand_bar, false))
-                //setExpanded(ta.getBoolean(R.styleable.AccountItemView_expanded, false))
+                hideExpandBar = ta.getBoolean(R.styleable.AccountItemView_hide_expand_bar, false)
             } finally {
                 ta.recycle()
             }
@@ -38,7 +39,9 @@ class AccountItemView(context: Context, attrs: AttributeSet?): LinearLayout(cont
         balance_at_disposal_textview.text = CurrencyUtil.formatGTU(accountWithIdentitiy.account.totalUnshieldedBalance - accountWithIdentitiy.account.getAtDisposalSubstraction() - accountWithIdentitiy.account.totalShieldedBalance, withGStroke = true)
         account_name_area.setData(accountWithIdentitiy)
 
-        button_area.visibility = if(accountWithIdentitiy.account.readOnly) View.GONE else View.VISIBLE
+        var accountPending = if(accountWithIdentitiy.account.transactionStatus == TransactionStatus.COMMITTED || accountWithIdentitiy.account.transactionStatus == TransactionStatus.RECEIVED) true else false
+
+        button_area.visibility = if(accountPending || accountWithIdentitiy.account.readOnly || hideExpandBar) View.GONE else View.VISIBLE
         root_card_content.setBackgroundColor(if(accountWithIdentitiy.account.readOnly) resources.getColor(R.color.theme_component_background_disabled, null) else resources.getColor(R.color.theme_white, null))
 
         this.isEnabled = !accountWithIdentitiy.account.readOnly

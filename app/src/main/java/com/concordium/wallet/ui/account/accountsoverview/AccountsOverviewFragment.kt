@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.account.accountsoverview
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -10,20 +11,18 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.MainViewModel
-import com.concordium.wallet.ui.RequestCodes
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.account.newaccountname.NewAccountNameActivity
 import com.concordium.wallet.ui.base.BaseFragment
-import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.uicore.dialog.CustomDialogFragment
-import com.concordium.wallet.util.Log
 import kotlinx.android.synthetic.main.fragment_accounts_overview.*
 import kotlinx.android.synthetic.main.fragment_accounts_overview.view.*
 import kotlinx.android.synthetic.main.progress.*
@@ -34,6 +33,12 @@ class AccountsOverviewFragment : BaseFragment() {
     companion object {
         private const val REQUESTCODE_ACCOUNT_DETAILS = 2000
     }
+
+    interface AccountsOverviewFragmentListener {
+        fun identityClicked(identity: Identity)
+    }
+
+    private var fragmentListener: AccountsOverviewFragmentListener? = null
 
     private var eventListener: Preferences.Listener? = null
 
@@ -59,6 +64,11 @@ class AccountsOverviewFragment : BaseFragment() {
         val rootView = inflater.inflate(R.layout.fragment_accounts_overview, container, false)
         initializeViews(rootView)
         return rootView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        updateWarnings()
     }
 
     override fun onResume() {
@@ -103,6 +113,16 @@ class AccountsOverviewFragment : BaseFragment() {
             R.id.add_item_menu -> gotoCreateAccount()
         }
         return true
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            fragmentListener = context as AccountsOverviewFragmentListener
+        } catch (e: ClassCastException) {
+            throw ClassCastException(context.toString() + "must implement AccountsOverviewFragmentListener")
+        }
+
     }
 
     //endregion
@@ -169,6 +189,10 @@ class AccountsOverviewFragment : BaseFragment() {
             viewModel.initiateFrequentUpdater()
         })
 
+        viewModel.pendingIdentityForWarningLiveData.observe(this, Observer { identity ->
+            updateWarnings()
+        })
+
     }
 
     private fun initializeViews(view: View) {
@@ -191,28 +215,44 @@ class AccountsOverviewFragment : BaseFragment() {
 
         eventListener = object : Preferences.Listener {
             override fun onChange() {
-                updateMissingBackup(view.missing_backup)
+                updateWarnings()
             }
         }
 
-        updateMissingBackup(view.missing_backup)
         eventListener?.let {
             App.appCore.session.addAccountsBackedUpListener(it)
         }
 
         initializeList(view)
 
-
         context?.let {
             if(App.appCore.session.shouldPromptForBackedUp(it)){
                 CustomDialogFragment.showAppUpdateBackupWarningDialog(it)
-                updateMissingBackup(view.missing_backup)
+                updateWarnings()
             }
         }
     }
 
-    private fun updateMissingBackup(view: View){
-        view.visibility = if(App.appCore.session.isAccountsBackedUp()) View.GONE else View.VISIBLE
+    private fun updateWarnings(){
+        var ident = viewModel.pendingIdentityForWarningLiveData.value
+        if(ident != null && !App.appCore.session.isIdentityPendingWarningAcknowledged(ident.id)){
+            missing_backup.visibility = View.GONE
+            identity_pending.visibility = View.VISIBLE
+            viewModel.pendingIdentityForWarningLiveData.value
+            identity_pending_tv.text = getString(R.string.accounts_overview_identity_pending_warning, ident.name)
+            identity_pending_close.setOnClickListener {
+                App.appCore.session.setIdentityPendingWarningAcknowledged(ident.id)
+                updateWarnings()
+            }
+            identity_pending.setOnClickListener {
+                fragmentListener?.identityClicked(ident)
+            }
+        }
+        else{
+            missing_backup.visibility = if(App.appCore.session.isAccountsBackedUp()) View.GONE else View.VISIBLE
+            identity_pending.visibility = View.GONE
+        }
+
     }
 
     private fun initializeList(view: View) {

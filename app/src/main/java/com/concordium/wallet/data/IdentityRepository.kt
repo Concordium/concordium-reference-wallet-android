@@ -22,6 +22,10 @@ class IdentityRepository(private val identityDao: IdentityDao) {
         return identityDao.getAllDone()
     }
 
+    suspend fun getAllPending(): List<Identity> {
+        return identityDao.getAllPending()
+    }
+
     suspend fun getNonDoneCount(): Int {
         return identityDao.getNonDoneCount()
     }

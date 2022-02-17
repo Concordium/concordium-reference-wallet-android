@@ -121,6 +121,9 @@
             android:name=".ui.intro.introstart.IntroStartActivity"
             android:launchMode="singleTop" />
         <activity
+            android:name=".ui.intro.introflow.IntroFlowActivity"
+            android:launchMode="singleTop" />
+        <activity
             android:name=".ui.intro.introsetup.IntroSetupActivity"
             android:launchMode="singleTop" />
 
@@ -154,6 +157,7 @@
             android:theme="@style/AppTheme.NoActionBar.WithBackground" />
 
         <!-- Identity -->
+        IntroFlowActivity
         <activity
             android:name=".ui.identity.identitycreate.IdentityCreateActivity"
             android:launchMode="singleTop"
