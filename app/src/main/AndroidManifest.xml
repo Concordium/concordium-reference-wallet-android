@@ -157,7 +157,7 @@
             android:theme="@style/AppTheme.NoActionBar.WithBackground" />
 
         <!-- Identity -->
-        IntroFlowActivity
+
         <activity
             android:name=".ui.identity.identitycreate.IdentityCreateActivity"
             android:launchMode="singleTop"
@@ -189,6 +189,12 @@
             android:name=".ui.identity.identityconfirmed.IdentityConfirmedActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.identity.identityproviderwebview.IdentityProviderWebviewActivity" />
+
+        <activity
+            android:name=".ui.identity.identitiesoverview.IdentitiesOverviewActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.MainActivity" />
+
         <activity
             android:name=".ui.identity.identitydetails.IdentityDetailsActivity"
             android:launchMode="singleTop"

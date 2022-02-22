@@ -81,44 +81,49 @@
                             </LinearLayout>
 
                             <LinearLayout
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="center_horizontal"
-                                android:layout_marginTop="7dp"
-                                android:orientation="horizontal">
+                                android:layout_marginTop="5dp"
+                                android:layout_marginBottom="7dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    style="@style/TextView.BalanceInfo"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="@string/account_total_details_disposal" />
 
                                 <LinearLayout
-                                    android:layout_width="match_parent"
+                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_gravity="top"
-                                    android:gravity="top"
-                                    android:orientation="vertical">
+                                    android:layout_gravity="center"
+                                    android:orientation="horizontal">
 
                                     <TextView
                                         style="@style/TextView.BlueValueHuge"
                                         android:layout_gravity="top"
-                                        android:layout_marginTop="10dp"
-                                        android:layout_marginRight="10dp"
                                         android:gravity="top"
                                         android:lines="1"
                                         android:text="@string/app_gstroke"
-                                        android:textSize="18dp" />
-                                </LinearLayout>
+                                        android:textSize="24dp" />
 
-                                <TextView
-                                    android:id="@+id/balance_textview"
-                                    style="@style/TextView.BlueValueHuge"
-                                    android:layout_gravity="top"
-                                    android:gravity="top"
-                                    android:lines="1"
-                                    android:text=""
-                                    app:autoSizeMaxTextSize="42sp"
-                                    app:autoSizeMinTextSize="8sp"
-                                    app:autoSizeStepGranularity="1sp"
-                                    app:autoSizeTextType="uniform"
-                                    app:layout_constraintStart_toStartOf="parent"
-                                    app:layout_constraintTop_toTopOf="parent"
-                                    tools:text="10000000000.00" />
+                                    <TextView
+                                        android:id="@+id/balance_textview"
+                                        style="@style/TextView.BlueValueHuge"
+                                        android:layout_gravity="top"
+                                        android:gravity="top"
+                                        android:lines="1"
+                                        android:text=""
+                                        app:autoSizeMaxTextSize="28sp"
+                                        app:autoSizeMinTextSize="8sp"
+                                        app:autoSizeStepGranularity="1sp"
+                                        app:autoSizeTextType="uniform"
+                                        app:layout_constraintStart_toStartOf="parent"
+                                        app:layout_constraintTop_toTopOf="parent"
+                                        tools:text="100.00" />
+
+                                </LinearLayout>
 
                             </LinearLayout>
 
@@ -128,19 +133,20 @@
                                 android:layout_marginLeft="@dimen/accounts_overview_total_details_side_margins"
                                 android:layout_marginTop="3dp"
                                 android:layout_marginRight="@dimen/accounts_overview_total_details_side_margins"
-                                android:layout_marginBottom="3dp"
+                                android:layout_marginBottom="7dp"
                                 android:orientation="horizontal">
 
-                                <RelativeLayout
+                                <LinearLayout
                                     android:id="@+id/accounts_overview_total_details_disposal_container"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
 
                                     <TextView
-                                        style="@style/TextView.TotalBalanceDetails"
+                                        style="@style/TextView.BalanceInfo"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_alignParentLeft="true"
+                                        android:layout_gravity="center"
                                         android:text="@string/accounts_overview_total_details_disposal" />
 
                                     <TextView
@@ -148,10 +154,10 @@
                                         style="@style/TextView.TotalBalanceDetails"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:layout_alignParentRight="true"
-                                        tools:text="G599.9505" />
+                                        android:layout_gravity="center"
+                                        tools:text="Ͼ599.9505" />
 
-                                </RelativeLayout>
+                                </LinearLayout>
 
                             </LinearLayout>
 
@@ -161,19 +167,21 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="@dimen/accounts_overview_total_details_side_margins"
                                 android:layout_marginRight="@dimen/accounts_overview_total_details_side_margins"
-                                android:layout_marginBottom="15dp">
+                                android:layout_marginBottom="15dp"
+                                android:visibility="gone"
+                                android:orientation="vertical">
 
                                 <TextView
-                                    style="@style/TextView.TotalBalanceDetails"
-                                    android:layout_gravity="center_vertical"
+                                    style="@style/TextView.BalanceInfo"
+                                    android:layout_gravity="center"
                                     android:text="@string/accounts_overview_total_details_staked" />
 
                                 <TextView
                                     android:id="@+id/accounts_overview_total_details_staked"
                                     style="@style/TextView.TotalBalanceDetails"
-                                    android:layout_width="match_parent"
-                                    android:gravity="right"
-                                    tools:text="G33.00" />
+                                    android:layout_width="wrap_content"
+                                    android:layout_gravity="center"
+                                    tools:text="Ͼ33.00" />
 
                             </LinearLayout>
 
@@ -184,8 +192,7 @@
                                 android:layout_gravity="center"
                                 android:layout_marginBottom="10dp"
                                 android:orientation="horizontal"
-                                android:visibility="gone"
-                                tools:visibility="visible">
+                                android:visibility="gone">
 
                                 <ImageView
                                     style="@style/Image"

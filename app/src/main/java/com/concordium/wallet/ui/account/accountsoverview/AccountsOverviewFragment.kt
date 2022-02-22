@@ -215,7 +215,9 @@ class AccountsOverviewFragment : BaseFragment() {
 
         eventListener = object : Preferences.Listener {
             override fun onChange() {
-                updateWarnings()
+                if(!isDetached){
+                    updateWarnings()
+                }
             }
         }
 

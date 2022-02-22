@@ -221,7 +221,10 @@ class AccountDetailsActivity :
 
         updateShieldEnabledUI()
 
-        if(viewModel.hasTransactionsToDecrypt && !App.appCore.session.isShieldedWarningDismissed(viewModel.account.address) && !App.appCore.session.isShieldingEnabled(viewModel.account.address)){
+        if(viewModel.hasTransactionsToDecrypt
+            && !App.appCore.session.isShieldedWarningDismissed(viewModel.account.address)
+            && !App.appCore.session.isShieldingEnabled(viewModel.account.address)){
+
             val builder = AlertDialog.Builder(this)
             builder.setTitle(getString(R.string.account_details_shielded_warning_title))
             builder.setMessage(getString(R.string.account_details_shielded_warning_text))
@@ -237,7 +240,6 @@ class AccountDetailsActivity :
             })
             builder.setCancelable(true)
             builder.create().show()
-
         }
 
     }
@@ -259,25 +261,27 @@ class AccountDetailsActivity :
         readonly_desc.visibility = if(viewModel.account.readOnly) View.VISIBLE else View.GONE
 
         if(viewModel.isShielded){
-            accounts_overview_total_details_baker_container.visibility = View.GONE
+            //accounts_overview_total_details_baker_container.visibility = View.GONE
             accounts_overview_total_details_staked_container.visibility = View.GONE
             accounts_overview_total_details_disposal_container.visibility = View.GONE
             send_imageview.setImageResource(R.drawable.ic_icon_send_shielded)
             shield_imageview.setImageResource(R.drawable.ic_unshield)
         }
         else{
-            accounts_overview_total_details_baker_container.visibility = View.VISIBLE
+            //accounts_overview_total_details_baker_container.visibility = View.VISIBLE
             accounts_overview_total_details_staked_container.visibility = View.VISIBLE
             accounts_overview_total_details_disposal_container.visibility = View.VISIBLE
             send_imageview.setImageResource(R.drawable.ic_send)
             shield_imageview.setImageResource(R.drawable.ic_shielded_icon)
 
             if(viewModel.account.isBaker()){
-                accounts_overview_total_details_baker_container.visibility = View.VISIBLE
+                //accounts_overview_total_details_baker_container.visibility = View.VISIBLE
                 accounts_overview_total_details_baker_id.text = viewModel.account.bakerId.toString()
+                accounts_overview_total_details_staked_container.visibility = View.VISIBLE
             }
             else{
-                accounts_overview_total_details_baker_container.visibility = View.GONE
+                //accounts_overview_total_details_baker_container.visibility = View.GONE
+                accounts_overview_total_details_staked_container.visibility = View.GONE
             }
             accounts_overview_total_details_staked.text = CurrencyUtil.formatGTU(viewModel.account.totalStaked, true)
         }

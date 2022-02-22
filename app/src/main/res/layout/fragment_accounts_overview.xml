@@ -100,7 +100,7 @@
                     android:id="@+id/generalTextView"
                     style="@style/TextView.BalanceInfo"
                     android:layout_gravity="center"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="15dp"
                     android:text="@string/accounts_overview_total_balance" />
 
                 <LinearLayout
@@ -109,23 +109,14 @@
                     android:layout_gravity="center_horizontal"
                     android:orientation="horizontal">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                    <TextView
+                        style="@style/TextView.BlueValueHuge"
+                        android:text="@string/app_gstroke"
                         android:gravity="top"
                         android:layout_gravity="top"
-                        android:orientation="vertical">
-                        <TextView
-                            style="@style/TextView.BlueValueHuge"
-                            android:text="@string/app_gstroke"
-                            android:layout_marginRight="10dp"
-                            android:layout_marginTop="10dp"
-                            android:gravity="top"
-                            android:layout_gravity="top"
-                            android:lines="1"
-                            android:textSize="18dp"
-                            />
-                    </LinearLayout>
+                        android:lines="1"
+                        android:textSize="24dp"
+                        />
 
                     <TextView
                         android:id="@+id/total_balance_textview"
@@ -136,62 +127,65 @@
                         android:lines="1"
                         app:autoSizeTextType="uniform"
                         app:autoSizeMinTextSize="8sp"
-                        app:autoSizeMaxTextSize="42sp"
-                        app:autoSizeStepGranularity="1sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:autoSizeMaxTextSize="24sp"
+                        app:autoSizeStepGranularity="1sp" />
 
+                    <LinearLayout
+                        android:id="@+id/total_balance_shielded_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/TextView.BalanceInfo"
+                            android:layout_gravity="center_vertical"
+                            android:textColor="@color/theme_blue"
+                            android:layout_marginLeft="3dp"
+                            android:textSize="24dp"
+                            android:text="+" />
+
+                        <ImageView
+                            style="@style/Image"
+                            android:layout_height="17dp"
+                            android:layout_width="15dp"
+                            android:src="@drawable/ic_shielded_icon"
+                            android:layout_marginLeft="3dp"
+                            android:layout_gravity="center_vertical"
+                            android:tint="@color/theme_blue" />
+
+                    </LinearLayout>
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/total_balance_shielded_container"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal">
 
-                    <TextView
-                        style="@style/TextView.BalanceInfo"
-                        android:layout_gravity="center_vertical"
-                        android:text="+" />
-
-                    <ImageView
-                        style="@style/Image"
-                        android:layout_height="13dp"
-                        android:layout_width="11dp"
-                        android:src="@drawable/ic_shielded_icon"
-                        android:layout_marginLeft="3dp"
-                        android:layout_gravity="center_vertical"
-                        android:tint="@color/theme_white" />
-
-                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/accounts_overview_total_details_side_margins"
                     android:layout_marginRight="@dimen/accounts_overview_total_details_side_margins"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="15dp"
-                    android:orientation="horizontal">
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="vertical">
 
                     <TextView
-                        style="@style/TextView.TotalBalanceDetails"
+                        style="@style/TextView.BalanceInfo"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
+                        android:layout_gravity="center"
                         android:text="@string/accounts_overview_total_details_disposal" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="right"
+                        android:gravity="center"
                         android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/accounts_overview_total_details_disposal"
                             style="@style/TextView.TotalBalanceDetails"
                             android:layout_width="wrap_content"
-                            tools:text="G599.9505" />
+                            tools:text="Ͼ599.9505" />
 
                         <LinearLayout
                             android:id="@+id/accounts_overview_total_details_disposal_shield"
@@ -211,29 +205,33 @@
                                 android:src="@drawable/ic_shielded_icon"
                                 android:layout_marginLeft="6dp"
                                 android:layout_gravity="center_vertical"
-                                android:tint="@color/theme_white" />
+                                android:tint="@color/theme_blue" />
                         </LinearLayout>
                     </LinearLayout>
 
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/accounts_overview_total_staked_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/accounts_overview_total_details_side_margins"
                     android:layout_marginRight="@dimen/accounts_overview_total_details_side_margins"
-                    android:layout_marginBottom="30dp">
+                    android:layout_marginBottom="10dp"
+                    android:visibility="gone"
+                    android:orientation="vertical">
 
                     <TextView
-                        style="@style/TextView.TotalBalanceDetails"
-                        android:layout_gravity="center_vertical"
+                        android:id="@+id/accounts_overview_total_title_staked"
+                        style="@style/TextView.BalanceInfo"
+                        android:layout_gravity="center"
                         android:text="@string/accounts_overview_total_details_staked" />
                     <TextView
                         android:id="@+id/accounts_overview_total_details_staked"
                         style="@style/TextView.TotalBalanceDetails"
                         android:layout_width="match_parent"
-                        android:gravity="right"
-                        tools:text="G33.00" />
+                        android:gravity="center"
+                        tools:text="Ͼ33.00" />
 
                 </LinearLayout>
 

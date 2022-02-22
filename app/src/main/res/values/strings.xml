@@ -2,6 +2,7 @@
 <resources>
     <!-- App -->
     <string name="app_name">Concordium</string>
+    <string name="app_menu_item_backup">Backup</string>
     <string name="app_menu_item_accounts">Accounts</string>
     <string name="app_menu_item_identities">Identities</string>
     <string name="app_menu_item_more">More</string>
@@ -335,7 +336,7 @@
     <string name="accounts_overview_title">Accounts</string>
     <string name="accounts_overview_create_identity">Create new identity</string>
     <string name="accounts_overview_create_account">Create account</string>
-    <string name="accounts_overview_total_balance">Wallet Total</string>
+    <string name="accounts_overview_total_balance">Grand total of all accounts</string>
     <string name="accounts_overview_no_identities">You need to create an identity before creating an account.</string>
     <string name="accounts_overview_no_accounts">You have no accounts yet.</string>
 
@@ -493,6 +494,7 @@
 
     <!-- More overview -->
     <string name="more_overview_title">More</string>
+    <string name="more_overview_identities">Your identity cards</string>
     <string name="more_overview_item_address_book">Address Book</string>
     <string name="more_overview_item_export">Export</string>
     <string name="more_overview_item_import">Import</string>
@@ -616,8 +618,8 @@
     <string name="error_database">You need to uninstall the app, and reinstall it, in order to continue</string>
     <string name="error_database_close">Close</string>
 
-    <string name="accounts_overview_total_details_disposal">At disposal:</string>
-    <string name="accounts_overview_total_details_staked">Staked:</string>
+    <string name="accounts_overview_total_details_disposal">Total currently at disposal</string>
+    <string name="accounts_overview_total_details_staked">Stake with baker %1$s</string>
     <string name="account_details_menu_release_schedule">Release schedule</string>
     <string name="account_details_menu_transfer_filter">Transfer filters</string>
     <string name="account_details_menu_show_shielded">Show shielded balance on %1$s</string>
@@ -634,6 +636,7 @@
     <string name="account_release_schedule_copy_title">Account address</string>
     <string name="account_details_baker_id">Baker ID:</string>
 
+    <string name="account_total_details_disposal">Balance total</string>
 
     <string name="accounts_overview_readonly_desc">This account is imported without keys, and is read only</string>
     <string name="transactions_filters_show_rewards">Show rewards</string>
