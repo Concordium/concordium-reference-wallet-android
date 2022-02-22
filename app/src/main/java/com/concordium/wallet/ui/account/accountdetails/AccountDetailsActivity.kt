@@ -286,38 +286,41 @@ class AccountDetailsActivity :
             accounts_overview_total_details_staked.text = CurrencyUtil.formatGTU(viewModel.account.totalStaked, true)
         }
 
+        /*
         if(!viewModel.account.readOnly){
             send_textview.setTextColor(
                 ContextCompat.getColor(
                     this,
-                    R.color.text_black
+                    R.color.theme_white
                 )
             )
             shield_textview.setTextColor(
                 ContextCompat.getColor(
                     this,
-                    R.color.text_black
+                    R.color.theme_white
                 )
             )
             ImageUtil.changeImageViewTintColor(
                 send_imageview,
-                R.color.theme_black
+                R.color.theme_white
             )
             ImageUtil.changeImageViewTintColor(
                 shield_imageview,
-                R.color.theme_black
+                R.color.theme_white
             )
         }
         address_textview.setTextColor(
             ContextCompat.getColor(
                 this,
-                R.color.text_black
+                R.color.theme_white
             )
         )
         ImageUtil.changeImageViewTintColor(
             address_imageview,
-            R.color.theme_black
+            R.color.theme_white
         )
+
+         */
     }
 
     private fun setErrorMode() {

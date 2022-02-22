@@ -65,16 +65,16 @@
     </style>
 
     <style name="Layout.Card">
-        <item name="android:background">@drawable/background_rounded_white</item>
+        <item name="android:background">@drawable/bg_cardview_border</item>
         <item name="android:elevation">0dp</item>
         <item name="android:foreground">@drawable/bg_cardview_border</item>
     </style>
 
     <style name="Layout.CardButton">
         <item name="android:layout_height">100dp</item>
-        <item name="android:background">@drawable/button_rounded</item>
+        <item name="android:background">@drawable/button_standard</item>
+        <item name="android:textColor">@color/text_white</item>
         <item name="android:elevation">0dp</item>
-        <item name="android:foreground">@drawable/bg_cardview_border</item>
     </style>
 
     <style name="Layout.CardView" parent="Base.CardView">
@@ -185,7 +185,7 @@
 
     <style name="TextView.CardButton" parent="TextView.SingleLine">
         <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">@color/text_grey</item>
+        <item name="android:textColor">@color/text_white</item>
         <item name="android:textSize">13sp</item>
         <item name="android:textStyle">bold</item>
     </style>

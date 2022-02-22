@@ -6,12 +6,12 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def versionBuildNumberSequential = 69 // continuous sequential number - must be incremented for every release
+def versionBuildNumberSequential = 70 // continuous sequential number - must be incremented for every release
 
-def versionBuildNumberReset = 63 // set this to value of versionBuildNumberSequential when incrementing minor and/or major
+def versionBuildNumberReset = 70 // set this to value of versionBuildNumberSequential when incrementing minor and/or major
 
-def versionBuildNumberMajor = 1
-def versionBuildNumberMinor = 2
+def versionBuildNumberMajor = 2
+def versionBuildNumberMinor = 0
 def versionBuildNumberPatch = versionBuildNumberSequential - versionBuildNumberReset
 
 //def LOCAL_IP = getLocalIPv4()

@@ -58,12 +58,13 @@
                     android:drawableLeft="@drawable/ic_button_back"
                     tools:visibility="gone"
                     android:text="@string/shielding_intro_back" />
+
                 <Button
                     android:id="@+id/create_ident_intro_next"
                     style="@style/Button.Standard.Intro"
-                    android:drawableRight="@drawable/ic_button_next"
                     android:layout_alignParentRight="true"
-                    android:text="@string/shielding_intro_next"/>
+                    android:drawableRight="@drawable/ic_button_next"
+                    android:text="@string/shielding_intro_next" />
                 <Button
                     android:id="@+id/create_ident_intro_continue"
                     style="@style/Button.Standard.Intro"
