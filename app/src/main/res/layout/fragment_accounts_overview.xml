@@ -53,7 +53,7 @@
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
                 android:id="@+id/missing_backup"
-                style="@style/Layout.CardView.Warning"
+                style="@style/Layout.CardView.Warning.Yellow"
                 app:layout_constraintTop_toBottomOf="@+id/initial_account">
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -135,6 +135,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:visibility="gone"
                         android:orientation="horizontal">
 
                         <TextView
@@ -185,6 +186,7 @@
                             android:id="@+id/accounts_overview_total_details_disposal"
                             style="@style/TextView.TotalBalanceDetails"
                             android:layout_width="wrap_content"
+                            android:textSize="24dp"
                             tools:text="Ͼ599.9505" />
 
                         <LinearLayout
@@ -192,6 +194,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="right"
+                            android:visibility="gone"
                             android:orientation="horizontal">
                             <TextView
                                 style="@style/TextView.TotalBalanceDetails"
@@ -219,13 +222,13 @@
                     android:layout_marginRight="@dimen/accounts_overview_total_details_side_margins"
                     android:layout_marginBottom="10dp"
                     android:visibility="gone"
+                    tools:visibility="visible"
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/accounts_overview_total_title_staked"
                         style="@style/TextView.BalanceInfo"
                         android:layout_gravity="center"
-                        android:text="@string/accounts_overview_total_details_staked" />
+                        android:text="@string/accounts_overview_total_details_staked_no_id" />
                     <TextView
                         android:id="@+id/accounts_overview_total_details_staked"
                         style="@style/TextView.TotalBalanceDetails"

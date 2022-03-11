@@ -371,6 +371,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
 
     private suspend fun calculateTotalBalances(): TotalBalancesData {
         var totalBalanceForAllAccounts = 0L
+        var totalBalanceForAllAccountsWithoutReadOnly = 0L
         var totalAtDisposalForSubstractionForAllAccounts = 0L
         var totalStakedForAllAccounts = 0L
         var totalContainsEncrypted = false
@@ -445,16 +446,19 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
             account.encryptedBalanceStatus = containsEncrypted
 
             //Calculate totals for all accounts
-            totalBalanceForAllAccounts += account.totalBalance
-            totalAtDisposalForSubstractionForAllAccounts += account.getAtDisposalSubstraction()
-            totalStakedForAllAccounts += account.totalStaked
+            totalBalanceForAllAccounts += account.totalUnshieldedBalance
+            if(!account.readOnly){
+                totalBalanceForAllAccountsWithoutReadOnly += account.totalUnshieldedBalance
+                totalAtDisposalForSubstractionForAllAccounts += account.getAtDisposalSubstraction()
+                totalStakedForAllAccounts += account.totalStaked
+            }
 
             if(containsEncrypted != ShieldedAccountEncryptionStatus.DECRYPTED){
                 totalContainsEncrypted = true
             }
 
         }
-        return TotalBalancesData(totalBalanceForAllAccounts, totalBalanceForAllAccounts - totalAtDisposalForSubstractionForAllAccounts, totalStakedForAllAccounts, totalContainsEncrypted)
+        return TotalBalancesData(totalBalanceForAllAccounts, totalBalanceForAllAccountsWithoutReadOnly - totalAtDisposalForSubstractionForAllAccounts, totalStakedForAllAccounts, totalContainsEncrypted)
     }
 
     private suspend fun saveAccounts() {

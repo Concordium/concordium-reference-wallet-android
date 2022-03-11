@@ -7,7 +7,7 @@
     <dimen name="compact_layout_width">300dp</dimen>
 
     <!-- List items -->
-    <dimen name="list_item_height">70dp</dimen>
+    <dimen name="list_item_height">60dp</dimen>
     <dimen name="list_item_height_lower">60dp</dimen>
     <dimen name="list_item_horizontal_margin">16dp</dimen>
     <dimen name="list_item_vertical_margin">16dp</dimen>

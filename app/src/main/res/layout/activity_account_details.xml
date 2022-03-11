@@ -88,6 +88,7 @@
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:id="@+id/account_total_details_disposal_text"
                                     style="@style/TextView.BalanceInfo"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -169,9 +170,11 @@
                                 android:layout_marginRight="@dimen/accounts_overview_total_details_side_margins"
                                 android:layout_marginBottom="15dp"
                                 android:visibility="gone"
+                                tools:visibility="visible"
                                 android:orientation="vertical">
 
                                 <TextView
+                                    android:id="@+id/accounts_overview_total_title_staked"
                                     style="@style/TextView.BalanceInfo"
                                     android:layout_gravity="center"
                                     android:text="@string/accounts_overview_total_details_staked" />
@@ -393,7 +396,7 @@
                     android:id="@+id/account_details_tablayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:tabIndicatorColor="@color/theme_dark_blue"
+                    app:tabIndicatorColor="@android:color/transparent"
                     app:tabSelectedTextColor="@color/text_blue"
                     app:tabTextColor="@color/text_black"
                     app:tabBackground="@drawable/tablayout_underline"

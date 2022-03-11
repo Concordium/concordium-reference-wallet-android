@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def versionBuildNumberSequential = 70 // continuous sequential number - must be incremented for every release
+def versionBuildNumberSequential = 72 // continuous sequential number - must be incremented for every release
 
 def versionBuildNumberReset = 70 // set this to value of versionBuildNumberSequential when incrementing minor and/or major
 
@@ -171,6 +171,8 @@ android {
         staging {
             applicationIdSuffix ".staging"
 
+            buildConfigField("String", "VERSION_POSTFIX", "\" - Stagenet\"")
+
             buildConfigField("String", "EXPORT_CHAIN", "\"staging\"")
             buildConfigField("String", "ENV_NAME", "\"staging\"")
             buildConfigField("String", "URL_PROXY_BASE", "\"${URL_PROXY_BASE_STAGING}\"")
@@ -193,6 +195,8 @@ android {
         prodTestNet {
             applicationIdSuffix ".testnet"
 
+            buildConfigField("String", "VERSION_POSTFIX", "\" - Testnet\"")
+
             buildConfigField("String", "EXPORT_CHAIN", "\"testnet\"")
             buildConfigField("String", "ENV_NAME", "\"prod_testnet\"")
             buildConfigField("String", "URL_PROXY_BASE", "\"${URL_PROXY_BASE_PROD_TESTNET}\"")
@@ -211,6 +215,8 @@ android {
 
         prodMainNet {
             applicationIdSuffix ".mainnet"
+
+            buildConfigField("String", "VERSION_POSTFIX", "\"\"")
 
             buildConfigField("String", "EXPORT_CHAIN", "\"mainnet\"")
             buildConfigField("String", "ENV_NAME", "\"production\"")

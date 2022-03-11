@@ -8,6 +8,7 @@ import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.MainActivity
@@ -44,6 +45,7 @@ class IdentityConfirmedActivity : BaseActivity(R.layout.activity_identity_confir
             accountWithIdentity?.let {
                 identity_view.setIdentityData(accountWithIdentity.identity)
                 account_view.setAccount(accountWithIdentity)
+                account_view.isEnabled = accountWithIdentity.identity.status == IdentityStatus.DONE
             }
         })
         initializeViews()

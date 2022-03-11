@@ -71,7 +71,7 @@ class AboutActivity : BaseActivity(
             }
         }
 
-        about_version_text.text = BuildConfig.VERSION_NAME
+        about_version_text.text = getString(R.string.app_version_about, BuildConfig.VERSION_NAME, BuildConfig.BUILD_NUMBER, BuildConfig.VERSION_POSTFIX)
     }
 
     //endregion

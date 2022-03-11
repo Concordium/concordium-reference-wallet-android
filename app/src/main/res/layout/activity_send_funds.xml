@@ -62,10 +62,11 @@
                         app:layout_constraintTop_toBottomOf="@id/balance_title_textview">
 
                         <TextView
+                            android:id="@+id/balance_total_text"
                             style="@style/TextView.SendFundBalance"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:text="@string/accounts_overview_balance_at_disposal" />
+                            android:text="@string/accounts_overview_account_total" />
 
                         <TextView
                             android:id="@+id/balance_total_textview"
@@ -92,6 +93,7 @@
                             android:orientation="horizontal">
 
                             <TextView
+                                android:id="@+id/at_disposal_total_text"
                                 style="@style/TextView.SendFundBalance"
                                 android:layout_width="0dp"
                                 android:layout_weight="1"
@@ -109,6 +111,17 @@
 
 
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/send_all"
+                    style="@style/Layout.CardButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_gravity="center"
+                    android:padding="10dp"
+                    android:textColor="@color/text_white"
+                    android:text="@string/send_funds_send_all" />
 
                 <LinearLayout
                     android:id="@+id/amount_edittext_container"

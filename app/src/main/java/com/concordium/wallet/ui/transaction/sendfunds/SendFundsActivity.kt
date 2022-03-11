@@ -218,6 +218,9 @@ class SendFundsActivity :
         progress_layout.visibility = View.GONE
         error_textview.visibility = View.INVISIBLE
         amount_edittext.afterTextChanged { _ ->
+            if (amount_edittext.hasFocus()) { //If it does not have focus, it means we are injecting text programatically
+                viewModel.disableSendAllValue()
+            }
             updateConfirmButton()
             updateAmountEditText()
         }
@@ -329,8 +332,17 @@ class SendFundsActivity :
 
         }
 
+        send_all.setOnClickListener {
+            viewModel.updateSendAllValue()
+        }
 
-        //amount_edittext.requestFocus()
+        viewModel.sendAllAmountLiveData.observe(this, object : Observer<Long> {
+            override fun onChanged(value: Long?) {
+                value?.let {
+                    amount_edittext.setText(CurrencyUtil.formatGTU(value))
+                }
+            }
+        })
 
         search_recipient_layout.setOnClickListener {
             gotoSelectRecipient()
@@ -340,11 +352,26 @@ class SendFundsActivity :
         }
 
         confirm_button.setOnClickListener {
-            viewModel.sendFunds(amount_edittext.text.toString())
+
+            viewModel.selectedRecipient?.let {
+                if(viewModel.validateAndSaveRecipient(it.name, it.address)){
+                    viewModel.sendFunds(amount_edittext.text.toString())
+                }
+            }
         }
 
-        balance_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance - viewModel.account.getAtDisposalSubstraction(), withGStroke = true)
-        at_disposal_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance - viewModel.account.getAtDisposalSubstraction() - viewModel.account.totalShieldedBalance, withGStroke = true)
+        if(viewModel.isShielded){
+            balance_total_text.text = getString(R.string.accounts_overview_balance_at_disposal)
+            at_disposal_total_text.text = getString(R.string.accounts_overview_shielded_balance)
+            balance_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance - viewModel.account.getAtDisposalSubstraction() - viewModel.account.totalShieldedBalance, withGStroke = true)
+            at_disposal_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalShieldedBalance, withGStroke = true)
+        }
+        else{
+            balance_total_text.text = getString(R.string.accounts_overview_account_total)
+            at_disposal_total_text.text = getString(R.string.accounts_overview_at_disposal)
+            balance_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance - viewModel.account.getAtDisposalSubstraction(), withGStroke = true)
+            at_disposal_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance - viewModel.account.getAtDisposalSubstraction(), withGStroke = true)
+        }
 
     }
 

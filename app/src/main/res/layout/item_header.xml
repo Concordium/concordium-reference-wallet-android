@@ -19,12 +19,12 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Today -  dsf dsfds dsfds fsd dsf dsf sdf dsfsdf sd sdf ds dsf " />
 
-    <View
+    <!--View
         android:id="@+id/divider"
         style="@style/Divider"
         android:layout_width="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent" /-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

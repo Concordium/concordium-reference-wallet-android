@@ -1,6 +1,9 @@
 package com.concordium.wallet.ui.account.accountsoverview
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -9,12 +12,16 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
+import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
+import com.concordium.wallet.ui.account.accountdetails.ShieldingIntroActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.account.newaccountname.NewAccountNameActivity
@@ -23,7 +30,11 @@ import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.uicore.dialog.CustomDialogFragment
+import kotlinx.android.synthetic.main.activity_account_details.*
 import kotlinx.android.synthetic.main.fragment_accounts_overview.*
+import kotlinx.android.synthetic.main.fragment_accounts_overview.accounts_overview_total_details_disposal
+import kotlinx.android.synthetic.main.fragment_accounts_overview.accounts_overview_total_details_staked
+import kotlinx.android.synthetic.main.fragment_accounts_overview.root_layout
 import kotlinx.android.synthetic.main.fragment_accounts_overview.view.*
 import kotlinx.android.synthetic.main.progress.*
 import kotlinx.android.synthetic.main.progress.view.*
@@ -38,6 +49,7 @@ class AccountsOverviewFragment : BaseFragment() {
         fun identityClicked(identity: Identity)
     }
 
+    private var encryptedWarningDialog: AlertDialog? = null
     private var fragmentListener: AccountsOverviewFragmentListener? = null
 
     private var eventListener: Preferences.Listener? = null
@@ -73,6 +85,10 @@ class AccountsOverviewFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
+        //Make sure when returning the dialog is cleared, else it will popup when returning
+        encryptedWarningDialog?.dismiss()
+        encryptedWarningDialog = null
+
         viewModel.updateState()
         viewModel.initiateFrequentUpdater()
     }
@@ -177,6 +193,7 @@ class AccountsOverviewFragment : BaseFragment() {
         viewModel.accountListLiveData.observe(this, Observer { accountList ->
             accountList?.let {
                 accountAdapter.setData(it)
+                checkForUnencrypted(it)
             }
         })
 
@@ -193,6 +210,54 @@ class AccountsOverviewFragment : BaseFragment() {
             updateWarnings()
         })
 
+    }
+
+    private fun checkForUnencrypted(accountList: List<AccountWithIdentity>) {
+        accountList?.forEach {
+            if(it.account.encryptedBalanceStatus != ShieldedAccountEncryptionStatus.DECRYPTED
+                && it.account.transactionStatus == TransactionStatus.FINALIZED
+                && !App.appCore.session.isShieldedWarningDismissed(it.account.address)
+                && !App.appCore.session.isShieldingEnabled(it.account.address)
+                && encryptedWarningDialog == null){
+
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle(getString(R.string.account_details_shielded_warning_title))
+                builder.setMessage(getString(R.string.account_details_shielded_warning_text, it.account.name))
+                builder.setNegativeButton(
+                    getString(R.string.account_details_shielded_warning_enable, it.account.name),
+                    object : DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface, which: Int) {
+                            startShieldedIntroFlow(it.account)
+                            encryptedWarningDialog?.dismiss()
+                            encryptedWarningDialog = null
+                        }
+                    })
+                builder.setPositiveButton(
+                    getString(R.string.account_details_shielded_warning_dismiss),
+                    object : DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface, which: Int) {
+                            App.appCore.session.setShieldedWarningDismissed(
+                                it.account.address,
+                                true
+                            )
+                            encryptedWarningDialog?.dismiss()
+                            encryptedWarningDialog = null
+                        }
+                    })
+                builder.setCancelable(true)
+                encryptedWarningDialog = builder.create()//.show()
+                encryptedWarningDialog?.show()
+            }
+        }
+
+    }
+
+    private fun startShieldedIntroFlow(account: Account) {
+        val intent = Intent(activity, AccountDetailsActivity::class.java)
+        intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, account)
+        intent.putExtra(AccountDetailsActivity.EXTRA_SHIELDED, false)
+        intent.putExtra(AccountDetailsActivity.EXTRA_CONTINUE_TO_SHIELD_INTRO, true)
+        startActivityForResult(intent, REQUESTCODE_ACCOUNT_DETAILS)
     }
 
     private fun initializeViews(view: View) {
@@ -233,6 +298,8 @@ class AccountsOverviewFragment : BaseFragment() {
                 updateWarnings()
             }
         }
+
+
     }
 
     private fun updateWarnings(){
@@ -359,12 +426,12 @@ class AccountsOverviewFragment : BaseFragment() {
 
     private fun showTotalBalance(totalBalance: Long, containsEncryptedAmount: Boolean) {
         total_balance_textview.text = CurrencyUtil.formatGTU(totalBalance)
-        total_balance_shielded_container.visibility = if(containsEncryptedAmount) View.VISIBLE else View.GONE
+        //total_balance_shielded_container.visibility = if(containsEncryptedAmount) View.VISIBLE else View.GONE
     }
     private fun showDisposalBalance(atDisposal: Long, containsEncryptedAmount: Boolean) {
         accounts_overview_total_details_disposal.text = CurrencyUtil.formatGTU(atDisposal, true)
-        total_balance_shielded_container.visibility = if(containsEncryptedAmount) View.VISIBLE else View.GONE
-        accounts_overview_total_details_disposal_shield.visibility = if(containsEncryptedAmount) View.VISIBLE else View.GONE
+        //total_balance_shielded_container.visibility = if(containsEncryptedAmount) View.VISIBLE else View.GONE
+        //accounts_overview_total_details_disposal_shield.visibility = if(containsEncryptedAmount) View.VISIBLE else View.GONE
     }
     private fun showStakedBalance(totalBalance: Long) {
         accounts_overview_total_details_staked.text = CurrencyUtil.formatGTU(totalBalance, true)

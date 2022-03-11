@@ -36,7 +36,7 @@ class AccountItemView(context: Context, attrs: AttributeSet?): LinearLayout(cont
     fun setAccount(accountWithIdentitiy: AccountWithIdentity) {
         this.accountWithIdentitiy = accountWithIdentitiy
         total_textview.text = CurrencyUtil.formatGTU(accountWithIdentitiy.account.totalUnshieldedBalance, withGStroke = true)
-        balance_at_disposal_textview.text = CurrencyUtil.formatGTU(accountWithIdentitiy.account.totalUnshieldedBalance - accountWithIdentitiy.account.getAtDisposalSubstraction() - accountWithIdentitiy.account.totalShieldedBalance, withGStroke = true)
+        balance_at_disposal_textview.text = CurrencyUtil.formatGTU(accountWithIdentitiy.account.totalUnshieldedBalance - accountWithIdentitiy.account.getAtDisposalSubstraction(), withGStroke = true)
         account_name_area.setData(accountWithIdentitiy)
 
         var accountPending = if(accountWithIdentitiy.account.transactionStatus == TransactionStatus.COMMITTED || accountWithIdentitiy.account.transactionStatus == TransactionStatus.RECEIVED) true else false

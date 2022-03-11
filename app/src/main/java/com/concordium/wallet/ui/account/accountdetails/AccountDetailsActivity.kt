@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -36,10 +37,10 @@ import kotlinx.android.synthetic.main.activity_account_details.accounts_overview
 import kotlinx.android.synthetic.main.activity_account_details.accounts_overview_total_details_disposal
 
 import kotlinx.android.synthetic.main.activity_account_details.root_layout
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.progress.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import java.util.*
 import javax.crypto.Cipher
 
 
@@ -53,6 +54,7 @@ class AccountDetailsActivity :
     companion object {
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
         const val EXTRA_SHIELDED = "EXTRA_SHIELDED"
+        const val EXTRA_CONTINUE_TO_SHIELD_INTRO = "EXTRA_CONTINUE_TO_SHIELD_INTRO"
         const val RESULT_RETRY_ACCOUNT_CREATION = 2
         const val REQUESTCODE_ENABLE_SHIELDING = 1241
 
@@ -66,9 +68,14 @@ class AccountDetailsActivity :
         super.onCreate(savedInstanceState)
         val account = intent.extras!!.getSerializable(EXTRA_ACCOUNT) as Account
         val isShielded = intent.extras!!.getBoolean(EXTRA_SHIELDED)
+        val continueToShieldIntro = intent.extras!!.getBoolean(EXTRA_CONTINUE_TO_SHIELD_INTRO)
         initializeViewModel()
         viewModel.initialize(account, isShielded)
         initViews()
+
+        if(continueToShieldIntro){
+            startShieldedIntroFlow()
+        }
     }
 
     override fun onResume() {
@@ -90,6 +97,13 @@ class AccountDetailsActivity :
                 data?.getBooleanExtra(ShieldingIntroActivity.EXTRA_RESULT_SHIELDING_ENABLED, false)?.let { enabled ->
                     if(enabled){
                         viewModel.enableShielded()
+                        //Decouple from main thread allowing UI to update
+                        GlobalScope.launch(Dispatchers.Main){
+                            delay(1)
+                            viewModel.isShielded = true
+                            initViews()
+                            updateShieldEnabledUI()
+                        }
                     }
                 }
             }
@@ -169,6 +183,10 @@ class AccountDetailsActivity :
         })
 
         viewModel.shieldingEnabledLiveData.observe(this, Observer { showShielded ->
+            //Show non-shielded options
+            viewModel.isShielded = false
+            initViews()
+            //...then hide shielding options
             updateShieldEnabledUI()
         })
 
@@ -217,30 +235,12 @@ class AccountDetailsActivity :
 
         shield_textview.text = if(viewModel.isShielded) resources.getText(R.string.account_details_unshield) else resources.getText(R.string.account_details_shield)
 
+        account_total_details_disposal_text.text = if(viewModel.isShielded) resources.getString(R.string.account_shielded_total_details_disposal, viewModel.account.name) else resources.getString(R.string.account_total_details_disposal)
+
+
         initTabs()
 
         updateShieldEnabledUI()
-
-        if(viewModel.hasTransactionsToDecrypt
-            && !App.appCore.session.isShieldedWarningDismissed(viewModel.account.address)
-            && !App.appCore.session.isShieldingEnabled(viewModel.account.address)){
-
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle(getString(R.string.account_details_shielded_warning_title))
-            builder.setMessage(getString(R.string.account_details_shielded_warning_text))
-            builder.setNegativeButton(getString(R.string.account_details_shielded_warning_enable), object: DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface, which:Int) {
-                    startShieldedIntroFlow()
-                }
-            })
-            builder.setPositiveButton(getString(R.string.account_details_shielded_warning_dismiss), object: DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface, which:Int) {
-                    App.appCore.session.setShieldedWarningDismissed(viewModel.account.address, true)
-                }
-            })
-            builder.setCancelable(true)
-            builder.create().show()
-        }
 
     }
 
@@ -283,6 +283,7 @@ class AccountDetailsActivity :
                 //accounts_overview_total_details_baker_container.visibility = View.GONE
                 accounts_overview_total_details_staked_container.visibility = View.GONE
             }
+            accounts_overview_total_title_staked.text = getString(R.string.accounts_overview_total_details_staked, viewModel.account.bakerId )
             accounts_overview_total_details_staked.text = CurrencyUtil.formatGTU(viewModel.account.totalStaked, true)
         }
 
@@ -393,7 +394,7 @@ class AccountDetailsActivity :
 
                 val cvShowShielded = menuView.findViewById(R.id.menu_show_shielded_container) as CardView
                 val cvShowShieldedTV = menuView.findViewById(R.id.menu_show_shielded) as TextView
-                cvShowShielded.visibility = if(viewModel.shieldingEnabledLiveData.value == true) View.GONE else View.VISIBLE
+                cvShowShielded.visibility = if(viewModel.shieldingEnabledLiveData.value == true || viewModel.account.readOnly == true) View.GONE else View.VISIBLE
                 cvShowShielded.setOnClickListener {
                     mMenuDialog?.dismiss()
                     startShieldedIntroFlow()
@@ -402,7 +403,7 @@ class AccountDetailsActivity :
 
                 val cvHideShielded = menuView.findViewById(R.id.menu_hide_shielded_container) as CardView
                 val cvHideShieldedTV = menuView.findViewById(R.id.menu_hide_shielded) as TextView
-                cvHideShielded.visibility = if(viewModel.shieldingEnabledLiveData.value == true) View.VISIBLE else View.GONE
+                cvHideShielded.visibility = if(viewModel.shieldingEnabledLiveData.value == true && viewModel.account.readOnly != true) View.VISIBLE else View.GONE
                 cvHideShielded.setOnClickListener {
                     mMenuDialog?.dismiss()
                     viewModel.disableShielded()
@@ -466,7 +467,6 @@ class AccountDetailsActivity :
     private fun showTotalBalance(totalBalance: Long) {
         balance_textview.text = CurrencyUtil.formatGTU(totalBalance)
         accounts_overview_total_details_disposal.text = CurrencyUtil.formatGTU(totalBalance - viewModel.account.getAtDisposalSubstraction(), true)
-
     }
 
     private fun onSendFundsClicked() {

@@ -98,6 +98,9 @@
         <item name="android:layout_marginTop">15dp</item>
     </style>
 
+    <style name="Layout.CardView.Warning.Yellow">
+        <item name="android:foreground">@drawable/bg_cardview_border_yellow</item>
+    </style>
     <!--............................................................................-->
 
     <style name="ScrollView">
@@ -180,14 +183,14 @@
     <style name="TextView.ListHeader" parent="TextView.SingleLine">
         <item name="android:textColor">@color/text_blue</item>
         <item name="android:textSize">12sp</item>
-        <item name="android:textAllCaps">true</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 
     <style name="TextView.CardButton" parent="TextView.SingleLine">
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">@color/text_white</item>
         <item name="android:textSize">13sp</item>
-        <item name="android:textStyle">bold</item>
+        <item name="android:textStyle">normal</item>
     </style>
 
     <style name="TextView.InfoSmall">
