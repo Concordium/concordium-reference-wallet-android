@@ -70,10 +70,10 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/create_account_image">
 
-                        <com.google.android.material.textfield.TextInputEditText
+                        <com.concordium.wallet.uicore.view.MaxShakeTextInputEditText
                             android:id="@+id/account_name_edittext"
                             style="@style/EditText.Name"
-                            android:maxLength="35"
+                            app:maxLength="35"
                             android:imeOptions="actionDone" />
                     </com.google.android.material.textfield.TextInputLayout>
 

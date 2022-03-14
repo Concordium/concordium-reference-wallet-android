@@ -6,4 +6,7 @@
     <declare-styleable name="AccountItemView">
         <attr name="hide_expand_bar" format="boolean" />
     </declare-styleable>
+    <declare-styleable name="MaxShakeTextInputEditText">
+        <attr name="maxLength" format="integer" />
+    </declare-styleable>
 </resources>

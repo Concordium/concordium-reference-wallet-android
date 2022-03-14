@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.concordium.wallet.AppConfig
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.ui.base.BaseActivity
@@ -71,7 +72,7 @@ class AboutActivity : BaseActivity(
             }
         }
 
-        about_version_text.text = getString(R.string.app_version_about, BuildConfig.VERSION_NAME, BuildConfig.BUILD_NUMBER, BuildConfig.VERSION_POSTFIX)
+        about_version_text.text = getString(R.string.app_version_about, AppConfig.appVersion)
     }
 
     //endregion

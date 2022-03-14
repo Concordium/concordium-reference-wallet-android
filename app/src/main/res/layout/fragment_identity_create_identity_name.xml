@@ -65,10 +65,10 @@
                         android:layout_marginTop="30dp"
                         android:hint="@string/identity_create_identity_name_identity_name">
 
-                        <com.google.android.material.textfield.TextInputEditText
+                        <com.concordium.wallet.uicore.view.MaxShakeTextInputEditText
                             android:id="@+id/identity_name_edittext"
                             style="@style/EditText.Name"
-                            android:maxLength="35"
+                            app:maxLength="35"
                             android:imeOptions="actionDone" />
                     </com.google.android.material.textfield.TextInputLayout>
 

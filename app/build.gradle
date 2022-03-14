@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def versionBuildNumberSequential = 72 // continuous sequential number - must be incremented for every release
+def versionBuildNumberSequential = 73 // continuous sequential number - must be incremented for every release
 
 def versionBuildNumberReset = 70 // set this to value of versionBuildNumberSequential when incrementing minor and/or major
 
@@ -101,6 +101,8 @@ android {
 
         buildConfigField("boolean", "FAIL_IDENTITY_CREATION", "false")
         buildConfigField("boolean", "FORCE_NO_EMAIL_CLIENTS", "false")
+
+        buildConfigField("String", "VERSION_POSTFIX", "\"\"")
 
         javaCompileOptions {
             annotationProcessorOptions {
