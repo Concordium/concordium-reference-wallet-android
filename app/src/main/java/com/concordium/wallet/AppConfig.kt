@@ -8,7 +8,8 @@ object AppConfig {
         get() = BuildConfig.URL_PROXY_BASE
 
     val appVersion: String
-        get() =
-            BuildConfig.VERSION_NAME  + " " + BuildConfig.VERSION_POSTFIX + " "+ (if (BuildConfig.DEBUG) " (debug)" else "")
+        get() = if (!BuildConfig.ENV_NAME.equals("production")) {
+            BuildConfig.VERSION_NAME +" ("+BuildConfig.BUILD_NUMBER+") "+ (if (BuildConfig.DEBUG) " (debug)" else "")
+        } else BuildConfig.VERSION_NAME
 
 }

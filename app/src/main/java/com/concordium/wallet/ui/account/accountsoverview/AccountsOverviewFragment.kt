@@ -30,6 +30,7 @@ import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.uicore.dialog.CustomDialogFragment
+import com.concordium.wallet.util.Log
 import kotlinx.android.synthetic.main.activity_account_details.*
 import kotlinx.android.synthetic.main.fragment_accounts_overview.*
 import kotlinx.android.synthetic.main.fragment_accounts_overview.accounts_overview_total_details_disposal
@@ -214,7 +215,9 @@ class AccountsOverviewFragment : BaseFragment() {
 
     private fun checkForUnencrypted(accountList: List<AccountWithIdentity>) {
         accountList?.forEach {
-            if(it.account.encryptedBalanceStatus != ShieldedAccountEncryptionStatus.DECRYPTED
+
+            val hasUnencryptedTransactions = it.account.finalizedEncryptedBalance?.incomingAmounts?.isNotEmpty()
+            if((hasUnencryptedTransactions != null && hasUnencryptedTransactions == true)
                 && it.account.transactionStatus == TransactionStatus.FINALIZED
                 && !App.appCore.session.isShieldedWarningDismissed(it.account.address)
                 && !App.appCore.session.isShieldingEnabled(it.account.address)
@@ -242,6 +245,7 @@ class AccountsOverviewFragment : BaseFragment() {
                             )
                             encryptedWarningDialog?.dismiss()
                             encryptedWarningDialog = null
+                            checkForUnencrypted(accountList) //Check for other accounts with shielded transactions
                         }
                     })
                 builder.setCancelable(true)

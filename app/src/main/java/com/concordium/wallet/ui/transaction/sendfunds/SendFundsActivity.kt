@@ -363,7 +363,7 @@ class SendFundsActivity :
         if(viewModel.isShielded){
             balance_total_text.text = getString(R.string.accounts_overview_balance_at_disposal)
             at_disposal_total_text.text = getString(R.string.accounts_overview_shielded_balance)
-            balance_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance - viewModel.account.getAtDisposalSubstraction() - viewModel.account.totalShieldedBalance, withGStroke = true)
+            balance_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance - viewModel.account.getAtDisposalSubstraction(), withGStroke = true)
             at_disposal_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalShieldedBalance, withGStroke = true)
         }
         else{

@@ -343,6 +343,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     else{
                         request.account.encryptedBalanceStatus = ShieldedAccountEncryptionStatus.ENCRYPTED
                     }
+
                     Log.d("AccountBalance Loop item end - ${request.account.submissionId} ${accountBalance.currentBalance}")
                 }
             } catch (e: Exception) {
