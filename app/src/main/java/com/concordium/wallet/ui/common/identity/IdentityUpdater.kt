@@ -1,6 +1,7 @@
 package com.concordium.wallet.ui.common.identity
 
 import android.app.Application
+import androidx.room.withTransaction
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.AccountRepository
@@ -22,16 +23,18 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
     private val identityRepository: IdentityRepository
     private val accountRepository: AccountRepository
     private val recipientRepository: RecipientRepository
+    private val database: WalletDatabase
 
     private var updateListener: UpdateListener? = null
     private var run = true
 
     init {
-        val identityDao = WalletDatabase.getDatabase(application).identityDao()
+        database = WalletDatabase.getDatabase(application)
+        val identityDao = database.identityDao()
         identityRepository = IdentityRepository(identityDao)
-        val accountDao = WalletDatabase.getDatabase(application).accountDao()
+        val accountDao = database.accountDao()
         accountRepository = AccountRepository(accountDao)
-        val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
+        val recipientDao = database.recipientDao()
         recipientRepository = RecipientRepository(recipientDao)
     }
 
@@ -93,13 +96,12 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
                             val token = identityTokenContainer.token
                             val identityContainer = token.identityObject
                             val accountCredentialWrapper = token.credential
+
                             val accountAddress = token.accountAddress
                             identity.identityObject = identityContainer.value
-                            identityRepository.update(identity)
                             val account = accountRepository.getAllByIdentityId(identity.id).firstOrNull()
                             account?.let {
                                 if (it.address == accountAddress) {
-                                    //it.credential = CredentialWrapper(RawJson(gson.toJson(CredentialContentWrapper(accountCredentialWrapper.value))), accountCredentialWrapper.v) //Make up for protocol inconsistency
                                     it.credential = accountCredentialWrapper
                                     if (identityTokenContainer.status == IdentityStatus.DONE) {
                                         if(account.transactionStatus != TransactionStatus.FINALIZED){
@@ -110,7 +112,10 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
                                     } else if (identityTokenContainer.status == IdentityStatus.ERROR) {
                                         account.transactionStatus = TransactionStatus.ABSENT
                                     }
-                                    accountRepository.update(account)
+                                    database.withTransaction {
+                                        accountRepository.update(account)
+                                        identityRepository.update(identity)
+                                    }
                                 }
                             }
                         } else if (newStatus == IdentityStatus.ERROR) {
@@ -127,6 +132,10 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
                     }
                 } catch (e: FileNotFoundException) {
                     Log.e("Identity backend request failed", e)
+                    hasMorePending = true
+                } catch (e: Exception) {
+                    Log.e("Identity backend failure", e)
+                    e.printStackTrace()
                     hasMorePending = true
                 }
             }

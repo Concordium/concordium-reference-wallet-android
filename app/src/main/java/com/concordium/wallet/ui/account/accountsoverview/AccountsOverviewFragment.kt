@@ -82,6 +82,15 @@ class AccountsOverviewFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         updateWarnings()
+
+        context?.let {
+            if(App.appCore.session.shouldPromptForBackedUp(it)){
+                if(isInLayout && isVisible && !isDetached){
+                    CustomDialogFragment.showAppUpdateBackupWarningDialog(it)
+                    updateWarnings()
+                }
+            }
+        }
     }
 
     override fun onResume() {
@@ -92,10 +101,15 @@ class AccountsOverviewFragment : BaseFragment() {
 
         viewModel.updateState()
         viewModel.initiateFrequentUpdater()
+
+        eventListener?.let {
+            App.appCore.session.addAccountsBackedUpListener(it)
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+
         eventListener?.let {
             App.appCore.session.removeAccountsBackedUpListener(it)
         }
@@ -105,6 +119,10 @@ class AccountsOverviewFragment : BaseFragment() {
     override fun onPause() {
         super.onPause()
         viewModel.stopFrequentUpdater()
+
+        eventListener?.let {
+            App.appCore.session.removeAccountsBackedUpListener(it)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -284,24 +302,15 @@ class AccountsOverviewFragment : BaseFragment() {
 
         eventListener = object : Preferences.Listener {
             override fun onChange() {
-                if(!isDetached){
+                if(isInLayout && isVisible && !isDetached){
                     updateWarnings()
                 }
             }
         }
 
-        eventListener?.let {
-            App.appCore.session.addAccountsBackedUpListener(it)
-        }
-
         initializeList(view)
 
-        context?.let {
-            if(App.appCore.session.shouldPromptForBackedUp(it)){
-                CustomDialogFragment.showAppUpdateBackupWarningDialog(it)
-                updateWarnings()
-            }
-        }
+
 
 
     }
