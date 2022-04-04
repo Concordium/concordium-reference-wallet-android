@@ -11,4 +11,13 @@ data class Recipient(
     val id: Int,
     var name: String,
     var address: String
-) : Serializable
+) : Serializable {
+    fun displayName(): String {
+        if(name.isNullOrEmpty()){
+            return address
+        }
+        else{
+            return name
+        }
+    }
+}

@@ -55,7 +55,7 @@
                         android:id="@+id/info_textview"
                         style="@style/TextView.Standard"
                         android:layout_marginTop="30dp"
-                        android:gravity="center_horizontal"
+                        android:gravity="left"
                         android:text="@string/intro_setup_info" />
 
                 </LinearLayout>

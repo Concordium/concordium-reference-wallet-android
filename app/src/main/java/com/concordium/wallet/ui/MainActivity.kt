@@ -4,27 +4,34 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
+import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewFragment
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
-import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewFragment
+import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
+
 import com.concordium.wallet.ui.identity.identityconfirmed.IdentityErrorData
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.intro.introstart.IntroTermsActivity
+import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
 import com.concordium.wallet.uicore.dialog.CustomDialogFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), Dialogs.DialogFragmentListener {
+class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), Dialogs.DialogFragmentListener, AccountsOverviewFragment.AccountsOverviewFragmentListener {
 
     companion object {
         const val EXTRA_SHOW_IDENTITIES = "EXTRA_SHOW_IDENTITIES"
@@ -96,10 +103,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
         super.onNewIntent(intent)
         intent?.getBooleanExtra(EXTRA_SHOW_IDENTITIES, false)?.let { showIdentities ->
             if (showIdentities) {
-                viewModel.setState(MainViewModel.State.IdentityOverview)
-                bottom_navigation_view.menu.findItem(R.id.menuitem_identities)?.let { menuItem ->
-                    menuItem.isChecked = true
-                }
+                switchToIdentities()
             }
         }
         // MainActivity has launchMode singleTask to not start a new instance (if already running),
@@ -109,6 +113,11 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
             this.intent = intent
             hasHandledPossibleImportFile = false
         }
+    }
+
+    private fun switchToIdentities() {
+        val intent = Intent(this, IdentitiesOverviewActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onDialogResult(requestCode: Int, resultCode: Int, data: Intent) {
@@ -155,35 +164,11 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
         })
 
 
-/*
-        if(IdentityErrorDialogHelper.canOpenSupportEmail(this)){
-            dialogs.showPositiveSupportDialog(
-                this,
-                RequestCodes.REQUEST_IDENTITY_ERROR_DIALOG,
-                R.string.dialog_initial_account_error_title,
-                R.string.dialog_popup_support_with_email_client_text,
-                R.string.dialog_initial_account_error_positive,
-                R.string.dialog_support,
-                R.string.dialog_cancel,
-                IdentityErrorDialogHelper.hash("lala"))
-        }
-        else{
-            dialogs.showPositiveSupportDialog(
-                this,
-                RequestCodes.REQUEST_IDENTITY_ERROR_DIALOG,
-                R.string.dialog_initial_account_error_title,
-                R.string.dialog_popup_support_without_email_client_text,
-                R.string.dialog_initial_account_error_positive,
-                R.string.dialog_copy,
-                R.string.dialog_cancel,
-                IdentityErrorDialogHelper.hash("lala"))
-
-        }
-*/
 
     }
 
     private fun initializeViews() {
+        forceMenuSelection(R.id.menuitem_accounts)
         bottom_navigation_view.setOnNavigationItemSelectedListener {
             onNavigationItemSelected(it)
         }
@@ -200,16 +185,35 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
 
         val state = getState(menuItem)
         if (state != null) {
-            viewModel.setState(state)
+            //We are keeping the existing state and starting the Backup flow
+            if(state == MainViewModel.State.Backup){
+                forceMenuSelection(if(viewModel.stateLiveData.value == MainViewModel.State.AccountOverview) R.id.menuitem_accounts else R.id.menuitem_more)
+                startBackup()
+            }
+            else{
+                viewModel.setState(state)
+            }
             return true
         }
         return false
     }
 
+    private fun forceMenuSelection(resId: Int) {
+        GlobalScope.launch(Dispatchers.Main){
+            delay(1)
+            bottom_navigation_view.getMenu().findItem(resId).setChecked(true);
+        }
+    }
+
+    private fun startBackup() {
+        val intent = Intent(this, ExportActivity::class.java)
+        startActivity(intent)
+    }
+
     private fun getState(menuItem: MenuItem): MainViewModel.State? {
         return when (menuItem.itemId) {
             R.id.menuitem_accounts -> MainViewModel.State.AccountOverview
-            R.id.menuitem_identities -> MainViewModel.State.IdentityOverview
+            R.id.menuitem_backup -> MainViewModel.State.Backup
             R.id.menuitem_more -> MainViewModel.State.More
             else -> null
         }
@@ -217,8 +221,8 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
 
     private fun replaceFragment(state: MainViewModel.State) {
         val fragment = when (state) {
+            MainViewModel.State.Backup -> AccountsOverviewFragment() // is triggering start of BackupExport
             MainViewModel.State.AccountOverview -> AccountsOverviewFragment()
-            MainViewModel.State.IdentityOverview -> IdentitiesOverviewFragment()
             MainViewModel.State.More -> MoreOverviewFragment()
         }
         replaceFragment(fragment, false)
@@ -271,6 +275,10 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
         }
     }
 
+    /* invoked eg when clicking pending warning */
+    override fun identityClicked(identity: Identity) {
+        switchToIdentities()
+    }
 
 
     //endregion

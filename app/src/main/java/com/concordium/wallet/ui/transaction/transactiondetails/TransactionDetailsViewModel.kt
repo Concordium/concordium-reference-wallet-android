@@ -111,7 +111,7 @@ class TransactionDetailsViewModel(application: Application) : AndroidViewModel(a
             return defaultTitle
         }
         return runBlocking {
-            recipientRepository.getRecipientByAddress(address)?.let { it.name }
+            recipientRepository.getRecipientByAddress(address)?.let { it.displayName() }
         } ?: defaultTitle
     }
 

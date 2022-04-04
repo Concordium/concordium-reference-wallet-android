@@ -84,6 +84,7 @@
                         style="@style/TextView.Standard"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="30dp"
+                        android:gravity="center_horizontal"
                         tools:text="Douglas Sparks" />
 
                     <TextView

@@ -6,13 +6,11 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def versionBuildNumberSequential = 69 // continuous sequential number - must be incremented for every release
+def versionBuildNumberSequential = 75
 
-def versionBuildNumberReset = 63 // set this to value of versionBuildNumberSequential when incrementing minor and/or major
-
-def versionBuildNumberMajor = 1
-def versionBuildNumberMinor = 2
-def versionBuildNumberPatch = versionBuildNumberSequential - versionBuildNumberReset
+def versionBuildNumberMajor = 2
+def versionBuildNumberMinor = 0
+def versionBuildNumberPatch = 0
 
 //def LOCAL_IP = getLocalIPv4()
 def LOCAL_IP = "10.0.2.2"
@@ -102,6 +100,8 @@ android {
         buildConfigField("boolean", "FAIL_IDENTITY_CREATION", "false")
         buildConfigField("boolean", "FORCE_NO_EMAIL_CLIENTS", "false")
 
+        buildConfigField("String", "VERSION_POSTFIX", "\"\"")
+
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [
@@ -171,6 +171,8 @@ android {
         staging {
             applicationIdSuffix ".staging"
 
+            buildConfigField("String", "VERSION_POSTFIX", "\" - Stagenet\"")
+
             buildConfigField("String", "EXPORT_CHAIN", "\"staging\"")
             buildConfigField("String", "ENV_NAME", "\"staging\"")
             buildConfigField("String", "URL_PROXY_BASE", "\"${URL_PROXY_BASE_STAGING}\"")
@@ -193,6 +195,8 @@ android {
         prodTestNet {
             applicationIdSuffix ".testnet"
 
+            buildConfigField("String", "VERSION_POSTFIX", "\" - Testnet\"")
+
             buildConfigField("String", "EXPORT_CHAIN", "\"testnet\"")
             buildConfigField("String", "ENV_NAME", "\"prod_testnet\"")
             buildConfigField("String", "URL_PROXY_BASE", "\"${URL_PROXY_BASE_PROD_TESTNET}\"")
@@ -211,6 +215,8 @@ android {
 
         prodMainNet {
             applicationIdSuffix ".mainnet"
+
+            buildConfigField("String", "VERSION_POSTFIX", "\"\"")
 
             buildConfigField("String", "EXPORT_CHAIN", "\"mainnet\"")
             buildConfigField("String", "ENV_NAME", "\"production\"")

@@ -7,7 +7,7 @@
     <dimen name="compact_layout_width">300dp</dimen>
 
     <!-- List items -->
-    <dimen name="list_item_height">70dp</dimen>
+    <dimen name="list_item_height">60dp</dimen>
     <dimen name="list_item_height_lower">60dp</dimen>
     <dimen name="list_item_horizontal_margin">16dp</dimen>
     <dimen name="list_item_vertical_margin">16dp</dimen>
@@ -41,5 +41,13 @@
     <dimen name="account_release_schedule_inner_list_padding_sides">15dp</dimen>
     <dimen name="account_release_schedule_inner_list_padding_top_bottom">8dp</dimen>
     <dimen name="item_recipient_delete_width">70dp</dimen>
+
+    <dimen name="account_card_margin_vertical">3dp</dimen>
+    <dimen name="account_card_margin_horizontal">11dp</dimen>
+
+    <dimen name="card_corner_radius">10dp</dimen>
+    <dimen name="indicator_size">5dp</dimen>
+
+    <dimen name="create_identity_flow_top_margin">20dp</dimen>
 
 </resources>

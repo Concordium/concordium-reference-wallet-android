@@ -55,6 +55,10 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     val totalBalanceLiveData: LiveData<TotalBalancesData>
         get() = _totalBalanceLiveData
 
+    private val _pendingIdentityForWarningLiveData = MutableLiveData<Identity>()
+    val pendingIdentityForWarningLiveData: LiveData<Identity>
+        get() = _pendingIdentityForWarningLiveData
+
     private val identityRepository: IdentityRepository
     private val accountRepository: AccountRepository
     private val accountUpdater = AccountUpdater(application, viewModelScope)
@@ -139,6 +143,14 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             }
             else {
                 _identityLiveData.value = State.NO_IDENTITIES
+            }
+
+            var identitiesPending = identityRepository.getAllPending()
+            if(!identitiesPending.isNullOrEmpty()){
+                _pendingIdentityForWarningLiveData.value = identitiesPending.first()
+            }
+            else{
+                _pendingIdentityForWarningLiveData.value = null
             }
 
             val identityCount = identityRepository.getNonFailedCount()

@@ -4,9 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
-import com.concordium.wallet.ui.auth.setup.AuthSetupActivity
+import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
+import com.concordium.wallet.ui.intro.introflow.IntroFlowActivity
 import com.concordium.wallet.ui.more.import.ImportActivity
 import kotlinx.android.synthetic.main.activity_intro_setup.*
 
@@ -59,7 +59,8 @@ class IntroSetupActivity :
 
     private fun gotoCreateInitial() {
         finish()
-        val intent = Intent(this, IdentityCreateActivity::class.java)
+        val intent = Intent(this, IntroFlowActivity::class.java)
+        intent.putExtra(IntroFlowActivity.EXTRA_HIDE_BACK, true)
         startActivity(intent)
     }
 

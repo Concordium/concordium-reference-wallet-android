@@ -62,7 +62,6 @@
                         android:layout_height="wrap_content"
                         android:paddingTop="30dp"
                         android:paddingBottom="30dp"
-                        app:expanded="true"
                         app:hide_expand_bar="true" />
 
                     <TextView

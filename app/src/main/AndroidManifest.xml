@@ -25,8 +25,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
 
-
-
         <provider
             android:name="com.concordium.wallet.DataFileProvider"
             android:authorities="@string/PROVIDER_AUTHORITY"
@@ -41,6 +39,7 @@
         <activity
             android:name="com.concordium.wallet.ui.MainActivity"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -111,63 +110,82 @@
         <!-- Common -->
         <activity
             android:name=".ui.common.failed.FailedActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop" />
 
         <!-- Intro -->
         <activity
             android:name=".ui.intro.introstart.IntroTermsActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop" />
         <activity
             android:name=".ui.intro.introstart.IntroStartActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.intro.introflow.IntroFlowActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop" />
         <activity
             android:name=".ui.intro.introsetup.IntroSetupActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop" />
 
         <!-- Auth -->
         <activity
             android:name=".ui.auth.login.AuthLoginActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.WithBackground" />
         <activity
             android:name=".ui.auth.setup.AuthSetupActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.WithBackground" />
         <activity
             android:name=".ui.auth.setuprepeat.AuthSetupRepeatActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.auth.setup.AuthSetupActivity"
             android:theme="@style/AppTheme.NoActionBar.WithBackground" />
         <activity
             android:name=".ui.auth.setuppassword.AuthSetupPasswordActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.auth.setup.AuthSetupActivity"
             android:theme="@style/AppTheme.NoActionBar.WithBackground" />
         <activity
             android:name=".ui.auth.setuppasswordrepeat.AuthSetupPasswordRepeatActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.auth.setuppassword.AuthSetupPasswordActivity"
             android:theme="@style/AppTheme.NoActionBar.WithBackground" />
         <activity
             android:name=".ui.auth.setupbiometrics.AuthSetupBiometricsActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.WithBackground" />
 
         <!-- Identity -->
+
         <activity
             android:name=".ui.identity.identitycreate.IdentityCreateActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity" />
         <activity
             android:name=".ui.identity.identityproviderlist.IdentityProviderListActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.identity.identitycreate.IdentityCreateActivity" />
         <activity
             android:name=".ui.identity.identityproviderpolicywebview.IdentityProviderPolicyWebviewActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.identity.identityproviderlist.IdentityProviderListActivity" />
         <activity
             android:name=".ui.identity.identityproviderwebview.IdentityProviderWebviewActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.identity.identityproviderlist.IdentityProviderListActivity">
             <intent-filter android:label="schemefilter">
@@ -183,44 +201,61 @@
         </activity>
         <activity
             android:name=".ui.identity.identityconfirmed.IdentityConfirmedActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.identity.identityproviderwebview.IdentityProviderWebviewActivity" />
+
+        <activity
+            android:name=".ui.identity.identitiesoverview.IdentitiesOverviewActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.MainActivity" />
+
         <activity
             android:name=".ui.identity.identitydetails.IdentityDetailsActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity" />
 
         <!-- Account -->
         <activity
             android:name=".ui.account.newaccountname.NewAccountNameActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity" />
         <activity
             android:name="com.concordium.wallet.ui.account.newaccountidentity.NewAccountIdentityActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.account.newaccountname.NewAccountNameActivity" />
         <activity
             android:name=".ui.account.newaccountsetup.NewAccountSetupActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.account.newaccountidentity.NewAccountIdentityActivity" />
         <activity
             android:name=".ui.account.newaccountidentityattributes.NewAccountIdentityAttributesActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.account.newaccountsetup.NewAccountSetupActivity" />
         <activity
             android:name=".ui.account.newaccountconfirmed.NewAccountConfirmedActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.account.newaccountsetup.NewAccountSetupActivity" />
         <activity
             android:name=".ui.account.accountdetails.AccountDetailsActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity" />
         <activity
             android:name=".ui.account.accountdetails.AccountReleaseScheduleActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity" />
         <activity
             android:name=".ui.account.accountqrcode.AccountQRCodeActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.account.accountdetails.AccountDetailsActivity" />
 
@@ -228,25 +263,38 @@
 
         <activity
             android:name=".ui.transaction.sendfunds.AddMemoActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.transaction.sendfunds.SendFundsActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.transaction.sendfunds.SendFundsActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".ui.account.accountdetails.AccountDetailsActivity"
-            android:windowSoftInputMode="adjustResize" />
+            />
+        <activity
+            android:name=".ui.account.accountdetails.ShieldingIntroActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustResize"
+            android:parentActivityName=".ui.account.accountdetails.ShieldingIntroActivity"
+            />
         <activity
             android:name=".ui.transaction.sendfundsconfirmed.SendFundsConfirmedActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.transaction.sendfunds.SendFundsActivity" />
         <activity
             android:name=".ui.transaction.transactiondetails.TransactionDetailsActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.account.accountdetails.AccountDetailsActivity" />
 
         <activity
             android:name=".ui.account.accountdetails.AccountTransactionsFiltersActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.account.accountdetails.AccountDetailsActivity" />
 
@@ -255,22 +303,27 @@
         <!-- More -->
         <activity
             android:name=".ui.more.dev.DevActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity" />
         <activity
             android:name=".ui.more.export.ExportActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity" />
         <activity
             android:name=".ui.more.import.ImportActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity" />
         <activity
             android:name=".ui.more.about.AboutActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity" />
         <activity
             android:name=".ui.more.alterpassword.AlterPasswordActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity" />
 
@@ -279,14 +332,17 @@
         <!-- Recipient -->
         <activity
             android:name="com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity" />
         <activity
             android:name="com.concordium.wallet.ui.recipient.recipient.RecipientActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName="com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity" />
         <activity
             android:name="com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity"
+            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName="com.concordium.wallet.ui.recipient.recipient.RecipientActivity" />
 

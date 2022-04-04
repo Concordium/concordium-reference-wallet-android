@@ -47,25 +47,16 @@
                     <TextView
                         style="@style/TextView.BlueHeader"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="40dp"
+                        android:layout_marginTop="@dimen/create_identity_flow_top_margin"
                         android:gravity="center_horizontal"
                         android:text="@string/identity_create_account_name_header" />
 
-                    <ImageView
-                        android:id="@+id/logo_imageview"
-                        style="@style/Image"
-                        android:layout_width="100dp"
-                        android:layout_height="120dp"
+                    <TextView
+                        style="@style/TextView.Standard"
+                        android:layout_width="match_parent"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="20dp"
-                        android:src="@drawable/ic_big_logo_plus" />
-
-                    <TextView
-                        style="@style/TextView.Standard.Light"
-                        android:layout_width="280dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="40dp"
-                        android:gravity="center_horizontal"
+                        android:gravity="left"
                         android:text="@string/identity_create_account_name_info" />
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -74,10 +65,10 @@
                         android:layout_marginTop="30dp"
                         android:hint="@string/identity_create_account_name_account_name">
 
-                        <com.google.android.material.textfield.TextInputEditText
+                        <com.concordium.wallet.uicore.view.MaxShakeTextInputEditText
                             android:id="@+id/account_name_edittext"
                             style="@style/EditText.Name"
-                            android:maxLength="35"
+                            app:maxLength="35"
                             android:imeOptions="actionDone" />
                     </com.google.android.material.textfield.TextInputLayout>
 

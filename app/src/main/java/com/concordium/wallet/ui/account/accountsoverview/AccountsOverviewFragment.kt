@@ -1,5 +1,9 @@
 package com.concordium.wallet.ui.account.accountsoverview
 
+import android.app.AlertDialog
+import android.app.Dialog
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -8,21 +12,30 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
+import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.AccountWithIdentity
+import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.MainViewModel
-import com.concordium.wallet.ui.RequestCodes
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
+import com.concordium.wallet.ui.account.accountdetails.ShieldingIntroActivity
+import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.account.newaccountname.NewAccountNameActivity
 import com.concordium.wallet.ui.base.BaseFragment
-import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
+import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.uicore.dialog.CustomDialogFragment
 import com.concordium.wallet.util.Log
+import kotlinx.android.synthetic.main.activity_account_details.*
 import kotlinx.android.synthetic.main.fragment_accounts_overview.*
+import kotlinx.android.synthetic.main.fragment_accounts_overview.accounts_overview_total_details_disposal
+import kotlinx.android.synthetic.main.fragment_accounts_overview.accounts_overview_total_details_staked
+import kotlinx.android.synthetic.main.fragment_accounts_overview.root_layout
 import kotlinx.android.synthetic.main.fragment_accounts_overview.view.*
 import kotlinx.android.synthetic.main.progress.*
 import kotlinx.android.synthetic.main.progress.view.*
@@ -32,6 +45,13 @@ class AccountsOverviewFragment : BaseFragment() {
     companion object {
         private const val REQUESTCODE_ACCOUNT_DETAILS = 2000
     }
+
+    interface AccountsOverviewFragmentListener {
+        fun identityClicked(identity: Identity)
+    }
+
+    private var encryptedWarningDialog: AlertDialog? = null
+    private var fragmentListener: AccountsOverviewFragmentListener? = null
 
     private var eventListener: Preferences.Listener? = null
 
@@ -59,14 +79,37 @@ class AccountsOverviewFragment : BaseFragment() {
         return rootView
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        updateWarnings()
+
+        context?.let {
+            if(App.appCore.session.shouldPromptForBackedUp(it)){
+                if(isInLayout && isVisible && !isDetached){
+                    CustomDialogFragment.showAppUpdateBackupWarningDialog(it)
+                    updateWarnings()
+                }
+            }
+        }
+    }
+
     override fun onResume() {
         super.onResume()
+        //Make sure when returning the dialog is cleared, else it will popup when returning
+        encryptedWarningDialog?.dismiss()
+        encryptedWarningDialog = null
+
         viewModel.updateState()
         viewModel.initiateFrequentUpdater()
+
+        eventListener?.let {
+            App.appCore.session.addAccountsBackedUpListener(it)
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+
         eventListener?.let {
             App.appCore.session.removeAccountsBackedUpListener(it)
         }
@@ -76,6 +119,10 @@ class AccountsOverviewFragment : BaseFragment() {
     override fun onPause() {
         super.onPause()
         viewModel.stopFrequentUpdater()
+
+        eventListener?.let {
+            App.appCore.session.removeAccountsBackedUpListener(it)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -101,6 +148,16 @@ class AccountsOverviewFragment : BaseFragment() {
             R.id.add_item_menu -> gotoCreateAccount()
         }
         return true
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            fragmentListener = context as AccountsOverviewFragmentListener
+        } catch (e: ClassCastException) {
+            throw ClassCastException(context.toString() + "must implement AccountsOverviewFragmentListener")
+        }
+
     }
 
     //endregion
@@ -155,6 +212,7 @@ class AccountsOverviewFragment : BaseFragment() {
         viewModel.accountListLiveData.observe(this, Observer { accountList ->
             accountList?.let {
                 accountAdapter.setData(it)
+                checkForUnencrypted(it)
             }
         })
 
@@ -167,6 +225,61 @@ class AccountsOverviewFragment : BaseFragment() {
             viewModel.initiateFrequentUpdater()
         })
 
+        viewModel.pendingIdentityForWarningLiveData.observe(this, Observer { identity ->
+            updateWarnings()
+        })
+
+    }
+
+    private fun checkForUnencrypted(accountList: List<AccountWithIdentity>) {
+        accountList?.forEach {
+
+            val hasUnencryptedTransactions = it.account.finalizedEncryptedBalance?.incomingAmounts?.isNotEmpty()
+            if((hasUnencryptedTransactions != null && hasUnencryptedTransactions == true)
+                && it.account.transactionStatus == TransactionStatus.FINALIZED
+                && !App.appCore.session.isShieldedWarningDismissed(it.account.address)
+                && !App.appCore.session.isShieldingEnabled(it.account.address)
+                && encryptedWarningDialog == null){
+
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle(getString(R.string.account_details_shielded_warning_title))
+                builder.setMessage(getString(R.string.account_details_shielded_warning_text, it.account.name))
+                builder.setNegativeButton(
+                    getString(R.string.account_details_shielded_warning_enable, it.account.name),
+                    object : DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface, which: Int) {
+                            startShieldedIntroFlow(it.account)
+                            encryptedWarningDialog?.dismiss()
+                            encryptedWarningDialog = null
+                        }
+                    })
+                builder.setPositiveButton(
+                    getString(R.string.account_details_shielded_warning_dismiss),
+                    object : DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface, which: Int) {
+                            App.appCore.session.setShieldedWarningDismissed(
+                                it.account.address,
+                                true
+                            )
+                            encryptedWarningDialog?.dismiss()
+                            encryptedWarningDialog = null
+                            checkForUnencrypted(accountList) //Check for other accounts with shielded transactions
+                        }
+                    })
+                builder.setCancelable(true)
+                encryptedWarningDialog = builder.create()//.show()
+                encryptedWarningDialog?.show()
+            }
+        }
+
+    }
+
+    private fun startShieldedIntroFlow(account: Account) {
+        val intent = Intent(activity, AccountDetailsActivity::class.java)
+        intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, account)
+        intent.putExtra(AccountDetailsActivity.EXTRA_SHIELDED, false)
+        intent.putExtra(AccountDetailsActivity.EXTRA_CONTINUE_TO_SHIELD_INTRO, true)
+        startActivityForResult(intent, REQUESTCODE_ACCOUNT_DETAILS)
     }
 
     private fun initializeViews(view: View) {
@@ -189,28 +302,39 @@ class AccountsOverviewFragment : BaseFragment() {
 
         eventListener = object : Preferences.Listener {
             override fun onChange() {
-                updateMissingBackup(view.missing_backup)
+                if(isInLayout && isVisible && !isDetached){
+                    updateWarnings()
+                }
             }
-        }
-
-        updateMissingBackup(view.missing_backup)
-        eventListener?.let {
-            App.appCore.session.addAccountsBackedUpListener(it)
         }
 
         initializeList(view)
 
 
-        context?.let {
-            if(App.appCore.session.shouldPromptForBackedUp(it)){
-                CustomDialogFragment.showAppUpdateBackupWarningDialog(it)
-                updateMissingBackup(view.missing_backup)
-            }
-        }
+
+
     }
 
-    private fun updateMissingBackup(view: View){
-        view.visibility = if(App.appCore.session.isAccountsBackedUp()) View.GONE else View.VISIBLE
+    private fun updateWarnings(){
+        var ident = viewModel.pendingIdentityForWarningLiveData.value
+        if(ident != null && !App.appCore.session.isIdentityPendingWarningAcknowledged(ident.id)){
+            missing_backup.visibility = View.GONE
+            identity_pending.visibility = View.VISIBLE
+            viewModel.pendingIdentityForWarningLiveData.value
+            identity_pending_tv.text = getString(R.string.accounts_overview_identity_pending_warning, ident.name)
+            identity_pending_close.setOnClickListener {
+                App.appCore.session.setIdentityPendingWarningAcknowledged(ident.id)
+                updateWarnings()
+            }
+            identity_pending.setOnClickListener {
+                fragmentListener?.identityClicked(ident)
+            }
+        }
+        else{
+            missing_backup.visibility = if(App.appCore.session.isAccountsBackedUp()) View.GONE else View.VISIBLE
+            identity_pending.visibility = View.GONE
+        }
+
     }
 
     private fun initializeList(view: View) {
@@ -219,11 +343,22 @@ class AccountsOverviewFragment : BaseFragment() {
         view.account_recyclerview.adapter = accountAdapter
 
         accountAdapter.setOnItemClickListener(object : AccountItemView.OnItemClickListener {
-            override fun onRegularBalanceClicked(item: Account) {
-                gotoAccountDetails(item, false)
+
+            override fun onMoreClicked(account: Account) {
+                gotoAccountDetails(account, false)
             }
-            override fun onShieldedBalanceClicked(item: Account) {
-                gotoAccountDetails(item, true)
+
+            override fun onReceiveClicked(account: Account) {
+                val intent = Intent(activity, AccountQRCodeActivity::class.java)
+                intent.putExtra(AccountQRCodeActivity.EXTRA_ACCOUNT, account)
+                startActivity(intent)
+            }
+
+            override fun onSendClicked(account: Account) {
+                val intent = Intent(activity, SendFundsActivity::class.java)
+                intent.putExtra(SendFundsActivity.EXTRA_SHIELDED, false)
+                intent.putExtra(SendFundsActivity.EXTRA_ACCOUNT, account)
+                startActivity(intent)
             }
         })
     }
@@ -232,6 +367,9 @@ class AccountsOverviewFragment : BaseFragment() {
 
     //region Control/UI
     //************************************************************
+
+
+
 
     private fun gotoExport() {
         val intent = Intent(activity, ExportActivity::class.java)
@@ -301,12 +439,12 @@ class AccountsOverviewFragment : BaseFragment() {
 
     private fun showTotalBalance(totalBalance: Long, containsEncryptedAmount: Boolean) {
         total_balance_textview.text = CurrencyUtil.formatGTU(totalBalance)
-        total_balance_shielded_container.visibility = if(containsEncryptedAmount) View.VISIBLE else View.GONE
+        //total_balance_shielded_container.visibility = if(containsEncryptedAmount) View.VISIBLE else View.GONE
     }
     private fun showDisposalBalance(atDisposal: Long, containsEncryptedAmount: Boolean) {
         accounts_overview_total_details_disposal.text = CurrencyUtil.formatGTU(atDisposal, true)
-        total_balance_shielded_container.visibility = if(containsEncryptedAmount) View.VISIBLE else View.GONE
-        accounts_overview_total_details_disposal_shield.visibility = if(containsEncryptedAmount) View.VISIBLE else View.GONE
+        //total_balance_shielded_container.visibility = if(containsEncryptedAmount) View.VISIBLE else View.GONE
+        //accounts_overview_total_details_disposal_shield.visibility = if(containsEncryptedAmount) View.VISIBLE else View.GONE
     }
     private fun showStakedBalance(totalBalance: Long) {
         accounts_overview_total_details_staked.text = CurrencyUtil.formatGTU(totalBalance, true)

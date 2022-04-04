@@ -125,7 +125,8 @@ class IdentityProviderListActivity :
         viewModel.identityProviderList.observe(this, Observer { list ->
             val items: MutableList<AdapterItem> = list.map { IdentityProviderItem(it) }.toMutableList()
             items.add(0, HeaderItem())
-            identityProviderAdapter = IdentityProviderAdapter(this, viewModel.identityCustomName, items)
+            val newlineSeperatedLinks = list.joinToString (separator = "<br><br>") { it -> "<a href=\"${it.ipInfo.ipDescription.url}\">${it.ipInfo.ipDescription.name}</a>" }
+            identityProviderAdapter = IdentityProviderAdapter(this, newlineSeperatedLinks, items)
             recyclerview.adapter = identityProviderAdapter
             setItemClickAdapter()
         })

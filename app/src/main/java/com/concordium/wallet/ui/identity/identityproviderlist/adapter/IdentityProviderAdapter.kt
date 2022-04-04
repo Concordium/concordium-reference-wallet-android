@@ -1,7 +1,9 @@
 package com.concordium.wallet.ui.identity.identityproviderlist.adapter
 
 import android.content.Context
+import android.text.Html
 import android.text.TextUtils
+import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +30,9 @@ class IdentityProviderAdapter(
         private val infoTextView: TextView = view.info_textview
 
         fun bind(identityName: String) {
-            infoTextView.text = context.getString(R.string.identity_create_identity_provider_info, identityName)
+            infoTextView.text = Html.fromHtml(context.getString(R.string.identity_create_identity_provider_info, identityName))
+            infoTextView.setMovementMethod(LinkMovementMethod.getInstance());
+            infoTextView.setLinksClickable(true);
         }
     }
 

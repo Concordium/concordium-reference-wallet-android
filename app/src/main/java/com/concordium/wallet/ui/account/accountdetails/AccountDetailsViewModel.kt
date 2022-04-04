@@ -75,6 +75,10 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     var allowScrollToLoadMore = true
     private var lastHeaderDate: Date? = null
 
+    private val _shieldingEnabledLiveData = MutableLiveData<Boolean>()
+    val shieldingEnabledLiveData: LiveData<Boolean>
+        get() = _shieldingEnabledLiveData
+
     private val _waitingLiveData = MutableLiveData<Boolean>()
     val waitingLiveData: LiveData<Boolean>
         get() = _waitingLiveData
@@ -132,6 +136,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         this.account = account
         this.isShielded = isShielded
         getIdentityProvider()
+        _shieldingEnabledLiveData.value = App.appCore.session.isShieldingEnabled(account.address)
         Log.d("Account address: ${account.address}")
     }
 
@@ -150,6 +155,16 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             val identity = identityRepository.findById(account.identityId)
             _identityLiveData.value = identity
         }
+    }
+
+    fun enableShielded() {
+        App.appCore.session.setShieldingEnabled(account.address, true)
+        _shieldingEnabledLiveData.value = true
+    }
+
+    fun disableShielded() {
+        App.appCore.session.setShieldingEnabled(account.address, false)
+        _shieldingEnabledLiveData.value = false
     }
 
     fun requestGTUDrop() {

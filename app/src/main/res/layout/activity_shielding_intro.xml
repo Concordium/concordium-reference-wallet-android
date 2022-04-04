@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    style="@style/Layout.Root"
+    tools:context=".ui.account.accountdetails.AccountDetailsActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/toolbar_layout"
+            layout="@layout/app_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbar_layout">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/pagers_tab_layout"
+                android:layout_alignParentTop="true">
+            </androidx.viewpager2.widget.ViewPager2>
+            <View
+                android:layout_width="200dp"
+                android:layout_height="2dp"
+                android:layout_centerInParent="true"
+                android:layout_above="@+id/pagers_tab_layout"
+                android:background="@color/theme_light_blue" />
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/pagers_tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/button_container"
+                app:tabBackground="@drawable/tab_pager_selector"
+                app:tabGravity="center"
+                app:tabIndicatorHeight="0dp"
+                android:layout_gravity="bottom"/>
+
+            <RelativeLayout
+                android:id="@+id/button_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:padding="30dp"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/shielding_intro_skip"
+                    style="@style/Button.Standard.Intro.White"
+                    tools:visibility="visible"
+                    android:text="@string/shielding_intro_skip"/>
+                <Button
+                    android:id="@+id/shielding_intro_back"
+                    style="@style/Button.Standard.Intro"
+                    android:drawableLeft="@drawable/ic_button_back"
+                    tools:visibility="gone"
+                    android:text="@string/shielding_intro_back" />
+                <Button
+                    android:id="@+id/shielding_intro_next"
+                    style="@style/Button.Standard.Intro"
+                    android:drawableRight="@drawable/ic_button_next"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/shielding_intro_next"/>
+                <Button
+                    android:id="@+id/shielding_intro_continue"
+                    style="@style/Button.Standard.Intro"
+                    tools:visibility="gone"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/shielding_intro_continue"/>
+            </RelativeLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

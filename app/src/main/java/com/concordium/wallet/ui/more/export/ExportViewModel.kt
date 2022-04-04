@@ -237,8 +237,7 @@ class ExportViewModel(application: Application) :
                 Log.d("ExportData: $jsonOutput")
 
                 // Encrypt
-                val encryptedExportData =
-                    ExportEncryptionHelper.encryptExportData(exportPassword, jsonOutput)
+                val encryptedExportData = ExportEncryptionHelper.encryptExportData(exportPassword, jsonOutput)
                 val fileContent = gson.toJson(encryptedExportData)
 
                 // Save and share file

@@ -70,6 +70,7 @@ class IdentityDetailsActivity :
         if(viewModel.identity.status == IdentityStatus.ERROR){
             error_wrapper_layout.visibility = View.VISIBLE
             error_textview.text = viewModel.identity.detail
+            identity_view.foreground = getDrawable(R.drawable.bg_cardview_error_border)
             remove_button.setOnClickListener(View.OnClickListener {
                 GlobalScope.launch {
                     viewModel.removeIdentity(viewModel.identity)
@@ -102,6 +103,7 @@ class IdentityDetailsActivity :
 
         }
         else{
+            identity_view.foreground = getDrawable(R.drawable.bg_cardview_border)
             error_wrapper_layout.visibility = View.GONE
         }
     }

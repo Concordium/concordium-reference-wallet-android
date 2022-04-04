@@ -9,8 +9,7 @@ object AppConfig {
 
     val appVersion: String
         get() = if (!BuildConfig.ENV_NAME.equals("production")) {
-            BuildConfig.VERSION_NAME + (if (BuildConfig.DEBUG) " (debug)" else " (release)") +
-                    " (" + BuildConfig.ENV_NAME + ")"
+            BuildConfig.VERSION_NAME +" ("+BuildConfig.BUILD_NUMBER+") "+ (if (BuildConfig.DEBUG) " (debug)" else "")
         } else BuildConfig.VERSION_NAME
 
 }

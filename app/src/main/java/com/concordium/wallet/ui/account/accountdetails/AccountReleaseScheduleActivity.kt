@@ -1,11 +1,18 @@
 package com.concordium.wallet.ui.account.accountdetails
 
+import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.graphics.Color
+import android.graphics.drawable.Animatable
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
@@ -24,6 +31,7 @@ import kotlinx.android.synthetic.main.activity_account_release_schedule.*
 import kotlinx.android.synthetic.main.progress.*
 import java.text.DateFormat
 import java.util.*
+import javax.crypto.Cipher
 import kotlin.collections.ArrayList
 
 
@@ -54,6 +62,16 @@ class AccountReleaseScheduleActivity :
         super.onResume()
         viewModel.populateScheduledReleaseList()
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+            }
+        }
+        return true
+    }
+
 
     // endregion
 

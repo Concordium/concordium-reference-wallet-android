@@ -2,6 +2,12 @@ package com.concordium.wallet.ui.account.newaccountname
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputFilter
+import android.text.InputFilter.LengthFilter
+import android.text.Spanned
+import android.text.TextWatcher
+import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
@@ -11,7 +17,7 @@ import com.concordium.wallet.uicore.afterTextChanged
 import com.concordium.wallet.util.ValidationUtil
 import kotlinx.android.synthetic.main.activity_new_account_name.*
 
-class NewAccountNameActivity :
+class NewAccountNameActivity() :
     BaseActivity(R.layout.activity_new_account_name, R.string.new_account_name_title) {
 
     private lateinit var viewModel: NewAccountNameViewModel
@@ -58,6 +64,8 @@ class NewAccountNameActivity :
                 else -> false
             }
         }
+
+
     }
 
     //endregion

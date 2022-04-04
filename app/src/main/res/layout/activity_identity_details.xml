@@ -37,6 +37,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     style="@style/Layout.CardView"
+                    android:foreground="@drawable/bg_cardview_error_border"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:layout_marginRight="@dimen/activity_horizontal_margin"

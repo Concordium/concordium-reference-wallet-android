@@ -6,6 +6,7 @@ import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.CBORUtil
@@ -36,14 +37,17 @@ import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.google.gson.GsonBuilder
 import com.google.iot.cbor.CborMap
+import kotlinx.android.synthetic.main.activity_send_funds.*
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.util.*
 import javax.crypto.Cipher
+import kotlin.coroutines.coroutineContext
 
 
 class SendFundsViewModel(application: Application) : AndroidViewModel(application) {
 
+    private var sendAll: Boolean = false
     private val proxyRepository = ProxyRepository()
     private val accountRepository: AccountRepository
     private val transferRepository: TransferRepository
@@ -55,13 +59,14 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
     class SendFundsPreferences(context: Context, preferenceName: String, preferenceMode: Int) :
         Preferences(context, preferenceName, preferenceMode) {
-            fun showMemoWarning(): Boolean {
-                return getBoolean(KEY_SHOW_MEMO_WARNING, true)
-            }
-            fun dontShowMemoWarning() {
-                setBoolean(KEY_SHOW_MEMO_WARNING, false)
-            }
+        fun showMemoWarning(): Boolean {
+            return getBoolean(KEY_SHOW_MEMO_WARNING, true)
         }
+
+        fun dontShowMemoWarning() {
+            setBoolean(KEY_SHOW_MEMO_WARNING, false)
+        }
+    }
 
 
     private val preferences: SendFundsPreferences
@@ -126,6 +131,9 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
     val recipientLiveData: LiveData<Recipient>
         get() = _recipientLiveData
 
+    private val _sendAllAmountLiveData = MutableLiveData<Long>()
+    val sendAllAmountLiveData: LiveData<Long>
+        get() = _sendAllAmountLiveData
 
     private class TempData {
         var accountNonce: AccountNonce? = null
@@ -177,28 +185,27 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
     private fun loadTransactionFee() {
 
         var type =
-            if(isShielded){
-                if(isTransferToSameAccount()){
+            if (isShielded) {
+                if (isTransferToSameAccount()) {
                     ProxyRepository.TRANSFER_TO_PUBLIC
-                }
-                else{
+                } else {
                     ProxyRepository.ENCRYPTED_TRANSFER
                 }
-            }
-            else{
-                if(isTransferToSameAccount()){
+            } else {
+                if (isTransferToSameAccount()) {
                     ProxyRepository.TRANSFER_TO_SECRET
-                }
-                else{
+                } else {
                     ProxyRepository.SIMPLE_TRANSFER
                 }
             }
 
 
-        proxyRepository.getTransferCost(type, if(tempData.memo == null) 0 else tempData.memo!!.length,
+        proxyRepository.getTransferCost(type,
+            if (tempData.memo == null) null else tempData.memo!!.length / 2, //div by 2 because hex takes up twice the length
             {
                 tempData.energy = it.energy
                 _transactionFeeLiveData.value = it.cost.toLong()
+                updateSendAllAmount()
             },
             {
                 handleBackendError(it)
@@ -221,30 +228,28 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             return true
         }
 
-        val totalUnshieldedAtDisposal = account.totalUnshieldedBalance - account.getAtDisposalSubstraction()
+        val totalUnshieldedAtDisposal =
+            account.totalUnshieldedBalance - account.getAtDisposalSubstraction()
 
-        if(isShielded){
-            if(isTransferToSameAccount()){
+        if (isShielded) {
+            if (isTransferToSameAccount()) {
                 //SEC_TO_PUBLIC_TRANSFER
                 if (amountValue > account.totalShieldedBalance || cost > totalUnshieldedAtDisposal) {
                     return false
                 }
-            }
-            else{
+            } else {
                 //ENCRYPTED_TRANSFER
                 if (amountValue > account.totalShieldedBalance || cost > totalUnshieldedAtDisposal) {
                     return false
                 }
             }
-        }
-        else{
-            if(isTransferToSameAccount()){
+        } else {
+            if (isTransferToSameAccount()) {
                 //PUBLIC_TO_SEC_TRANSFER
                 if (amountValue + cost > totalUnshieldedAtDisposal) {
                     return false
                 }
-            }
-            else{
+            } else {
                 //REGULAR_TRANSFER
                 if (amountValue + cost > totalUnshieldedAtDisposal) {
                     return false
@@ -253,7 +258,6 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         }
         return true
     }
-
 
 
     fun sendFunds(amount: String) {
@@ -295,7 +299,8 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun getCipherForBiometrics(): Cipher? {
         try {
-            val cipher = App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
+            val cipher =
+                App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
             if (cipher == null) {
                 _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
             }
@@ -313,7 +318,8 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun checkLogin(cipher: Cipher) = viewModelScope.launch {
         _waitingLiveData.value = true
-        val password = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
+        val password =
+            App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
         if (password != null) {
             decryptAndContinue(password)
         } else {
@@ -330,7 +336,8 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             _waitingLiveData.value = false
             return
         }
-        val decryptedJson = App.appCore.getCurrentAuthenticationManager().decryptInBackground(password, storageAccountDataEncrypted)
+        val decryptedJson = App.appCore.getCurrentAuthenticationManager()
+            .decryptInBackground(password, storageAccountDataEncrypted)
 
         if (decryptedJson != null) {
             val credentialsOutput = gson.fromJson(decryptedJson, StorageAccountData::class.java)
@@ -376,19 +383,16 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         )
 
         var transactionType =
-            if(isShielded){
-                if(isTransferToSameAccount()){
+            if (isShielded) {
+                if (isTransferToSameAccount()) {
                     CryptoLibrary.SEC_TO_PUBLIC_TRANSFER
-                }
-                else{
+                } else {
                     CryptoLibrary.ENCRYPTED_TRANSFER
                 }
-            }
-            else{
-                if(isTransferToSameAccount()){
+            } else {
+                if (isTransferToSameAccount()) {
                     CryptoLibrary.PUBLIC_TO_SEC_TRANSFER
-                }
-                else{
+                } else {
                     CryptoLibrary.REGULAR_TRANSFER
                 }
             }
@@ -403,24 +407,36 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
             //Save and update new selfAmount for later lookup
             viewModelScope.launch {
-                if(output.addedSelfEncryptedAmount != null){
+                if (output.addedSelfEncryptedAmount != null) {
                     account.finalizedEncryptedBalance?.let { encBalance ->
-                        val newEncryptedAmount = App.appCore.cryptoLibrary.combineEncryptedAmounts(output.addedSelfEncryptedAmount, encBalance.selfAmount).toString()
+                        val newEncryptedAmount = App.appCore.cryptoLibrary.combineEncryptedAmounts(
+                            output.addedSelfEncryptedAmount,
+                            encBalance.selfAmount
+                        ).toString()
                         tempData.newSelfEncryptedamount = newEncryptedAmount
-                        val oldDecryptedAmount = accountUpdater.lookupMappedAmount(encBalance.selfAmount)
-                        oldDecryptedAmount?.let{
-                            accountUpdater.saveDecryptedAmount(newEncryptedAmount, (it.toLong()+amount).toString())
+                        val oldDecryptedAmount =
+                            accountUpdater.lookupMappedAmount(encBalance.selfAmount)
+                        oldDecryptedAmount?.let {
+                            accountUpdater.saveDecryptedAmount(
+                                newEncryptedAmount,
+                                (it.toLong() + amount).toString()
+                            )
                         }
                     }
                 }
-                if(output.remaining != null){
+                if (output.remaining != null) {
                     tempData.newSelfEncryptedamount = output.remaining
-                    val remainingAmount = accountUpdater.decryptAndSaveAmount(encryptionSecretKey, output.remaining)
+                    val remainingAmount =
+                        accountUpdater.decryptAndSaveAmount(encryptionSecretKey, output.remaining)
 
                     account.finalizedEncryptedBalance?.let { encBalance ->
-                        val oldDecryptedAmount = accountUpdater.lookupMappedAmount(encBalance.selfAmount)
-                        oldDecryptedAmount?.let{
-                            accountUpdater.saveDecryptedAmount(output.remaining, remainingAmount.toString())
+                        val oldDecryptedAmount =
+                            accountUpdater.lookupMappedAmount(encBalance.selfAmount)
+                        oldDecryptedAmount?.let {
+                            accountUpdater.saveDecryptedAmount(
+                                output.remaining,
+                                remainingAmount.toString()
+                            )
                         }
                     }
                 }
@@ -432,59 +448,64 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
     private suspend fun calculateInputEncryptedAmount(encryptionSecretKey: String): InputEncryptedAmount? {
 
-        val lastNounceToInclude = tempData.accountBalance?.finalizedBalance?.accountNonce?:-2
+        val lastNounceToInclude = tempData.accountBalance?.finalizedBalance?.accountNonce ?: -2
 
         val allTransfers = transferRepository.getAllByAccountId(account.id)
         val unfinalisedTransfers = allTransfers?.filter {
-            it.transactionStatus != TransactionStatus.FINALIZED && it.nonce?.nonce?:-1 >= lastNounceToInclude
+            it.transactionStatus != TransactionStatus.FINALIZED && it.nonce?.nonce ?: -1 >= lastNounceToInclude
         }
 
-        var aggEncryptedAmount = if(unfinalisedTransfers.size >0) {
-            val lastTransaction = unfinalisedTransfers.maxWith(Comparator({a, b -> a.id.compareTo(b.id)}))
-            if(lastTransaction != null){
+        var aggEncryptedAmount = if (unfinalisedTransfers.size > 0) {
+            val lastTransaction =
+                unfinalisedTransfers.maxWith(Comparator({ a, b -> a.id.compareTo(b.id) }))
+            if (lastTransaction != null) {
                 tempData.accountBalance?.finalizedBalance?.let {
                     val incomingAmounts = it.accountEncryptedAmount.incomingAmounts.filter {
                         accountUpdater.lookupMappedAmount(it) != null
                     }
-                    var agg = lastTransaction.newSelfEncryptedAmount?:""
-                    for (i in lastTransaction.newStartIndex..(it.accountEncryptedAmount.startIndex + incomingAmounts.count()-1)){
-                        agg = App.appCore.cryptoLibrary.combineEncryptedAmounts(agg, incomingAmounts[i]).toString()
+                    var agg = lastTransaction.newSelfEncryptedAmount ?: ""
+                    for (i in lastTransaction.newStartIndex..(it.accountEncryptedAmount.startIndex + incomingAmounts.count() - 1)) {
+                        agg = App.appCore.cryptoLibrary.combineEncryptedAmounts(
+                            agg,
+                            incomingAmounts[i]
+                        ).toString()
                     }
                     agg
-                }?: ""
-            }
-            else{
+                } ?: ""
+            } else {
                 ""
             }
         } else {
             tempData.accountBalance?.finalizedBalance?.let {
                 var agg = it.accountEncryptedAmount.selfAmount
                 it.accountEncryptedAmount.incomingAmounts.forEach {
-                    if(accountUpdater.lookupMappedAmount(it) != null){
+                    if (accountUpdater.lookupMappedAmount(it) != null) {
                         agg = App.appCore.cryptoLibrary.combineEncryptedAmounts(agg, it).toString()
                     }
                 }
                 agg
-            }?: ""
+            } ?: ""
         }
 
         var aggAmount = tempData.accountBalance?.finalizedBalance?.let {
-            var agg = accountUpdater.lookupMappedAmount(it.accountEncryptedAmount.selfAmount)?.toLong()?:0
+            var agg =
+                accountUpdater.lookupMappedAmount(it.accountEncryptedAmount.selfAmount)?.toLong()
+                    ?: 0
             it.accountEncryptedAmount.incomingAmounts.forEach {
-                agg += accountUpdater.lookupMappedAmount(it)?.toLong()?:0
+                agg += accountUpdater.lookupMappedAmount(it)?.toLong() ?: 0
             }
-            unfinalisedTransfers.forEach{
+            unfinalisedTransfers.forEach {
                 agg -= it.amount
             }
             agg
-        }?: ""
+        } ?: ""
 
 
         val index = tempData.accountBalance?.finalizedBalance?.let {
             it.accountEncryptedAmount.startIndex + it.accountEncryptedAmount.incomingAmounts.count {
                 accountUpdater.lookupMappedAmount(it) != null
             }
-        }?:0
+        } ?: 0
 
         return InputEncryptedAmount(aggEncryptedAmount, aggAmount.toString(), index)
 
@@ -589,7 +610,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         val createdAt = Date().time
         var newStartIndex: Int = 0
         tempData.createTransferInput?.let {
-            newStartIndex = it.inputEncryptedAmount?.aggIndex?:0
+            newStartIndex = it.inputEncryptedAmount?.aggIndex ?: 0
         }
 
         val transfer = Transfer(
@@ -605,29 +626,24 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             submissionId,
             transferSubmissionStatus.status,
             transferSubmissionStatus.outcome ?: TransactionOutcome.UNKNOWN,
-            if(isShielded){
-                if(isTransferToSameAccount()){
-                    if(memo == null || memo.isEmpty()){
+            if (isShielded) {
+                if (isTransferToSameAccount()) {
+                    if (memo == null || memo.isEmpty()) {
                         TransactionType.TRANSFER
-                    }
-                    else{
+                    } else {
                         TransactionType.TRANSFERWITHMEMO
                     }
-                }
-                else{
-                    if(memo == null || memo.isEmpty()){
+                } else {
+                    if (memo == null || memo.isEmpty()) {
                         TransactionType.ENCRYPTEDAMOUNTTRANSFER
-                    }
-                    else{
+                    } else {
                         TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO
                     }
                 }
-            }
-            else{
-                if(isTransferToSameAccount()){
+            } else {
+                if (isTransferToSameAccount()) {
                     TransactionType.TRANSFERTOENCRYPTED
-                }
-                else{
+                } else {
                     TransactionType.TRANSFERTOPUBLIC
                 }
             },
@@ -649,11 +665,10 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         Integer.toUnsignedString(java.lang.Byte.toUnsignedInt(it), 16).padStart(2, '0')
     }
 
-    fun setMemo(memo: ByteArray?){
-        if(memo != null){
+    fun setMemo(memo: ByteArray?) {
+        if (memo != null) {
             tempData.memo = memo.toHexString()
-        }
-        else{
+        } else {
             tempData.memo = null
         }
         loadTransactionFee()
@@ -666,16 +681,49 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
     fun showMemoWarning(): Boolean {
         return preferences.showMemoWarning()
     }
+
     fun dontShowMemoWarning() {
         return preferences.dontShowMemoWarning()
     }
 
     fun getClearTextMemo(): String? {
-        if(tempData.memo == null){
+        if (tempData.memo == null) {
             return null
-        }
-        else{
+        } else {
             return CBORUtil.decodeHexAndCBOR(tempData.memo!!)
         }
+    }
+
+    fun updateSendAllValue() {
+        sendAll = true
+        loadTransactionFee()
+    }
+
+    fun disableSendAllValue() {
+        sendAll = false
+    }
+
+    fun updateSendAllAmount() {
+        if (sendAll) {
+            var cost = 0L
+            _transactionFeeLiveData.value?.let {
+                cost = it
+            }
+            var amount =
+                ((if (isShielded) account.totalShieldedBalance else (account.totalUnshieldedBalance - cost)) )
+            if (amount < 0) {
+                amount = 0
+            }
+            _sendAllAmountLiveData.value = amount
+        }
+    }
+
+    fun validateAndSaveRecipient(name: String, address: String): Boolean {
+        val isAddressValid = App.appCore.cryptoLibrary.checkAccountAddress(address)
+        if (!isAddressValid) {
+            _errorLiveData.value = Event(R.string.recipient_error_invalid_address)
+            return false
+        }
+        return true
     }
 }

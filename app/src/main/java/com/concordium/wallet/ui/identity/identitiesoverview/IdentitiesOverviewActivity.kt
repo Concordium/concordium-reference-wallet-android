@@ -8,16 +8,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.MainViewModel
-import com.concordium.wallet.ui.base.BaseFragment
+import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.IdentityAdapter
 import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
 import com.concordium.wallet.ui.identity.identitydetails.IdentityDetailsActivity
-import kotlinx.android.synthetic.main.fragment_identities_overview.*
-import kotlinx.android.synthetic.main.fragment_identities_overview.view.*
+import kotlinx.android.synthetic.main.activity_identities_overview.*
 import kotlinx.android.synthetic.main.progress.*
-import kotlinx.android.synthetic.main.progress.view.*
 
-class IdentitiesOverviewFragment : BaseFragment() {
+class IdentitiesOverviewActivity : BaseActivity(R.layout.activity_identities_overview, R.string.identities_overview_title) {
 
     private lateinit var viewModel: IdentitiesOverviewViewModel
     private lateinit var mainViewModel: MainViewModel
@@ -28,28 +26,22 @@ class IdentitiesOverviewFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
         initializeViewModel()
+        initializeViews()
         viewModel.initialize()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
-        val rootView = inflater.inflate(R.layout.fragment_identities_overview, container, false)
-        initializeViews(rootView)
-        return rootView
-    }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.add_item_menu, menu)
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.add_item_menu, menu)
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.add_item_menu -> gotoCreateIdentity()
         }
-        return true
+        return super.onOptionsItemSelected(item)
     }
 
     //endregion
@@ -60,11 +52,11 @@ class IdentitiesOverviewFragment : BaseFragment() {
     private fun initializeViewModel() {
         viewModel = ViewModelProvider(
             this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(activity!!.application)
+            ViewModelProvider.AndroidViewModelFactory.getInstance(this.application)
         ).get(IdentitiesOverviewViewModel::class.java)
         mainViewModel = ViewModelProvider(
-            activity!!,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(activity!!.application)
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(this.application)
         ).get(MainViewModel::class.java)
 
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
@@ -85,22 +77,22 @@ class IdentitiesOverviewFragment : BaseFragment() {
         })
     }
 
-    private fun initializeViews(view: View) {
+    private fun initializeViews() {
         mainViewModel.setTitle(getString(R.string.identities_overview_title))
-        view.progress_layout.visibility = View.VISIBLE
-        view.no_identity_layout.visibility = View.GONE
+        progress_layout.visibility = View.VISIBLE
+        no_identity_layout.visibility = View.GONE
 
-        view.new_identity_button.setOnClickListener {
+        new_identity_button.setOnClickListener {
             gotoCreateIdentity()
         }
 
-        initializeList(view)
+        initializeList()
     }
 
-    private fun initializeList(view: View) {
+    private fun initializeList() {
         identityAdapter = IdentityAdapter()
-        view.identity_recyclerview.setHasFixedSize(true)
-        view.identity_recyclerview.adapter = identityAdapter
+        identity_recyclerview.setHasFixedSize(true)
+        identity_recyclerview.adapter = identityAdapter
 
         identityAdapter.setOnItemClickListener(object : IdentityAdapter.OnItemClickListener {
             override fun onItemClicked(item: Identity) {
@@ -115,7 +107,7 @@ class IdentitiesOverviewFragment : BaseFragment() {
     //************************************************************
 
     private fun gotoCreateIdentity() {
-        val intent = Intent(activity, IdentityCreateActivity::class.java)
+        val intent = Intent(this, IdentityCreateActivity::class.java)
         startActivity(intent)
     }
 
@@ -128,7 +120,7 @@ class IdentitiesOverviewFragment : BaseFragment() {
     }
 
     private fun gotoIdentityDetails(identity: Identity) {
-        val intent = Intent(activity, IdentityDetailsActivity::class.java)
+        val intent = Intent(this, IdentityDetailsActivity::class.java)
         intent.putExtra(
             IdentityDetailsActivity.EXTRA_IDENTITY, identity
         )

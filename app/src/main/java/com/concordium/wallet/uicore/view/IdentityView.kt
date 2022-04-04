@@ -70,6 +70,9 @@ class IdentityView : CardView {
             }
         )
 
+        foreground = context.getDrawable( if(identity.status == IdentityStatus.DONE || identity.status == IdentityStatus.PENDING) R.drawable.bg_cardview_border else R.drawable.bg_cardview_error_border)
+        isEnabled = identity.status != IdentityStatus.PENDING
+
         nameTextView.text = identity.name
 
         val identityObject = identity.identityObject

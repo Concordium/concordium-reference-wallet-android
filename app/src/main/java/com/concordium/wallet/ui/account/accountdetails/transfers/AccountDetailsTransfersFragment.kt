@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.account.accountdetails.transfers
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,7 +33,6 @@ class AccountDetailsTransfersFragment : Fragment() {
     private lateinit var accountDetailsViewModel: AccountDetailsViewModel
     private lateinit var transactionAdapter: TransactionAdapter
 
-    private val session: Session = App.appCore.session
 
     //region Lifecycle
     //************************************************************
@@ -51,6 +51,12 @@ class AccountDetailsTransfersFragment : Fragment() {
             inflater.inflate(R.layout.fragment_account_details_transfers, container, false)
         initializeViews(rootView)
         return rootView
+    }
+
+    override fun onResume() {
+        super.onResume()
+        accountDetailsViewModel.populateTransferList()
+
     }
 
     //endregion
@@ -125,15 +131,7 @@ class AccountDetailsTransfersFragment : Fragment() {
                                         result = true
                                     }
                                 }
-/*
-                                if(!session.getHasShowRewards(accountDetailsViewModel.account.id) && transaction.isReward()){
-                                    result = false
-                                }
 
-                                if(!session.getHasShowFinalizationRewards(accountDetailsViewModel.account.id) && transaction.isFinalizedReward()){
-                                    result = false
-                                }
-*/
                             }
                         }
                         result

@@ -85,6 +85,8 @@ class AuthSetupActivity : BaseActivity(R.layout.activity_auth_setup, R.string.au
         }
     }
 
+
+
     //endregion
 
     //region Initialize

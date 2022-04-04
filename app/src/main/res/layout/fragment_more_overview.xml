@@ -18,6 +18,26 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+
+
+            more_overview_export
+
+            <LinearLayout
+                android:id="@+id/identities"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/list_item_height"
+                android:background="@drawable/list_item"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TextView.MoreMenuItem"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:text="@string/more_overview_identities" />
+            </LinearLayout>
+
+            <View style="@style/Divider" />
+
             <LinearLayout
                 android:id="@+id/address_book_layout"
                 android:layout_width="match_parent"
