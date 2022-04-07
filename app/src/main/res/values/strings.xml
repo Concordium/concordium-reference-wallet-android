@@ -526,6 +526,11 @@
     <string name="export_error_account_not_finalised_cancel">Cancel</string>
     <string name="export_error_account_not_finalised_continue">Continue</string>
 
+    <string name="export_method_question">Do you want to export your backup via another app, or save it to local storage?</string>
+    <string name="export_method_another_app">Another app</string>
+    <string name="export_method_local_storage">Local storage</string>
+    <string name="export_backup_saved_local">Your backup has been saved to local storage.</string>
+
     <!-- About -->
 
     <string name="about_title">About</string>

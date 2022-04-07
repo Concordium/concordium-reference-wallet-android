@@ -1,8 +1,8 @@
 package com.concordium.wallet.ui.more.export
 
 import android.content.Intent
+import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -10,17 +10,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import com.concordium.wallet.App
-import com.concordium.wallet.DataFileProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.base.BaseActivity.AuthenticationCallback
+import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
 import com.concordium.wallet.util.KeyboardUtil
 import kotlinx.android.synthetic.main.activity_export.*
 import kotlinx.android.synthetic.main.progress.*
-import java.io.File
 import javax.crypto.Cipher
-
 
 class ExportActivity : BaseActivity(
     R.layout.activity_export,
@@ -31,14 +28,11 @@ class ExportActivity : BaseActivity(
     private val BACKSTACK_NAME_PASSWORD = "BACKSTACK_NAME_PASSWORD"
     private val BACKSTACK_NAME_REPEAT_PASSWORD = "BACKSTACK_NAME_REPEAT_PASSWORD"
 
-
     companion object {
-
+        private const val RESULT_FOLDER_PICKER = 101
     }
 
     private val viewModel: ExportViewModel by viewModels()
-
-
 
     //region Lifecycle
     //************************************************************
@@ -132,18 +126,14 @@ class ExportActivity : BaseActivity(
                 if (value) {
                     //Success
                     supportFragmentManager.popBackStack(BACKSTACK_NAME_PASSWORD, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                    viewModel.finalizeEncryptionOfFile();
+                    chooseLocalFolderOrShareWithApp()
                 }
                 else{
                     //Failure
                 }
             }
         })
-
     }
-
-
-
 
     private fun initViews() {
         progress_layout.visibility = View.GONE
@@ -163,7 +153,6 @@ class ExportActivity : BaseActivity(
         popup.showSnackbar(root_layout, stringRes)
     }
 
-
     private fun showRequestExportPassword() {
         replaceFragment(ExportSetupPasswordFragment(R.string.export_setup_password_title), BACKSTACK_NAME_PASSWORD, true)
     }
@@ -172,22 +161,49 @@ class ExportActivity : BaseActivity(
         replaceFragment(ExportSetupPasswordRepeatFragment(R.string.export_setup_password_repeat_title), BACKSTACK_NAME_REPEAT_PASSWORD,true)
     }
 
+    private fun chooseLocalFolderOrShareWithApp() {
+        val dialogFragment = ExportChooseMethodFragment()
+        dialogFragment.isCancelable = false
+        dialogFragment.setCallback(object : ExportChooseMethodFragment.Callback {
+            override fun onAnotherApp() {
+                viewModel.finalizeEncryptionOfFile()
+            }
+            override fun onLocalStorage() {
+                openFolderPicker()
+            }
+        })
+        dialogFragment.show(supportFragmentManager, AuthenticationDialogFragment.AUTH_DIALOG_TAG)
+    }
+
+    private fun openFolderPicker() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
+            flags = FLAG_GRANT_READ_URI_PERMISSION
+        }
+        startActivityForResult(intent, RESULT_FOLDER_PICKER)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK && requestCode == RESULT_FOLDER_PICKER) {
+            data?.data?.let { uri ->
+                viewModel.saveFileToLocalFolder(uri)
+            }
+        }
+    }
 
     private fun shareExportFile() {
         val share = Intent(Intent.ACTION_SEND)
         share.type = "message/rfc822"
-        val uri = Uri.parse("content://" + DataFileProvider.AUTHORITY.toString() + File.separator.toString() + ExportViewModel.FILE_NAME);
-        share.putExtra(Intent.EXTRA_STREAM, uri)
+        share.putExtra(Intent.EXTRA_STREAM, viewModel.getEncryptedFileWithPath())
         val resInfoList = this.packageManager.queryIntentActivities(share, PackageManager.MATCH_DEFAULT_ONLY)
         for (resolveInfo in resInfoList) {
             val packageName = resolveInfo.activityInfo.packageName
-            grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            grantUriPermission(packageName, viewModel.getEncryptedFileWithPath(), Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
         startActivity(Intent.createChooser(share, null));
         App.appCore.session.setAccountsBackedUp(true)
         isShareFlowActive = true
     }
-
 
     private fun replaceFragment(fragment: Fragment, name: String, addToBackStack: Boolean = true) {
         val transaction = supportFragmentManager.beginTransaction()
@@ -198,6 +214,4 @@ class ExportActivity : BaseActivity(
         transaction.commit()
     }
     //endregion
-
-
 }
