@@ -83,6 +83,12 @@
         <item name="android:foreground">@drawable/bg_cardview_border</item>
     </style>
 
+    <style name="Layout.CardView.Gray" parent="Base.CardView">
+        <item name="cardCornerRadius">@dimen/card_corner_radius</item>
+        <item name="cardElevation">0dp</item>
+        <item name="android:foreground">@drawable/bg_cardview_gray_double_border</item>
+    </style>
+
     <style name="Layout.CardView.Dark" parent="Layout.CardView">
         <item name="cardCornerRadius">@dimen/card_corner_radius</item>
         <item name="cardElevation">0dp</item>
@@ -125,6 +131,16 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="TextView.Standard.Error">
+        <item name="android:textColor">@color/text_pink</item>
+        <item name="android:textSize">12dp</item>
+    </style>
+
+
+    <style name="TextView.Standard.White">
+        <item name="android:textColor">@color/text_white</item>
+    </style>
+
     <style name="TextView.Standard.Light">
         <item name="android:textColor">@color/text_grey</item>
     </style>
@@ -148,6 +164,37 @@
     <style name="TextView.Standard.Small">
         <item name="android:textSize">12sp</item>
     </style>
+
+    <style name="TextView.Standard.RegisterDelegationReceipt">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/text_black</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="TextView.Standard.RegisterDelegationReceipt.Title">
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+    </style>
+
+    <style name="TextView.Standard.RegisterDelegationReceipt.Content">
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">monospace</item>
+    </style>
+
+    <style name="TextView.Standard.RegisterDelegationReceipt.Content.Gray">
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:textColor">@color/text_grey</item>
+    </style>
+
+    <style name="TextView.Standard.RegisterDelegationReceipt.Content.Large">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+
 
     <style name="TextView.SendFundBalance">
         <item name="android:textSize">15sp</item>
@@ -249,6 +296,11 @@
         <item name="android:textColor">@color/theme_component</item>
     </style>
 
+    <style name="TextView.BlueRegular">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/theme_component</item>
+    </style>
+
     <style name="TextView.BlueHeader">
         <item name="android:textSize">24sp</item>
         <item name="android:textColor">@color/theme_component</item>
@@ -256,6 +308,10 @@
 
     <style name="TextView.MoreMenuItem" parent="TextView.SingleLine">
         <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextView.BlueRegular.Mono">
+        <item name="android:fontFamily">monospace</item>
     </style>
 
     <!--............................................................................-->
@@ -270,6 +326,16 @@
         <item name="android:textSize">18sp</item>
         <item name="android:background">@drawable/background_rounded_white</item>
         <item name="android:elevation">4dp</item>
+    </style>
+
+    <style name="EditText.Card.Flat">
+        <item name="android:layout_height">50dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:background">@drawable/bg_border_gray</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textColorHint">@color/theme_blue</item>
+        <item name="android:textColor">@color/theme_blue</item>
     </style>
 
     <style name="EditText.Name">
@@ -316,6 +382,11 @@
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="Button.Standard.Danger">
+        <item name="android:background">@drawable/button_standard_danger</item>
+        <item name="android:textColor">@color/text_selector_danger</item>
     </style>
 
     <style name="Button.Standard.Intro">

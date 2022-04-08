@@ -1,0 +1,110 @@
+package com.concordium.wallet.ui.bakerdelegation.delegation
+
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.R
+import com.concordium.wallet.data.model.DelegationData
+import com.concordium.wallet.data.model.DelegationTarget
+import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity
+import com.concordium.wallet.ui.bakerdelegation.common.StatusActivity
+import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationRemoveIntroFlowActivity
+import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationUpdateIntroFlowActivity
+import com.concordium.wallet.ui.common.GenericFlowActivity
+import kotlinx.android.synthetic.main.delegationbaker_status.*
+
+class DelegationStatusActivity() :
+    StatusActivity(R.string.delegation_status_title) {
+
+    private lateinit var viewModel: DelegationViewModel
+
+
+    companion object {
+        const val EXTRA_DELEGATION_DATA = "EXTRA_DELEGATION_DATA"
+
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initializeViewModel()
+        viewModel.initialize(intent.extras?.getSerializable(EXTRA_DELEGATION_DATA) as DelegationData)
+        viewModel.loadChainParameters()
+        initView()
+    }
+
+    fun initializeViewModel() {
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        ).get(DelegationViewModel::class.java)
+    }
+
+    override fun initView() {
+
+        val account = viewModel.delegationData.account
+        val accountDelegation = account?.accountDelegation
+
+        //TODO update with proper status info
+
+        if(account == null || accountDelegation == null){
+            setContentTitle(R.string.delegation_status_content_empty_title)
+            setEmptyState(getString(R.string.delegation_status_content_empty_desc))
+
+            status_button_bottom.visibility = View.VISIBLE
+            status_button_bottom.text = getString(R.string.delegation_status_continue)
+            status_button_bottom.setOnClickListener {
+                continueToCreate()
+            }
+        }
+        else{
+            setContentTitle(R.string.delegation_status_content_registered_title)
+            addContent(R.string.delegation_status_content_delegating_account, account.name+"\n\n"+account.address)
+            addContent(R.string.delegation_status_content_delegation_amount, CurrencyUtil.formatGTU(accountDelegation.stakedAmount))
+            if(accountDelegation.delegationTarget.delegateType == DelegationTarget.TYPE_DELEGATE_TO_BAKER){
+                addContent(R.string.delegation_status_content_target_pool, accountDelegation.delegationTarget.bakerId.toString())
+            }
+            else{
+                addContent(R.string.delegation_status_content_target_pool, DelegationTarget.TYPE_DELEGATE_TO_L_POOL)
+            }
+            //addContent(R.string.delegation_status_content_rewards_will_be, "content")
+
+            status_button_top.visibility = View.VISIBLE
+            status_button_top.text = getString(R.string.delegation_status_stop)
+            status_button_top.setOnClickListener {
+                continueToDelete()
+            }
+
+            status_button_bottom.visibility = View.VISIBLE
+            status_button_bottom.text = getString(R.string.delegation_status_update)
+            status_button_bottom.setOnClickListener {
+                continueToUpdate()
+            }
+
+        }
+
+    }
+
+    fun continueToDelete(){
+        val intent = Intent(this, DelegationRemoveIntroFlowActivity::class.java)
+        intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
+        viewModel.delegationData.type = DelegationData.TYPE_REMOVE_DELEGATION
+        intent.putExtra(BaseDelegationBakerFlowActivity.EXTRA_DELEGATION_DATA, viewModel.delegationData)
+        startActivityForResultAndHistoryCheck(intent)
+    }
+
+    fun continueToCreate(){
+        val intent = Intent(this, DelegationRegisterPoolActivity::class.java)
+        intent.putExtra(DelegationRegisterPoolActivity.EXTRA_DELEGATION_DATA, viewModel.delegationData)
+        startActivityForResultAndHistoryCheck(intent)
+    }
+
+    fun continueToUpdate(){
+        val intent = Intent(this, DelegationUpdateIntroFlowActivity::class.java)
+        intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
+        intent.putExtra(BaseDelegationBakerFlowActivity.EXTRA_DELEGATION_DATA, viewModel.delegationData)
+        startActivityForResultAndHistoryCheck(intent)
+    }
+
+}

@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.base
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
@@ -12,7 +13,6 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.concordium.wallet.App
-import com.concordium.wallet.AppCore
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.security.BiometricPromptCallback
@@ -20,7 +20,6 @@ import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
 import com.concordium.wallet.uicore.popup.Popup
-import com.concordium.wallet.util.Log
 import javax.crypto.Cipher
 
 
@@ -30,6 +29,12 @@ abstract open class BaseActivity(private val layout: Int, private val titleId: I
     private var subtitleView: TextView? = null
     protected lateinit var popup: Popup
     protected lateinit var dialogs: Dialogs
+
+    companion object {
+        const val REQUESTCODE_GENERIC_RETURN = 8232
+        const val POP_UNTIL_ACTIVITY = "POP_UNTIL_ACTIVITY"
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +67,34 @@ abstract open class BaseActivity(private val layout: Int, private val titleId: I
                 }
             }
         })
+    }
+
+    /**
+     * Upon returning, we check the result and pop if needed - see @onActivityResult
+     */
+    fun startActivityForResultAndHistoryCheck(intent: Intent) {
+        startActivityForResult(intent, REQUESTCODE_GENERIC_RETURN)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUESTCODE_GENERIC_RETURN) {
+            if (resultCode == Activity.RESULT_OK) {
+                data?.getStringExtra(POP_UNTIL_ACTIVITY)?.let { className ->
+                    if(this.javaClass.asSubclass(this.javaClass).canonicalName != className){
+                        finishUntilClass(className)
+                    }
+                }
+            }
+        }
+    }
+
+    fun finishUntilClass(canonicalClassName: String){
+        val intent = Intent()
+        intent.putExtra(POP_UNTIL_ACTIVITY, canonicalClassName)
+        setResult(Activity.RESULT_OK, intent)
+        finish()
     }
 
     open fun loggedOut() {

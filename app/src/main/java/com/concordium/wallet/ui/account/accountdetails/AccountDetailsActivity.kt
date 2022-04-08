@@ -2,45 +2,40 @@ package com.concordium.wallet.ui.account.accountdetails
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.data.model.DelegationData
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
-import com.concordium.wallet.ui.account.accountdetails.transfers.AdapterItem
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
+import com.concordium.wallet.ui.bakerdelegation.baker.BakerIntroFlowActivity
+import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity
+import com.concordium.wallet.ui.bakerdelegation.delegation.DelegationStatusActivity
+import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationCreateIntroFlowActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.recipient.recipient.RecipientActivity
-import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
+import com.concordium.wallet.ui.common.GenericFlowActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
-import com.concordium.wallet.util.ImageUtil
 import kotlinx.android.synthetic.main.activity_account_details.*
-import kotlinx.android.synthetic.main.activity_account_details.accounts_overview_total_details_staked
-import kotlinx.android.synthetic.main.activity_account_details.accounts_overview_total_details_disposal
-
-import kotlinx.android.synthetic.main.activity_account_details.root_layout
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.progress.*
-import kotlinx.coroutines.*
-import java.util.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.crypto.Cipher
 
 
@@ -57,7 +52,6 @@ class AccountDetailsActivity :
         const val EXTRA_CONTINUE_TO_SHIELD_INTRO = "EXTRA_CONTINUE_TO_SHIELD_INTRO"
         const val RESULT_RETRY_ACCOUNT_CREATION = 2
         const val REQUESTCODE_ENABLE_SHIELDING = 1241
-
     }
 
 
@@ -287,41 +281,6 @@ class AccountDetailsActivity :
             accounts_overview_total_details_staked.text = CurrencyUtil.formatGTU(viewModel.account.totalStaked, true)
         }
 
-        /*
-        if(!viewModel.account.readOnly){
-            send_textview.setTextColor(
-                ContextCompat.getColor(
-                    this,
-                    R.color.theme_white
-                )
-            )
-            shield_textview.setTextColor(
-                ContextCompat.getColor(
-                    this,
-                    R.color.theme_white
-                )
-            )
-            ImageUtil.changeImageViewTintColor(
-                send_imageview,
-                R.color.theme_white
-            )
-            ImageUtil.changeImageViewTintColor(
-                shield_imageview,
-                R.color.theme_white
-            )
-        }
-        address_textview.setTextColor(
-            ContextCompat.getColor(
-                this,
-                R.color.theme_white
-            )
-        )
-        ImageUtil.changeImageViewTintColor(
-            address_imageview,
-            R.color.theme_white
-        )
-
-         */
     }
 
     private fun setErrorMode() {
@@ -410,6 +369,20 @@ class AccountDetailsActivity :
                 }
                 cvHideShieldedTV.text = getString(R.string.account_details_menu_hide_shielded, viewModel.account.name)
 
+                //Delegation
+                val tvDelegation = menuView.findViewById(R.id.menu_item_delegation) as TextView
+                tvDelegation.setOnClickListener {
+                    mMenuDialog?.dismiss()
+                    gotoDelegation(viewModel.account)
+                }
+
+                //Baking
+                val tvBaking = menuView.findViewById(R.id.menu_item_baking) as TextView
+                tvBaking.setOnClickListener {
+                    mMenuDialog?.dismiss()
+                    gotoBaking(viewModel.account)
+                }
+
                 //Decrypt option
                 val cvDecrypt = menuView.findViewById(R.id.menu_decrypt_container) as CardView
                 cvDecrypt.visibility = if(viewModel.isShielded && viewModel.hasTransactionsToDecrypt) View.VISIBLE else View.GONE
@@ -457,6 +430,27 @@ class AccountDetailsActivity :
     private fun gotoTransferFilters(item: Account, isShielded: Boolean) {
         val intent = Intent(this, AccountTransactionsFiltersActivity::class.java)
         intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, item)
+        startActivity(intent)
+    }
+
+    private fun gotoDelegation(account: Account) {
+        if(account.accountDelegation != null){
+            val intent = Intent(this, DelegationStatusActivity::class.java)
+            intent.putExtra(DelegationStatusActivity.EXTRA_DELEGATION_DATA, DelegationData(account, type = DelegationData.TYPE_UPDATE_DELEGATION))
+            startActivityForResultAndHistoryCheck(intent)
+        }
+        else{
+            val intent = Intent(this, DelegationCreateIntroFlowActivity::class.java)
+            intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
+            intent.putExtra(BaseDelegationBakerFlowActivity.EXTRA_DELEGATION_DATA, DelegationData(account, type = DelegationData.TYPE_REGISTER_DELEGATION))
+            startActivityForResultAndHistoryCheck(intent)
+        }
+    }
+
+    private fun gotoBaking(item: Account) {
+        val intent = Intent(this, BakerIntroFlowActivity::class.java)
+        //intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, item)
+        intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         startActivity(intent)
     }
 

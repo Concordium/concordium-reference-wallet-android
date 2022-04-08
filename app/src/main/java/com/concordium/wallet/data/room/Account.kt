@@ -73,10 +73,12 @@ data class Account(
     var finalizedAccountReleaseSchedule: AccountReleaseSchedule?,
 
     @ColumnInfo(name = "baker_id")
-    var bakerId: Long? = null
+    var bakerId: Long? = null,
 
-) : Serializable {
+    @ColumnInfo(name = "account_delegation")
+    var accountDelegation: AccountDelegation? = null
 
+    ) : Serializable {
 
     fun isInitial(): Boolean {
         if (readOnly) {

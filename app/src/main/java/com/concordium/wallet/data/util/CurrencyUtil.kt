@@ -10,6 +10,11 @@ object CurrencyUtil {
     private val separator: Char = DecimalFormatSymbols.getInstance().decimalSeparator
     private val patternGTU: Pattern = Pattern.compile("^-?[0-9]*[${separator}]?[0-9]{0,6}\$")
 
+    fun formatGTU(value: String, withGStroke: Boolean = false): String {
+        val valueLong = value.toLong()
+        return formatGTU(valueLong, withGStroke)
+    }
+
     fun formatGTU(value: Long, withGStroke: Boolean = false): String {
 
         val isNegative = value < 0

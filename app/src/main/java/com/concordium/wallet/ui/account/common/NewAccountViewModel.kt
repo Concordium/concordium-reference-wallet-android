@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
-import com.concordium.wallet.core.authentication.AuthenticationManager
 import com.concordium.wallet.core.backend.BackendError
 import com.concordium.wallet.core.backend.BackendErrorException
 import com.concordium.wallet.core.backend.BackendRequest
@@ -24,7 +23,6 @@ import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
-import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.account.newaccountidentityattributes.SelectableIdentityAttribute
 import com.concordium.wallet.ui.common.BackendErrorHandler

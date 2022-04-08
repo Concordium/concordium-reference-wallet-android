@@ -127,6 +127,45 @@
             android:screenOrientation="portrait"
             android:launchMode="singleTop" />
         <activity
+            android:name=".ui.bakerdelegation.delegation.introflow.DelegationCreateIntroFlowActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.bakerdelegation.delegation.introflow.DelegationUpdateIntroFlowActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.bakerdelegation.delegation.introflow.DelegationRemoveIntroFlowActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.bakerdelegation.delegation.DelegationRegisterPoolActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.bakerdelegation.delegation.DelegationRegisterAmountActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
+
+
+
+        <activity
+            android:name=".ui.bakerdelegation.delegation.DelegationStatusActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
+
+        <activity
+            android:name=".ui.bakerdelegation.delegation.DelegationRegisterConfirmationActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
+
+
+        <activity
+            android:name=".ui.bakerdelegation.baker.BakerIntroFlowActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
+
+        <activity
             android:name=".ui.intro.introsetup.IntroSetupActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTop" />

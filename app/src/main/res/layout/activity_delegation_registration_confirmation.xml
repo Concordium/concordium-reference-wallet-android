@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    style="@style/Layout.Root">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/toolbar_layout"
+            layout="@layout/app_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/create_identity_flow_top_margin"
+            android:layout_below="@+id/toolbar_layout">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="@dimen/activity_content_margin">
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/TextView.Standard"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/delegation_register_delegation_confirmation_desc" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/activity_vertical_margin"
+                            android:background="@drawable/receipt_background_new"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/delegation_register_delegation_confirmation_receipt_title" />
+
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="1px"
+                                android:background="@color/theme_grey" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/activity_receipt_padding"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/delegation_register_delegation_confirmation_receipt_account_to_delegate_from" />
+                                <TextView
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:text="Main\n\n14f3632ac857400d417a7277f726c43a 8ddf07184f10a429cf0759e985247c33" />
+
+                                <TextView
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/delegation_register_delegation_confirmation_receipt_amount_to_delegate" />
+                                <TextView
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Large"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:text="Ͼ100.00" />
+
+                                <TextView
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/delegation_register_delegation_confirmation_receipt_target_pool" />
+                                <TextView
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Large"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/delegation_register_delegation_confirmation_receipt_account_to_delegate_from" />
+
+                                <TextView
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/delegation_register_delegation_confirmation_receipt_rewards_will_be" />
+                                <TextView
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:text="Added to delegation amount" />
+
+                                <TextView
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Gray"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:text="Estimated transaction fee:\nϾ 0.0059" />
+
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/button_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/activity_vertical_margin"
+                        android:orientation="horizontal"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp">
+
+                        <Button
+                            android:id="@+id/pool_registration_continue"
+                            style="@style/Button.Standard"
+                            android:layout_width="match_parent"
+                            android:text="[Submit delegation transaction]" />
+                    </RelativeLayout>
+
+                </LinearLayout>
+            </ScrollView>
+
+            <include layout="@layout/progress"
+                tools:visibility="gone"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

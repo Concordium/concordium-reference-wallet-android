@@ -18,7 +18,6 @@ import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PerformanceUtil
 import kotlinx.coroutines.*
 import retrofit2.HttpException
-import java.lang.Exception
 
 class AccountUpdater(val application: Application, private val viewModelScope: CoroutineScope) {
 
@@ -316,6 +315,8 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     val accountBalance = request.deferred.await()
                     request.account.finalizedBalance = accountBalance.finalizedBalance?.getAmount() ?: 0
                     request.account.currentBalance = accountBalance.currentBalance?.getAmount() ?: 0
+
+                    request.account.accountDelegation = accountBalance.currentBalance?.accountDelegation
 
                     request.account.finalizedAccountReleaseSchedule = accountBalance.finalizedBalance?.accountReleaseSchedule
                     accountBalance.finalizedBalance?.let {

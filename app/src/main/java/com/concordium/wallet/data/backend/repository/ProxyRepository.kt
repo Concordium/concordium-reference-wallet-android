@@ -15,6 +15,16 @@ class ProxyRepository() {
         const val ENCRYPTED_TRANSFER = "encryptedTransfer"
         const val TRANSFER_TO_SECRET = "transferToSecret"
         const val TRANSFER_TO_PUBLIC = "transferToPublic"
+
+        const val REGISTER_DELEGATION = "registerDelegation"
+        const val UPDATE_DELEGATION = "updateDelegation"
+        const val REMOVE_DELEGATION = "removeDelegation"
+        const val REGISTER_BAKER = "registerBaker"
+        const val UPDATE_BAKE_STAKE = "updateBakerStake"
+        const val UPDATE_BAKER_POOL = "updateBakerPool"
+        const val UPDATE_BAKER_KEYS = "updateBakerKeys"
+        const val REMOVE_BAKER = "removeBaker"
+        const val CONFIGURE_BAKER = "configureBaker"
     }
 
     fun submitCredential(
@@ -42,6 +52,31 @@ class ProxyRepository() {
     }
 
     suspend fun getAccountSubmissionStatusSuspended(submissionId: String) = backend.accountSubmissionStatusSuspended(submissionId)
+
+
+    fun getBakerPool(
+        bakerId: String,
+        success: (BakerPoolStatus) -> Unit,
+        failure: ((Throwable) -> Unit)?
+    ): BackendRequest<BakerPoolStatus> {
+        val call = backend.bakerPool(bakerId)
+        call.enqueue(object : BackendCallback<BakerPoolStatus>() {
+
+            override fun onResponseData(response: BakerPoolStatus) {
+                success(response)
+            }
+
+            override fun onFailure(t: Throwable) {
+                failure?.invoke(t)
+            }
+        })
+
+        return BackendRequest<BakerPoolStatus>(
+            call = call,
+            success = success,
+            failure = failure
+        )
+    }
 
     fun getAccountSubmissionStatus(
         submissionId: String,
@@ -142,8 +177,9 @@ class ProxyRepository() {
     }
 
 
-    fun getTransferCost(type: String, memoSize: Int?, success: (TransferCost) -> Unit, failure: ((Throwable) -> Unit)?): BackendRequest<TransferCost> {
-        val call = backend.transferCost(type, memoSize)
+    fun getTransferCost(type: String, memoSize: Int?, amount: Long? = null, restake: Boolean? = null, lPool: Boolean? = null, success: (TransferCost) -> Unit, failure: ((Throwable) -> Unit)?): BackendRequest<TransferCost> {
+        val lPoolArg = if(lPool == true) "lPool" else null
+        val call = backend.transferCost(type, memoSize, amount, restake, lPoolArg)
 
         call.enqueue(object : BackendCallback<TransferCost>() {
 
@@ -157,6 +193,27 @@ class ProxyRepository() {
         })
 
         return BackendRequest<TransferCost>(
+            call = call,
+            success = success,
+            failure = failure
+        )
+    }
+
+    fun getChainParameters(success: (ChainParameters) -> Unit, failure: ((Throwable) -> Unit)?): BackendRequest<ChainParameters> {
+        val call = backend.chainParameters()
+
+        call.enqueue(object : BackendCallback<ChainParameters>() {
+
+            override fun onResponseData(response: ChainParameters) {
+                success(response)
+            }
+
+            override fun onFailure(t: Throwable) {
+                failure?.invoke(t)
+            }
+        })
+
+        return BackendRequest<ChainParameters>(
             call = call,
             success = success,
             failure = failure

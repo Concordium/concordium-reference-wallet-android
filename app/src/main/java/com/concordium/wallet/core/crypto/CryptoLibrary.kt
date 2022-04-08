@@ -16,6 +16,7 @@ interface CryptoLibrary {
         val PUBLIC_TO_SEC_TRANSFER: Int = 1
         val SEC_TO_PUBLIC_TRANSFER: Int = 2
         val ENCRYPTED_TRANSFER: Int = 3
+        val CONFIGURE_DELEGATION_TRANSACTION: Int = 4
     }
 
     suspend fun createIdRequestAndPrivateData(
