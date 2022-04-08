@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-
-
     <!-- Theme - Primary -->
     <color name="theme_primary">#FFFFFF</color>
     <color name="theme_primary_dark">#000000</color>
@@ -10,6 +8,7 @@
 
     <color name="theme_white">#ffffff</color>
     <color name="theme_black">#000000</color>
+    <color name="theme_light_grey">#FBFBF9</color>
     <color name="theme_grey">#969696</color>
     <color name="theme_blue">#4486AB</color>
     <color name="theme_dark_blue">#325D76</color>
@@ -37,6 +36,7 @@
     <!-- Backgrounds -->
     <color name="background_light_blue">#f2f9ff</color>
     <color name="background_light_red">#fb9c9c</color>
+    <color name="background_edit_text_grey">#FBFBFB</color>
 
     <color name="background_release">#D9EFFC</color>
     <!-- Other -->

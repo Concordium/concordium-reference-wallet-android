@@ -73,13 +73,15 @@ data class Account(
     var finalizedAccountReleaseSchedule: AccountReleaseSchedule?,
 
     @ColumnInfo(name = "baker_id")
-    var bakerId: Long? = null
+    var bakerId: Long? = null,
 
-) : Serializable {
+    @ColumnInfo(name = "account_delegation")
+    var accountDelegation: AccountDelegation? = null
 
+    ) : Serializable {
 
     fun isInitial(): Boolean {
-        if (readOnly) {
+        if (readOnly || isBaking() || isDelegating()) {
             return false
         }
         val credential = this.credential ?: return true
@@ -102,11 +104,15 @@ data class Account(
         }
     }
 
-    fun isBaker(): Boolean {
+    fun isBaking(): Boolean {
         return bakerId != null
     }
 
+    fun isDelegating(): Boolean {
+        return accountDelegation != null
+    }
+
     fun getAtDisposalSubstraction(): Long {
-        return Math.max((finalizedAccountReleaseSchedule?.total?.toLong() ?: 0), totalStaked)
+        return Math.max((finalizedAccountReleaseSchedule?.total?.toLong() ?: 0), totalStaked).plus(accountDelegation?.stakedAmount?.toLong() ?: 0)
     }
 }

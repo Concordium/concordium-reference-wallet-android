@@ -48,6 +48,7 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             return@withContext null
         }
 
+
     override suspend fun createTransfer(createTransferInput: CreateTransferInput, type: Int): CreateTransferOutput? =
         withContext(Dispatchers.Default) {
             val input = gson.toJson(createTransferInput)
@@ -73,6 +74,10 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
         if (type == CryptoLibrary.ENCRYPTED_TRANSFER) {
             return create_encrypted_transfer(input)
         }
+        if (type == CryptoLibrary.CONFIGURE_DELEGATION_TRANSACTION) {
+            return create_configure_delegation_transaction(input)
+        }
+
         //CryptoLibrary.REGULAR_TRANSFER
         return create_transfer(input)
     }

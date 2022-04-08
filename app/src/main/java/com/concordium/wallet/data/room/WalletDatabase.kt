@@ -5,11 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.concordium.wallet.data.room.WalletDatabase.Companion.VERSION_NUMBER
 import com.concordium.wallet.data.room.typeconverter.GlobalTypeConverters
-import androidx.sqlite.db.SupportSQLiteDatabase
-
-import androidx.room.migration.Migration
 
 
 
@@ -30,13 +29,20 @@ public abstract class WalletDatabase : RoomDatabase() {
 
     companion object {
 
-        const val VERSION_NUMBER = 4
+        const val VERSION_NUMBER = 5
 
 
         val MIGRATION_3_4: Migration = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE transfer_table "
                         + " ADD COLUMN memo TEXT");
+            }
+        }
+
+        val MIGRATION_4_5: Migration = object : Migration(4, 5) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE account_table "
+                        + " ADD COLUMN account_delegation TEXT");
             }
         }
 
@@ -56,6 +62,7 @@ public abstract class WalletDatabase : RoomDatabase() {
                     "wallet_database"
                 )
                     .addMigrations(MIGRATION_3_4)
+                    .addMigrations(MIGRATION_4_5)
                     .build()
                 INSTANCE = instance
                 return instance

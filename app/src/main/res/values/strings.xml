@@ -67,6 +67,8 @@
     <!-- AccountView -->
     <string name="view_account_initial">Initial</string>
     <string name="view_account_read_only">Read-only</string>
+    <string name="view_account_baking">Baking</string>
+    <string name="view_account_delegating">Delegating</string>
     <string name="view_account_name_container">(%1$s)</string>
 
     <!-- Failed -->
@@ -202,6 +204,150 @@
     <string name="intro_setup_confirm_create_initial">I want to create my initial account</string>
     <string name="intro_setup_confirm_import">I want to import existing accounts</string>
     <string name="intro_flow_title">Introduction</string>
+
+    <!-- Delegation intro -->
+    <string name="delegation_intro_flow_title">Delegation</string>
+    <string name="delegation_intro_subtitle1">Delegation</string>
+    <string name="delegation_intro_subtitle2">Two types of pools</string>
+    <string name="delegation_intro_subtitle3">Baker pools</string>
+    <string name="delegation_intro_subtitle4">The L-pool</string>
+    <string name="delegation_intro_subtitle5">Pay days</string>
+    <string name="delegation_intro_subtitle6">Lock-in and cool-downs</string>
+    <string name="delegation_intro_subtitle7">The status page</string>
+
+    <string name="delegation_update_subtitle1">Updating your delegation</string>
+    <string name="delegation_update_subtitle2">Pay day updates</string>
+    <string name="delegation_update_subtitle3">Updates with longer cool-downs</string>
+
+    <string name="delegation_remove_subtitle1">Stop your delegation</string>
+    <string name="delegation_remove_subtitle2">Update during the cool-down period</string>
+
+    <string name="delegation_status_title">Delegation status</string>
+    <string name="delegation_status_content_empty_title">This account is not currently delegating any CCDs.</string>
+    <string name="delegation_status_content_empty_desc">This account has no delegation registered. You can register a delegation with the button below.</string>
+    <string name="delegation_status_continue">Continue</string>
+    <string name="delegation_status_update">Update current delegation</string>
+    <string name="delegation_status_stop">Stop delegation</string>
+    <string name="delegation_status_added_to_delegation_amount">Added to delegation amount</string>
+    <string name="delegation_status_at_disposal">At disposal</string>
+    <string name="delegation_status_waiting_to_finalize">Waiting for transaction to finalize</string>
+    <string name="delegation_status_new_amount">New delegation amount</string>
+    <string name="delegation_status_effective_time">%1$s at %2$s</string>
+
+    <string name="delegation_register_delegation_title">Register delegation</string>
+    <string name="delegation_update_delegation_title">Update delegation</string>
+    <string name="delegation_remove_delegation_title">Remove delegation</string>
+    <string name="delegation_update_delegation_transaction_title">Transaction: Update delegation</string>
+
+    <string name="delegation_status_content_registered_title">Your delegation is registered.</string>
+    <string name="delegation_status_content_delegating_account">Delegating account</string>
+    <string name="delegation_status_content_delegation_amount">Delegation amount</string>
+    <string name="delegation_status_content_target_pool">Target pool</string>
+    <string name="delegation_status_content_rewards_will_be">Rewards will be</string>
+    <string name="delegation_status_content_take_effect_on">The following changes will take effect on</string>
+    <string name="delegation_status_content_delegation_will_be_stopped">The delegation will be stopped, and the delegation amount will be unlocked on the public balance of the account.</string>
+
+    <string name="delegation_register_delegation_intro">You can delegate to a specific open pool of your choice, or you can delegate to the L-pool.</string>
+    <string name="delegation_register_delegation_desc">If you don’t already know what target baker pool you want to delegate an amount to, you can read more about how to find one here:\n\n developer.concordium.software</string>
+    <string name="delegation_register_delegation_pool_id_hint">Enter target baker pool ID</string>
+    <string name="delegation_register_delegation_pool_id_hint_update">Optional: Enter new target ID</string>
+    <string name="delegation_update_delegation_pool_id_baker">Current target: Baker id %1$s</string>
+    <string name="delegation_update_delegation_pool_id_l">Current target: L-pool</string>
+
+    <string name="delegation_register_delegation_pool_baker">Baker pool</string>
+    <string name="delegation_register_delegation_pool_l">L-pool</string>
+    <string name="delegation_register_delegation_continue">Continue</string>
+
+    <string name="delegation_register_delegation_pool_id_error">Invalid target baker pool ID</string>
+    <string name="delegation_register_delegation_pool_id_closed">This pool is closed</string>
+
+    <string name="delegation_register_delegation_yes_restake">Yes, restake</string>
+    <string name="delegation_register_delegation_no_restake">No, don\'t restake</string>
+
+    <string name="delegation_register_delegation_amount_current_amount">Current amounts on your account:</string>
+    <string name="delegation_register_delegation_amount_balance">Balance:</string>
+    <string name="delegation_register_delegation_amount_at_disposal">At disposal:</string>
+    <string name="delegation_register_delegation_amount_delegation">Delegation:</string>
+    <string name="delegation_register_delegation_amount_enter_amount">Enter the amount you want to delegate</string>
+    <string name="delegation_update_delegation_amount_enter_amount">Optional: Enter new delegation amount</string>
+    <string name="delegation_register_delegation_amount_hint">0.00</string>
+    <string name="delegation_register_delegation_amount_locked">Amount locked</string>
+    <string name="delegation_register_delegation_amount_insufficient_error">Insufficient funds</string>
+    <string name="delegation_register_delegation_amount_current_pool">Current pool:</string>
+    <string name="delegation_register_delegation_amount_pool_pool">Pool limit:</string>
+    <string name="delegation_register_delegation_amount_estimated_transaction_fee">Estimated transaction fee:\nϾ%1$s</string>
+    <string name="delegation_register_delegation_amount_do_you_want">Do you want to automatically add your delegation rewards to your delegated amount?\n\nIf you choose to not restake your rewards, the amounts will be at disposal on your account balance at each pay day.</string>
+    <string name="delegation_register_delegation_amount_continue">Continue</string>
+    <string name="delegation_register_delegation_minimum">Minimum stake: Ͼ%1$s</string>
+    <string name="delegation_register_delegation_maximum">Current maximum:: Ͼ%1$s</string>
+    <string name="delegation_register_delegation_not_enough_funds">Insufficient funds</string>
+    <string name="delegation_register_delegation_pool_limit_will_be_breached">Pool limit will be breached</string>
+    <plurals name="delegation_register_delegation_confirmation_desc">
+        <item quantity="one">You are about to submit a delegation transaction. This will lock your delegation amount for at least %d day.</item>
+        <item quantity="other">You are about to submit a delegation transaction. This will lock your delegation amount for at least %d days.</item>
+    </plurals>
+    <plurals name="delegation_register_delegation_confirmation_desc_update">
+        <item quantity="one">You are about to submit a delegation transaction that lowers your delegation amount. It will take effect after %d day and the delegation amount cannot be changed during this period of time.</item>
+        <item quantity="other">You are about to submit a delegation transaction that lowers your delegation amount. It will take effect after %d days and the delegation amount cannot be changed during this period of time.</item>
+    </plurals>
+    <string name="delegation_register_delegation_confirmation_receipt_title">Transaction: Register delegation</string>
+    <string name="delegation_register_delegation_confirmation_receipt_account_to_delegate_from">Account to delegate from</string>
+    <string name="delegation_register_delegation_confirmation_receipt_amount_to_delegate">Delegation amount</string>
+    <string name="delegation_register_delegation_confirmation_receipt_target_pool">Target pool</string>
+    <string name="delegation_register_delegation_confirmation_receipt_rewards_will_be">Rewards will be</string>
+    <string name="delegation_register_delegation_reduce_warning_title">Important</string>
+    <string name="delegation_register_delegation_reduce_warning_content">Reducing the delegation amount will lock the total delegation amount for a cool down period. No changes can be made to the amount during this period, and the withdrawal will not take effect before the cool down is over.</string>
+    <string name="delegation_register_delegation_reduce_warning_cancel">Let me change my amount</string>
+    <string name="delegation_register_delegation_reduce_warning_ok">That’s fine</string>
+
+    <string name="delegation_no_changes_title">Notice</string>
+    <string name="delegation_no_changes_message">Your transaction contains no changes compared to the current delegation.</string>
+    <string name="delegation_no_changes_ok">Okay</string>
+
+    <string name="delegation_amount_zero_title">Important</string>
+    <string name="delegation_amount_zero_message">Setting your delegated amount to 0 will remove the delegation all together.\n\nDo you want to remove your delegation?</string>
+    <string name="delegation_amount_zero_continue">Yes. Remove the delegation</string>
+    <string name="delegation_amount_zero_new_stake">No. Set another value</string>
+
+    <string name="delegation_more_than_95_title">Warning</string>
+    <string name="delegation_more_than_95_message">You are about to lock more than 95% of your total balance in a delegation stake.\n\nIf you don’t have enough unlocked CCD at your disposal, you might not be able to pay future transaction fees.</string>
+    <string name="delegation_more_than_95_continue">Continue</string>
+    <string name="delegation_more_than_95_new_stake">Enter new delegation stake</string>
+
+    <string name="delegation_register_delegation_submit_delegation_transaction">Submit delegation transaction</string>
+    <string name="delegation_register_delegation_finish">Finish</string>
+    <string name="delegation_register_delegation_failed_title">Transaction failed</string>
+    <string name="delegation_register_delegation_failed_message">Your delegation transaction failed:\n\n%1$s\n\nDo you want to try again?</string>
+    <string name="delegation_register_delegation_failed_try_again">Try again</string>
+    <string name="delegation_register_delegation_failed_later">Later</string>
+
+    <string name="delegation_remove_text">Are you sure you want to remove your delegation?</string>
+    <string name="delegation_remove_confirm_title">Transaction: Remove delegation</string>
+    <string name="delegation_remove_account">Account to stop delegating</string>
+    <string name="delegation_remove_submit">Submit delegation transaction</string>
+    <string name="delegation_remove_finish">Finish</string>
+    <string name="delegation_remove_not_enough_funds_title">Warning</string>
+    <string name="delegation_remove_not_enough_funds_message">You don\'t have any funds on your balance to pay for the fee.</string>
+    <string name="delegation_remove_not_enough_funds_ok">Okay</string>
+
+    <string name="delegation_notice_title">Notice</string>
+    <string name="delegation_notice_message">Once your transaction has successfully finalized, the delegation will take effect from the next pay day.</string>
+    <plurals name="delegation_notice_message_decrease">
+        <item quantity="one">Your decrease to the delegation amount will take effect after a cool down of approximately %d day.\n\nAll other updates will take effect at the next pay day.</item>
+        <item quantity="other">Your decrease to the delegation amount will take effect after a cool down of approximately %d days.\n\nAll other updates will take effect at the next pay day.</item>
+    </plurals>
+    <string name="delegation_notice_message_locked">Once your transaction has successfully finalized, the delegation will take effect from the next pay day.</string>
+    <plurals name="delegation_notice_message_remove">
+        <item quantity="one">Once your transaction has finalized, the delegation will be stopped after a cool down of %d day.</item>
+        <item quantity="other">Once your transaction has finalized, the delegation will be stopped after a cool down of %d days.</item>
+    </plurals>
+    <string name="delegation_notice_ok">Okay</string>
+
+    <!-- Baker intro -->
+    <string name="baker_intro_flow_title">Become a baker</string>
+    <string name="baker_intro_subtitle1">Become a baker</string>
+    <string name="baker_intro_subtitle2">The node</string>
+    <string name="baker_intro_subtitle3">Opening a pool</string>
 
 
     <!-- ***** Auth ***** -->
@@ -405,6 +551,7 @@
     <string name="account_details_gtu_drop_info">On the Concordium Testnet, you can request 2000CCD to be deposited to an account to get you started.</string>
     <string name="account_details_gtu_drop_button">Request 2000CCD</string>
     <string name="account_details_shielded_transaction_fee">Shielded transaction fee</string>
+    <string name="account_delegation_pending">Configure delegation</string>
 
     <string name="account_details_empty_identity_data">This account has no identity data revealed.</string>
 
@@ -631,9 +778,13 @@
     <string name="accounts_overview_total_details_staked_no_id">Stake with baker</string>
     <string name="account_details_menu_release_schedule">Release schedule</string>
     <string name="account_details_menu_transfer_filter">Transfer filters</string>
+    <string name="account_details_menu_delegation">Delegation</string>
+    <string name="account_details_menu_baking">Baking</string>
     <string name="account_details_menu_show_shielded">Show shielded balance on %1$s</string>
     <string name="account_details_menu_hide_shielded">Hide shielded balance on %1$s</string>
     <string name="account_details_menu_decrypt">Decrypt</string>
+    <string name="account_details_delegation_with_baker_pool">Delegation with baker pool %1$s</string>
+    <string name="account_details_stake_with_baker">Stake with baker %1$s</string>
 
     <string name="account_details_toggle_shielded">Shielded balance</string>
     <string name="account_details_toggle_balance">Balance</string>
