@@ -18,13 +18,11 @@ import com.concordium.wallet.uicore.view.SegmentedControlView
 import kotlinx.android.synthetic.main.activity_delegation_registration_amount.*
 import kotlinx.android.synthetic.main.progress.*
 
-
 class DelegationRegisterAmountActivity() :
     BaseActivity(R.layout.activity_delegation_registration_amount, R.string.delegation_register_delegation_title) {
 
     private lateinit var viewModel: DelegationViewModel
     private var reduceWarningDialog: AlertDialog? = null
-
 
     companion object {
         const val EXTRA_DELEGATION_DATA = "EXTRA_DELEGATION_DATA"
@@ -36,7 +34,6 @@ class DelegationRegisterAmountActivity() :
         viewModel.initialize(intent.extras?.getSerializable(EXTRA_DELEGATION_DATA) as DelegationData)
         initViews()
     }
-
 
     fun initializeViewModel() {
         showWaiting(false)
@@ -65,7 +62,6 @@ class DelegationRegisterAmountActivity() :
                 showError()
             }
         })
-
     }
 
     private fun showError() {
@@ -115,13 +111,11 @@ class DelegationRegisterAmountActivity() :
             onContinueClicked()
         }
 
-
-
         delegation_amount.text = CurrencyUtil.formatGTU(0, true)
         viewModel.delegationData.account?.let { account ->
             balance_amount.text = CurrencyUtil.formatGTU(account.totalUnshieldedBalance, true)
             account.accountDelegation?.let { accountDelegation ->
-                delegation_amount.text = CurrencyUtil.toGTUValue(accountDelegation.stakedAmount)?.let { it -> CurrencyUtil.formatGTU(it) }
+                delegation_amount.text = CurrencyUtil.formatGTU(accountDelegation.stakedAmount, true)
             }
         }
 
@@ -160,7 +154,7 @@ class DelegationRegisterAmountActivity() :
     private fun updateContent() {
         if(viewModel.delegationData.type == DelegationData.TYPE_UPDATE_DELEGATION){
             amount_desc.setText(getString(R.string.delegation_update_delegation_amount_enter_amount))
-            amount.setText(viewModel.delegationData.amount?.let { CurrencyUtil.formatGTU(it,false) })
+            amount.setText(viewModel.delegationData.account?.accountDelegation?.stakedAmount?.let { CurrencyUtil.formatGTU(it,false) })
         }
     }
 
@@ -286,7 +280,5 @@ class DelegationRegisterAmountActivity() :
         builder.setCancelable(true)
         reduceWarningDialog = builder.create()//.show()
         reduceWarningDialog?.show()
-
     }
-
 }

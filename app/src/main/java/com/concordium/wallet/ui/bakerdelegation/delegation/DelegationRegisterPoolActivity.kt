@@ -36,7 +36,6 @@ class DelegationRegisterPoolActivity() :
         initViews()
     }
 
-
     fun initializeViewModel() {
         viewModel = ViewModelProvider(
             this,
@@ -123,10 +122,8 @@ class DelegationRegisterPoolActivity() :
 
     private fun updateContent() {
         if(viewModel.delegationData.type == DelegationData.TYPE_UPDATE_DELEGATION){
-            var existingPoolIdText = viewModel.delegationData.account?.accountDelegation?.delegationTarget?.bakerId.toString()
-            existing_pool_id.text = getString(R.string.delegation_update_delegation_pool_id, existingPoolIdText)
+            existing_pool_id.text = getString(R.string.delegation_update_delegation_pool_id, getExistingPoolIdText())
             existing_pool_id.visibility = View.VISIBLE
-            pool_id.setText(existingPoolIdText)
             pool_id.hint = getString(R.string.delegation_register_delegation_pool_id_hint_update)
             if(viewModel.delegationData.account?.accountDelegation?.delegationTarget?.delegateType == DelegationTarget.TYPE_DELEGATE_TO_L_POOL){
                 viewModel.selectLPool()
@@ -146,7 +143,8 @@ class DelegationRegisterPoolActivity() :
     private fun updateVisibilities() {
         pool_id.visibility = if(viewModel.isLPool()) View.GONE else View.VISIBLE
         pool_desc.visibility = if(viewModel.isLPool()) View.GONE else View.VISIBLE
-        pool_registration_continue.isEnabled = pool_id.length() > 0 || viewModel.isLPool()
+        existing_pool_id.visibility = if(viewModel.isLPool()) View.GONE else View.VISIBLE
+        pool_registration_continue.isEnabled = getExistingPoolIdText().isNotEmpty() || viewModel.isLPool()
         hideError()
     }
 
@@ -158,10 +156,11 @@ class DelegationRegisterPoolActivity() :
         if(pool_id.length() > 0 || viewModel.isLPool()){  //If we are L-Pool we do not need a pool id
             KeyboardUtil.hideKeyboard(this)
             viewModel.setPoolID(pool_id.text.toString())
-            viewModel.validatePoolId()
+        } else {
+            viewModel.setPoolID(getExistingPoolIdText())
         }
+        viewModel.validatePoolId()
     }
-
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
@@ -173,5 +172,10 @@ class DelegationRegisterPoolActivity() :
         }
     }
 
-
+    private fun getExistingPoolIdText(): String {
+        viewModel.delegationData.account?.accountDelegation?.delegationTarget?.bakerId?.let {
+            return it.toString()
+        }
+        return ""
+    }
 }

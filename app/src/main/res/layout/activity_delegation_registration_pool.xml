@@ -68,7 +68,7 @@
                                 android:gravity="center"
                                 android:visibility="gone"
                                 tools:visibility="visible"
-                                tools:text="[Current target Baker id 2323]" />
+                                tools:text="[Current target: 2323]" />
 
                             <EditText
                                 android:id="@+id/pool_id"
