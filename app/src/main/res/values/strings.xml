@@ -226,6 +226,9 @@
     <string name="delegation_status_continue">Continue</string>
     <string name="delegation_status_update">Update current delegation</string>
     <string name="delegation_status_stop">Stop delegation</string>
+    <string name="delegation_status_added_to_delegation_amount">Added to delegation amount</string>
+    <string name="delegation_status_at_disposal">At disposal</string>
+
     <string name="delegation_register_delegation_title">Register delegation</string>
     <string name="delegation_update_delegation_title">Update delegation</string>
 

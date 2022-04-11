@@ -113,7 +113,7 @@
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    tools:text="Added to delegation amount" />
+                                    tools:text="@string/delegation_status_added_to_delegation_amount" />
 
                                 <TextView
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Gray"

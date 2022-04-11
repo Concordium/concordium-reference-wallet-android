@@ -48,7 +48,7 @@ class DelegationStatusActivity() :
 
         //TODO update with proper status info
 
-        if(account == null || accountDelegation == null){
+        if (account == null || accountDelegation == null){
             setContentTitle(R.string.delegation_status_content_empty_title)
             setEmptyState(getString(R.string.delegation_status_content_empty_desc))
 
@@ -58,7 +58,7 @@ class DelegationStatusActivity() :
                 continueToCreate()
             }
         }
-        else{
+        else {
             setContentTitle(R.string.delegation_status_content_registered_title)
             addContent(R.string.delegation_status_content_delegating_account, account.name+"\n\n"+account.address)
             addContent(R.string.delegation_status_content_delegation_amount, CurrencyUtil.formatGTU(accountDelegation.stakedAmount))
@@ -68,7 +68,9 @@ class DelegationStatusActivity() :
             else{
                 addContent(R.string.delegation_status_content_target_pool, DelegationTarget.TYPE_DELEGATE_TO_L_POOL)
             }
-            //addContent(R.string.delegation_status_content_rewards_will_be, "content")
+
+            if (accountDelegation.restakeEarnings) addContent(R.string.delegation_status_content_rewards_will_be, getString(R.string.delegation_status_added_to_delegation_amount))
+            else addContent(R.string.delegation_status_content_rewards_will_be, getString(R.string.delegation_status_at_disposal))
 
             status_button_top.visibility = View.VISIBLE
             status_button_top.text = getString(R.string.delegation_status_stop)
@@ -81,9 +83,7 @@ class DelegationStatusActivity() :
             status_button_bottom.setOnClickListener {
                 continueToUpdate()
             }
-
         }
-
     }
 
     fun continueToDelete(){
