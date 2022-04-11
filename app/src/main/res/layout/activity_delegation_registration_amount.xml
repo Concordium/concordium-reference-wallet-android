@@ -104,11 +104,10 @@
                                 style="@style/EditText.Card.Flat"
                                 android:layout_width="match_parent"
                                 android:hint="@string/delegation_register_delegation_amount_hint"
-                                android:inputType="number"
+                                android:inputType="numberDecimal"
                                 android:gravity="center"
-                                android:textSize="24dp"
-                                android:imeOptions="actionDone"
-                                 />
+                                android:textSize="24sp"
+                                android:imeOptions="actionDone" />
                             <TextView
                                 android:id="@+id/amount_error"
                                 style="@style/TextView.Standard.Error"
@@ -116,7 +115,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_margin="10dp"
                                 android:layout_gravity="center"
-                                android:visibility="gone"
+                                android:visibility="invisible"
                                 tools:visibility="visible"
                                 android:text="@string/delegation_register_delegation_amount_insufficient_error" />
                         </LinearLayout>

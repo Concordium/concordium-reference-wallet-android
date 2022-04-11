@@ -256,13 +256,15 @@
     <string name="delegation_register_delegation_amount_delegation">Delegation:</string>
     <string name="delegation_register_delegation_amount_enter_amount">Enter the amount you want to delegate</string>
     <string name="delegation_update_delegation_amount_enter_amount">Optional: Enter new delegation amount</string>
-    <string name="delegation_register_delegation_amount_hint">Ͼ0.00</string>
+    <string name="delegation_register_delegation_amount_hint">0.00</string>
     <string name="delegation_register_delegation_amount_insufficient_error">Insufficient funds</string>
     <string name="delegation_register_delegation_amount_current_pool">Current pool:</string>
     <string name="delegation_register_delegation_amount_pool_pool">Pool limit:</string>
     <string name="delegation_register_delegation_amount_estimated_transaction_fee">Estimated transaction fee:\nϾ%1$s</string>
     <string name="delegation_register_delegation_amount_do_you_want">Do you want to automatically add your delegation rewards to your delegated amount?\n\nIf you choose to not restake your rewards, the amounts will be at disposal on your account balance at each pay day.</string>
     <string name="delegation_register_delegation_amount_continue">Continue</string>
+    <string name="delegation_register_delegation_not_enough_funds">Not enough funds</string>
+    <string name="delegation_register_delegation_pool_limit_will_be_breached">Pool limit will be breached</string>
 
     <string name="delegation_register_delegation_confirmation_desc">You are about to submit a delegation transaction. This will lock your delegation amount for at least Ͼ%1$s days.</string>
     <string name="delegation_register_delegation_confirmation_receipt_title">Transaction: Register delegation</string>
@@ -275,11 +277,6 @@
     <string name="delegation_register_delegation_reduce_warning_content">Reducing the delegation amount will lock the total delegation amount for a cool down period. No changes can be made to the amount during this period, and the withdrawal will not take effect before the cool down is over.</string>
     <string name="delegation_register_delegation_reduce_warning_cancel">Let me change my amount</string>
     <string name="delegation_register_delegation_reduce_warning_ok">That’s fine</string>
-
-
-
-
-
 
 
     <!-- Baker intro -->

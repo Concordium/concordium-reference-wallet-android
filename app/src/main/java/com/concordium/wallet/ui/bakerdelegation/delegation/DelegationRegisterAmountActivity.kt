@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.text.method.DigitsKeyListener
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
@@ -13,10 +14,12 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.DelegationData
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.uicore.view.SegmentedControlView
 import kotlinx.android.synthetic.main.activity_delegation_registration_amount.*
 import kotlinx.android.synthetic.main.progress.*
+import java.text.DecimalFormatSymbols
 
 class DelegationRegisterAmountActivity() :
     BaseActivity(R.layout.activity_delegation_registration_amount, R.string.delegation_register_delegation_title) {
@@ -65,13 +68,11 @@ class DelegationRegisterAmountActivity() :
     }
 
     private fun showError() {
-        //pool_id.setTextColor(getColor(R.color.text_pink))
-        //pool_id_error.visibility = View.VISIBLE
+        amount_error.visibility = View.VISIBLE
     }
 
     private fun hideError() {
-        //pool_id.setTextColor(getColor(R.color.theme_blue))
-        //pool_id_error.visibility = View.GONE
+        amount_error.visibility = View.INVISIBLE
     }
 
     private fun showConfirmationPage() {
@@ -102,9 +103,25 @@ class DelegationRegisterAmountActivity() :
                 false
             }
 
+        amount.keyListener = DigitsKeyListener.getInstance("0123456789" + DecimalFormatSymbols.getInstance().decimalSeparator)
         amount.doOnTextChanged { text, start, count, after ->
-            //updateVisibilities()
-            viewModel.setAmount(CurrencyUtil.toGTUValue(amount.text.toString()))
+            val stakeValidation = StakeAmountInputValidator(
+                this,
+                if (viewModel.isUpdating()) "0" else "1",
+                null,
+                viewModel.atDisposal().toString(),
+                viewModel.delegationData.bakerPoolStatus?.delegatedCapital,
+                viewModel.delegationData.bakerPoolStatus?.delegatedCapitalCap,
+                viewModel.delegationData.account?.accountDelegation?.stakedAmount)
+                .validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString())
+
+            if (stakeValidation != StakeAmountInputValidator.StakeError.OK) {
+                amount_error.text = StakeAmountInputValidator.getErrorText(this, stakeValidation)
+                showError()
+            } else {
+                hideError()
+                viewModel.setAmount(CurrencyUtil.toGTUValue(amount.text.toString()))
+            }
         }
 
         pool_registration_continue.setOnClickListener {
@@ -121,13 +138,11 @@ class DelegationRegisterAmountActivity() :
 
         pool_limit.text =
             viewModel.delegationData.bakerPoolStatus?.let {
-                CurrencyUtil.toGTUValue(it.delegatedCapitalCap)
-                    ?.let { CurrencyUtil.formatGTU(it, true) }
+                CurrencyUtil.formatGTU(it.delegatedCapitalCap, true)
             }
         current_pool.text =
             viewModel.delegationData.bakerPoolStatus?.let {
-                CurrencyUtil.toGTUValue(it.delegatedCapital)
-                    ?.let { CurrencyUtil.formatGTU(it, true) }
+                CurrencyUtil.formatGTU(it.delegatedCapital, true)
             }
 
         viewModel.transactionFeeLiveData.observe(this, object : Observer<Long> {
@@ -142,7 +157,7 @@ class DelegationRegisterAmountActivity() :
             }
         })
 
-        pool_info.visibility = if(viewModel.isLPool()) View.VISIBLE else View.GONE
+        // pool_info.visibility = if(viewModel.isLPool()) View.VISIBLE else View.GONE
 
         viewModel.loadTransactionFee()
 
@@ -167,79 +182,36 @@ class DelegationRegisterAmountActivity() :
 
     private fun onContinueClicked() {
 
-        //TODO proper validity testing here
-        //Align with iOS code here and Figma flow
+        val stakeValidation = StakeAmountInputValidator(
+            this,
+            if (viewModel.isUpdating()) "0" else "1",
+            null,
+            viewModel.atDisposal().toString(),
+            viewModel.delegationData.bakerPoolStatus?.delegatedCapital,
+            viewModel.delegationData.bakerPoolStatus?.delegatedCapitalCap,
+            viewModel.delegationData.account?.accountDelegation?.stakedAmount)
+            .validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString())
+
+        if (stakeValidation != StakeAmountInputValidator.StakeError.OK) {
+            //Show error
+            return
+        }
+
         /*
+        val amounttoStake = amount.text.toString()
 
-        struct StakeAmountInputValidator {
-            var minimumValue: GTU
-            var maximumValue: GTU
-            var atDisposal: GTU
-            var currentPool: GTU?
-            var poolLimit: GTU?
-
-            func validate(amount: GTU) -> AnyPublisher<GTU, StakeError> {
-                .just(amount).flatMap {
-                    checkMaximum(amount: $0)
-                }.flatMap {
-                    checkMinimum(amount: $0)
-                }.flatMap {
-                    checkAtDisposal(amount: $0)
-                }.flatMap {
-                    checkPoolLimit(amount: $0)
-                }.eraseToAnyPublisher()
-
+        if (viewModel.delegationData.amount == null){
+            continueToConfirmation()
+        }
+        else {
+            if (amounttoStake.toLong() < viewModel.delegationData.amount!!) {
+                showReduceWarning()
             }
-
-            func checkMaximum(amount: GTU) -> AnyPublisher<GTU, StakeError> {
-                if amount.intValue > maximumValue.intValue {
-                    return .fail(.maximumAmount(maximumValue))
-                }
-                return .just(amount)
-            }
-            func checkMinimum(amount: GTU) -> AnyPublisher<GTU, StakeError> {
-                if amount.intValue < minimumValue.intValue {
-                    return .fail(.minimumAmount(minimumValue))
-                }
-                return .just(amount)
-            }
-            func checkAtDisposal(amount:GTU) -> AnyPublisher<GTU, StakeError> {
-                if amount.intValue > atDisposal.intValue {
-                    return .fail(.notEnoughFund(atDisposal))
-                }
-                return .just(amount)
-            }
-            func checkPoolLimit(amount: GTU) -> AnyPublisher<GTU, StakeError> {
-                guard let currentPool = currentPool, let poolLimit = poolLimit else {
-                    return .just(amount)
-                }
-                if amount.intValue + currentPool.intValue > poolLimit.intValue {
-                    return .fail(.poolLimitReached(currentPool, poolLimit))
-                }
-                return .just(amount)
+            else {
+                continueToConfirmation()
             }
         }
         */
-
-        //Replace this flow for validation...
-        val amounttoStake = amount.text.toString()
-
-        if(amounttoStake.isEmpty()){
-            //Show error
-        }
-        else{
-            if(viewModel.delegationData.amount == null){
-                continueToConfirmation()
-            }
-            else{
-                if(amounttoStake.toLong() < viewModel.delegationData.amount!!){
-                    showReduceWarning()
-                }
-                else{
-                    continueToConfirmation()
-                }
-            }
-        }
     }
 
     private fun continueToConfirmation() {

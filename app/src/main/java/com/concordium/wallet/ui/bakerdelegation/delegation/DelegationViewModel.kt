@@ -33,7 +33,6 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
 
     private val gson = App.appCore.gson
 
-
     private val _transactionSuccessLiveData = MutableLiveData<Boolean>()
     val transactionSuccessLiveData: LiveData<Boolean>
         get() = _transactionSuccessLiveData
@@ -58,7 +57,6 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
     val showAuthenticationLiveData: LiveData<Event<Boolean>>
         get() = _showAuthenticationLiveData
 
-
     fun initialize(delegationData: DelegationData) {
         this.delegationData = delegationData
     }
@@ -66,8 +64,18 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
     fun isBakerPool(): Boolean {
         return this.delegationData.isBakerPool
     }
+
     fun isLPool(): Boolean {
         return this.delegationData.isLPool
+    }
+
+    fun isUpdating(): Boolean {
+        delegationData.account?.accountDelegation?.let { return it.stakedAmount.isNotBlank() }
+        return false
+    }
+
+    fun atDisposal(): Long {
+        return (delegationData.account?.finalizedBalance ?: 0) - (delegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0)
     }
 
     fun selectBakerPool() {
@@ -84,7 +92,6 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
         this.delegationData.restake = restake
         loadTransactionFee()
     }
-
 
     fun setPoolID(id: String) {
         delegationData.poolId = id
@@ -356,6 +363,4 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
         delegationData.amount = amount
         loadTransactionFee()
     }
-
-
 }
