@@ -8,12 +8,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.DelegationData
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_delegation_registration_amount.*
+import com.concordium.wallet.util.UnitConvertUtil
+import kotlinx.android.synthetic.main.activity_delegation_registration_amount.pool_registration_continue
+import kotlinx.android.synthetic.main.activity_delegation_registration_confirmation.*
 import kotlinx.android.synthetic.main.progress.*
 import javax.crypto.Cipher
-
 
 class DelegationRegisterConfirmationActivity() :
     BaseActivity(R.layout.activity_delegation_registration_confirmation, R.string.delegation_register_delegation_title) {
@@ -30,7 +32,6 @@ class DelegationRegisterConfirmationActivity() :
         viewModel.initialize(intent.extras?.getSerializable(EXTRA_DELEGATION_DATA) as DelegationData)
         initViews()
     }
-
 
     fun initializeViewModel() {
         showWaiting(false)
@@ -54,43 +55,37 @@ class DelegationRegisterConfirmationActivity() :
             }
         })
 
-        viewModel.showDetailedLiveData.observe(this, object : EventObserver<Boolean>() {
-            override fun onUnhandledEvent(value: Boolean) {
-                if (value) {
-                    showConfirmationPage()
-                }
-            }
-        })
-
         viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
-                showError()
+                showError(value)
             }
         })
-
     }
 
-    private fun showError() {
-        Toast.makeText(this, "Error!", Toast.LENGTH_SHORT).show()
-        //pool_id.setTextColor(getColor(R.color.text_pink))
-        //pool_id_error.visibility = View.VISIBLE
-    }
-
-    private fun hideError() {
-        //pool_id.setTextColor(getColor(R.color.theme_blue))
-        //pool_id_error.visibility = View.GONE
-    }
-
-    private fun showConfirmationPage() {
-
+    private fun showError(value: Int) {
+        Toast.makeText(this, getString(value), Toast.LENGTH_SHORT).show()
     }
 
     fun initViews() {
-        updateVisibilities()
 
         pool_registration_continue.setOnClickListener {
             onContinueClicked()
         }
+
+        val gracePeriod = UnitConvertUtil.secondsToDaysRoundedUp(viewModel.delegationData.chainParameters?.delegatorCooldown ?: 0)
+        grace_period.text = resources.getQuantityString(R.plurals.delegation_register_delegation_confirmation_desc, gracePeriod, gracePeriod)
+        account_to_delegate_from.text = (viewModel.delegationData.account?.name ?: "").plus("\n\n").plus(viewModel.delegationData.account?.address ?: "")
+        delegation_amount_confirmation.text = CurrencyUtil.formatGTU(viewModel.delegationData.amount ?: 0, true)
+        target_pool.text = if (viewModel.isLPool()) getString(R.string.delegation_register_delegation_pool_l) else viewModel.delegationData.poolId
+        rewards_will_be.text = if (viewModel.delegationData.restake) getString(R.string.delegation_status_added_to_delegation_amount) else getString(R.string.delegation_status_at_disposal)
+
+        viewModel.transactionFeeLiveData.observe(this, object : Observer<Long> {
+            override fun onChanged(value: Long?) {
+                value?.let {
+                    estimated_transaction_fee.text = getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(value))
+                }
+            }
+        })
 
         viewModel.showAuthenticationLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
@@ -112,13 +107,7 @@ class DelegationRegisterConfirmationActivity() :
             }
         })
 
-    }
-
-    private fun updateVisibilities() {
-        //pool_id.visibility = if(viewModel.isLPool()) View.GONE else View.VISIBLE
-        //pool_desc.visibility = if(viewModel.isLPool()) View.GONE else View.VISIBLE
-        //pool_registration_continue.isEnabled = pool_id.length() > 0
-        hideError()
+        viewModel.loadTransactionFee()
     }
 
     private fun onContinueClicked() {
@@ -134,6 +123,4 @@ class DelegationRegisterConfirmationActivity() :
             pool_registration_continue.isEnabled = true
         }
     }
-
-
 }
