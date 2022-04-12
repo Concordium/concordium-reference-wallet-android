@@ -54,6 +54,7 @@
                                 android:layout_height="wrap_content"
                                 android:orientation="horizontal">
                                 <TextView
+                                    android:id="@+id/account_balance"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Large"

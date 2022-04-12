@@ -255,7 +255,8 @@
     <string name="delegation_register_delegation_no_restake">No, don\'t restake</string>
 
     <string name="delegation_register_delegation_amount_current_amount">Current amounts on your account:</string>
-    <string name="delegation_register_delegation_amount_balance">At disposal:</string>
+    <string name="delegation_register_delegation_amount_balance">Balance:</string>
+    <string name="delegation_register_delegation_amount_at_disposal">At disposal:</string>
     <string name="delegation_register_delegation_amount_delegation">Delegation:</string>
     <string name="delegation_register_delegation_amount_enter_amount">Enter the amount you want to delegate</string>
     <string name="delegation_update_delegation_amount_enter_amount">Optional: Enter new delegation amount</string>
@@ -280,7 +281,6 @@
     <string name="delegation_register_delegation_reduce_warning_content">Reducing the delegation amount will lock the total delegation amount for a cool down period. No changes can be made to the amount during this period, and the withdrawal will not take effect before the cool down is over.</string>
     <string name="delegation_register_delegation_reduce_warning_cancel">Let me change my amount</string>
     <string name="delegation_register_delegation_reduce_warning_ok">That’s fine</string>
-
 
     <!-- Baker intro -->
     <string name="baker_intro_flow_title">Baker</string>

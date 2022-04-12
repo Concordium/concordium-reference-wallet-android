@@ -92,17 +92,14 @@ class DelegationRegisterAmountActivity() :
         restake_options.addControl(getString(R.string.delegation_register_delegation_yes_restake), object: SegmentedControlView.OnItemClickListener {
             override fun onItemClicked(){
                 viewModel.markRestake(true)
-                updateVisibilities()
             }
         }, viewModel.delegationData.restake)
         restake_options.addControl(getString(R.string.delegation_register_delegation_no_restake), object: SegmentedControlView.OnItemClickListener {
             override fun onItemClicked(){
                 viewModel.markRestake(false)
-                updateVisibilities()
             }
         }, !viewModel.delegationData.restake)
 
-        //amount.setText(viewModel.getPoolId())
         amount.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     onContinueClicked()
@@ -169,16 +166,14 @@ class DelegationRegisterAmountActivity() :
                     pool_estimated_transaction_fee.text = getString(
                         R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(value)
                     )
-                    //updateConfirmButton()
                 }
             }
         })
 
         pool_info.visibility = if (viewModel.isLPool()) View.GONE else View.VISIBLE
+        account_balance.text = if (viewModel.isUpdating()) getString(R.string.delegation_register_delegation_amount_at_disposal) else getString(R.string.delegation_register_delegation_amount_balance)
 
         viewModel.loadTransactionFee()
-
-        updateVisibilities()
 
         updateContent()
     }
@@ -195,16 +190,9 @@ class DelegationRegisterAmountActivity() :
         }
     }
 
-    private fun updateVisibilities() {
-        //pool_id.visibility = if(viewModel.isLPool()) View.GONE else View.VISIBLE
-        //pool_desc.visibility = if(viewModel.isLPool()) View.GONE else View.VISIBLE
-        //pool_registration_continue.isEnabled = pool_id.length() > 0
-        hideError()
-    }
-
     private fun onContinueClicked() {
 
-        val stakeValidation = StakeAmountInputValidator(
+        val stakeError = StakeAmountInputValidator(
             if (viewModel.isUpdating()) "0" else "1",
             null,
             viewModel.atDisposal().toString(),
@@ -213,26 +201,35 @@ class DelegationRegisterAmountActivity() :
             viewModel.delegationData.account?.accountDelegation?.stakedAmount)
             .validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString())
 
-        if (stakeValidation != StakeAmountInputValidator.StakeError.OK) {
-            //Show error
+        if (stakeError != StakeAmountInputValidator.StakeError.OK) {
+            showError(stakeError)
             return
         }
 
-        /*
-        val amounttoStake = amount.text.toString()
+        val amountToStake = CurrencyUtil.toGTUValue(amount.text.toString()) ?: 0
+        if (viewModel.isUpdating()) {
+            if (amountToStake == 0L) {
 
-        if (viewModel.delegationData.amount == null){
-            continueToConfirmation()
-        }
-        else {
-            if (amounttoStake.toLong() < viewModel.delegationData.amount!!) {
+            } else if (amountToStake < viewModel.delegationData.amount!!) {
                 showReduceWarning()
             }
             else {
+                if (amountToStake > viewModel.atDisposal() * 0.95)
+                    show95PercentWarning()
+                else
+                    continueToConfirmation()
+            }
+        } else {
+            if (amountToStake == 0L) {
+
+            } else {
                 continueToConfirmation()
             }
         }
-        */
+    }
+
+    private fun show95PercentWarning() {
+
     }
 
     private fun continueToConfirmation() {
@@ -271,7 +268,7 @@ class DelegationRegisterAmountActivity() :
                 }
             })
         builder.setCancelable(true)
-        reduceWarningDialog = builder.create()//.show()
+        reduceWarningDialog = builder.create()
         reduceWarningDialog?.show()
     }
 }
