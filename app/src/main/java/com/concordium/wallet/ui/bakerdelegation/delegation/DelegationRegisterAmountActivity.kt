@@ -62,16 +62,24 @@ class DelegationRegisterAmountActivity() :
 
         viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
-                showError()
+                showError(null)
             }
         })
     }
 
-    private fun showError() {
+    private fun showError(stakeError: StakeAmountInputValidator.StakeError?) {
+        amount.setTextColor(getColor(R.color.text_pink))
         amount_error.visibility = View.VISIBLE
+        if (stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED) {
+            pool_limit_title.setTextColor(getColor(R.color.text_pink))
+            pool_limit.setTextColor(getColor(R.color.text_pink))
+        }
     }
 
     private fun hideError() {
+        amount.setTextColor(getColor(R.color.theme_blue))
+        pool_limit_title.setTextColor(getColor(R.color.text_black))
+        pool_limit.setTextColor(getColor(R.color.text_black))
         amount_error.visibility = View.INVISIBLE
     }
 
@@ -102,11 +110,18 @@ class DelegationRegisterAmountActivity() :
                 }
                 false
             }
-
+        setAmountHint()
         amount.keyListener = DigitsKeyListener.getInstance("0123456789" + DecimalFormatSymbols.getInstance().decimalSeparator)
         amount.doOnTextChanged { text, start, count, after ->
-            val stakeValidation = StakeAmountInputValidator(
-                this,
+            if (text != null && (text.toString().equals(DecimalFormatSymbols.getInstance().decimalSeparator.toString()) || text.filter { it == DecimalFormatSymbols.getInstance().decimalSeparator }.length > 1)) {
+                amount.setText(text.dropLast(1))
+            }
+            if (amount.text.isNotEmpty() && !amount.text.startsWith("Ͼ")) {
+                amount.setText("Ͼ".plus(amount.text.toString()))
+                amount.setSelection(amount.text.length)
+            }
+            setAmountHint()
+            val stakeError = StakeAmountInputValidator(
                 if (viewModel.isUpdating()) "0" else "1",
                 null,
                 viewModel.atDisposal().toString(),
@@ -114,14 +129,16 @@ class DelegationRegisterAmountActivity() :
                 viewModel.delegationData.bakerPoolStatus?.delegatedCapitalCap,
                 viewModel.delegationData.account?.accountDelegation?.stakedAmount)
                 .validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString())
-
-            if (stakeValidation != StakeAmountInputValidator.StakeError.OK) {
-                amount_error.text = StakeAmountInputValidator.getErrorText(this, stakeValidation)
-                showError()
+            if (stakeError != StakeAmountInputValidator.StakeError.OK) {
+                amount_error.text = StakeAmountInputValidator.getErrorText(this, stakeError)
+                showError(stakeError)
             } else {
                 hideError()
-                viewModel.setAmount(CurrencyUtil.toGTUValue(amount.text.toString()))
             }
+        }
+        amount.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && amount.text.isEmpty()) amount.hint = ""
+            else setAmountHint()
         }
 
         pool_registration_continue.setOnClickListener {
@@ -157,13 +174,18 @@ class DelegationRegisterAmountActivity() :
             }
         })
 
-        // pool_info.visibility = if(viewModel.isLPool()) View.VISIBLE else View.GONE
+        pool_info.visibility = if (viewModel.isLPool()) View.GONE else View.VISIBLE
 
         viewModel.loadTransactionFee()
 
         updateVisibilities()
 
         updateContent()
+    }
+
+    private fun setAmountHint() {
+        if (amount.text.isNotEmpty()) amount.hint = ""
+        else amount.hint = "Ͼ0" + DecimalFormatSymbols.getInstance().decimalSeparator + "00"
     }
 
     private fun updateContent() {
@@ -183,7 +205,6 @@ class DelegationRegisterAmountActivity() :
     private fun onContinueClicked() {
 
         val stakeValidation = StakeAmountInputValidator(
-            this,
             if (viewModel.isUpdating()) "0" else "1",
             null,
             viewModel.atDisposal().toString(),

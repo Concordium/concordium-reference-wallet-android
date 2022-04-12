@@ -4,7 +4,6 @@ import android.content.Context
 import com.concordium.wallet.R
 
 class StakeAmountInputValidator(
-    private val context: Context,
     private val minimumValue: String?,
     private val maximumValue: String?,
     private val atDisposal: String?,
@@ -18,7 +17,7 @@ class StakeAmountInputValidator(
 
     fun validate(amount: String?): StakeError {
 
-        if (amount == null) return StakeError.POOL_LIMIT_REACHED
+        if (amount == null) return StakeError.OK
 
         var check = checkAmount(amount)
         if (check != StakeError.OK) return check
@@ -29,10 +28,10 @@ class StakeAmountInputValidator(
         check = checkMinimum(amount)
         if (check != StakeError.OK) return check
 
-        check = checkAtDisposal(amount)
+        check = checkPoolLimit(amount)
         if (check != StakeError.OK) return check
 
-        check = checkPoolLimit(amount)
+        check = checkAtDisposal(amount)
         if (check != StakeError.OK) return check
 
         return StakeError.OK

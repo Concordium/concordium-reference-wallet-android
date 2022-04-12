@@ -67,7 +67,7 @@ object CurrencyUtil {
 
 
     fun toGTUValue(stringValue: String): Long? {
-        var str = stringValue
+        var str = stringValue.replace("Ͼ", "")
         if (str.isEmpty()) {
             return null
         }

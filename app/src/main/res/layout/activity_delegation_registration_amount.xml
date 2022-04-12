@@ -37,7 +37,7 @@
                         android:layout_weight="1"
                         android:orientation="vertical">
                         <TextView
-                            style="@style/TextView.Standard"
+                            style="@style/TextView.Standard.Small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="@dimen/activity_horizontal_margin"
@@ -56,11 +56,13 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Large"
                                     android:text="@string/delegation_register_delegation_amount_balance" />
                                 <TextView
                                     android:id="@+id/balance_amount"
                                     android:layout_width="0dp"
                                     android:layout_weight="1"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Large"
                                     android:layout_height="wrap_content"
                                     android:gravity="right"
                                     tools:text="[132.955]" />
@@ -72,11 +74,13 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Large"
                                     android:text="@string/delegation_register_delegation_amount_delegation" />
                                 <TextView
                                     android:id="@+id/delegation_amount"
                                     android:layout_width="0dp"
                                     android:layout_weight="1"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Large"
                                     android:layout_height="wrap_content"
                                     android:gravity="right"
                                     tools:text="[132.955]" />
@@ -92,7 +96,7 @@
                             android:layout_margin="20dp">
                             <TextView
                                 android:id="@+id/amount_desc"
-                                style="@style/TextView.Standard"
+                                style="@style/TextView.Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_margin="10dp"
@@ -103,7 +107,6 @@
                                 android:id="@+id/amount"
                                 style="@style/EditText.Card.Flat"
                                 android:layout_width="match_parent"
-                                android:hint="@string/delegation_register_delegation_amount_hint"
                                 android:inputType="numberDecimal"
                                 android:gravity="center"
                                 android:textSize="24sp"
@@ -133,12 +136,14 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Large"
                                     android:text="@string/delegation_register_delegation_amount_current_pool" />
                                 <TextView
                                     android:id="@+id/current_pool"
                                     android:layout_width="0dp"
                                     android:layout_weight="1"
                                     android:layout_height="wrap_content"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Large"
                                     android:gravity="right"
                                     tools:text="[132.955]" />
                             </LinearLayout>
@@ -147,24 +152,26 @@
                                 android:layout_height="wrap_content"
                                 android:orientation="horizontal">
                                 <TextView
+                                    android:id="@+id/pool_limit_title"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Large"
                                     android:text="@string/delegation_register_delegation_amount_pool_pool" />
                                 <TextView
                                     android:id="@+id/pool_limit"
                                     android:layout_width="0dp"
                                     android:layout_weight="1"
                                     android:layout_height="wrap_content"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Large"
                                     android:gravity="right"
                                     tools:text="[132.955]" />
                             </LinearLayout>
                         </LinearLayout>
 
-
-
                         <TextView
                             android:id="@+id/pool_estimated_transaction_fee"
-                            style="@style/TextView.Standard"
+                            style="@style/TextView.Standard.Small"
+                            android:textColor="@color/text_grey"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="5dp"
@@ -182,7 +189,6 @@
                             android:layout_margin="@dimen/activity_vertical_margin"
                             android:gravity="center"
                             android:text="@string/delegation_register_delegation_amount_do_you_want" />
-
 
                     </LinearLayout>
                     <com.concordium.wallet.uicore.view.SegmentedControlView
