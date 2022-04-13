@@ -1,5 +1,7 @@
 package com.concordium.wallet.ui.bakerdelegation.delegation
 
+import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -10,6 +12,7 @@ import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.DelegationData
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
+import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.UnitConvertUtil
 import kotlinx.android.synthetic.main.activity_delegation_registration_confirmation.*
@@ -42,9 +45,7 @@ class DelegationRegisterConfirmationActivity() :
 
         viewModel.transactionSuccessLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let {
-                Toast.makeText(this, "Transaction success!", Toast.LENGTH_SHORT).show()
-                finishUntilClass(AccountDetailsActivity::class.java.canonicalName)
-                //TODO show receipt screen from here
+                showPageAsReceipt()
             }
         })
 
@@ -65,6 +66,19 @@ class DelegationRegisterConfirmationActivity() :
         Toast.makeText(this, getString(value), Toast.LENGTH_SHORT).show()
     }
 
+    private fun showPageAsReceipt() {
+        submit_delegation_transaction.visibility = View.GONE
+        grace_period.visibility = View.GONE
+        submit_delegation_finish.visibility = View.VISIBLE
+        transaction_submitted.visibility = View.VISIBLE
+        transaction_submitted_divider.visibility = View.VISIBLE
+        transaction_submitted_transaction_no.visibility = View.VISIBLE
+        transaction_submitted_transaction_no.text = viewModel.delegationData.bakerPoolStatus?.bakerAddress ?: ""
+        if (viewModel.isUpdating()) {
+            showNotice()
+        }
+    }
+
     fun initViews() {
 
         if (viewModel.isUpdating())
@@ -72,6 +86,10 @@ class DelegationRegisterConfirmationActivity() :
 
         submit_delegation_transaction.setOnClickListener {
             onContinueClicked()
+        }
+
+        submit_delegation_finish.setOnClickListener {
+            finishUntilClass(AccountDetailsActivity::class.java.canonicalName)
         }
 
         val gracePeriod = UnitConvertUtil.secondsToDaysRoundedUp(viewModel.delegationData.chainParameters?.delegatorCooldown ?: 0)
@@ -115,6 +133,20 @@ class DelegationRegisterConfirmationActivity() :
 
     private fun onContinueClicked() {
         viewModel.delegateAmount()
+    }
+
+    private fun showNotice() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.delegation_notice_title)
+        builder.setMessage(getString(R.string.delegation_notice_message))
+        builder.setPositiveButton(getString(R.string.delegation_notice_ok)) { dialog, _ ->
+            dialog.dismiss()
+            val intent = Intent(this, DelegationStatusActivity::class.java)
+            intent.putExtra(BaseDelegationBakerFlowActivity.EXTRA_DELEGATION_DATA, viewModel.delegationData)
+            startActivity(intent)
+            finish()
+        }
+        builder.create().show()
     }
 
     private fun showWaiting(waiting: Boolean) {

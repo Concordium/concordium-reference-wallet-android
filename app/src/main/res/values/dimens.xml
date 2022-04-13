@@ -56,5 +56,6 @@
     <dimen name="activity_receipt_item_vertical_margin">10dp</dimen>
     <dimen name="activity_receipt_padding">16dp</dimen>
 
+    <dimen name="logo_size_small">38dp</dimen>
 
 </resources>

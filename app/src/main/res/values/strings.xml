@@ -300,6 +300,11 @@
     <string name="delegation_more_than_95_new_stake">Enter new delegation stake</string>
 
     <string name="delegation_register_delegation_submit_delegation_transaction">Submit delegation transaction</string>
+    <string name="delegation_register_delegation_finish">Finish</string>
+
+    <string name="delegation_notice_title">Notice</string>
+    <string name="delegation_notice_message">Once your transaction has succesfully finalized, the delegation will take effect from the next pay day.</string>
+    <string name="delegation_notice_ok">Okay</string>
 
     <!-- Baker intro -->
     <string name="baker_intro_flow_title">Baker</string>
