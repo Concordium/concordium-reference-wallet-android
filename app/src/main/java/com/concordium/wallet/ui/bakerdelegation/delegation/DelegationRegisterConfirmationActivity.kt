@@ -12,7 +12,6 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.UnitConvertUtil
-import kotlinx.android.synthetic.main.activity_delegation_registration_amount.pool_registration_continue
 import kotlinx.android.synthetic.main.activity_delegation_registration_confirmation.*
 import kotlinx.android.synthetic.main.progress.*
 import javax.crypto.Cipher
@@ -68,7 +67,10 @@ class DelegationRegisterConfirmationActivity() :
 
     fun initViews() {
 
-        pool_registration_continue.setOnClickListener {
+        if (viewModel.isUpdating())
+            setActionBarTitle(R.string.delegation_update_delegation_title)
+
+        submit_delegation_transaction.setOnClickListener {
             onContinueClicked()
         }
 
@@ -87,10 +89,11 @@ class DelegationRegisterConfirmationActivity() :
             }
         })
 
+        val authenticationText = authenticateText(viewModel.shouldUseBiometrics(), viewModel.usePasscode())
         viewModel.showAuthenticationLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
-                    showAuthentication("[confirm string]", viewModel.shouldUseBiometrics(), viewModel.usePasscode(), object : AuthenticationCallback{
+                    showAuthentication(authenticationText, viewModel.shouldUseBiometrics(), viewModel.usePasscode(), object : AuthenticationCallback{
                         override fun getCipherForBiometrics() : Cipher?{
                             return viewModel.getCipherForBiometrics()
                         }
@@ -117,10 +120,10 @@ class DelegationRegisterConfirmationActivity() :
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
             progress_layout.visibility = View.VISIBLE
-            pool_registration_continue.isEnabled = false
+            submit_delegation_transaction.isEnabled = false
         } else {
             progress_layout.visibility = View.GONE
-            pool_registration_continue.isEnabled = true
+            submit_delegation_transaction.isEnabled = true
         }
     }
 }

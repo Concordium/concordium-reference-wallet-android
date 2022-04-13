@@ -22,7 +22,6 @@ import com.concordium.wallet.uicore.dialog.Dialogs
 import com.concordium.wallet.uicore.popup.Popup
 import javax.crypto.Cipher
 
-
 abstract open class BaseActivity(private val layout: Int, private val titleId: Int = R.string.app_name) : AppCompatActivity() {
 
     private var titleView: TextView? = null
@@ -153,6 +152,14 @@ abstract open class BaseActivity(private val layout: Int, private val titleId: I
             showBiometrics(text, usePasscode, callback)
         } else {
             showPasswordDialog(text, callback)
+        }
+    }
+
+    fun authenticateText(useBiometrics: Boolean, usePasscode: Boolean): String {
+        return when {
+            useBiometrics -> getString(R.string.auth_login_biometrics_dialog_subtitle)
+            usePasscode -> getString(R.string.auth_login_biometrics_dialog_cancel_passcode)
+            else -> getString(R.string.auth_login_biometrics_dialog_cancel_password)
         }
     }
 

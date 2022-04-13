@@ -130,7 +130,7 @@
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp">
                         <Button
-                            android:id="@+id/pool_registration_continue"
+                            android:id="@+id/submit_delegation_transaction"
                             style="@style/Button.Standard"
                             android:layout_width="match_parent"
                             android:text="@string/delegation_register_delegation_submit_delegation_transaction" />
