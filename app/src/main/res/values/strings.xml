@@ -267,6 +267,8 @@
     <string name="delegation_register_delegation_amount_estimated_transaction_fee">Estimated transaction fee:\nϾ%1$s</string>
     <string name="delegation_register_delegation_amount_do_you_want">Do you want to automatically add your delegation rewards to your delegated amount?\n\nIf you choose to not restake your rewards, the amounts will be at disposal on your account balance at each pay day.</string>
     <string name="delegation_register_delegation_amount_continue">Continue</string>
+    <string name="delegation_register_delegation_minimum">Minimum stake: Ͼ%1$s</string>
+    <string name="delegation_register_delegation_maximum">Current maximum:: Ͼ%1$s</string>
     <string name="delegation_register_delegation_not_enough_funds">Insufficient funds</string>
     <string name="delegation_register_delegation_pool_limit_will_be_breached">Pool limit will be breached</string>
     <plurals name="delegation_register_delegation_confirmation_desc">
@@ -278,11 +280,24 @@
     <string name="delegation_register_delegation_confirmation_receipt_amount_to_delegate">Amount to Delegation amount</string>
     <string name="delegation_register_delegation_confirmation_receipt_target_pool">Target pool</string>
     <string name="delegation_register_delegation_confirmation_receipt_rewards_will_be">Rewards will be</string>
-
     <string name="delegation_register_delegation_reduce_warning_title">Important</string>
     <string name="delegation_register_delegation_reduce_warning_content">Reducing the delegation amount will lock the total delegation amount for a cool down period. No changes can be made to the amount during this period, and the withdrawal will not take effect before the cool down is over.</string>
     <string name="delegation_register_delegation_reduce_warning_cancel">Let me change my amount</string>
     <string name="delegation_register_delegation_reduce_warning_ok">That’s fine</string>
+
+    <string name="delegation_no_changes_title">Notice</string>
+    <string name="delegation_no_changes_message">Your transaction contains no changes compared to the current delegation.</string>
+    <string name="delegation_no_changes_ok">Okay</string>
+
+    <string name="delegation_amount_zero_title">Important</string>
+    <string name="delegation_amount_zero_message">Setting your delegated amount to 0 will remove the delegation all together.\n\nDo you want to remove your delegation?</string>
+    <string name="delegation_amount_zero_continue">Yes. Remove the delegation</string>
+    <string name="delegation_amount_zero_new_stake">No. Set another value</string>
+
+    <string name="delegation_more_than_95_title">Warning</string>
+    <string name="delegation_more_than_95_message">You are about to lock more than 95% of your total balance in a delegation stake.\n\nIf you don’t have enough unlocked CCD at your disposal, you might not be able to pay future transaction fees.</string>
+    <string name="delegation_more_than_95_continue">Continue</string>
+    <string name="delegation_more_than_95_new_stake">Enter new delegation stake</string>
 
     <string name="delegation_register_delegation_submit_delegation_transaction">Submit delegation transaction</string>
 

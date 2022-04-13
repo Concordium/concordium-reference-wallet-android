@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.bakerdelegation.delegation
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.text.method.DigitsKeyListener
@@ -25,7 +24,6 @@ class DelegationRegisterAmountActivity() :
     BaseActivity(R.layout.activity_delegation_registration_amount, R.string.delegation_register_delegation_title) {
 
     private lateinit var viewModel: DelegationViewModel
-    private var reduceWarningDialog: AlertDialog? = null
 
     companion object {
         const val EXTRA_DELEGATION_DATA = "EXTRA_DELEGATION_DATA"
@@ -88,6 +86,10 @@ class DelegationRegisterAmountActivity() :
     }
 
     fun initViews() {
+
+        if (viewModel.isUpdating())
+            setActionBarTitle(R.string.delegation_update_delegation_title)
+
         restake_options.clearAll()
         restake_options.addControl(getString(R.string.delegation_register_delegation_yes_restake), object: SegmentedControlView.OnItemClickListener {
             override fun onItemClicked(){
@@ -118,16 +120,16 @@ class DelegationRegisterAmountActivity() :
                 amount.setSelection(amount.text.length)
             }
             setAmountHint()
-            val stakeError = StakeAmountInputValidator(
+            val stakeAmountInputValidator = StakeAmountInputValidator(
                 if (viewModel.isUpdating()) "0" else "1",
                 null,
                 viewModel.atDisposal().toString(),
                 viewModel.delegationData.bakerPoolStatus?.delegatedCapital,
                 viewModel.delegationData.bakerPoolStatus?.delegatedCapitalCap,
                 viewModel.delegationData.account?.accountDelegation?.stakedAmount)
-                .validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString())
+            val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString())
             if (stakeError != StakeAmountInputValidator.StakeError.OK) {
-                amount_error.text = StakeAmountInputValidator.getErrorText(this, stakeError)
+                amount_error.text = stakeAmountInputValidator.getErrorText(this, stakeError)
                 showError(stakeError)
             } else {
                 hideError()
@@ -142,9 +144,9 @@ class DelegationRegisterAmountActivity() :
             onContinueClicked()
         }
 
+        balance_amount.text = CurrencyUtil.formatGTU(viewModel.atDisposal(), true)
         delegation_amount.text = CurrencyUtil.formatGTU(0, true)
         viewModel.delegationData.account?.let { account ->
-            balance_amount.text = CurrencyUtil.formatGTU(account.totalUnshieldedBalance, true)
             account.accountDelegation?.let { accountDelegation ->
                 delegation_amount.text = CurrencyUtil.formatGTU(accountDelegation.stakedAmount, true)
             }
@@ -208,28 +210,51 @@ class DelegationRegisterAmountActivity() :
 
         val amountToStake = CurrencyUtil.toGTUValue(amount.text.toString()) ?: 0
         if (viewModel.isUpdating()) {
-            if (amountToStake == 0L) {
-
-            } else if (amountToStake < viewModel.delegationData.amount!!) {
-                showReduceWarning()
-            }
-            else {
-                if (amountToStake > viewModel.atDisposal() * 0.95)
-                    show95PercentWarning()
-                else
-                    continueToConfirmation()
+            when {
+                (amountToStake == viewModel.delegationData.account?.accountDelegation?.stakedAmount?.toLongOrNull() ?: 0 && viewModel.getPoolId() == viewModel.getOldPoolId()) -> showNoChange()
+                amountToStake == 0L -> showNewAmountZero()
+                amountToStake < viewModel.delegationData.account?.accountDelegation?.stakedAmount?.toLongOrNull() ?: 0 -> showReduceWarning()
+                amountToStake > viewModel.atDisposal() * 0.95 -> show95PercentWarning()
+                else -> continueToConfirmation()
             }
         } else {
-            if (amountToStake == 0L) {
-
-            } else {
-                continueToConfirmation()
-            }
+            continueToConfirmation()
         }
     }
 
-    private fun show95PercentWarning() {
+    private fun showNoChange() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.delegation_no_changes_title)
+        builder.setMessage(getString(R.string.delegation_no_changes_message))
+        builder.setPositiveButton(getString(R.string.delegation_no_changes_ok)) { dialog, _ -> dialog.dismiss() }
+        builder.create().show()
+    }
 
+    private fun showNewAmountZero() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.delegation_amount_zero_title)
+        builder.setMessage(getString(R.string.delegation_amount_zero_message))
+        builder.setPositiveButton(getString(R.string.delegation_amount_zero_continue)) { _, _ -> continueToConfirmation() }
+        builder.setNegativeButton(getString(R.string.delegation_amount_zero_new_stake)) { dialog, _ -> dialog.dismiss() }
+        builder.create().show()
+    }
+
+    private fun showReduceWarning() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.delegation_register_delegation_reduce_warning_title)
+        builder.setMessage(getString(R.string.delegation_register_delegation_reduce_warning_content))
+        builder.setPositiveButton(getString(R.string.delegation_register_delegation_reduce_warning_ok)) { _, _ -> continueToConfirmation() }
+        builder.setNegativeButton(getString(R.string.delegation_register_delegation_reduce_warning_cancel)) { dialog, _ -> dialog.dismiss() }
+        builder.create().show()
+    }
+
+    private fun show95PercentWarning() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.delegation_more_than_95_title)
+        builder.setMessage(getString(R.string.delegation_more_than_95_message))
+        builder.setPositiveButton(getString(R.string.delegation_more_than_95_continue)) { _, _ -> continueToConfirmation() }
+        builder.setNegativeButton(getString(R.string.delegation_more_than_95_new_stake)) { dialog, _ -> dialog.dismiss() }
+        builder.create().show()
     }
 
     private fun continueToConfirmation() {
@@ -247,28 +272,5 @@ class DelegationRegisterAmountActivity() :
             progress_layout.visibility = View.GONE
             pool_registration_continue.isEnabled = true
         }
-    }
-
-    private fun showReduceWarning() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(getString(R.string.delegation_register_delegation_reduce_warning_title))
-        builder.setMessage(getString(R.string.delegation_register_delegation_reduce_warning_content))
-        builder.setNegativeButton(
-            getString(R.string.delegation_register_delegation_reduce_warning_cancel),
-            object : DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface, which: Int) {
-                    reduceWarningDialog?.dismiss()
-                }
-            })
-        builder.setPositiveButton(
-            getString(R.string.delegation_register_delegation_reduce_warning_ok),
-            object : DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface, which: Int) {
-                    continueToConfirmation()
-                }
-            })
-        builder.setCancelable(true)
-        reduceWarningDialog = builder.create()
-        reduceWarningDialog?.show()
     }
 }

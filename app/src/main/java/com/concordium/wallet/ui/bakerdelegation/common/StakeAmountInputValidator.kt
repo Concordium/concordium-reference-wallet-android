@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.bakerdelegation.common
 
 import android.content.Context
 import com.concordium.wallet.R
+import com.concordium.wallet.data.util.CurrencyUtil
 
 class StakeAmountInputValidator(
     private val minimumValue: String?,
@@ -12,7 +13,7 @@ class StakeAmountInputValidator(
     private val previouslyStakedInPool: String?
 ) {
     enum class StakeError {
-        OK, NOT_ENOUGH_FUND, POOL_LIMIT_REACHED, UNKNOWN
+        OK, NOT_ENOUGH_FUND, MINIMUM, MAXIMUM, POOL_LIMIT_REACHED, UNKNOWN
     }
 
     fun validate(amount: String?): StakeError {
@@ -37,14 +38,14 @@ class StakeAmountInputValidator(
         return StakeError.OK
     }
 
-    companion object {
-        fun getErrorText(context: Context, stakeError: StakeError): String {
-            return when (stakeError) {
-                StakeError.NOT_ENOUGH_FUND -> context.getString(R.string.delegation_register_delegation_not_enough_funds)
-                StakeError.POOL_LIMIT_REACHED -> context.getString(R.string.delegation_register_delegation_pool_limit_will_be_breached)
-                StakeError.UNKNOWN -> context.getString(R.string.app_error_general)
-                else -> ""
-            }
+    fun getErrorText(context: Context, stakeError: StakeError): String {
+        return when (stakeError) {
+            StakeError.NOT_ENOUGH_FUND -> context.getString(R.string.delegation_register_delegation_not_enough_funds)
+            StakeError.MINIMUM -> context.getString(R.string.delegation_register_delegation_minimum, CurrencyUtil.formatGTU(minimumValue ?: "0", false))
+            StakeError.MAXIMUM -> context.getString(R.string.delegation_register_delegation_maximum, CurrencyUtil.formatGTU(maximumValue ?: "0", false))
+            StakeError.POOL_LIMIT_REACHED -> context.getString(R.string.delegation_register_delegation_pool_limit_will_be_breached)
+            StakeError.UNKNOWN -> context.getString(R.string.app_error_general)
+            else -> ""
         }
     }
 
@@ -55,13 +56,13 @@ class StakeAmountInputValidator(
 
     private fun checkMaximum(amount: String): StakeError {
         if (maximumValue?.toLongOrNull() == null) return StakeError.OK
-        if (amount.toLong() > maximumValue.toLong()) return StakeError.POOL_LIMIT_REACHED
+        if (amount.toLong() > maximumValue.toLong()) return StakeError.MAXIMUM
         return StakeError.OK
     }
 
     private fun checkMinimum(amount: String): StakeError {
         if (minimumValue?.toLongOrNull() == null) return StakeError.UNKNOWN
-        if (amount.toLong() < minimumValue.toLong()) return StakeError.POOL_LIMIT_REACHED
+        if (amount.toLong() < minimumValue.toLong()) return StakeError.MINIMUM
         return StakeError.OK
     }
 

@@ -12,8 +12,9 @@ data class DelegationData(
     var isLPool: Boolean = false,
     var isBakerPool: Boolean = true,
     var poolId: String = "",
-    var type: String
-) : Serializable {
+    var type: String,
+    var oldPoolId: String = ""
+    ) : Serializable {
 
     companion object {
         const val TYPE_REGISTER_DELEGATION = "TYPE_REGISTER_DELEGATION"

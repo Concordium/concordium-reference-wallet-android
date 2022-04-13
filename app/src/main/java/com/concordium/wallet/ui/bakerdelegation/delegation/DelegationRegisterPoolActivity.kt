@@ -134,6 +134,7 @@ class DelegationRegisterPoolActivity() :
                 bakerPoolControl.isSelected
             }
             setActionBarTitle(R.string.delegation_update_delegation_title)
+            viewModel.setOldPoolID(getExistingPoolIdText())
         }
         else{
             existing_pool_id.visibility = View.GONE
@@ -155,7 +156,7 @@ class DelegationRegisterPoolActivity() :
     private fun continueValidating() {
         if(pool_id.length() > 0 || viewModel.isLPool()){  //If we are L-Pool we do not need a pool id
             KeyboardUtil.hideKeyboard(this)
-            viewModel.setPoolID(pool_id.text.toString())
+            if (viewModel.isLPool()) viewModel.setPoolID("") else viewModel.setPoolID(pool_id.text.toString())
         } else {
             viewModel.setPoolID(getExistingPoolIdText())
         }

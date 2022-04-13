@@ -93,6 +93,14 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
         loadTransactionFee()
     }
 
+    fun setOldPoolID(id: String) {
+        delegationData.oldPoolId = id
+    }
+
+    fun getOldPoolId(): String {
+        return delegationData.oldPoolId
+    }
+
     fun setPoolID(id: String) {
         delegationData.poolId = id
     }
