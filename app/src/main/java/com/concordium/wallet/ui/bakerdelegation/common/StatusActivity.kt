@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.bakerdelegation.common
 
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
@@ -10,14 +9,6 @@ import kotlinx.android.synthetic.main.delegationbaker_status.*
 
 abstract class StatusActivity(titleId: Int) :
     BaseActivity(R.layout.delegationbaker_status, titleId) {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-    fun setContentTitle(text: String){
-        status_title.text = text
-    }
 
     fun setContentTitle(res: Int){
         status_title.text = getString(res)
@@ -44,5 +35,4 @@ abstract class StatusActivity(titleId: Int) :
     }
 
     abstract fun initView()
-
 }

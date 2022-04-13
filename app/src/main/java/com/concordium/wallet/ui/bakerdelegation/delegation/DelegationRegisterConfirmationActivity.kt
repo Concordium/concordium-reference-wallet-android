@@ -2,85 +2,30 @@ package com.concordium.wallet.ui.bakerdelegation.delegation
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
-import com.concordium.wallet.core.arch.EventObserver
-import com.concordium.wallet.data.model.DelegationData
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity
-import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.UnitConvertUtil
 import kotlinx.android.synthetic.main.activity_delegation_registration_confirmation.*
-import kotlinx.android.synthetic.main.progress.*
-import javax.crypto.Cipher
+import kotlinx.android.synthetic.main.activity_delegation_registration_confirmation.submit_delegation_finish
+import kotlinx.android.synthetic.main.activity_delegation_registration_confirmation.submit_delegation_transaction
+import kotlinx.android.synthetic.main.transaction_submitted_header.*
+import kotlinx.android.synthetic.main.transaction_submitted_no.*
 
-class DelegationRegisterConfirmationActivity() :
-    BaseActivity(R.layout.activity_delegation_registration_confirmation, R.string.delegation_register_delegation_title) {
+class DelegationRegisterConfirmationActivity :
+    BaseDelegationActivity(R.layout.activity_delegation_registration_confirmation, R.string.delegation_register_delegation_title) {
 
-    private lateinit var viewModel: DelegationViewModel
-
-    companion object {
-        const val EXTRA_DELEGATION_DATA = "EXTRA_DELEGATION_DATA"
+    override fun initializeViewModel() {
+        super.initializeViewModel()
+        initializeWaitingLiveData()
+        initializeTransactionLiveData()
+        initializeShowAuthenticationLiveData()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        initializeViewModel()
-        viewModel.initialize(intent.extras?.getSerializable(EXTRA_DELEGATION_DATA) as DelegationData)
-        initViews()
-    }
-
-    fun initializeViewModel() {
-        showWaiting(false)
-
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(DelegationViewModel::class.java)
-
-        viewModel.transactionSuccessLiveData.observe(this, Observer<Boolean> { waiting ->
-            waiting?.let {
-                showPageAsReceipt()
-            }
-        })
-
-        viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
-            waiting?.let {
-                showWaiting(waiting)
-            }
-        })
-
-        viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
-            override fun onUnhandledEvent(value: Int) {
-                showError(value)
-            }
-        })
-    }
-
-    private fun showError(value: Int) {
-        Toast.makeText(this, getString(value), Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showPageAsReceipt() {
-        submit_delegation_transaction.visibility = View.GONE
-        grace_period.visibility = View.GONE
-        submit_delegation_finish.visibility = View.VISIBLE
-        transaction_submitted.visibility = View.VISIBLE
-        transaction_submitted_divider.visibility = View.VISIBLE
-        transaction_submitted_transaction_no.visibility = View.VISIBLE
-        transaction_submitted_transaction_no.text = viewModel.delegationData.bakerPoolStatus?.bakerAddress ?: ""
-        if (viewModel.isUpdating()) {
-            showNotice()
-        }
-    }
-
-    fun initViews() {
-
+    override fun initViews() {
         if (viewModel.isUpdating())
             setActionBarTitle(R.string.delegation_update_delegation_title)
 
@@ -99,36 +44,32 @@ class DelegationRegisterConfirmationActivity() :
         target_pool.text = if (viewModel.isLPool()) getString(R.string.delegation_register_delegation_pool_l) else viewModel.delegationData.poolId
         rewards_will_be.text = if (viewModel.delegationData.restake) getString(R.string.delegation_status_added_to_delegation_amount) else getString(R.string.delegation_status_at_disposal)
 
-        viewModel.transactionFeeLiveData.observe(this, object : Observer<Long> {
-            override fun onChanged(value: Long?) {
-                value?.let {
-                    estimated_transaction_fee.text = getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(value))
-                }
-            }
-        })
+        initializeTransactionFeeLiveData()
+        initializeShowAuthenticationLiveData()
+    }
 
-        val authenticationText = authenticateText(viewModel.shouldUseBiometrics(), viewModel.usePasscode())
-        viewModel.showAuthenticationLiveData.observe(this, object : EventObserver<Boolean>() {
-            override fun onUnhandledEvent(value: Boolean) {
-                if (value) {
-                    showAuthentication(authenticationText, viewModel.shouldUseBiometrics(), viewModel.usePasscode(), object : AuthenticationCallback{
-                        override fun getCipherForBiometrics() : Cipher?{
-                            return viewModel.getCipherForBiometrics()
-                        }
-                        override fun onCorrectPassword(password: String) {
-                            viewModel.continueWithPassword(password)
-                        }
-                        override fun onCipher(cipher: Cipher) {
-                            viewModel.checkLogin(cipher)
-                        }
-                        override fun onCancelled() {
-                        }
-                    })
-                }
-            }
-        })
+    override fun errorLiveData(value: Int) {
+        Toast.makeText(this, getString(value), Toast.LENGTH_SHORT).show()
+    }
 
-        viewModel.loadTransactionFee()
+    override fun transactionSuccessLiveData() {
+        showPageAsReceipt()
+    }
+
+    override fun showDetailedLiveData(value: Boolean) {
+    }
+
+    private fun showPageAsReceipt() {
+        submit_delegation_transaction.visibility = View.GONE
+        grace_period.visibility = View.GONE
+        submit_delegation_finish.visibility = View.VISIBLE
+        transaction_submitted.visibility = View.VISIBLE
+        transaction_submitted_divider.visibility = View.VISIBLE
+        transaction_submitted_transaction_no.visibility = View.VISIBLE
+        transaction_submitted_transaction_no.text = viewModel.delegationData.bakerPoolStatus?.bakerAddress ?: ""
+        if (viewModel.isUpdating()) {
+            showNotice()
+        }
     }
 
     private fun onContinueClicked() {
@@ -149,13 +90,8 @@ class DelegationRegisterConfirmationActivity() :
         builder.create().show()
     }
 
-    private fun showWaiting(waiting: Boolean) {
-        if (waiting) {
-            progress_layout.visibility = View.VISIBLE
-            submit_delegation_transaction.isEnabled = false
-        } else {
-            progress_layout.visibility = View.GONE
-            submit_delegation_transaction.isEnabled = true
-        }
+    override fun showWaiting(waiting: Boolean) {
+        super.showWaiting(waiting)
+        submit_delegation_transaction.isEnabled = !waiting
     }
 }

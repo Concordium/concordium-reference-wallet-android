@@ -89,11 +89,13 @@ abstract open class BaseActivity(private val layout: Int, private val titleId: I
         }
     }
 
-    fun finishUntilClass(canonicalClassName: String){
-        val intent = Intent()
-        intent.putExtra(POP_UNTIL_ACTIVITY, canonicalClassName)
-        setResult(Activity.RESULT_OK, intent)
-        finish()
+    fun finishUntilClass(canonicalClassName: String?) {
+        canonicalClassName?.let {
+            val intent = Intent()
+            intent.putExtra(POP_UNTIL_ACTIVITY, it)
+            setResult(Activity.RESULT_OK, intent)
+            finish()
+        }
     }
 
     open fun loggedOut() {

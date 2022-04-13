@@ -20,10 +20,8 @@ class DelegationStatusActivity() :
 
     private lateinit var viewModel: DelegationViewModel
 
-
     companion object {
         const val EXTRA_DELEGATION_DATA = "EXTRA_DELEGATION_DATA"
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,7 +84,7 @@ class DelegationStatusActivity() :
         }
     }
 
-    fun continueToDelete(){
+    private fun continueToDelete(){
         val intent = Intent(this, DelegationRemoveIntroFlowActivity::class.java)
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         viewModel.delegationData.type = DelegationData.TYPE_REMOVE_DELEGATION
@@ -94,17 +92,16 @@ class DelegationStatusActivity() :
         startActivityForResultAndHistoryCheck(intent)
     }
 
-    fun continueToCreate(){
+    private fun continueToCreate() {
         val intent = Intent(this, DelegationRegisterPoolActivity::class.java)
-        intent.putExtra(DelegationRegisterPoolActivity.EXTRA_DELEGATION_DATA, viewModel.delegationData)
+        intent.putExtra(EXTRA_DELEGATION_DATA, viewModel.delegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 
-    fun continueToUpdate(){
+    private fun continueToUpdate() {
         val intent = Intent(this, DelegationUpdateIntroFlowActivity::class.java)
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         intent.putExtra(BaseDelegationBakerFlowActivity.EXTRA_DELEGATION_DATA, viewModel.delegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
-
 }

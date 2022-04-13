@@ -231,6 +231,7 @@
 
     <string name="delegation_register_delegation_title">Register delegation</string>
     <string name="delegation_update_delegation_title">Update delegation</string>
+    <string name="delegation_remove_delegation_title">Remove delegation</string>
 
     <string name="delegation_status_content_registered_title">Your delegation is registered.</string>
     <string name="delegation_status_content_delegating_account">Delegating account</string>
@@ -301,6 +302,12 @@
 
     <string name="delegation_register_delegation_submit_delegation_transaction">Submit delegation transaction</string>
     <string name="delegation_register_delegation_finish">Finish</string>
+
+    <string name="delegation_remove_text">Are you sure you want to remove you delegation?</string>
+    <string name="delegation_remove_confirm_title">Transaction: Remove delegation</string>
+    <string name="delegation_remove_account">Account to stop delegating</string>
+    <string name="delegation_remove_submit">Submit delegation transaction</string>
+    <string name="delegation_remove_finish">Finish</string>
 
     <string name="delegation_notice_title">Notice</string>
     <string name="delegation_notice_message">Once your transaction has succesfully finalized, the delegation will take effect from the next pay day.</string>

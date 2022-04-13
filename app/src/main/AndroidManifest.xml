@@ -146,25 +146,23 @@
             android:name=".ui.bakerdelegation.delegation.DelegationRegisterAmountActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTop" />
-
-
-
+        <activity
+            android:name=".ui.bakerdelegation.delegation.DelegationRemoveActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
         <activity
             android:name=".ui.bakerdelegation.delegation.DelegationStatusActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTop" />
-
         <activity
             android:name=".ui.bakerdelegation.delegation.DelegationRegisterConfirmationActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTop" />
 
-
         <activity
             android:name=".ui.bakerdelegation.baker.BakerIntroFlowActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTop" />
-
         <activity
             android:name=".ui.intro.introsetup.IntroSetupActivity"
             android:screenOrientation="portrait"

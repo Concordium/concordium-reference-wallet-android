@@ -5,65 +5,27 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.DelegationData
 import com.concordium.wallet.data.model.DelegationTarget
-import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.uicore.view.SegmentedControlView
 import com.concordium.wallet.util.KeyboardUtil
 import kotlinx.android.synthetic.main.activity_delegation_registration_pool.*
-import kotlinx.android.synthetic.main.progress.*
 
-class DelegationRegisterPoolActivity() :
-    BaseActivity(R.layout.activity_delegation_registration_pool, R.string.delegation_register_delegation_title) {
+class DelegationRegisterPoolActivity :
+    BaseDelegationActivity(R.layout.activity_delegation_registration_pool, R.string.delegation_register_delegation_title) {
 
     private lateinit var lPoolControl: View
     private lateinit var bakerPoolControl: View
 
-    private lateinit var viewModel: DelegationViewModel
-
-    companion object {
-        const val EXTRA_DELEGATION_DATA = "EXTRA_DELEGATION_DATA"
+    override fun initializeViewModel() {
+        super.initializeViewModel()
+        initializeWaitingLiveData()
+        initializeShowDetailedLiveData()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        initializeViewModel()
-        viewModel.initialize(intent.extras?.getSerializable(EXTRA_DELEGATION_DATA) as DelegationData)
-        initViews()
-    }
-
-    fun initializeViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(DelegationViewModel::class.java)
-
-        viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
-            waiting?.let {
-                showWaiting(waiting)
-            }
-        })
-
-        viewModel.showDetailedLiveData.observe(this, object : EventObserver<Boolean>() {
-            override fun onUnhandledEvent(value: Boolean) {
-                if (value) {
-                    showDetailedPage()
-                }
-            }
-        })
-
-        viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
-            override fun onUnhandledEvent(value: Int) {
-                showError()
-            }
-        })
-    }
-
-    private fun showError() {
+    fun showError() {
         pool_id.setTextColor(getColor(R.color.text_pink))
         pool_id_error.visibility = View.VISIBLE
     }
@@ -75,12 +37,11 @@ class DelegationRegisterPoolActivity() :
 
     private fun showDetailedPage() {
         val intent = Intent(this, DelegationRegisterAmountActivity::class.java)
-        intent.putExtra(DelegationRegisterAmountActivity.EXTRA_DELEGATION_DATA, viewModel.delegationData)
+        intent.putExtra(EXTRA_DELEGATION_DATA, viewModel.delegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 
-    fun initViews() {
-        showWaiting(false)
+    override fun initViews() {
         pool_options.clearAll()
         bakerPoolControl = pool_options.addControl(
             getString(R.string.delegation_register_delegation_pool_baker),
@@ -118,6 +79,19 @@ class DelegationRegisterPoolActivity() :
 
         updateVisibilities()
         updateContent()
+    }
+
+    override fun transactionSuccessLiveData() {
+    }
+
+    override fun errorLiveData(value: Int) {
+        showError()
+    }
+
+    override fun showDetailedLiveData(value: Boolean) {
+        if (value) {
+            showDetailedPage()
+        }
     }
 
     private fun updateContent() {
@@ -161,16 +135,6 @@ class DelegationRegisterPoolActivity() :
             viewModel.setPoolID(getExistingPoolIdText())
         }
         viewModel.validatePoolId()
-    }
-
-    private fun showWaiting(waiting: Boolean) {
-        if (waiting) {
-            progress_layout.visibility = View.VISIBLE
-            pool_registration_continue.isEnabled = false
-        } else {
-            progress_layout.visibility = View.GONE
-            pool_registration_continue.isEnabled = true
-        }
     }
 
     private fun getExistingPoolIdText(): String {
