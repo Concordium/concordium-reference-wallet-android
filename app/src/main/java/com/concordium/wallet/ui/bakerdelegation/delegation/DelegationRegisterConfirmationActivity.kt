@@ -10,6 +10,7 @@ import com.concordium.wallet.util.UnitConvertUtil
 import kotlinx.android.synthetic.main.activity_delegation_registration_confirmation.*
 import kotlinx.android.synthetic.main.activity_delegation_registration_confirmation.submit_delegation_finish
 import kotlinx.android.synthetic.main.activity_delegation_registration_confirmation.submit_delegation_transaction
+import kotlinx.android.synthetic.main.fragment_import_failed.*
 import kotlinx.android.synthetic.main.transaction_submitted_header.*
 import kotlinx.android.synthetic.main.transaction_submitted_no.*
 
@@ -48,7 +49,18 @@ class DelegationRegisterConfirmationActivity :
     }
 
     override fun errorLiveData(value: Int) {
-        Toast.makeText(this, getString(value), Toast.LENGTH_SHORT).show()
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.delegation_register_delegation_failed_title)
+        val messageFromWalletProxy = getString(value)
+        builder.setMessage(getString(R.string.delegation_register_delegation_failed_message, messageFromWalletProxy))
+        builder.setPositiveButton(getString(R.string.delegation_register_delegation_failed_try_again)) { dialog, _ ->
+            dialog.dismiss()
+            onContinueClicked()
+        }
+        builder.setNegativeButton(getString(R.string.delegation_register_delegation_failed_later)) { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.create().show()
     }
 
     override fun transactionSuccessLiveData() {

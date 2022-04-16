@@ -302,6 +302,10 @@
 
     <string name="delegation_register_delegation_submit_delegation_transaction">Submit delegation transaction</string>
     <string name="delegation_register_delegation_finish">Finish</string>
+    <string name="delegation_register_delegation_failed_title">Transaction failed</string>
+    <string name="delegation_register_delegation_failed_message">Your delegation transaction failed:\n\n%1$s\n\nDo you want to try again?</string>
+    <string name="delegation_register_delegation_failed_try_again">Try again</string>
+    <string name="delegation_register_delegation_failed_later">Later</string>
 
     <string name="delegation_remove_text">Are you sure you want to remove you delegation?</string>
     <string name="delegation_remove_confirm_title">Transaction: Remove delegation</string>
