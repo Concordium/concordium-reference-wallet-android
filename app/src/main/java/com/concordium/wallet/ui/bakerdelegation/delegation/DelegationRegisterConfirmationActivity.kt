@@ -1,13 +1,11 @@
 package com.concordium.wallet.ui.bakerdelegation.delegation
 
 import android.app.AlertDialog
-import android.content.Intent
 import android.view.View
 import android.widget.Toast
 import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
-import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity
 import com.concordium.wallet.util.UnitConvertUtil
 import kotlinx.android.synthetic.main.activity_delegation_registration_confirmation.*
 import kotlinx.android.synthetic.main.activity_delegation_registration_confirmation.submit_delegation_finish
@@ -34,7 +32,7 @@ class DelegationRegisterConfirmationActivity :
         }
 
         submit_delegation_finish.setOnClickListener {
-            finishUntilClass(AccountDetailsActivity::class.java.canonicalName)
+            showNotice()
         }
 
         val gracePeriod = UnitConvertUtil.secondsToDaysRoundedUp(viewModel.delegationData.chainParameters?.delegatorCooldown ?: 0)
@@ -46,6 +44,7 @@ class DelegationRegisterConfirmationActivity :
 
         initializeTransactionFeeLiveData()
         initializeShowAuthenticationLiveData()
+        initializeTransactionLiveData()
     }
 
     override fun errorLiveData(value: Int) {
@@ -82,10 +81,7 @@ class DelegationRegisterConfirmationActivity :
         builder.setMessage(getString(R.string.delegation_notice_message))
         builder.setPositiveButton(getString(R.string.delegation_notice_ok)) { dialog, _ ->
             dialog.dismiss()
-            val intent = Intent(this, DelegationStatusActivity::class.java)
-            intent.putExtra(BaseDelegationBakerFlowActivity.EXTRA_DELEGATION_DATA, viewModel.delegationData)
-            startActivity(intent)
-            finish()
+            finishUntilClass(AccountDetailsActivity::class.java.canonicalName, DelegationStatusActivity::class.java.canonicalName, EXTRA_DELEGATION_DATA, viewModel.delegationData)
         }
         builder.create().show()
     }

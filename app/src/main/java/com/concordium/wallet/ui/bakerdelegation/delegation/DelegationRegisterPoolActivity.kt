@@ -1,12 +1,10 @@
 package com.concordium.wallet.ui.bakerdelegation.delegation
 
 import android.content.Intent
-import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import com.concordium.wallet.R
-import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.DelegationData
 import com.concordium.wallet.data.model.DelegationTarget
 import com.concordium.wallet.uicore.view.SegmentedControlView
@@ -119,7 +117,7 @@ class DelegationRegisterPoolActivity :
         pool_id.visibility = if(viewModel.isLPool()) View.GONE else View.VISIBLE
         pool_desc.visibility = if(viewModel.isLPool()) View.GONE else View.VISIBLE
         existing_pool_id.visibility = if(viewModel.isLPool()) View.GONE else View.VISIBLE
-        pool_registration_continue.isEnabled = getExistingPoolIdText().isNotEmpty() || viewModel.isLPool()
+        pool_registration_continue.isEnabled = getExistingPoolIdText().isNotEmpty() || viewModel.isLPool() || pool_id.getText().isNotEmpty()
         hideError()
     }
 
@@ -128,7 +126,7 @@ class DelegationRegisterPoolActivity :
     }
 
     private fun continueValidating() {
-        if(pool_id.length() > 0 || viewModel.isLPool()){  //If we are L-Pool we do not need a pool id
+        if (pool_id.length() > 0 || viewModel.isLPool()) {  // If we are L-Pool we do not need a pool id
             KeyboardUtil.hideKeyboard(this)
             if (viewModel.isLPool()) viewModel.setPoolID("") else viewModel.setPoolID(pool_id.text.toString())
         } else {

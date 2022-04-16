@@ -8,7 +8,6 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import com.concordium.wallet.R
-import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.DelegationData
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
@@ -31,6 +30,9 @@ class DelegationRegisterAmountActivity :
         if (stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED) {
             pool_limit_title.setTextColor(getColor(R.color.text_pink))
             pool_limit.setTextColor(getColor(R.color.text_pink))
+        } else {
+            pool_limit_title.setTextColor(getColor(R.color.text_black))
+            pool_limit.setTextColor(getColor(R.color.text_black))
         }
     }
 
@@ -189,7 +191,10 @@ class DelegationRegisterAmountActivity :
                 else -> continueToConfirmation()
             }
         } else {
-            continueToConfirmation()
+            when {
+                amountToStake > viewModel.atDisposal() * 0.95 -> show95PercentWarning()
+                else -> continueToConfirmation()
+            }
         }
     }
 

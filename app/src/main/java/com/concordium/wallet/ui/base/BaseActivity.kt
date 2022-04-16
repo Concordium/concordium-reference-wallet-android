@@ -17,9 +17,11 @@ import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.security.BiometricPromptCallback
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
+import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity.Companion.EXTRA_DELEGATION_DATA
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
 import com.concordium.wallet.uicore.popup.Popup
+import java.io.Serializable
 import javax.crypto.Cipher
 
 abstract open class BaseActivity(private val layout: Int, private val titleId: Int = R.string.app_name) : AppCompatActivity() {
@@ -33,7 +35,6 @@ abstract open class BaseActivity(private val layout: Int, private val titleId: I
         const val REQUESTCODE_GENERIC_RETURN = 8232
         const val POP_UNTIL_ACTIVITY = "POP_UNTIL_ACTIVITY"
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +55,6 @@ abstract open class BaseActivity(private val layout: Int, private val titleId: I
 
         popup = Popup()
         dialogs = Dialogs()
-
 
         App.appCore.session.isLoggedIn.observe(this, Observer<Boolean> { loggedin ->
             if(App.appCore.session.hasSetupPassword){
@@ -81,18 +81,33 @@ abstract open class BaseActivity(private val layout: Int, private val titleId: I
         if (requestCode == REQUESTCODE_GENERIC_RETURN) {
             if (resultCode == Activity.RESULT_OK) {
                 data?.getStringExtra(POP_UNTIL_ACTIVITY)?.let { className ->
-                    if(this.javaClass.asSubclass(this.javaClass).canonicalName != className){
-                        finishUntilClass(className)
+                    if (this.javaClass.asSubclass(this.javaClass).canonicalName != className) {
+                        finishUntilClass(className, data.getStringExtra("THEN_START"), data.getStringExtra("WITH_KEY"), data.getSerializableExtra("WITH_DATA"))
+                    } else {
+                        data.getStringExtra("THEN_START")?.let { thenStart ->
+                            val intent = Intent(this, Class.forName(thenStart))
+                            if (data.getStringExtra("WITH_KEY") != null && data.getSerializableExtra("WITH_DATA") != null) {
+                                intent.putExtra(data.getStringExtra("WITH_KEY"), data.getSerializableExtra("WITH_DATA"))
+                            }
+                            startActivity(intent)
+                        }
                     }
                 }
             }
         }
     }
 
-    fun finishUntilClass(canonicalClassName: String?) {
+    fun finishUntilClass(canonicalClassName: String?, thenStart: String? = null, withKey: String? = null, withData: Serializable? = null) {
         canonicalClassName?.let {
             val intent = Intent()
             intent.putExtra(POP_UNTIL_ACTIVITY, it)
+            thenStart?.let {
+                intent.putExtra("THEN_START", thenStart)
+                if (withKey != null && withData != null) {
+                    intent.putExtra("WITH_KEY", withKey)
+                    intent.putExtra("WITH_DATA", withData)
+                }
+            }
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
@@ -236,8 +251,5 @@ abstract open class BaseActivity(private val layout: Int, private val titleId: I
         return super.dispatchTouchEvent(event)
     }
 
-
-
     // end authentication region
-
 }

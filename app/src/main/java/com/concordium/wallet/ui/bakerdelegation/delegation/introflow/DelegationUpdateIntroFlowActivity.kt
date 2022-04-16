@@ -5,7 +5,6 @@ import com.concordium.wallet.R
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.DelegationRegisterPoolActivity
 
-
 class DelegationUpdateIntroFlowActivity :
     BaseDelegationBakerFlowActivity(R.string.delegation_intro_flow_title) {
 
@@ -17,12 +16,11 @@ class DelegationUpdateIntroFlowActivity :
 
     override fun gotoContinue() {
         val intent = Intent(this, DelegationRegisterPoolActivity::class.java)
-        intent.putExtra(BaseDelegationBakerFlowActivity.EXTRA_DELEGATION_DATA, delegationData)
+        intent.putExtra(EXTRA_DELEGATION_DATA, delegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 
     override fun getLink(position: Int): String {
         return "file:///android_asset/delegation_update_flow_en_"+(position+1)+".html"
     }
-
 }

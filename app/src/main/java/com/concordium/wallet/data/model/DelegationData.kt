@@ -8,7 +8,7 @@ import java.io.Serializable
  */
 data class DelegationData(
     var account: Account? = null,
-    var restake: Boolean = false,
+    var restake: Boolean = true,
     var isLPool: Boolean = false,
     var isBakerPool: Boolean = true,
     var poolId: String = "",
