@@ -53,6 +53,7 @@
                             android:background="@drawable/receipt_background_new"
                             android:orientation="vertical">
                             <TextView
+                                android:id="@+id/delegation_transaction_title"
                                 style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"

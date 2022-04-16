@@ -6,7 +6,6 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.DelegationData
-import com.concordium.wallet.data.model.DelegationTarget
 import com.concordium.wallet.uicore.view.SegmentedControlView
 import com.concordium.wallet.util.KeyboardUtil
 import kotlinx.android.synthetic.main.activity_delegation_registration_pool.*
@@ -49,8 +48,7 @@ class DelegationRegisterPoolActivity :
                     updateVisibilities()
                 }
             },
-            viewModel.isBakerPool()
-        )
+            viewModel.isBakerPool() || (!viewModel.isBakerPool() && !viewModel.isLPool()))
         lPoolControl = pool_options.addControl(getString(R.string.delegation_register_delegation_pool_l), object: SegmentedControlView.OnItemClickListener {
             override fun onItemClicked(){
                 viewModel.selectLPool()
@@ -61,6 +59,7 @@ class DelegationRegisterPoolActivity :
         pool_id.setText(viewModel.getPoolId())
         pool_id.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    KeyboardUtil.hideKeyboard(this)
                     onContinueClicked()
                     true
                 }
@@ -71,12 +70,14 @@ class DelegationRegisterPoolActivity :
             onContinueClicked()
         }
 
-        pool_id.doOnTextChanged { text, start, count, after ->
+        pool_id.doOnTextChanged { text, _, _, _ ->
+            if (text != null && text.isNotEmpty())
+                viewModel.setPoolID(text.toString())
             updateVisibilities()
         }
 
-        updateVisibilities()
         updateContent()
+        updateVisibilities()
     }
 
     override fun transactionSuccessLiveData() {
@@ -93,45 +94,32 @@ class DelegationRegisterPoolActivity :
     }
 
     private fun updateContent() {
-        if(viewModel.delegationData.type == DelegationData.TYPE_UPDATE_DELEGATION){
-            existing_pool_id.text = getString(R.string.delegation_update_delegation_pool_id, getExistingPoolIdText())
-            existing_pool_id.visibility = View.VISIBLE
-            pool_id.hint = getString(R.string.delegation_register_delegation_pool_id_hint_update)
-            if(viewModel.delegationData.account?.accountDelegation?.delegationTarget?.delegateType == DelegationTarget.TYPE_DELEGATE_TO_L_POOL){
-                viewModel.selectLPool()
-                lPoolControl.isSelected
-            }
-            else{
-                viewModel.selectBakerPool()
-                bakerPoolControl.isSelected
-            }
+        existing_pool_id.visibility = View.GONE
+        if (viewModel.delegationData.type == DelegationData.TYPE_UPDATE_DELEGATION) {
             setActionBarTitle(R.string.delegation_update_delegation_title)
             viewModel.setOldPoolID(getExistingPoolIdText())
-        }
-        else{
-            existing_pool_id.visibility = View.GONE
+            if (viewModel.isBakerPool()) {
+                viewModel.selectBakerPool()
+                existing_pool_id.text = getString(R.string.delegation_update_delegation_pool_id, getExistingPoolIdText())
+                existing_pool_id.visibility = View.VISIBLE
+            } else {
+                viewModel.selectLPool()
+            }
         }
     }
 
     private fun updateVisibilities() {
-        pool_id.visibility = if(viewModel.isLPool()) View.GONE else View.VISIBLE
-        pool_desc.visibility = if(viewModel.isLPool()) View.GONE else View.VISIBLE
-        existing_pool_id.visibility = if(viewModel.isLPool()) View.GONE else View.VISIBLE
-        pool_registration_continue.isEnabled = getExistingPoolIdText().isNotEmpty() || viewModel.isLPool() || pool_id.getText().isNotEmpty()
+        pool_id.hint = if (viewModel.getOldPoolId().isEmpty()) getString(R.string.delegation_register_delegation_pool_id_hint) else getString(R.string.delegation_register_delegation_pool_id_hint_update)
+        pool_id.visibility = if (viewModel.delegationData.isLPool) View.GONE else View.VISIBLE
+        pool_desc.visibility = if (viewModel.delegationData.isLPool) View.GONE else View.VISIBLE
+        existing_pool_id.visibility = if (viewModel.delegationData.isLPool) View.GONE else View.VISIBLE
+        pool_registration_continue.isEnabled = getExistingPoolIdText().isNotEmpty() || viewModel.delegationData.isLPool || pool_id.text.isNotEmpty()
         hideError()
     }
 
     private fun onContinueClicked() {
-        continueValidating()
-    }
-
-    private fun continueValidating() {
-        if (pool_id.length() > 0 || viewModel.isLPool()) {  // If we are L-Pool we do not need a pool id
-            KeyboardUtil.hideKeyboard(this)
-            if (viewModel.isLPool()) viewModel.setPoolID("") else viewModel.setPoolID(pool_id.text.toString())
-        } else {
+        if (viewModel.isBakerPool() && viewModel.getPoolId().isEmpty() && getExistingPoolIdText().isNotEmpty())
             viewModel.setPoolID(getExistingPoolIdText())
-        }
         viewModel.validatePoolId()
     }
 

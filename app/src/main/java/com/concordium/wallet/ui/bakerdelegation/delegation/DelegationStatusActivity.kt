@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.bakerdelegation.delegation
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.DelegationData
@@ -47,6 +48,7 @@ class DelegationStatusActivity() :
         //TODO update with proper status info
 
         if (account == null || accountDelegation == null){
+            findViewById<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_logo_icon_pending)
             setContentTitle(R.string.delegation_status_content_empty_title)
             setEmptyState(getString(R.string.delegation_status_content_empty_desc))
 
@@ -57,6 +59,7 @@ class DelegationStatusActivity() :
             }
         }
         else {
+            findViewById<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_big_logo_ok)
             setContentTitle(R.string.delegation_status_content_registered_title)
             addContent(R.string.delegation_status_content_delegating_account, account.name+"\n\n"+account.address)
             addContent(R.string.delegation_status_content_delegation_amount, CurrencyUtil.formatGTU(accountDelegation.stakedAmount))

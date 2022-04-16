@@ -18,7 +18,7 @@ class StakeAmountInputValidator(
 
     fun validate(amount: String?): StakeError {
 
-        if (amount == null) return StakeError.OK
+        if (amount == null) return StakeError.MINIMUM
 
         var check = checkAmount(amount)
         if (check != StakeError.OK) return check

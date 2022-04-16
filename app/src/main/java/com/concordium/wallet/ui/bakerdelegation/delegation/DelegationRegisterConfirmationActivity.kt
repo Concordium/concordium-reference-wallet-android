@@ -2,7 +2,6 @@ package com.concordium.wallet.ui.bakerdelegation.delegation
 
 import android.app.AlertDialog
 import android.view.View
-import android.widget.Toast
 import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
@@ -10,7 +9,6 @@ import com.concordium.wallet.util.UnitConvertUtil
 import kotlinx.android.synthetic.main.activity_delegation_registration_confirmation.*
 import kotlinx.android.synthetic.main.activity_delegation_registration_confirmation.submit_delegation_finish
 import kotlinx.android.synthetic.main.activity_delegation_registration_confirmation.submit_delegation_transaction
-import kotlinx.android.synthetic.main.fragment_import_failed.*
 import kotlinx.android.synthetic.main.transaction_submitted_header.*
 import kotlinx.android.synthetic.main.transaction_submitted_no.*
 
@@ -25,8 +23,15 @@ class DelegationRegisterConfirmationActivity :
     }
 
     override fun initViews() {
-        if (viewModel.isUpdating())
+        val gracePeriod = UnitConvertUtil.secondsToDaysRoundedUp(viewModel.delegationData.chainParameters?.delegatorCooldown ?: 0)
+
+        if (viewModel.isUpdating()) {
             setActionBarTitle(R.string.delegation_update_delegation_title)
+            delegation_transaction_title.text = getString(R.string.delegation_update_delegation_transaction_title)
+            grace_period.text = resources.getQuantityString(R.plurals.delegation_register_delegation_confirmation_desc_update, gracePeriod, gracePeriod)
+        } else {
+            grace_period.text = resources.getQuantityString(R.plurals.delegation_register_delegation_confirmation_desc, gracePeriod, gracePeriod)
+        }
 
         submit_delegation_transaction.setOnClickListener {
             onContinueClicked()
@@ -36,11 +41,9 @@ class DelegationRegisterConfirmationActivity :
             showNotice()
         }
 
-        val gracePeriod = UnitConvertUtil.secondsToDaysRoundedUp(viewModel.delegationData.chainParameters?.delegatorCooldown ?: 0)
-        grace_period.text = resources.getQuantityString(R.plurals.delegation_register_delegation_confirmation_desc, gracePeriod, gracePeriod)
         account_to_delegate_from.text = (viewModel.delegationData.account?.name ?: "").plus("\n\n").plus(viewModel.delegationData.account?.address ?: "")
         delegation_amount_confirmation.text = CurrencyUtil.formatGTU(viewModel.delegationData.amount ?: 0, true)
-        target_pool.text = if (viewModel.isLPool()) getString(R.string.delegation_register_delegation_pool_l) else viewModel.delegationData.poolId
+        target_pool.text = if (viewModel.delegationData.isLPool) getString(R.string.delegation_register_delegation_pool_l) else viewModel.delegationData.poolId
         rewards_will_be.text = if (viewModel.delegationData.restake) getString(R.string.delegation_status_added_to_delegation_amount) else getString(R.string.delegation_status_at_disposal)
 
         initializeTransactionFeeLiveData()

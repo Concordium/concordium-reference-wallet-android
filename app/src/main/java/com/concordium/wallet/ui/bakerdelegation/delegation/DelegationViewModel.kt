@@ -62,11 +62,11 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     fun isBakerPool(): Boolean {
-        return this.delegationData.isBakerPool
+        return delegationData.account?.accountDelegation?.delegationTarget?.delegateType == DelegationTarget.TYPE_DELEGATE_TO_BAKER
     }
 
     fun isLPool(): Boolean {
-        return this.delegationData.isLPool
+        return delegationData.account?.accountDelegation?.delegationTarget?.delegateType == DelegationTarget.TYPE_DELEGATE_TO_L_POOL
     }
 
     fun isUpdating(): Boolean {
@@ -110,10 +110,9 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     fun validatePoolId() {
-        if(isLPool()){
+        if (delegationData.isLPool) {
             _showDetailedLiveData.value = Event(true)
-        }
-        else{
+        } else {
             _waitingLiveData.value = true
             bakerPoolRequest?.dispose()
             bakerPoolRequest = proxyRepository.getBakerPool(getPoolId(),

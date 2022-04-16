@@ -232,6 +232,7 @@
     <string name="delegation_register_delegation_title">Register delegation</string>
     <string name="delegation_update_delegation_title">Update delegation</string>
     <string name="delegation_remove_delegation_title">Remove delegation</string>
+    <string name="delegation_update_delegation_transaction_title">Transaction: Update delegation</string>
 
     <string name="delegation_status_content_registered_title">Your delegation is registered.</string>
     <string name="delegation_status_content_delegating_account">Delegating account</string>
@@ -275,6 +276,10 @@
     <plurals name="delegation_register_delegation_confirmation_desc">
         <item quantity="one">You are about to submit a delegation transaction. This will lock your delegation amount for at least %d day.</item>
         <item quantity="other">You are about to submit a delegation transaction. This will lock your delegation amount for at least %d days.</item>
+    </plurals>
+    <plurals name="delegation_register_delegation_confirmation_desc_update">
+        <item quantity="one">You are about to submit a delegation transaction that lowers your delegation amount. It will take effect after %d day and the delegation amount cannot be changed during this period of time.</item>
+        <item quantity="other">You are about to submit a delegation transaction that lowers your delegation amount. It will take effect after %d days and the delegation amount cannot be changed during this period of time.</item>
     </plurals>
     <string name="delegation_register_delegation_confirmation_receipt_title">Transaction: Register delegation</string>
     <string name="delegation_register_delegation_confirmation_receipt_account_to_delegate_from">Account to delegate from</string>

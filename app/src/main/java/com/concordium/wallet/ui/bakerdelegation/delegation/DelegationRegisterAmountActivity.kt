@@ -167,16 +167,17 @@ class DelegationRegisterAmountActivity :
 
     private fun onContinueClicked() {
 
-        val stakeError = StakeAmountInputValidator(
+        val stakeAmountInputValidator = StakeAmountInputValidator(
             if (viewModel.isUpdating()) "0" else "1",
             null,
             viewModel.atDisposal().toString(),
             viewModel.delegationData.bakerPoolStatus?.delegatedCapital,
             viewModel.delegationData.bakerPoolStatus?.delegatedCapitalCap,
             viewModel.delegationData.account?.accountDelegation?.stakedAmount)
-            .validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString())
 
+        val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString())
         if (stakeError != StakeAmountInputValidator.StakeError.OK) {
+            amount_error.text = stakeAmountInputValidator.getErrorText(this, stakeError)
             showError(stakeError)
             return
         }
