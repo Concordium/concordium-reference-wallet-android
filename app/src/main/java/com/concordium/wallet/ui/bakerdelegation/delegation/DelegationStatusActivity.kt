@@ -46,6 +46,8 @@ class DelegationStatusActivity :
         val accountDelegation = account?.accountDelegation
 
         //TODO update with proper status info
+        // LOAD STATUS FROM WALLET-PROXY ?
+        // val w = getString(R.string.delegation_status_waiting_to_finalize)
 
         if (account == null || accountDelegation == null) {
             findViewById<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_logo_icon_pending)

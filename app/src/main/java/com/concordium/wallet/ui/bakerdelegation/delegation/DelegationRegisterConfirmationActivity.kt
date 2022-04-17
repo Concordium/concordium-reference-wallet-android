@@ -93,12 +93,18 @@ class DelegationRegisterConfirmationActivity :
     private fun showNotice() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.delegation_notice_title)
-        val gracePeriod = UnitConvertUtil.secondsToDaysRoundedUp(viewModel.delegationData.chainParameters?.delegatorCooldown ?: 0)
-        if (gracePeriod > 0) {
-            builder.setMessage(resources.getQuantityString(R.plurals.delegation_notice_message_decrease, gracePeriod, gracePeriod))
+
+        if (viewModel.isInCoolDown()) {
+            builder.setMessage(getString(R.string.delegation_notice_message_locked))
         } else {
-            builder.setMessage(getString(R.string.delegation_notice_message))
+            val gracePeriod = UnitConvertUtil.secondsToDaysRoundedUp(viewModel.delegationData.chainParameters?.delegatorCooldown ?: 0)
+            if (gracePeriod > 0) {
+                builder.setMessage(resources.getQuantityString(R.plurals.delegation_notice_message_decrease, gracePeriod, gracePeriod))
+            } else {
+                builder.setMessage(getString(R.string.delegation_notice_message))
+            }
         }
+
         builder.setPositiveButton(getString(R.string.delegation_notice_ok)) { dialog, _ ->
             dialog.dismiss()
             finishUntilClass(AccountDetailsActivity::class.java.canonicalName, DelegationStatusActivity::class.java.canonicalName, EXTRA_DELEGATION_DATA, viewModel.delegationData)

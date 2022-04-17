@@ -228,6 +228,7 @@
     <string name="delegation_status_stop">Stop delegation</string>
     <string name="delegation_status_added_to_delegation_amount">Added to delegation amount</string>
     <string name="delegation_status_at_disposal">At disposal</string>
+    <string name="delegation_status_waiting_to_finalize">Waiting for transaction to finalize</string>
 
     <string name="delegation_register_delegation_title">Register delegation</string>
     <string name="delegation_update_delegation_title">Update delegation</string>
@@ -325,6 +326,7 @@
         <item quantity="one">Your decrease to the delegation amount will take effect after a cool down of approximately %d day.\n\nAll other updates will take effect at the next pay day.</item>
         <item quantity="other">Your decrease to the delegation amount will take effect after a cool down of approximately %d days.\n\nAll other updates will take effect at the next pay day.</item>
     </plurals>
+    <string name="delegation_notice_message_locked">Once your transaction has successfully finalized, the delegation will take effect from the next pay day.</string>
     <string name="delegation_notice_ok">Okay</string>
 
     <!-- Baker intro -->
