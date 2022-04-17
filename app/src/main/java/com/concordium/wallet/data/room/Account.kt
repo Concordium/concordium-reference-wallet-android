@@ -81,7 +81,7 @@ data class Account(
     ) : Serializable {
 
     fun isInitial(): Boolean {
-        if (readOnly) {
+        if (readOnly || isBaking() || isDelegating()) {
             return false
         }
         val credential = this.credential ?: return true
@@ -104,8 +104,12 @@ data class Account(
         }
     }
 
-    fun isBaker(): Boolean {
+    fun isBaking(): Boolean {
         return bakerId != null
+    }
+
+    fun isDelegating(): Boolean {
+        return accountDelegation != null
     }
 
     fun getAtDisposalSubstraction(): Long {

@@ -268,7 +268,7 @@ class AccountDetailsActivity :
             send_imageview.setImageResource(R.drawable.ic_send)
             shield_imageview.setImageResource(R.drawable.ic_shielded_icon)
 
-            if(viewModel.account.isBaker()){
+            if(viewModel.account.isBaking()){
                 //accounts_overview_total_details_baker_container.visibility = View.VISIBLE
                 accounts_overview_total_details_baker_id.text = viewModel.account.bakerId.toString()
                 accounts_overview_total_details_staked_container.visibility = View.VISIBLE

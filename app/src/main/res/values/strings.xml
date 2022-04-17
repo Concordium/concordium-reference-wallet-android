@@ -67,6 +67,8 @@
     <!-- AccountView -->
     <string name="view_account_initial">Initial</string>
     <string name="view_account_read_only">Read-only</string>
+    <string name="view_account_baking">Baking</string>
+    <string name="view_account_delegating">Delegating</string>
     <string name="view_account_name_container">(%1$s)</string>
 
     <!-- Failed -->

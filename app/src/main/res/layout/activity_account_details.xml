@@ -203,7 +203,7 @@
                                     android:layout_height="13dp"
                                     android:layout_gravity="center_vertical"
                                     android:layout_marginRight="6dp"
-                                    android:src="@drawable/ic_baker"
+                                    android:src="@drawable/ic_baking"
                                     android:tint="@color/text_blue" />
 
                                 <TextView
