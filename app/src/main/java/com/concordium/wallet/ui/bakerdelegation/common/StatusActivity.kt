@@ -18,7 +18,7 @@ abstract class StatusActivity(titleId: Int) :
         addContent(getString(titleRes), text)
     }
 
-    fun addContent(title: String, text: String){
+    private fun addContent(title: String, text: String){
         status_empty.visibility = View.GONE
         status_list_container.visibility = View.VISIBLE
 

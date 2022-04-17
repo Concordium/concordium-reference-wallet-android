@@ -74,6 +74,10 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
         return false
     }
 
+    fun isInCoolDown(): Boolean {
+        return delegationData.account?.accountDelegation?.pendingChange != null
+    }
+
     fun atDisposal(): Long {
         return (delegationData.account?.finalizedBalance ?: 0) - (delegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0)
     }

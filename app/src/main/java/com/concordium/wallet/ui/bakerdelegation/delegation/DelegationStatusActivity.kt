@@ -16,7 +16,7 @@ import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationU
 import com.concordium.wallet.ui.common.GenericFlowActivity
 import kotlinx.android.synthetic.main.delegationbaker_status.*
 
-class DelegationStatusActivity() :
+class DelegationStatusActivity :
     StatusActivity(R.string.delegation_status_title) {
 
     private lateinit var viewModel: DelegationViewModel
@@ -47,7 +47,7 @@ class DelegationStatusActivity() :
 
         //TODO update with proper status info
 
-        if (account == null || accountDelegation == null){
+        if (account == null || accountDelegation == null) {
             findViewById<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_logo_icon_pending)
             setContentTitle(R.string.delegation_status_content_empty_title)
             setEmptyState(getString(R.string.delegation_status_content_empty_desc))
@@ -61,17 +61,21 @@ class DelegationStatusActivity() :
         else {
             findViewById<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_big_logo_ok)
             setContentTitle(R.string.delegation_status_content_registered_title)
-            addContent(R.string.delegation_status_content_delegating_account, account.name+"\n\n"+account.address)
+            addContent(R.string.delegation_status_content_delegating_account, account.name + "\n\n" + account.address)
             addContent(R.string.delegation_status_content_delegation_amount, CurrencyUtil.formatGTU(accountDelegation.stakedAmount))
-            if(accountDelegation.delegationTarget.delegateType == DelegationTarget.TYPE_DELEGATE_TO_BAKER){
+            if (accountDelegation.delegationTarget.delegateType == DelegationTarget.TYPE_DELEGATE_TO_BAKER) {
                 addContent(R.string.delegation_status_content_target_pool, accountDelegation.delegationTarget.bakerId.toString())
             }
-            else{
+            else {
                 addContent(R.string.delegation_status_content_target_pool, DelegationTarget.TYPE_DELEGATE_TO_L_POOL)
             }
 
             if (accountDelegation.restakeEarnings) addContent(R.string.delegation_status_content_rewards_will_be, getString(R.string.delegation_status_added_to_delegation_amount))
             else addContent(R.string.delegation_status_content_rewards_will_be, getString(R.string.delegation_status_at_disposal))
+
+            viewModel.delegationData.account?.accountDelegation?.pendingChange?.let {
+                addContent(R.string.delegation_status_content_take_effect_on, it.effectiveTime)
+            }
 
             status_button_top.visibility = View.VISIBLE
             status_button_top.text = getString(R.string.delegation_status_stop)
