@@ -239,7 +239,7 @@
     <string name="delegation_status_content_delegation_amount">Delegation amount</string>
     <string name="delegation_status_content_target_pool">Target pool</string>
     <string name="delegation_status_content_rewards_will_be">Rewards will be</string>
-
+    <string name="delegation_status_content_take_effect_on">The following changes will take effect on</string>
 
     <string name="delegation_register_delegation_intro">You can delegate to a specific open pool of your choice, or you can delegate to the L-pool.</string>
     <string name="delegation_register_delegation_desc">If you don’t already know what target baker pool you want to delegate an amount to, you can read more about how to find one here:\n\n developer.concordium.software</string>
@@ -263,6 +263,7 @@
     <string name="delegation_register_delegation_amount_enter_amount">Enter the amount you want to delegate</string>
     <string name="delegation_update_delegation_amount_enter_amount">Optional: Enter new delegation amount</string>
     <string name="delegation_register_delegation_amount_hint">0.00</string>
+    <string name="delegation_register_delegation_amount_locked">Amount locked</string>
     <string name="delegation_register_delegation_amount_insufficient_error">Insufficient funds</string>
     <string name="delegation_register_delegation_amount_current_pool">Current pool:</string>
     <string name="delegation_register_delegation_amount_pool_pool">Pool limit:</string>
@@ -319,7 +320,11 @@
     <string name="delegation_remove_finish">Finish</string>
 
     <string name="delegation_notice_title">Notice</string>
-    <string name="delegation_notice_message">Once your transaction has succesfully finalized, the delegation will take effect from the next pay day.</string>
+    <string name="delegation_notice_message">Once your transaction has successfully finalized, the delegation will take effect from the next pay day.</string>
+    <plurals name="delegation_notice_message_decrease">
+        <item quantity="one">Your decrease to the delegation amount will take effect after a cool down of approximately %d day.\n\nAll other updates will take effect at the next pay day.</item>
+        <item quantity="other">Your decrease to the delegation amount will take effect after a cool down of approximately %d days.\n\nAll other updates will take effect at the next pay day.</item>
+    </plurals>
     <string name="delegation_notice_ok">Okay</string>
 
     <!-- Baker intro -->

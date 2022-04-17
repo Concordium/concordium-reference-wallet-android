@@ -71,8 +71,8 @@ class DelegationRegisterAmountActivity :
             }
         setAmountHint()
         amount.keyListener = DigitsKeyListener.getInstance("0123456789" + DecimalFormatSymbols.getInstance().decimalSeparator)
-        amount.doOnTextChanged { text, start, count, after ->
-            if (text != null && (text.toString().equals(DecimalFormatSymbols.getInstance().decimalSeparator.toString()) || text.filter { it == DecimalFormatSymbols.getInstance().decimalSeparator }.length > 1)) {
+        amount.doOnTextChanged { text, _, _, _ ->
+            if (text != null && (text.toString() == DecimalFormatSymbols.getInstance().decimalSeparator.toString() || text.filter { it == DecimalFormatSymbols.getInstance().decimalSeparator }.length > 1)) {
                 amount.setText(text.dropLast(1))
             }
             if (amount.text.isNotEmpty() && !amount.text.startsWith("Ͼ")) {
@@ -154,13 +154,23 @@ class DelegationRegisterAmountActivity :
     }
 
     private fun setAmountHint() {
-        if (amount.text.isNotEmpty()) amount.hint = ""
-        else amount.hint = "Ͼ0" + DecimalFormatSymbols.getInstance().decimalSeparator + "00"
+        when {
+            amount.text.isNotEmpty() -> {
+                amount.hint = ""
+            }
+            else -> {
+                amount.hint = "Ͼ0" + DecimalFormatSymbols.getInstance().decimalSeparator + "00"
+            }
+        }
     }
 
     private fun updateContent() {
-        if(viewModel.delegationData.type == DelegationData.TYPE_UPDATE_DELEGATION){
-            amount_desc.setText(getString(R.string.delegation_update_delegation_amount_enter_amount))
+        if (viewModel.isInCoolDown()) {
+            amount_locked.visibility = View.VISIBLE
+            amount.isEnabled = false
+        }
+        if (viewModel.delegationData.type == DelegationData.TYPE_UPDATE_DELEGATION) {
+            amount_desc.text = getString(R.string.delegation_update_delegation_amount_enter_amount)
             amount.setText(viewModel.delegationData.account?.accountDelegation?.stakedAmount?.let { CurrencyUtil.formatGTU(it,false) })
         }
     }
@@ -182,7 +192,15 @@ class DelegationRegisterAmountActivity :
             return
         }
 
-        val amountToStake = CurrencyUtil.toGTUValue(amount.text.toString()) ?: 0
+        var amountToStake = 0L
+        if (viewModel.isInCoolDown()) {
+            viewModel.delegationData.account?.accountDelegation?.stakedAmount?.let {
+                amountToStake = CurrencyUtil.toGTUValue(it) ?: 0
+            }
+        } else {
+            amountToStake = CurrencyUtil.toGTUValue(amount.text.toString()) ?: 0
+        }
+
         if (viewModel.isUpdating()) {
             when {
                 (amountToStake == viewModel.delegationData.account?.accountDelegation?.stakedAmount?.toLongOrNull() ?: 0 && viewModel.getPoolId() == viewModel.getOldPoolId()) -> showNoChange()
