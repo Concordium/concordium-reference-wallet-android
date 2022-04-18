@@ -70,13 +70,12 @@ abstract class BaseDelegationActivity(layout: Int, titleId: Int = R.string.app_n
     }
 
     protected fun initializeTransactionFeeLiveData() {
-        viewModel.transactionFeeLiveData.observe(this, object : Observer<Long> {
-            override fun onChanged(value: Long?) {
+        viewModel.transactionFeeLiveData.observe(this,
+            Observer<Long> { value ->
                 value?.let {
                     estimated_transaction_fee.text = getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(value))
                 }
-            }
-        })
+            })
         viewModel.loadTransactionFee()
     }
 

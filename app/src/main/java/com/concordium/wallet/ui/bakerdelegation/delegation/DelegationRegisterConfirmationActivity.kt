@@ -15,13 +15,6 @@ import kotlinx.android.synthetic.main.transaction_submitted_no.*
 class DelegationRegisterConfirmationActivity :
     BaseDelegationActivity(R.layout.activity_delegation_registration_confirmation, R.string.delegation_register_delegation_title) {
 
-    override fun initializeViewModel() {
-        super.initializeViewModel()
-        initializeWaitingLiveData()
-        initializeTransactionLiveData()
-        initializeShowAuthenticationLiveData()
-    }
-
     override fun initViews() {
         val gracePeriod = UnitConvertUtil.secondsToDaysRoundedUp(viewModel.delegationData.chainParameters?.delegatorCooldown ?: 0)
 
@@ -49,6 +42,7 @@ class DelegationRegisterConfirmationActivity :
         initializeTransactionFeeLiveData()
         initializeShowAuthenticationLiveData()
         initializeTransactionLiveData()
+        initializeWaitingLiveData()
     }
 
     override fun errorLiveData(value: Int) {

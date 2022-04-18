@@ -18,12 +18,6 @@ import java.text.DecimalFormatSymbols
 class DelegationRegisterAmountActivity :
     BaseDelegationActivity(R.layout.activity_delegation_registration_amount, R.string.delegation_register_delegation_title) {
 
-    override fun initializeViewModel() {
-        super.initializeViewModel()
-        initializeWaitingLiveData()
-        initializeShowDetailedLiveData()
-    }
-
     private fun showError(stakeError: StakeAmountInputValidator.StakeError?) {
         amount.setTextColor(getColor(R.color.text_pink))
         amount_error.visibility = View.VISIBLE
@@ -138,6 +132,9 @@ class DelegationRegisterAmountActivity :
         viewModel.loadTransactionFee()
 
         updateContent()
+
+        initializeWaitingLiveData()
+        initializeShowDetailedLiveData()
     }
 
     override fun transactionSuccessLiveData() {

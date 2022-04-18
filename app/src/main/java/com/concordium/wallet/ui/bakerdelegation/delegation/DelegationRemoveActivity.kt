@@ -3,7 +3,6 @@ package com.concordium.wallet.ui.bakerdelegation.delegation
 import android.widget.Toast
 import com.concordium.wallet.R
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
-import kotlinx.android.synthetic.main.activity_delegation_registration_confirmation.*
 import kotlinx.android.synthetic.main.activity_delegation_remove.*
 import kotlinx.android.synthetic.main.activity_delegation_remove.estimated_transaction_fee
 import kotlinx.android.synthetic.main.activity_delegation_remove.submit_delegation_finish
@@ -11,11 +10,6 @@ import kotlinx.android.synthetic.main.activity_delegation_remove.submit_delegati
 
 class DelegationRemoveActivity :
     BaseDelegationActivity(R.layout.activity_delegation_remove, R.string.delegation_remove_delegation_title) {
-
-    override fun initializeViewModel() {
-        super.initializeViewModel()
-        initializeWaitingLiveData()
-    }
 
     override fun initViews() {
         account_to_remove_delegate_from.text = (viewModel.delegationData.account?.name ?: "").plus("\n\n").plus(viewModel.delegationData.account?.address ?: "")
@@ -28,6 +22,9 @@ class DelegationRemoveActivity :
         submit_delegation_finish.setOnClickListener {
             finishUntilClass(AccountDetailsActivity::class.java.canonicalName)
         }
+
+        initializeWaitingLiveData()
+        initializeTransactionFeeLiveData()
     }
 
     private fun onContinueClicked() {

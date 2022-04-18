@@ -16,12 +16,6 @@ class DelegationRegisterPoolActivity :
     private lateinit var lPoolControl: View
     private lateinit var bakerPoolControl: View
 
-    override fun initializeViewModel() {
-        super.initializeViewModel()
-        initializeWaitingLiveData()
-        initializeShowDetailedLiveData()
-    }
-
     fun showError() {
         pool_id.setTextColor(getColor(R.color.text_pink))
         pool_id_error.visibility = View.VISIBLE
@@ -78,6 +72,9 @@ class DelegationRegisterPoolActivity :
 
         updateContent()
         updateVisibilities()
+
+        initializeWaitingLiveData()
+        initializeShowDetailedLiveData()
     }
 
     override fun transactionSuccessLiveData() {
