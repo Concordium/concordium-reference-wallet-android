@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_alignParentTop="true"
+        android:textAlignment="center"
         style="@style/TextView.Standard.White"
         tools:text="12-12-2020 13:40"/>
 

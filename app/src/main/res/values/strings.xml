@@ -243,6 +243,7 @@
     <string name="delegation_status_content_target_pool">Target pool</string>
     <string name="delegation_status_content_rewards_will_be">Rewards will be</string>
     <string name="delegation_status_content_take_effect_on">The following changes will take effect on</string>
+    <string name="delegation_status_content_delegation_will_be_stopped">The delegation will be stopped, and the delegation amount will be unlocked on the public balance of the account.</string>
 
     <string name="delegation_register_delegation_intro">You can delegate to a specific open pool of your choice, or you can delegate to the L-pool.</string>
     <string name="delegation_register_delegation_desc">If you don’t already know what target baker pool you want to delegate an amount to, you can read more about how to find one here:\n\n developer.concordium.software</string>

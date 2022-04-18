@@ -76,7 +76,11 @@ class DelegationStatusActivity :
             else addContent(R.string.delegation_status_content_rewards_will_be, getString(R.string.delegation_status_at_disposal))
 
             viewModel.delegationData.account?.accountDelegation?.pendingChange?.let {
-                addContent(R.string.delegation_status_content_take_effect_on, it.effectiveTime)
+                addContent(getString(R.string.delegation_status_content_take_effect_on) + "\n" + it.effectiveTime, "")
+                if (it.change == "RemoveStake") {
+                    status_button_top.isEnabled = false
+                    addContent(getString(R.string.delegation_status_content_delegation_will_be_stopped), "")
+                }
             }
 
             status_button_top.visibility = View.VISIBLE

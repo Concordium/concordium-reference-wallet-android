@@ -18,13 +18,22 @@ abstract class StatusActivity(titleId: Int) :
         addContent(getString(titleRes), text)
     }
 
-    private fun addContent(title: String, text: String){
+    fun addContent(title: String, text: String) {
         status_empty.visibility = View.GONE
         status_list_container.visibility = View.VISIBLE
 
         val view = LayoutInflater.from(this).inflate(R.layout.delegation_baker_status_content_item, null)
-        view.findViewById<TextView>(R.id.status_item_title).text = title
-        view.findViewById<TextView>(R.id.status_item_content).text = text
+
+        if (title.isNotEmpty())
+            view.findViewById<TextView>(R.id.status_item_title).text = title
+        else
+            view.findViewById<TextView>(R.id.status_item_title).visibility = View.GONE
+
+        if (text.isNotEmpty())
+            view.findViewById<TextView>(R.id.status_item_content).text = text
+        else
+            view.findViewById<TextView>(R.id.status_item_content).visibility = View.GONE
+
         status_list_container.addView(view)
     }
 
