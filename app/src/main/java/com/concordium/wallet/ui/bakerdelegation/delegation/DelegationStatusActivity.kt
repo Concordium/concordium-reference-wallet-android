@@ -103,6 +103,7 @@ class DelegationStatusActivity :
 
     private fun continueToCreate() {
         val intent = Intent(this, DelegationRegisterPoolActivity::class.java)
+        viewModel.delegationData.type = DelegationData.TYPE_REGISTER_DELEGATION
         intent.putExtra(EXTRA_DELEGATION_DATA, viewModel.delegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
@@ -110,6 +111,7 @@ class DelegationStatusActivity :
     private fun continueToUpdate() {
         val intent = Intent(this, DelegationUpdateIntroFlowActivity::class.java)
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
+        viewModel.delegationData.type = DelegationData.TYPE_UPDATE_DELEGATION
         intent.putExtra(BaseDelegationBakerFlowActivity.EXTRA_DELEGATION_DATA, viewModel.delegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
