@@ -27,5 +27,5 @@ data class DelegationData(
     var amount: Long? = null
     var chainParameters: ChainParameters? = null
     var bakerPoolStatus: BakerPoolStatus? = null
-
+    var cost: Long? = null
 }

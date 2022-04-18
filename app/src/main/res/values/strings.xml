@@ -321,6 +321,9 @@
     <string name="delegation_remove_account">Account to stop delegating</string>
     <string name="delegation_remove_submit">Submit delegation transaction</string>
     <string name="delegation_remove_finish">Finish</string>
+    <string name="delegation_remove_not_enough_funds_title">Warning</string>
+    <string name="delegation_remove_not_enough_funds_message">You don\'t have any funds on your balance to pay for the fee.</string>
+    <string name="delegation_remove_not_enough_funds_ok">Okay</string>
 
     <string name="delegation_notice_title">Notice</string>
     <string name="delegation_notice_message">Once your transaction has successfully finalized, the delegation will take effect from the next pay day.</string>
@@ -329,6 +332,10 @@
         <item quantity="other">Your decrease to the delegation amount will take effect after a cool down of approximately %d days.\n\nAll other updates will take effect at the next pay day.</item>
     </plurals>
     <string name="delegation_notice_message_locked">Once your transaction has successfully finalized, the delegation will take effect from the next pay day.</string>
+    <plurals name="delegation_notice_message_remove">
+        <item quantity="one">Once your transaction has finalized, the delegation will be stopped after a cool down of %d day.</item>
+        <item quantity="other">Once your transaction has finalized, the delegation will be stopped after a cool down of %d days.</item>
+    </plurals>
     <string name="delegation_notice_ok">Okay</string>
 
     <!-- Baker intro -->

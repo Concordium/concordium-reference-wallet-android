@@ -159,7 +159,8 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
             delegationData.isLPool,
             {
                 delegationData.energy = it.energy
-                _transactionFeeLiveData.value = it.cost.toLong()
+                delegationData.cost = it.cost.toLong()
+                _transactionFeeLiveData.value = delegationData.cost
             },
             {
                 handleBackendError(it)
