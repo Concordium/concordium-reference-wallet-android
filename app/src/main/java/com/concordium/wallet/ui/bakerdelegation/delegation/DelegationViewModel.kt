@@ -115,11 +115,15 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
                 {
                     delegationData.bakerPoolStatus = it
                     _waitingLiveData.value = false
-                    _showDetailedLiveData.value = Event(true)
+                    if (delegationData.bakerPoolStatus?.poolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW) {
+                        _errorLiveData.value = Event(R.string.delegation_register_delegation_pool_id_closed)
+                    } else {
+                        _showDetailedLiveData.value = Event(true)
+                    }
                 },
                 {
                     _waitingLiveData.value = false
-                    _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(it))
+                    _errorLiveData.value = Event(R.string.delegation_register_delegation_pool_id_error)
                 }
             )
         }

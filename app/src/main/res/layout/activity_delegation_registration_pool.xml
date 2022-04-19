@@ -88,7 +88,7 @@
                                 android:layout_gravity="center"
                                 android:visibility="gone"
                                 tools:visibility="visible"
-                                android:text="@string/delegation_register_delegation_pool_id_error" />
+                                tools:text="@string/delegation_register_delegation_pool_id_error" />
                         </LinearLayout>
 
                         <TextView

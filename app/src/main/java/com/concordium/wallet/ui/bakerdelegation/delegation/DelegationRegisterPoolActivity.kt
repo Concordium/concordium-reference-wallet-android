@@ -81,6 +81,7 @@ class DelegationRegisterPoolActivity :
     }
 
     override fun errorLiveData(value: Int) {
+        pool_id_error.text = getString(value)
         showError()
     }
 

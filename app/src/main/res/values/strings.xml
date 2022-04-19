@@ -256,6 +256,7 @@
     <string name="delegation_register_delegation_continue">Continue</string>
 
     <string name="delegation_register_delegation_pool_id_error">Invalid target baker pool ID</string>
+    <string name="delegation_register_delegation_pool_id_closed">This pool is closed.</string>
 
     <string name="delegation_register_delegation_yes_restake">Yes, restake</string>
     <string name="delegation_register_delegation_no_restake">No, don\'t restake</string>

@@ -9,8 +9,8 @@ data class BakerPoolStatus(
     val delegatedCapitalCap: String,
     val bakerAddress: String,
     val delegatedCapital: String,
-    val currentPaydayStatus: PayDayStatus
-
+    val currentPaydayStatus: PayDayStatus,
+    val poolInfo: BakerPoolInfo
 ) : Serializable
 
 /*
