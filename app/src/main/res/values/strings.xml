@@ -770,6 +770,8 @@
     <string name="account_details_menu_show_shielded">Show shielded balance on %1$s</string>
     <string name="account_details_menu_hide_shielded">Hide shielded balance on %1$s</string>
     <string name="account_details_menu_decrypt">Decrypt</string>
+    <string name="account_details_delegation_with_baker_pool">Delegation with baker pool %1$s</string>
+    <string name="account_details_stake_with_baker">Stake with baker %1$s</string>
 
     <string name="account_details_toggle_shielded">Shielded balance</string>
     <string name="account_details_toggle_balance">Balance</string>
