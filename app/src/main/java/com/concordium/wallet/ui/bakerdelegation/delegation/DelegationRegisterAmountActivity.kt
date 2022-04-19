@@ -98,7 +98,7 @@ class DelegationRegisterAmountActivity :
             onContinueClicked()
         }
 
-        balance_amount.text = CurrencyUtil.formatGTU(viewModel.atDisposal(), true)
+        balance_amount.text = CurrencyUtil.formatGTU(viewModel.delegationData.account?.finalizedBalance ?: 0, true)
         delegation_amount.text = CurrencyUtil.formatGTU(0, true)
         viewModel.delegationData.account?.let { account ->
             account.accountDelegation?.let { accountDelegation ->
@@ -127,7 +127,6 @@ class DelegationRegisterAmountActivity :
         })
 
         pool_info.visibility = if (viewModel.delegationData.isLPool) View.GONE else View.VISIBLE
-        account_balance.text = if (viewModel.isUpdating()) getString(R.string.delegation_register_delegation_amount_at_disposal) else getString(R.string.delegation_register_delegation_amount_balance)
 
         viewModel.loadTransactionFee()
 
