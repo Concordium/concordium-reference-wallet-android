@@ -97,14 +97,6 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
         loadTransactionFee()
     }
 
-    fun setOldPoolID(id: String) {
-        delegationData.oldPoolId = id
-    }
-
-    fun getOldPoolId(): String {
-        return delegationData.oldPoolId
-    }
-
     fun setPoolID(id: String) {
         delegationData.poolId = id
     }
@@ -274,55 +266,45 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-    private suspend fun createDelegation(keys: AccountData, encryptionSecretKey: String) {
-/*
-
-        Mandatory:
-        "from" ... address of the sender account.
-        "expiry" ... unix timestamp of the expiry date of the transaction.
-        "nonce" ... nonce of the sender account.
-        "keys" ... mapping with the keys of the sender account.
-        "energy" ... max energy wanted for the transfer.
-
-        Optional:
-        "capital" ... string containing the amount to be staked.
-        "restakeEarnings" ... bool indicating whether earnings should be restaked.
-        "delegationTarget" ... JSON indicating either delegation to the L-pool or to a baker pool.
-
-        The delegation target should either be of the form
-        {
-            "type": "delegateToLPool"
-        }
-        or
-
-        {
-            "type": "delegateToBaker",
-            "targetBaker": 100
-        }
-
- */
+    private suspend fun createDelegation(keys: AccountData, encryptionSecretKey: String?) {
         val from = delegationData.account?.address
-        val nonce = delegationData.accountNonce
+        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000 // Expiry should me now + 10 minutes (in seconds)
         val energy = delegationData.energy
+        val nonce = delegationData.accountNonce
 
-        val capital = delegationData.amount.toString()
-        val restakeEarnings = delegationData.restake
-        val delegationTarget =
-            if(delegationData.isBakerPool){
+        var encryptionSK: String? = null
+        if (delegationData.type != DelegationData.TYPE_REMOVE_DELEGATION)
+            encryptionSK = encryptionSecretKey
+
+        var capital: String? = null
+        if (delegationData.oldStakedAmount != delegationData.amount)
+            capital = delegationData.amount.toString()
+
+        var restakeEarnings: Boolean? = null
+        if (delegationData.type != DelegationData.TYPE_REMOVE_DELEGATION && delegationData.oldRestake != delegationData.restake)
+            restakeEarnings = delegationData.restake
+
+        var delegationTarget: DelegationTarget? = null
+        if (delegationData.type == DelegationData.TYPE_REGISTER_DELEGATION) {
+            delegationTarget = if (delegationData.isBakerPool)
                 DelegationTarget(DelegationTarget.TYPE_DELEGATE_TO_BAKER, delegationData.poolId.toLong())
-            }
-            else{
+            else
                 DelegationTarget(DelegationTarget.TYPE_DELEGATE_TO_L_POOL, null)
+        } else if (delegationData.type == DelegationData.TYPE_UPDATE_DELEGATION) {
+            if (delegationData.oldDelegationIsBaker != isBakerPool() || delegationData.oldDelegationTargetPoolId != delegationData.account?.accountDelegation?.delegationTarget?.bakerId) {
+                delegationTarget = if (delegationData.isBakerPool)
+                    DelegationTarget(DelegationTarget.TYPE_DELEGATE_TO_BAKER, delegationData.poolId.toLong())
+                else
+                    DelegationTarget(DelegationTarget.TYPE_DELEGATE_TO_L_POOL, null)
             }
+        }
 
-        if (from == null || nonce == null || keys == null || energy == null) {
+        if (from == null || nonce == null || energy == null) {
             _errorLiveData.value = Event(R.string.app_error_general)
             _waitingLiveData.value = false
             return
         }
 
-        //Expiry should me now + 10 minutes (in seconds)
-        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
         val transferInput = CreateTransferInput(
             from,
             keys,
@@ -334,7 +316,7 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
             null,
             null,
             null,
-            encryptionSecretKey,
+            encryptionSK,
             null,
             capital,
             restakeEarnings,

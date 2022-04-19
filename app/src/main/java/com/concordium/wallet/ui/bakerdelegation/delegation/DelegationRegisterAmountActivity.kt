@@ -126,7 +126,7 @@ class DelegationRegisterAmountActivity :
             }
         })
 
-        pool_info.visibility = if (viewModel.isLPool()) View.GONE else View.VISIBLE
+        pool_info.visibility = if (viewModel.delegationData.isLPool) View.GONE else View.VISIBLE
         account_balance.text = if (viewModel.isUpdating()) getString(R.string.delegation_register_delegation_amount_at_disposal) else getString(R.string.delegation_register_delegation_amount_balance)
 
         viewModel.loadTransactionFee()
@@ -167,6 +167,7 @@ class DelegationRegisterAmountActivity :
             amount.isEnabled = false
         }
         if (viewModel.delegationData.type == DelegationData.TYPE_UPDATE_DELEGATION) {
+            viewModel.delegationData.oldStakedAmount = viewModel.delegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0
             amount_desc.text = getString(R.string.delegation_update_delegation_amount_enter_amount)
             amount.setText(viewModel.delegationData.account?.accountDelegation?.stakedAmount?.let { CurrencyUtil.formatGTU(it,false) })
         }
@@ -200,7 +201,7 @@ class DelegationRegisterAmountActivity :
 
         if (viewModel.isUpdating()) {
             when {
-                (amountToStake == viewModel.delegationData.account?.accountDelegation?.stakedAmount?.toLongOrNull() ?: 0 && viewModel.getPoolId() == viewModel.getOldPoolId()) -> showNoChange()
+                (amountToStake == viewModel.delegationData.oldStakedAmount && viewModel.getPoolId() == viewModel.delegationData.oldDelegationTargetPoolId?.toString() ?: "") -> showNoChange()
                 amountToStake == 0L -> showNewAmountZero()
                 amountToStake < viewModel.delegationData.account?.accountDelegation?.stakedAmount?.toLongOrNull() ?: 0 -> showReduceWarning()
                 amountToStake > viewModel.atDisposal() * 0.95 -> show95PercentWarning()

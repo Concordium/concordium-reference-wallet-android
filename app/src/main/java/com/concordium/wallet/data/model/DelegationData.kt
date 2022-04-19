@@ -12,8 +12,7 @@ data class DelegationData(
     var isLPool: Boolean = false,
     var isBakerPool: Boolean = true,
     var poolId: String = "",
-    var type: String,
-    var oldPoolId: String = ""
+    var type: String
     ) : Serializable {
 
     companion object {
@@ -28,4 +27,9 @@ data class DelegationData(
     var chainParameters: ChainParameters? = null
     var bakerPoolStatus: BakerPoolStatus? = null
     var cost: Long? = null
+
+    var oldStakedAmount: Long? = null
+    var oldRestake: Boolean? = null
+    var oldDelegationIsBaker: Boolean? = null
+    var oldDelegationTargetPoolId: Long? = null
 }
