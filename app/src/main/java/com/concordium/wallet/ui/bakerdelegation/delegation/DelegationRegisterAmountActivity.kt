@@ -202,7 +202,9 @@ class DelegationRegisterAmountActivity :
         val amountToStake = getAmountToStake()
         if (viewModel.isUpdating()) {
             when {
-                (amountToStake == viewModel.delegationData.oldStakedAmount && viewModel.getPoolId() == viewModel.delegationData.oldDelegationTargetPoolId?.toString() ?: "") -> showNoChange()
+                (amountToStake == viewModel.delegationData.oldStakedAmount &&
+                    viewModel.getPoolId() == viewModel.delegationData.oldDelegationTargetPoolId?.toString() ?: "" &&
+                    viewModel.delegationData.restake == viewModel.delegationData.oldRestake) -> showNoChange()
                 amountToStake == 0L -> showNewAmountZero()
                 amountToStake < viewModel.delegationData.account?.accountDelegation?.stakedAmount?.toLongOrNull() ?: 0 -> showReduceWarning()
                 amountToStake > (viewModel.delegationData.account?.finalizedBalance ?: 0) * 0.95 -> show95PercentWarning()
