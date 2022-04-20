@@ -543,6 +543,7 @@
     <string name="account_details_gtu_drop_info">On the Concordium Testnet, you can request 2000CCD to be deposited to an account to get you started.</string>
     <string name="account_details_gtu_drop_button">Request 2000CCD</string>
     <string name="account_details_shielded_transaction_fee">Shielded transaction fee</string>
+    <string name="account_delegation_pending">Configure delegation</string>
 
     <string name="account_details_empty_identity_data">This account has no identity data revealed.</string>
 

@@ -7,8 +7,6 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.util.UnitConvertUtil
 import kotlinx.android.synthetic.main.activity_delegation_registration_confirmation.*
-import kotlinx.android.synthetic.main.activity_delegation_registration_confirmation.submit_delegation_finish
-import kotlinx.android.synthetic.main.activity_delegation_registration_confirmation.submit_delegation_transaction
 import kotlinx.android.synthetic.main.transaction_submitted_header.*
 import kotlinx.android.synthetic.main.transaction_submitted_no.*
 
@@ -101,7 +99,7 @@ class DelegationRegisterConfirmationActivity :
 
         builder.setPositiveButton(getString(R.string.delegation_notice_ok)) { dialog, _ ->
             dialog.dismiss()
-            finishUntilClass(AccountDetailsActivity::class.java.canonicalName, DelegationStatusActivity::class.java.canonicalName, EXTRA_DELEGATION_DATA, viewModel.delegationData)
+            finishUntilClass(AccountDetailsActivity::class.java.canonicalName)
         }
         builder.create().show()
     }

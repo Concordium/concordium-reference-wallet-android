@@ -12,24 +12,31 @@ import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.core.security.KeystoreEncryptionException
+import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.CreateTransferInput
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.room.Transfer
+import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.crypto.Cipher
 
 class DelegationViewModel(application: Application) : AndroidViewModel(application) {
 
     lateinit var delegationData: DelegationData
     private val proxyRepository = ProxyRepository()
+    private val transferRepository: TransferRepository
+
     private var bakerPoolRequest: BackendRequest<BakerPoolStatus>? = null
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
     private var submitCredentialRequest: BackendRequest<SubmissionData>? = null
+    private var transferSubmissionStatusRequest: BackendRequest<TransferSubmissionStatus>? = null
 
     private val gson = App.appCore.gson
 
@@ -56,6 +63,12 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
     private val _showAuthenticationLiveData = MutableLiveData<Event<Boolean>>()
     val showAuthenticationLiveData: LiveData<Event<Boolean>>
         get() = _showAuthenticationLiveData
+
+
+    init {
+        val transferDao = WalletDatabase.getDatabase(application).transferDao()
+        transferRepository = TransferRepository(transferDao)
+    }
 
     fun initialize(delegationData: DelegationData) {
         this.delegationData = delegationData
@@ -275,32 +288,7 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     private suspend fun createDelegation(keys: AccountData, encryptionSecretKey: String) {
-/*
 
-        Mandatory:
-        "from" ... address of the sender account.
-        "expiry" ... unix timestamp of the expiry date of the transaction.
-        "nonce" ... nonce of the sender account.
-        "keys" ... mapping with the keys of the sender account.
-        "energy" ... max energy wanted for the transfer.
-
-        Optional:
-        "capital" ... string containing the amount to be staked.
-        "restakeEarnings" ... bool indicating whether earnings should be restaked.
-        "delegationTarget" ... JSON indicating either delegation to the L-pool or to a baker pool.
-
-        The delegation target should either be of the form
-        {
-            "type": "delegateToLPool"
-        }
-        or
-
-        {
-            "type": "delegateToBaker",
-            "targetBaker": 100
-        }
-
- */
         val from = delegationData.account?.address
         val nonce = delegationData.accountNonce
         val energy = delegationData.energy
@@ -359,8 +347,8 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
         submitCredentialRequest = proxyRepository.submitTransfer(transfer,
             {
                 Log.d("Success:"+it)
-                _transactionSuccessLiveData.value = true
-                _waitingLiveData.value = false
+                delegationData.submissionId = it.submissionId
+                submissionStatus()
                 // Do not disable waiting state yet
             },
             {
@@ -370,6 +358,70 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
             }
         )
     }
+
+    private fun submissionStatus() {
+        _waitingLiveData.value = true
+        transferSubmissionStatusRequest?.dispose()
+        transferSubmissionStatusRequest = delegationData.submissionId?.let { submissionId ->
+            proxyRepository.getTransferSubmissionStatus(submissionId,
+                { transferSubmissionStatus ->
+                    delegationData.transferSubmissionStatus = transferSubmissionStatus
+                    finishTransferCreation()
+                    // Do not disable waiting state yet
+                },
+                {
+                    _waitingLiveData.value = false
+                    _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(it))
+                }
+            )
+        }
+    }
+
+    private fun finishTransferCreation() {
+        val createdAt = Date().time
+
+        val accountId = delegationData.account?.id
+        val amount = delegationData.amount
+        val fromAddress = delegationData.account?.address
+        val submissionId = delegationData.submissionId
+        val transferSubmissionStatus = delegationData.transferSubmissionStatus
+        val cost = delegationData.cost
+        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
+
+        if (transferSubmissionStatus == null || expiry == null || cost == null || accountId == null || amount == null || fromAddress == null || submissionId == null) {
+            _errorLiveData.value = Event(R.string.app_error_general)
+            _waitingLiveData.value = false
+            return
+        }
+
+        val transfer = Transfer(
+            0,
+            accountId,
+            cost,
+            0,
+            fromAddress,
+            fromAddress,
+            expiry,
+            "",
+            createdAt,
+            submissionId,
+            TransactionStatus.UNKNOWN,
+            TransactionOutcome.UNKNOWN,
+            TransactionType.LOCAL_DELEGATIONORBAKER,
+            //but amount is negative so it is listed as incoming positive
+            null,
+            0,
+            null
+        )
+        saveNewTransfer(transfer)
+    }
+
+    private fun saveNewTransfer(transfer: Transfer) = viewModelScope.launch {
+        transferRepository.insert(transfer)
+        _waitingLiveData.value = false
+        _transactionSuccessLiveData.value = true
+    }
+
 
     fun setAmount(amount: Long?) {
         delegationData.amount = amount

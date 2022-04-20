@@ -7,9 +7,6 @@ import com.concordium.wallet.R
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.util.UnitConvertUtil
 import kotlinx.android.synthetic.main.activity_delegation_remove.*
-import kotlinx.android.synthetic.main.activity_delegation_remove.estimated_transaction_fee
-import kotlinx.android.synthetic.main.activity_delegation_remove.submit_delegation_finish
-import kotlinx.android.synthetic.main.activity_delegation_remove.submit_delegation_transaction
 import kotlinx.android.synthetic.main.transaction_submitted_header.*
 import kotlinx.android.synthetic.main.transaction_submitted_no.*
 
@@ -88,7 +85,7 @@ class DelegationRemoveActivity :
         builder.setMessage(resources.getQuantityString(R.plurals.delegation_notice_message_remove, gracePeriod, gracePeriod))
         builder.setPositiveButton(getString(R.string.delegation_notice_ok)) { dialog, _ ->
             dialog.dismiss()
-            finishUntilClass(AccountDetailsActivity::class.java.canonicalName, DelegationStatusActivity::class.java.canonicalName, EXTRA_DELEGATION_DATA, viewModel.delegationData)
+            finishUntilClass(AccountDetailsActivity::class.java.canonicalName)
         }
         builder.create().show()
     }

@@ -245,8 +245,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     updateEncryptedAmount(submissionStatus, request.transfer.submissionId, request.transfer.amount.toString())
 
                     request.transfer.transactionStatus = submissionStatus.status
-                    request.transfer.outcome =
-                        submissionStatus.outcome ?: TransactionOutcome.UNKNOWN
+                    request.transfer.outcome = submissionStatus.outcome ?: TransactionOutcome.UNKNOWN
                     if (submissionStatus.cost != null) {
                         request.transfer.cost = submissionStatus.cost
                     }

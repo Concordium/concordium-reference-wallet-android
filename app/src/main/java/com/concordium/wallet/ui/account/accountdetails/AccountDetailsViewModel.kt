@@ -11,7 +11,6 @@ import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
-import com.concordium.wallet.core.authentication.AuthenticationManager
 import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.AccountRepository
@@ -19,7 +18,6 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.cryptolib.CreateCredentialOutput
 import com.concordium.wallet.data.cryptolib.DecryptAmountInput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.*
@@ -36,7 +34,9 @@ import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
 import javax.crypto.Cipher
 import kotlin.collections.ArrayList
@@ -288,7 +288,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             val transferList = transferRepository.getAllByAccountId(account.id)
             for (transfer in transferList) {
                 val transaction = transfer.toTransaction()
-                transactionMappingHelper.addTitlesToTransaction(transaction, transfer)
+                transactionMappingHelper.addTitlesToTransaction(transaction, transfer, getApplication())
                 nonMergedLocalTransactions.add(transaction)
             }
             loadRemoteTransactions(null)

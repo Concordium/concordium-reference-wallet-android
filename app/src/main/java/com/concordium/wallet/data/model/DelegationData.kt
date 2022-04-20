@@ -22,6 +22,8 @@ data class DelegationData(
         const val TYPE_REMOVE_DELEGATION = "TYPE_REMOVE_DELEGATION"
     }
 
+    var transferSubmissionStatus: TransferSubmissionStatus? = null
+    var submissionId: String? = null
     var energy: Long? = null
     var accountNonce: AccountNonce? = null
     var amount: Long? = null
