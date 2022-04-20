@@ -51,8 +51,6 @@
                             android:layout_height="@dimen/segmented_control_height"
                             android:layout_gravity="center"
                             android:layout_margin="@dimen/activity_vertical_margin" />
-
-
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -61,15 +59,12 @@
                             android:layout_margin="50dp">
                             <TextView
                                 android:id="@+id/existing_pool_id"
-                                style="@style/TextView.Standard"
+                                style="@style/TextView.Mono"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_margin="@dimen/activity_horizontal_margin"
                                 android:gravity="center"
-                                android:visibility="gone"
-                                tools:visibility="visible"
                                 tools:text="[Current target: 2323]" />
-
                             <EditText
                                 android:id="@+id/pool_id"
                                 style="@style/EditText.Card.Flat"
@@ -77,8 +72,7 @@
                                 android:hint="@string/delegation_register_delegation_pool_id_hint"
                                 android:inputType="number"
                                 android:gravity="center"
-                                android:imeOptions="actionDone"
-                                 />
+                                android:imeOptions="actionDone" />
                             <TextView
                                 android:id="@+id/pool_id_error"
                                 style="@style/TextView.Standard.Error"
