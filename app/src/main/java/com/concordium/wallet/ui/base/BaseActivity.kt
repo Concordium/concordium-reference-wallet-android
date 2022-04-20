@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.base
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
@@ -17,12 +18,14 @@ import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.security.BiometricPromptCallback
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
-import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity.Companion.EXTRA_DELEGATION_DATA
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
 import com.concordium.wallet.uicore.popup.Popup
 import java.io.Serializable
 import javax.crypto.Cipher
+
+
+
 
 abstract open class BaseActivity(private val layout: Int, private val titleId: Int = R.string.app_name) : AppCompatActivity() {
 
@@ -155,6 +158,15 @@ abstract open class BaseActivity(private val layout: Int, private val titleId: I
         actionbar.setDisplayHomeAsUpEnabled(false)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.getItemId()) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
     // authentication region
 
     interface AuthenticationCallback {
