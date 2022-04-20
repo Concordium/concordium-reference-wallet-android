@@ -259,8 +259,11 @@ class DelegationRegisterAmountActivity :
     }
 
     private fun continueToConfirmation() {
-        val intent = Intent(this, DelegationRegisterConfirmationActivity::class.java)
         viewModel.delegationData.amount = CurrencyUtil.toGTUValue(amount.text.toString())
+        val intent = if (viewModel.delegationData.amount ?: 0 == 0L)
+            Intent(this, DelegationRemoveActivity::class.java)
+        else
+            Intent(this, DelegationRegisterConfirmationActivity::class.java)
         intent.putExtra(EXTRA_DELEGATION_DATA, viewModel.delegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
