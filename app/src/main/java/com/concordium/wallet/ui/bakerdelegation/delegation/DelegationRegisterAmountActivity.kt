@@ -87,6 +87,7 @@ class DelegationRegisterAmountActivity :
                 showError(stakeError)
             } else {
                 hideError()
+                viewModel.loadTransactionFee()
             }
         }
         amount.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
@@ -127,8 +128,6 @@ class DelegationRegisterAmountActivity :
         })
 
         pool_info.visibility = if (viewModel.delegationData.isLPool) View.GONE else View.VISIBLE
-
-        viewModel.loadTransactionFee()
 
         updateContent()
 

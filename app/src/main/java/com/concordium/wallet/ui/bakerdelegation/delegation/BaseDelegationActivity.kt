@@ -76,7 +76,6 @@ abstract class BaseDelegationActivity(layout: Int, titleId: Int = R.string.app_n
                     estimated_transaction_fee.text = getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(value))
                 }
             })
-        viewModel.loadTransactionFee()
     }
 
     protected open fun showWaiting(waiting: Boolean) {
