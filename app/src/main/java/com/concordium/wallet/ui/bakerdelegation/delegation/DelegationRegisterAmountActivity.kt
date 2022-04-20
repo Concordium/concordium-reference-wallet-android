@@ -89,6 +89,11 @@ class DelegationRegisterAmountActivity :
                 hideError()
                 viewModel.loadTransactionFee(true)
             }
+            if (viewModel.isInCoolDown()) {
+                pool_registration_continue.isEnabled = getAmountToStake() > viewModel.delegationData.oldStakedAmount ?: 0
+            } else {
+                pool_registration_continue.isEnabled = true
+            }
         }
         amount.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (hasFocus && amount.text.isEmpty()) amount.hint = ""
@@ -97,6 +102,11 @@ class DelegationRegisterAmountActivity :
 
         pool_registration_continue.setOnClickListener {
             onContinueClicked()
+        }
+
+        amount_locked.setOnClickListener {
+            amount_locked.visibility = View.GONE
+            amount.isEnabled = true
         }
 
         balance_amount.text = CurrencyUtil.formatGTU(viewModel.delegationData.account?.finalizedBalance ?: 0, true)
@@ -163,6 +173,7 @@ class DelegationRegisterAmountActivity :
         if (viewModel.isInCoolDown()) {
             amount_locked.visibility = View.VISIBLE
             amount.isEnabled = false
+            pool_registration_continue.isEnabled = false
         }
         if (viewModel.delegationData.type == DelegationData.TYPE_UPDATE_DELEGATION) {
             viewModel.delegationData.oldStakedAmount = viewModel.delegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0
@@ -188,15 +199,7 @@ class DelegationRegisterAmountActivity :
             return
         }
 
-        var amountToStake = 0L
-        if (viewModel.isInCoolDown()) {
-            viewModel.delegationData.account?.accountDelegation?.stakedAmount?.let {
-                amountToStake = CurrencyUtil.toGTUValue(it) ?: 0
-            }
-        } else {
-            amountToStake = CurrencyUtil.toGTUValue(amount.text.toString()) ?: 0
-        }
-
+        val amountToStake = getAmountToStake()
         if (viewModel.isUpdating()) {
             when {
                 (amountToStake == viewModel.delegationData.oldStakedAmount && viewModel.getPoolId() == viewModel.delegationData.oldDelegationTargetPoolId?.toString() ?: "") -> showNoChange()
@@ -211,6 +214,10 @@ class DelegationRegisterAmountActivity :
                 else -> continueToConfirmation()
             }
         }
+    }
+
+    private fun getAmountToStake(): Long {
+        return CurrencyUtil.toGTUValue(amount.text.toString()) ?: 0
     }
 
     private fun showNoChange() {
