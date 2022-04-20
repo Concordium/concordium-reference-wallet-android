@@ -17,13 +17,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.DelegationData
+import com.concordium.wallet.data.model.DelegationTarget
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
-import com.concordium.wallet.ui.bakerdelegation.baker.BakerIntroFlowActivity
+import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerIntroFlowActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.DelegationStatusActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationCreateIntroFlowActivity
@@ -254,33 +255,31 @@ class AccountDetailsActivity :
         account_details_layout.visibility = View.VISIBLE
         readonly_desc.visibility = if(viewModel.account.readOnly) View.VISIBLE else View.GONE
 
-        if(viewModel.isShielded){
-            //accounts_overview_total_details_baker_container.visibility = View.GONE
-            accounts_overview_total_details_staked_container.visibility = View.GONE
+        accounts_overview_total_details_baker_container.visibility = View.GONE
+        accounts_overview_total_details_staked_container.visibility = View.GONE
+
+        if (viewModel.isShielded) {
             accounts_overview_total_details_disposal_container.visibility = View.GONE
             send_imageview.setImageResource(R.drawable.ic_icon_send_shielded)
             shield_imageview.setImageResource(R.drawable.ic_unshield)
         }
-        else{
-            //accounts_overview_total_details_baker_container.visibility = View.VISIBLE
-            accounts_overview_total_details_staked_container.visibility = View.VISIBLE
+        else {
             accounts_overview_total_details_disposal_container.visibility = View.VISIBLE
             send_imageview.setImageResource(R.drawable.ic_send)
             shield_imageview.setImageResource(R.drawable.ic_shielded_icon)
-
-            if(viewModel.account.isBaking()){
-                //accounts_overview_total_details_baker_container.visibility = View.VISIBLE
-                accounts_overview_total_details_baker_id.text = viewModel.account.bakerId.toString()
+            if (viewModel.account.isBaking()) {
+                accounts_overview_total_details_baker_container.visibility = View.VISIBLE
+                //accounts_overview_total_title_baker.text = getString(R.string.account_details_stake_with_baker, viewModel.account.accountBaker.bakerId?.toString() ?: "")
+                //accounts_overview_total_details_baker.text = CurrencyUtil.formatGTU(viewModel.account.accountBaker.stakedAmount, true)
+            } else if (viewModel.account.isDelegating()) {
                 accounts_overview_total_details_staked_container.visibility = View.VISIBLE
+                if (viewModel.account.accountDelegation?.delegationTarget?.delegateType == DelegationTarget.TYPE_DELEGATE_TO_L_POOL)
+                    accounts_overview_total_title_staked.text = getString(R.string.account_details_delegation_with_baker_pool, DelegationTarget.TYPE_DELEGATE_TO_L_POOL)
+                else
+                    accounts_overview_total_title_staked.text = getString(R.string.account_details_delegation_with_baker_pool, viewModel.account.accountDelegation?.delegationTarget?.bakerId ?: "")
+                accounts_overview_total_details_staked.text = CurrencyUtil.formatGTU(viewModel.account.accountDelegation?.stakedAmount ?: "", true)
             }
-            else{
-                //accounts_overview_total_details_baker_container.visibility = View.GONE
-                accounts_overview_total_details_staked_container.visibility = View.GONE
-            }
-            accounts_overview_total_title_staked.text = getString(R.string.accounts_overview_total_details_staked, viewModel.account.bakerId )
-            accounts_overview_total_details_staked.text = CurrencyUtil.formatGTU(viewModel.account.totalStaked, true)
         }
-
     }
 
     private fun setErrorMode() {

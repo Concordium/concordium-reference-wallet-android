@@ -107,15 +107,7 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
 
     fun markRestake(restake: Boolean) {
         this.delegationData.restake = restake
-        loadTransactionFee()
-    }
-
-    fun setOldPoolID(id: String) {
-        delegationData.oldPoolId = id
-    }
-
-    fun getOldPoolId(): String {
-        return delegationData.oldPoolId
+        loadTransactionFee(true)
     }
 
     fun setPoolID(id: String) {
@@ -136,17 +128,21 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
                 {
                     delegationData.bakerPoolStatus = it
                     _waitingLiveData.value = false
-                    _showDetailedLiveData.value = Event(true)
+                    if (delegationData.bakerPoolStatus?.poolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW) {
+                        _errorLiveData.value = Event(R.string.delegation_register_delegation_pool_id_closed)
+                    } else {
+                        _showDetailedLiveData.value = Event(true)
+                    }
                 },
                 {
                     _waitingLiveData.value = false
-                    _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(it))
+                    _errorLiveData.value = Event(R.string.delegation_register_delegation_pool_id_error)
                 }
             )
         }
     }
 
-    fun loadTransactionFee() {
+    fun loadTransactionFee(notifyObservers: Boolean) {
 
         var type = when(delegationData.type) {
             DelegationData.TYPE_REGISTER_DELEGATION -> ProxyRepository.REGISTER_DELEGATION
@@ -173,7 +169,8 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
             {
                 delegationData.energy = it.energy
                 delegationData.cost = it.cost.toLong()
-                _transactionFeeLiveData.value = delegationData.cost
+                if (notifyObservers)
+                    _transactionFeeLiveData.value = delegationData.cost
             },
             {
                 handleBackendError(it)
@@ -287,30 +284,45 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-    private suspend fun createDelegation(keys: AccountData, encryptionSecretKey: String) {
-
+    private suspend fun createDelegation(keys: AccountData, encryptionSecretKey: String?) {
         val from = delegationData.account?.address
-        val nonce = delegationData.accountNonce
+        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000 // Expiry should me now + 10 minutes (in seconds)
         val energy = delegationData.energy
+        val nonce = delegationData.accountNonce
 
-        val capital = delegationData.amount.toString()
-        val restakeEarnings = delegationData.restake
-        val delegationTarget =
-            if(delegationData.isBakerPool){
+        var encryptionSK: String? = null
+        if (delegationData.type != DelegationData.TYPE_REMOVE_DELEGATION)
+            encryptionSK = encryptionSecretKey
+
+        var capital: String? = null
+        if (delegationData.oldStakedAmount != delegationData.amount)
+            capital = delegationData.amount.toString()
+
+        var restakeEarnings: Boolean? = null
+        if (delegationData.type != DelegationData.TYPE_REMOVE_DELEGATION && delegationData.oldRestake != delegationData.restake)
+            restakeEarnings = delegationData.restake
+
+        var delegationTarget: DelegationTarget? = null
+        if (delegationData.type == DelegationData.TYPE_REGISTER_DELEGATION) {
+            delegationTarget = if (delegationData.isBakerPool)
                 DelegationTarget(DelegationTarget.TYPE_DELEGATE_TO_BAKER, delegationData.poolId.toLong())
-            }
-            else{
+            else
                 DelegationTarget(DelegationTarget.TYPE_DELEGATE_TO_L_POOL, null)
+        } else if (delegationData.type == DelegationData.TYPE_UPDATE_DELEGATION) {
+            if (delegationData.oldDelegationIsBaker != isBakerPool() || delegationData.oldDelegationTargetPoolId != delegationData.account?.accountDelegation?.delegationTarget?.bakerId) {
+                delegationTarget = if (delegationData.isBakerPool)
+                    DelegationTarget(DelegationTarget.TYPE_DELEGATE_TO_BAKER, delegationData.poolId.toLong())
+                else
+                    DelegationTarget(DelegationTarget.TYPE_DELEGATE_TO_L_POOL, null)
             }
+        }
 
-        if (from == null || nonce == null || keys == null || energy == null) {
+        if (from == null || nonce == null || energy == null) {
             _errorLiveData.value = Event(R.string.app_error_general)
             _waitingLiveData.value = false
             return
         }
 
-        //Expiry should me now + 10 minutes (in seconds)
-        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
         val transferInput = CreateTransferInput(
             from,
             keys,
@@ -322,7 +334,7 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
             null,
             null,
             null,
-            encryptionSecretKey,
+            encryptionSK,
             null,
             capital,
             restakeEarnings,
@@ -358,6 +370,7 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
             }
         )
     }
+
 
     private fun submissionStatus() {
         _waitingLiveData.value = true
@@ -422,9 +435,4 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
         _transactionSuccessLiveData.value = true
     }
 
-
-    fun setAmount(amount: Long?) {
-        delegationData.amount = amount
-        loadTransactionFee()
-    }
 }

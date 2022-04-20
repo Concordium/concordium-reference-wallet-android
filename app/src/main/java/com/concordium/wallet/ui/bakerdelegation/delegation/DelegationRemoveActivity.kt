@@ -29,6 +29,8 @@ class DelegationRemoveActivity :
         initializeTransactionFeeLiveData()
         initializeShowAuthenticationLiveData()
         initializeTransactionLiveData()
+
+        viewModel.loadTransactionFee(true)
     }
 
     private fun onContinueClicked() {
@@ -73,15 +75,17 @@ class DelegationRemoveActivity :
         submit_delegation_transaction.visibility = View.GONE
         submit_delegation_finish.visibility = View.VISIBLE
         transaction_submitted.visibility = View.VISIBLE
-        transaction_submitted_divider.visibility = View.VISIBLE
-        transaction_submitted_transaction_no.visibility = View.VISIBLE
-        transaction_submitted_transaction_no.text = viewModel.delegationData.bakerPoolStatus?.bakerAddress ?: ""
+        viewModel.delegationData.account?.submissionId?.let {
+            transaction_submitted_divider.visibility = View.VISIBLE
+            transaction_submitted_id.visibility = View.VISIBLE
+            transaction_submitted_id.text = it
+        }
     }
 
     private fun showNotice() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.delegation_notice_title)
-        val gracePeriod = UnitConvertUtil.secondsToDaysRoundedUp(viewModel.delegationData.chainParameters?.delegatorCooldown ?: 0)
+        val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.delegationData.chainParameters?.delegatorCooldown ?: 0)
         builder.setMessage(resources.getQuantityString(R.plurals.delegation_notice_message_remove, gracePeriod, gracePeriod))
         builder.setPositiveButton(getString(R.string.delegation_notice_ok)) { dialog, _ ->
             dialog.dismiss()

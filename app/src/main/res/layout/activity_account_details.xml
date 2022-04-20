@@ -172,52 +172,38 @@
                                 android:visibility="gone"
                                 tools:visibility="visible"
                                 android:orientation="vertical">
-
                                 <TextView
                                     android:id="@+id/accounts_overview_total_title_staked"
                                     style="@style/TextView.BalanceInfo"
                                     android:layout_gravity="center"
-                                    android:text="@string/accounts_overview_total_details_staked" />
-
+                                    tools:text="@string/account_details_delegation_with_baker_pool" />
                                 <TextView
                                     android:id="@+id/accounts_overview_total_details_staked"
                                     style="@style/TextView.TotalBalanceDetails"
                                     android:layout_width="wrap_content"
                                     android:layout_gravity="center"
                                     tools:text="Ͼ33.00" />
-
                             </LinearLayout>
 
                             <LinearLayout
                                 android:id="@+id/accounts_overview_total_details_baker_container"
-                                android:layout_width="wrap_content"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_marginBottom="10dp"
-                                android:orientation="horizontal"
-                                android:visibility="gone">
-
-                                <ImageView
-                                    style="@style/Image"
-                                    android:layout_width="11dp"
-                                    android:layout_height="13dp"
-                                    android:layout_gravity="center_vertical"
-                                    android:layout_marginRight="6dp"
-                                    android:src="@drawable/ic_baking"
-                                    android:tint="@color/text_blue" />
-
+                                android:layout_marginLeft="@dimen/accounts_overview_total_details_side_margins"
+                                android:layout_marginRight="@dimen/accounts_overview_total_details_side_margins"
+                                android:layout_marginBottom="15dp"
+                                android:visibility="gone"
+                                android:orientation="vertical">
                                 <TextView
+                                    android:id="@+id/accounts_overview_total_title_baker"
                                     style="@style/TextView.TotalBalanceDetails"
                                     android:layout_width="wrap_content"
-                                    android:layout_marginRight="4dp"
-                                    android:text="@string/account_details_baker_id" />
-
+                                    tools:text="@string/account_details_stake_with_baker" />
                                 <TextView
-                                    android:id="@+id/accounts_overview_total_details_baker_id"
+                                    android:id="@+id/accounts_overview_total_details_baker"
                                     style="@style/TextView.TotalBalanceDetails"
                                     android:layout_width="match_parent"
-                                    tools:text="123456" />
-
+                                    tools:text="Ͼ33.00" />
                             </LinearLayout>
 
                         </LinearLayout>

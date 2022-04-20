@@ -249,13 +249,15 @@
     <string name="delegation_register_delegation_desc">If you don’t already know what target baker pool you want to delegate an amount to, you can read more about how to find one here:\n\n developer.concordium.software</string>
     <string name="delegation_register_delegation_pool_id_hint">Enter target baker pool ID</string>
     <string name="delegation_register_delegation_pool_id_hint_update">Optional: Enter new target ID</string>
-    <string name="delegation_update_delegation_pool_id">Current target: %1$s</string>
+    <string name="delegation_update_delegation_pool_id_baker">Current target: Baker id %1$s</string>
+    <string name="delegation_update_delegation_pool_id_l">Current target: L-pool</string>
 
     <string name="delegation_register_delegation_pool_baker">Baker pool</string>
     <string name="delegation_register_delegation_pool_l">L-pool</string>
     <string name="delegation_register_delegation_continue">Continue</string>
 
     <string name="delegation_register_delegation_pool_id_error">Invalid target baker pool ID</string>
+    <string name="delegation_register_delegation_pool_id_closed">This pool is closed</string>
 
     <string name="delegation_register_delegation_yes_restake">Yes, restake</string>
     <string name="delegation_register_delegation_no_restake">No, don\'t restake</string>
@@ -317,7 +319,7 @@
     <string name="delegation_register_delegation_failed_try_again">Try again</string>
     <string name="delegation_register_delegation_failed_later">Later</string>
 
-    <string name="delegation_remove_text">Are you sure you want to remove you delegation?</string>
+    <string name="delegation_remove_text">Are you sure you want to remove your delegation?</string>
     <string name="delegation_remove_confirm_title">Transaction: Remove delegation</string>
     <string name="delegation_remove_account">Account to stop delegating</string>
     <string name="delegation_remove_submit">Submit delegation transaction</string>
@@ -340,7 +342,11 @@
     <string name="delegation_notice_ok">Okay</string>
 
     <!-- Baker intro -->
-    <string name="baker_intro_flow_title">Baker</string>
+    <string name="baker_intro_flow_title">Become a baker</string>
+    <string name="baker_intro_subtitle1">Become a baker</string>
+    <string name="baker_intro_subtitle2">The node</string>
+    <string name="baker_intro_subtitle3">Opening a pool</string>
+
 
     <!-- ***** Auth ***** -->
 
@@ -770,6 +776,8 @@
     <string name="account_details_menu_show_shielded">Show shielded balance on %1$s</string>
     <string name="account_details_menu_hide_shielded">Hide shielded balance on %1$s</string>
     <string name="account_details_menu_decrypt">Decrypt</string>
+    <string name="account_details_delegation_with_baker_pool">Delegation with baker pool %1$s</string>
+    <string name="account_details_stake_with_baker">Stake with baker %1$s</string>
 
     <string name="account_details_toggle_shielded">Shielded balance</string>
     <string name="account_details_toggle_balance">Balance</string>

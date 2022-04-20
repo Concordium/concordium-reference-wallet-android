@@ -194,6 +194,10 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="TextView.Mono">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">monospace</item>
+    </style>
 
 
     <style name="TextView.SendFundBalance">

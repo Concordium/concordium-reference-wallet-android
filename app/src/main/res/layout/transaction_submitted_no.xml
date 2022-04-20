@@ -7,7 +7,7 @@
         style="@style/Divider"
         android:visibility="gone" />
     <TextView
-        android:id="@+id/transaction_submitted_transaction_no"
+        android:id="@+id/transaction_submitted_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"

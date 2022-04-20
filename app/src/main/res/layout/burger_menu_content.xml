@@ -70,6 +70,7 @@
         android:layout_height="wrap_content"
         style="@style/Layout.CardView"
         android:layout_marginBottom="10dp"
+        android:visibility="gone"
         android:background="@color/theme_white">
         <TextView
             android:id="@+id/menu_item_baking"

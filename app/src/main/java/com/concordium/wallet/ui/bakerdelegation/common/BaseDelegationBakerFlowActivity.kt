@@ -15,7 +15,9 @@ abstract class BaseDelegationBakerFlowActivity(titleId: Int) :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        delegationData = intent.extras?.getSerializable(EXTRA_DELEGATION_DATA) as DelegationData
+        intent.extras?.getSerializable(EXTRA_DELEGATION_DATA)?.let {
+            delegationData = it as DelegationData
+        }
     }
 
     abstract fun getTitles(): IntArray

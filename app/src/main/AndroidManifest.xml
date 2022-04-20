@@ -160,7 +160,7 @@
             android:launchMode="singleTop" />
 
         <activity
-            android:name=".ui.bakerdelegation.baker.BakerIntroFlowActivity"
+            android:name=".ui.bakerdelegation.baker.introflow.BakerIntroFlowActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTop" />
         <activity

@@ -2,7 +2,6 @@ package com.concordium.wallet.ui.bakerdelegation.delegation
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
@@ -10,8 +9,7 @@ import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.DelegationData
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_delegation_remove.estimated_transaction_fee
-import kotlinx.android.synthetic.main.activity_delegation_remove.submit_delegation_transaction
+import kotlinx.android.synthetic.main.activity_delegation_remove.*
 import kotlinx.android.synthetic.main.progress.*
 import javax.crypto.Cipher
 
@@ -76,7 +74,7 @@ abstract class BaseDelegationActivity(layout: Int, titleId: Int = R.string.app_n
                     estimated_transaction_fee.text = getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(value))
                 }
             })
-        viewModel.loadTransactionFee()
+        viewModel.loadTransactionFee(false)
     }
 
     protected open fun showWaiting(waiting: Boolean) {
