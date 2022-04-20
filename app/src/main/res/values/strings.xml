@@ -290,7 +290,7 @@
     </plurals>
     <string name="delegation_register_delegation_confirmation_receipt_title">Transaction: Register delegation</string>
     <string name="delegation_register_delegation_confirmation_receipt_account_to_delegate_from">Account to delegate from</string>
-    <string name="delegation_register_delegation_confirmation_receipt_amount_to_delegate">Amount to Delegation amount</string>
+    <string name="delegation_register_delegation_confirmation_receipt_amount_to_delegate">Delegation amount</string>
     <string name="delegation_register_delegation_confirmation_receipt_target_pool">Target pool</string>
     <string name="delegation_register_delegation_confirmation_receipt_rewards_will_be">Rewards will be</string>
     <string name="delegation_register_delegation_reduce_warning_title">Important</string>
