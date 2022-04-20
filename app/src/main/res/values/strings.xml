@@ -319,7 +319,7 @@
     <string name="delegation_register_delegation_failed_try_again">Try again</string>
     <string name="delegation_register_delegation_failed_later">Later</string>
 
-    <string name="delegation_remove_text">Are you sure you want to remove you delegation?</string>
+    <string name="delegation_remove_text">Are you sure you want to remove your delegation?</string>
     <string name="delegation_remove_confirm_title">Transaction: Remove delegation</string>
     <string name="delegation_remove_account">Account to stop delegating</string>
     <string name="delegation_remove_submit">Submit delegation transaction</string>
