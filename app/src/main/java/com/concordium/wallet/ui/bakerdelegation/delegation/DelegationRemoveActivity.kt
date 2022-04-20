@@ -33,7 +33,7 @@ class DelegationRemoveActivity :
         initializeShowAuthenticationLiveData()
         initializeTransactionLiveData()
 
-        viewModel.loadTransactionFee()
+        viewModel.loadTransactionFee(true)
     }
 
     private fun onContinueClicked() {

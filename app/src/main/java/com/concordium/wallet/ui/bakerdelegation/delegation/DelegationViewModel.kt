@@ -94,7 +94,7 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
 
     fun markRestake(restake: Boolean) {
         this.delegationData.restake = restake
-        loadTransactionFee()
+        loadTransactionFee(true)
     }
 
     fun setPoolID(id: String) {
@@ -129,7 +129,7 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-    fun loadTransactionFee() {
+    fun loadTransactionFee(notifyObservers: Boolean) {
 
         var type = when(delegationData.type) {
             DelegationData.TYPE_REGISTER_DELEGATION -> ProxyRepository.REGISTER_DELEGATION
@@ -156,7 +156,8 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
             {
                 delegationData.energy = it.energy
                 delegationData.cost = it.cost.toLong()
-                _transactionFeeLiveData.value = delegationData.cost
+                if (notifyObservers)
+                    _transactionFeeLiveData.value = delegationData.cost
             },
             {
                 handleBackendError(it)
@@ -355,10 +356,5 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
                 handleBackendError(it)
             }
         )
-    }
-
-    fun setAmount(amount: Long?) {
-        delegationData.amount = amount
-        loadTransactionFee()
     }
 }

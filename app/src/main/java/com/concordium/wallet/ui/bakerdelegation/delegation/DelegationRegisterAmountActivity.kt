@@ -87,7 +87,7 @@ class DelegationRegisterAmountActivity :
                 showError(stakeError)
             } else {
                 hideError()
-                viewModel.loadTransactionFee()
+                viewModel.loadTransactionFee(true)
             }
         }
         amount.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->

@@ -129,7 +129,7 @@
                                     android:visibility="gone"
                                     style="@style/TextView.Large"
                                     android:textColor="@color/text_grey"
-                                    tools:text="@string/delegation_register_delegation_amount_locked" />
+                                    android:text="@string/delegation_register_delegation_amount_locked" />
                             </RelativeLayout>
                             <TextView
                                 android:id="@+id/amount_error"
