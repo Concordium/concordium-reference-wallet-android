@@ -341,7 +341,11 @@
     <string name="delegation_notice_ok">Okay</string>
 
     <!-- Baker intro -->
-    <string name="baker_intro_flow_title">Baker</string>
+    <string name="baker_intro_flow_title">Become a baker</string>
+    <string name="baker_intro_subtitle1">Become a baker</string>
+    <string name="baker_intro_subtitle2">The node</string>
+    <string name="baker_intro_subtitle3">Opening a pool</string>
+
 
     <!-- ***** Auth ***** -->
 

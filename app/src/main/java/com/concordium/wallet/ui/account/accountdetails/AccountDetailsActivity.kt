@@ -24,7 +24,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
-import com.concordium.wallet.ui.bakerdelegation.baker.BakerIntroFlowActivity
+import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerIntroFlowActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.DelegationStatusActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationCreateIntroFlowActivity
