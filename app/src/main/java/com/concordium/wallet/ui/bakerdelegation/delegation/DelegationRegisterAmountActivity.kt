@@ -77,7 +77,7 @@ class DelegationRegisterAmountActivity :
             val stakeAmountInputValidator = StakeAmountInputValidator(
                 if (viewModel.isUpdating()) "0" else "1",
                 null,
-                viewModel.atDisposal().toString(),
+                (viewModel.delegationData.account?.finalizedBalance ?: 0).toString(),
                 viewModel.delegationData.bakerPoolStatus?.delegatedCapital,
                 viewModel.delegationData.bakerPoolStatus?.delegatedCapitalCap,
                 viewModel.delegationData.account?.accountDelegation?.stakedAmount)
@@ -177,7 +177,7 @@ class DelegationRegisterAmountActivity :
         val stakeAmountInputValidator = StakeAmountInputValidator(
             if (viewModel.isUpdating()) "0" else "1",
             null,
-            viewModel.atDisposal().toString(),
+            (viewModel.delegationData.account?.finalizedBalance ?: 0).toString(),
             viewModel.delegationData.bakerPoolStatus?.delegatedCapital,
             viewModel.delegationData.bakerPoolStatus?.delegatedCapitalCap,
             viewModel.delegationData.account?.accountDelegation?.stakedAmount)
@@ -203,12 +203,12 @@ class DelegationRegisterAmountActivity :
                 (amountToStake == viewModel.delegationData.oldStakedAmount && viewModel.getPoolId() == viewModel.delegationData.oldDelegationTargetPoolId?.toString() ?: "") -> showNoChange()
                 amountToStake == 0L -> showNewAmountZero()
                 amountToStake < viewModel.delegationData.account?.accountDelegation?.stakedAmount?.toLongOrNull() ?: 0 -> showReduceWarning()
-                amountToStake > viewModel.atDisposal() * 0.95 -> show95PercentWarning()
+                amountToStake > (viewModel.delegationData.account?.finalizedBalance ?: 0) * 0.95 -> show95PercentWarning()
                 else -> continueToConfirmation()
             }
         } else {
             when {
-                amountToStake > viewModel.atDisposal() * 0.95 -> show95PercentWarning()
+                amountToStake > (viewModel.delegationData.account?.finalizedBalance ?: 0) * 0.95 -> show95PercentWarning()
                 else -> continueToConfirmation()
             }
         }
