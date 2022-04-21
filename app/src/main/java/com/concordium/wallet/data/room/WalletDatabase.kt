@@ -10,16 +10,13 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.concordium.wallet.data.room.WalletDatabase.Companion.VERSION_NUMBER
 import com.concordium.wallet.data.room.typeconverter.GlobalTypeConverters
 
-
-
-
 @Database(
     entities = arrayOf(Identity::class, Account::class, Transfer::class, Recipient::class, EncryptedAmount::class),
     version = VERSION_NUMBER,
     exportSchema = true
 )
 @TypeConverters(GlobalTypeConverters::class)
-public abstract class WalletDatabase : RoomDatabase() {
+abstract class WalletDatabase : RoomDatabase() {
 
     abstract fun identityDao(): IdentityDao
     abstract fun accountDao(): AccountDao
@@ -29,8 +26,7 @@ public abstract class WalletDatabase : RoomDatabase() {
 
     companion object {
 
-        const val VERSION_NUMBER = 5
-
+        const val VERSION_NUMBER = 6
 
         val MIGRATION_3_4: Migration = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
@@ -43,6 +39,13 @@ public abstract class WalletDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE account_table "
                         + " ADD COLUMN account_delegation TEXT");
+            }
+        }
+
+        val MIGRATION_5_6: Migration = object : Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE account_table "
+                        + " ADD COLUMN account_baker TEXT");
             }
         }
 
@@ -63,12 +66,11 @@ public abstract class WalletDatabase : RoomDatabase() {
                 )
                     .addMigrations(MIGRATION_3_4)
                     .addMigrations(MIGRATION_4_5)
+                    .addMigrations(MIGRATION_5_6)
                     .build()
                 INSTANCE = instance
                 return instance
             }
         }
-
-
     }
 }

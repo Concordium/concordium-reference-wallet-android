@@ -1,9 +1,12 @@
 package com.concordium.wallet.ui.bakerdelegation.baker.introflow
 
+import android.content.Intent
 import com.concordium.wallet.R
+import com.concordium.wallet.ui.bakerdelegation.baker.BakerRegistrationActivity
+import com.concordium.wallet.ui.bakerdelegation.baker.BaseBakerActivity.Companion.EXTRA_BAKER_DATA
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity
 
-class BakerIntroFlowActivity :
+class BakerRegistrationIntroFlow :
     BaseDelegationBakerFlowActivity(R.string.baker_intro_flow_title) {
 
     override fun getTitles(): IntArray {
@@ -13,8 +16,9 @@ class BakerIntroFlowActivity :
     }
 
     override fun gotoContinue() {
-        //val intent = Intent(this, IdentityCreateActivity::class.java)
-        //startActivity(intent)
+        val intent = Intent(this, BakerRegistrationActivity::class.java)
+        intent.putExtra(EXTRA_BAKER_DATA, bakerData)
+        startActivity(intent)
     }
 
     override fun getLink(position: Int): String {

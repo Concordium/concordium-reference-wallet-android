@@ -318,17 +318,17 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     request.account.accountDelegation = accountBalance.currentBalance?.accountDelegation
 
                     request.account.finalizedAccountReleaseSchedule = accountBalance.finalizedBalance?.accountReleaseSchedule
-                    accountBalance.finalizedBalance?.let {
-
-                        if(it.accountBaker != null && it.accountBaker.stakedAmount != null){
-                            it.accountBaker?.stakedAmount?.toLong()?.let { request.account.totalStaked = it }
+                    accountBalance.finalizedBalance?.let { accountBalanceInfo ->
+                        if (accountBalanceInfo.accountBaker?.stakedAmount != null) {
+                            accountBalanceInfo.accountBaker.stakedAmount.toLong()
+                                .let { request.account.totalStaked = it }
                         }
-                        else{
+                        else {
                             request.account.totalStaked = 0
                         }
-
-                        if(it.accountBaker != null && it.accountBaker.bakerId != null){
-                            it.accountBaker?.bakerId?.toLong()?.let { request.account.bakerId = it }
+                        if (accountBalanceInfo.accountBaker?.bakerId != null) {
+                            accountBalanceInfo.accountBaker.bakerId.toLong()
+                                .let { request.account.bakerId = it }
                         }
                         else{
                             request.account.bakerId = null

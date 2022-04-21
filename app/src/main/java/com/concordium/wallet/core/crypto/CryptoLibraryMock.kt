@@ -48,4 +48,8 @@ class CryptoLibraryMock(val gson: Gson) : CryptoLibrary {
     override suspend fun generateAccounts(generateAccountsInput: GenerateAccountsInput): List<PossibleAccount>? {
         return null
     }
+
+    override suspend fun generateBakerKeys(): String? {
+        TODO("Not yet implemented")
+    }
 }

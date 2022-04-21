@@ -1,20 +1,18 @@
 package com.concordium.wallet.ui.bakerdelegation.delegation
 
 import android.os.Bundle
-import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.DelegationData
 import com.concordium.wallet.data.util.CurrencyUtil
-import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import kotlinx.android.synthetic.main.activity_delegation_remove.*
-import kotlinx.android.synthetic.main.progress.*
 import javax.crypto.Cipher
 
 abstract class BaseDelegationActivity(layout: Int, titleId: Int = R.string.app_name) :
-    BaseActivity(layout, titleId) {
+    BaseDelegationBakerActivity(layout, titleId) {
 
     protected lateinit var viewModel: DelegationViewModel
 
@@ -77,14 +75,6 @@ abstract class BaseDelegationActivity(layout: Int, titleId: Int = R.string.app_n
         viewModel.loadTransactionFee(false)
     }
 
-    protected open fun showWaiting(waiting: Boolean) {
-        if (waiting) {
-            progress_layout.visibility = View.VISIBLE
-        } else {
-            progress_layout.visibility = View.GONE
-        }
-    }
-
     protected fun initializeShowAuthenticationLiveData() {
         val authenticationText = authenticateText(viewModel.shouldUseBiometrics(), viewModel.usePasscode())
         viewModel.showAuthenticationLiveData.observe(this, object : EventObserver<Boolean>() {
@@ -107,8 +97,6 @@ abstract class BaseDelegationActivity(layout: Int, titleId: Int = R.string.app_n
             }
         })
     }
-
-    protected open fun initViews() { }
 
     abstract fun transactionSuccessLiveData()
     abstract fun errorLiveData(value: Int)

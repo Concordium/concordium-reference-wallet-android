@@ -16,16 +16,14 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
-import com.concordium.wallet.data.model.DelegationData
-import com.concordium.wallet.data.model.DelegationTarget
-import com.concordium.wallet.data.model.Transaction
-import com.concordium.wallet.data.model.TransactionStatus
+import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
-import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerIntroFlowActivity
-import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity
+import com.concordium.wallet.ui.bakerdelegation.baker.BaseBakerActivity.Companion.EXTRA_BAKER_DATA
+import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRegistrationIntroFlow
+import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity.Companion.EXTRA_DELEGATION_DATA
 import com.concordium.wallet.ui.bakerdelegation.delegation.DelegationStatusActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationCreateIntroFlowActivity
 import com.concordium.wallet.ui.base.BaseActivity
@@ -38,7 +36,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.crypto.Cipher
-
 
 class AccountDetailsActivity :
     BaseActivity(R.layout.activity_account_details, R.string.account_details_title) {
@@ -54,7 +51,6 @@ class AccountDetailsActivity :
         const val RESULT_RETRY_ACCOUNT_CREATION = 2
         const val REQUESTCODE_ENABLE_SHIELDING = 1241
     }
-
 
     //region Lifecycle
     //************************************************************
@@ -184,9 +180,7 @@ class AccountDetailsActivity :
             //...then hide shielding options
             updateShieldEnabledUI()
         })
-
     }
-
 
     private fun initViews() {
         setActionBarTitle(getString(if(viewModel.isShielded) R.string.account_details_title_shielded_balance else R.string.account_details_title_regular_balance, viewModel.account.getAccountName()))
@@ -269,8 +263,8 @@ class AccountDetailsActivity :
             shield_imageview.setImageResource(R.drawable.ic_shielded_icon)
             if (viewModel.account.isBaking()) {
                 accounts_overview_total_details_baker_container.visibility = View.VISIBLE
-                //accounts_overview_total_title_baker.text = getString(R.string.account_details_stake_with_baker, viewModel.account.accountBaker.bakerId?.toString() ?: "")
-                //accounts_overview_total_details_baker.text = CurrencyUtil.formatGTU(viewModel.account.accountBaker.stakedAmount, true)
+                accounts_overview_total_title_baker.text = getString(R.string.account_details_stake_with_baker, viewModel.account.accountBaker?.bakerId?.toString() ?: "")
+                accounts_overview_total_details_baker.text = CurrencyUtil.formatGTU(viewModel.account.accountBaker?.stakedAmount ?: "0", true)
             } else if (viewModel.account.isDelegating()) {
                 accounts_overview_total_details_staked_container.visibility = View.VISIBLE
                 if (viewModel.account.accountDelegation?.delegationTarget?.delegateType == DelegationTarget.TYPE_DELEGATE_TO_L_POOL)
@@ -441,14 +435,14 @@ class AccountDetailsActivity :
         else{
             val intent = Intent(this, DelegationCreateIntroFlowActivity::class.java)
             intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
-            intent.putExtra(BaseDelegationBakerFlowActivity.EXTRA_DELEGATION_DATA, DelegationData(account, type = DelegationData.TYPE_REGISTER_DELEGATION))
+            intent.putExtra(EXTRA_DELEGATION_DATA, DelegationData(account, type = DelegationData.TYPE_REGISTER_DELEGATION))
             startActivityForResultAndHistoryCheck(intent)
         }
     }
 
-    private fun gotoBaking(item: Account) {
-        val intent = Intent(this, BakerIntroFlowActivity::class.java)
-        //intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, item)
+    private fun gotoBaking(account: Account) {
+        val intent = Intent(this, BakerRegistrationIntroFlow::class.java)
+        intent.putExtra(EXTRA_BAKER_DATA, BakerData(account))
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         startActivity(intent)
     }

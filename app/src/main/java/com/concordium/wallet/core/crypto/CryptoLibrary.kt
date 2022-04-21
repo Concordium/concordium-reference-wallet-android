@@ -37,4 +37,5 @@ interface CryptoLibrary {
 
     suspend fun generateAccounts(generateAccountsInput: GenerateAccountsInput): List<PossibleAccount>?
 
+    suspend fun generateBakerKeys(): String?
 }

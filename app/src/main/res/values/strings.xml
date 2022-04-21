@@ -349,6 +349,20 @@
     <string name="baker_intro_subtitle2">The node</string>
     <string name="baker_intro_subtitle3">Opening a pool</string>
 
+    <string name="baker_registration_title">Register baker</string>
+    <string name="baker_registration_explain">You have the option to open your baker as a pool for others to delegate their CCD to.\n\nIf you choose to open your pool, other people will be able to delegate CCDs to your baking pool.\n\nYou can also keep the pool closed, if you want only your own CCDs to be staked.</string>
+    <string name="baker_registration_open">Open for delegation</string>
+    <string name="baker_registration_closed">Closes for delegation</string>
+    <string name="baker_registration_continue">Continue</string>
+    <string name="baker_registration_export">Export baker keys</string>
+    <string name="baker_registration_export_explain">Your new baker keys have been generated. Before you can continue, you must export and save them. The keys will have to be added to the baker node.\n\nNOTICE: Besides exporting the keys, you will have to finish and submit the transaction afterwards for the baker to be registered.</string>
+    <string name="baker_registration_export_election_verify_key">Election verify key</string>
+    <string name="baker_registration_export_signature_verify_key">Signature verify key</string>
+    <string name="baker_registration_export_aggregation_verify_key">Aggregation verify key</string>
+    <string name="baker_registration_export_notice_title">Notice</string>
+    <string name="baker_registration_export_notice_message">This is your only chance to export and save the keys.\n\nThey cannot be recreated, so you will have to generate new keys and register them with a transaction, if you lose these.</string>
+    <string name="baker_registration_export_notice_ok">OK</string>
+
 
     <!-- ***** Auth ***** -->
 
@@ -506,7 +520,6 @@
     <!-- New account identity -->
     <string name="new_account_identity_title">Add Identity Data</string>
     <string name="new_account_please_wait">This process may take a while on some phones. Please hang on.</string>
-
 
 
     <!-- New account setup -->

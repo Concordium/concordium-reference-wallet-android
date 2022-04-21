@@ -121,4 +121,19 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             return@withContext null
         }
 
+    override suspend fun generateBakerKeys(): String? =
+        withContext(Dispatchers.Default) {
+            loadWalletLib()
+            val result = generate_baker_keys()
+            Log.d("Output (Code ${result.result}): ${result.output}")
+            if (result.result == CryptoLibrary.SUCCESS) {
+                /*
+                val listType = object : TypeToken<List<PossibleAccount>>() {}.type
+                return@withContext gson.fromJson<List<PossibleAccount>>(result.output, listType)
+                */
+                return@withContext null
+            }
+            Log.e("Cryptolib failed")
+            return@withContext null
+        }
 }
