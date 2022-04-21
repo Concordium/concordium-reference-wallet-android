@@ -66,7 +66,7 @@ class DelegationStatusActivity :
             findViewById<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_big_logo_ok)
             setContentTitle(R.string.delegation_status_content_registered_title)
             addContent(R.string.delegation_status_content_delegating_account, account.name + "\n\n" + account.address)
-            addContent(R.string.delegation_status_content_delegation_amount, CurrencyUtil.formatGTU(accountDelegation.stakedAmount))
+            addContent(R.string.delegation_status_content_delegation_amount, CurrencyUtil.formatGTU(accountDelegation.stakedAmount, true))
             if (accountDelegation.delegationTarget.delegateType == DelegationTarget.TYPE_DELEGATE_TO_BAKER) {
                 addContent(R.string.delegation_status_content_target_pool, accountDelegation.delegationTarget.bakerId.toString())
             }
