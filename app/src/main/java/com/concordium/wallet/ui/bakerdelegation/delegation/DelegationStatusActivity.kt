@@ -4,10 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.BakerStakePendingChange
 import com.concordium.wallet.data.model.DelegationData
 import com.concordium.wallet.data.model.DelegationTarget
+import com.concordium.wallet.data.model.PendingChange
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity
 import com.concordium.wallet.ui.bakerdelegation.common.StatusActivity
@@ -41,13 +44,23 @@ class DelegationStatusActivity :
     }
 
     override fun initView() {
+        //updateView()
+
+        viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
+            waiting?.let {
+                updateView()
+            }
+        })
+
+    }
+
+    private fun updateView() {
+
+        clearState()
 
         val account = viewModel.delegationData.account
-        val accountDelegation = account?.accountDelegation
 
-        //TODO update with proper status info
-        // LOAD STATUS FROM WALLET-PROXY ?
-        // val w = getString(R.string.delegation_status_waiting_to_finalize)
+        val accountDelegation = account?.accountDelegation
 
         if (account == null || accountDelegation == null) {
             findViewById<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_logo_icon_pending)
@@ -75,18 +88,34 @@ class DelegationStatusActivity :
             if (accountDelegation.restakeEarnings) addContent(R.string.delegation_status_content_rewards_will_be, getString(R.string.delegation_status_added_to_delegation_amount))
             else addContent(R.string.delegation_status_content_rewards_will_be, getString(R.string.delegation_status_at_disposal))
 
-            viewModel.delegationData.account?.accountDelegation?.pendingChange?.let {
-                addContent(getString(R.string.delegation_status_content_take_effect_on) + "\n" + it.effectiveTime, "")
-                if (it.change == "RemoveStake") {
-                    status_button_top.isEnabled = false
-                    addContent(getString(R.string.delegation_status_content_delegation_will_be_stopped), "")
-                }
-            }
-
             status_button_top.visibility = View.VISIBLE
             status_button_top.text = getString(R.string.delegation_status_stop)
             status_button_top.setOnClickListener {
                 continueToDelete()
+            }
+
+            viewModel.delegationData.account?.accountDelegation?.pendingChange?.let {
+                addContent(getString(R.string.delegation_status_content_take_effect_on) + "\n" + it.effectiveTime, "")
+                if (it.change == "RemoveStake") {
+                    addContent(getString(R.string.delegation_status_content_delegation_will_be_stopped), "")
+                }
+            }
+
+            /*
+            The stop button has the following states:
+            */
+
+            // no pending changes (either empty or equal to NoChange) -> enabled
+            // accBalance -> if you have pending changes -> disabled
+            viewModel.delegationData.account?.accountDelegation?.pendingChange.let { pendingChange ->
+                status_button_top.isEnabled = pendingChange == null  || pendingChange.change == PendingChange.CHANGE_NO_CHANGE
+            }
+
+            // bakerPool -> bakerstakependingchange == RemovePool (aka the baker closed the pool) -> enabled
+            viewModel.delegationData.bakerPoolStatus?.bakerStakePendingChange?.pendingChangeType.let { pendingChangeType ->
+                if (pendingChangeType == BakerStakePendingChange.CHANGE_REMOVE_POOL) {
+                    status_button_top.isEnabled = true
+                }
             }
 
             status_button_bottom.visibility = View.VISIBLE
@@ -95,6 +124,13 @@ class DelegationStatusActivity :
                 continueToUpdate()
             }
         }
+
+        //If there are transactions in progress
+        if(viewModel.delegationData.isTransactionInProgress){
+            status_button_top.isEnabled = false
+            status_button_bottom.isEnabled = false
+        }
+
     }
 
     private fun continueToDelete(){

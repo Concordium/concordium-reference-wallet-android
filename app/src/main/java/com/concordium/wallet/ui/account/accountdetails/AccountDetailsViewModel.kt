@@ -53,6 +53,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     lateinit var account: Account
     var isShielded: Boolean = false
+    var hasPendingTransactions: Boolean = false
 
     private val proxyRepository = ProxyRepository()
     private val accountRepository: AccountRepository
@@ -283,10 +284,14 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     fun getLocalTransfers() {
         viewModelScope.launch {
+            hasPendingTransactions = false
             val recipientList = recipientRepository.getAll()
             transactionMappingHelper = TransactionMappingHelper(account, recipientList)
             val transferList = transferRepository.getAllByAccountId(account.id)
             for (transfer in transferList) {
+                if(transfer.transactionType == TransactionType.LOCAL_DELEGATIONORBAKER){
+                    hasPendingTransactions = true
+                }
                 val transaction = transfer.toTransaction()
                 transactionMappingHelper.addTitlesToTransaction(transaction, transfer, getApplication())
                 nonMergedLocalTransactions.add(transaction)

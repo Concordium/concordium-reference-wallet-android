@@ -12,6 +12,7 @@ data class DelegationData(
     var isLPool: Boolean = false,
     var isBakerPool: Boolean = true,
     var poolId: String = "",
+    var isTransactionInProgress: Boolean = false,
     var type: String
     ) : Serializable {
 

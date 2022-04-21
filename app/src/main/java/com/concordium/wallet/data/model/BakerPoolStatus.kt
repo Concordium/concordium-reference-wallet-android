@@ -10,16 +10,12 @@ data class BakerPoolStatus(
     val bakerAddress: String,
     val delegatedCapital: String,
     val currentPaydayStatus: PayDayStatus,
-    val poolInfo: BakerPoolInfo
+    val poolInfo: BakerPoolInfo,
+    val bakerStakePendingChange: BakerStakePendingChange
+
 ) : Serializable
 
 /*
-change:
-
-"pendingChange":{"change":"ReduceStake","newStake":"1000000000","effectiveTime":1648563555500}
-or
-"pendingChange":{"change":"RemoveStake", "effectiveTime":1648563555500}
-
 
 {
 x	"poolType": "BakerPool",

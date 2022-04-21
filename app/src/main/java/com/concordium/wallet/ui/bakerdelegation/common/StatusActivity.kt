@@ -43,5 +43,10 @@ abstract class StatusActivity(titleId: Int) :
         status_list_container.visibility = View.GONE
     }
 
+    fun clearState(){
+        status_empty.text = ""
+        status_list_container.removeAllViews()
+    }
+
     abstract fun initView()
 }

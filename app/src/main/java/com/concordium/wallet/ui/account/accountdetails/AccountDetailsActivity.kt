@@ -433,9 +433,9 @@ class AccountDetailsActivity :
     }
 
     private fun gotoDelegation(account: Account) {
-        if(account.accountDelegation != null){
+        if(account.accountDelegation != null || viewModel.hasPendingTransactions){
             val intent = Intent(this, DelegationStatusActivity::class.java)
-            intent.putExtra(DelegationStatusActivity.EXTRA_DELEGATION_DATA, DelegationData(account, type = DelegationData.TYPE_UPDATE_DELEGATION))
+            intent.putExtra(DelegationStatusActivity.EXTRA_DELEGATION_DATA, DelegationData(account, isTransactionInProgress = viewModel.hasPendingTransactions, type = DelegationData.TYPE_UPDATE_DELEGATION))
             startActivityForResultAndHistoryCheck(intent)
         }
         else{
