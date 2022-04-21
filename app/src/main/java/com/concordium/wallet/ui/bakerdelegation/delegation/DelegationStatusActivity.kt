@@ -80,6 +80,10 @@ class DelegationStatusActivity :
                 if (it.change == "RemoveStake") {
                     status_button_top.isEnabled = false
                     addContent(getString(R.string.delegation_status_content_delegation_will_be_stopped), "")
+                } else if (it.change == "ReduceStake") {
+                    it.newStake?.let { newStake ->
+                        addContent(getString(R.string.delegation_status_new_amount), CurrencyUtil.formatGTU(newStake, true))
+                    }
                 }
             }
 
