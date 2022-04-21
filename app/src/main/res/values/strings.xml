@@ -232,6 +232,7 @@
     <string name="delegation_status_at_disposal">At disposal</string>
     <string name="delegation_status_waiting_to_finalize">Waiting for transaction to finalize</string>
     <string name="delegation_status_new_amount">New delegation amount</string>
+    <string name="delegation_status_effective_time">%1$s at %2$s</string>
 
     <string name="delegation_register_delegation_title">Register delegation</string>
     <string name="delegation_update_delegation_title">Update delegation</string>

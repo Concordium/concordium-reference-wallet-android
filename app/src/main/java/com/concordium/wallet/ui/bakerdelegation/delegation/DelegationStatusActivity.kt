@@ -14,6 +14,8 @@ import com.concordium.wallet.ui.bakerdelegation.common.StatusActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationRemoveIntroFlowActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationUpdateIntroFlowActivity
 import com.concordium.wallet.ui.common.GenericFlowActivity
+import com.concordium.wallet.util.DateTimeUtil.formatTo
+import com.concordium.wallet.util.DateTimeUtil.toDate
 import kotlinx.android.synthetic.main.delegationbaker_status.*
 
 class DelegationStatusActivity :
@@ -75,13 +77,16 @@ class DelegationStatusActivity :
             if (accountDelegation.restakeEarnings) addContent(R.string.delegation_status_content_rewards_will_be, getString(R.string.delegation_status_added_to_delegation_amount))
             else addContent(R.string.delegation_status_content_rewards_will_be, getString(R.string.delegation_status_at_disposal))
 
-            viewModel.delegationData.account?.accountDelegation?.pendingChange?.let {
-                addContent(getString(R.string.delegation_status_content_take_effect_on) + "\n" + it.effectiveTime, "")
-                if (it.change == "RemoveStake") {
+            viewModel.delegationData.account?.accountDelegation?.pendingChange?.let { pendingChange ->
+                val prefix = pendingChange.effectiveTime.toDate()?.formatTo("yyyy-MM-dd")
+                val postfix = pendingChange.effectiveTime.toDate()?.formatTo("HH:mm")
+                val dateStr = getString(R.string.delegation_status_effective_time, prefix, postfix)
+                addContent(getString(R.string.delegation_status_content_take_effect_on) + "\n" + dateStr, "")
+                if (pendingChange.change == "RemoveStake") {
                     status_button_top.isEnabled = false
                     addContent(getString(R.string.delegation_status_content_delegation_will_be_stopped), "")
-                } else if (it.change == "ReduceStake") {
-                    it.newStake?.let { newStake ->
+                } else if (pendingChange.change == "ReduceStake") {
+                    pendingChange.newStake?.let { newStake ->
                         addContent(getString(R.string.delegation_status_new_amount), CurrencyUtil.formatGTU(newStake, true))
                     }
                 }
