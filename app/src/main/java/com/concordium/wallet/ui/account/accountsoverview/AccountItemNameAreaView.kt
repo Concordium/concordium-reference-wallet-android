@@ -29,6 +29,8 @@ class AccountItemNameAreaView(context: Context, attrs: AttributeSet?): LinearLay
         status_imageview.visibility = if (accountWithIdentitiy.account.transactionStatus == TransactionStatus.FINALIZED) View.GONE else View.VISIBLE
         name_textview.text = accountWithIdentitiy.account.getAccountName()
 
+        status_icon.visibility = View.VISIBLE
+        status_text.visibility = View.VISIBLE
         if (accountWithIdentitiy.account.isBaking()) {
             status_icon.setImageResource(R.drawable.ic_baking)
             status_text.text = context.getString(R.string.view_account_baking)
