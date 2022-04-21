@@ -23,7 +23,7 @@ class DelegationRegisterPoolActivity :
 
     private fun hideError() {
         pool_id.setTextColor(getColor(R.color.theme_blue))
-        pool_id_error.visibility = View.GONE
+        pool_id_error.visibility = View.INVISIBLE
     }
 
     private fun showDetailedPage() {

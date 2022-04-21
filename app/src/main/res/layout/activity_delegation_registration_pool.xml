@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout"
     style="@style/Layout.Root">
@@ -40,23 +39,25 @@
                             style="@style/TextView.Standard"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/activity_horizontal_margin"
+                            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                            android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
                             android:gravity="center"
                             android:text="@string/delegation_register_delegation_intro" />
-
-
                         <com.concordium.wallet.uicore.view.SegmentedControlView
                             android:id="@+id/pool_options"
                             android:layout_width="307dp"
                             android:layout_height="@dimen/segmented_control_height"
-                            android:layout_gravity="center"
-                            android:layout_margin="@dimen/activity_vertical_margin" />
+                            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                            android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
+                            android:layout_gravity="center" />
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:orientation="vertical"
-                            android:layout_margin="50dp">
+                            android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
+                            android:layout_marginStart="50dp"
+                            android:layout_marginEnd="50dp">
                             <TextView
                                 android:id="@+id/existing_pool_id"
                                 style="@style/TextView.Mono"
@@ -80,26 +81,26 @@
                                 android:layout_height="match_parent"
                                 android:layout_margin="10dp"
                                 android:layout_gravity="center"
-                                android:visibility="gone"
+                                android:visibility="invisible"
                                 tools:visibility="visible"
                                 tools:text="@string/delegation_register_delegation_pool_id_error" />
                         </LinearLayout>
-
                         <TextView
                             android:id="@+id/pool_desc"
                             style="@style/TextView.Standard"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_margin="@dimen/activity_vertical_margin"
+                            android:layout_marginHorizontal="@dimen/activity_vertical_margin"
+                            android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
                             android:gravity="center"
                             android:text="@string/delegation_register_delegation_desc" />
                     </LinearLayout>
-
                     <RelativeLayout
                         android:id="@+id/button_container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/activity_vertical_margin"
+                        android:layout_marginHorizontal="@dimen/activity_vertical_margin"
+                        android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
                         android:orientation="horizontal">
@@ -117,6 +118,5 @@
                 tools:visibility="gone"/>
         </RelativeLayout>
     </RelativeLayout>
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -39,14 +39,15 @@
                             style="@style/TextView.Standard.Small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/activity_horizontal_margin"
+                            android:layout_marginHorizontal="@dimen/activity_vertical_margin"
+                            android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
                             android:gravity="center"
                             android:text="@string/delegation_register_delegation_amount_current_amount" />
-
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/activity_horizontal_margin"
+                            android:layout_marginHorizontal="@dimen/activity_vertical_margin"
+                            android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
                             android:orientation="vertical">
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -87,25 +88,25 @@
                             </LinearLayout>
                         </LinearLayout>
 
-
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:orientation="vertical"
-                            android:layout_margin="20dp">
+                            android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
+                            android:layout_marginHorizontal="20dp">
                             <TextView
                                 android:id="@+id/amount_desc"
                                 style="@style/TextView.Small"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:layout_margin="10dp"
                                 android:layout_gravity="center"
                                 android:gravity="center"
                                 android:text="@string/delegation_register_delegation_amount_enter_amount" />
                             <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
                                 android:gravity="center">
                                 <EditText
                                     android:id="@+id/amount"
@@ -127,7 +128,7 @@
                                     android:clickable="true"
                                     android:layout_margin="@dimen/card_corner_radius"
                                     android:visibility="gone"
-                                    style="@style/TextView.Large"
+                                    style="@style/TextView.Medium"
                                     android:textColor="@color/text_grey"
                                     android:text="@string/delegation_register_delegation_amount_locked" />
                             </RelativeLayout>
@@ -136,7 +137,7 @@
                                 style="@style/TextView.Standard.Error"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:layout_margin="10dp"
+                                android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
                                 android:layout_gravity="center"
                                 android:visibility="invisible"
                                 tools:visibility="visible"
@@ -147,7 +148,8 @@
                             android:id="@+id/pool_info"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/activity_horizontal_margin"
+                            android:layout_marginHorizontal="@dimen/activity_vertical_margin"
+                            android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
                             android:orientation="vertical">
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -194,10 +196,10 @@
                             android:textColor="@color/text_grey"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="5dp"
+                            android:layout_marginTop="5dp"
                             android:layout_gravity="center"
                             android:gravity="center"
-                            android:visibility="gone"
+                            android:visibility="invisible"
                             tools:visibility="visible"
                             android:text="@string/delegation_register_delegation_amount_estimated_transaction_fee" />
 
@@ -206,7 +208,8 @@
                             style="@style/TextView.Standard"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/activity_vertical_margin"
+                            android:layout_marginHorizontal="@dimen/activity_vertical_margin"
+                            android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
                             android:gravity="center"
                             android:text="@string/delegation_register_delegation_amount_do_you_want" />
 
@@ -216,13 +219,15 @@
                         android:layout_width="307dp"
                         android:layout_height="@dimen/segmented_control_height"
                         android:layout_gravity="center"
-                        android:layout_margin="@dimen/activity_vertical_margin" />
+                        android:layout_marginHorizontal="@dimen/activity_vertical_margin"
+                        android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin" />
 
                     <RelativeLayout
                         android:id="@+id/button_container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/activity_vertical_margin"
+                        android:layout_marginHorizontal="@dimen/activity_vertical_margin"
+                        android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
                         android:orientation="horizontal">
