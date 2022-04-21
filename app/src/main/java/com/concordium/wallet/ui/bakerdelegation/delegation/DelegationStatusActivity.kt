@@ -17,6 +17,8 @@ import com.concordium.wallet.ui.bakerdelegation.common.StatusActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationRemoveIntroFlowActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationUpdateIntroFlowActivity
 import com.concordium.wallet.ui.common.GenericFlowActivity
+import com.concordium.wallet.util.DateTimeUtil.formatTo
+import com.concordium.wallet.util.DateTimeUtil.toDate
 import kotlinx.android.synthetic.main.delegationbaker_status.*
 
 class DelegationStatusActivity :
@@ -77,7 +79,7 @@ class DelegationStatusActivity :
             findViewById<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_big_logo_ok)
             setContentTitle(R.string.delegation_status_content_registered_title)
             addContent(R.string.delegation_status_content_delegating_account, account.name + "\n\n" + account.address)
-            addContent(R.string.delegation_status_content_delegation_amount, CurrencyUtil.formatGTU(accountDelegation.stakedAmount))
+            addContent(R.string.delegation_status_content_delegation_amount, CurrencyUtil.formatGTU(accountDelegation.stakedAmount, true))
             if (accountDelegation.delegationTarget.delegateType == DelegationTarget.TYPE_DELEGATE_TO_BAKER) {
                 addContent(R.string.delegation_status_content_target_pool, accountDelegation.delegationTarget.bakerId.toString())
             }
@@ -88,16 +90,24 @@ class DelegationStatusActivity :
             if (accountDelegation.restakeEarnings) addContent(R.string.delegation_status_content_rewards_will_be, getString(R.string.delegation_status_added_to_delegation_amount))
             else addContent(R.string.delegation_status_content_rewards_will_be, getString(R.string.delegation_status_at_disposal))
 
+
             status_button_top.visibility = View.VISIBLE
             status_button_top.text = getString(R.string.delegation_status_stop)
             status_button_top.setOnClickListener {
                 continueToDelete()
             }
 
-            viewModel.delegationData.account?.accountDelegation?.pendingChange?.let {
-                addContent(getString(R.string.delegation_status_content_take_effect_on) + "\n" + it.effectiveTime, "")
-                if (it.change == "RemoveStake") {
+            viewModel.delegationData.account?.accountDelegation?.pendingChange?.let { pendingChange ->
+                val prefix = pendingChange.effectiveTime.toDate()?.formatTo("yyyy-MM-dd")
+                val postfix = pendingChange.effectiveTime.toDate()?.formatTo("HH:mm")
+                val dateStr = getString(R.string.delegation_status_effective_time, prefix, postfix)
+                addContent(getString(R.string.delegation_status_content_take_effect_on) + "\n" + dateStr, "")
+                if (pendingChange.change == "RemoveStake") {
                     addContent(getString(R.string.delegation_status_content_delegation_will_be_stopped), "")
+                } else if (pendingChange.change == "ReduceStake") {
+                    pendingChange.newStake?.let { newStake ->
+                        addContent(getString(R.string.delegation_status_new_amount), CurrencyUtil.formatGTU(newStake, true))
+                    }
                 }
             }
 

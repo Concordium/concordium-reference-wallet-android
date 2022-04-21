@@ -42,6 +42,7 @@
                             style="@style/TextView.Standard"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            tools:text="You are about to submit a delegation transaction that lowers your delegation amount. It will take effect after %d days and the delegation amount cannot be changed during this period of time."
                             android:gravity="center" />
 
                         <include layout="@layout/transaction_submitted_header" />
@@ -49,7 +50,7 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/activity_vertical_margin"
+                            android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
                             android:background="@drawable/receipt_background_new"
                             android:orientation="vertical">
                             <TextView
@@ -62,7 +63,8 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/activity_receipt_padding"
+                                android:layout_marginHorizontal="@dimen/activity_vertical_margin"
+                                android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
                                 android:orientation="vertical">
                                 <TextView
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
@@ -124,7 +126,8 @@
                         android:id="@+id/button_container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/activity_vertical_margin"
+                        android:layout_marginHorizontal="@dimen/activity_vertical_margin"
+                        android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
                         android:orientation="horizontal"
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp">
