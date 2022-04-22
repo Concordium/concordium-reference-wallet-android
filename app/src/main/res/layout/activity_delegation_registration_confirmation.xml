@@ -78,6 +78,7 @@
                                     android:layout_height="wrap_content"
                                     tools:text="Main\n\n14f3632ac857400d417a7277f726c43a 8ddf07184f10a429cf0759e985247c33" />
                                 <TextView
+                                    android:id="@+id/delegation_amount_confirmation_title"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -89,6 +90,7 @@
                                     android:layout_height="wrap_content"
                                     tools:text="Ͼ100.00" />
                                 <TextView
+                                    android:id="@+id/target_pool_title"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -100,6 +102,7 @@
                                     android:layout_height="wrap_content"
                                     tools:text="73456" />
                                 <TextView
+                                    android:id="@+id/rewards_will_be_title"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
