@@ -6,9 +6,9 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def versionBuildNumberSequential = 80
+def versionBuildNumberSequential = 81
 
-def versionBuildNumberMajor = 2
+def versionBuildNumberMajor = 3
 def versionBuildNumberMinor = 0
 def versionBuildNumberPatch = 0
 
