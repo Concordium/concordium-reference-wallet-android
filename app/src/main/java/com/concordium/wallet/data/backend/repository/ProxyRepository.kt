@@ -177,9 +177,12 @@ class ProxyRepository() {
     }
 
 
-    fun getTransferCost(type: String, memoSize: Int?, amount: Long? = null, restake: Boolean? = null, lPool: Boolean? = null, success: (TransferCost) -> Unit, failure: ((Throwable) -> Unit)?): BackendRequest<TransferCost> {
-        val lPoolArg = if(lPool == true) "lPool" else null
-        val call = backend.transferCost(type, memoSize, amount, restake, lPoolArg)
+    fun getTransferCost(type: String, memoSize: Int?, amount: Long? = null, restake: Boolean? = null, lPool: Boolean? = null, targetChange: Boolean? = null, success: (TransferCost) -> Unit, failure: ((Throwable) -> Unit)?): BackendRequest<TransferCost> {
+
+        val lPoolArg = if (lPool == true) "lPool" else null
+        val targetArg = if (targetChange == true) "target" else null
+
+        val call = backend.transferCost(type, memoSize, amount, restake, lPoolArg, targetArg)
 
         call.enqueue(object : BackendCallback<TransferCost>() {
 

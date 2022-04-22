@@ -163,28 +163,31 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
 
     fun loadTransactionFee(notifyObservers: Boolean) {
 
-        var type = when(delegationData.type) {
+        val type = when(delegationData.type) {
             DelegationData.TYPE_REGISTER_DELEGATION -> ProxyRepository.REGISTER_DELEGATION
             DelegationData.TYPE_UPDATE_DELEGATION -> ProxyRepository.UPDATE_DELEGATION
             DelegationData.TYPE_REMOVE_DELEGATION -> ProxyRepository.REMOVE_DELEGATION
             else -> ProxyRepository.REGISTER_DELEGATION
         }
 
-        var amount = when(delegationData.type) {
+        val amount = when(delegationData.type) {
             DelegationData.TYPE_UPDATE_DELEGATION -> delegationData.amount
             else -> null
         }
 
-        var restake = when(delegationData.type) {
+        val restake = when(delegationData.type) {
             DelegationData.TYPE_UPDATE_DELEGATION -> delegationData.restake
             else -> null
         }
+
+        val targetChange: Boolean? = if (poolHasChanged()) true else null
 
         proxyRepository.getTransferCost(type,
             null,
             amount,
             restake,
             delegationData.isLPool,
+            targetChange,
             {
                 delegationData.energy = it.energy
                 delegationData.cost = it.cost.toLong()

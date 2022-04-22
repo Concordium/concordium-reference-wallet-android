@@ -195,7 +195,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
         proxyRepository.getTransferCost(type,
             if (tempData.memo == null) null else tempData.memo!!.length / 2, //div by 2 because hex takes up twice the length
-            null,null,null,
+            null,null,null, null,
             {
                 tempData.energy = it.energy
                 _transactionFeeLiveData.value = it.cost.toLong()

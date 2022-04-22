@@ -37,7 +37,8 @@ interface ProxyBackend {
         @Query("memoSize") memoSize: Int? = null,
         @Query("amount") amount: Long? = null,
         @Query("restake") restake: Boolean? = null,
-        @Query("lPool") lPool: String? = null
+        @Query("lPool") lPool: String? = null,
+        @Query("target") target: String? = null
     ): Call<TransferCost>
 
     @GET("v0/chainParameters")
