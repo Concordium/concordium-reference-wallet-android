@@ -38,6 +38,7 @@ class DelegationRegisterPoolActivity :
             getString(R.string.delegation_register_delegation_pool_baker),
             object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
+                    pool_id.setText("")
                     viewModel.selectBakerPool()
                     updateVisibilities()
                 }

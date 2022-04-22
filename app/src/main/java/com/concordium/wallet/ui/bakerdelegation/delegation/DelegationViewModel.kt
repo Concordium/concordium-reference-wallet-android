@@ -74,6 +74,24 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
         this.delegationData = delegationData
     }
 
+    fun restakeHasChanged(): Boolean {
+        return delegationData.restake != delegationData.oldRestake
+    }
+
+    fun stakedAmountHasChanged(): Boolean {
+        return delegationData.amount != delegationData.oldStakedAmount
+    }
+
+    fun poolHasChanged(): Boolean {
+        if (delegationData.isLPool && delegationData.oldDelegationIsBaker != null && delegationData.oldDelegationIsBaker!!)
+            return true
+        if (delegationData.isBakerPool && delegationData.oldDelegationIsBaker != null && delegationData.oldDelegationIsBaker == false)
+            return true
+        if (delegationData.isBakerPool && delegationData.oldDelegationIsBaker == true && delegationData.poolId != delegationData.oldDelegationTargetPoolId?.toString() ?: "")
+            return true
+        return false
+    }
+
     fun isBakerPool(): Boolean {
         return delegationData.account?.accountDelegation?.delegationTarget?.delegateType == DelegationTarget.TYPE_DELEGATE_TO_BAKER
     }
@@ -103,6 +121,7 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
     fun selectLPool() {
         this.delegationData.isLPool = true
         this.delegationData.isBakerPool = false
+        this.delegationData.poolId = ""
     }
 
     fun markRestake(restake: Boolean) {
@@ -295,11 +314,11 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
             encryptionSK = encryptionSecretKey
 
         var capital: String? = null
-        if (delegationData.oldStakedAmount != delegationData.amount)
+        if (stakedAmountHasChanged())
             capital = delegationData.amount.toString()
 
         var restakeEarnings: Boolean? = null
-        if (delegationData.type != DelegationData.TYPE_REMOVE_DELEGATION && delegationData.oldRestake != delegationData.restake)
+        if (delegationData.type != DelegationData.TYPE_REMOVE_DELEGATION && restakeHasChanged())
             restakeEarnings = delegationData.restake
 
         var delegationTarget: DelegationTarget? = null
@@ -309,7 +328,7 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
             else
                 DelegationTarget(DelegationTarget.TYPE_DELEGATE_TO_L_POOL, null)
         } else if (delegationData.type == DelegationData.TYPE_UPDATE_DELEGATION) {
-            if (delegationData.oldDelegationIsBaker != isBakerPool() || delegationData.oldDelegationTargetPoolId != delegationData.account?.accountDelegation?.delegationTarget?.bakerId) {
+            if (poolHasChanged()) {
                 delegationTarget = if (delegationData.isBakerPool)
                     DelegationTarget(DelegationTarget.TYPE_DELEGATE_TO_BAKER, delegationData.poolId.toLong())
                 else
