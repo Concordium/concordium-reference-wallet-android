@@ -185,12 +185,26 @@ class AccountDetailsActivity :
             updateShieldEnabledUI()
         })
 
+        viewModel.accountUpdatedLiveData.observe(this, Observer {
+            initTopContent()
+        })
     }
 
 
     private fun initViews() {
-        setActionBarTitle(getString(if(viewModel.isShielded) R.string.account_details_title_shielded_balance else R.string.account_details_title_regular_balance, viewModel.account.getAccountName()))
         showWaiting(false)
+
+        initTopContent()
+
+
+        initTabs()
+
+        updateShieldEnabledUI()
+
+    }
+
+    private fun initTopContent() {
+        setActionBarTitle(getString(if(viewModel.isShielded) R.string.account_details_title_shielded_balance else R.string.account_details_title_regular_balance, viewModel.account.getAccountName()))
         when (viewModel.account.transactionStatus) {
             TransactionStatus.ABSENT -> {
                 setErrorMode()
@@ -231,11 +245,6 @@ class AccountDetailsActivity :
         shield_textview.text = if(viewModel.isShielded) resources.getText(R.string.account_details_unshield) else resources.getText(R.string.account_details_shield)
 
         account_total_details_disposal_text.text = if(viewModel.isShielded) resources.getString(R.string.account_shielded_total_details_disposal, viewModel.account.name) else resources.getString(R.string.account_total_details_disposal)
-
-
-        initTabs()
-
-        updateShieldEnabledUI()
 
     }
 

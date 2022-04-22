@@ -120,6 +120,10 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     val selectedTransactionForDecrytionLiveData: LiveData<Transaction>
         get() = _selectedTransactionForDecrytionLiveData
 
+    private var _accountUpdatedLiveData = MutableLiveData<Boolean>()
+    val accountUpdatedLiveData: LiveData<Boolean>
+        get() = _accountUpdatedLiveData
+
     init {
         val accountDao = WalletDatabase.getDatabase(application).accountDao()
         accountRepository = AccountRepository(accountDao)
@@ -254,6 +258,12 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             override fun onDone(totalBalances: TotalBalancesData) {
                 _totalBalanceLiveData.value = Pair(if(isShielded) account.totalShieldedBalance else account.totalUnshieldedBalance, totalBalances.totalContainsEncrypted)
                 getLocalTransfers()
+                viewModelScope.launch {
+                    accountRepository.findById(account.id)?.let { accountCandidate ->
+                        account = accountCandidate
+                        _accountUpdatedLiveData.value = true
+                    }
+                }
             }
 
             override fun onNewAccountFinalized(accountName: String) {

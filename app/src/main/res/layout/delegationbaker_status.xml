@@ -71,7 +71,7 @@
                     </LinearLayout>
                     <TextView
                         android:id="@+id/status_empty"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         style="@style/TextView.Standard.White"
                         android:textAlignment="center"
@@ -79,7 +79,7 @@
                         android:layout_margin="15dp"
                         android:visibility="gone"
                         tools:visibility="visible"
-                        tools:text="This account has no xxx registered. You can register a delegation with the button below." />
+                        tools:text="short text" />
                     <ScrollView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
