@@ -2,6 +2,8 @@ package com.concordium.wallet.ui.base
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.MotionEvent
@@ -24,9 +26,6 @@ import com.concordium.wallet.uicore.popup.Popup
 import java.io.Serializable
 import javax.crypto.Cipher
 
-
-
-
 abstract open class BaseActivity(private val layout: Int, private val titleId: Int = R.string.app_name) : AppCompatActivity() {
 
     private var titleView: TextView? = null
@@ -37,6 +36,7 @@ abstract open class BaseActivity(private val layout: Int, private val titleId: I
     companion object {
         const val REQUESTCODE_GENERIC_RETURN = 8232
         const val POP_UNTIL_ACTIVITY = "POP_UNTIL_ACTIVITY"
+        const val RESULT_FOLDER_PICKER = 101
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +71,18 @@ abstract open class BaseActivity(private val layout: Int, private val titleId: I
         })
     }
 
+    protected fun shareFile(fileName: Uri) {
+        val share = Intent(Intent.ACTION_SEND)
+        share.type = "message/rfc822"
+        share.putExtra(Intent.EXTRA_STREAM, fileName)
+        val resInfoList = this.packageManager.queryIntentActivities(share, PackageManager.MATCH_DEFAULT_ONLY)
+        for (resolveInfo in resInfoList) {
+            val packageName = resolveInfo.activityInfo.packageName
+            grantUriPermission(packageName, fileName, Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        startActivity(Intent.createChooser(share, null));
+    }
+
     /**
      * Upon returning, we check the result and pop if needed - see @onActivityResult
      */
@@ -98,6 +110,13 @@ abstract open class BaseActivity(private val layout: Int, private val titleId: I
                 }
             }
         }
+    }
+
+    protected fun openFolderPicker() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
+            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        }
+        startActivityForResult(intent, RESULT_FOLDER_PICKER)
     }
 
     fun finishUntilClass(canonicalClassName: String?, thenStart: String? = null, withKey: String? = null, withData: Serializable? = null) {

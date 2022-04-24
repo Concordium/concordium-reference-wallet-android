@@ -18,7 +18,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/create_identity_flow_top_margin"
+            android:layout_marginTop="@dimen/activity_content_margin"
             android:layout_below="@+id/toolbar_layout">
 
             <ScrollView

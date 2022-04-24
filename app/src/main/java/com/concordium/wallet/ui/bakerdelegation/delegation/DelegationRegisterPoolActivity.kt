@@ -6,6 +6,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.DelegationData
+import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.uicore.view.SegmentedControlView
 import com.concordium.wallet.util.KeyboardUtil
 import kotlinx.android.synthetic.main.activity_delegation_registration_pool.*
@@ -28,7 +29,7 @@ class DelegationRegisterPoolActivity :
 
     private fun showDetailedPage() {
         val intent = Intent(this, DelegationRegisterAmountActivity::class.java)
-        intent.putExtra(EXTRA_DELEGATION_DATA, viewModel.delegationData)
+        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.delegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 

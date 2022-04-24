@@ -20,7 +20,7 @@ class ProxyRepository() {
         const val UPDATE_DELEGATION = "updateDelegation"
         const val REMOVE_DELEGATION = "removeDelegation"
         const val REGISTER_BAKER = "registerBaker"
-        const val UPDATE_BAKE_STAKE = "updateBakerStake"
+        const val UPDATE_BAKER_STAKE = "updateBakerStake"
         const val UPDATE_BAKER_POOL = "updateBakerPool"
         const val UPDATE_BAKER_KEYS = "updateBakerKeys"
         const val REMOVE_BAKER = "removeBaker"

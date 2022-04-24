@@ -21,9 +21,10 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
-import com.concordium.wallet.ui.bakerdelegation.baker.BaseBakerActivity.Companion.EXTRA_BAKER_DATA
+import com.concordium.wallet.ui.bakerdelegation.baker.BakerRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRegistrationIntroFlow
-import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity.Companion.EXTRA_DELEGATION_DATA
+import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
+import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.ui.bakerdelegation.delegation.DelegationStatusActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationCreateIntroFlowActivity
 import com.concordium.wallet.ui.base.BaseActivity
@@ -439,20 +440,23 @@ class AccountDetailsActivity :
     private fun gotoDelegation(account: Account) {
         if(account.accountDelegation != null || viewModel.hasPendingTransactions){
             val intent = Intent(this, DelegationStatusActivity::class.java)
-            intent.putExtra(DelegationStatusActivity.EXTRA_DELEGATION_DATA, DelegationData(account, isTransactionInProgress = viewModel.hasPendingTransactions, type = DelegationData.TYPE_UPDATE_DELEGATION))
+            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, DelegationData(account, isTransactionInProgress = viewModel.hasPendingTransactions, type = DelegationData.TYPE_UPDATE_DELEGATION))
             startActivityForResultAndHistoryCheck(intent)
         }
         else{
             val intent = Intent(this, DelegationCreateIntroFlowActivity::class.java)
             intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
-            intent.putExtra(EXTRA_DELEGATION_DATA, DelegationData(account, type = DelegationData.TYPE_REGISTER_DELEGATION))
+            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, DelegationData(account, type = DelegationData.TYPE_REGISTER_DELEGATION))
             startActivityForResultAndHistoryCheck(intent)
         }
     }
 
     private fun gotoBaking(account: Account) {
-        val intent = Intent(this, BakerRegistrationIntroFlow::class.java)
-        intent.putExtra(EXTRA_BAKER_DATA, BakerData(account))
+        val intent = if (account.isBaking())
+            Intent(this, BakerRegisterAmountActivity::class.java)
+        else
+            Intent(this, BakerRegistrationIntroFlow::class.java)
+        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, DelegationData(account, type = DelegationData.TYPE_REGISTER_BAKER))
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         startActivity(intent)
     }

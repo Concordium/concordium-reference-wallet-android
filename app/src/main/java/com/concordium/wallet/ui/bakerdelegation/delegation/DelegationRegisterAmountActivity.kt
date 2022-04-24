@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.DelegationData
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
 import com.concordium.wallet.uicore.view.SegmentedControlView
 import kotlinx.android.synthetic.main.activity_delegation_registration_amount.*
@@ -266,7 +267,7 @@ class DelegationRegisterAmountActivity :
             Intent(this, DelegationRemoveActivity::class.java)
         else
             Intent(this, DelegationRegisterConfirmationActivity::class.java)
-        intent.putExtra(EXTRA_DELEGATION_DATA, viewModel.delegationData)
+        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.delegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 }

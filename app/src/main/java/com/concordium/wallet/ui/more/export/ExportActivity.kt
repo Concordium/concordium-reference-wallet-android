@@ -1,8 +1,6 @@
 package com.concordium.wallet.ui.more.export
 
 import android.content.Intent
-import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -115,7 +113,9 @@ class ExportActivity : BaseActivity(
         viewModel.shareExportFileLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
-                    shareExportFile()
+                    shareFile(viewModel.getEncryptedFileWithPath())
+                    App.appCore.session.setAccountsBackedUp(true)
+                    isShareFlowActive = true
                 }
             }
         })
@@ -175,13 +175,6 @@ class ExportActivity : BaseActivity(
         dialogFragment.show(supportFragmentManager, AuthenticationDialogFragment.AUTH_DIALOG_TAG)
     }
 
-    private fun openFolderPicker() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
-            flags = FLAG_GRANT_READ_URI_PERMISSION
-        }
-        startActivityForResult(intent, RESULT_FOLDER_PICKER)
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == RESULT_FOLDER_PICKER) {
@@ -189,20 +182,6 @@ class ExportActivity : BaseActivity(
                 viewModel.saveFileToLocalFolder(uri)
             }
         }
-    }
-
-    private fun shareExportFile() {
-        val share = Intent(Intent.ACTION_SEND)
-        share.type = "message/rfc822"
-        share.putExtra(Intent.EXTRA_STREAM, viewModel.getEncryptedFileWithPath())
-        val resInfoList = this.packageManager.queryIntentActivities(share, PackageManager.MATCH_DEFAULT_ONLY)
-        for (resolveInfo in resInfoList) {
-            val packageName = resolveInfo.activityInfo.packageName
-            grantUriPermission(packageName, viewModel.getEncryptedFileWithPath(), Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-        startActivity(Intent.createChooser(share, null));
-        App.appCore.session.setAccountsBackedUp(true)
-        isShareFlowActive = true
     }
 
     private fun replaceFragment(fragment: Fragment, name: String, addToBackStack: Boolean = true) {

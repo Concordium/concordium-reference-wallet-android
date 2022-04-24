@@ -1,11 +1,7 @@
 package com.concordium.wallet.core.crypto
 
-
 import com.concordium.wallet.data.cryptolib.*
-import com.concordium.wallet.data.model.ArsInfo
-import com.concordium.wallet.data.model.GlobalParams
-import com.concordium.wallet.data.model.IdentityProviderInfo
-import com.concordium.wallet.data.model.PossibleAccount
+import com.concordium.wallet.data.model.*
 
 interface CryptoLibrary {
 
@@ -37,5 +33,5 @@ interface CryptoLibrary {
 
     suspend fun generateAccounts(generateAccountsInput: GenerateAccountsInput): List<PossibleAccount>?
 
-    suspend fun generateBakerKeys(): String?
+    suspend fun generateBakerKeys(): BakerKeys?
 }

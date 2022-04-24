@@ -1,11 +1,8 @@
 package com.concordium.wallet.ui.bakerdelegation.delegation
 
-import android.os.Bundle
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
-import com.concordium.wallet.data.model.DelegationData
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import kotlinx.android.synthetic.main.activity_delegation_remove.*
@@ -13,28 +10,6 @@ import javax.crypto.Cipher
 
 abstract class BaseDelegationActivity(layout: Int, titleId: Int = R.string.app_name) :
     BaseDelegationBakerActivity(layout, titleId) {
-
-    protected lateinit var viewModel: DelegationViewModel
-
-    companion object {
-        const val EXTRA_DELEGATION_DATA = "EXTRA_DELEGATION_DATA"
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        initializeViewModel()
-        viewModel.initialize(intent.extras?.getSerializable(EXTRA_DELEGATION_DATA) as DelegationData)
-        initViews()
-    }
-
-    open fun initializeViewModel() {
-        showWaiting(false)
-
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(DelegationViewModel::class.java)
-    }
 
     protected fun initializeTransactionLiveData() {
         viewModel.transactionSuccessLiveData.observe(this, Observer<Boolean> { waiting ->

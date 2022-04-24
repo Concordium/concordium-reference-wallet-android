@@ -2,16 +2,12 @@ package com.concordium.wallet.core.crypto
 
 import com.concordium.mobile_wallet_lib.*
 import com.concordium.wallet.data.cryptolib.*
-import com.concordium.wallet.data.model.ArsInfo
-import com.concordium.wallet.data.model.GlobalParams
-import com.concordium.wallet.data.model.IdentityProviderInfo
-import com.concordium.wallet.data.model.PossibleAccount
+import com.concordium.wallet.data.model.*
 import com.concordium.wallet.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
 
 class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
 
@@ -121,17 +117,13 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             return@withContext null
         }
 
-    override suspend fun generateBakerKeys(): String? =
+    override suspend fun generateBakerKeys(): BakerKeys? =
         withContext(Dispatchers.Default) {
             loadWalletLib()
             val result = generate_baker_keys()
             Log.d("Output (Code ${result.result}): ${result.output}")
             if (result.result == CryptoLibrary.SUCCESS) {
-                /*
-                val listType = object : TypeToken<List<PossibleAccount>>() {}.type
-                return@withContext gson.fromJson<List<PossibleAccount>>(result.output, listType)
-                */
-                return@withContext null
+                return@withContext gson.fromJson(result.output, BakerKeys::class.java)
             }
             Log.e("Cryptolib failed")
             return@withContext null

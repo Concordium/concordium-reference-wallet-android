@@ -5,14 +5,13 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.BakerStakePendingChange
 import com.concordium.wallet.data.model.DelegationData
 import com.concordium.wallet.data.model.DelegationTarget
 import com.concordium.wallet.data.model.PendingChange
 import com.concordium.wallet.data.util.CurrencyUtil
-import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity
+import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.ui.bakerdelegation.common.StatusActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationRemoveIntroFlowActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationUpdateIntroFlowActivity
@@ -24,36 +23,17 @@ import kotlinx.android.synthetic.main.delegationbaker_status.*
 class DelegationStatusActivity :
     StatusActivity(R.string.delegation_status_title) {
 
-    private lateinit var viewModel: DelegationViewModel
-
-    companion object {
-        const val EXTRA_DELEGATION_DATA = "EXTRA_DELEGATION_DATA"
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initializeViewModel()
-        viewModel.initialize(intent.extras?.getSerializable(EXTRA_DELEGATION_DATA) as DelegationData)
         viewModel.loadChainParameters()
-        initView()
-    }
-
-    fun initializeViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(DelegationViewModel::class.java)
     }
 
     override fun initView() {
-        //updateView()
-
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let {
                 updateView()
             }
         })
-
     }
 
     private fun updateView() {
@@ -157,14 +137,14 @@ class DelegationStatusActivity :
         val intent = Intent(this, DelegationRemoveIntroFlowActivity::class.java)
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         viewModel.delegationData.type = DelegationData.TYPE_REMOVE_DELEGATION
-        intent.putExtra(BaseDelegationBakerFlowActivity.EXTRA_DELEGATION_DATA, viewModel.delegationData)
+        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.delegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 
     private fun continueToCreate() {
         val intent = Intent(this, DelegationRegisterPoolActivity::class.java)
         viewModel.delegationData.type = DelegationData.TYPE_REGISTER_DELEGATION
-        intent.putExtra(EXTRA_DELEGATION_DATA, viewModel.delegationData)
+        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.delegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 
@@ -172,7 +152,7 @@ class DelegationStatusActivity :
         val intent = Intent(this, DelegationUpdateIntroFlowActivity::class.java)
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         viewModel.delegationData.type = DelegationData.TYPE_UPDATE_DELEGATION
-        intent.putExtra(BaseDelegationBakerFlowActivity.EXTRA_DELEGATION_DATA, viewModel.delegationData)
+        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.delegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 }

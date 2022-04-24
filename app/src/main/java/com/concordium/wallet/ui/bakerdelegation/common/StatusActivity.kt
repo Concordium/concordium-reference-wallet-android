@@ -1,14 +1,33 @@
 package com.concordium.wallet.ui.bakerdelegation.common
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.DelegationData
 import com.concordium.wallet.ui.base.BaseActivity
 import kotlinx.android.synthetic.main.delegationbaker_status.*
 
 abstract class StatusActivity(titleId: Int) :
     BaseActivity(R.layout.delegationbaker_status, titleId) {
+
+    protected lateinit var viewModel: DelegationBakerViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initializeViewModel()
+        viewModel.initialize(intent.extras?.getSerializable(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA) as DelegationData)
+        initView()
+    }
+
+    private fun initializeViewModel() {
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        ).get(DelegationBakerViewModel::class.java)
+    }
 
     fun setContentTitle(res: Int){
         status_title.text = getString(res)

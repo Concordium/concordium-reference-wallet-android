@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.bakerdelegation.delegation.introflow
 import android.content.Intent
 import com.concordium.wallet.R
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity
+import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.ui.bakerdelegation.delegation.DelegationRegisterPoolActivity
 
 class DelegationUpdateIntroFlowActivity :
@@ -16,7 +17,7 @@ class DelegationUpdateIntroFlowActivity :
 
     override fun gotoContinue() {
         val intent = Intent(this, DelegationRegisterPoolActivity::class.java)
-        intent.putExtra(EXTRA_DELEGATION_DATA, delegationData)
+        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, delegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 

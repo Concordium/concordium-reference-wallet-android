@@ -22,39 +22,6 @@ class AccountTypeConverters {
     }
 
     @TypeConverter
-    fun jsonToCredential(value: String): Credential {
-        val gson = App.appCore.gson
-        return gson.fromJson(value, Credential::class.java)
-    }
-
-    @TypeConverter
-    fun credentialToJson(credential: Credential): String {
-        val gson = App.appCore.gson
-        return gson.toJson(credential)
-    }
-
-
-
-    @TypeConverter
-    fun jsonToAccountDelegation(value: String?): AccountDelegation? {
-        if(value == null){
-            return null
-        }
-        val gson = App.appCore.gson
-        return gson.fromJson(value, AccountDelegation::class.java)
-    }
-
-    @TypeConverter
-    fun accountDelegationToJson(delegation: AccountDelegation?): String? {
-        if(delegation == null){
-            return null
-        }
-        val gson = App.appCore.gson
-        return gson.toJson(delegation)
-    }
-
-
-    @TypeConverter
     fun jsonToAccountDelegation(value: String?): AccountDelegation? {
         if(value == null){
             return null
