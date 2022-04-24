@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.account.accountsoverview
 
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -12,7 +11,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
-import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
@@ -21,7 +19,6 @@ import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
-import com.concordium.wallet.ui.account.accountdetails.ShieldingIntroActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.account.newaccountname.NewAccountNameActivity
@@ -30,12 +27,7 @@ import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.uicore.dialog.CustomDialogFragment
-import com.concordium.wallet.util.Log
-import kotlinx.android.synthetic.main.activity_account_details.*
 import kotlinx.android.synthetic.main.fragment_accounts_overview.*
-import kotlinx.android.synthetic.main.fragment_accounts_overview.accounts_overview_total_details_disposal
-import kotlinx.android.synthetic.main.fragment_accounts_overview.accounts_overview_total_details_staked
-import kotlinx.android.synthetic.main.fragment_accounts_overview.root_layout
 import kotlinx.android.synthetic.main.fragment_accounts_overview.view.*
 import kotlinx.android.synthetic.main.progress.*
 import kotlinx.android.synthetic.main.progress.view.*
@@ -309,9 +301,6 @@ class AccountsOverviewFragment : BaseFragment() {
         }
 
         initializeList(view)
-
-
-
 
     }
 

@@ -75,7 +75,7 @@ class DelegationRemoveActivity :
         submit_delegation_transaction.visibility = View.GONE
         submit_delegation_finish.visibility = View.VISIBLE
         transaction_submitted.visibility = View.VISIBLE
-        viewModel.delegationData.account?.submissionId?.let {
+        viewModel.delegationData.submissionId?.let {
             transaction_submitted_divider.visibility = View.VISIBLE
             transaction_submitted_id.visibility = View.VISIBLE
             transaction_submitted_id.text = it

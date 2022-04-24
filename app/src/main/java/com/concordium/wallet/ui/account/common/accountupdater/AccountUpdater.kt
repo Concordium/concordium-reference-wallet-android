@@ -318,6 +318,9 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     request.account.accountDelegation = accountBalance.currentBalance?.accountDelegation
 
                     request.account.finalizedAccountReleaseSchedule = accountBalance.finalizedBalance?.accountReleaseSchedule
+                    accountBalance.finalizedBalance?.let {
+
+                    request.account.finalizedAccountReleaseSchedule = accountBalance.finalizedBalance?.accountReleaseSchedule
                     accountBalance.finalizedBalance?.let { accountBalanceInfo ->
                         if (accountBalanceInfo.accountBaker?.stakedAmount != null) {
                             accountBalanceInfo.accountBaker.stakedAmount.toLong()

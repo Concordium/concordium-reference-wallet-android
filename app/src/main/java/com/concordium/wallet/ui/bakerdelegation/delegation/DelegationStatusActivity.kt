@@ -90,6 +90,20 @@ class DelegationStatusActivity :
             if (accountDelegation.restakeEarnings) addContent(R.string.delegation_status_content_rewards_will_be, getString(R.string.delegation_status_added_to_delegation_amount))
             else addContent(R.string.delegation_status_content_rewards_will_be, getString(R.string.delegation_status_at_disposal))
 
+            viewModel.delegationData.account?.accountDelegation?.pendingChange?.let { pendingChange ->
+                val prefix = pendingChange.effectiveTime.toDate()?.formatTo("yyyy-MM-dd")
+                val postfix = pendingChange.effectiveTime.toDate()?.formatTo("HH:mm")
+                val dateStr = getString(R.string.delegation_status_effective_time, prefix, postfix)
+                addContent(getString(R.string.delegation_status_content_take_effect_on) + "\n" + dateStr, "")
+                if (pendingChange.change == "RemoveStake") {
+                    status_button_top.isEnabled = false
+                    addContent(getString(R.string.delegation_status_content_delegation_will_be_stopped), "")
+                } else if (pendingChange.change == "ReduceStake") {
+                    pendingChange.newStake?.let { newStake ->
+                        addContent(getString(R.string.delegation_status_new_amount), CurrencyUtil.formatGTU(newStake, true))
+                    }
+                }
+            }
 
             status_button_top.visibility = View.VISIBLE
             status_button_top.text = getString(R.string.delegation_status_stop)
@@ -97,17 +111,10 @@ class DelegationStatusActivity :
                 continueToDelete()
             }
 
-            viewModel.delegationData.account?.accountDelegation?.pendingChange?.let { pendingChange ->
-                val prefix = pendingChange.effectiveTime.toDate()?.formatTo("yyyy-MM-dd")
-                val postfix = pendingChange.effectiveTime.toDate()?.formatTo("HH:mm")
-                val dateStr = getString(R.string.delegation_status_effective_time, prefix, postfix)
-                addContent(getString(R.string.delegation_status_content_take_effect_on) + "\n" + dateStr, "")
-                if (pendingChange.change == "RemoveStake") {
+            viewModel.delegationData.account?.accountDelegation?.pendingChange?.let {
+                addContent(getString(R.string.delegation_status_content_take_effect_on) + "\n" + it.effectiveTime, "")
+                if (it.change == "RemoveStake") {
                     addContent(getString(R.string.delegation_status_content_delegation_will_be_stopped), "")
-                } else if (pendingChange.change == "ReduceStake") {
-                    pendingChange.newStake?.let { newStake ->
-                        addContent(getString(R.string.delegation_status_new_amount), CurrencyUtil.formatGTU(newStake, true))
-                    }
                 }
             }
 
@@ -139,6 +146,9 @@ class DelegationStatusActivity :
         if(viewModel.delegationData.isTransactionInProgress){
             status_button_top.isEnabled = false
             status_button_bottom.isEnabled = false
+            clearState()
+            setContentTitle(R.string.delegation_status_waiting_to_finalize_title)
+            setEmptyState(getString(R.string.delegation_status_waiting_to_finalize))
         }
 
     }

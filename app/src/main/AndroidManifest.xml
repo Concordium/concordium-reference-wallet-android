@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.INTERNET" /> <!-- Protection level: normal -->
     <uses-permission android:name="android.permission.USE_BIOMETRIC" /> <!-- Protection level: normal -->
     <uses-permission android:name="android.permission.CAMERA" /> <!-- Protection level: dangerous -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <uses-feature
         android:name="android.hardware.camera.any"
         android:required="true" />
@@ -175,6 +177,43 @@
             android:name=".ui.bakerdelegation.baker.BakerGenerateKeysAndExportActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bakerdelegation.delegation.introflow.DelegationCreateIntroFlowActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.bakerdelegation.delegation.introflow.DelegationUpdateIntroFlowActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.bakerdelegation.delegation.introflow.DelegationRemoveIntroFlowActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.bakerdelegation.delegation.DelegationRegisterPoolActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.bakerdelegation.delegation.DelegationRegisterAmountActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.bakerdelegation.delegation.DelegationRemoveActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.bakerdelegation.delegation.DelegationStatusActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".ui.bakerdelegation.delegation.DelegationRegisterConfirmationActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
+
+        <activity
+            android:name=".ui.bakerdelegation.baker.introflow.BakerIntroFlowActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
         <activity
             android:name=".ui.intro.introsetup.IntroSetupActivity"
             android:launchMode="singleTop"

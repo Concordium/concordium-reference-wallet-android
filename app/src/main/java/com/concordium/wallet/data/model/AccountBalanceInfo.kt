@@ -1,6 +1,7 @@
 package com.concordium.wallet.data.model
 
 data class AccountBalanceInfo(
+
     val accountAmount: String,
     val accountEncryptedAmount: AccountEncryptedAmount,
     val accountNonce: Int,

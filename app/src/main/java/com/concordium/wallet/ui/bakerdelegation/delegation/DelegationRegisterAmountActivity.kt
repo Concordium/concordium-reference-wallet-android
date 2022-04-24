@@ -184,6 +184,8 @@ class DelegationRegisterAmountActivity :
 
     private fun onContinueClicked() {
 
+        if (!pool_registration_continue.isEnabled) return
+
         val stakeAmountInputValidator = StakeAmountInputValidator(
             if (viewModel.isUpdating()) "0" else "1",
             null,
