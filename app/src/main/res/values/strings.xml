@@ -384,6 +384,23 @@
     <string name="baker_more_than_95_continue">Continue</string>
     <string name="baker_more_than_95_new_stake">Enter new baker stake</string>
 
+    <string name="baker_registration_confirmation_title">Register baker</string>
+    <string name="baker_registration_confirmation_explain">You are about to submit a register baker transaction that locks some of your funds in a stake. If you want to unlock the stake again, there will be a cooldown period.</string>
+    <string name="baker_register_confirmation_receipt_title">Transaction: Register baker</string>
+    <string name="baker_register_confirmation_receipt_account_to_bake_from">Account to register as baker</string>
+    <string name="baker_register_confirmation_receipt_amount_to_bake">Baker stake</string>
+    <string name="baker_register_confirmation_receipt_rewards_will_be">Rewards will be</string>
+    <string name="baker_register_confirmation_receipt_pool_status">Delegation pool status</string>
+    <string name="baker_register_confirmation_receipt_pool_status_open">Open for delegation</string>
+    <string name="baker_register_confirmation_receipt_pool_status_closed">Closed for delegation</string>
+    <string name="baker_register_confirmation_receipt_election_verify_key">Election verify key</string>
+    <string name="baker_register_confirmation_receipt_signature_verify_key">Signature verify key</string>
+    <string name="baker_register_confirmation_receipt_aggregation_verify_key">Aggregation verify key</string>
+    <string name="baker_register_confirmation_receipt_submit_transaction">Submit delegation transaction</string>
+    <string name="baker_register_confirmation_receipt_finish">Finish</string>
+    <string name="baker_register_confirmation_receipt_added_to_delegation_amount">Added to delegation amount</string>
+    <string name="baker_register_confirmation_receipt_at_disposal">At disposal</string>
+
 
     <!-- ***** Auth ***** -->
 

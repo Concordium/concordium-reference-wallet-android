@@ -337,12 +337,19 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
             if (decryptedJson != null) {
                 val credentialsOutput = App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
-                createDelegation(credentialsOutput.accountKeys, credentialsOutput.encryptionSecretKey)
+                if (bakerDelegationData.isBakerFlow())
+                    createBaking(credentialsOutput.accountKeys, credentialsOutput.encryptionSecretKey)
+                else
+                    createDelegation(credentialsOutput.accountKeys, credentialsOutput.encryptionSecretKey)
             } else {
                 _errorLiveData.value = Event(R.string.app_error_encryption)
                 _waitingLiveData.value = false
             }
         }
+    }
+
+    private suspend fun createBaking(keys: AccountData, encryptionSecretKey: String?) {
+
     }
 
     private suspend fun createDelegation(keys: AccountData, encryptionSecretKey: String?) {
@@ -501,6 +508,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             if (bakerKeys == null) {
                 _errorLiveData.value = Event(R.string.app_error_lib)
             } else {
+                bakerDelegationData.electionVerifyKey = bakerKeys.electionVerifyKey
+                bakerDelegationData.signatureVerifyKey = bakerKeys.signatureVerifyKey
+                bakerDelegationData.aggregationVerifyKey = bakerKeys.aggregationVerifyKey
                 _bakerKeysLiveData.value = bakerKeys
             }
         }

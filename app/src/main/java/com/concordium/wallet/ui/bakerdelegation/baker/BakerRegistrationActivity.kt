@@ -32,7 +32,6 @@ class BakerRegistrationActivity :
             object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
                     viewModel.selectOpenBaker()
-
                 }
             },
             viewModel.isOpenBaker()
@@ -42,7 +41,6 @@ class BakerRegistrationActivity :
             object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
                     viewModel.selectClosedBaker()
-
                 }
             },
             viewModel.isClosedBaker()

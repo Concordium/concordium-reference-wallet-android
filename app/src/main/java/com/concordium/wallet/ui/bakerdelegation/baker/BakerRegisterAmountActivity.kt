@@ -182,6 +182,7 @@ class BakerRegisterAmountActivity :
     }
 
     private fun continueBakerRegistration() {
+        viewModel.bakerDelegationData.amount = CurrencyUtil.toGTUValue(amount.text.toString())
         val intent = Intent(this, BakerRegistrationActivity::class.java)
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)

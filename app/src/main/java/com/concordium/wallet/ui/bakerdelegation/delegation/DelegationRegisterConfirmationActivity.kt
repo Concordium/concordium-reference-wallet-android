@@ -6,13 +6,14 @@ import androidx.lifecycle.Observer
 import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
+import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.util.UnitConvertUtil
 import kotlinx.android.synthetic.main.activity_delegation_registration_confirmation.*
 import kotlinx.android.synthetic.main.transaction_submitted_header.*
 import kotlinx.android.synthetic.main.transaction_submitted_no.*
 
 class DelegationRegisterConfirmationActivity :
-    BaseDelegationActivity(R.layout.activity_delegation_registration_confirmation, R.string.delegation_register_delegation_title) {
+    BaseDelegationBakerActivity(R.layout.activity_delegation_registration_confirmation, R.string.delegation_register_delegation_title) {
 
     override fun initViews() {
         super.initViews()

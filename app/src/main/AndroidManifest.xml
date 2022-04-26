@@ -190,6 +190,10 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.bakerdelegation.baker.BakerRegistrationConfirmationActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.intro.introsetup.IntroSetupActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" /> <!-- Auth -->

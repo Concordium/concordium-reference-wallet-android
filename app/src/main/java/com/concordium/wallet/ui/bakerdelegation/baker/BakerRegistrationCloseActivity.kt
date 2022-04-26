@@ -11,6 +11,7 @@ import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.util.FileUtil
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
+import com.concordium.wallet.ui.common.GenericFlowActivity
 import com.concordium.wallet.ui.more.export.ExportChooseMethodFragment
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
 import kotlinx.android.synthetic.main.activity_baker_registration_close.*
@@ -102,6 +103,7 @@ class BakerRegistrationCloseActivity :
         if (resultCode == RESULT_OK && requestCode == RESULT_FOLDER_PICKER) {
             data?.data?.let { uri ->
                 viewModel.saveFileToLocalFolder(uri)
+                continueToBakerConfirmation()
             }
         }
     }
@@ -112,7 +114,15 @@ class BakerRegistrationCloseActivity :
             if (!bakerKeysJson.isNullOrEmpty()) {
                 FileUtil.saveFile(App.appContext, DelegationBakerViewModel.FILE_NAME_BAKER_KEYS, bakerKeysJson)
                 shareFile(viewModel.getTempFileWithPath())
+                continueToBakerConfirmation()
             }
         }
+    }
+
+    private fun continueToBakerConfirmation() {
+        val intent = Intent(this, BakerRegistrationConfirmationActivity::class.java)
+        intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
+        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
+        startActivityForResultAndHistoryCheck(intent)
     }
 }

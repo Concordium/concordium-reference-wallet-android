@@ -6,13 +6,14 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.DelegationData
+import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.uicore.view.SegmentedControlView
 import com.concordium.wallet.util.KeyboardUtil
 import kotlinx.android.synthetic.main.activity_delegation_registration_pool.*
 
 class DelegationRegisterPoolActivity :
-    BaseDelegationActivity(R.layout.activity_delegation_registration_pool, R.string.delegation_register_delegation_title) {
+    BaseDelegationBakerActivity(R.layout.activity_delegation_registration_pool, R.string.delegation_register_delegation_title) {
 
     private lateinit var lPoolControl: View
     private lateinit var bakerPoolControl: View

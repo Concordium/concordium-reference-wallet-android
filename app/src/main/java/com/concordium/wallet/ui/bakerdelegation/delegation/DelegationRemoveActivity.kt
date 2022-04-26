@@ -5,13 +5,14 @@ import android.view.View
 import android.widget.Toast
 import com.concordium.wallet.R
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
+import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.util.UnitConvertUtil
 import kotlinx.android.synthetic.main.activity_delegation_remove.*
 import kotlinx.android.synthetic.main.transaction_submitted_header.*
 import kotlinx.android.synthetic.main.transaction_submitted_no.*
 
 class DelegationRemoveActivity :
-    BaseDelegationActivity(R.layout.activity_delegation_remove, R.string.delegation_remove_delegation_title) {
+    BaseDelegationBakerActivity(R.layout.activity_delegation_remove, R.string.delegation_remove_delegation_title) {
 
     override fun initViews() {
         account_to_remove_delegate_from.text = (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n").plus(viewModel.bakerDelegationData.account?.address ?: "")
