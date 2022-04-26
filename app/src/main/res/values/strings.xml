@@ -493,6 +493,10 @@
     <string name="accounts_overview_account_total">Total</string>
     <string name="accounts_overview_shielded_balance">Shielded balance</string>
 
+    <string name="accounts_overview_closing_pools_notice_title">Delegation update</string>
+    <string name="accounts_overview_closing_pools_notice_message">The target pools of the following accounts will close soon. If you don’t actively change the target pool, your account will keep earning rewards as a passive delegator after the cooldown.\n\nYou can however already change your target pool via the delegation status menu, if you would rather do that.\n\nAffected delegator accounts:</string>
+    <string name="accounts_overview_closing_pools_notice_ok">Remind me next time I open the wallet</string>
+
 
     <!-- New account name -->
     <string name="new_account_name_title">New Account</string>

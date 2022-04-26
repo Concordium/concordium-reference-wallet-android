@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.data.model.BakerStakePendingChange
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
@@ -59,8 +60,6 @@ class AccountsOverviewFragment : BaseFragment() {
 
         setHasOptionsMenu(true)
         initializeViewModel()
-        viewModel.initialize()
-
     }
 
     override fun onCreateView(
@@ -205,6 +204,7 @@ class AccountsOverviewFragment : BaseFragment() {
             accountList?.let {
                 accountAdapter.setData(it)
                 checkForUnencrypted(it)
+                checkForClosingPools(it)
             }
         })
 
@@ -220,11 +220,47 @@ class AccountsOverviewFragment : BaseFragment() {
         viewModel.pendingIdentityForWarningLiveData.observe(this, Observer { identity ->
             updateWarnings()
         })
+    }
 
+    private fun checkForClosingPools(accountList: List<AccountWithIdentity>) {
+        if (App.appCore.closingPoolsChecked)
+            return
+
+        App.appCore.closingPoolsChecked = true // avoid calling this more than once for each app cold launch
+
+        val poolIds = accountList.mapNotNull { accountWithIdentity ->
+            accountWithIdentity.account.accountDelegation?.delegationTarget?.bakerId?.toString()
+        }.distinct()
+
+        viewModel.poolStatusesLiveData.observe(this, Observer { poolStatuses ->
+            if (poolStatuses.isNotEmpty()) {
+                var affectedAccounts = ""
+                poolStatuses.forEach { poolStatus ->
+                    if (poolStatus.second == BakerStakePendingChange.CHANGE_REMOVE_POOL) {
+                        val accountNames = accountList.filter { it.account.accountDelegation?.delegationTarget?.bakerId?.toString() == poolStatus.first }.map { it.account.name }
+                        accountNames.forEach { accountName ->
+                            if (accountName.isNotEmpty())
+                                affectedAccounts = affectedAccounts.plus("\n").plus(accountName)
+                        }
+                    }
+                }
+                if (affectedAccounts.isNotEmpty()) {
+                    val builder = AlertDialog.Builder(context)
+                    builder.setTitle(R.string.accounts_overview_closing_pools_notice_title)
+                    builder.setMessage(getString(R.string.accounts_overview_closing_pools_notice_message).plus(affectedAccounts))
+                    builder.setPositiveButton(getString(R.string.accounts_overview_closing_pools_notice_ok)) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    builder.create().show()
+                }
+            }
+        })
+
+        viewModel.loadPoolStatuses(poolIds)
     }
 
     private fun checkForUnencrypted(accountList: List<AccountWithIdentity>) {
-        accountList?.forEach {
+        accountList.forEach {
 
             val hasUnencryptedTransactions = it.account.finalizedEncryptedBalance?.incomingAmounts?.isNotEmpty()
             if((hasUnencryptedTransactions != null && hasUnencryptedTransactions == true)
