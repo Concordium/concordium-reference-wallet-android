@@ -10,14 +10,21 @@ import androidx.lifecycle.Observer
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.DelegationData
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
-import com.concordium.wallet.uicore.view.SegmentedControlView
 import kotlinx.android.synthetic.main.activity_delegation_registration_amount.*
+import kotlinx.android.synthetic.main.activity_delegation_registration_amount.amount
+import kotlinx.android.synthetic.main.activity_delegation_registration_amount.amount_desc
+import kotlinx.android.synthetic.main.activity_delegation_registration_amount.amount_error
+import kotlinx.android.synthetic.main.activity_delegation_registration_amount.amount_locked
+import kotlinx.android.synthetic.main.activity_delegation_registration_amount.balance_amount
+import kotlinx.android.synthetic.main.activity_delegation_registration_amount.pool_estimated_transaction_fee
+import kotlinx.android.synthetic.main.activity_delegation_registration_amount.pool_registration_continue
 import java.text.DecimalFormatSymbols
 
 class DelegationRegisterAmountActivity :
-    BaseDelegationActivity(R.layout.activity_delegation_registration_amount, R.string.delegation_register_delegation_title) {
+    BaseDelegationBakerRegisterAmountActivity(R.layout.activity_delegation_registration_amount, R.string.delegation_register_delegation_title) {
 
     private fun showError(stakeError: StakeAmountInputValidator.StakeError?) {
         amount.setTextColor(getColor(R.color.text_pink))
@@ -42,20 +49,10 @@ class DelegationRegisterAmountActivity :
     }
 
     override fun initViews() {
-        if (viewModel.isUpdating())
-            setActionBarTitle(R.string.delegation_update_delegation_title)
+        super.initViews()
 
-        restake_options.clearAll()
-        restake_options.addControl(getString(R.string.delegation_register_delegation_yes_restake), object: SegmentedControlView.OnItemClickListener {
-            override fun onItemClicked(){
-                viewModel.markRestake(true)
-            }
-        }, viewModel.delegationData.restake)
-        restake_options.addControl(getString(R.string.delegation_register_delegation_no_restake), object: SegmentedControlView.OnItemClickListener {
-            override fun onItemClicked(){
-                viewModel.markRestake(false)
-            }
-        }, !viewModel.delegationData.restake)
+        if (viewModel.isUpdatingDelegation())
+            setActionBarTitle(R.string.delegation_update_delegation_title)
 
         amount.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -75,13 +72,7 @@ class DelegationRegisterAmountActivity :
                 amount.setSelection(amount.text.length)
             }
             setAmountHint()
-            val stakeAmountInputValidator = StakeAmountInputValidator(
-                if (viewModel.isUpdating()) "0" else "1",
-                null,
-                (viewModel.delegationData.account?.finalizedBalance ?: 0).toString(),
-                viewModel.delegationData.bakerPoolStatus?.delegatedCapital,
-                viewModel.delegationData.bakerPoolStatus?.delegatedCapitalCap,
-                viewModel.delegationData.account?.accountDelegation?.stakedAmount)
+            val stakeAmountInputValidator = getStakeAmountInputValidator()
             val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString())
             if (stakeError != StakeAmountInputValidator.StakeError.OK) {
                 amount_error.text = stakeAmountInputValidator.getErrorText(this, stakeError)
@@ -91,7 +82,7 @@ class DelegationRegisterAmountActivity :
                 viewModel.loadTransactionFee(true)
             }
             if (viewModel.isInCoolDown()) {
-                pool_registration_continue.isEnabled = getAmountToStake() > viewModel.delegationData.oldStakedAmount ?: 0
+                pool_registration_continue.isEnabled = getAmountToStake() > viewModel.bakerDelegationData.oldStakedAmount ?: 0
             } else {
                 pool_registration_continue.isEnabled = true
             }
@@ -110,20 +101,20 @@ class DelegationRegisterAmountActivity :
             amount.isEnabled = true
         }
 
-        balance_amount.text = CurrencyUtil.formatGTU(viewModel.delegationData.account?.finalizedBalance ?: 0, true)
+        balance_amount.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.account?.finalizedBalance ?: 0, true)
         delegation_amount.text = CurrencyUtil.formatGTU(0, true)
-        viewModel.delegationData.account?.let { account ->
+        viewModel.bakerDelegationData.account?.let { account ->
             account.accountDelegation?.let { accountDelegation ->
                 delegation_amount.text = CurrencyUtil.formatGTU(accountDelegation.stakedAmount, true)
             }
         }
 
         pool_limit.text =
-            viewModel.delegationData.bakerPoolStatus?.let {
+            viewModel.bakerDelegationData.bakerPoolStatus?.let {
                 CurrencyUtil.formatGTU(it.delegatedCapitalCap, true)
             }
         current_pool.text =
-            viewModel.delegationData.bakerPoolStatus?.let {
+            viewModel.bakerDelegationData.bakerPoolStatus?.let {
                 CurrencyUtil.formatGTU(it.delegatedCapital, true)
             }
 
@@ -138,12 +129,23 @@ class DelegationRegisterAmountActivity :
             }
         })
 
-        pool_info.visibility = if (viewModel.delegationData.isLPool) View.GONE else View.VISIBLE
+        pool_info.visibility = if (viewModel.bakerDelegationData.isLPool) View.GONE else View.VISIBLE
 
         updateContent()
 
         initializeWaitingLiveData()
         initializeShowDetailedLiveData()
+    }
+
+
+    override fun getStakeAmountInputValidator(): StakeAmountInputValidator {
+        return StakeAmountInputValidator(
+            if (viewModel.isUpdatingDelegation()) "0" else "1",
+            null,
+            (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0).toString(),
+            viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,
+            viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapitalCap,
+            viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount)
     }
 
     override fun transactionSuccessLiveData() {
@@ -176,10 +178,10 @@ class DelegationRegisterAmountActivity :
             amount.isEnabled = false
             pool_registration_continue.isEnabled = false
         }
-        if (viewModel.delegationData.type == DelegationData.TYPE_UPDATE_DELEGATION) {
-            viewModel.delegationData.oldStakedAmount = viewModel.delegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0
+        if (viewModel.bakerDelegationData.type == DelegationData.TYPE_UPDATE_DELEGATION) {
+            viewModel.bakerDelegationData.oldStakedAmount = viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0
             amount_desc.text = getString(R.string.delegation_update_delegation_amount_enter_amount)
-            amount.setText(viewModel.delegationData.account?.accountDelegation?.stakedAmount?.let { CurrencyUtil.formatGTU(it,false) })
+            amount.setText(viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.let { CurrencyUtil.formatGTU(it,false) })
         }
     }
 
@@ -187,14 +189,7 @@ class DelegationRegisterAmountActivity :
 
         if (!pool_registration_continue.isEnabled) return
 
-        val stakeAmountInputValidator = StakeAmountInputValidator(
-            if (viewModel.isUpdating()) "0" else "1",
-            null,
-            (viewModel.delegationData.account?.finalizedBalance ?: 0).toString(),
-            viewModel.delegationData.bakerPoolStatus?.delegatedCapital,
-            viewModel.delegationData.bakerPoolStatus?.delegatedCapitalCap,
-            viewModel.delegationData.account?.accountDelegation?.stakedAmount)
-
+        val stakeAmountInputValidator = getStakeAmountInputValidator()
         val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString())
         if (stakeError != StakeAmountInputValidator.StakeError.OK) {
             amount_error.text = stakeAmountInputValidator.getErrorText(this, stakeError)
@@ -203,20 +198,20 @@ class DelegationRegisterAmountActivity :
         }
 
         val amountToStake = getAmountToStake()
-        if (viewModel.isUpdating()) {
+        if (viewModel.isUpdatingDelegation()) {
             when {
-                (amountToStake == viewModel.delegationData.oldStakedAmount &&
-                    viewModel.getPoolId() == viewModel.delegationData.oldDelegationTargetPoolId?.toString() ?: "" &&
-                    viewModel.delegationData.restake == viewModel.delegationData.oldRestake &&
-                    viewModel.delegationData.isBakerPool == viewModel.delegationData.oldDelegationIsBaker) -> showNoChange()
+                (amountToStake == viewModel.bakerDelegationData.oldStakedAmount &&
+                    viewModel.getPoolId() == viewModel.bakerDelegationData.oldDelegationTargetPoolId?.toString() ?: "" &&
+                    viewModel.bakerDelegationData.restake == viewModel.bakerDelegationData.oldRestake &&
+                    viewModel.bakerDelegationData.isBakerPool == viewModel.bakerDelegationData.oldDelegationIsBaker) -> showNoChange()
                 amountToStake == 0L -> showNewAmountZero()
-                amountToStake < viewModel.delegationData.account?.accountDelegation?.stakedAmount?.toLongOrNull() ?: 0 -> showReduceWarning()
-                amountToStake > (viewModel.delegationData.account?.finalizedBalance ?: 0) * 0.95 -> show95PercentWarning()
+                amountToStake < viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLongOrNull() ?: 0 -> showReduceWarning()
+                amountToStake > (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0) * 0.95 -> show95PercentWarning()
                 else -> continueToConfirmation()
             }
         } else {
             when {
-                amountToStake > (viewModel.delegationData.account?.finalizedBalance ?: 0) * 0.95 -> show95PercentWarning()
+                amountToStake > (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0) * 0.95 -> show95PercentWarning()
                 else -> continueToConfirmation()
             }
         }
@@ -262,12 +257,12 @@ class DelegationRegisterAmountActivity :
     }
 
     private fun continueToConfirmation() {
-        viewModel.delegationData.amount = CurrencyUtil.toGTUValue(amount.text.toString())
-        val intent = if (viewModel.delegationData.amount ?: 0 == 0L)
+        viewModel.bakerDelegationData.amount = CurrencyUtil.toGTUValue(amount.text.toString())
+        val intent = if (viewModel.bakerDelegationData.amount ?: 0 == 0L)
             Intent(this, DelegationRemoveActivity::class.java)
         else
             Intent(this, DelegationRegisterConfirmationActivity::class.java)
-        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.delegationData)
+        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 }

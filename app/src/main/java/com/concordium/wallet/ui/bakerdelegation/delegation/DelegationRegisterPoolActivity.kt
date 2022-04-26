@@ -29,7 +29,7 @@ class DelegationRegisterPoolActivity :
 
     private fun showDetailedPage() {
         val intent = Intent(this, DelegationRegisterAmountActivity::class.java)
-        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.delegationData)
+        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 
@@ -94,11 +94,11 @@ class DelegationRegisterPoolActivity :
     }
 
     private fun updateContent() {
-        if (viewModel.delegationData.type == DelegationData.TYPE_UPDATE_DELEGATION) {
+        if (viewModel.bakerDelegationData.type == DelegationData.TYPE_UPDATE_DELEGATION) {
             setActionBarTitle(R.string.delegation_update_delegation_title)
-            viewModel.delegationData.oldRestake = viewModel.delegationData.restake
-            viewModel.delegationData.oldDelegationIsBaker = viewModel.isBakerPool()
-            viewModel.delegationData.oldDelegationTargetPoolId = viewModel.delegationData.account?.accountDelegation?.delegationTarget?.bakerId
+            viewModel.bakerDelegationData.oldRestake = viewModel.bakerDelegationData.restake
+            viewModel.bakerDelegationData.oldDelegationIsBaker = viewModel.isBakerPool()
+            viewModel.bakerDelegationData.oldDelegationTargetPoolId = viewModel.bakerDelegationData.account?.accountDelegation?.delegationTarget?.bakerId
             if (viewModel.isBakerPool()) {
                 viewModel.selectBakerPool()
                 existing_pool_id.text = getString(R.string.delegation_update_delegation_pool_id_baker, getExistingPoolIdText())
@@ -110,10 +110,10 @@ class DelegationRegisterPoolActivity :
     }
 
     private fun updateVisibilities() {
-        pool_id.hint = if (viewModel.delegationData.oldDelegationTargetPoolId == null) getString(R.string.delegation_register_delegation_pool_id_hint) else getString(R.string.delegation_register_delegation_pool_id_hint_update)
-        pool_id.visibility = if (viewModel.delegationData.isLPool) View.GONE else View.VISIBLE
-        pool_desc.visibility = if (viewModel.delegationData.isLPool) View.GONE else View.VISIBLE
-        pool_registration_continue.isEnabled = getExistingPoolIdText().isNotEmpty() || viewModel.delegationData.isLPool || pool_id.text.isNotEmpty()
+        pool_id.hint = if (viewModel.bakerDelegationData.oldDelegationTargetPoolId == null) getString(R.string.delegation_register_delegation_pool_id_hint) else getString(R.string.delegation_register_delegation_pool_id_hint_update)
+        pool_id.visibility = if (viewModel.bakerDelegationData.isLPool) View.GONE else View.VISIBLE
+        pool_desc.visibility = if (viewModel.bakerDelegationData.isLPool) View.GONE else View.VISIBLE
+        pool_registration_continue.isEnabled = getExistingPoolIdText().isNotEmpty() || viewModel.bakerDelegationData.isLPool || pool_id.text.isNotEmpty()
         hideError()
     }
 
@@ -124,7 +124,7 @@ class DelegationRegisterPoolActivity :
     }
 
     private fun getExistingPoolIdText(): String {
-        viewModel.delegationData.account?.accountDelegation?.delegationTarget?.bakerId?.let {
+        viewModel.bakerDelegationData.account?.accountDelegation?.delegationTarget?.bakerId?.let {
             return it.toString()
         }
         return ""

@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.bakerdelegation.delegation
 
 import android.app.AlertDialog
 import android.view.View
+import androidx.lifecycle.Observer
 import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
@@ -14,9 +15,21 @@ class DelegationRegisterConfirmationActivity :
     BaseDelegationActivity(R.layout.activity_delegation_registration_confirmation, R.string.delegation_register_delegation_title) {
 
     override fun initViews() {
-        val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.delegationData.chainParameters?.delegatorCooldown ?: 0)
+        super.initViews()
+        viewModel.chainParametersLoadedLiveData.observe(this, Observer { success ->
+            success?.let {
+                updateViews()
+                showWaiting(false)
+            }
+        })
+        showWaiting(true)
+        viewModel.loadChainParameters()
+    }
 
-        if (viewModel.isUpdating()) {
+    private fun updateViews() {
+        val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0)
+
+        if (viewModel.isUpdatingDelegation()) {
             setActionBarTitle(R.string.delegation_update_delegation_title)
             delegation_transaction_title.text = getString(R.string.delegation_update_delegation_transaction_title)
             grace_period.text = resources.getQuantityString(R.plurals.delegation_register_delegation_confirmation_desc_update, gracePeriod, gracePeriod)
@@ -32,10 +45,10 @@ class DelegationRegisterConfirmationActivity :
             showNotice()
         }
 
-        account_to_delegate_from.text = (viewModel.delegationData.account?.name ?: "").plus("\n\n").plus(viewModel.delegationData.account?.address ?: "")
-        delegation_amount_confirmation.text = CurrencyUtil.formatGTU(viewModel.delegationData.amount ?: 0, true)
-        target_pool.text = if (viewModel.delegationData.isLPool) getString(R.string.delegation_register_delegation_pool_l) else viewModel.delegationData.poolId
-        rewards_will_be.text = if (viewModel.delegationData.restake) getString(R.string.delegation_status_added_to_delegation_amount) else getString(R.string.delegation_status_at_disposal)
+        account_to_delegate_from.text = (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n").plus(viewModel.bakerDelegationData.account?.address ?: "")
+        delegation_amount_confirmation.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
+        target_pool.text = if (viewModel.bakerDelegationData.isLPool) getString(R.string.delegation_register_delegation_pool_l) else viewModel.bakerDelegationData.poolId
+        rewards_will_be.text = if (viewModel.bakerDelegationData.restake) getString(R.string.delegation_status_added_to_delegation_amount) else getString(R.string.delegation_status_at_disposal)
 
         if (!viewModel.stakedAmountHasChanged()) {
             delegation_amount_confirmation_title.visibility = View.GONE
@@ -85,12 +98,12 @@ class DelegationRegisterConfirmationActivity :
         grace_period.visibility = View.GONE
         submit_delegation_finish.visibility = View.VISIBLE
         transaction_submitted.visibility = View.VISIBLE
-        viewModel.delegationData.submissionId?.let {
+        viewModel.bakerDelegationData.submissionId?.let {
             transaction_submitted_divider.visibility = View.VISIBLE
             transaction_submitted_id.visibility = View.VISIBLE
             transaction_submitted_id.text = it
         }
-        if (viewModel.isUpdating()) {
+        if (viewModel.isUpdatingDelegation()) {
             showNotice()
         }
     }
@@ -106,7 +119,7 @@ class DelegationRegisterConfirmationActivity :
         if (viewModel.isInCoolDown()) {
             builder.setMessage(getString(R.string.delegation_notice_message_locked))
         } else {
-            val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.delegationData.chainParameters?.delegatorCooldown ?: 0)
+            val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0)
             if (gracePeriod > 0) {
                 builder.setMessage(resources.getQuantityString(R.plurals.delegation_notice_message_decrease, gracePeriod, gracePeriod))
             } else {

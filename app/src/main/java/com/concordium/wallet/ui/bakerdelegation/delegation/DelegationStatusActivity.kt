@@ -1,10 +1,8 @@
 package com.concordium.wallet.ui.bakerdelegation.delegation
 
 import android.content.Intent
-import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
-import androidx.lifecycle.Observer
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.BakerStakePendingChange
 import com.concordium.wallet.data.model.DelegationData
@@ -23,25 +21,11 @@ import kotlinx.android.synthetic.main.delegationbaker_status.*
 class DelegationStatusActivity :
     StatusActivity(R.string.delegation_status_title) {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.loadChainParameters()
-    }
-
     override fun initView() {
-        viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
-            waiting?.let {
-                updateView()
-            }
-        })
-    }
-
-    private fun updateView() {
 
         clearState()
 
-        val account = viewModel.delegationData.account
-
+        val account = viewModel.bakerDelegationData.account
         val accountDelegation = account?.accountDelegation
 
         if (account == null || accountDelegation == null) {
@@ -70,7 +54,7 @@ class DelegationStatusActivity :
             if (accountDelegation.restakeEarnings) addContent(R.string.delegation_status_content_rewards_will_be, getString(R.string.delegation_status_added_to_delegation_amount))
             else addContent(R.string.delegation_status_content_rewards_will_be, getString(R.string.delegation_status_at_disposal))
 
-            viewModel.delegationData.account?.accountDelegation?.pendingChange?.let { pendingChange ->
+            viewModel.bakerDelegationData.account?.accountDelegation?.pendingChange?.let { pendingChange ->
                 val prefix = pendingChange.effectiveTime.toDate()?.formatTo("yyyy-MM-dd")
                 val postfix = pendingChange.effectiveTime.toDate()?.formatTo("HH:mm")
                 val dateStr = getString(R.string.delegation_status_effective_time, prefix, postfix)
@@ -91,7 +75,7 @@ class DelegationStatusActivity :
                 continueToDelete()
             }
 
-            viewModel.delegationData.account?.accountDelegation?.pendingChange?.let {
+            viewModel.bakerDelegationData.account?.accountDelegation?.pendingChange?.let {
                 addContent(getString(R.string.delegation_status_content_take_effect_on) + "\n" + it.effectiveTime, "")
                 if (it.change == "RemoveStake") {
                     addContent(getString(R.string.delegation_status_content_delegation_will_be_stopped), "")
@@ -104,12 +88,12 @@ class DelegationStatusActivity :
 
             // no pending changes (either empty or equal to NoChange) -> enabled
             // accBalance -> if you have pending changes -> disabled
-            viewModel.delegationData.account?.accountDelegation?.pendingChange.let { pendingChange ->
+            viewModel.bakerDelegationData.account?.accountDelegation?.pendingChange.let { pendingChange ->
                 status_button_top.isEnabled = pendingChange == null  || pendingChange.change == PendingChange.CHANGE_NO_CHANGE
             }
 
             // bakerPool -> bakerstakependingchange == RemovePool (aka the baker closed the pool) -> enabled
-            viewModel.delegationData.bakerPoolStatus?.bakerStakePendingChange?.pendingChangeType.let { pendingChangeType ->
+            viewModel.bakerDelegationData.bakerPoolStatus?.bakerStakePendingChange?.pendingChangeType.let { pendingChangeType ->
                 if (pendingChangeType == BakerStakePendingChange.CHANGE_REMOVE_POOL) {
                     status_button_top.isEnabled = true
                 }
@@ -123,7 +107,7 @@ class DelegationStatusActivity :
         }
 
         //If there are transactions in progress
-        if(viewModel.delegationData.isTransactionInProgress){
+        if(viewModel.bakerDelegationData.isTransactionInProgress){
             status_button_top.isEnabled = false
             status_button_bottom.isEnabled = false
             clearState()
@@ -136,23 +120,23 @@ class DelegationStatusActivity :
     private fun continueToDelete(){
         val intent = Intent(this, DelegationRemoveIntroFlowActivity::class.java)
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
-        viewModel.delegationData.type = DelegationData.TYPE_REMOVE_DELEGATION
-        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.delegationData)
+        viewModel.bakerDelegationData.type = DelegationData.TYPE_REMOVE_DELEGATION
+        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 
     private fun continueToCreate() {
         val intent = Intent(this, DelegationRegisterPoolActivity::class.java)
-        viewModel.delegationData.type = DelegationData.TYPE_REGISTER_DELEGATION
-        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.delegationData)
+        viewModel.bakerDelegationData.type = DelegationData.TYPE_REGISTER_DELEGATION
+        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 
     private fun continueToUpdate() {
         val intent = Intent(this, DelegationUpdateIntroFlowActivity::class.java)
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
-        viewModel.delegationData.type = DelegationData.TYPE_UPDATE_DELEGATION
-        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.delegationData)
+        viewModel.bakerDelegationData.type = DelegationData.TYPE_UPDATE_DELEGATION
+        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 }

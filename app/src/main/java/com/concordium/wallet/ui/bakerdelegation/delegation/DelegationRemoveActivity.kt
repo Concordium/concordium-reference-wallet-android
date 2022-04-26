@@ -14,7 +14,7 @@ class DelegationRemoveActivity :
     BaseDelegationActivity(R.layout.activity_delegation_remove, R.string.delegation_remove_delegation_title) {
 
     override fun initViews() {
-        account_to_remove_delegate_from.text = (viewModel.delegationData.account?.name ?: "").plus("\n\n").plus(viewModel.delegationData.account?.address ?: "")
+        account_to_remove_delegate_from.text = (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n").plus(viewModel.bakerDelegationData.account?.address ?: "")
         estimated_transaction_fee.text = ""
 
         submit_delegation_transaction.setOnClickListener {
@@ -38,15 +38,15 @@ class DelegationRemoveActivity :
     }
 
     private fun validate() {
-        if (viewModel.atDisposal() < viewModel.delegationData.cost ?: 0) {
+        if (viewModel.atDisposal() < viewModel.bakerDelegationData.cost ?: 0) {
             showNotEnoughFunds()
         } else {
-            if (viewModel.delegationData.isBakerPool) {
-                viewModel.delegationData.account?.accountDelegation?.delegationTarget?.bakerId?.let {
+            if (viewModel.bakerDelegationData.isBakerPool) {
+                viewModel.bakerDelegationData.account?.accountDelegation?.delegationTarget?.bakerId?.let {
                     viewModel.setPoolID(it.toString())
                 }
             }
-            viewModel.delegationData.amount = 0
+            viewModel.bakerDelegationData.amount = 0
             viewModel.delegateAmount()
         }
     }
@@ -75,7 +75,7 @@ class DelegationRemoveActivity :
         submit_delegation_transaction.visibility = View.GONE
         submit_delegation_finish.visibility = View.VISIBLE
         transaction_submitted.visibility = View.VISIBLE
-        viewModel.delegationData.submissionId?.let {
+        viewModel.bakerDelegationData.submissionId?.let {
             transaction_submitted_divider.visibility = View.VISIBLE
             transaction_submitted_id.visibility = View.VISIBLE
             transaction_submitted_id.text = it
@@ -85,7 +85,7 @@ class DelegationRemoveActivity :
     private fun showNotice() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.delegation_notice_title)
-        val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.delegationData.chainParameters?.delegatorCooldown ?: 0)
+        val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0)
         builder.setMessage(resources.getQuantityString(R.plurals.delegation_notice_message_remove, gracePeriod, gracePeriod))
         builder.setPositiveButton(getString(R.string.delegation_notice_ok)) { dialog, _ ->
             dialog.dismiss()

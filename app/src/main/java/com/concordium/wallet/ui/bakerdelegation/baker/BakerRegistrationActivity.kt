@@ -13,6 +13,17 @@ class BakerRegistrationActivity :
 
     private lateinit var openForDelegationControl: View
     private lateinit var closeForDelegationControl: View
+    override fun transactionSuccessLiveData() {
+        TODO("Not yet implemented")
+    }
+
+    override fun errorLiveData(value: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun showDetailedLiveData(value: Boolean) {
+        TODO("Not yet implemented")
+    }
 
     override fun initViews() {
         baker_options.clearAll()
@@ -47,7 +58,7 @@ class BakerRegistrationActivity :
             Intent(this, BakerRegistrationCloseActivity::class.java)
         else
             Intent(this, BakerRegistrationOpenActivity::class.java)
-        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, viewModel.delegationData)
+        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 }

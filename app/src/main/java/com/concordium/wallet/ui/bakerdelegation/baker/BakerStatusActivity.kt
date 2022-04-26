@@ -15,7 +15,7 @@ class BakerStatusActivity :
         status_button_bottom.visibility = View.VISIBLE
         status_button_bottom.text = getString(R.string.baker_status_register_baker)
 
-        if (viewModel.delegationData.account?.isBaking() == true) {
+        if (viewModel.bakerDelegationData.account?.isBaking() == true) {
 
         } else {
             setEmptyState(getString(R.string.baker_status_no_baker))
@@ -28,7 +28,7 @@ class BakerStatusActivity :
     private fun continueToBakerAmount() {
         val intent = Intent(this, BakerRegisterAmountActivity::class.java)
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
-        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.delegationData)
+        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 }

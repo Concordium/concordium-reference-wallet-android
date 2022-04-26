@@ -186,7 +186,7 @@
                         android:paddingBottom="10dp"
                         android:orientation="horizontal">
                         <Button
-                            android:id="@+id/pool_registration_continue"
+                            android:id="@+id/baker_registration_continue"
                             style="@style/Button.Standard"
                             android:layout_width="match_parent"
                             android:text="@string/delegation_register_delegation_amount_continue" />

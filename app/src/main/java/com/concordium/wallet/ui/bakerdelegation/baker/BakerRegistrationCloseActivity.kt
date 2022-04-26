@@ -30,6 +30,18 @@ class BakerRegistrationCloseActivity :
         generateKeys()
     }
 
+    override fun transactionSuccessLiveData() {
+        TODO("Not yet implemented")
+    }
+
+    override fun errorLiveData(value: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun showDetailedLiveData(value: Boolean) {
+        TODO("Not yet implemented")
+    }
+
     override fun initViews() {
         baker_registration_export.setOnClickListener {
             startExport()

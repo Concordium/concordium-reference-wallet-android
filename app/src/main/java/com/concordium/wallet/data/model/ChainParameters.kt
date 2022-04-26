@@ -14,7 +14,7 @@ data class ChainParameters(
     val bakingCommissionLPool: Double,
     val accountCreationLimit: Int,
     val electionDifficulty: Double,
-    val minimumEquityCapital: Long
+    val minimumEquityCapital: String
 ) : Serializable
 
 
