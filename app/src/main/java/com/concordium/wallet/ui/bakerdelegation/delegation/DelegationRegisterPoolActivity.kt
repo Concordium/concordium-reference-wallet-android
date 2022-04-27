@@ -8,6 +8,7 @@ import androidx.core.widget.doOnTextChanged
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.DelegationData
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
+import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.AMOUNT_TOO_LARGE_FOR_POOL
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.uicore.view.SegmentedControlView
 import com.concordium.wallet.util.KeyboardUtil
@@ -85,7 +86,7 @@ class DelegationRegisterPoolActivity :
     }
 
     override fun errorLiveData(value: Int) {
-        if (value == DelegationViewModel.AMOUNT_TOO_LARGE_FOR_POOL) {
+        if (value == AMOUNT_TOO_LARGE_FOR_POOL) {
             showDelegationAmountTooLargeNotice()
         } else {
             pool_id_error.text = getString(value)
@@ -148,7 +149,7 @@ class DelegationRegisterPoolActivity :
 
     private fun gotoStopDelegation() {
         val intent = Intent(this, DelegationRemoveActivity::class.java)
-        intent.putExtra(EXTRA_DELEGATION_DATA, viewModel.delegationData)
+        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 }

@@ -45,6 +45,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     companion object {
         const val FILE_NAME_BAKER_KEYS = "baker-credentials.json"
         const val EXTRA_DELEGATION_BAKER_DATA = "EXTRA_DELEGATION_BAKER_DATA"
+        const val AMOUNT_TOO_LARGE_FOR_POOL = -100
     }
 
     private val _transactionSuccessLiveData = MutableLiveData<Boolean>()
@@ -187,11 +188,12 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                 {
                     bakerDelegationData.bakerPoolStatus = it
                     _waitingLiveData.value = false
-                    if (bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW) {
+                    if (bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW)
                         _errorLiveData.value = Event(R.string.delegation_register_delegation_pool_id_closed)
-                    } else {
+                    else if (bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0 > bakerDelegationData.bakerPoolStatus?.delegatedCapitalCap?.toLong() ?: 0)
+                        _errorLiveData.value = Event(AMOUNT_TOO_LARGE_FOR_POOL)
+                    else
                         _showDetailedLiveData.value = Event(true)
-                    }
                 },
                 {
                     _waitingLiveData.value = false

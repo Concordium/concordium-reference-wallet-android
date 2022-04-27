@@ -26,8 +26,6 @@ import java.text.DecimalFormatSymbols
 class DelegationRegisterAmountActivity :
     BaseDelegationBakerRegisterAmountActivity(R.layout.activity_delegation_registration_amount, R.string.delegation_register_delegation_title) {
 
-    private var fee: Long? = null
-
     private fun showError(stakeError: StakeAmountInputValidator.StakeError?) {
         amount.setTextColor(getColor(R.color.text_pink))
         amount_error.visibility = View.VISIBLE
@@ -81,7 +79,7 @@ class DelegationRegisterAmountActivity :
             }
             setAmountHint()
             val stakeAmountInputValidator = getStakeAmountInputValidator()
-            val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString())
+            val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString(), fee)
             if (stakeError != StakeAmountInputValidator.StakeError.OK) {
                 amount_error.text = stakeAmountInputValidator.getErrorText(this, stakeError)
                 showError(stakeError)
@@ -151,10 +149,14 @@ class DelegationRegisterAmountActivity :
         return StakeAmountInputValidator(
             if (viewModel.isUpdatingDelegation()) "0" else "1",
             null,
-            (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0).toString(),
+            (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0),
+            viewModel.bakerDelegationData.account?.getAtDisosal(),
             viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,
             viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapitalCap,
-            viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount)
+            viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount,
+            viewModel.isInCoolDown(),
+            viewModel.bakerDelegationData.account?.accountDelegation?.delegationTarget?.bakerId,
+            viewModel.bakerDelegationData.poolId)
     }
 
     override fun transactionSuccessLiveData() {
@@ -199,7 +201,7 @@ class DelegationRegisterAmountActivity :
         if (!pool_registration_continue.isEnabled) return
 
         val stakeAmountInputValidator = getStakeAmountInputValidator()
-        val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString())
+        val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString(), fee)
         if (stakeError != StakeAmountInputValidator.StakeError.OK) {
             amount_error.text = stakeAmountInputValidator.getErrorText(this, stakeError)
             showError(stakeError)

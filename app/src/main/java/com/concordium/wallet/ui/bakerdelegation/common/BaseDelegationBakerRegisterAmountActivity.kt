@@ -7,6 +7,8 @@ import kotlinx.android.synthetic.main.activity_baker_registration_amount.restake
 abstract class BaseDelegationBakerRegisterAmountActivity(layout: Int, titleId: Int = R.string.app_name) :
     BaseDelegationBakerActivity(layout, titleId) {
 
+    protected var fee: Long? = null
+
     override fun initViews() {
         super.initViews()
 
@@ -17,18 +19,14 @@ abstract class BaseDelegationBakerRegisterAmountActivity(layout: Int, titleId: I
                 override fun onItemClicked() {
                     viewModel.markRestake(true)
                 }
-            },
-            viewModel.bakerDelegationData.restake
-        )
+            },viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings == true)
         restake_options.addControl(
             getString(R.string.delegation_register_delegation_no_restake),
             object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
                     viewModel.markRestake(false)
                 }
-            },
-            !viewModel.bakerDelegationData.restake
-        )
+            },viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings != true)
     }
 
     abstract fun getStakeAmountInputValidator(): StakeAmountInputValidator
