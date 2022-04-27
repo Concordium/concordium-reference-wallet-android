@@ -283,7 +283,7 @@ class AccountDetailsActivity :
             } else if (viewModel.account.isDelegating()) {
                 accounts_overview_total_details_staked_container.visibility = View.VISIBLE
                 if (viewModel.account.accountDelegation?.delegationTarget?.delegateType == DelegationTarget.TYPE_DELEGATE_TO_L_POOL)
-                    accounts_overview_total_title_staked.text = getString(R.string.account_details_delegation_with_baker_pool, DelegationTarget.TYPE_DELEGATE_TO_L_POOL)
+                    accounts_overview_total_title_staked.text = getString(R.string.account_details_delegation_with_passive_pool)
                 else
                     accounts_overview_total_title_staked.text = getString(R.string.account_details_delegation_with_baker_pool, viewModel.account.accountDelegation?.delegationTarget?.bakerId ?: "")
                 accounts_overview_total_details_staked.text = CurrencyUtil.formatGTU(viewModel.account.accountDelegation?.stakedAmount ?: "", true)

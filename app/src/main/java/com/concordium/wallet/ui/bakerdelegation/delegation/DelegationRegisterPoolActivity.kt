@@ -45,7 +45,7 @@ class DelegationRegisterPoolActivity :
                 }
             },
             viewModel.isBakerPool() || (!viewModel.isBakerPool() && !viewModel.isLPool()))
-            lPoolControl = pool_options.addControl(getString(R.string.delegation_register_delegation_pool_l), object: SegmentedControlView.OnItemClickListener {
+            lPoolControl = pool_options.addControl(getString(R.string.delegation_register_delegation_passive), object: SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked(){
                     viewModel.selectLPool()
                     updateVisibilities()
@@ -108,7 +108,7 @@ class DelegationRegisterPoolActivity :
                 existing_pool_id.text = getString(R.string.delegation_update_delegation_pool_id_baker, getExistingPoolIdText())
             } else {
                 viewModel.selectLPool()
-                existing_pool_id.text = getString(R.string.delegation_update_delegation_pool_id_l)
+                existing_pool_id.text = getString(R.string.delegation_update_delegation_pool_id__passive)
             }
         }
     }
@@ -116,7 +116,7 @@ class DelegationRegisterPoolActivity :
     private fun updateVisibilities() {
         pool_id.hint = if (viewModel.delegationData.oldDelegationTargetPoolId == null) getString(R.string.delegation_register_delegation_pool_id_hint) else getString(R.string.delegation_register_delegation_pool_id_hint_update)
         pool_id.visibility = if (viewModel.delegationData.isLPool) View.GONE else View.VISIBLE
-        pool_desc.visibility = if (viewModel.delegationData.isLPool) View.GONE else View.VISIBLE
+        pool_desc.text = if (viewModel.delegationData.isLPool) getString(R.string.delegation_register_delegation_desc_passive) else getString(R.string.delegation_register_delegation_desc)
         pool_registration_continue.isEnabled = getExistingPoolIdText().isNotEmpty() || viewModel.delegationData.isLPool || pool_id.text.isNotEmpty()
         hideError()
     }
