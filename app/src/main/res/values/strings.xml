@@ -344,6 +344,14 @@
     </plurals>
     <string name="delegation_notice_ok">Okay</string>
 
+    <string name="delegation_amount_too_large_notice_title">Current delegation amount too large</string>
+    <string name="delegation_amount_too_large_notice_message">Your current delegation amount will breach the new pool’s limits. To delegate to this pool you must first lower or stop your delegation and then wait for the cool down to pass.</string>
+    <string name="delegation_amount_too_large_notice_cancel">Cancel</string>
+    <string name="delegation_amount_too_large_notice_stop">Stop current delegation</string>
+    <string name="delegation_amount_too_large_notice_lower">Lower delegation amount and stay with current pool</string>
+    <string name="delegation_amount_too_large_while_in_cooldown">Your delegation amount is too large for this pool.</string>
+
+
     <!-- Baker intro -->
     <string name="baker_intro_flow_title">Become a baker</string>
     <string name="baker_intro_subtitle1">Become a baker</string>

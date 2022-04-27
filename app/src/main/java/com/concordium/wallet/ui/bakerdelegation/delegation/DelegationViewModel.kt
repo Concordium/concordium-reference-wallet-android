@@ -40,6 +40,10 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
 
     private val gson = App.appCore.gson
 
+    companion object {
+        const val AMOUNT_TOO_LARGE_FOR_POOL = -100
+    }
+
     private val _transactionSuccessLiveData = MutableLiveData<Boolean>()
     val transactionSuccessLiveData: LiveData<Boolean>
         get() = _transactionSuccessLiveData
@@ -149,7 +153,9 @@ class DelegationViewModel(application: Application) : AndroidViewModel(applicati
                     _waitingLiveData.value = false
                     if (delegationData.bakerPoolStatus?.poolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW) {
                         _errorLiveData.value = Event(R.string.delegation_register_delegation_pool_id_closed)
-                    } else {
+                    } else if (delegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0 > delegationData.bakerPoolStatus?.delegatedCapitalCap?.toLong() ?: 0)
+                        _errorLiveData.value = Event(AMOUNT_TOO_LARGE_FOR_POOL)
+                    else {
                         _showDetailedLiveData.value = Event(true)
                     }
                 },

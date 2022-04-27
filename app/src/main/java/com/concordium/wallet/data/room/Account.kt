@@ -115,4 +115,8 @@ data class Account(
     fun getAtDisposalSubstraction(): Long {
         return Math.max((finalizedAccountReleaseSchedule?.total?.toLong() ?: 0), totalStaked).plus(accountDelegation?.stakedAmount?.toLong() ?: 0)
     }
+
+    fun getAtDisosal(): Long {
+        return finalizedBalance - getAtDisposalSubstraction()
+    }
 }

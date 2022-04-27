@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.bakerdelegation.delegation
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -82,8 +83,12 @@ class DelegationRegisterPoolActivity :
     }
 
     override fun errorLiveData(value: Int) {
-        pool_id_error.text = getString(value)
-        showError()
+        if (value == DelegationViewModel.AMOUNT_TOO_LARGE_FOR_POOL) {
+            showDelegationAmountTooLargeNotice()
+        } else {
+            pool_id_error.text = getString(value)
+            showError()
+        }
     }
 
     override fun showDetailedLiveData(value: Boolean) {
@@ -127,5 +132,21 @@ class DelegationRegisterPoolActivity :
             return it.toString()
         }
         return ""
+    }
+
+    private fun showDelegationAmountTooLargeNotice() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.delegation_amount_too_large_notice_title)
+        builder.setMessage(getString(R.string.delegation_amount_too_large_notice_message))
+        builder.setPositiveButton(getString(R.string.delegation_amount_too_large_notice_lower)) { _, _ -> showDetailedPage() }
+        builder.setNegativeButton(getString(R.string.delegation_amount_too_large_notice_stop)) { _, _ -> gotoStopDelegation() }
+        builder.setNeutralButton(getString(R.string.delegation_amount_too_large_notice_cancel)) { dialog, _ -> dialog.dismiss() }
+        builder.create().show()
+    }
+
+    private fun gotoStopDelegation() {
+        val intent = Intent(this, DelegationRemoveActivity::class.java)
+        intent.putExtra(EXTRA_DELEGATION_DATA, viewModel.delegationData)
+        startActivityForResultAndHistoryCheck(intent)
     }
 }

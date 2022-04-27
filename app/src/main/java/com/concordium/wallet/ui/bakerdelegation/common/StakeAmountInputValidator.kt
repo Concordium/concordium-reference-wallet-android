@@ -7,16 +7,20 @@ import com.concordium.wallet.data.util.CurrencyUtil
 class StakeAmountInputValidator(
     private val minimumValue: String?,
     private val maximumValue: String?,
-    private val atDisposal: String?,
+    private val balance: Long?,
+    private val atDisposal: Long?,
     private val currentPool: String?,
     private val poolLimit: String?,
-    private val previouslyStakedInPool: String?
+    private val previouslyStakedInPool: String?,
+    private val isInCoolDown: Boolean?,
+    private val oldPoolId: Long?,
+    private val newPoolId: String?
 ) {
     enum class StakeError {
-        OK, NOT_ENOUGH_FUND, MINIMUM, MAXIMUM, POOL_LIMIT_REACHED, UNKNOWN
+        OK, NOT_ENOUGH_FUND, MINIMUM, MAXIMUM, POOL_LIMIT_REACHED, POOL_LIMIT_REACHED_COOLDOWN, UNKNOWN
     }
 
-    fun validate(amount: String?): StakeError {
+    fun validate(amount: String?, fee: Long?): StakeError {
 
         if (amount == null) return StakeError.MINIMUM
 
@@ -32,7 +36,10 @@ class StakeAmountInputValidator(
         check = checkPoolLimit(amount)
         if (check != StakeError.OK) return check
 
-        check = checkAtDisposal(amount)
+        check = checkPoolLimitCoolDown(amount)
+        if (check != StakeError.OK) return check
+
+        check = checkBalance(amount, fee)
         if (check != StakeError.OK) return check
 
         return StakeError.OK
@@ -44,6 +51,7 @@ class StakeAmountInputValidator(
             StakeError.MINIMUM -> context.getString(R.string.delegation_register_delegation_minimum, CurrencyUtil.formatGTU(minimumValue ?: "0", false))
             StakeError.MAXIMUM -> context.getString(R.string.delegation_register_delegation_maximum, CurrencyUtil.formatGTU(maximumValue ?: "0", false))
             StakeError.POOL_LIMIT_REACHED -> context.getString(R.string.delegation_register_delegation_pool_limit_will_be_breached)
+            StakeError.POOL_LIMIT_REACHED_COOLDOWN -> context.getString(R.string.delegation_amount_too_large_while_in_cooldown)
             StakeError.UNKNOWN -> context.getString(R.string.app_error_general)
             else -> ""
         }
@@ -66,9 +74,9 @@ class StakeAmountInputValidator(
         return StakeError.OK
     }
 
-    private fun checkAtDisposal(amount: String): StakeError {
-        if (atDisposal?.toLongOrNull() == null) return StakeError.UNKNOWN
-        if (amount.toLong() > atDisposal.toLong()) return StakeError.NOT_ENOUGH_FUND
+    private fun checkBalance(amount: String, fee: Long?): StakeError {
+        if (balance == null || atDisposal == null) return StakeError.UNKNOWN
+        if (amount.toLong() + (fee ?: 0) > balance || (fee ?: 0) > atDisposal) return StakeError.NOT_ENOUGH_FUND
         return StakeError.OK
     }
 
@@ -76,6 +84,20 @@ class StakeAmountInputValidator(
         if (currentPool?.toLongOrNull() != null && poolLimit?.toLongOrNull() != null) {
             if (amount.toLong() + currentPool.toLong() - (previouslyStakedInPool?.toLong() ?: 0) > poolLimit.toLong()) {
                 return StakeError.POOL_LIMIT_REACHED
+            }
+        }
+        return StakeError.OK
+    }
+
+    private fun checkPoolLimitCoolDown(amount: String): StakeError {
+        // check if pool has changed from either L-pool to a baker pool or from one baker pool to another
+        if (isInCoolDown == true) {
+            if ( (oldPoolId == null && !newPoolId.isNullOrEmpty()) || (oldPoolId != null && newPoolId != null && oldPoolId.toString() != newPoolId ) ) {
+                if (currentPool?.toLongOrNull() != null && poolLimit?.toLongOrNull() != null) {
+                    if (amount.toLong() + currentPool.toLong() - (previouslyStakedInPool?.toLong() ?: 0) > poolLimit.toLong()) {
+                        return StakeError.POOL_LIMIT_REACHED_COOLDOWN
+                    }
+                }
             }
         }
         return StakeError.OK
