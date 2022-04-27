@@ -1,33 +1,24 @@
 package com.concordium.wallet.ui.account.accountsoverview
 
 import android.app.Application
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
 import android.os.CountDownTimer
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
+import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
-import com.concordium.wallet.ui.transaction.sendfunds.SendFundsViewModel
-import com.concordium.wallet.uicore.dialog.CustomDialogFragment
-import com.concordium.wallet.uicore.dialog.Dialogs
-import com.concordium.wallet.util.Log
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class AccountsOverviewViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -59,9 +50,14 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     val pendingIdentityForWarningLiveData: LiveData<Identity>
         get() = _pendingIdentityForWarningLiveData
 
+    private val _poolStatusesLiveData = MutableLiveData<List<Pair<String, String>>>()
+    val poolStatusesLiveData: LiveData<List<Pair<String, String>>>
+        get() = _poolStatusesLiveData
+
     private val identityRepository: IdentityRepository
     private val accountRepository: AccountRepository
     private val accountUpdater = AccountUpdater(application, viewModelScope)
+    private val proxyRepository = ProxyRepository()
 
     val accountListLiveData: LiveData<List<AccountWithIdentity>>
     val identityListLiveData: LiveData<List<Identity>>
@@ -95,36 +91,25 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             }
         })
         identityListLiveData = identityRepository.allIdentities
-
     }
 
-    /*
-    companion object {
-        val KEY_ACCOUNT_FINALIZATION = "KEY_ACCOUNT_FINALIZATION"
-        val KEY_ACCOUNT_FINALIZATION_TO_SHOW = "KEY_ACCOUNT_FINALIZATION_TO_SHOW"
-    }
-
-    class AccountFinalizationPreferences(context: Context, preferenceName: String, preferenceMode: Int) :
-        Preferences(context, preferenceName, preferenceMode) {
-        fun showMemoWarning(): Boolean {
-            return getBoolean(KEY_ACCOUNT_FINALIZATION_TO_SHOW, true)
+    fun loadPoolStatuses(poolIds: List<String>) {
+        val poolStatuses: MutableList<Pair<String, String>> = mutableListOf()
+        viewModelScope.launch {
+            poolIds.forEach { poolId ->
+                proxyRepository.getBakerPool(poolId,
+                    { bakerPoolStatus ->
+                        poolStatuses.add(Pair(poolId, bakerPoolStatus.bakerStakePendingChange.pendingChangeType))
+                        if (poolStatuses.count() == poolIds.count())
+                            _poolStatusesLiveData.value = poolStatuses
+                    }, {
+                        poolStatuses.add(Pair(poolId, ""))
+                        if (poolStatuses.count() == poolIds.count())
+                            _poolStatusesLiveData.value = poolStatuses
+                    }
+                )
+            }
         }
-        fun addAccountFinalized(account: String) {
-            setBoolean(KEY_ACCOUNT_FINALIZATION_TO_SHOW, false)
-        }
-    }
-    private val preferences: AccountFinalizationPreferences
-        get() {
-            return AccountFinalizationPreferences(
-                getApplication(),
-                KEY_ACCOUNT_FINALIZATION,
-                Context.MODE_PRIVATE
-            )
-        }
-    */
-
-    fun initialize() {
-
     }
 
     override fun onCleared() {
