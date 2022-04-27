@@ -18,15 +18,21 @@ import java.text.DecimalFormatSymbols
 class DelegationRegisterAmountActivity :
     BaseDelegationActivity(R.layout.activity_delegation_registration_amount, R.string.delegation_register_delegation_title) {
 
+    private var fee: Long? = null
+
     private fun showError(stakeError: StakeAmountInputValidator.StakeError?) {
         amount.setTextColor(getColor(R.color.text_pink))
         amount_error.visibility = View.VISIBLE
-        if (stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED) {
+        if (stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED || stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED_COOLDOWN) {
             pool_limit_title.setTextColor(getColor(R.color.text_pink))
             pool_limit.setTextColor(getColor(R.color.text_pink))
         } else {
             pool_limit_title.setTextColor(getColor(R.color.text_black))
             pool_limit.setTextColor(getColor(R.color.text_black))
+        }
+        if (stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED_COOLDOWN) {
+            delegation_amount_title.setTextColor(getColor(R.color.text_pink))
+            delegation_amount.setTextColor(getColor(R.color.text_pink))
         }
     }
 
@@ -34,6 +40,8 @@ class DelegationRegisterAmountActivity :
         amount.setTextColor(getColor(R.color.theme_blue))
         pool_limit_title.setTextColor(getColor(R.color.text_black))
         pool_limit.setTextColor(getColor(R.color.text_black))
+        delegation_amount_title.setTextColor(getColor(R.color.text_black))
+        delegation_amount.setTextColor(getColor(R.color.text_black))
         amount_error.visibility = View.INVISIBLE
     }
 
@@ -49,12 +57,12 @@ class DelegationRegisterAmountActivity :
             override fun onItemClicked(){
                 viewModel.markRestake(true)
             }
-        }, viewModel.delegationData.restake)
+        },viewModel.delegationData.account?.accountDelegation?.restakeEarnings == true)
         restake_options.addControl(getString(R.string.delegation_register_delegation_no_restake), object: SegmentedControlView.OnItemClickListener {
             override fun onItemClicked(){
                 viewModel.markRestake(false)
             }
-        }, !viewModel.delegationData.restake)
+        },viewModel.delegationData.account?.accountDelegation?.restakeEarnings != true)
 
         amount.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -77,11 +85,15 @@ class DelegationRegisterAmountActivity :
             val stakeAmountInputValidator = StakeAmountInputValidator(
                 if (viewModel.isUpdating()) "0" else "1",
                 null,
-                (viewModel.delegationData.account?.finalizedBalance ?: 0).toString(),
+                (viewModel.delegationData.account?.finalizedBalance ?: 0),
+                viewModel.delegationData.account?.getAtDisosal(),
                 viewModel.delegationData.bakerPoolStatus?.delegatedCapital,
                 viewModel.delegationData.bakerPoolStatus?.delegatedCapitalCap,
-                viewModel.delegationData.account?.accountDelegation?.stakedAmount)
-            val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString())
+                viewModel.delegationData.account?.accountDelegation?.stakedAmount,
+                viewModel.isInCoolDown(),
+                viewModel.delegationData.account?.accountDelegation?.delegationTarget?.bakerId,
+                viewModel.delegationData.poolId)
+            val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString(), fee)
             if (stakeError != StakeAmountInputValidator.StakeError.OK) {
                 amount_error.text = stakeAmountInputValidator.getErrorText(this, stakeError)
                 showError(stakeError)
@@ -129,6 +141,7 @@ class DelegationRegisterAmountActivity :
         viewModel.transactionFeeLiveData.observe(this, object : Observer<Long> {
             override fun onChanged(value: Long?) {
                 value?.let {
+                    fee = value
                     pool_estimated_transaction_fee.visibility = View.VISIBLE
                     pool_estimated_transaction_fee.text = getString(
                         R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(value)
@@ -189,12 +202,15 @@ class DelegationRegisterAmountActivity :
         val stakeAmountInputValidator = StakeAmountInputValidator(
             if (viewModel.isUpdating()) "0" else "1",
             null,
-            (viewModel.delegationData.account?.finalizedBalance ?: 0).toString(),
+            (viewModel.delegationData.account?.finalizedBalance ?: 0),
+            viewModel.delegationData.account?.getAtDisosal(),
             viewModel.delegationData.bakerPoolStatus?.delegatedCapital,
             viewModel.delegationData.bakerPoolStatus?.delegatedCapitalCap,
-            viewModel.delegationData.account?.accountDelegation?.stakedAmount)
-
-        val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString())
+            viewModel.delegationData.account?.accountDelegation?.stakedAmount,
+            viewModel.isInCoolDown(),
+            viewModel.delegationData.account?.accountDelegation?.delegationTarget?.bakerId,
+            viewModel.delegationData.poolId)
+        val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString(), fee)
         if (stakeError != StakeAmountInputValidator.StakeError.OK) {
             amount_error.text = stakeAmountInputValidator.getErrorText(this, stakeError)
             showError(stakeError)
