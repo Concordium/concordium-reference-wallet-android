@@ -26,15 +26,21 @@ import java.text.DecimalFormatSymbols
 class DelegationRegisterAmountActivity :
     BaseDelegationBakerRegisterAmountActivity(R.layout.activity_delegation_registration_amount, R.string.delegation_register_delegation_title) {
 
+    private var fee: Long? = null
+
     private fun showError(stakeError: StakeAmountInputValidator.StakeError?) {
         amount.setTextColor(getColor(R.color.text_pink))
         amount_error.visibility = View.VISIBLE
-        if (stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED) {
+        if (stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED || stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED_COOLDOWN) {
             pool_limit_title.setTextColor(getColor(R.color.text_pink))
             pool_limit.setTextColor(getColor(R.color.text_pink))
         } else {
             pool_limit_title.setTextColor(getColor(R.color.text_black))
             pool_limit.setTextColor(getColor(R.color.text_black))
+        }
+        if (stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED_COOLDOWN) {
+            delegation_amount_title.setTextColor(getColor(R.color.text_pink))
+            delegation_amount.setTextColor(getColor(R.color.text_pink))
         }
     }
 
@@ -42,6 +48,8 @@ class DelegationRegisterAmountActivity :
         amount.setTextColor(getColor(R.color.theme_blue))
         pool_limit_title.setTextColor(getColor(R.color.text_black))
         pool_limit.setTextColor(getColor(R.color.text_black))
+        delegation_amount_title.setTextColor(getColor(R.color.text_black))
+        delegation_amount.setTextColor(getColor(R.color.text_black))
         amount_error.visibility = View.INVISIBLE
     }
 
@@ -121,6 +129,7 @@ class DelegationRegisterAmountActivity :
         viewModel.transactionFeeLiveData.observe(this, object : Observer<Long> {
             override fun onChanged(value: Long?) {
                 value?.let {
+                    fee = value
                     pool_estimated_transaction_fee.visibility = View.VISIBLE
                     pool_estimated_transaction_fee.text = getString(
                         R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(value)

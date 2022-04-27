@@ -8,5 +8,6 @@ data class BakerPoolInfo(
     companion object {
         val OPEN_STATUS_OPEN_FOR_ALL = "openForAll"
         val OPEN_STATUS_CLOSED_FOR_NEW = "closedForNew"
+        val OPEN_STATUS_CLOSED_FOR_ALL = "closedForAll"
     }
 }

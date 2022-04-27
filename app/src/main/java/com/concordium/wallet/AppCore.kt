@@ -21,12 +21,12 @@ class AppCore(val context: Context) {
     val proxybackendConfig = ProxyBackendConfig(gson)
     val cryptoLibrary: CryptoLibrary
     val session: Session = Session(App.appContext)
+    var closingPoolsChecked = false
 
     private val authenticationManagerGeneric: AuthenticationManager = AuthenticationManager(session.getBiometricAuthKeyName())
     private var authenticationManagerReset: AuthenticationManager = authenticationManagerGeneric
     private var authenticationManager: AuthenticationManager = authenticationManagerGeneric
     private var resetBiometricKeyNameAppendix: String = ""
-
 
     init {
         cryptoLibrary =
