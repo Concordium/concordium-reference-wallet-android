@@ -9,6 +9,7 @@ import com.concordium.wallet.ui.bakerdelegation.baker.BakerStatusActivity.Compan
 import com.concordium.wallet.ui.bakerdelegation.baker.BakerStatusActivity.Companion.BAKER_SETTINGS_MENU_UPDATE_BAKER_KEYS
 import com.concordium.wallet.ui.bakerdelegation.baker.BakerStatusActivity.Companion.BAKER_SETTINGS_MENU_UPDATE_BAKER_STAKE
 import com.concordium.wallet.ui.bakerdelegation.baker.BakerStatusActivity.Companion.BAKER_SETTINGS_MENU_UPDATE_POOL_SETTINGS
+import com.concordium.wallet.ui.bakerdelegation.baker.BakerUpdatePoolSettingsActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 
@@ -47,9 +48,9 @@ class BakerUpdateIntroFlow :
     }
 
     private fun gotoUpdatePoolSettings() {
-        //val intent = Intent(this, BakerRegisterAmountActivity::class.java)
-        //intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, delegationData)
-        //startActivity(intent)
+        val intent = Intent(this, BakerUpdatePoolSettingsActivity::class.java)
+        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, delegationData)
+        startActivity(intent)
     }
 
     private fun gotoUpdateBakerKeys() {

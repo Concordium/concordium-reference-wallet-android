@@ -427,6 +427,16 @@
     <string name="update_baker_settings_menu_update_baker_keys">Update baker keys</string>
     <string name="update_baker_settings_menu_stop_baking">Stop baking</string>
 
+    <string name="baker_update_pool_settings_title">Update pool settings</string>
+    <string name="baker_update_pool_settings_explain">You have the option to open your baker as a pool for others to delegate their CCD to.\n\nIf you choose to open your pool, other people will be able to delegate CCDs to your baking pool.\n\nIf your pool is already open, you can also close it for new delegators, or you can close it for delegation completely.</string>
+    <string name="baker_update_pool_settings_current_status_open">Current status: Open</string>
+    <string name="baker_update_pool_settings_current_status_closed">Current status: Closed</string>
+    <string name="baker_update_pool_settings_option_open">Open for delegation</string>
+    <string name="baker_update_pool_settings_option_close_for_new">Close for new delegators</string>
+    <string name="baker_update_pool_settings_option_close">Close for delegation</string>
+    <string name="baker_update_pool_settings_continue">Continue</string>
+
+
     <!-- ***** Auth ***** -->
 
     <!-- Auth -->

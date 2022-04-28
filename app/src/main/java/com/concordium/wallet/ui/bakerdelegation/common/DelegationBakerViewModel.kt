@@ -123,6 +123,10 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return bakerDelegationData.isOpenBaker // bakerData.account?.accountBaker?.bakerId == null
     }
 
+    fun isClosedForNewBaker(): Boolean {
+        return bakerDelegationData.isOpenBaker // bakerData.account?.accountBaker?.bakerId == null
+    }
+
     fun isClosedBaker(): Boolean {
         return bakerDelegationData.isClosedBaker // bakerData.account?.accountBaker?.bakerId != null
     }
@@ -156,6 +160,11 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun selectOpenBaker() {
+        bakerDelegationData.isOpenBaker = true
+        bakerDelegationData.isClosedBaker = false
+    }
+
+    fun selectClosedForNewBaker() {
         bakerDelegationData.isOpenBaker = true
         bakerDelegationData.isClosedBaker = false
     }
