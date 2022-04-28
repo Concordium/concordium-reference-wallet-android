@@ -159,7 +159,10 @@ object DateTimeUtil {
     }
 
     fun String.toDate(dateFormat: String = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timeZone: TimeZone = TimeZone.getTimeZone("UTC")): Date? {
-        val parser = SimpleDateFormat(dateFormat, Locale.getDefault())
+        var df = dateFormat
+        if (this.isNotEmpty() && !this.contains("."))
+            df = "yyyy-MM-dd'T'HH:mm:ss'Z'" // needed if wallet-proxy doesn't send milliseconds with timestamps.
+        val parser = SimpleDateFormat(df, Locale.getDefault())
         parser.timeZone = timeZone
         return parser.parse(this)
     }
