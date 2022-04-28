@@ -21,7 +21,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
-import com.concordium.wallet.ui.bakerdelegation.baker.BakerRegisterAmountActivity
+import com.concordium.wallet.ui.bakerdelegation.baker.BakerStatusActivity
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRegistrationIntroFlow
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
@@ -453,7 +453,7 @@ class AccountDetailsActivity :
 
     private fun gotoBaking(account: Account) {
         val intent = if (account.isBaking())
-            Intent(this, BakerRegisterAmountActivity::class.java)
+            Intent(this, BakerStatusActivity::class.java)
         else
             Intent(this, BakerRegistrationIntroFlow::class.java)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, DelegationData(account, type = DelegationData.TYPE_REGISTER_BAKER))

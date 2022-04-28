@@ -382,6 +382,7 @@
     <string name="baker_status_title">Baker status</string>
     <string name="baker_status_register_baker">Register baker</string>
     <string name="baker_status_no_baker">This account has no baker registered. You can register a baker with the button below.</string>
+    <string name="baker_status_update_baker_settings">Update baker settings</string>
 
     <string name="baker_registration_amount_title">Register baker</string>
     <string name="baker_registration_amount_explain">Do you want to automatically add your baking rewards to your baker stake?\n\nIf you choose to not restake your rewards, the amounts will be at disposal on your account balance at each pay day.</string>
@@ -411,6 +412,20 @@
     <string name="baker_register_confirmation_receipt_added_to_delegation_amount">Added to delegation amount</string>
     <string name="baker_register_confirmation_receipt_at_disposal">At disposal</string>
 
+    <string name="baker_update_intro_flow_title">Baking</string>
+    <string name="baker_update_intro_subtitle1">Updating baker settings</string>
+    <string name="baker_update_intro_subtitle2">Update baker stake</string>
+    <string name="baker_update_intro_subtitle3">Update pool settings (1/2)</string>
+    <string name="baker_update_intro_subtitle4">Update pool settings (2/2)</string>
+    <string name="baker_update_intro_subtitle5">Update baker keys</string>
+
+    <string name="baker_remove_intro_flow_title">Baking</string>
+    <string name="baker_remove_intro_subtitle1">Stop baking</string>
+
+    <string name="update_baker_settings_menu_update_baker_stake">Update baker stake</string>
+    <string name="update_baker_settings_menu_update_pool_settings">Update pool settings</string>
+    <string name="update_baker_settings_menu_update_baker_keys">Update baker keys</string>
+    <string name="update_baker_settings_menu_stop_baking">Stop baking</string>
 
     <!-- ***** Auth ***** -->
 
