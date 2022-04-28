@@ -208,9 +208,9 @@
     <!-- Delegation intro -->
     <string name="delegation_intro_flow_title">Delegation</string>
     <string name="delegation_intro_subtitle1">Delegation</string>
-    <string name="delegation_intro_subtitle2">Two types of pools</string>
+    <string name="delegation_intro_subtitle2">Delegation models</string>
     <string name="delegation_intro_subtitle3">Baker pools</string>
-    <string name="delegation_intro_subtitle4">The L-pool</string>
+    <string name="delegation_intro_subtitle4">Passive delegation</string>
     <string name="delegation_intro_subtitle5">Pay days</string>
     <string name="delegation_intro_subtitle6">Lock-in and cool-downs</string>
     <string name="delegation_intro_subtitle7">The status page</string>
@@ -243,20 +243,22 @@
     <string name="delegation_status_content_registered_title">Your delegation is registered.</string>
     <string name="delegation_status_content_delegating_account">Delegating account</string>
     <string name="delegation_status_content_delegation_amount">Delegation amount</string>
-    <string name="delegation_status_content_target_pool">Target pool</string>
+    <string name="delegation_status_content_target_pool">Target</string>
     <string name="delegation_status_content_rewards_will_be">Rewards will be</string>
     <string name="delegation_status_content_take_effect_on">The following changes will take effect on</string>
     <string name="delegation_status_content_delegation_will_be_stopped">The delegation will be stopped, and the delegation amount will be unlocked on the public balance of the account.</string>
 
-    <string name="delegation_register_delegation_intro">You can delegate to a specific open pool of your choice, or you can delegate to the L-pool.</string>
+    <string name="delegation_register_delegation_intro">You can delegate to an open pool of your choice, or you can stake using passive delegation.</string>
     <string name="delegation_register_delegation_desc">If you don’t already know what target baker pool you want to delegate an amount to, you can read more about how to find one here:\n\n developer.concordium.software</string>
+    <string name="delegation_register_delegation_desc_passive">Passive delegation divides the staked tokens shared between all baker pools proportionally to their size, and has a higher commission rate than delegating to a single baker.\n\nFor more info you can visit\ndeveloper.concordium.software</string>
     <string name="delegation_register_delegation_pool_id_hint">Enter target baker pool ID</string>
     <string name="delegation_register_delegation_pool_id_hint_update">Optional: Enter new target ID</string>
     <string name="delegation_update_delegation_pool_id_baker">Current target: Baker id %1$s</string>
-    <string name="delegation_update_delegation_pool_id_l">Current target: L-pool</string>
+    <string name="delegation_update_delegation_pool_id__passive">Current target: Passive </string>
 
     <string name="delegation_register_delegation_pool_baker">Baker pool</string>
-    <string name="delegation_register_delegation_pool_l">L-pool</string>
+    <string name="delegation_register_delegation_passive">Passive</string>
+    <string name="delegation_register_delegation_passive_long">Passive delegation</string>
     <string name="delegation_register_delegation_continue">Continue</string>
 
     <string name="delegation_register_delegation_pool_id_error">Invalid target baker pool ID</string>
@@ -294,7 +296,7 @@
     <string name="delegation_register_delegation_confirmation_receipt_title">Transaction: Register delegation</string>
     <string name="delegation_register_delegation_confirmation_receipt_account_to_delegate_from">Account to delegate from</string>
     <string name="delegation_register_delegation_confirmation_receipt_amount_to_delegate">Delegation amount</string>
-    <string name="delegation_register_delegation_confirmation_receipt_target_pool">Target pool</string>
+    <string name="delegation_register_delegation_confirmation_receipt_target_pool">Target</string>
     <string name="delegation_register_delegation_confirmation_receipt_rewards_will_be">Rewards will be</string>
     <string name="delegation_register_delegation_reduce_warning_title">Important</string>
     <string name="delegation_register_delegation_reduce_warning_content">Reducing the delegation amount will lock the total delegation amount for a cool down period. No changes can be made to the amount during this period, and the withdrawal will not take effect before the cool down is over.</string>
@@ -797,6 +799,7 @@
     <string name="account_details_menu_hide_shielded">Hide shielded balance on %1$s</string>
     <string name="account_details_menu_decrypt">Decrypt</string>
     <string name="account_details_delegation_with_baker_pool">Delegation with baker pool %1$s</string>
+    <string name="account_details_delegation_with_passive_pool">Passive delegation</string>
     <string name="account_details_stake_with_baker">Stake with baker %1$s</string>
 
     <string name="account_details_toggle_shielded">Shielded balance</string>

@@ -90,7 +90,7 @@ class StakeAmountInputValidator(
     }
 
     private fun checkPoolLimitCoolDown(amount: String): StakeError {
-        // check if pool has changed from either L-pool to a baker pool or from one baker pool to another
+        // check if pool has changed from either Passive to a baker pool or from one baker pool to another
         if (isInCoolDown == true) {
             if ( (oldPoolId == null && !newPoolId.isNullOrEmpty()) || (oldPoolId != null && newPoolId != null && oldPoolId.toString() != newPoolId ) ) {
                 if (currentPool?.toLongOrNull() != null && poolLimit?.toLongOrNull() != null) {
