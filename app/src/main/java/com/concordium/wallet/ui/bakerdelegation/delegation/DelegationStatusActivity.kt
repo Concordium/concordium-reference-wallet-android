@@ -48,7 +48,7 @@ class DelegationStatusActivity :
                 addContent(R.string.delegation_status_content_target_pool, accountDelegation.delegationTarget.bakerId.toString())
             }
             else {
-                addContent(R.string.delegation_status_content_target_pool, DelegationTarget.TYPE_DELEGATE_TO_L_POOL)
+                addContent(R.string.delegation_status_content_target_pool, getString(R.string.delegation_register_delegation_passive_long))
             }
 
             if (accountDelegation.restakeEarnings) addContent(R.string.delegation_status_content_rewards_will_be, getString(R.string.delegation_status_added_to_delegation_amount))

@@ -92,8 +92,8 @@
                             android:layout_height="match_parent"
                             android:layout_marginHorizontal="@dimen/activity_vertical_margin"
                             android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
-                            android:gravity="center"
-                            android:text="@string/delegation_register_delegation_desc" />
+                            android:gravity="center_horizontal"
+                            tools:text="@string/delegation_register_delegation_desc" />
                     </LinearLayout>
                     <RelativeLayout
                         android:id="@+id/button_container"
