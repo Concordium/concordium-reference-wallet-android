@@ -46,16 +46,16 @@ class DelegationRegisterConfirmationActivity :
             showNotice()
         }
 
-        account_to_delegate_from.text = (viewModel.delegationData.account?.name ?: "").plus("\n\n").plus(viewModel.delegationData.account?.address ?: "")
-        delegation_amount_confirmation.text = CurrencyUtil.formatGTU(viewModel.delegationData.amount ?: 0, true)
-        target_pool.text = if (viewModel.delegationData.isLPool) getString(R.string.delegation_register_delegation_passive_long) else viewModel.delegationData.poolId
-        rewards_will_be.text = if (viewModel.delegationData.restake) getString(R.string.delegation_status_added_to_delegation_amount) else getString(R.string.delegation_status_at_disposal)
+        account_to_delegate_from.text = (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n").plus(viewModel.bakerDelegationData.account?.address ?: "")
+        delegation_amount_confirmation.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
+        target_pool.text = if (viewModel.bakerDelegationData.isLPool) getString(R.string.delegation_register_delegation_passive_long) else viewModel.bakerDelegationData.poolId
+        rewards_will_be.text = if (viewModel.bakerDelegationData.restake) getString(R.string.delegation_status_added_to_delegation_amount) else getString(R.string.delegation_status_at_disposal)
 
         if (!viewModel.stakedAmountHasChanged()) {
             delegation_amount_confirmation_title.visibility = View.GONE
             delegation_amount_confirmation.visibility = View.GONE
         }
-        if (!viewModel.poolHasChanged() && viewModel.isUpdating()) {
+        if (!viewModel.poolHasChanged() && viewModel.isUpdatingDelegation()) {
             target_pool_title.visibility = View.GONE
             target_pool.visibility = View.GONE
         }

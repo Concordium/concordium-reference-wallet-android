@@ -117,10 +117,10 @@ class DelegationRegisterPoolActivity :
     }
 
     private fun updateVisibilities() {
-        pool_id.hint = if (viewModel.delegationData.oldDelegationTargetPoolId == null) getString(R.string.delegation_register_delegation_pool_id_hint) else getString(R.string.delegation_register_delegation_pool_id_hint_update)
-        pool_id.visibility = if (viewModel.delegationData.isLPool) View.GONE else View.VISIBLE
-        pool_desc.text = if (viewModel.delegationData.isLPool) getString(R.string.delegation_register_delegation_desc_passive) else getString(R.string.delegation_register_delegation_desc)
-        pool_registration_continue.isEnabled = getExistingPoolIdText().isNotEmpty() || viewModel.delegationData.isLPool || pool_id.text.isNotEmpty()
+        pool_id.hint = if (viewModel.bakerDelegationData.oldDelegationTargetPoolId == null) getString(R.string.delegation_register_delegation_pool_id_hint) else getString(R.string.delegation_register_delegation_pool_id_hint_update)
+        pool_id.visibility = if (viewModel.bakerDelegationData.isLPool) View.GONE else View.VISIBLE
+        pool_desc.text = if (viewModel.bakerDelegationData.isLPool) getString(R.string.delegation_register_delegation_desc_passive) else getString(R.string.delegation_register_delegation_desc)
+        pool_registration_continue.isEnabled = getExistingPoolIdText().isNotEmpty() || viewModel.bakerDelegationData.isLPool || pool_id.text.isNotEmpty()
         hideError()
     }
 
