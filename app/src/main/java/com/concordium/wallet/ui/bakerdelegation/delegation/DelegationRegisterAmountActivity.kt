@@ -57,12 +57,12 @@ class DelegationRegisterAmountActivity :
             override fun onItemClicked(){
                 viewModel.markRestake(true)
             }
-        },viewModel.delegationData.account?.accountDelegation?.restakeEarnings == true)
+        },viewModel.delegationData.account?.accountDelegation?.restakeEarnings == true || viewModel.delegationData.account?.accountDelegation?.restakeEarnings == null)
         restake_options.addControl(getString(R.string.delegation_register_delegation_no_restake), object: SegmentedControlView.OnItemClickListener {
             override fun onItemClicked(){
                 viewModel.markRestake(false)
             }
-        },viewModel.delegationData.account?.accountDelegation?.restakeEarnings != true)
+        },viewModel.delegationData.account?.accountDelegation?.restakeEarnings != true && viewModel.delegationData.account?.accountDelegation?.restakeEarnings != null)
 
         amount.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
