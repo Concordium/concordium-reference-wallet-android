@@ -100,7 +100,7 @@ class DelegationRegisterPoolActivity :
     private fun updateContent() {
         if (viewModel.delegationData.type == DelegationData.TYPE_UPDATE_DELEGATION) {
             setActionBarTitle(R.string.delegation_update_delegation_title)
-            viewModel.delegationData.oldRestake = viewModel.delegationData.restake
+            viewModel.delegationData.oldRestake = viewModel.delegationData.account?.accountDelegation?.restakeEarnings
             viewModel.delegationData.oldDelegationIsBaker = viewModel.isBakerPool()
             viewModel.delegationData.oldDelegationTargetPoolId = viewModel.delegationData.account?.accountDelegation?.delegationTarget?.bakerId
             if (viewModel.isBakerPool()) {
