@@ -282,7 +282,7 @@
     <string name="delegation_register_delegation_amount_do_you_want">Do you want to automatically add your delegation rewards to your delegated amount?\n\nIf you choose to not restake your rewards, the amounts will be at disposal on your account balance at each pay day.</string>
     <string name="delegation_register_delegation_amount_continue">Continue</string>
     <string name="delegation_register_delegation_minimum">Minimum stake: Ͼ%1$s</string>
-    <string name="delegation_register_delegation_maximum">Current maximum:: Ͼ%1$s</string>
+    <string name="delegation_register_delegation_maximum">Current maximum: Ͼ%1$s</string>
     <string name="delegation_register_delegation_not_enough_funds">Insufficient funds</string>
     <string name="delegation_register_delegation_pool_limit_will_be_breached">Pool limit will be breached</string>
     <plurals name="delegation_register_delegation_confirmation_desc">
