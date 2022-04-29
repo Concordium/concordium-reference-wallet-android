@@ -33,6 +33,12 @@ class BakerRegistrationConfirmationActivity :
         rewards_will_be.text = if (viewModel.bakerDelegationData.restake) getString(R.string.baker_register_confirmation_receipt_added_to_delegation_amount) else getString(R.string.baker_register_confirmation_receipt_at_disposal)
         pool_status.text = if (viewModel.bakerDelegationData.isOpenBaker) getString(R.string.baker_register_confirmation_receipt_pool_status_open) else getString(R.string.baker_register_confirmation_receipt_pool_status_closed)
 
+        if (viewModel.isOpenBaker()) {
+            meta_data_url_title.visibility = View.VISIBLE
+            meta_data_url.visibility = View.VISIBLE
+            meta_data_url.text = viewModel.bakerDelegationData.bakerUrl
+        }
+
         election_verify_key.text = viewModel.bakerDelegationData.electionVerifyKey
         signature_verify_key.text = viewModel.bakerDelegationData.signatureVerifyKey
         aggregation_verify_key.text = viewModel.bakerDelegationData.aggregationVerifyKey

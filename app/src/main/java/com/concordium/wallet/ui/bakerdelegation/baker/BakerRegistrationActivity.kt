@@ -11,23 +11,18 @@ import kotlinx.android.synthetic.main.activity_baker_registration.*
 class BakerRegistrationActivity :
     BaseDelegationBakerActivity(R.layout.activity_baker_registration, R.string.baker_registration_title) {
 
-    private lateinit var openForDelegationControl: View
-    private lateinit var closeForDelegationControl: View
     override fun transactionSuccessLiveData() {
-        TODO("Not yet implemented")
     }
 
     override fun errorLiveData(value: Int) {
-        TODO("Not yet implemented")
     }
 
     override fun showDetailedLiveData(value: Boolean) {
-        TODO("Not yet implemented")
     }
 
     override fun initViews() {
         baker_options.clearAll()
-        openForDelegationControl = baker_options.addControl(
+        baker_options.addControl(
             getString(R.string.baker_registration_open),
             object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
@@ -36,7 +31,7 @@ class BakerRegistrationActivity :
             },
             viewModel.isOpenBaker()
         )
-        closeForDelegationControl = baker_options.addControl(
+        baker_options.addControl(
             getString(R.string.baker_registration_close),
             object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {

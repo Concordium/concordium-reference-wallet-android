@@ -38,6 +38,7 @@ data class DelegationData(
     var chainParameters: ChainParameters? = null
     var bakerPoolStatus: BakerPoolStatus? = null
     var cost: Long? = null
+    var bakerUrl: String? = null
 
     var oldStakedAmount: Long? = null
     var oldRestake: Boolean? = null

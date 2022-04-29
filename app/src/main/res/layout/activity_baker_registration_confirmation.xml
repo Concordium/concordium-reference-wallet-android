@@ -113,6 +113,22 @@
                                     android:layout_height="wrap_content"
                                     tools:text="@string/baker_register_confirmation_receipt_pool_status_closed" />
                                 <TextView
+                                    android:id="@+id/meta_data_url_title"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:visibility="gone"
+                                    tools:visibility="visible"
+                                    android:text="@string/baker_register_confirmation_receipt_meta_data_url" />
+                                <TextView
+                                    android:id="@+id/meta_data_url"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:visibility="gone"
+                                    tools:visibility="visible"
+                                    tools:text="https://example.com" />
+                                <TextView
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"

@@ -19,14 +19,14 @@ abstract class BaseDelegationBakerRegisterAmountActivity(layout: Int, titleId: I
                 override fun onItemClicked() {
                     viewModel.markRestake(true)
                 }
-            },viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings == true)
+            },viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings == true || viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings == null)
         restake_options.addControl(
             getString(R.string.delegation_register_delegation_no_restake),
             object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
                     viewModel.markRestake(false)
                 }
-            },viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings != true)
+            },viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings != true && viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings != null)
     }
 
     abstract fun getStakeAmountInputValidator(): StakeAmountInputValidator

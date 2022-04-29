@@ -64,7 +64,7 @@
                         android:paddingBottom="10dp"
                         android:orientation="horizontal">
                         <Button
-                            android:id="@+id/baker_registration_export"
+                            android:id="@+id/baker_registration_open_continue"
                             style="@style/Button.Standard"
                             android:layout_width="match_parent"
                             android:text="@string/baker_registration_open_continue" />
