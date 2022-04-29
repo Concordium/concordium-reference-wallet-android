@@ -75,13 +75,6 @@ class DelegationStatusActivity :
                 continueToDelete()
             }
 
-            viewModel.bakerDelegationData.account?.accountDelegation?.pendingChange?.let {
-                addContent(getString(R.string.delegation_status_content_take_effect_on) + "\n" + it.effectiveTime, "")
-                if (it.change == "RemoveStake") {
-                    addContent(getString(R.string.delegation_status_content_delegation_will_be_stopped), "")
-                }
-            }
-
             /*
             The stop button has the following states:
             */
