@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.bakerdelegation.baker
 
 import android.content.Intent
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.BakerPoolInfo
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.common.GenericFlowActivity
@@ -20,7 +21,7 @@ class BakerUpdatePoolSettingsActivity :
             getString(R.string.baker_update_pool_settings_option_open),
             object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
-                    viewModel.selectOpenBaker()
+                    viewModel.selectOpenStatus(BakerPoolInfo(BakerPoolInfo.OPEN_STATUS_OPEN_FOR_ALL))
                 }
             }, viewModel.isOpenBaker())
         if (!viewModel.isClosedBaker()) {
@@ -28,7 +29,7 @@ class BakerUpdatePoolSettingsActivity :
                 getString(R.string.baker_update_pool_settings_option_close_for_new),
                 object : SegmentedControlView.OnItemClickListener {
                     override fun onItemClicked() {
-                        viewModel.selectClosedForNewBaker()
+                        viewModel.selectOpenStatus(BakerPoolInfo(BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW))
                     }
                 }, viewModel.isClosedForNewBaker())
         }
@@ -36,7 +37,7 @@ class BakerUpdatePoolSettingsActivity :
             getString(R.string.baker_update_pool_settings_option_close),
             object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
-                    viewModel.selectClosedBaker()
+                    viewModel.selectOpenStatus(BakerPoolInfo(BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL))
                 }
             }, viewModel.isClosedBaker())
 
@@ -55,14 +56,11 @@ class BakerUpdatePoolSettingsActivity :
     }
 
     override fun transactionSuccessLiveData() {
-        TODO("Not yet implemented")
     }
 
     override fun errorLiveData(value: Int) {
-        TODO("Not yet implemented")
     }
 
     override fun showDetailedLiveData(value: Boolean) {
-        TODO("Not yet implemented")
     }
 }

@@ -26,10 +26,6 @@ class ExportActivity : BaseActivity(
     private val BACKSTACK_NAME_PASSWORD = "BACKSTACK_NAME_PASSWORD"
     private val BACKSTACK_NAME_REPEAT_PASSWORD = "BACKSTACK_NAME_REPEAT_PASSWORD"
 
-    companion object {
-        private const val RESULT_FOLDER_PICKER = 101
-    }
-
     private val viewModel: ExportViewModel by viewModels()
 
     //region Lifecycle

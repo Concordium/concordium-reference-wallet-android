@@ -35,10 +35,11 @@ class TransactionMappingHelper(
 
 
     fun addTitlesToTransaction(transaction: Transaction, transfer: Transfer, ctx: Context) {
-        if(transaction.isDelegationOrBakerTransfer()){
+        if (transaction.isDelegationTransfer()){
             transaction.title = ctx.getString(R.string.account_delegation_pending)
-        }
-        else{
+        } else if (transaction.isBakerTransfer()) {
+            transaction.title = ctx.getString(R.string.account_baking_pending)
+        } else {
             // ...else transfer is always outgoing, so just use toAddress
             val recipientResult = findRecipientOrUseAddress(transfer.toAddress)
             transaction.title = recipientResult.recipientOrAddress

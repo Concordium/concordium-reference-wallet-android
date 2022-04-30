@@ -18,7 +18,7 @@ class BakerRegistrationIntroFlow :
     override fun gotoContinue() {
         val intent = Intent(this, BakerStatusActivity::class.java)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, delegationData)
-        startActivity(intent)
+        startActivityForResultAndHistoryCheck(intent)
     }
 
     override fun getLink(position: Int): String {

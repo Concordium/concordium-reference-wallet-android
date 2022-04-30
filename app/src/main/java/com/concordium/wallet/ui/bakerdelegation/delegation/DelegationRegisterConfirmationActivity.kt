@@ -110,7 +110,7 @@ class DelegationRegisterConfirmationActivity :
     }
 
     private fun onContinueClicked() {
-        viewModel.delegateAmount()
+        viewModel.prepareTransaction()
     }
 
     private fun showNotice() {

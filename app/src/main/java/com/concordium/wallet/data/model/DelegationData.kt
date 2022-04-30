@@ -12,12 +12,9 @@ data class DelegationData(
     var isLPool: Boolean = false,
     var isBakerPool: Boolean = true,
     var poolId: String = "",
-    var isOpenBaker: Boolean = true,
-    var isClosedBaker: Boolean = false,
+    var bakerPoolInfo: BakerPoolInfo? = BakerPoolInfo(BakerPoolInfo.OPEN_STATUS_OPEN_FOR_ALL),
     var isTransactionInProgress: Boolean = false,
-    var electionVerifyKey: String = "",
-    var signatureVerifyKey: String = "",
-    var aggregationVerifyKey: String = "",
+    var bakerKeys: BakerKeys? = null,
     var type: String
     ) : Serializable {
 
@@ -26,8 +23,11 @@ data class DelegationData(
         const val TYPE_UPDATE_DELEGATION = "TYPE_UPDATE_DELEGATION"
         const val TYPE_REMOVE_DELEGATION = "TYPE_REMOVE_DELEGATION"
         const val TYPE_REGISTER_BAKER = "TYPE_REGISTER_BAKER"
-        const val TYPE_UPDATE_BAKER = "TYPE_UPDATE_BAKER"
+        const val TYPE_UPDATE_BAKER_STAKE = "TYPE_UPDATE_BAKER_STAKE"
+        const val TYPE_UPDATE_BAKER_POOL = "TYPE_UPDATE_BAKER_POOL"
+        const val TYPE_UPDATE_BAKER_KEYS = "TYPE_UPDATE_BAKER_KEYS"
         const val TYPE_REMOVE_BAKER = "TYPE_REMOVE_BAKER"
+        const val TYPE_CONFIGURE_BAKER = "TYPE_CONFIGURE_BAKER"
     }
 
     var transferSubmissionStatus: TransferSubmissionStatus? = null
@@ -38,14 +38,15 @@ data class DelegationData(
     var chainParameters: ChainParameters? = null
     var bakerPoolStatus: BakerPoolStatus? = null
     var cost: Long? = null
-    var bakerUrl: String? = null
+    var metadataUrl: String? = null
 
     var oldStakedAmount: Long? = null
     var oldRestake: Boolean? = null
     var oldDelegationIsBaker: Boolean? = null
     var oldDelegationTargetPoolId: Long? = null
+    var oldMetadataUrl: String? = null
 
     fun isBakerFlow(): Boolean {
-        return electionVerifyKey.isNotEmpty()
+        return bakerKeys != null
     }
 }

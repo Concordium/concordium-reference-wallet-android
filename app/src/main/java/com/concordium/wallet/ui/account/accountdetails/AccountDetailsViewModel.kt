@@ -299,7 +299,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             transactionMappingHelper = TransactionMappingHelper(account, recipientList)
             val transferList = transferRepository.getAllByAccountId(account.id)
             for (transfer in transferList) {
-                if(transfer.transactionType == TransactionType.LOCAL_DELEGATIONORBAKER){
+                if (transfer.transactionType == TransactionType.LOCAL_DELEGATION || transfer.transactionType == TransactionType.LOCAL_BAKER) {
                     hasPendingTransactions = true
                 }
                 val transaction = transfer.toTransaction()

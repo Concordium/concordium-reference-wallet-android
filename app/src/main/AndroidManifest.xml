@@ -37,7 +37,7 @@
             android:name=".DataFileProvider"
             android:authorities="@string/PROVIDER_AUTHORITY"
             android:enabled="true"
-            android:exported="false"
+            android:exported="true"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"

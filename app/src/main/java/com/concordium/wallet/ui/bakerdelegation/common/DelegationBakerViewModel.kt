@@ -101,6 +101,10 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return bakerDelegationData.amount != bakerDelegationData.oldStakedAmount
     }
 
+    fun metadataUrlHasChanged(): Boolean {
+        return bakerDelegationData.metadataUrl != bakerDelegationData.oldMetadataUrl
+    }
+
     fun poolHasChanged(): Boolean {
         if (bakerDelegationData.isLPool && bakerDelegationData.oldDelegationIsBaker != null && bakerDelegationData.oldDelegationIsBaker!!)
             return true
@@ -120,15 +124,15 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun isOpenBaker(): Boolean {
-        return bakerDelegationData.isOpenBaker // bakerData.account?.accountBaker?.bakerId == null
+        return bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_OPEN_FOR_ALL
     }
 
     fun isClosedForNewBaker(): Boolean {
-        return bakerDelegationData.isOpenBaker // bakerData.account?.accountBaker?.bakerId == null
+        return bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW
     }
 
     fun isClosedBaker(): Boolean {
-        return bakerDelegationData.isClosedBaker // bakerData.account?.accountBaker?.bakerId != null
+        return bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL
     }
 
     fun isUpdatingDelegation(): Boolean {
@@ -159,19 +163,8 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         this.bakerDelegationData.poolId = ""
     }
 
-    fun selectOpenBaker() {
-        bakerDelegationData.isOpenBaker = true
-        bakerDelegationData.isClosedBaker = false
-    }
-
-    fun selectClosedForNewBaker() {
-        bakerDelegationData.isOpenBaker = true
-        bakerDelegationData.isClosedBaker = false
-    }
-
-    fun selectClosedBaker() {
-        bakerDelegationData.isOpenBaker = false
-        bakerDelegationData.isClosedBaker = true
+    fun selectOpenStatus(openStatus: BakerPoolInfo) {
+        bakerDelegationData.bakerPoolInfo = openStatus
     }
 
     fun markRestake(restake: Boolean) {
@@ -218,20 +211,36 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             DelegationData.TYPE_REGISTER_DELEGATION -> ProxyRepository.REGISTER_DELEGATION
             DelegationData.TYPE_UPDATE_DELEGATION -> ProxyRepository.UPDATE_DELEGATION
             DelegationData.TYPE_REMOVE_DELEGATION -> ProxyRepository.REMOVE_DELEGATION
+            DelegationData.TYPE_REGISTER_BAKER -> ProxyRepository.REGISTER_BAKER
             else -> ProxyRepository.REGISTER_DELEGATION
         }
 
         val amount = when(bakerDelegationData.type) {
-            DelegationData.TYPE_UPDATE_DELEGATION -> bakerDelegationData.amount
+            DelegationData.TYPE_UPDATE_DELEGATION, DelegationData.TYPE_UPDATE_BAKER_STAKE, DelegationData.TYPE_CONFIGURE_BAKER -> bakerDelegationData.amount
             else -> null
         }
 
         val restake = when(bakerDelegationData.type) {
-            DelegationData.TYPE_UPDATE_DELEGATION -> bakerDelegationData.restake
+            DelegationData.TYPE_UPDATE_DELEGATION, DelegationData.TYPE_UPDATE_BAKER_STAKE, DelegationData.TYPE_CONFIGURE_BAKER -> bakerDelegationData.restake
             else -> null
         }
 
-        val targetChange: Boolean? = if (poolHasChanged()) true else null
+        val targetChange: Boolean? = if (type == DelegationData.TYPE_UPDATE_DELEGATION && poolHasChanged()) true else null
+
+        val metadataSize = when(type) {
+            DelegationData.TYPE_REGISTER_BAKER -> {
+                bakerDelegationData.metadataUrl?.length
+            }
+            DelegationData.TYPE_UPDATE_BAKER_POOL, DelegationData.TYPE_CONFIGURE_BAKER -> {
+                if (metadataUrlHasChanged()) { bakerDelegationData.metadataUrl?.length }
+                else null
+            }
+            else -> null
+        }
+
+        val openStatus: String? = if (type == DelegationData.TYPE_UPDATE_BAKER_POOL || type == DelegationData.TYPE_CONFIGURE_BAKER) {
+            bakerDelegationData.bakerPoolInfo?.openStatus
+        } else null
 
         proxyRepository.getTransferCost(type,
             null,
@@ -239,6 +248,8 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             restake,
             bakerDelegationData.isLPool,
             targetChange,
+            metadataSize,
+            openStatus,
             {
                 bakerDelegationData.energy = it.energy
                 bakerDelegationData.cost = it.cost.toLong()
@@ -273,7 +284,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return App.appCore.getCurrentAuthenticationManager().usePasscode()
     }
 
-    fun delegateAmount() {
+    fun prepareTransaction() {
         if (bakerDelegationData.amount == null) {
             _errorLiveData.value = Event(R.string.app_error_general)
             return
@@ -349,9 +360,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             if (decryptedJson != null) {
                 val credentialsOutput = App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
                 if (bakerDelegationData.isBakerFlow())
-                    createBaking(credentialsOutput.accountKeys, credentialsOutput.encryptionSecretKey)
+                    createBakingTransaction(credentialsOutput.accountKeys, credentialsOutput.encryptionSecretKey)
                 else
-                    createDelegation(credentialsOutput.accountKeys, credentialsOutput.encryptionSecretKey)
+                    createDelegationTransaction(credentialsOutput.accountKeys, credentialsOutput.encryptionSecretKey)
             } else {
                 _errorLiveData.value = Event(R.string.app_error_encryption)
                 _waitingLiveData.value = false
@@ -359,11 +370,69 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    private suspend fun createBaking(keys: AccountData, encryptionSecretKey: String?) {
+    private suspend fun createBakingTransaction(keys: AccountData, encryptionSecretKey: String?) {
 
+        val from = bakerDelegationData.account?.address
+        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000 // Expiry should me now + 10 minutes (in seconds)
+        val energy = bakerDelegationData.energy
+        val nonce = bakerDelegationData.accountNonce
+
+        var encryptionSK: String? = null
+        if (bakerDelegationData.type != DelegationData.TYPE_REMOVE_BAKER)
+            encryptionSK = encryptionSecretKey
+
+        var capital: String? = null
+        if (stakedAmountHasChanged())
+            capital = bakerDelegationData.amount.toString()
+
+        var restakeEarnings: Boolean? = null
+        if (bakerDelegationData.type != DelegationData.TYPE_REMOVE_BAKER && restakeHasChanged())
+            restakeEarnings = bakerDelegationData.restake
+
+        val metadataUrl = if (bakerDelegationData.metadataUrl.isNullOrEmpty()) null else bakerDelegationData.metadataUrl
+
+        if (from == null || nonce == null || energy == null) {
+            _errorLiveData.value = Event(R.string.app_error_general)
+            _waitingLiveData.value = false
+            return
+        }
+
+        val transferInput = CreateTransferInput(
+            from,
+            keys,
+            null,
+            expiry,
+            null,
+            energy,
+            nonce.nonce,
+            null,
+            null,
+            null,
+            encryptionSK,
+            null,
+            capital,
+            restakeEarnings,
+            null,
+            metadataUrl,
+            bakerDelegationData.bakerPoolInfo?.openStatus,
+            bakerDelegationData.bakerKeys,
+            0.05,
+            0.05,
+            0.05)
+
+        val output = App.appCore.cryptoLibrary.createTransfer(transferInput, CryptoLibrary.CONFIGURE_BAKING_TRANSACTION)
+
+        if (output == null) {
+            _errorLiveData.value = Event(R.string.app_error_lib)
+            _waitingLiveData.value = false
+        } else {
+            viewModelScope.launch {
+                submitTransfer(output, TransactionType.LOCAL_BAKER)
+            }
+        }
     }
 
-    private suspend fun createDelegation(keys: AccountData, encryptionSecretKey: String?) {
+    private suspend fun createDelegationTransaction(keys: AccountData, encryptionSecretKey: String?) {
         val from = bakerDelegationData.account?.address
         val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000 // Expiry should me now + 10 minutes (in seconds)
         val energy = bakerDelegationData.energy
@@ -417,8 +486,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             null,
             capital,
             restakeEarnings,
-            delegationTarget
-        )
+            delegationTarget)
 
         val output = App.appCore.cryptoLibrary.createTransfer(transferInput, CryptoLibrary.CONFIGURE_DELEGATION_TRANSACTION)
 
@@ -427,19 +495,19 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             _waitingLiveData.value = false
         } else {
             viewModelScope.launch {
-                submitTransfer(output)
+                submitTransfer(output, TransactionType.LOCAL_DELEGATION)
             }
         }
     }
 
-    private fun submitTransfer(transfer: CreateTransferOutput) {
+    private fun submitTransfer(transfer: CreateTransferOutput, localTransactionType: TransactionType) {
         _waitingLiveData.value = true
         submitCredentialRequest?.dispose()
         submitCredentialRequest = proxyRepository.submitTransfer(transfer,
             {
                 Log.d("Success:"+it)
                 bakerDelegationData.submissionId = it.submissionId
-                submissionStatus()
+                submissionStatus(localTransactionType)
                 // Do not disable waiting state yet
             },
             {
@@ -450,14 +518,14 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         )
     }
 
-    private fun submissionStatus() {
+    private fun submissionStatus(localTransactionType: TransactionType) {
         _waitingLiveData.value = true
         transferSubmissionStatusRequest?.dispose()
         transferSubmissionStatusRequest = bakerDelegationData.submissionId?.let { submissionId ->
             proxyRepository.getTransferSubmissionStatus(submissionId,
                 { transferSubmissionStatus ->
                     bakerDelegationData.transferSubmissionStatus = transferSubmissionStatus
-                    finishTransferCreation()
+                    finishTransferCreation(localTransactionType)
                     // Do not disable waiting state yet
                 },
                 {
@@ -468,7 +536,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    private fun finishTransferCreation() {
+    private fun finishTransferCreation(localTransactionType: TransactionType) {
         val createdAt = Date().time
 
         val accountId = bakerDelegationData.account?.id
@@ -498,7 +566,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             submissionId,
             TransactionStatus.UNKNOWN,
             TransactionOutcome.UNKNOWN,
-            TransactionType.LOCAL_DELEGATIONORBAKER,
+            localTransactionType,
             //but amount is negative so it is listed as incoming positive
             null,
             0,
@@ -519,9 +587,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             if (bakerKeys == null) {
                 _errorLiveData.value = Event(R.string.app_error_lib)
             } else {
-                bakerDelegationData.electionVerifyKey = bakerKeys.electionVerifyKey
-                bakerDelegationData.signatureVerifyKey = bakerKeys.signatureVerifyKey
-                bakerDelegationData.aggregationVerifyKey = bakerKeys.aggregationVerifyKey
+                bakerDelegationData.bakerKeys = bakerKeys
                 _bakerKeysLiveData.value = bakerKeys
             }
         }

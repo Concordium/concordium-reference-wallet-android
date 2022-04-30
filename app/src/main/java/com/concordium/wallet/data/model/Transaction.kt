@@ -36,8 +36,12 @@ data class Transaction(
         return transactionStatus == TransactionStatus.FINALIZED
     }
 
-    fun isDelegationOrBakerTransfer(): Boolean {
-        return details?.type == TransactionType.LOCAL_DELEGATIONORBAKER
+    fun isBakerTransfer(): Boolean {
+        return details?.type == TransactionType.LOCAL_BAKER
+    }
+
+    fun isDelegationTransfer(): Boolean {
+        return details?.type == TransactionType.LOCAL_DELEGATION
     }
 
     fun isSimpleTransfer(): Boolean {

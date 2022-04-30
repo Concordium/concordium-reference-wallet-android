@@ -44,24 +44,24 @@ class BakerUpdateIntroFlow :
     private fun gotoUpdateBakerStake() {
         val intent = Intent(this, BakerRegisterAmountActivity::class.java)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, delegationData)
-        startActivity(intent)
+        startActivityForResultAndHistoryCheck(intent)
     }
 
     private fun gotoUpdatePoolSettings() {
         val intent = Intent(this, BakerUpdatePoolSettingsActivity::class.java)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, delegationData)
-        startActivity(intent)
+        startActivityForResultAndHistoryCheck(intent)
     }
 
     private fun gotoUpdateBakerKeys() {
         val intent = Intent(this, BakerRegistrationCloseActivity::class.java)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, delegationData)
-        startActivity(intent)
+        startActivityForResultAndHistoryCheck(intent)
     }
 
     private fun gotoStopBaking() {
         val intent = Intent(this, BakerRemoveIntroFlow::class.java)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, delegationData)
-        startActivity(intent)
+        startActivityForResultAndHistoryCheck(intent)
     }
 }

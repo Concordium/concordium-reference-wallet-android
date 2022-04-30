@@ -14,13 +14,13 @@ class BakerRegistrationOpenActivity :
         super.initViews()
 
         baker_registration_open_continue.setOnClickListener {
-            viewModel.bakerDelegationData.bakerUrl = open_url.text?.toString()
-            continueToBakerConfirmation()
+            viewModel.bakerDelegationData.metadataUrl = open_url.text?.toString()
+            continueToGenerateKeys()
         }
     }
 
-    private fun continueToBakerConfirmation() {
-        val intent = Intent(this, BakerRegistrationConfirmationActivity::class.java)
+    private fun continueToGenerateKeys() {
+        val intent = Intent(this, BakerRegistrationCloseActivity::class.java)
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)

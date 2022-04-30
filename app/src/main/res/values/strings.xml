@@ -412,6 +412,7 @@
     <string name="baker_register_confirmation_receipt_added_to_delegation_amount">Added to stake</string>
     <string name="baker_register_confirmation_receipt_at_disposal">At disposal</string>
     <string name="baker_register_confirmation_receipt_meta_data_url">Metadata URL</string>
+    <string name="baker_register_transaction_failed">Your baking transaction failed:\n\n%1$s\n\nDo you want to try again?</string>
 
     <string name="baker_update_intro_flow_title">Baking</string>
     <string name="baker_update_intro_subtitle1">Updating baker settings</string>
@@ -436,6 +437,10 @@
     <string name="baker_update_pool_settings_option_close_for_new">Close for new delegators</string>
     <string name="baker_update_pool_settings_option_close">Close for delegation</string>
     <string name="baker_update_pool_settings_continue">Continue</string>
+
+    <string name="baker_notice_title">Notice</string>
+    <string name="baker_notice_message">Once your transaction has succesfully finalized, the baker registration will take effect from the next pay day.\n\nRemember to restart your node with the baker keys.</string>
+    <string name="baker_notice_ok">Okay</string>
 
 
     <!-- ***** Auth ***** -->
@@ -643,6 +648,7 @@
     <string name="account_details_gtu_drop_button">Request 2000CCD</string>
     <string name="account_details_shielded_transaction_fee">Shielded transaction fee</string>
     <string name="account_delegation_pending">Configure delegation</string>
+    <string name="account_baking_pending">Configure baker</string>
 
     <string name="account_details_empty_identity_data">This account has no identity data revealed.</string>
 

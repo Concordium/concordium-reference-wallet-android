@@ -61,21 +61,14 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
         }
 
     private fun internalCreateTransfer(input: String, type: Int): ReturnValue {
-        if (type == CryptoLibrary.PUBLIC_TO_SEC_TRANSFER) {
-            return create_pub_to_sec_transfer(input)
+        when (type) {
+            CryptoLibrary.PUBLIC_TO_SEC_TRANSFER -> return create_pub_to_sec_transfer(input)
+            CryptoLibrary.SEC_TO_PUBLIC_TRANSFER -> return create_sec_to_pub_transfer(input)
+            CryptoLibrary.ENCRYPTED_TRANSFER -> return create_encrypted_transfer(input)
+            CryptoLibrary.CONFIGURE_DELEGATION_TRANSACTION -> return create_configure_delegation_transaction(input)
+            CryptoLibrary.CONFIGURE_BAKING_TRANSACTION -> return create_configure_baker_transaction(input)
         }
-        if (type == CryptoLibrary.SEC_TO_PUBLIC_TRANSFER) {
-            return create_sec_to_pub_transfer(input)
-        }
-        if (type == CryptoLibrary.ENCRYPTED_TRANSFER) {
-            return create_encrypted_transfer(input)
-        }
-        if (type == CryptoLibrary.CONFIGURE_DELEGATION_TRANSACTION) {
-            return create_configure_delegation_transaction(input)
-        }
-
-        //CryptoLibrary.REGULAR_TRANSFER
-        return create_transfer(input)
+        return create_transfer(input) // CryptoLibrary.REGULAR_TRANSFER
     }
 
     override suspend fun decryptEncryptedAmount(input: DecryptAmountInput): String? =

@@ -15,7 +15,6 @@ class ProxyRepository() {
         const val ENCRYPTED_TRANSFER = "encryptedTransfer"
         const val TRANSFER_TO_SECRET = "transferToSecret"
         const val TRANSFER_TO_PUBLIC = "transferToPublic"
-
         const val REGISTER_DELEGATION = "registerDelegation"
         const val UPDATE_DELEGATION = "updateDelegation"
         const val REMOVE_DELEGATION = "removeDelegation"
@@ -177,12 +176,12 @@ class ProxyRepository() {
     }
 
 
-    fun getTransferCost(type: String, memoSize: Int?, amount: Long? = null, restake: Boolean? = null, lPool: Boolean? = null, targetChange: Boolean? = null, success: (TransferCost) -> Unit, failure: ((Throwable) -> Unit)?): BackendRequest<TransferCost> {
+    fun getTransferCost(type: String, memoSize: Int?, amount: Long? = null, restake: Boolean? = null, lPool: Boolean? = null, targetChange: Boolean? = null, metadataSize: Int? = null, openStatus: String? = null, success: (TransferCost) -> Unit, failure: ((Throwable) -> Unit)?): BackendRequest<TransferCost> {
 
         val lPoolArg = if (lPool == true) "lPool" else null
         val targetArg = if (targetChange == true) "target" else null
 
-        val call = backend.transferCost(type, memoSize, amount, restake, lPoolArg, targetArg)
+        val call = backend.transferCost(type, memoSize, amount, restake, lPoolArg, targetArg, metadataSize, openStatus)
 
         call.enqueue(object : BackendCallback<TransferCost>() {
 

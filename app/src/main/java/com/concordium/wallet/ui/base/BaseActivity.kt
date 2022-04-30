@@ -37,6 +37,7 @@ abstract open class BaseActivity(private val layout: Int, private val titleId: I
         const val REQUESTCODE_GENERIC_RETURN = 8232
         const val POP_UNTIL_ACTIVITY = "POP_UNTIL_ACTIVITY"
         const val RESULT_FOLDER_PICKER = 101
+        const val RESULT_SHARE_FILE = 102
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,7 +81,7 @@ abstract open class BaseActivity(private val layout: Int, private val titleId: I
             val packageName = resolveInfo.activityInfo.packageName
             grantUriPermission(packageName, fileName, Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        startActivity(Intent.createChooser(share, null));
+        startActivityForResult(Intent.createChooser(share, null), RESULT_SHARE_FILE)
     }
 
     /**

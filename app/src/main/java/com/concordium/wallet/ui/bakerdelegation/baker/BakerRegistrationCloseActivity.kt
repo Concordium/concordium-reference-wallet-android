@@ -22,25 +22,9 @@ import kotlinx.coroutines.launch
 class BakerRegistrationCloseActivity :
     BaseDelegationBakerActivity(R.layout.activity_baker_registration_close, R.string.baker_registration_title) {
 
-    companion object {
-        private const val RESULT_FOLDER_PICKER = 101
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         generateKeys()
-    }
-
-    override fun transactionSuccessLiveData() {
-        TODO("Not yet implemented")
-    }
-
-    override fun errorLiveData(value: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun showDetailedLiveData(value: Boolean) {
-        TODO("Not yet implemented")
     }
 
     override fun initViews() {
@@ -100,7 +84,9 @@ class BakerRegistrationCloseActivity :
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK && requestCode == RESULT_FOLDER_PICKER) {
+        if (requestCode == RESULT_SHARE_FILE) {
+            continueToBakerConfirmation()
+        } else if (resultCode == RESULT_OK && requestCode == RESULT_FOLDER_PICKER) {
             data?.data?.let { uri ->
                 viewModel.saveFileToLocalFolder(uri)
                 continueToBakerConfirmation()
@@ -114,7 +100,6 @@ class BakerRegistrationCloseActivity :
             if (!bakerKeysJson.isNullOrEmpty()) {
                 FileUtil.saveFile(App.appContext, DelegationBakerViewModel.FILE_NAME_BAKER_KEYS, bakerKeysJson)
                 shareFile(viewModel.getTempFileWithPath())
-                continueToBakerConfirmation()
             }
         }
     }
@@ -124,5 +109,14 @@ class BakerRegistrationCloseActivity :
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
+    }
+
+    override fun transactionSuccessLiveData() {
+    }
+
+    override fun errorLiveData(value: Int) {
+    }
+
+    override fun showDetailedLiveData(value: Boolean) {
     }
 }

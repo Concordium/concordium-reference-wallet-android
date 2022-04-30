@@ -1,9 +1,6 @@
 package com.concordium.wallet.data.cryptolib
 
-import com.concordium.wallet.data.model.AccountData
-import com.concordium.wallet.data.model.GlobalParams
-import com.concordium.wallet.data.model.DelegationTarget
-import com.concordium.wallet.data.model.InputEncryptedAmount
+import com.concordium.wallet.data.model.*
 
 data class CreateTransferInput(
     val from: String,
@@ -20,5 +17,11 @@ data class CreateTransferInput(
     val inputEncryptedAmount: InputEncryptedAmount?,
     val capital: String?,
     val restakeEarnings: Boolean? = null,
-    val delegationTarget: DelegationTarget? = null
+    val delegationTarget: DelegationTarget? = null,
+    val metadataUrl: String? = null,
+    val openStatus: String? = null,
+    val bakerKeys: BakerKeys? = null,
+    val transactionFeeCommission: Double? = null,
+    val bakingRewardCommission: Double? = null,
+    val finalizationRewardCommission: Double? = null
 )

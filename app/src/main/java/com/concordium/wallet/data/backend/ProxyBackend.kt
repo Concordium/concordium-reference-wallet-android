@@ -38,7 +38,9 @@ interface ProxyBackend {
         @Query("amount") amount: Long? = null,
         @Query("restake") restake: Boolean? = null,
         @Query("lPool") lPool: String? = null,
-        @Query("target") target: String? = null
+        @Query("target") target: String? = null,
+        @Query("metadataSize") metadataSize: Int? = null,
+        @Query("openStatus") openStatus: String? = null
     ): Call<TransferCost>
 
     @GET("v0/chainParameters")

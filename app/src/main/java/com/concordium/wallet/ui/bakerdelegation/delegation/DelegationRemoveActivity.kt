@@ -48,7 +48,7 @@ class DelegationRemoveActivity :
                 }
             }
             viewModel.bakerDelegationData.amount = 0
-            viewModel.delegateAmount()
+            viewModel.prepareTransaction()
         }
     }
 

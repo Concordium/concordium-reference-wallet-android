@@ -1,8 +1,10 @@
 package com.concordium.wallet.ui.bakerdelegation.baker
 
 import android.content.Intent
-import android.view.View
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.BakerPoolInfo
+import com.concordium.wallet.data.model.BakerPoolInfo.Companion.OPEN_STATUS_CLOSED_FOR_ALL
+import com.concordium.wallet.data.model.BakerPoolInfo.Companion.OPEN_STATUS_OPEN_FOR_ALL
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.uicore.view.SegmentedControlView
@@ -26,20 +28,16 @@ class BakerRegistrationActivity :
             getString(R.string.baker_registration_open),
             object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
-                    viewModel.selectOpenBaker()
+                    viewModel.selectOpenStatus(BakerPoolInfo(OPEN_STATUS_OPEN_FOR_ALL))
                 }
-            },
-            viewModel.isOpenBaker()
-        )
+            }, viewModel.bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL || viewModel.bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == null)
         baker_options.addControl(
             getString(R.string.baker_registration_close),
             object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
-                    viewModel.selectClosedBaker()
+                    viewModel.selectOpenStatus(BakerPoolInfo(OPEN_STATUS_CLOSED_FOR_ALL))
                 }
-            },
-            viewModel.isClosedBaker()
-        )
+            }, viewModel.bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_ALL)
 
         baker_registration_continue.setOnClickListener {
             onContinueClicked()
@@ -47,7 +45,7 @@ class BakerRegistrationActivity :
     }
 
     private fun onContinueClicked() {
-        val intent = if (viewModel.isClosedBaker())
+        val intent = if (viewModel.bakerDelegationData.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_ALL)
             Intent(this, BakerRegistrationCloseActivity::class.java)
         else
             Intent(this, BakerRegistrationOpenActivity::class.java)
