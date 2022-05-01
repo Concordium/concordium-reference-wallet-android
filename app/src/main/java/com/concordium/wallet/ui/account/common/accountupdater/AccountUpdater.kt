@@ -316,6 +316,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     request.account.currentBalance = accountBalance.currentBalance?.getAmount() ?: 0
 
                     request.account.accountDelegation = accountBalance.currentBalance?.accountDelegation
+                    request.account.accountBaker = accountBalance.currentBalance?.accountBaker
 
                     request.account.finalizedAccountReleaseSchedule = accountBalance.finalizedBalance?.accountReleaseSchedule
                     accountBalance.finalizedBalance?.let {
