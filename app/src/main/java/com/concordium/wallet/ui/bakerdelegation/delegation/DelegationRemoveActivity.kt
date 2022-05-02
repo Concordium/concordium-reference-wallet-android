@@ -52,14 +52,6 @@ class DelegationRemoveActivity :
         }
     }
 
-    private fun showNotEnoughFunds() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(R.string.delegation_remove_not_enough_funds_title)
-        builder.setMessage(getString(R.string.delegation_remove_not_enough_funds_message))
-        builder.setPositiveButton(getString(R.string.delegation_remove_not_enough_funds_ok)) { dialog, _ -> dialog.dismiss() }
-        builder.create().show()
-    }
-
     override fun transactionSuccessLiveData() {
         showPageAsReceipt()
     }

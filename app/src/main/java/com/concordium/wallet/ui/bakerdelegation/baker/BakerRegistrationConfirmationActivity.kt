@@ -4,7 +4,11 @@ import android.app.AlertDialog
 import android.view.View
 import androidx.lifecycle.Observer
 import com.concordium.wallet.R
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_BAKER
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_BAKER
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_KEYS
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_POOL
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_STAKE
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
@@ -68,10 +72,7 @@ class BakerRegistrationConfirmationActivity :
             signature_verify_key.visibility = View.GONE
             aggregation_verify_key_title.visibility = View.GONE
             aggregation_verify_key.visibility = View.GONE
-        } else if (viewModel.bakerDelegationData.isUpdateBaker()) {
-            // setActionBarTitle(R.string.delegation_update_delegation_title)
-            //delegation_transaction_title.text = getString(R.string.delegation_update_delegation_transaction_title)
-        } else {
+        } else if (viewModel.bakerDelegationData.type == REGISTER_BAKER) {
             account_to_bake_from.text = (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n").plus(viewModel.bakerDelegationData.account?.address ?: "")
             baker_amount_confirmation.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
             rewards_will_be.text = if (viewModel.bakerDelegationData.restake) getString(R.string.baker_register_confirmation_receipt_added_to_delegation_amount) else getString(R.string.baker_register_confirmation_receipt_at_disposal)
@@ -95,6 +96,9 @@ class BakerRegistrationConfirmationActivity :
                 rewards_will_be_title.visibility = View.GONE
                 rewards_will_be.visibility = View.GONE
             }
+        } else {
+            // setActionBarTitle(R.string.delegation_update_delegation_title)
+            //delegation_transaction_title.text = getString(R.string.delegation_update_delegation_transaction_title)
         }
 
         submit_baker_transaction.setOnClickListener {
@@ -111,6 +115,12 @@ class BakerRegistrationConfirmationActivity :
     }
 
     private fun onContinueClicked() {
+        if (viewModel.bakerDelegationData.type == REMOVE_BAKER) {
+            if (viewModel.atDisposal() < viewModel.bakerDelegationData.cost ?: 0) {
+                showNotEnoughFunds()
+                return
+            }
+        }
         viewModel.prepareTransaction()
     }
 
@@ -136,16 +146,16 @@ class BakerRegistrationConfirmationActivity :
 
         var noticeMessage = getString(R.string.baker_notice_message)
 
-        if (viewModel.bakerDelegationData.isUpdateBakerStakeIncrease) {
+        if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && viewModel.bakerDelegationData.oldStakedAmount ?: 0 > viewModel.bakerDelegationData.amount ?: 0) {
             noticeMessage = getString(R.string.baker_notice_message_update_increase)
-        }  else if (viewModel.bakerDelegationData.isUpdateBakerStakeDecrease) {
+        }  else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && viewModel.bakerDelegationData.oldStakedAmount ?: 0 < viewModel.bakerDelegationData.amount ?: 0) {
             val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0)
             noticeMessage = resources.getQuantityString(R.plurals.baker_notice_message_update_decrease, gracePeriod, gracePeriod)
-        } else if (viewModel.bakerDelegationData.isUpdateBakerPool) {
+        } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_POOL) {
             noticeMessage = getString(R.string.baker_notice_message_update_pool)
-        } else if (viewModel.bakerDelegationData.isUpdateBakerKeys) {
+        } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_KEYS) {
             noticeMessage = getString(R.string.baker_notice_message_update_keys)
-        } else if (viewModel.bakerDelegationData.isRemoveBaking) {
+        } else if (viewModel.bakerDelegationData.type == REMOVE_BAKER) {
             noticeMessage = getString(R.string.baker_notice_message_remove)
         }
 

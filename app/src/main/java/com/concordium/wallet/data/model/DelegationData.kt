@@ -34,14 +34,8 @@ data class DelegationData(
     var cost: Long? = null
     var metadataUrl: String? = null
 
-    var isUpdateBakerStakeIncrease: Boolean = false
-    var isUpdateBakerStakeDecrease: Boolean = false
-    var isUpdateBakerPool: Boolean = false
-    var isUpdateBakerKeys: Boolean = false
-    var isRemoveBaking: Boolean = false
-
     fun isUpdateBaker(): Boolean {
-        return isUpdateBakerStakeIncrease || isUpdateBakerStakeDecrease || isUpdateBakerPool || isUpdateBakerKeys
+        return type == UPDATE_BAKER_STAKE || type == UPDATE_BAKER_POOL || type == UPDATE_BAKER_KEYS || type == CONFIGURE_BAKER
     }
 
     var oldStakedAmount: Long? = null

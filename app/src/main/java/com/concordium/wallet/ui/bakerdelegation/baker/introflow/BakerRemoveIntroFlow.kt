@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.bakerdelegation.baker.introflow
 
 import android.content.Intent
 import com.concordium.wallet.R
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_BAKER
 import com.concordium.wallet.ui.bakerdelegation.baker.BakerRegistrationConfirmationActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
@@ -15,7 +16,7 @@ class BakerRemoveIntroFlow :
 
     override fun gotoContinue() {
         val intent = Intent(this, BakerRegistrationConfirmationActivity::class.java)
-        delegationData?.isRemoveBaking = true
+        delegationData?.type = REMOVE_BAKER
         delegationData?.amount = 0
         delegationData?.metadataUrl = null
 

@@ -402,6 +402,9 @@
         <item quantity="one">The following changes will take effect in approximately %d day</item>
         <item quantity="other">The following changes will take effect in approximately %d days</item>
     </plurals>
+    <string name="baker_status_baker_effective_remove">The baker will be deregistered, and the stake will be unlocked on the public balance of the account.</string>
+    <string name="baker_status_baker_effective_time">%1$s at %2$s</string>
+    <string name="baker_status_baker_take_effect_on">The following changes will take effect on</string>
 
     <string name="baker_registration_amount_title">Register baker</string>
     <string name="baker_registration_amount_explain">Do you want to automatically add your baking rewards to your baker stake?\n\nIf you choose to not restake your rewards, the amounts will be at disposal on your account balance at each pay day.</string>

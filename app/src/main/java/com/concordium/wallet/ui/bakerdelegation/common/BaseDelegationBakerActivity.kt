@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.bakerdelegation.common
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
@@ -8,6 +9,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.DelegationData
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_delegation_remove.*
 import kotlinx.android.synthetic.main.progress.*
@@ -106,6 +108,17 @@ abstract class BaseDelegationBakerActivity(layout: Int, titleId: Int = R.string.
         } else {
             progress_layout.visibility = View.GONE
         }
+    }
+
+    protected fun showNotEnoughFunds() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.delegation_remove_not_enough_funds_title)
+        builder.setMessage(getString(R.string.delegation_remove_not_enough_funds_message))
+        builder.setPositiveButton(getString(R.string.delegation_remove_not_enough_funds_ok)) { dialog, _ ->
+            dialog.dismiss()
+            finishUntilClass(AccountDetailsActivity::class.java.canonicalName)
+        }
+        builder.create().show()
     }
 
     protected open fun initViews() { }
