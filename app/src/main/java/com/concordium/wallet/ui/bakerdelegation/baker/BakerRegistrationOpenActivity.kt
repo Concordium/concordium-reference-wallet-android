@@ -5,6 +5,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.common.GenericFlowActivity
+import com.concordium.wallet.util.KeyboardUtil
 import kotlinx.android.synthetic.main.activity_baker_registration_open.*
 
 class BakerRegistrationOpenActivity :
@@ -14,6 +15,7 @@ class BakerRegistrationOpenActivity :
         super.initViews()
 
         baker_registration_open_continue.setOnClickListener {
+            KeyboardUtil.hideKeyboard(this)
             viewModel.bakerDelegationData.metadataUrl = open_url.text?.toString()
             continueToGenerateKeys()
         }

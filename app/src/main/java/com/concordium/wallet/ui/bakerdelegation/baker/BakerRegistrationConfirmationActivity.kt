@@ -115,11 +115,9 @@ class BakerRegistrationConfirmationActivity :
     }
 
     private fun onContinueClicked() {
-        if (viewModel.bakerDelegationData.type == REMOVE_BAKER) {
-            if (viewModel.atDisposal() < viewModel.bakerDelegationData.cost ?: 0) {
-                showNotEnoughFunds()
-                return
-            }
+        if (viewModel.atDisposal() < viewModel.bakerDelegationData.cost ?: 0) {
+            showNotEnoughFunds()
+            return
         }
         viewModel.prepareTransaction()
     }

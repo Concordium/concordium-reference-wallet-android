@@ -211,21 +211,21 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     fun loadTransactionFee(notifyObservers: Boolean) {
 
-        val amount = when(bakerDelegationData.type) {
+        val amount = when (bakerDelegationData.type) {
             UPDATE_DELEGATION, UPDATE_BAKER_STAKE, CONFIGURE_BAKER -> bakerDelegationData.amount
             else -> null
         }
 
-        val restake = when(bakerDelegationData.type) {
+        val restake = when (bakerDelegationData.type) {
             UPDATE_DELEGATION, UPDATE_BAKER_STAKE, CONFIGURE_BAKER -> bakerDelegationData.restake
             else -> null
         }
 
         val targetChange: Boolean? = if (bakerDelegationData.type == UPDATE_DELEGATION && poolHasChanged()) true else null
 
-        val metadataSize = when(bakerDelegationData.type) {
+        val metadataSize = when (bakerDelegationData.type) {
             REGISTER_BAKER -> {
-                bakerDelegationData.metadataUrl?.length
+                null
             }
             UPDATE_BAKER_POOL, CONFIGURE_BAKER -> {
                 if (metadataUrlHasChanged()) { bakerDelegationData.metadataUrl?.length }
