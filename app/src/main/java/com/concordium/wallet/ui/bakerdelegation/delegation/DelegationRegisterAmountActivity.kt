@@ -8,7 +8,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import com.concordium.wallet.R
-import com.concordium.wallet.data.model.DelegationData
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
@@ -189,7 +189,7 @@ class DelegationRegisterAmountActivity :
             amount.isEnabled = false
             pool_registration_continue.isEnabled = false
         }
-        if (viewModel.bakerDelegationData.type == DelegationData.TYPE_UPDATE_DELEGATION) {
+        if (viewModel.bakerDelegationData.type == UPDATE_DELEGATION) {
             viewModel.bakerDelegationData.oldStakedAmount = viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0
             amount_desc.text = getString(R.string.delegation_update_delegation_amount_enter_amount)
             amount.setText(viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.let { CurrencyUtil.formatGTU(it,false) })

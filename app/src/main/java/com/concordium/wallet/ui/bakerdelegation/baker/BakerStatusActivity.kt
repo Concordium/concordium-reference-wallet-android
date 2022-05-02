@@ -8,6 +8,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import com.concordium.wallet.R
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_BAKER
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_KEYS
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_POOL
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_STAKE
 import com.concordium.wallet.data.model.BakerPoolInfo
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRemoveIntroFlow
@@ -15,23 +19,12 @@ import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerUpdateIntro
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.ui.bakerdelegation.common.StatusActivity
 import com.concordium.wallet.ui.common.GenericFlowActivity
-import com.concordium.wallet.util.DateTimeUtil.formatTo
-import com.concordium.wallet.util.DateTimeUtil.toDate
-import com.concordium.wallet.util.UnitConvertUtil
 import kotlinx.android.synthetic.main.delegationbaker_status.*
 
 class BakerStatusActivity :
     StatusActivity(R.string.baker_status_title) {
 
     private var menuDialog: AlertDialog? = null
-
-    companion object {
-        const val BAKER_SETTINGS_MENU = "BAKER_SETTINGS_MENU"
-        const val BAKER_SETTINGS_MENU_UPDATE_BAKER_STAKE = 1
-        const val BAKER_SETTINGS_MENU_UPDATE_POOL_SETTINGS = 2
-        const val BAKER_SETTINGS_MENU_UPDATE_BAKER_KEYS = 3
-        const val BAKER_SETTINGS_MENU_STOP_BAKING = 4
-    }
 
     override fun initView() {
 
@@ -125,17 +118,17 @@ class BakerStatusActivity :
 
         val menuItemUpdateBakerStake = menuView.findViewById(R.id.menu_item_update_baker_stake) as TextView
         menuItemUpdateBakerStake.setOnClickListener {
-            gotoBakerUpdateIntroFlow(BAKER_SETTINGS_MENU_UPDATE_BAKER_STAKE)
+            gotoBakerUpdateIntroFlow(UPDATE_BAKER_STAKE)
         }
 
         val menuItemUpdatePolSettings = menuView.findViewById(R.id.menu_item_update_pool_settings) as TextView
         menuItemUpdatePolSettings.setOnClickListener {
-            gotoBakerUpdateIntroFlow(BAKER_SETTINGS_MENU_UPDATE_POOL_SETTINGS)
+            gotoBakerUpdateIntroFlow(UPDATE_BAKER_POOL)
         }
 
         val menuItemUpdateBakerKeys = menuView.findViewById(R.id.menu_item_update_baker_keys) as TextView
         menuItemUpdateBakerKeys.setOnClickListener {
-            gotoBakerUpdateIntroFlow(BAKER_SETTINGS_MENU_UPDATE_BAKER_KEYS)
+            gotoBakerUpdateIntroFlow(UPDATE_BAKER_KEYS)
         }
 
         val menuItemStopBaking = menuView.findViewById(R.id.menu_item_stop_baking) as TextView
@@ -149,12 +142,12 @@ class BakerStatusActivity :
         menuDialog?.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
-    private fun gotoBakerUpdateIntroFlow(bakerSettingsMenuItem: Int) {
+    private fun gotoBakerUpdateIntroFlow(bakerSettingsMenuItem: String) {
         menuDialog?.dismiss()
         val intent = Intent(this, BakerUpdateIntroFlow::class.java)
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
+        viewModel.bakerDelegationData.type = bakerSettingsMenuItem
         intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
-        intent.putExtra(BAKER_SETTINGS_MENU, bakerSettingsMenuItem)
         startActivity(intent)
     }
 
@@ -162,6 +155,7 @@ class BakerStatusActivity :
         menuDialog?.dismiss()
         val intent = Intent(this, BakerRemoveIntroFlow::class.java)
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
+        viewModel.bakerDelegationData.type = REMOVE_BAKER
         intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivity(intent)
     }

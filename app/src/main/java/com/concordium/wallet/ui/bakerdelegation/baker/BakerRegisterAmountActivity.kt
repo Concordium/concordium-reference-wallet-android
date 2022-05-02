@@ -26,7 +26,7 @@ class BakerRegisterAmountActivity :
     override fun initViews() {
         super.initViews()
 
-        if (viewModel.isUpdatingBaker())
+        if (viewModel.bakerDelegationData.isUpdateBaker())
             setActionBarTitle(R.string.baker_registration_update_amount_title)
 
         balance_amount.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.account?.finalizedBalance ?: 0, true)
@@ -152,7 +152,7 @@ class BakerRegisterAmountActivity :
         }
 
         val amountToStake = getAmountToStake()
-        if (viewModel.isUpdatingBaker()) {
+        if (viewModel.bakerDelegationData.isUpdateBaker()) {
             /*
             when {
                 (amountToStake == viewModel.delegationData.oldStakedAmount &&

@@ -16,6 +16,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_BAKER
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_DELEGATION
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
@@ -440,13 +443,13 @@ class AccountDetailsActivity :
     private fun gotoDelegation(account: Account) {
         if(account.accountDelegation != null || viewModel.hasPendingTransactions){
             val intent = Intent(this, DelegationStatusActivity::class.java)
-            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, DelegationData(account, isTransactionInProgress = viewModel.hasPendingTransactions, type = DelegationData.TYPE_UPDATE_DELEGATION))
+            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, DelegationData(account, isTransactionInProgress = viewModel.hasPendingTransactions, type = UPDATE_DELEGATION))
             startActivityForResultAndHistoryCheck(intent)
         }
         else{
             val intent = Intent(this, DelegationCreateIntroFlowActivity::class.java)
             intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
-            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, DelegationData(account, type = DelegationData.TYPE_REGISTER_DELEGATION))
+            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, DelegationData(account, type = REGISTER_DELEGATION))
             startActivityForResultAndHistoryCheck(intent)
         }
     }
@@ -456,7 +459,7 @@ class AccountDetailsActivity :
             Intent(this, BakerStatusActivity::class.java)
         else
             Intent(this, BakerRegistrationIntroFlow::class.java)
-        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, DelegationData(account, type = DelegationData.TYPE_REGISTER_BAKER))
+        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, DelegationData(account, type = REGISTER_BAKER))
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         startActivity(intent)
     }

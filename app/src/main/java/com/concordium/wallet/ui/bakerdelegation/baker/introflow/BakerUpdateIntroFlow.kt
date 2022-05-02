@@ -2,13 +2,12 @@ package com.concordium.wallet.ui.bakerdelegation.baker.introflow
 
 import android.content.Intent
 import com.concordium.wallet.R
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_BAKER
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_KEYS
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_POOL
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_STAKE
 import com.concordium.wallet.ui.bakerdelegation.baker.BakerRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.baker.BakerRegistrationCloseActivity
-import com.concordium.wallet.ui.bakerdelegation.baker.BakerStatusActivity.Companion.BAKER_SETTINGS_MENU
-import com.concordium.wallet.ui.bakerdelegation.baker.BakerStatusActivity.Companion.BAKER_SETTINGS_MENU_STOP_BAKING
-import com.concordium.wallet.ui.bakerdelegation.baker.BakerStatusActivity.Companion.BAKER_SETTINGS_MENU_UPDATE_BAKER_KEYS
-import com.concordium.wallet.ui.bakerdelegation.baker.BakerStatusActivity.Companion.BAKER_SETTINGS_MENU_UPDATE_BAKER_STAKE
-import com.concordium.wallet.ui.bakerdelegation.baker.BakerStatusActivity.Companion.BAKER_SETTINGS_MENU_UPDATE_POOL_SETTINGS
 import com.concordium.wallet.ui.bakerdelegation.baker.BakerUpdatePoolSettingsActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
@@ -26,13 +25,12 @@ class BakerUpdateIntroFlow :
     }
 
     override fun gotoContinue() {
-
-        intent.extras?.getInt(BAKER_SETTINGS_MENU)?.let { menuItem ->
-            when (menuItem) {
-                BAKER_SETTINGS_MENU_UPDATE_BAKER_STAKE -> gotoUpdateBakerStake()
-                BAKER_SETTINGS_MENU_UPDATE_POOL_SETTINGS -> gotoUpdatePoolSettings()
-                BAKER_SETTINGS_MENU_UPDATE_BAKER_KEYS -> gotoUpdateBakerKeys()
-                BAKER_SETTINGS_MENU_STOP_BAKING -> gotoStopBaking()
+        delegationData?.type?.let { type ->
+            when (type) {
+                UPDATE_BAKER_STAKE -> gotoUpdateBakerStake()
+                UPDATE_BAKER_POOL -> gotoUpdatePoolSettings()
+                UPDATE_BAKER_KEYS -> gotoUpdateBakerKeys()
+                REMOVE_BAKER -> gotoStopBaking()
             }
         }
     }

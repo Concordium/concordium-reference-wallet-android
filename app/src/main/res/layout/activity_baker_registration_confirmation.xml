@@ -67,6 +67,7 @@
                                 android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
                                 android:orientation="vertical">
                                 <TextView
+                                    android:id="@+id/account_to_bake_title"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -102,6 +103,7 @@
                                     android:layout_height="wrap_content"
                                     tools:text="@string/delegation_status_added_to_delegation_amount" />
                                 <TextView
+                                    android:id="@+id/pool_status_title"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -129,6 +131,7 @@
                                     tools:visibility="visible"
                                     tools:text="https://example.com" />
                                 <TextView
+                                    android:id="@+id/election_verify_key_title"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -140,6 +143,7 @@
                                     android:layout_height="wrap_content"
                                     tools:text="14f3632ac857400d417a7277f726c43a 8ddf07184f10a429cf0759e985247c33" />
                                 <TextView
+                                    android:id="@+id/signature_verify_key_title"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -151,6 +155,7 @@
                                     android:layout_height="wrap_content"
                                     tools:text="7bb9028cc6f7202f1b72608b98ba9e4c 43e922cea3b01120eb70b7e01a623df7" />
                                 <TextView
+                                    android:id="@+id/aggregation_verify_key_title"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"

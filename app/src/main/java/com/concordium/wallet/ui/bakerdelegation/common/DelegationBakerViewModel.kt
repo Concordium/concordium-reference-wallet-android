@@ -16,6 +16,14 @@ import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.CONFIGURE_BAKER
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_BAKER
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_DELEGATION
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_BAKER
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_DELEGATION
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_POOL
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_STAKE
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
 import com.concordium.wallet.data.cryptolib.CreateTransferInput
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
@@ -140,10 +148,6 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return false
     }
 
-    fun isUpdatingBaker(): Boolean {
-        return false
-    }
-
     fun isInCoolDown(): Boolean {
         return bakerDelegationData.account?.accountDelegation?.pendingChange != null
     }
@@ -207,42 +211,34 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     fun loadTransactionFee(notifyObservers: Boolean) {
 
-        val type = when(bakerDelegationData.type) {
-            DelegationData.TYPE_REGISTER_DELEGATION -> ProxyRepository.REGISTER_DELEGATION
-            DelegationData.TYPE_UPDATE_DELEGATION -> ProxyRepository.UPDATE_DELEGATION
-            DelegationData.TYPE_REMOVE_DELEGATION -> ProxyRepository.REMOVE_DELEGATION
-            DelegationData.TYPE_REGISTER_BAKER -> ProxyRepository.REGISTER_BAKER
-            else -> ProxyRepository.REGISTER_DELEGATION
-        }
-
         val amount = when(bakerDelegationData.type) {
-            DelegationData.TYPE_UPDATE_DELEGATION, DelegationData.TYPE_UPDATE_BAKER_STAKE, DelegationData.TYPE_CONFIGURE_BAKER -> bakerDelegationData.amount
+            UPDATE_DELEGATION, UPDATE_BAKER_STAKE, CONFIGURE_BAKER -> bakerDelegationData.amount
             else -> null
         }
 
         val restake = when(bakerDelegationData.type) {
-            DelegationData.TYPE_UPDATE_DELEGATION, DelegationData.TYPE_UPDATE_BAKER_STAKE, DelegationData.TYPE_CONFIGURE_BAKER -> bakerDelegationData.restake
+            UPDATE_DELEGATION, UPDATE_BAKER_STAKE, CONFIGURE_BAKER -> bakerDelegationData.restake
             else -> null
         }
 
-        val targetChange: Boolean? = if (type == DelegationData.TYPE_UPDATE_DELEGATION && poolHasChanged()) true else null
+        val targetChange: Boolean? = if (bakerDelegationData.type == UPDATE_DELEGATION && poolHasChanged()) true else null
 
-        val metadataSize = when(type) {
-            DelegationData.TYPE_REGISTER_BAKER -> {
+        val metadataSize = when(bakerDelegationData.type) {
+            REGISTER_BAKER -> {
                 bakerDelegationData.metadataUrl?.length
             }
-            DelegationData.TYPE_UPDATE_BAKER_POOL, DelegationData.TYPE_CONFIGURE_BAKER -> {
+            UPDATE_BAKER_POOL, CONFIGURE_BAKER -> {
                 if (metadataUrlHasChanged()) { bakerDelegationData.metadataUrl?.length }
                 else null
             }
             else -> null
         }
 
-        val openStatus: String? = if (type == DelegationData.TYPE_UPDATE_BAKER_POOL || type == DelegationData.TYPE_CONFIGURE_BAKER) {
+        val openStatus: String? = if (bakerDelegationData.type == UPDATE_BAKER_POOL || bakerDelegationData.type == CONFIGURE_BAKER) {
             bakerDelegationData.bakerPoolInfo?.openStatus
         } else null
 
-        proxyRepository.getTransferCost(type,
+        proxyRepository.getTransferCost(bakerDelegationData.type,
             null,
             amount,
             restake,
@@ -378,7 +374,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         val nonce = bakerDelegationData.accountNonce
 
         var encryptionSK: String? = null
-        if (bakerDelegationData.type != DelegationData.TYPE_REMOVE_BAKER)
+        if (bakerDelegationData.type != REMOVE_BAKER)
             encryptionSK = encryptionSecretKey
 
         var capital: String? = null
@@ -386,10 +382,18 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             capital = bakerDelegationData.amount.toString()
 
         var restakeEarnings: Boolean? = null
-        if (bakerDelegationData.type != DelegationData.TYPE_REMOVE_BAKER && restakeHasChanged())
+        if (bakerDelegationData.type != REMOVE_BAKER && restakeHasChanged())
             restakeEarnings = bakerDelegationData.restake
 
         val metadataUrl = if (bakerDelegationData.metadataUrl.isNullOrEmpty()) null else bakerDelegationData.metadataUrl
+
+        val openStatus = if (bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.bakerPoolInfo?.openStatus
+
+        val bakerKeys = if (bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.bakerKeys
+
+        val transactionFeeCommission = if (bakerDelegationData.type == REMOVE_BAKER) null else 0.05
+        val bakingRewardCommission = if (bakerDelegationData.type == REMOVE_BAKER) null else 0.05
+        val finalizationRewardCommission = if (bakerDelegationData.type == REMOVE_BAKER) null else 0.05
 
         if (from == null || nonce == null || energy == null) {
             _errorLiveData.value = Event(R.string.app_error_general)
@@ -414,11 +418,11 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             restakeEarnings,
             null,
             metadataUrl,
-            bakerDelegationData.bakerPoolInfo?.openStatus,
-            bakerDelegationData.bakerKeys,
-            0.05,
-            0.05,
-            0.05)
+            openStatus,
+            bakerKeys,
+            transactionFeeCommission,
+            bakingRewardCommission,
+            finalizationRewardCommission)
 
         val output = App.appCore.cryptoLibrary.createTransfer(transferInput, CryptoLibrary.CONFIGURE_BAKING_TRANSACTION)
 
@@ -439,7 +443,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         val nonce = bakerDelegationData.accountNonce
 
         var encryptionSK: String? = null
-        if (bakerDelegationData.type != DelegationData.TYPE_REMOVE_DELEGATION)
+        if (bakerDelegationData.type != REMOVE_DELEGATION)
             encryptionSK = encryptionSecretKey
 
         var capital: String? = null
@@ -447,16 +451,16 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             capital = bakerDelegationData.amount.toString()
 
         var restakeEarnings: Boolean? = null
-        if (bakerDelegationData.type != DelegationData.TYPE_REMOVE_DELEGATION && restakeHasChanged())
+        if (bakerDelegationData.type != REMOVE_DELEGATION && restakeHasChanged())
             restakeEarnings = bakerDelegationData.restake
 
         var delegationTarget: DelegationTarget? = null
-        if (bakerDelegationData.type == DelegationData.TYPE_REGISTER_DELEGATION) {
+        if (bakerDelegationData.type == REGISTER_DELEGATION) {
             delegationTarget = if (bakerDelegationData.isBakerPool)
                 DelegationTarget(DelegationTarget.TYPE_DELEGATE_TO_BAKER, bakerDelegationData.poolId.toLong())
             else
                 DelegationTarget(DelegationTarget.TYPE_DELEGATE_TO_L_POOL, null)
-        } else if (bakerDelegationData.type == DelegationData.TYPE_UPDATE_DELEGATION) {
+        } else if (bakerDelegationData.type == UPDATE_DELEGATION) {
             if (poolHasChanged()) {
                 delegationTarget = if (bakerDelegationData.isBakerPool)
                     DelegationTarget(DelegationTarget.TYPE_DELEGATE_TO_BAKER, bakerDelegationData.poolId.toLong())

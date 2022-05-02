@@ -6,7 +6,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import com.concordium.wallet.R
-import com.concordium.wallet.data.model.DelegationData
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.AMOUNT_TOO_LARGE_FOR_POOL
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
@@ -101,7 +101,7 @@ class DelegationRegisterPoolActivity :
     }
 
     private fun updateContent() {
-        if (viewModel.bakerDelegationData.type == DelegationData.TYPE_UPDATE_DELEGATION) {
+        if (viewModel.bakerDelegationData.type == UPDATE_DELEGATION) {
             setActionBarTitle(R.string.delegation_update_delegation_title)
             viewModel.bakerDelegationData.oldRestake = viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings
             viewModel.bakerDelegationData.oldDelegationIsBaker = viewModel.isBakerPool()

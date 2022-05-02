@@ -4,8 +4,10 @@ import android.content.Intent
 import android.view.View
 import android.widget.ImageView
 import com.concordium.wallet.R
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_DELEGATION
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_DELEGATION
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
 import com.concordium.wallet.data.model.BakerStakePendingChange
-import com.concordium.wallet.data.model.DelegationData
 import com.concordium.wallet.data.model.DelegationTarget
 import com.concordium.wallet.data.model.PendingChange
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -106,14 +108,14 @@ class DelegationStatusActivity :
     private fun continueToDelete(){
         val intent = Intent(this, DelegationRemoveIntroFlowActivity::class.java)
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
-        viewModel.bakerDelegationData.type = DelegationData.TYPE_REMOVE_DELEGATION
+        viewModel.bakerDelegationData.type = REMOVE_DELEGATION
         intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 
     private fun continueToCreate() {
         val intent = Intent(this, DelegationRegisterPoolActivity::class.java)
-        viewModel.bakerDelegationData.type = DelegationData.TYPE_REGISTER_DELEGATION
+        viewModel.bakerDelegationData.type = REGISTER_DELEGATION
         intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
@@ -121,7 +123,7 @@ class DelegationStatusActivity :
     private fun continueToUpdate() {
         val intent = Intent(this, DelegationUpdateIntroFlowActivity::class.java)
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
-        viewModel.bakerDelegationData.type = DelegationData.TYPE_UPDATE_DELEGATION
+        viewModel.bakerDelegationData.type = UPDATE_DELEGATION
         intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }

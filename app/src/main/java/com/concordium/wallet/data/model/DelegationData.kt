@@ -1,5 +1,11 @@
 package com.concordium.wallet.data.model
 
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.CONFIGURE_BAKER
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_BAKER
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_BAKER
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_KEYS
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_POOL
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_STAKE
 import com.concordium.wallet.data.room.Account
 import java.io.Serializable
 
@@ -18,18 +24,6 @@ data class DelegationData(
     var type: String
     ) : Serializable {
 
-    companion object {
-        const val TYPE_REGISTER_DELEGATION = "TYPE_REGISTER_DELEGATION"
-        const val TYPE_UPDATE_DELEGATION = "TYPE_UPDATE_DELEGATION"
-        const val TYPE_REMOVE_DELEGATION = "TYPE_REMOVE_DELEGATION"
-        const val TYPE_REGISTER_BAKER = "TYPE_REGISTER_BAKER"
-        const val TYPE_UPDATE_BAKER_STAKE = "TYPE_UPDATE_BAKER_STAKE"
-        const val TYPE_UPDATE_BAKER_POOL = "TYPE_UPDATE_BAKER_POOL"
-        const val TYPE_UPDATE_BAKER_KEYS = "TYPE_UPDATE_BAKER_KEYS"
-        const val TYPE_REMOVE_BAKER = "TYPE_REMOVE_BAKER"
-        const val TYPE_CONFIGURE_BAKER = "TYPE_CONFIGURE_BAKER"
-    }
-
     var transferSubmissionStatus: TransferSubmissionStatus? = null
     var submissionId: String? = null
     var energy: Long? = null
@@ -40,6 +34,16 @@ data class DelegationData(
     var cost: Long? = null
     var metadataUrl: String? = null
 
+    var isUpdateBakerStakeIncrease: Boolean = false
+    var isUpdateBakerStakeDecrease: Boolean = false
+    var isUpdateBakerPool: Boolean = false
+    var isUpdateBakerKeys: Boolean = false
+    var isRemoveBaking: Boolean = false
+
+    fun isUpdateBaker(): Boolean {
+        return isUpdateBakerStakeIncrease || isUpdateBakerStakeDecrease || isUpdateBakerPool || isUpdateBakerKeys
+    }
+
     var oldStakedAmount: Long? = null
     var oldRestake: Boolean? = null
     var oldDelegationIsBaker: Boolean? = null
@@ -47,6 +51,6 @@ data class DelegationData(
     var oldMetadataUrl: String? = null
 
     fun isBakerFlow(): Boolean {
-        return bakerKeys != null
+        return type == REGISTER_BAKER || type == UPDATE_BAKER_STAKE || type == UPDATE_BAKER_POOL || type == UPDATE_BAKER_KEYS || type == REMOVE_BAKER || type == CONFIGURE_BAKER
     }
 }
