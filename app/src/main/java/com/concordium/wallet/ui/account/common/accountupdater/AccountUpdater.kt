@@ -257,8 +257,9 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
 
                         Log.d("TransferSubmissionStatus Loop item end - ${request.transfer.submissionId} ${submissionStatus.status}")
                     } catch (httpEx: HttpException) {
-                        if (httpEx.code() == 502) transferRepository.delete(request.transfer)
-                        else throw httpEx
+                        //if (httpEx.code() == 502) transferRepository.delete(request.transfer)
+                        //else throw httpEx
+                        // TODO: maybe delete transaction
                     }
                 }
             } catch (e: Exception) {
