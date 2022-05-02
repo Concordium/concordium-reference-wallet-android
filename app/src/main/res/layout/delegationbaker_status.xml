@@ -113,8 +113,6 @@
                     android:layout_marginBottom="@dimen/activity_horizontal_margin"
                     style="@style/Button.Standard"
                     tools:enabled="false"
-                    android:visibility="invisible"
-                    tools:visibility="visible"
                     tools:text="Button buttom" />
             </LinearLayout>
 

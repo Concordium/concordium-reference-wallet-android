@@ -33,7 +33,6 @@ class DelegationStatusActivity :
             setContentTitle(R.string.delegation_status_content_empty_title)
             setEmptyState(getString(R.string.delegation_status_content_empty_desc))
 
-            status_button_bottom.visibility = View.VISIBLE
             status_button_bottom.text = getString(R.string.delegation_status_continue)
             status_button_bottom.setOnClickListener {
                 continueToCreate()
@@ -75,10 +74,6 @@ class DelegationStatusActivity :
                 continueToDelete()
             }
 
-            /*
-            The stop button has the following states:
-            */
-
             // no pending changes (either empty or equal to NoChange) -> enabled
             // accBalance -> if you have pending changes -> disabled
             viewModel.bakerDelegationData.account?.accountDelegation?.pendingChange.let { pendingChange ->
@@ -92,7 +87,6 @@ class DelegationStatusActivity :
                 }
             }
 
-            status_button_bottom.visibility = View.VISIBLE
             status_button_bottom.text = getString(R.string.delegation_status_update)
             status_button_bottom.setOnClickListener {
                 continueToUpdate()
@@ -107,7 +101,6 @@ class DelegationStatusActivity :
             setContentTitle(R.string.delegation_status_waiting_to_finalize_title)
             setEmptyState(getString(R.string.delegation_status_waiting_to_finalize))
         }
-
     }
 
     private fun continueToDelete(){

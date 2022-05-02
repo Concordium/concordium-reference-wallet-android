@@ -7,7 +7,7 @@ data class AccountBaker (
     val bakerId: Int,
     val bakerPoolInfo: BakerPoolInfo,
     val stakedAmount: String,
-    val pendingChange: PendingChange,
+    val pendingChange: PendingChange?,
     val bakerAggregationVerifyKey: String,
     val bakerElectionVerifyKey: String,
     val bakerSignatureVerifyKey: String

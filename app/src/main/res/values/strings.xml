@@ -381,8 +381,27 @@
 
     <string name="baker_status_title">Baker status</string>
     <string name="baker_status_register_baker">Register baker</string>
+    <string name="baker_status_no_baker_title">This account has no baker registered.</string>
     <string name="baker_status_no_baker">This account has no baker registered. You can register a baker with the button below.</string>
     <string name="baker_status_update_baker_settings">Update baker settings</string>
+    <string name="baker_status_baker_waiting_title">Waiting for baker transaction to finalize.</string>
+    <string name="baker_status_baker_waiting">Waiting for transaction to finalize.</string>
+    <string name="baker_status_baker_registered_title">Your baker is registered.</string>
+    <string name="baker_status_baker_remove">Remove baker</string>
+    <string name="baker_status_baker_account">Baker account</string>
+    <string name="baker_status_baker_stake">Baker stake</string>
+    <string name="baker_status_baker_id">Baker ID</string>
+    <string name="baker_status_baker_rewards_will_be">Rewards will be</string>
+    <string name="baker_status_baker_added_to_stake">Added to stake</string>
+    <string name="baker_status_baker_at_disposal">At disposal</string>
+    <string name="baker_status_baker_delegation_pool_status">Delegation pool status</string>
+    <string name="baker_status_baker_delegation_pool_status_open">Open for delegation</string>
+    <string name="baker_status_baker_delegation_pool_status_closed">Closed for delegation</string>
+    <string name="baker_status_baker_metadata_url">Metadata URL</string>
+    <plurals name="baker_status_baker_take_effect_in">
+        <item quantity="one">The following changes will take effect in approximately %d day</item>
+        <item quantity="other">The following changes will take effect in approximately %d days</item>
+    </plurals>
 
     <string name="baker_registration_amount_title">Register baker</string>
     <string name="baker_registration_amount_explain">Do you want to automatically add your baking rewards to your baker stake?\n\nIf you choose to not restake your rewards, the amounts will be at disposal on your account balance at each pay day.</string>

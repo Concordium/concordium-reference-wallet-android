@@ -108,7 +108,7 @@ data class Account(
     }
 
     fun isBaking(): Boolean {
-        return bakerId != null
+        return accountBaker != null
     }
 
     fun isDelegating(): Boolean {
