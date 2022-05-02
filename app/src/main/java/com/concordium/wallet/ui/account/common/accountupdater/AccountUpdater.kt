@@ -240,22 +240,26 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                 }
 
                 for (request in transferSubmissionStatusRequestList) {
-                    val submissionStatus = request.deferred.await()
+                    try {
+                        val submissionStatus = request.deferred.await()
+                        updateEncryptedAmount(submissionStatus, request.transfer.submissionId, request.transfer.amount.toString())
 
-                    updateEncryptedAmount(submissionStatus, request.transfer.submissionId, request.transfer.amount.toString())
+                        request.transfer.transactionStatus = submissionStatus.status
+                        request.transfer.outcome = submissionStatus.outcome ?: TransactionOutcome.UNKNOWN
+                        if (submissionStatus.cost != null) {
+                            request.transfer.cost = submissionStatus.cost
+                        }
 
-                    request.transfer.transactionStatus = submissionStatus.status
-                    request.transfer.outcome = submissionStatus.outcome ?: TransactionOutcome.UNKNOWN
-                    if (submissionStatus.cost != null) {
-                        request.transfer.cost = submissionStatus.cost
+                        //IF GTU Drop we set cost to 0
+                        if (submissionStatus.status == TransactionStatus.COMMITTED && submissionStatus.sender != request.transfer.fromAddress){
+                            request.transfer.cost = 0
+                        }
+
+                        Log.d("TransferSubmissionStatus Loop item end - ${request.transfer.submissionId} ${submissionStatus.status}")
+                    } catch (httpEx: HttpException) {
+                        if (httpEx.code() == 502) transferRepository.delete(request.transfer)
+                        else throw httpEx
                     }
-
-                    //IF GTU Drop we set cost to 0
-                    if(submissionStatus.status == TransactionStatus.COMMITTED && submissionStatus.sender != request.transfer.fromAddress){
-                        request.transfer.cost = 0
-                    }
-
-                    Log.d("TransferSubmissionStatus Loop item end - ${request.transfer.submissionId} ${submissionStatus.status}")
                 }
             } catch (e: Exception) {
                 Log.e("TransferSubmissionStatus failed", e)
