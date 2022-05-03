@@ -36,12 +36,25 @@
                         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                         android:orientation="vertical">
                         <TextView
+                            android:id="@+id/open_url_explain"
                             style="@style/TextView.Standard"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
                             android:gravity="center"
                             android:text="@string/baker_registration_open_explain" />
+                        <TextView
+                            android:id="@+id/current_url"
+                            style="@style/TextView.Mono"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                            android:layout_marginTop="@dimen/activity_content_margin"
+                            android:layout_marginBottom="@dimen/activity_receipt_item_vertical_margin"
+                            android:visibility="gone"
+                            android:gravity="center"
+                            tools:visibility="visible"
+                            tools:text="@string/baker_update_pool_settings_current_url" />
                         <EditText
                             android:id="@+id/open_url"
                             android:layout_width="match_parent"

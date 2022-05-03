@@ -126,6 +126,16 @@ class BakerRegistrationConfirmationActivity :
     private fun updateViewsUpdateBakerPool() {
         setActionBarTitle(R.string.baker_registration_confirmation_update_pool_title)
         delegation_transaction_title.text = getString(R.string.baker_registration_confirmation_update_pool_transaction_title)
+
+        if (viewModel.openStatusHasChanged()) {
+            showPoolStatus()
+            pool_status.text = if (viewModel.isOpenBaker()) getString(R.string.baker_register_confirmation_receipt_pool_status_open) else getString(R.string.baker_register_confirmation_receipt_pool_status_closed)
+        }
+
+        if (viewModel.isOpenBaker() && viewModel.metadataUrlHasChanged()) {
+            showMetaUrl()
+            meta_data_url.text = viewModel.bakerDelegationData.metadataUrl
+        }
     }
 
     private fun updateViewsUpdateBakerStake() {

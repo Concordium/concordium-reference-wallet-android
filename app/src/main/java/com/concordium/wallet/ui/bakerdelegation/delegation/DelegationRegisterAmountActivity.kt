@@ -232,14 +232,6 @@ class DelegationRegisterAmountActivity :
         return CurrencyUtil.toGTUValue(amount.text.toString()) ?: 0
     }
 
-    private fun showNoChange() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(R.string.delegation_no_changes_title)
-        builder.setMessage(getString(R.string.delegation_no_changes_message))
-        builder.setPositiveButton(getString(R.string.delegation_no_changes_ok)) { dialog, _ -> dialog.dismiss() }
-        builder.create().show()
-    }
-
     private fun showNewAmountZero() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.delegation_amount_zero_title)

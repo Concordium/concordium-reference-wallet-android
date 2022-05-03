@@ -472,6 +472,8 @@
     <string name="baker_update_pool_settings_option_close_for_new">Close for new delegators</string>
     <string name="baker_update_pool_settings_option_close">Close for delegation</string>
     <string name="baker_update_pool_settings_continue">Continue</string>
+    <string name="baker_update_pool_settings_current_url">Current URL:\n%s</string>
+    <string name="baker_update_pool_settings_open_url_explain">If you want to set a new metadata URL, you can do so by pasting it below. It’s optional, so you can just leave it blank if you don’t want to make any changes.\n\nYou can read more about the metadata URL on\n\ndeveloper.concordium.software</string>
 
     <string name="baker_notice_title">Notice</string>
     <string name="baker_notice_message">Once your transaction has successfully finalized, the baker registration will take effect from the next pay day.\n\nRemember to restart your node with the baker keys.</string>

@@ -122,5 +122,13 @@ abstract class BaseDelegationBakerActivity(layout: Int, titleId: Int = R.string.
         builder.create().show()
     }
 
+    protected fun showNoChange() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.delegation_no_changes_title)
+        builder.setMessage(getString(R.string.delegation_no_changes_message))
+        builder.setPositiveButton(getString(R.string.delegation_no_changes_ok)) { dialog, _ -> dialog.dismiss() }
+        builder.create().show()
+    }
+
     protected open fun initViews() { }
 }

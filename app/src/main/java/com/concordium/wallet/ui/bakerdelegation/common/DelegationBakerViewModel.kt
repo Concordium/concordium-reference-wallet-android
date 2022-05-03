@@ -114,6 +114,10 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return bakerDelegationData.metadataUrl != bakerDelegationData.oldMetadataUrl
     }
 
+    fun openStatusHasChanged(): Boolean {
+        return bakerDelegationData.bakerPoolInfo?.openStatus != bakerDelegationData.oldOpenStatus
+    }
+
     fun poolHasChanged(): Boolean {
         if (bakerDelegationData.isLPool && bakerDelegationData.oldDelegationIsBaker != null && bakerDelegationData.oldDelegationIsBaker!!)
             return true
@@ -229,13 +233,13 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                 null
             }
             UPDATE_BAKER_POOL, CONFIGURE_BAKER -> {
-                if (metadataUrlHasChanged()) { bakerDelegationData.metadataUrl?.length }
+                if (metadataUrlHasChanged()) { (bakerDelegationData.metadataUrl?.length ?: 0) * 2 }
                 else null
             }
             else -> null
         }
 
-        val openStatus: String? = if (bakerDelegationData.type == UPDATE_BAKER_POOL || bakerDelegationData.type == CONFIGURE_BAKER) {
+        val openStatus: String? = if ((bakerDelegationData.type == UPDATE_BAKER_POOL || bakerDelegationData.type == CONFIGURE_BAKER) && openStatusHasChanged()) {
             bakerDelegationData.bakerPoolInfo?.openStatus
         } else null
 
@@ -282,7 +286,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun prepareTransaction() {
-        if (bakerDelegationData.amount == null) {
+        if (bakerDelegationData.amount == null && bakerDelegationData.type != UPDATE_BAKER_KEYS && bakerDelegationData.type != UPDATE_BAKER_POOL) {
             _errorLiveData.value = Event(R.string.app_error_general)
             return
         }
@@ -379,16 +383,16 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             encryptionSK = encryptionSecretKey
 
         var capital: String? = null
-        if (bakerDelegationData.type != UPDATE_BAKER_KEYS && stakedAmountHasChanged())
+        if (bakerDelegationData.type != UPDATE_BAKER_KEYS && bakerDelegationData.type != UPDATE_BAKER_POOL && stakedAmountHasChanged())
             capital = bakerDelegationData.amount.toString()
 
         var restakeEarnings: Boolean? = null
-        if (bakerDelegationData.type != UPDATE_BAKER_KEYS && bakerDelegationData.type != REMOVE_BAKER && restakeHasChanged())
+        if (bakerDelegationData.type != UPDATE_BAKER_KEYS && bakerDelegationData.type != UPDATE_BAKER_POOL && bakerDelegationData.type != REMOVE_BAKER && restakeHasChanged())
             restakeEarnings = bakerDelegationData.restake
 
         val metadataUrl = if (bakerDelegationData.type == REGISTER_BAKER) bakerDelegationData.metadataUrl ?: "" else if (bakerDelegationData.metadataUrl.isNullOrEmpty()) null else bakerDelegationData.metadataUrl
 
-        val openStatus = if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.bakerPoolInfo?.openStatus
+        val openStatus = if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER) null else if (openStatusHasChanged()) bakerDelegationData.bakerPoolInfo?.openStatus else null
 
         val bakerKeys = if (bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.bakerKeys
 
@@ -552,7 +556,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         val cost = bakerDelegationData.cost
         val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
 
-        if (transferSubmissionStatus == null || expiry == null || cost == null || accountId == null || amount == null || fromAddress == null || submissionId == null) {
+        if (transferSubmissionStatus == null || expiry == null || cost == null || accountId == null || fromAddress == null || submissionId == null) {
             _errorLiveData.value = Event(R.string.app_error_general)
             _waitingLiveData.value = false
             return
