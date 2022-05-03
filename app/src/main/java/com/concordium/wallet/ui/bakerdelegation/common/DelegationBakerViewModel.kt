@@ -391,9 +391,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
         val bakerKeys = if (bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.bakerKeys
 
-        val transactionFeeCommission = if (bakerDelegationData.type == REMOVE_BAKER) null else 0.05
-        val bakingRewardCommission = if (bakerDelegationData.type == REMOVE_BAKER) null else 0.05
-        val finalizationRewardCommission = if (bakerDelegationData.type == REMOVE_BAKER) null else 0.05
+        val transactionFeeCommission = if (bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.chainParameters?.transactionCommissionRange?.max
+        val bakingRewardCommission = if (bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.chainParameters?.bakingCommissionRange?.max
+        val finalizationRewardCommission = if (bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.chainParameters?.finalizationCommissionRange?.max
 
         if (from == null || nonce == null || energy == null) {
             _errorLiveData.value = Event(R.string.app_error_general)
