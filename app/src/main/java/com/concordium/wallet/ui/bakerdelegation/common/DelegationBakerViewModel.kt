@@ -385,7 +385,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         if (bakerDelegationData.type != REMOVE_BAKER && restakeHasChanged())
             restakeEarnings = bakerDelegationData.restake
 
-        val metadataUrl = if (bakerDelegationData.metadataUrl.isNullOrEmpty()) null else bakerDelegationData.metadataUrl
+        val metadataUrl = if (bakerDelegationData.type == REGISTER_BAKER) bakerDelegationData.metadataUrl ?: "" else if (bakerDelegationData.metadataUrl.isNullOrEmpty()) null else bakerDelegationData.metadataUrl
 
         val openStatus = if (bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.bakerPoolInfo?.openStatus
 
