@@ -475,7 +475,10 @@
     </plurals>
     <string name="baker_notice_message_update_pool">Once your transaction has successfully finalized, the pool settings update will take effect from the next pay day.</string>
     <string name="baker_notice_message_update_keys">Once your transaction has successfully finalized, the new baker keys will take effect from the next pay day.\n\nThis means the node should be restarted with the new keys, as close to the next pay day as possible.</string>
-    <string name="baker_notice_message_remove">Once your transaction has finalized, the baker will be deregistered  after a cool down of %s</string>
+    <plurals name="baker_notice_message_remove">
+        <item quantity="one">Once your transaction has finalized, the baker will be deregistered  after a cool down of %d day.</item>
+        <item quantity="other">Once your transaction has finalized, the baker will be deregistered  after a cool down of %d days.</item>
+    </plurals>
     <string name="baker_notice_ok">Okay</string>
 
 

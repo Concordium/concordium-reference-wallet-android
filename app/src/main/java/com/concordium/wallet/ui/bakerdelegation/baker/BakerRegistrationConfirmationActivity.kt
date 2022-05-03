@@ -155,7 +155,8 @@ class BakerRegistrationConfirmationActivity :
         } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_KEYS) {
             noticeMessage = getString(R.string.baker_notice_message_update_keys)
         } else if (viewModel.bakerDelegationData.type == REMOVE_BAKER) {
-            noticeMessage = getString(R.string.baker_notice_message_remove)
+            val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0)
+            noticeMessage = resources.getQuantityString(R.plurals.baker_notice_message_remove, gracePeriod, gracePeriod)
         }
 
         builder.setMessage(noticeMessage)
