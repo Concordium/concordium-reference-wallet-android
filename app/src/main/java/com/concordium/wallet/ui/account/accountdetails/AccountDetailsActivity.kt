@@ -441,27 +441,29 @@ class AccountDetailsActivity :
     }
 
     private fun gotoDelegation(account: Account) {
-        val intent = if (account.accountDelegation != null || viewModel.hasPendingTransactions) {
-            Intent(this, DelegationStatusActivity::class.java)
+        if (account.accountDelegation != null || viewModel.hasPendingTransactions) {
+            val intent = Intent(this, DelegationStatusActivity::class.java)
             intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, DelegationData(account, isTransactionInProgress = viewModel.hasPendingTransactions, type = UPDATE_DELEGATION))
+            startActivityForResultAndHistoryCheck(intent)
         } else {
-            Intent(this, DelegationCreateIntroFlowActivity::class.java)
+            val intent = Intent(this, DelegationCreateIntroFlowActivity::class.java)
             intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
             intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, DelegationData(account, type = REGISTER_DELEGATION))
+            startActivityForResultAndHistoryCheck(intent)
         }
-        startActivityForResultAndHistoryCheck(intent)
     }
 
     private fun gotoBaking(account: Account) {
-        val intent = if (account.isBaking()) {
-            Intent(this, BakerStatusActivity::class.java)
-        }
-        else {
-            Intent(this, BakerRegistrationIntroFlow::class.java)
+        if (account.accountBaker != null) {
+            val intent = Intent(this, BakerStatusActivity::class.java)
+            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, DelegationData(account, type = REGISTER_BAKER))
+            startActivityForResultAndHistoryCheck(intent)
+        } else {
+            val intent = Intent(this, BakerRegistrationIntroFlow::class.java)
             intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
+            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, DelegationData(account, type = REGISTER_BAKER))
+            startActivityForResultAndHistoryCheck(intent)
         }
-        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, DelegationData(account, type = REGISTER_BAKER))
-        startActivityForResultAndHistoryCheck(intent)
     }
 
     private fun showError(stringRes: Int) {

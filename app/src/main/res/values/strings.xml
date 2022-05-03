@@ -441,6 +441,13 @@
     <string name="baker_registration_confirmation_remove_transaction">Transaction: Stop baking</string>
     <string name="baker_registration_confirmation_remove_account_to_stop">Account to stop baking</string>
     <string name="baker_registration_confirmation_submit">Submit baker transaction</string>
+    <string name="baker_registration_confirmation_update_keys_title">Update baker keys</string>
+    <string name="baker_registration_confirmation_update_pool_title">Update pool settings</string>
+    <string name="baker_registration_confirmation_update_stake_title">Update baker stake</string>
+    <string name="baker_registration_confirmation_update_keys_transaction_title">Transaction: Update baker keys</string>
+    <string name="baker_registration_confirmation_update_pool_transaction_title">Transaction: Update pool settings</string>
+    <string name="baker_registration_confirmation_update_stake_transaction_title">Transaction: Update baker stake</string>
+    <string name="baker_registration_confirmation_update_affected_account">Affected baker account</string>
 
     <string name="baker_update_intro_flow_title">Baking</string>
     <string name="baker_update_intro_subtitle1">Updating baker settings</string>

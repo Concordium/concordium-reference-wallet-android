@@ -61,6 +61,7 @@ class BakerRegistrationCloseActivity :
         builder.setTitle(R.string.baker_registration_export_notice_title)
         builder.setMessage(getString(R.string.baker_registration_export_notice_message))
         builder.setPositiveButton(getString(R.string.baker_registration_export_notice_ok)) { dialog, _ -> dialog.dismiss() }
+        builder.setCancelable(false)
         builder.create().show()
     }
 

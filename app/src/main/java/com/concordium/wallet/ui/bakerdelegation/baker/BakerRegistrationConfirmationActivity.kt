@@ -51,55 +51,26 @@ class BakerRegistrationConfirmationActivity :
     private fun updateViews() {
 
         submit_baker_transaction.text = getString(R.string.baker_registration_confirmation_submit)
+        account_to_bake_from.text = (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n").plus(viewModel.bakerDelegationData.account?.address ?: "")
+        estimated_transaction_fee.visibility = View.VISIBLE
 
-        if (viewModel.bakerDelegationData.type == REMOVE_BAKER) {
-            setActionBarTitle(R.string.baker_registration_confirmation_remove_title)
-            grace_period.text = getString(R.string.baker_registration_confirmation_remove_are_you_sure)
-            delegation_transaction_title.text = getString(R.string.baker_registration_confirmation_remove_transaction)
-            delegation_transaction_title.setTextColor(getColor(R.color.text_red))
-            account_to_bake_title.text = getString(R.string.baker_registration_confirmation_remove_account_to_stop)
-            account_to_bake_from.text = (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n").plus(viewModel.bakerDelegationData.account?.address ?: "")
-            delegation_amount_confirmation_title.visibility = View.GONE
-            baker_amount_confirmation.visibility = View.GONE
-            rewards_will_be_title.visibility = View.GONE
-            rewards_will_be.visibility = View.GONE
-            pool_status_title.visibility = View.GONE
-            pool_status.visibility = View.GONE
-            meta_data_url_title.visibility = View.GONE
-            meta_data_url.visibility = View.GONE
-            election_verify_key_title.visibility = View.GONE
-            election_verify_key.visibility = View.GONE
-            signature_verify_key_title.visibility = View.GONE
-            signature_verify_key.visibility = View.GONE
-            aggregation_verify_key_title.visibility = View.GONE
-            aggregation_verify_key.visibility = View.GONE
-        } else if (viewModel.bakerDelegationData.type == REGISTER_BAKER) {
-            account_to_bake_from.text = (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n").plus(viewModel.bakerDelegationData.account?.address ?: "")
-            baker_amount_confirmation.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
-            rewards_will_be.text = if (viewModel.bakerDelegationData.restake) getString(R.string.baker_register_confirmation_receipt_added_to_delegation_amount) else getString(R.string.baker_register_confirmation_receipt_at_disposal)
-            pool_status.text = if (viewModel.isOpenBaker()) getString(R.string.baker_register_confirmation_receipt_pool_status_open) else getString(R.string.baker_register_confirmation_receipt_pool_status_closed)
-
-            if (viewModel.isOpenBaker()) {
-                meta_data_url_title.visibility = View.VISIBLE
-                meta_data_url.visibility = View.VISIBLE
-                meta_data_url.text = viewModel.bakerDelegationData.metadataUrl
+        when (viewModel.bakerDelegationData.type) {
+            REGISTER_BAKER -> {
+                updateViewsRegisterBaker()
             }
-
-            election_verify_key.text = viewModel.bakerDelegationData.bakerKeys?.electionVerifyKey
-            signature_verify_key.text = viewModel.bakerDelegationData.bakerKeys?.signatureVerifyKey
-            aggregation_verify_key.text = viewModel.bakerDelegationData.bakerKeys?.aggregationVerifyKey
-
-            if (!viewModel.stakedAmountHasChanged()) {
-                //delegation_amount_confirmation_title.visibility = View.GONE
-                //delegation_amount_confirmation.visibility = View.GONE
+            UPDATE_BAKER_KEYS -> {
+                viewModel.bakerDelegationData.amount = viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount?.toLong() ?: 0
+                updateViewsUpdateBakerKeys()
             }
-            if (!viewModel.restakeHasChanged()) {
-                rewards_will_be_title.visibility = View.GONE
-                rewards_will_be.visibility = View.GONE
+            UPDATE_BAKER_POOL -> {
+                updateViewsUpdateBakerPool()
             }
-        } else {
-            // setActionBarTitle(R.string.delegation_update_delegation_title)
-            //delegation_transaction_title.text = getString(R.string.delegation_update_delegation_transaction_title)
+            UPDATE_BAKER_STAKE -> {
+                updateViewsUpdateBakerStake()
+            }
+            REMOVE_BAKER -> {
+                updateViewsRemoveBaker()
+            }
         }
 
         submit_baker_transaction.setOnClickListener {
@@ -113,6 +84,94 @@ class BakerRegistrationConfirmationActivity :
         initializeShowAuthenticationLiveData()
         initializeTransactionLiveData()
         initializeWaitingLiveData()
+    }
+
+    private fun updateViewsRegisterBaker() {
+        setActionBarTitle(R.string.baker_registration_confirmation_title)
+        grace_period.text = getString(R.string.baker_registration_confirmation_explain)
+        delegation_transaction_title.text = getString(R.string.baker_register_confirmation_receipt_title)
+
+        showAmount()
+        baker_amount_confirmation.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
+
+        showRewards()
+        rewards_will_be.text = if (viewModel.bakerDelegationData.restake) getString(R.string.baker_register_confirmation_receipt_added_to_delegation_amount) else getString(R.string.baker_register_confirmation_receipt_at_disposal)
+
+        showPoolStatus()
+        pool_status.text = if (viewModel.isOpenBaker()) getString(R.string.baker_register_confirmation_receipt_pool_status_open) else getString(R.string.baker_register_confirmation_receipt_pool_status_closed)
+
+        if (viewModel.isOpenBaker()) {
+            showMetaUrl()
+            meta_data_url.text = viewModel.bakerDelegationData.metadataUrl
+        }
+
+        showKeys()
+        election_verify_key.text = viewModel.bakerDelegationData.bakerKeys?.electionVerifyKey
+        signature_verify_key.text = viewModel.bakerDelegationData.bakerKeys?.signatureVerifyKey
+        aggregation_verify_key.text = viewModel.bakerDelegationData.bakerKeys?.aggregationVerifyKey
+    }
+
+    private fun updateViewsUpdateBakerKeys() {
+        setActionBarTitle(R.string.baker_registration_confirmation_update_keys_title)
+        grace_period.visibility = View.GONE
+        delegation_transaction_title.text = getString(R.string.baker_registration_confirmation_update_keys_transaction_title)
+        account_to_bake_title.text = getString(R.string.baker_registration_confirmation_update_affected_account)
+
+        showKeys()
+        election_verify_key.text = viewModel.bakerDelegationData.bakerKeys?.electionVerifyKey
+        signature_verify_key.text = viewModel.bakerDelegationData.bakerKeys?.signatureVerifyKey
+        aggregation_verify_key.text = viewModel.bakerDelegationData.bakerKeys?.aggregationVerifyKey
+    }
+
+    private fun updateViewsUpdateBakerPool() {
+        setActionBarTitle(R.string.baker_registration_confirmation_update_pool_title)
+        delegation_transaction_title.text = getString(R.string.baker_registration_confirmation_update_pool_transaction_title)
+    }
+
+    private fun updateViewsUpdateBakerStake() {
+        setActionBarTitle(R.string.baker_registration_confirmation_update_stake_title)
+        delegation_transaction_title.text = getString(R.string.baker_registration_confirmation_update_stake_transaction_title)
+    }
+
+    private fun updateViewsRemoveBaker() {
+        setActionBarTitle(R.string.baker_registration_confirmation_remove_title)
+        grace_period.text = getString(R.string.baker_registration_confirmation_remove_are_you_sure)
+        delegation_transaction_title.text = getString(R.string.baker_registration_confirmation_remove_transaction)
+        delegation_transaction_title.setTextColor(getColor(R.color.text_red))
+        account_to_bake_title.text = getString(R.string.baker_registration_confirmation_remove_account_to_stop)
+    }
+
+    private fun showAmount() {
+        if (viewModel.stakedAmountHasChanged()) {
+            delegation_amount_confirmation_title.visibility = View.VISIBLE
+            baker_amount_confirmation.visibility = View.VISIBLE
+        }
+    }
+
+    private fun showRewards() {
+        if (viewModel.restakeHasChanged()) {
+            rewards_will_be_title.visibility = View.VISIBLE
+            rewards_will_be.visibility = View.VISIBLE
+        }
+    }
+
+    private fun showPoolStatus() {
+        pool_status_title.visibility = View.VISIBLE
+        pool_status.visibility = View.VISIBLE
+    }
+
+    private fun showKeys() {
+        election_verify_key_title.visibility = View.VISIBLE
+        election_verify_key.visibility = View.VISIBLE
+        signature_verify_key_title.visibility = View.VISIBLE
+        signature_verify_key.visibility = View.VISIBLE
+        aggregation_verify_key_title.visibility = View.VISIBLE
+        aggregation_verify_key.visibility = View.VISIBLE
+    }
+
+    private fun showMetaUrl() {
+        meta_data_url_title.visibility = View.VISIBLE
+        meta_data_url.visibility = View.VISIBLE
     }
 
     private fun onContinueClicked() {
