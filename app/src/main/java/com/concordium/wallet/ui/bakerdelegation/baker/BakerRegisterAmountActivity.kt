@@ -23,6 +23,14 @@ import java.text.DecimalFormatSymbols
 class BakerRegisterAmountActivity :
     BaseDelegationBakerRegisterAmountActivity(R.layout.activity_baker_registration_amount, R.string.baker_registration_amount_title) {
 
+    private var minFee: Long? = null
+    private var maxFee: Long? = null
+
+    companion object {
+        private const val MIN_FEE = 1
+        private const val MAX_FEE = 2
+    }
+
     override fun initViews() {
         super.initViews()
 
@@ -32,14 +40,17 @@ class BakerRegisterAmountActivity :
         balance_amount.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.account?.finalizedBalance ?: 0, true)
         baker_amount.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount ?: "0", true)
 
-        viewModel.transactionFeeLiveData.observe(this, object : Observer<Long> {
-            override fun onChanged(value: Long?) {
-                value?.let {
-                    fee = value
-                    pool_estimated_transaction_fee.visibility = View.VISIBLE
-                    pool_estimated_transaction_fee.text = getString(
-                        R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(value)
-                    )
+        viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<Long?, Int?>> {
+            override fun onChanged(response: Pair<Long?, Int?>?) {
+                response?.second?.let { requestId ->
+                    if (requestId == MIN_FEE)
+                        minFee = response.first
+                    else if (requestId == MAX_FEE)
+                        maxFee = response.first
+                    if (minFee != null && maxFee != null) {
+                        pool_estimated_transaction_fee.visibility = View.VISIBLE
+                        pool_estimated_transaction_fee.text = getString(R.string.baker_registration_update_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(minFee ?: 0), CurrencyUtil.formatGTU(maxFee ?: 0))
+                    }
                 }
             }
         })
@@ -80,7 +91,8 @@ class BakerRegisterAmountActivity :
                 showError()
             } else {
                 hideError()
-                viewModel.loadTransactionFee(true)
+                viewModel.loadTransactionFee(true, requestId = MIN_FEE, metadataSizeForced = 0)
+                viewModel.loadTransactionFee(true, requestId = MAX_FEE, metadataSizeForced = 2048)
             }
         }
         amount.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
@@ -129,15 +141,12 @@ class BakerRegisterAmountActivity :
     }
 
     override fun transactionSuccessLiveData() {
-        TODO("Not yet implemented")
     }
 
     override fun errorLiveData(value: Int) {
-        TODO("Not yet implemented")
     }
 
     override fun showDetailedLiveData(value: Boolean) {
-        TODO("Not yet implemented")
     }
 
     private fun onContinueClicked() {

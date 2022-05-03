@@ -66,12 +66,13 @@ abstract class BaseDelegationBakerActivity(layout: Int, titleId: Int = R.string.
     }
 
     protected fun initializeTransactionFeeLiveData() {
-        viewModel.transactionFeeLiveData.observe(this,
-            Observer<Long> { value ->
-                value?.let {
-                    estimated_transaction_fee.text = getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(value))
+        viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<Long?, Int?>> {
+            override fun onChanged(response: Pair<Long?, Int?>?) {
+                response?.first?.let {
+                    estimated_transaction_fee.text = getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(it))
                 }
-            })
+            }
+        })
         viewModel.loadTransactionFee(false)
     }
 

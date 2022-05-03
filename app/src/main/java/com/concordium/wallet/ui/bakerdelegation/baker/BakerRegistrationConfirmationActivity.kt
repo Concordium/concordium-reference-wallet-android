@@ -36,14 +36,15 @@ class BakerRegistrationConfirmationActivity :
     }
 
     private fun loadFee() {
-        viewModel.transactionFeeLiveData.observe(this,
-            Observer<Long> { value ->
-                value?.let {
+        viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<Long?, Int?>> {
+            override fun onChanged(response: Pair<Long?, Int?>?) {
+                response?.first?.let {
                     showWaiting(false)
                     updateViews()
-                    estimated_transaction_fee.text = getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(value))
+                    estimated_transaction_fee.text = getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(it))
                 }
-            })
+            }
+        })
         viewModel.loadTransactionFee(true)
     }
 

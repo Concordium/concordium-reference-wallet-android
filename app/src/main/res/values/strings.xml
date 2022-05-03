@@ -416,6 +416,7 @@
     <string name="baker_more_than_95_message">You are about to lock more than 95% of your total balance in a baker stake.\n\nIf you don’t have enough unlocked CCD at your disposal, you might not be able to pay future transaction fees.</string>
     <string name="baker_more_than_95_continue">Continue</string>
     <string name="baker_more_than_95_new_stake">Enter new baker stake</string>
+    <string name="baker_registration_update_amount_estimated_transaction_fee">Estimated transaction fee:\nϾ%1$s - Ͼ%2$s</string>
 
     <string name="baker_registration_confirmation_title">Register baker</string>
     <string name="baker_registration_confirmation_explain">You are about to submit a register baker transaction that locks some of your funds in a stake. If you want to unlock the stake again, there will be a cooldown period.</string>

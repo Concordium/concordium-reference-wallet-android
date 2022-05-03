@@ -76,8 +76,8 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     val showDetailedLiveData: LiveData<Event<Boolean>>
         get() = _showDetailedLiveData
 
-    private val _transactionFeeLiveData = MutableLiveData<Long>()
-    val transactionFeeLiveData: LiveData<Long>
+    private val _transactionFeeLiveData = MutableLiveData<Pair<Long?, Int?>>()
+    val transactionFeeLiveData: LiveData<Pair<Long?, Int?>>
         get() = _transactionFeeLiveData
 
     private val _showAuthenticationLiveData = MutableLiveData<Event<Boolean>>()
@@ -209,7 +209,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    fun loadTransactionFee(notifyObservers: Boolean) {
+    fun loadTransactionFee(notifyObservers: Boolean, requestId: Int? = null, metadataSizeForced: Int? = null) {
 
         val amount = when (bakerDelegationData.type) {
             UPDATE_DELEGATION, UPDATE_BAKER_STAKE, CONFIGURE_BAKER -> bakerDelegationData.amount
@@ -223,7 +223,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
         val targetChange: Boolean? = if (bakerDelegationData.type == UPDATE_DELEGATION && poolHasChanged()) true else null
 
-        val metadataSize = when (bakerDelegationData.type) {
+        val metadataSize = metadataSizeForced ?: when (bakerDelegationData.type) {
             REGISTER_BAKER -> {
                 null
             }
@@ -250,7 +250,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                 bakerDelegationData.energy = it.energy
                 bakerDelegationData.cost = it.cost.toLong()
                 if (notifyObservers)
-                    _transactionFeeLiveData.value = bakerDelegationData.cost
+                    _transactionFeeLiveData.value = Pair(bakerDelegationData.cost, requestId)
             },
             {
                 handleBackendError(it)

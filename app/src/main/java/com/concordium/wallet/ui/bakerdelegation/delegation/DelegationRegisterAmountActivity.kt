@@ -124,13 +124,13 @@ class DelegationRegisterAmountActivity :
                 CurrencyUtil.formatGTU(it.delegatedCapital, true)
             }
 
-        viewModel.transactionFeeLiveData.observe(this, object : Observer<Long> {
-            override fun onChanged(value: Long?) {
-                value?.let {
-                    fee = value
+        viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<Long?, Int?>> {
+            override fun onChanged(response: Pair<Long?, Int?>?) {
+                response?.first?.let {
+                    fee = it
                     pool_estimated_transaction_fee.visibility = View.VISIBLE
                     pool_estimated_transaction_fee.text = getString(
-                        R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(value)
+                        R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(it)
                     )
                 }
             }
