@@ -99,10 +99,6 @@ class BakerStatusActivity :
     private fun openUpdateBakerSettingsMenu() {
 
         val builder = AlertDialog.Builder(this)
-        builder.setOnDismissListener {
-
-        }
-
         val menuView = View.inflate(this, R.layout.menu_update_baker_settings_content, null)
 
         val menuItemUpdateBakerStake = menuView.findViewById(R.id.menu_item_update_baker_stake) as TextView
@@ -137,7 +133,7 @@ class BakerStatusActivity :
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         viewModel.bakerDelegationData.type = bakerSettingsMenuItem
         intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
-        startActivity(intent)
+        startActivityForResultAndHistoryCheck(intent)
     }
 
     private fun gotoBakerRemoveIntroFlow() {
@@ -146,6 +142,6 @@ class BakerStatusActivity :
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         viewModel.bakerDelegationData.type = REMOVE_BAKER
         intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
-        startActivity(intent)
+        startActivityForResultAndHistoryCheck(intent)
     }
 }

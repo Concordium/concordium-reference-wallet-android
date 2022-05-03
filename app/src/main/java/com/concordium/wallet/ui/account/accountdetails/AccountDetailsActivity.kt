@@ -429,39 +429,39 @@ class AccountDetailsActivity :
 
     private fun gotoAccountReleaseSchedule(item: Account, isShielded: Boolean) {
         val intent = Intent(this, AccountReleaseScheduleActivity::class.java)
-        intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, item)
-        intent.putExtra(AccountDetailsActivity.EXTRA_SHIELDED, isShielded)
+        intent.putExtra(EXTRA_ACCOUNT, item)
+        intent.putExtra(EXTRA_SHIELDED, isShielded)
         startActivity(intent)
     }
 
     private fun gotoTransferFilters(item: Account, isShielded: Boolean) {
         val intent = Intent(this, AccountTransactionsFiltersActivity::class.java)
-        intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, item)
+        intent.putExtra(EXTRA_ACCOUNT, item)
         startActivity(intent)
     }
 
     private fun gotoDelegation(account: Account) {
-        if(account.accountDelegation != null || viewModel.hasPendingTransactions){
-            val intent = Intent(this, DelegationStatusActivity::class.java)
+        val intent = if (account.accountDelegation != null || viewModel.hasPendingTransactions) {
+            Intent(this, DelegationStatusActivity::class.java)
             intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, DelegationData(account, isTransactionInProgress = viewModel.hasPendingTransactions, type = UPDATE_DELEGATION))
-            startActivityForResultAndHistoryCheck(intent)
-        }
-        else{
-            val intent = Intent(this, DelegationCreateIntroFlowActivity::class.java)
+        } else {
+            Intent(this, DelegationCreateIntroFlowActivity::class.java)
             intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
             intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, DelegationData(account, type = REGISTER_DELEGATION))
-            startActivityForResultAndHistoryCheck(intent)
         }
+        startActivityForResultAndHistoryCheck(intent)
     }
 
     private fun gotoBaking(account: Account) {
-        val intent = if (account.isBaking())
+        val intent = if (account.isBaking()) {
             Intent(this, BakerStatusActivity::class.java)
-        else
+        }
+        else {
             Intent(this, BakerRegistrationIntroFlow::class.java)
-        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, DelegationData(account, type = REGISTER_BAKER))
-        intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
-        startActivity(intent)
+            intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
+        }
+        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, DelegationData(account, type = REGISTER_BAKER))
+        startActivityForResultAndHistoryCheck(intent)
     }
 
     private fun showError(stringRes: Int) {
@@ -488,8 +488,6 @@ class AccountDetailsActivity :
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
     }
-
-
 
     private fun onAddressClicked() {
         val intent = Intent(this, AccountQRCodeActivity::class.java)
