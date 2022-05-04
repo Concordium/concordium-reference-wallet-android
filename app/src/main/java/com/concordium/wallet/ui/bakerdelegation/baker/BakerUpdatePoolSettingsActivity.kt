@@ -48,16 +48,29 @@ class BakerUpdatePoolSettingsActivity :
                 override fun onItemClicked() {
                     viewModel.selectOpenStatus(BakerPoolInfo(OPEN_STATUS_CLOSED_FOR_ALL))
                 }
-            }, viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_ALL)
+            }, viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_NEW || viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_ALL)
 
-        pool_settings_current_status.text = if (viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL) getString(R.string.baker_update_pool_settings_current_status_open) else getString(R.string.baker_update_pool_settings_current_status_closed)
+        when (viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus) {
+            OPEN_STATUS_OPEN_FOR_ALL -> pool_settings_current_status.text = getString(R.string.baker_update_pool_settings_current_status_open)
+            OPEN_STATUS_CLOSED_FOR_NEW -> pool_settings_current_status.text = getString(R.string.baker_update_pool_settings_current_status_closed_for_new)
+            else -> pool_settings_current_status.text = getString(R.string.baker_update_pool_settings_current_status_closed)
+        }
 
         update_pool_settings_continue.setOnClickListener {
-            gotoBakerRegistration()
+            validate()
         }
     }
 
-    private fun gotoBakerRegistration() {
+    private fun validate() {
+        var gotoNextPage = false
+        if (viewModel.bakerDelegationData.oldOpenStatus != viewModel.bakerDelegationData.bakerPoolInfo?.openStatus || viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL)
+            gotoNextPage = true
+
+        if (gotoNextPage) gotoNextPage()
+        else showNoChange()
+    }
+
+    private fun gotoNextPage() {
         val intent = if (viewModel.bakerDelegationData.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL) {
             Intent(this, BakerRegistrationOpenActivity::class.java)
         } else {

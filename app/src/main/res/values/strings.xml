@@ -397,6 +397,7 @@
     <string name="baker_status_baker_delegation_pool_status">Delegation pool status</string>
     <string name="baker_status_baker_delegation_pool_status_open">Open for delegation</string>
     <string name="baker_status_baker_delegation_pool_status_closed">Closed for delegation</string>
+    <string name="baker_status_baker_delegation_pool_status_closed_for_new">Closed for new delegation</string>
     <string name="baker_status_baker_metadata_url">Metadata URL</string>
     <plurals name="baker_status_baker_take_effect_in">
         <item quantity="one">The following changes will take effect in approximately %d day</item>
@@ -468,6 +469,7 @@
     <string name="baker_update_pool_settings_explain">You have the option to open your baker as a pool for others to delegate their CCD to.\n\nIf you choose to open your pool, other people will be able to delegate CCDs to your baking pool.\n\nIf your pool is already open, you can also close it for new delegators, or you can close it for delegation completely.</string>
     <string name="baker_update_pool_settings_current_status_open">Current status: Open</string>
     <string name="baker_update_pool_settings_current_status_closed">Current status: Closed</string>
+    <string name="baker_update_pool_settings_current_status_closed_for_new">Current status: Closed for new</string>
     <string name="baker_update_pool_settings_option_open">Open for delegation</string>
     <string name="baker_update_pool_settings_option_close_for_new">Close for new delegators</string>
     <string name="baker_update_pool_settings_option_close">Close for delegation</string>

@@ -62,10 +62,16 @@ class BakerStatusActivity :
         addContent(R.string.baker_status_baker_account, account.name + "\n\n" + account.address)
         addContent(R.string.baker_status_baker_stake, CurrencyUtil.formatGTU(accountBaker.stakedAmount, true))
         addContent(R.string.baker_status_baker_id, accountBaker.bakerId.toString())
+
         if (accountBaker.restakeEarnings) addContent(R.string.baker_status_baker_rewards_will_be, getString(R.string.baker_status_baker_added_to_stake))
         else addContent(R.string.baker_status_baker_rewards_will_be, getString(R.string.baker_status_baker_at_disposal))
-        if (accountBaker.bakerPoolInfo.openStatus == BakerPoolInfo.OPEN_STATUS_OPEN_FOR_ALL) addContent(R.string.baker_status_baker_delegation_pool_status, getString(R.string.baker_status_baker_delegation_pool_status_open))
-        else addContent(R.string.baker_status_baker_delegation_pool_status, getString(R.string.baker_status_baker_delegation_pool_status_closed))
+
+        when (accountBaker.bakerPoolInfo.openStatus) {
+            BakerPoolInfo.OPEN_STATUS_OPEN_FOR_ALL -> addContent(R.string.baker_status_baker_delegation_pool_status, getString(R.string.baker_status_baker_delegation_pool_status_open))
+            BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW -> addContent(R.string.baker_status_baker_delegation_pool_status, getString(R.string.baker_status_baker_delegation_pool_status_closed_for_new))
+            else -> addContent(R.string.baker_status_baker_delegation_pool_status, getString(R.string.baker_status_baker_delegation_pool_status_closed))
+        }
+
         if (!accountBaker.bakerPoolInfo.metadataUrl.isNullOrBlank()) {
             addContent(R.string.baker_status_baker_metadata_url, accountBaker.bakerPoolInfo.metadataUrl)
         }

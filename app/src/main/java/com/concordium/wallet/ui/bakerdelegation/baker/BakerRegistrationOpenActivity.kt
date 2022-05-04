@@ -37,7 +37,8 @@ class BakerRegistrationOpenActivity :
 
     private fun validate() {
         var gotoNextPage = false
-        if (viewModel.bakerDelegationData.oldMetadataUrl != viewModel.bakerDelegationData.metadataUrl)
+        if (viewModel.bakerDelegationData.oldMetadataUrl != viewModel.bakerDelegationData.metadataUrl ||
+            viewModel.bakerDelegationData.oldOpenStatus != viewModel.bakerDelegationData.bakerPoolInfo?.openStatus)
             gotoNextPage = true
 
         if (gotoNextPage) gotoNextPage()

@@ -29,6 +29,7 @@ import com.concordium.wallet.data.cryptolib.CreateTransferInput
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.BakerPoolInfo.Companion.OPEN_STATUS_OPEN_FOR_ALL
 import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.util.FileUtil
@@ -233,7 +234,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                 null
             }
             UPDATE_BAKER_POOL, CONFIGURE_BAKER -> {
-                if (metadataUrlHasChanged()) { (bakerDelegationData.metadataUrl?.length ?: 0) * 2 }
+                if (metadataUrlHasChanged() || (openStatusHasChanged() && bakerDelegationData.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL)) { (bakerDelegationData.metadataUrl?.length ?: 0) * 2 }
                 else null
             }
             else -> null
@@ -396,9 +397,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
         val bakerKeys = if (bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.bakerKeys
 
-        val transactionFeeCommission = if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.chainParameters?.transactionCommissionRange?.max
-        val bakingRewardCommission = if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.chainParameters?.bakingCommissionRange?.max
-        val finalizationRewardCommission = if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.chainParameters?.finalizationCommissionRange?.max
+        val transactionFeeCommission = if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL) null else bakerDelegationData.chainParameters?.transactionCommissionRange?.max
+        val bakingRewardCommission = if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL) null else bakerDelegationData.chainParameters?.bakingCommissionRange?.max
+        val finalizationRewardCommission = if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL) null else bakerDelegationData.chainParameters?.finalizationCommissionRange?.max
 
         if (from == null || nonce == null || energy == null) {
             _errorLiveData.value = Event(R.string.app_error_general)

@@ -126,6 +126,7 @@ class BakerRegistrationConfirmationActivity :
     private fun updateViewsUpdateBakerPool() {
         setActionBarTitle(R.string.baker_registration_confirmation_update_pool_title)
         delegation_transaction_title.text = getString(R.string.baker_registration_confirmation_update_pool_transaction_title)
+        account_to_bake_title.text = getString(R.string.baker_registration_confirmation_update_affected_account)
 
         if (viewModel.openStatusHasChanged()) {
             showPoolStatus()
