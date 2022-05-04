@@ -12,6 +12,13 @@ abstract class BaseDelegationBakerRegisterAmountActivity(layout: Int, titleId: I
     override fun initViews() {
         super.initViews()
 
+        val initiallyRestake = if (viewModel.bakerDelegationData.isBakerFlow()) {
+            viewModel.bakerDelegationData.account?.accountBaker?.restakeEarnings == true || viewModel.bakerDelegationData.account?.accountBaker?.restakeEarnings == null
+        } else {
+            viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings == true || viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings == null
+        }
+        viewModel.bakerDelegationData.restake = initiallyRestake
+
         restake_options.clearAll()
         restake_options.addControl(
             getString(R.string.delegation_register_delegation_yes_restake),
@@ -19,14 +26,18 @@ abstract class BaseDelegationBakerRegisterAmountActivity(layout: Int, titleId: I
                 override fun onItemClicked() {
                     viewModel.markRestake(true)
                 }
-            },viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings == true || viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings == null)
+            }, initiallyRestake)
         restake_options.addControl(
             getString(R.string.delegation_register_delegation_no_restake),
             object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
                     viewModel.markRestake(false)
                 }
-            },viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings != true && viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings != null)
+            }, !initiallyRestake)
+    }
+
+    protected fun moreThan95Percent(amountToStake: Long): Boolean {
+        return amountToStake > (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0) * 0.95
     }
 
     abstract fun getStakeAmountInputValidator(): StakeAmountInputValidator

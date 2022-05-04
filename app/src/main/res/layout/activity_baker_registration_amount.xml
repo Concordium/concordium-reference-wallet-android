@@ -112,12 +112,12 @@
                                     android:id="@+id/amount"
                                     style="@style/EditText.Card.Flat"
                                     android:layout_width="match_parent"
-                                    android:inputType="numberDecimal"
                                     android:layout_centerInParent="true"
+                                    android:imeOptions="actionDone"
+                                    android:inputType="numberDecimal"
                                     android:textAlignment="center"
-                                    tools:text="Ͼ100.34432354"
                                     android:textSize="24sp"
-                                    android:imeOptions="actionDone" />
+                                    tools:text="Ͼ100.34432354" />
                                 <TextView
                                     android:id="@+id/amount_locked"
                                     android:layout_width="match_parent"

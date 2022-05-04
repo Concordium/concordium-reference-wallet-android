@@ -119,6 +119,10 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return bakerDelegationData.bakerPoolInfo?.openStatus != bakerDelegationData.oldOpenStatus
     }
 
+    fun isUpdateDecreaseAmount(): Boolean {
+        return (bakerDelegationData.isUpdateBaker() || isUpdatingDelegation()) && bakerDelegationData.oldStakedAmount ?: 0 > bakerDelegationData.amount ?: 0
+    }
+
     fun poolHasChanged(): Boolean {
         if (bakerDelegationData.isLPool && bakerDelegationData.oldDelegationIsBaker != null && bakerDelegationData.oldDelegationIsBaker!!)
             return true
@@ -138,7 +142,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun isOpenBaker(): Boolean {
-        return bakerDelegationData?.bakerPoolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_OPEN_FOR_ALL
+        return bakerDelegationData?.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL
     }
 
     fun isClosedForNewBaker(): Boolean {

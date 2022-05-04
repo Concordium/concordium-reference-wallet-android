@@ -34,8 +34,13 @@ class BakerRegisterAmountActivity :
     override fun initViews() {
         super.initViews()
 
-        if (viewModel.bakerDelegationData.isUpdateBaker())
+        if (viewModel.bakerDelegationData.isUpdateBaker()) {
             setActionBarTitle(R.string.baker_registration_update_amount_title)
+            viewModel.bakerDelegationData.oldStakedAmount = viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount?.toLong()
+            viewModel.bakerDelegationData.oldRestake = viewModel.bakerDelegationData.account?.accountBaker?.restakeEarnings
+            amount.setText(CurrencyUtil.formatGTU(viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount ?: "0", true))
+            amount_desc.text = getString(R.string.baker_update_enter_new_stake)
+        }
 
         balance_amount.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.account?.finalizedBalance ?: 0, true)
         baker_amount.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount ?: "0", true)
@@ -162,22 +167,15 @@ class BakerRegisterAmountActivity :
 
         val amountToStake = getAmountToStake()
         if (viewModel.bakerDelegationData.isUpdateBaker()) {
-            /*
             when {
-                (amountToStake == viewModel.delegationData.oldStakedAmount &&
-                        viewModel.getPoolId() == viewModel.delegationData.oldDelegationTargetPoolId?.toString() ?: "" &&
-                        viewModel.delegationData.restake == viewModel.delegationData.oldRestake &&
-                        viewModel.delegationData.isBakerPool == viewModel.delegationData.oldDelegationIsBaker) -> showNoChange()
-                amountToStake == 0L -> showNewAmountZero()
-                amountToStake < viewModel.delegationData.account?.accountDelegation?.stakedAmount?.toLongOrNull() ?: 0 -> showReduceWarning()
-                amountToStake > (viewModel.delegationData.account?.finalizedBalance ?: 0) * 0.95 -> show95PercentWarning()
-                else -> continueToBakerKeysGeneration()
+                amountToStake == viewModel.bakerDelegationData.oldStakedAmount && viewModel.bakerDelegationData.restake == viewModel.bakerDelegationData.oldRestake -> showNoChange()
+                moreThan95Percent(amountToStake) -> show95PercentWarning()
+                else -> gotoNextPage()
             }
-            */
         } else {
             when {
-                amountToStake > (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0) * 0.95 -> show95PercentWarning()
-                else -> continueBakerRegistration()
+                moreThan95Percent(amountToStake) -> show95PercentWarning()
+                else -> gotoNextPage()
             }
         }
     }
@@ -190,14 +188,17 @@ class BakerRegisterAmountActivity :
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.baker_more_than_95_title)
         builder.setMessage(getString(R.string.baker_more_than_95_message))
-        builder.setPositiveButton(getString(R.string.baker_more_than_95_continue)) { _, _ -> continueBakerRegistration() }
+        builder.setPositiveButton(getString(R.string.baker_more_than_95_continue)) { _, _ -> gotoNextPage() }
         builder.setNegativeButton(getString(R.string.baker_more_than_95_new_stake)) { dialog, _ -> dialog.dismiss() }
         builder.create().show()
     }
 
-    private fun continueBakerRegistration() {
+    private fun gotoNextPage() {
         viewModel.bakerDelegationData.amount = CurrencyUtil.toGTUValue(amount.text.toString())
-        val intent = Intent(this, BakerRegistrationActivity::class.java)
+        val intent = if (viewModel.bakerDelegationData.isUpdateBaker())
+            Intent(this, BakerRegistrationConfirmationActivity::class.java)
+        else
+            Intent(this, BakerRegistrationActivity::class.java)
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)

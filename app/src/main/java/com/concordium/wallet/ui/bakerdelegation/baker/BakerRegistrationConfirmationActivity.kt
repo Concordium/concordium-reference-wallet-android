@@ -90,25 +90,11 @@ class BakerRegistrationConfirmationActivity :
         setActionBarTitle(R.string.baker_registration_confirmation_title)
         grace_period.text = getString(R.string.baker_registration_confirmation_explain)
         delegation_transaction_title.text = getString(R.string.baker_register_confirmation_receipt_title)
-
         showAmount()
-        baker_amount_confirmation.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
-
         showRewards()
-        rewards_will_be.text = if (viewModel.bakerDelegationData.restake) getString(R.string.baker_register_confirmation_receipt_added_to_delegation_amount) else getString(R.string.baker_register_confirmation_receipt_at_disposal)
-
         showPoolStatus()
-        pool_status.text = if (viewModel.isOpenBaker()) getString(R.string.baker_register_confirmation_receipt_pool_status_open) else getString(R.string.baker_register_confirmation_receipt_pool_status_closed)
-
-        if (viewModel.isOpenBaker()) {
-            showMetaUrl()
-            meta_data_url.text = viewModel.bakerDelegationData.metadataUrl
-        }
-
+        showMetaUrl()
         showKeys()
-        election_verify_key.text = viewModel.bakerDelegationData.bakerKeys?.electionVerifyKey
-        signature_verify_key.text = viewModel.bakerDelegationData.bakerKeys?.signatureVerifyKey
-        aggregation_verify_key.text = viewModel.bakerDelegationData.bakerKeys?.aggregationVerifyKey
     }
 
     private fun updateViewsUpdateBakerKeys() {
@@ -116,32 +102,25 @@ class BakerRegistrationConfirmationActivity :
         grace_period.visibility = View.GONE
         delegation_transaction_title.text = getString(R.string.baker_registration_confirmation_update_keys_transaction_title)
         account_to_bake_title.text = getString(R.string.baker_registration_confirmation_update_affected_account)
-
         showKeys()
-        election_verify_key.text = viewModel.bakerDelegationData.bakerKeys?.electionVerifyKey
-        signature_verify_key.text = viewModel.bakerDelegationData.bakerKeys?.signatureVerifyKey
-        aggregation_verify_key.text = viewModel.bakerDelegationData.bakerKeys?.aggregationVerifyKey
     }
 
     private fun updateViewsUpdateBakerPool() {
         setActionBarTitle(R.string.baker_registration_confirmation_update_pool_title)
         delegation_transaction_title.text = getString(R.string.baker_registration_confirmation_update_pool_transaction_title)
         account_to_bake_title.text = getString(R.string.baker_registration_confirmation_update_affected_account)
-
-        if (viewModel.openStatusHasChanged()) {
-            showPoolStatus()
-            pool_status.text = if (viewModel.isOpenBaker()) getString(R.string.baker_register_confirmation_receipt_pool_status_open) else getString(R.string.baker_register_confirmation_receipt_pool_status_closed)
-        }
-
-        if (viewModel.isOpenBaker() && viewModel.metadataUrlHasChanged()) {
-            showMetaUrl()
-            meta_data_url.text = viewModel.bakerDelegationData.metadataUrl
-        }
+        showPoolStatus()
+        showMetaUrl()
     }
 
     private fun updateViewsUpdateBakerStake() {
         setActionBarTitle(R.string.baker_registration_confirmation_update_stake_title)
+        if (viewModel.isUpdateDecreaseAmount()) grace_period.text = getString(R.string.baker_registration_confirmation_update_stake_update_decrease_explain)
+        else grace_period.visibility = View.GONE
         delegation_transaction_title.text = getString(R.string.baker_registration_confirmation_update_stake_transaction_title)
+        account_to_bake_title.text = getString(R.string.baker_registration_confirmation_update_stake_update)
+        showAmount()
+        showRewards()
     }
 
     private fun updateViewsRemoveBaker() {
@@ -156,6 +135,7 @@ class BakerRegistrationConfirmationActivity :
         if (viewModel.stakedAmountHasChanged()) {
             delegation_amount_confirmation_title.visibility = View.VISIBLE
             baker_amount_confirmation.visibility = View.VISIBLE
+            baker_amount_confirmation.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
         }
     }
 
@@ -163,12 +143,16 @@ class BakerRegistrationConfirmationActivity :
         if (viewModel.restakeHasChanged()) {
             rewards_will_be_title.visibility = View.VISIBLE
             rewards_will_be.visibility = View.VISIBLE
+            rewards_will_be.text = if (viewModel.bakerDelegationData.restake) getString(R.string.baker_register_confirmation_receipt_added_to_delegation_amount) else getString(R.string.baker_register_confirmation_receipt_at_disposal)
         }
     }
 
     private fun showPoolStatus() {
-        pool_status_title.visibility = View.VISIBLE
-        pool_status.visibility = View.VISIBLE
+        if (viewModel.openStatusHasChanged()) {
+            pool_status_title.visibility = View.VISIBLE
+            pool_status.visibility = View.VISIBLE
+            pool_status.text = if (viewModel.isOpenBaker()) getString(R.string.baker_register_confirmation_receipt_pool_status_open) else getString(R.string.baker_register_confirmation_receipt_pool_status_closed)
+        }
     }
 
     private fun showKeys() {
@@ -178,11 +162,17 @@ class BakerRegistrationConfirmationActivity :
         signature_verify_key.visibility = View.VISIBLE
         aggregation_verify_key_title.visibility = View.VISIBLE
         aggregation_verify_key.visibility = View.VISIBLE
+        election_verify_key.text = viewModel.bakerDelegationData.bakerKeys?.electionVerifyKey
+        signature_verify_key.text = viewModel.bakerDelegationData.bakerKeys?.signatureVerifyKey
+        aggregation_verify_key.text = viewModel.bakerDelegationData.bakerKeys?.aggregationVerifyKey
     }
 
     private fun showMetaUrl() {
-        meta_data_url_title.visibility = View.VISIBLE
-        meta_data_url.visibility = View.VISIBLE
+        if (viewModel.isOpenBaker() && viewModel.metadataUrlHasChanged()) {
+            meta_data_url_title.visibility = View.VISIBLE
+            meta_data_url.visibility = View.VISIBLE
+            meta_data_url.text = viewModel.bakerDelegationData.metadataUrl
+        }
     }
 
     private fun onContinueClicked() {

@@ -418,6 +418,7 @@
     <string name="baker_more_than_95_continue">Continue</string>
     <string name="baker_more_than_95_new_stake">Enter new baker stake</string>
     <string name="baker_registration_update_amount_estimated_transaction_fee">Estimated transaction fee:\nϾ%1$s - Ͼ%2$s</string>
+    <string name="baker_update_enter_new_stake">Enter your new total baker stake</string>
 
     <string name="baker_registration_confirmation_title">Register baker</string>
     <string name="baker_registration_confirmation_explain">You are about to submit a register baker transaction that locks some of your funds in a stake. If you want to unlock the stake again, there will be a cooldown period.</string>
@@ -449,6 +450,8 @@
     <string name="baker_registration_confirmation_update_pool_transaction_title">Transaction: Update pool settings</string>
     <string name="baker_registration_confirmation_update_stake_transaction_title">Transaction: Update baker stake</string>
     <string name="baker_registration_confirmation_update_affected_account">Affected baker account</string>
+    <string name="baker_registration_confirmation_update_stake_update">Account to make baker update</string>
+    <string name="baker_registration_confirmation_update_stake_update_decrease_explain">You are about to submit a transaction that lowers your baker stake. Lowering your stake has a cooldown period, meaning it will not take effect immediately.\n\nThe baker cannot be removed and the stake cannot be changed until the cooldown is over.</string>
 
     <string name="baker_update_intro_flow_title">Baking</string>
     <string name="baker_update_intro_subtitle1">Updating baker settings</string>

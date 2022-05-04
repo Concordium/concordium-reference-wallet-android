@@ -144,7 +144,6 @@ class DelegationRegisterAmountActivity :
         initializeShowDetailedLiveData()
     }
 
-
     override fun getStakeAmountInputValidator(): StakeAmountInputValidator {
         return StakeAmountInputValidator(
             if (viewModel.isUpdatingDelegation()) "0" else "1",
@@ -217,12 +216,12 @@ class DelegationRegisterAmountActivity :
                     viewModel.bakerDelegationData.isBakerPool == viewModel.bakerDelegationData.oldDelegationIsBaker) -> showNoChange()
                 amountToStake == 0L -> showNewAmountZero()
                 amountToStake < viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLongOrNull() ?: 0 -> showReduceWarning()
-                amountToStake > (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0) * 0.95 -> show95PercentWarning()
+                moreThan95Percent(amountToStake) -> show95PercentWarning()
                 else -> continueToConfirmation()
             }
         } else {
             when {
-                amountToStake > (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0) * 0.95 -> show95PercentWarning()
+                moreThan95Percent(amountToStake) -> show95PercentWarning()
                 else -> continueToConfirmation()
             }
         }
