@@ -4,7 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
+import android.os.storage.StorageManager
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
@@ -26,7 +29,7 @@ import com.concordium.wallet.uicore.popup.Popup
 import java.io.Serializable
 import javax.crypto.Cipher
 
-abstract open class BaseActivity(private val layout: Int, private val titleId: Int = R.string.app_name) : AppCompatActivity() {
+abstract class BaseActivity(private val layout: Int, private val titleId: Int = R.string.app_name) : AppCompatActivity() {
 
     private var titleView: TextView? = null
     private var subtitleView: TextView? = null
@@ -114,9 +117,21 @@ abstract open class BaseActivity(private val layout: Int, private val titleId: I
     }
 
     protected fun openFolderPicker() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
-            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        val intent: Intent?
+        if (SDK_INT >= Build.VERSION_CODES.Q) {
+            val storageManager = getSystemService(STORAGE_SERVICE) as StorageManager
+            intent = storageManager.primaryStorageVolume.createOpenDocumentTreeIntent()
+            val startDir = "Documents"
+            var uriRoot = intent.getParcelableExtra<Uri>("android.provider.extra.INITIAL_URI")
+            var scheme = uriRoot.toString()
+            scheme = scheme.replace("/root/", "/document/")
+            scheme += "%3A$startDir"
+            uriRoot = Uri.parse(scheme)
+            intent.putExtra("android.provider.extra.INITIAL_URI", uriRoot)
+        } else {
+            intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
         }
+        intent.apply { flags = Intent.FLAG_GRANT_READ_URI_PERMISSION }
         startActivityForResult(intent, RESULT_FOLDER_PICKER)
     }
 
