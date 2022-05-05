@@ -66,8 +66,13 @@ class DelegationRegisterConfirmationActivity :
 
         initializeTransactionFeeLiveData()
         initializeShowAuthenticationLiveData()
-        initializeTransactionLiveData()
         initializeWaitingLiveData()
+
+        viewModel.transactionSuccessLiveData.observe(this, Observer<Boolean> { waiting ->
+            waiting?.let {
+                showPageAsReceipt()
+            }
+        })
 
         viewModel.loadTransactionFee(true)
     }
@@ -85,13 +90,6 @@ class DelegationRegisterConfirmationActivity :
             dialog.dismiss()
         }
         builder.create().show()
-    }
-
-    override fun transactionSuccessLiveData() {
-        showPageAsReceipt()
-    }
-
-    override fun showDetailedLiveData(value: Boolean) {
     }
 
     private fun showPageAsReceipt() {

@@ -145,13 +145,7 @@ class BakerRegisterAmountActivity :
         }
     }
 
-    override fun transactionSuccessLiveData() {
-    }
-
     override fun errorLiveData(value: Int) {
-    }
-
-    override fun showDetailedLiveData(value: Boolean) {
     }
 
     private fun onContinueClicked() {

@@ -3,11 +3,16 @@ package com.concordium.wallet.ui.bakerdelegation.common
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.DelegationData
+import com.concordium.wallet.data.model.PendingChange
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.util.DateTimeUtil.formatTo
+import com.concordium.wallet.util.DateTimeUtil.toDate
 import kotlinx.android.synthetic.main.delegationbaker_status.*
 
 abstract class StatusActivity(titleId: Int) :
@@ -65,6 +70,29 @@ abstract class StatusActivity(titleId: Int) :
     fun clearState(){
         status_empty.text = ""
         status_list_container.removeAllViews()
+    }
+
+    protected fun addPendingChange(pendingChange: PendingChange, dateStringId: Int, takeEffectOnStringId: Int, removeStakeStringId: Int, reduceStakeStringId: Int) {
+        val prefix = pendingChange.effectiveTime.toDate()?.formatTo("yyyy-MM-dd")
+        val postfix = pendingChange.effectiveTime.toDate()?.formatTo("HH:mm")
+        val dateStr = getString(dateStringId, prefix, postfix)
+        addContent(getString(takeEffectOnStringId) + "\n" + dateStr, "")
+        if (pendingChange.change == "RemoveStake") {
+            status_button_top.isEnabled = false
+            addContent(getString(removeStakeStringId), "")
+        } else if (pendingChange.change == "ReduceStake") {
+            pendingChange.newStake?.let { newStake ->
+                addContent(getString(reduceStakeStringId), CurrencyUtil.formatGTU(newStake, true))
+            }
+        }
+    }
+
+    protected fun addWaitingForTransaction(contentTitleStringId: Int, emptyStateStringId: Int) {
+        findViewById<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_logo_icon_pending)
+        status_button_top.isEnabled = false
+        status_button_bottom.isEnabled = false
+        setContentTitle(contentTitleStringId)
+        setEmptyState(getString(emptyStateStringId))
     }
 
     abstract fun initView()

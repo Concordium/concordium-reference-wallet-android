@@ -19,8 +19,6 @@ import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerUpdateIntro
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.ui.bakerdelegation.common.StatusActivity
 import com.concordium.wallet.ui.common.GenericFlowActivity
-import com.concordium.wallet.util.DateTimeUtil.formatTo
-import com.concordium.wallet.util.DateTimeUtil.toDate
 import kotlinx.android.synthetic.main.delegationbaker_status.*
 
 class BakerStatusActivity :
@@ -49,10 +47,7 @@ class BakerStatusActivity :
         status_button_bottom.text = getString(R.string.baker_status_update_baker_settings)
 
         if (viewModel.bakerDelegationData.isTransactionInProgress) {
-            findViewById<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_logo_icon_pending)
-            setContentTitle(R.string.baker_status_baker_waiting_title)
-            setEmptyState(getString(R.string.baker_status_baker_waiting))
-            status_button_bottom.isEnabled = false
+            addWaitingForTransaction(R.string.baker_status_baker_waiting_title, R.string.baker_status_baker_waiting)
             return
         }
 
@@ -77,17 +72,7 @@ class BakerStatusActivity :
         }
 
         accountBaker.pendingChange?.let { pendingChange ->
-            val prefix = pendingChange.effectiveTime.toDate()?.formatTo("yyyy-MM-dd")
-            val postfix = pendingChange.effectiveTime.toDate()?.formatTo("HH:mm")
-            val dateStr = getString(R.string.baker_status_baker_effective_time, prefix, postfix)
-            addContent(getString(R.string.baker_status_baker_take_effect_on) + "\n" + dateStr, "")
-            if (pendingChange.change == "RemoveStake") {
-                addContent(getString(R.string.baker_status_baker_effective_remove), "")
-            } else if (pendingChange.change == "ReduceStake") {
-                pendingChange.newStake?.let { newStake ->
-                    addContent(getString(R.string.delegation_status_new_amount), CurrencyUtil.formatGTU(newStake, true))
-                }
-            }
+            addPendingChange(pendingChange, R.string.baker_status_baker_effective_time, R.string.baker_status_baker_take_effect_on, R.string.baker_status_baker_effective_remove, R.string.baker_status_baker_stake_lowered_to)
         }
 
         status_button_bottom.setOnClickListener {

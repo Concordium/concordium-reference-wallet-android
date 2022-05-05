@@ -82,8 +82,13 @@ class BakerRegistrationConfirmationActivity :
         }
 
         initializeShowAuthenticationLiveData()
-        initializeTransactionLiveData()
         initializeWaitingLiveData()
+
+        viewModel.transactionSuccessLiveData.observe(this, Observer<Boolean> { waiting ->
+            waiting?.let {
+                showPageAsReceipt()
+            }
+        })
     }
 
     private fun updateViewsRegisterBaker() {
@@ -183,10 +188,6 @@ class BakerRegistrationConfirmationActivity :
         viewModel.prepareTransaction()
     }
 
-    override fun transactionSuccessLiveData() {
-        showPageAsReceipt()
-    }
-
     private fun showPageAsReceipt() {
         submit_baker_transaction.visibility = View.GONE
         submit_baker_finish.visibility = View.VISIBLE
@@ -241,9 +242,6 @@ class BakerRegistrationConfirmationActivity :
             dialog.dismiss()
         }
         builder.create().show()
-    }
-
-    override fun showDetailedLiveData(value: Boolean) {
     }
 
     override fun showWaiting(waiting: Boolean) {

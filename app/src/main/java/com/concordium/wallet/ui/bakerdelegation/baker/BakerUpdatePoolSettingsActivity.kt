@@ -81,12 +81,6 @@ class BakerUpdatePoolSettingsActivity :
         startActivityForResultAndHistoryCheck(intent)
     }
 
-    override fun transactionSuccessLiveData() {
-    }
-
     override fun errorLiveData(value: Int) {
-    }
-
-    override fun showDetailedLiveData(value: Boolean) {
     }
 }

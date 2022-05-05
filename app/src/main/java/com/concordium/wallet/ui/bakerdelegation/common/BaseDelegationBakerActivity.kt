@@ -36,14 +36,6 @@ abstract class BaseDelegationBakerActivity(layout: Int, titleId: Int = R.string.
         ).get(DelegationBakerViewModel::class.java)
     }
 
-    protected fun initializeTransactionLiveData() {
-        viewModel.transactionSuccessLiveData.observe(this, Observer<Boolean> { waiting ->
-            waiting?.let {
-                transactionSuccessLiveData()
-            }
-        })
-    }
-
     protected fun initializeWaitingLiveData() {
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let {
@@ -53,14 +45,6 @@ abstract class BaseDelegationBakerActivity(layout: Int, titleId: Int = R.string.
         viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
                 errorLiveData(value)
-            }
-        })
-    }
-
-    protected fun initializeShowDetailedLiveData() {
-        viewModel.showDetailedLiveData.observe(this, object : EventObserver<Boolean>() {
-            override fun onUnhandledEvent(value: Boolean) {
-                showDetailedLiveData(value)
             }
         })
     }
@@ -99,9 +83,7 @@ abstract class BaseDelegationBakerActivity(layout: Int, titleId: Int = R.string.
         })
     }
 
-    abstract fun transactionSuccessLiveData()
     abstract fun errorLiveData(value: Int)
-    abstract fun showDetailedLiveData(value: Boolean)
 
     protected open fun showWaiting(waiting: Boolean) {
         if (waiting) {

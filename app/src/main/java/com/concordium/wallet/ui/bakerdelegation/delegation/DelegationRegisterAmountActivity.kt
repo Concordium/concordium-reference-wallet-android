@@ -8,6 +8,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import com.concordium.wallet.R
+import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerRegisterAmountActivity
@@ -141,7 +142,14 @@ class DelegationRegisterAmountActivity :
         updateContent()
 
         initializeWaitingLiveData()
-        initializeShowDetailedLiveData()
+
+        viewModel.showDetailedLiveData.observe(this, object : EventObserver<Boolean>() {
+            override fun onUnhandledEvent(value: Boolean) {
+                if (value) {
+                    showConfirmationPage()
+                }
+            }
+        })
     }
 
     override fun getStakeAmountInputValidator(): StakeAmountInputValidator {
@@ -158,17 +166,8 @@ class DelegationRegisterAmountActivity :
             viewModel.bakerDelegationData.poolId)
     }
 
-    override fun transactionSuccessLiveData() {
-    }
-
     override fun errorLiveData(value: Int) {
         showError(null)
-    }
-
-    override fun showDetailedLiveData(value: Boolean) {
-        if (value) {
-            showConfirmationPage()
-        }
     }
 
     private fun setAmountHint() {

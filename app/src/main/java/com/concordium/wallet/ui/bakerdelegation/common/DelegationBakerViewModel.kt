@@ -383,6 +383,12 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         val energy = bakerDelegationData.energy
         val nonce = bakerDelegationData.accountNonce
 
+        if (from == null || nonce == null || energy == null) {
+            _errorLiveData.value = Event(R.string.app_error_general)
+            _waitingLiveData.value = false
+            return
+        }
+
         var encryptionSK: String? = null
         if (bakerDelegationData.type != REMOVE_BAKER)
             encryptionSK = encryptionSecretKey
@@ -396,20 +402,12 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             restakeEarnings = bakerDelegationData.restake
 
         val metadataUrl = if (bakerDelegationData.type == REGISTER_BAKER) bakerDelegationData.metadataUrl ?: "" else if (bakerDelegationData.metadataUrl.isNullOrEmpty()) null else bakerDelegationData.metadataUrl
-
         val openStatus = if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER) null else if (openStatusHasChanged()) bakerDelegationData.bakerPoolInfo?.openStatus else null
-
         val bakerKeys = if (bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.bakerKeys
 
         val transactionFeeCommission = if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL) null else bakerDelegationData.chainParameters?.transactionCommissionRange?.max
         val bakingRewardCommission = if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL) null else bakerDelegationData.chainParameters?.bakingCommissionRange?.max
         val finalizationRewardCommission = if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL) null else bakerDelegationData.chainParameters?.finalizationCommissionRange?.max
-
-        if (from == null || nonce == null || energy == null) {
-            _errorLiveData.value = Event(R.string.app_error_general)
-            _waitingLiveData.value = false
-            return
-        }
 
         val transferInput = CreateTransferInput(
             from,
@@ -452,6 +450,12 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         val energy = bakerDelegationData.energy
         val nonce = bakerDelegationData.accountNonce
 
+        if (from == null || nonce == null || energy == null) {
+            _errorLiveData.value = Event(R.string.app_error_general)
+            _waitingLiveData.value = false
+            return
+        }
+
         var encryptionSK: String? = null
         if (bakerDelegationData.type != REMOVE_DELEGATION)
             encryptionSK = encryptionSecretKey
@@ -477,12 +481,6 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                 else
                     DelegationTarget(DelegationTarget.TYPE_DELEGATE_TO_L_POOL, null)
             }
-        }
-
-        if (from == null || nonce == null || energy == null) {
-            _errorLiveData.value = Event(R.string.app_error_general)
-            _waitingLiveData.value = false
-            return
         }
 
         val transferInput = CreateTransferInput(

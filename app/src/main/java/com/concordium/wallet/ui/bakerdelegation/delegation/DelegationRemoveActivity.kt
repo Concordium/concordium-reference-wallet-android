@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.bakerdelegation.delegation
 import android.app.AlertDialog
 import android.view.View
 import android.widget.Toast
+import androidx.lifecycle.Observer
 import com.concordium.wallet.R
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
@@ -29,7 +30,12 @@ class DelegationRemoveActivity :
         initializeWaitingLiveData()
         initializeTransactionFeeLiveData()
         initializeShowAuthenticationLiveData()
-        initializeTransactionLiveData()
+
+        viewModel.transactionSuccessLiveData.observe(this, Observer<Boolean> { waiting ->
+            waiting?.let {
+                showPageAsReceipt()
+            }
+        })
 
         viewModel.loadTransactionFee(true)
     }
@@ -52,15 +58,8 @@ class DelegationRemoveActivity :
         }
     }
 
-    override fun transactionSuccessLiveData() {
-        showPageAsReceipt()
-    }
-
     override fun errorLiveData(value: Int) {
         Toast.makeText(this, getString(value), Toast.LENGTH_SHORT).show()
-    }
-
-    override fun showDetailedLiveData(value: Boolean) {
     }
 
     private fun showPageAsReceipt() {

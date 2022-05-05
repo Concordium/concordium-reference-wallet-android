@@ -6,6 +6,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import com.concordium.wallet.R
+import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.AMOUNT_TOO_LARGE_FOR_POOL
@@ -79,10 +80,14 @@ class DelegationRegisterPoolActivity :
         updateVisibilities()
 
         initializeWaitingLiveData()
-        initializeShowDetailedLiveData()
-    }
 
-    override fun transactionSuccessLiveData() {
+        viewModel.showDetailedLiveData.observe(this, object : EventObserver<Boolean>() {
+            override fun onUnhandledEvent(value: Boolean) {
+                if (value) {
+                    showDetailedPage()
+                }
+            }
+        })
     }
 
     override fun errorLiveData(value: Int) {
@@ -91,12 +96,6 @@ class DelegationRegisterPoolActivity :
         } else {
             pool_id_error.text = getString(value)
             showError()
-        }
-    }
-
-    override fun showDetailedLiveData(value: Boolean) {
-        if (value) {
-            showDetailedPage()
         }
     }
 

@@ -13,15 +13,6 @@ import kotlinx.android.synthetic.main.activity_baker_registration.*
 class BakerRegistrationActivity :
     BaseDelegationBakerActivity(R.layout.activity_baker_registration, R.string.baker_registration_title) {
 
-    override fun transactionSuccessLiveData() {
-    }
-
-    override fun errorLiveData(value: Int) {
-    }
-
-    override fun showDetailedLiveData(value: Boolean) {
-    }
-
     override fun initViews() {
         baker_options.clearAll()
         baker_options.addControl(
@@ -51,5 +42,8 @@ class BakerRegistrationActivity :
             Intent(this, BakerRegistrationOpenActivity::class.java)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
+    }
+
+    override fun errorLiveData(value: Int) {
     }
 }
