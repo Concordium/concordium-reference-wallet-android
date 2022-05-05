@@ -192,6 +192,7 @@ class ExportViewModel(application: Application) :
             try {
                 val fileContent = createExportFileContent(decryptKey, exportPassword)
                 FileUtil.writeFile(destinationUri, FILE_NAME, fileContent)
+                App.appCore.session.setAccountsBackedUp(true)
                 _errorLiveData.value = Event(R.string.export_backup_saved_local)
                 _waitingLiveData.value = false
             } catch (e: Exception) {
