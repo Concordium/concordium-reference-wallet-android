@@ -418,7 +418,8 @@
     <string name="baker_more_than_95_message">You are about to lock more than 95% of your total balance in a baker stake.\n\nIf you don’t have enough unlocked CCD at your disposal, you might not be able to pay future transaction fees.</string>
     <string name="baker_more_than_95_continue">Continue</string>
     <string name="baker_more_than_95_new_stake">Enter new baker stake</string>
-    <string name="baker_registration_update_amount_estimated_transaction_fee">Estimated transaction fee:\nϾ%1$s - Ͼ%2$s</string>
+    <string name="baker_registration_update_amount_estimated_transaction_fee_range">Estimated transaction fee:\nϾ%1$s - Ͼ%2$s</string>
+    <string name="baker_registration_update_amount_estimated_transaction_fee_single">Estimated transaction fee:\nϾ%1$s</string>
     <string name="baker_update_enter_new_stake">Enter your new total baker stake</string>
 
     <string name="baker_registration_confirmation_title">Register baker</string>

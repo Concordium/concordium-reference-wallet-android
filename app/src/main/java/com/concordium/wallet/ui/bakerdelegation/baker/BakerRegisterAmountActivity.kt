@@ -8,6 +8,7 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import com.concordium.wallet.R
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_BAKER
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
@@ -15,7 +16,9 @@ import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
 import com.concordium.wallet.ui.common.GenericFlowActivity
 import kotlinx.android.synthetic.main.activity_baker_registration_amount.*
 import kotlinx.android.synthetic.main.activity_baker_registration_amount.amount
+import kotlinx.android.synthetic.main.activity_baker_registration_amount.amount_desc
 import kotlinx.android.synthetic.main.activity_baker_registration_amount.amount_error
+import kotlinx.android.synthetic.main.activity_baker_registration_amount.amount_locked
 import kotlinx.android.synthetic.main.activity_baker_registration_amount.balance_amount
 import kotlinx.android.synthetic.main.activity_baker_registration_amount.pool_estimated_transaction_fee
 import java.text.DecimalFormatSymbols
@@ -25,10 +28,12 @@ class BakerRegisterAmountActivity :
 
     private var minFee: Long? = null
     private var maxFee: Long? = null
+    private var singleFee: Long? = null
 
     companion object {
-        private const val MIN_FEE = 1
-        private const val MAX_FEE = 2
+        private const val RANGE_MIN_FEE = 1
+        private const val RANGE_MAX_FEE = 2
+        private const val SINGLE_FEE = 3
     }
 
     override fun initViews() {
@@ -48,13 +53,19 @@ class BakerRegisterAmountActivity :
         viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<Long?, Int?>> {
             override fun onChanged(response: Pair<Long?, Int?>?) {
                 response?.second?.let { requestId ->
-                    if (requestId == MIN_FEE)
-                        minFee = response.first
-                    else if (requestId == MAX_FEE)
-                        maxFee = response.first
-                    if (minFee != null && maxFee != null) {
+                    when (requestId) {
+                        SINGLE_FEE -> singleFee = response.first
+                        RANGE_MIN_FEE -> minFee = response.first
+                        RANGE_MAX_FEE -> maxFee = response.first
+                    }
+                    singleFee?.let {
                         pool_estimated_transaction_fee.visibility = View.VISIBLE
-                        pool_estimated_transaction_fee.text = getString(R.string.baker_registration_update_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(minFee ?: 0), CurrencyUtil.formatGTU(maxFee ?: 0))
+                        pool_estimated_transaction_fee.text = getString(R.string.baker_registration_update_amount_estimated_transaction_fee_single, CurrencyUtil.formatGTU(it))
+                    } ?: run {
+                        if (minFee != null && maxFee != null) {
+                            pool_estimated_transaction_fee.visibility = View.VISIBLE
+                            pool_estimated_transaction_fee.text = getString(R.string.baker_registration_update_amount_estimated_transaction_fee_range, CurrencyUtil.formatGTU(minFee ?: 0), CurrencyUtil.formatGTU(maxFee ?: 0))
+                        }
                     }
                 }
             }
@@ -96,8 +107,13 @@ class BakerRegisterAmountActivity :
                 showError()
             } else {
                 hideError()
-                viewModel.loadTransactionFee(true, requestId = MIN_FEE, metadataSizeForced = 0)
-                viewModel.loadTransactionFee(true, requestId = MAX_FEE, metadataSizeForced = 2048)
+                when (viewModel.bakerDelegationData.type) {
+                    REGISTER_BAKER -> {
+                        viewModel.loadTransactionFee(true, requestId = RANGE_MIN_FEE, metadataSizeForced = 0)
+                        viewModel.loadTransactionFee(true, requestId = RANGE_MAX_FEE, metadataSizeForced = 2048)
+                    }
+                    else -> viewModel.loadTransactionFee(true, requestId = SINGLE_FEE, metadataSizeForced = viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.metadataUrl?.length)
+                }
             }
         }
         amount.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
@@ -107,6 +123,11 @@ class BakerRegisterAmountActivity :
 
         baker_registration_continue.setOnClickListener {
             onContinueClicked()
+        }
+
+        if (viewModel.isInCoolDown()) {
+            amount_locked.visibility = View.VISIBLE
+            amount.isEnabled = false
         }
     }
 

@@ -159,7 +159,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun isInCoolDown(): Boolean {
-        return bakerDelegationData.account?.accountDelegation?.pendingChange != null
+        return bakerDelegationData.account?.accountDelegation?.pendingChange != null || bakerDelegationData.account?.accountBaker?.pendingChange != null
     }
 
     fun atDisposal(): Long {
@@ -227,7 +227,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         }
 
         val restake = when (bakerDelegationData.type) {
-            UPDATE_DELEGATION, UPDATE_BAKER_STAKE, CONFIGURE_BAKER -> bakerDelegationData.restake
+            UPDATE_DELEGATION, UPDATE_BAKER_STAKE, CONFIGURE_BAKER -> if (restakeHasChanged()) bakerDelegationData.restake else null
             else -> null
         }
 
@@ -402,12 +402,12 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             restakeEarnings = bakerDelegationData.restake
 
         val metadataUrl = if (bakerDelegationData.type == REGISTER_BAKER) bakerDelegationData.metadataUrl ?: "" else if (bakerDelegationData.metadataUrl.isNullOrEmpty()) null else bakerDelegationData.metadataUrl
-        val openStatus = if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER) null else if (openStatusHasChanged()) bakerDelegationData.bakerPoolInfo?.openStatus else null
+        val openStatus = if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER || bakerDelegationData.type == UPDATE_BAKER_STAKE) null else if (openStatusHasChanged()) bakerDelegationData.bakerPoolInfo?.openStatus else null
         val bakerKeys = if (bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.bakerKeys
 
-        val transactionFeeCommission = if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL) null else bakerDelegationData.chainParameters?.transactionCommissionRange?.max
-        val bakingRewardCommission = if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL) null else bakerDelegationData.chainParameters?.bakingCommissionRange?.max
-        val finalizationRewardCommission = if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL) null else bakerDelegationData.chainParameters?.finalizationCommissionRange?.max
+        val transactionFeeCommission = if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.transactionCommissionRange?.max else null
+        val bakingRewardCommission = if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.bakingCommissionRange?.max else null
+        val finalizationRewardCommission = if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.finalizationCommissionRange?.max else null
 
         val transferInput = CreateTransferInput(
             from,

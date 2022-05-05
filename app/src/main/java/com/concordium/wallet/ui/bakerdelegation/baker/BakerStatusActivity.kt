@@ -108,8 +108,13 @@ class BakerStatusActivity :
         }
 
         val menuItemStopBaking = menuView.findViewById(R.id.menu_item_stop_baking) as TextView
-        menuItemStopBaking.setOnClickListener {
-            gotoBakerRemoveIntroFlow()
+        if (viewModel.isInCoolDown()) {
+            menuItemStopBaking.isEnabled = false
+            menuItemStopBaking.setTextColor(getColor(R.color.text_grey))
+        } else {
+            menuItemStopBaking.setOnClickListener {
+                gotoBakerRemoveIntroFlow()
+            }
         }
 
         builder.setCustomTitle(menuView)
