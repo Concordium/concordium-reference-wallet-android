@@ -43,7 +43,7 @@ import javax.crypto.Cipher
 
 class DelegationBakerViewModel(application: Application) : AndroidViewModel(application) {
 
-    lateinit var bakerDelegationData: DelegationData
+    lateinit var bakerDelegationData: BakerDelegationData
     private val proxyRepository = ProxyRepository()
     private val transferRepository: TransferRepository
 
@@ -99,8 +99,8 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         transferRepository = TransferRepository(transferDao)
     }
 
-    fun initialize(delegationData: DelegationData) {
-        this.bakerDelegationData = delegationData
+    fun initialize(bakerDelegationData: BakerDelegationData) {
+        this.bakerDelegationData = bakerDelegationData
     }
 
     fun restakeHasChanged(): Boolean {

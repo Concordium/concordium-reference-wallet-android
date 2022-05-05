@@ -206,9 +206,9 @@ class BakerRegistrationConfirmationActivity :
 
         var noticeMessage = getString(R.string.baker_notice_message)
 
-        if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && viewModel.bakerDelegationData.oldStakedAmount ?: 0 > viewModel.bakerDelegationData.amount ?: 0) {
+        if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && viewModel.bakerDelegationData.oldStakedAmount ?: 0 < viewModel.bakerDelegationData.amount ?: 0) {
             noticeMessage = getString(R.string.baker_notice_message_update_increase)
-        }  else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && viewModel.bakerDelegationData.oldStakedAmount ?: 0 < viewModel.bakerDelegationData.amount ?: 0) {
+        }  else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && viewModel.bakerDelegationData.oldStakedAmount ?: 0 > viewModel.bakerDelegationData.amount ?: 0) {
             val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0)
             noticeMessage = resources.getQuantityString(R.plurals.baker_notice_message_update_decrease, gracePeriod, gracePeriod)
         } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && viewModel.bakerDelegationData.oldStakedAmount ?: 0 == viewModel.bakerDelegationData.amount ?: 0) {

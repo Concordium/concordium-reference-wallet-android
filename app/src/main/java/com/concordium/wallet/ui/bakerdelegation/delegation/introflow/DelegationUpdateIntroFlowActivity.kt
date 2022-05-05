@@ -17,7 +17,7 @@ class DelegationUpdateIntroFlowActivity :
 
     override fun gotoContinue() {
         val intent = Intent(this, DelegationRegisterPoolActivity::class.java)
-        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, delegationData)
+        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 

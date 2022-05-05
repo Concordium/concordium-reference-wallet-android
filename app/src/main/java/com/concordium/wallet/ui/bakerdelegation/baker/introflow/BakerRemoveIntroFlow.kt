@@ -16,11 +16,11 @@ class BakerRemoveIntroFlow :
 
     override fun gotoContinue() {
         val intent = Intent(this, BakerRegistrationConfirmationActivity::class.java)
-        delegationData?.type = REMOVE_BAKER
-        delegationData?.amount = 0
-        delegationData?.metadataUrl = null
+        bakerDelegationData?.type = REMOVE_BAKER
+        bakerDelegationData?.amount = 0
+        bakerDelegationData?.metadataUrl = null
 
-        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, delegationData)
+        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 

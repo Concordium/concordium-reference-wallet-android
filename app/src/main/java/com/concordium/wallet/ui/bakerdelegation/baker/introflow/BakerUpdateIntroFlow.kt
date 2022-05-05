@@ -25,7 +25,7 @@ class BakerUpdateIntroFlow :
     }
 
     override fun gotoContinue() {
-        delegationData?.type?.let { type ->
+        bakerDelegationData?.type?.let { type ->
             when (type) {
                 UPDATE_BAKER_STAKE -> gotoUpdateBakerStake()
                 UPDATE_BAKER_POOL -> gotoUpdatePoolSettings()
@@ -41,25 +41,25 @@ class BakerUpdateIntroFlow :
 
     private fun gotoUpdateBakerStake() {
         val intent = Intent(this, BakerRegisterAmountActivity::class.java)
-        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, delegationData)
+        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 
     private fun gotoUpdatePoolSettings() {
         val intent = Intent(this, BakerUpdatePoolSettingsActivity::class.java)
-        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, delegationData)
+        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 
     private fun gotoUpdateBakerKeys() {
         val intent = Intent(this, BakerRegistrationCloseActivity::class.java)
-        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, delegationData)
+        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 
     private fun gotoStopBaking() {
         val intent = Intent(this, BakerRemoveIntroFlow::class.java)
-        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, delegationData)
+        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 }

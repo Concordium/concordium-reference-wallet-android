@@ -12,7 +12,7 @@ import java.io.Serializable
 /**
  * Class used for collecting data from AccountDetails all the way to submission
  */
-data class DelegationData(
+data class BakerDelegationData(
     var account: Account? = null,
     var restake: Boolean = true,
     var isLPool: Boolean = false,
