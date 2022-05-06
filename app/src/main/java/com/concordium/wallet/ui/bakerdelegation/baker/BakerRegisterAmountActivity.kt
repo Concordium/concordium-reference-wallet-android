@@ -71,7 +71,7 @@ class BakerRegisterAmountActivity :
             }
         })
 
-        viewModel.chainParametersAndPassiveDelegationLoaded.observe(this, Observer { success ->
+        viewModel.chainParametersPassiveDelegationBakerPoolLoaded.observe(this, Observer { success ->
             success?.let {
                 updateViews()
                 showWaiting(false)
@@ -79,7 +79,7 @@ class BakerRegisterAmountActivity :
         })
 
         showWaiting(true)
-        viewModel.loadChainParametersAndPassiveDelegation()
+        viewModel.loadChainParametersPassiveDelegationAndPossibleBakerPool()
     }
 
     private fun updateViews() {
@@ -144,7 +144,7 @@ class BakerRegisterAmountActivity :
     override fun getStakeAmountInputValidator(): StakeAmountInputValidator {
         return StakeAmountInputValidator(
             viewModel.bakerDelegationData.chainParameters?.minimumEquityCapital,
-            null,
+            viewModel.getStakeInputMax(),
             (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0),
             viewModel.bakerDelegationData.account?.getAtDisosal(),
             viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,

@@ -75,9 +75,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     val chainParametersLoadedLiveData: LiveData<Boolean>
         get() = _chainParametersLoadedLiveData
 
-    private val _chainParametersAndPassiveDelegationLoaded = MutableLiveData<Boolean>()
-    val chainParametersAndPassiveDelegationLoaded: LiveData<Boolean>
-        get() = _chainParametersAndPassiveDelegationLoaded
+    private val _chainParametersPassiveDelegationBakerPoolLoaded = MutableLiveData<Boolean>()
+    val chainParametersPassiveDelegationBakerPoolLoaded: LiveData<Boolean>
+        get() = _chainParametersPassiveDelegationBakerPoolLoaded
 
     private val _showDetailedLiveData = MutableLiveData<Event<Boolean>>()
     val showDetailedLiveData: LiveData<Event<Boolean>>
@@ -191,6 +191,21 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return bakerDelegationData.poolId
     }
 
+    fun getStakeInputMax(): String? {
+        var max: Double? = null
+        val allPoolTotalCapital = bakerDelegationData.passiveDelegation?.allPoolTotalCapital
+        val capitalBound = bakerDelegationData.chainParameters?.capitalBound
+        if (allPoolTotalCapital != null && capitalBound != null) {
+            max = ((allPoolTotalCapital.toLongOrNull() ?: 0) * capitalBound / 100)
+            if (bakerDelegationData.type != REGISTER_BAKER) {
+                bakerDelegationData.bakerPoolStatus?.delegatedCapital?.let { delegatedCapital ->
+                    max -= (delegatedCapital.toLongOrNull() ?: 0)
+                }
+            }
+        }
+        return max?.toBigDecimal()?.toLong().toString()
+    }
+
     fun validatePoolId() {
         if (bakerDelegationData.isLPool) {
             _showDetailedLiveData.value = Event(true)
@@ -278,9 +293,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         )
     }
 
-    fun loadChainParametersAndPassiveDelegation() {
+    fun loadChainParametersPassiveDelegationAndPossibleBakerPool() {
         runBlocking {
-            val tasks = listOf(
+            val tasks = mutableListOf(
                 async(Dispatchers.IO) {
                     val response = proxyRepository.getPassiveDelegationSuspended()
                     if (response.isSuccessful) {
@@ -304,8 +319,21 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                     }
                 }
             )
+            if (bakerDelegationData.type != REGISTER_BAKER) {
+                tasks.add(async(Dispatchers.IO) {
+                    val response = proxyRepository.getBakerPoolSuspended(bakerDelegationData.account?.accountBaker?.bakerId.toString())
+                    if (response.isSuccessful) {
+                        response.body()?.let {
+                            bakerDelegationData.bakerPoolStatus = it
+                        }
+                    } else {
+                        val error = ErrorParser.parseError(response)
+                        _errorLiveData.value = error?.let { Event(it.error) }
+                    }
+                })
+            }
             tasks.awaitAll()
-            _chainParametersAndPassiveDelegationLoaded.value = true
+            _chainParametersPassiveDelegationBakerPoolLoaded.value = true
         }
     }
 

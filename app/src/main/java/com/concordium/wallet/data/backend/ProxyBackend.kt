@@ -14,6 +14,9 @@ interface ProxyBackend {
     @GET("v0/bakerPool/{poolId}")
     fun bakerPool(@Path("poolId") poolId: String): Call<BakerPoolStatus>
 
+    @GET("v0/bakerPool/{poolId}")
+    suspend fun bakerPoolSuspended(@Path("poolId") poolId: String): Response<BakerPoolStatus>
+
     @GET("v0/submissionStatus/{submissionId}")
     fun accountSubmissionStatus(@Path("submissionId") submissionId: String): Call<AccountSubmissionStatus>
 

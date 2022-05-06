@@ -226,6 +226,8 @@ class ProxyRepository() {
 
     suspend fun getPassiveDelegationSuspended() = backend.passiveDelegationSuspended()
 
+    suspend fun getBakerPoolSuspended(poolId: String) = backend.bakerPoolSuspended(poolId)
+
     suspend fun getAccountBalanceSuspended(accountAddress: String) = backend.accountBalanceSuspended(accountAddress)
 
     fun getAccountBalance(
