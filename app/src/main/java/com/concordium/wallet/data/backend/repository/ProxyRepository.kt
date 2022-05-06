@@ -222,6 +222,10 @@ class ProxyRepository() {
         )
     }
 
+    suspend fun getChainParametersSuspended() = backend.chainParametersSuspended()
+
+    suspend fun getPassiveDelegationSuspended() = backend.passiveDelegationSuspended()
+
     suspend fun getAccountBalanceSuspended(accountAddress: String) = backend.accountBalanceSuspended(accountAddress)
 
     fun getAccountBalance(

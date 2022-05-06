@@ -71,7 +71,7 @@ class BakerRegisterAmountActivity :
             }
         })
 
-        viewModel.chainParametersLoadedLiveData.observe(this, Observer { success ->
+        viewModel.chainParametersAndPassiveDelegationLoaded.observe(this, Observer { success ->
             success?.let {
                 updateViews()
                 showWaiting(false)
@@ -79,7 +79,7 @@ class BakerRegisterAmountActivity :
         })
 
         showWaiting(true)
-        viewModel.loadChainParameters()
+        viewModel.loadChainParametersAndPassiveDelegation()
     }
 
     private fun updateViews() {

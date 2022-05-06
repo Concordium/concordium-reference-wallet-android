@@ -3,6 +3,7 @@ package com.concordium.wallet.data.backend
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.model.*
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.*
 
 interface ProxyBackend {
@@ -44,8 +45,13 @@ interface ProxyBackend {
     ): Call<TransferCost>
 
     @GET("v0/chainParameters")
-    fun chainParameters(
-    ): Call<ChainParameters>
+    fun chainParameters(): Call<ChainParameters>
+
+    @GET("v0/chainParameters")
+    suspend fun chainParametersSuspended(): Response<ChainParameters>
+
+    @GET("v0/passiveDelegation")
+    suspend fun passiveDelegationSuspended(): Response<PassiveDelegation>
 
     @GET("v0/accBalance/{accountAddress}")
     fun accountBalance(@Path("accountAddress") accountAddress: String): Call<AccountBalance>

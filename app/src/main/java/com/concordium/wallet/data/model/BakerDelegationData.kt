@@ -31,6 +31,7 @@ data class BakerDelegationData(
     var amount: Long? = null
     var chainParameters: ChainParameters? = null
     var bakerPoolStatus: BakerPoolStatus? = null
+    var passiveDelegation: PassiveDelegation? = null
     var cost: Long? = null
     var metadataUrl: String? = null
 

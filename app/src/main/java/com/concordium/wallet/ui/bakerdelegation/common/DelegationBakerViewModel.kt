@@ -12,6 +12,7 @@ import com.concordium.wallet.DataFileProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendRequest
+import com.concordium.wallet.core.backend.ErrorParser
 import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.TransferRepository
@@ -36,7 +37,7 @@ import com.concordium.wallet.data.util.FileUtil
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.io.File
 import java.util.*
 import javax.crypto.Cipher
@@ -73,6 +74,10 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     private val _chainParametersLoadedLiveData = MutableLiveData<Boolean>()
     val chainParametersLoadedLiveData: LiveData<Boolean>
         get() = _chainParametersLoadedLiveData
+
+    private val _chainParametersAndPassiveDelegationLoaded = MutableLiveData<Boolean>()
+    val chainParametersAndPassiveDelegationLoaded: LiveData<Boolean>
+        get() = _chainParametersAndPassiveDelegationLoaded
 
     private val _showDetailedLiveData = MutableLiveData<Event<Boolean>>()
     val showDetailedLiveData: LiveData<Event<Boolean>>
@@ -143,14 +148,6 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     fun isOpenBaker(): Boolean {
         return bakerDelegationData?.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL
-    }
-
-    fun isClosedForNewBaker(): Boolean {
-        return bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW
-    }
-
-    fun isClosedBaker(): Boolean {
-        return bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL
     }
 
     fun isUpdatingDelegation(): Boolean {
@@ -279,6 +276,37 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                 handleBackendError(it)
             }
         )
+    }
+
+    fun loadChainParametersAndPassiveDelegation() {
+        runBlocking {
+            val tasks = listOf(
+                async(Dispatchers.IO) {
+                    val response = proxyRepository.getPassiveDelegationSuspended()
+                    if (response.isSuccessful) {
+                        response.body()?.let {
+                            bakerDelegationData.passiveDelegation = it
+                        }
+                    } else {
+                        val error = ErrorParser.parseError(response)
+                        _errorLiveData.value = error?.let { Event(it.error) }
+                    }
+                },
+                async(Dispatchers.IO) {
+                    val response = proxyRepository.getChainParametersSuspended()
+                    if (response.isSuccessful) {
+                        response.body()?.let {
+                            bakerDelegationData.chainParameters = it
+                        }
+                    } else {
+                        val error = ErrorParser.parseError(response)
+                        _errorLiveData.value = error?.let { Event(it.error) }
+                    }
+                }
+            )
+            tasks.awaitAll()
+            _chainParametersAndPassiveDelegationLoaded.value = true
+        }
     }
 
     private fun handleBackendError(throwable: Throwable) {
