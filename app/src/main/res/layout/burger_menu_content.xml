@@ -48,6 +48,7 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/menu_item_delegation_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/Layout.CardView"
@@ -66,6 +67,7 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/menu_item_baking_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/Layout.CardView"

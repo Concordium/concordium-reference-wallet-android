@@ -375,18 +375,26 @@ class AccountDetailsActivity :
                 }
                 cvHideShieldedTV.text = getString(R.string.account_details_menu_hide_shielded, viewModel.account.name)
 
-                //Delegation
-                val tvDelegation = menuView.findViewById(R.id.menu_item_delegation) as TextView
-                tvDelegation.setOnClickListener {
-                    mMenuDialog?.dismiss()
-                    gotoDelegation(viewModel.account)
+                // Delegation
+                if (viewModel.account.isBaking()) {
+                    (menuView.findViewById(R.id.menu_item_delegation_card) as CardView).visibility = View.GONE
+                } else {
+                    val tvDelegation = menuView.findViewById(R.id.menu_item_delegation) as TextView
+                    tvDelegation.setOnClickListener {
+                        mMenuDialog?.dismiss()
+                        gotoDelegation(viewModel.account)
+                    }
                 }
 
-                //Baking
-                val tvBaking = menuView.findViewById(R.id.menu_item_baking) as TextView
-                tvBaking.setOnClickListener {
-                    mMenuDialog?.dismiss()
-                    gotoBaking(viewModel.account)
+                // Baking
+                if (viewModel.account.isDelegating()) {
+                    (menuView.findViewById(R.id.menu_item_baking_card) as CardView).visibility = View.GONE
+                } else {
+                    val tvBaking = menuView.findViewById(R.id.menu_item_baking) as TextView
+                    tvBaking.setOnClickListener {
+                        mMenuDialog?.dismiss()
+                        gotoBaking(viewModel.account)
+                    }
                 }
 
                 //Decrypt option
