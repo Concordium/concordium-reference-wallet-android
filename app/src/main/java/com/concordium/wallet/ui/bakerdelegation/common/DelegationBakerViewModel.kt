@@ -250,7 +250,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                 null
             }
             UPDATE_BAKER_POOL, CONFIGURE_BAKER -> {
-                if (metadataUrlHasChanged() || (openStatusHasChanged() && bakerDelegationData.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL)) { (bakerDelegationData.metadataUrl?.length ?: 0) * 2 }
+                if (metadataUrlHasChanged() || (openStatusHasChanged() && bakerDelegationData.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL)) { (bakerDelegationData.metadataUrl?.length ?: 0) }
                 else null
             }
             else -> null
