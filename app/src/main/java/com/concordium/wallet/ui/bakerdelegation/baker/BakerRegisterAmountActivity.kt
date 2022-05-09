@@ -127,7 +127,7 @@ class BakerRegisterAmountActivity :
             (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0),
             viewModel.bakerDelegationData.account?.getAtDisosal(),
             viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,
-            viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapitalCap,
+            null,
             viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount,
             viewModel.isInCoolDown(),
             viewModel.bakerDelegationData.account?.accountDelegation?.delegationTarget?.bakerId,
