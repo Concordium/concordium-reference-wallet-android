@@ -172,10 +172,13 @@ class BakerRegistrationConfirmationActivity :
     }
 
     private fun showMetaUrl() {
-        if (viewModel.isOpenBaker() && viewModel.metadataUrlHasChanged() && viewModel.bakerDelegationData.metadataUrl?.isNotBlank() == true) {
-            meta_data_url_title.visibility = View.VISIBLE
-            meta_data_url.visibility = View.VISIBLE
-            meta_data_url.text = viewModel.bakerDelegationData.metadataUrl
+        meta_data_url_title.visibility = View.VISIBLE
+        meta_data_url.visibility = View.VISIBLE
+        if (viewModel.metadataUrlHasChanged()) {
+            if (viewModel.bakerDelegationData.metadataUrl?.length ?: 0 > 0) meta_data_url.text = viewModel.bakerDelegationData.metadataUrl
+            else meta_data_url.text = getString(R.string.baker_update_pool_settings_url_removed)
+        } else {
+            meta_data_url.text = getString(R.string.baker_update_pool_settings_url_no_changes)
         }
     }
 
