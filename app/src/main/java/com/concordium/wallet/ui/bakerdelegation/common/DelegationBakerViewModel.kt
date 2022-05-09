@@ -457,8 +457,15 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         if (bakerDelegationData.type != UPDATE_BAKER_KEYS && bakerDelegationData.type != UPDATE_BAKER_POOL && bakerDelegationData.type != REMOVE_BAKER && restakeHasChanged())
             restakeEarnings = bakerDelegationData.restake
 
-        val metadataUrl = if (bakerDelegationData.type == REGISTER_BAKER) bakerDelegationData.metadataUrl ?: "" else if (bakerDelegationData.metadataUrl.isNullOrEmpty()) null else bakerDelegationData.metadataUrl
+        val metadataUrl = if (bakerDelegationData.type == REGISTER_BAKER)
+            bakerDelegationData.metadataUrl ?: ""
+        else if (bakerDelegationData.type == UPDATE_BAKER_POOL && metadataUrlHasChanged())
+            bakerDelegationData.metadataUrl ?: ""
+        else
+            null
+
         val openStatus = if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER || bakerDelegationData.type == UPDATE_BAKER_STAKE) null else if (openStatusHasChanged()) bakerDelegationData.bakerPoolInfo?.openStatus else null
+
         val bakerKeys = if (bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.bakerKeys
 
         val transactionFeeCommission = if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.transactionCommissionRange?.max else null

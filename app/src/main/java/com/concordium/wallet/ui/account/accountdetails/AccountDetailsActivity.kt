@@ -463,7 +463,7 @@ class AccountDetailsActivity :
     private fun gotoBaking(account: Account) {
         if (account.accountBaker != null) {
             val intent = Intent(this, BakerStatusActivity::class.java)
-            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, BakerDelegationData(account, type = REGISTER_BAKER))
+            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, BakerDelegationData(account, isTransactionInProgress = viewModel.hasPendingTransactions, type = REGISTER_BAKER))
             startActivityForResultAndHistoryCheck(intent)
         } else {
             val intent = Intent(this, BakerRegistrationIntroFlow::class.java)

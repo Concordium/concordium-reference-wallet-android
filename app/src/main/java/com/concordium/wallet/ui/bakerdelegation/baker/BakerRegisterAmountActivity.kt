@@ -79,6 +79,7 @@ class BakerRegisterAmountActivity :
         })
 
         showWaiting(true)
+        loadTransactionFee()
         viewModel.loadChainParametersPassiveDelegationAndPossibleBakerPool()
     }
 
@@ -107,13 +108,7 @@ class BakerRegisterAmountActivity :
                 showError()
             } else {
                 hideError()
-                when (viewModel.bakerDelegationData.type) {
-                    REGISTER_BAKER -> {
-                        viewModel.loadTransactionFee(true, requestId = RANGE_MIN_FEE, metadataSizeForced = 0)
-                        viewModel.loadTransactionFee(true, requestId = RANGE_MAX_FEE, metadataSizeForced = 2048)
-                    }
-                    else -> viewModel.loadTransactionFee(true, requestId = SINGLE_FEE, metadataSizeForced = viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.metadataUrl?.length)
-                }
+                loadTransactionFee()
             }
         }
         amount.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
@@ -139,6 +134,16 @@ class BakerRegisterAmountActivity :
     private fun hideError() {
         amount.setTextColor(getColor(R.color.theme_blue))
         amount_error.visibility = View.INVISIBLE
+    }
+
+    private fun loadTransactionFee() {
+        when (viewModel.bakerDelegationData.type) {
+            REGISTER_BAKER -> {
+                viewModel.loadTransactionFee(true, requestId = RANGE_MIN_FEE, metadataSizeForced = 0)
+                viewModel.loadTransactionFee(true, requestId = RANGE_MAX_FEE, metadataSizeForced = 2048)
+            }
+            else -> viewModel.loadTransactionFee(true, requestId = SINGLE_FEE, metadataSizeForced = viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.metadataUrl?.length)
+        }
     }
 
     override fun getStakeAmountInputValidator(): StakeAmountInputValidator {

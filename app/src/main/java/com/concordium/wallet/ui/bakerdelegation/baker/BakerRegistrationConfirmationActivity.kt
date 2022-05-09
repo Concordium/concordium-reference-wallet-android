@@ -173,7 +173,7 @@ class BakerRegistrationConfirmationActivity :
     }
 
     private fun showMetaUrl() {
-        if (viewModel.isOpenBaker() && viewModel.metadataUrlHasChanged()) {
+        if (viewModel.isOpenBaker() && viewModel.metadataUrlHasChanged() && viewModel.bakerDelegationData.metadataUrl?.isNotBlank() == true) {
             meta_data_url_title.visibility = View.VISIBLE
             meta_data_url.visibility = View.VISIBLE
             meta_data_url.text = viewModel.bakerDelegationData.metadataUrl

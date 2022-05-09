@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_KEYS
 import com.concordium.wallet.data.util.FileUtil
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
@@ -28,6 +29,9 @@ class BakerRegistrationCloseActivity :
     }
 
     override fun initViews() {
+        if (viewModel.bakerDelegationData.type == UPDATE_BAKER_KEYS)
+            setActionBarTitle(R.string.baker_update_keys_settings_title)
+
         baker_registration_export.setOnClickListener {
             startExport()
         }

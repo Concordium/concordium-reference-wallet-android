@@ -497,6 +497,8 @@
     </plurals>
     <string name="baker_notice_ok">Okay</string>
 
+    <string name="baker_update_keys_settings_title">Update baker keys</string>
+
 
     <!-- ***** Auth ***** -->
 
