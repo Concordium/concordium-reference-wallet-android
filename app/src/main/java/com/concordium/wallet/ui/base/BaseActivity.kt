@@ -178,10 +178,6 @@ abstract class BaseActivity(private val layout: Int, private val titleId: Int = 
         titleView?.setText(title)
     }
 
-    protected fun setActionBarTextColor(colorId: Int) {
-        titleView?.setTextColor(getColor(colorId))
-    }
-
     fun setActionBarTitle(title: String, subtitle: String?) {
         titleView?.setText(title)
         titleView?.setSingleLine()

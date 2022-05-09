@@ -129,11 +129,9 @@ class BakerRegistrationConfirmationActivity :
     }
 
     private fun updateViewsRemoveBaker() {
-        setActionBarTextColor(R.color.text_red)
         setActionBarTitle(R.string.baker_registration_confirmation_remove_title)
         grace_period.text = getString(R.string.baker_registration_confirmation_remove_are_you_sure)
         delegation_transaction_title.text = getString(R.string.baker_registration_confirmation_remove_transaction)
-        delegation_transaction_title.setTextColor(getColor(R.color.text_red))
         account_to_bake_title.text = getString(R.string.baker_registration_confirmation_remove_account_to_stop)
     }
 
