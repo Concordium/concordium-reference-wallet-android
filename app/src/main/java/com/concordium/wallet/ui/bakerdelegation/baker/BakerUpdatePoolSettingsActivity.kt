@@ -71,11 +71,7 @@ class BakerUpdatePoolSettingsActivity :
     }
 
     private fun gotoNextPage() {
-        val intent = if (viewModel.bakerDelegationData.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL) {
-            Intent(this, BakerRegistrationOpenActivity::class.java)
-        } else {
-            Intent(this, BakerRegistrationConfirmationActivity::class.java)
-        }
+        val intent = Intent(this, BakerRegistrationOpenActivity::class.java)
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
