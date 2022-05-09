@@ -27,7 +27,7 @@ import java.text.DecimalFormatSymbols
 class DelegationRegisterAmountActivity :
     BaseDelegationBakerRegisterAmountActivity(R.layout.activity_delegation_registration_amount, R.string.delegation_register_delegation_title) {
 
-    private fun showError(stakeError: StakeAmountInputValidator.StakeError?) {
+    override fun showError(stakeError: StakeAmountInputValidator.StakeError?) {
         amount.setTextColor(getColor(R.color.text_pink))
         amount_error.visibility = View.VISIBLE
         if (stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED || stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED_COOLDOWN) {
@@ -43,13 +43,17 @@ class DelegationRegisterAmountActivity :
         }
     }
 
-    private fun hideError() {
+    override fun hideError() {
         amount.setTextColor(getColor(R.color.theme_blue))
         pool_limit_title.setTextColor(getColor(R.color.text_black))
         pool_limit.setTextColor(getColor(R.color.text_black))
         delegation_amount_title.setTextColor(getColor(R.color.text_black))
         delegation_amount.setTextColor(getColor(R.color.text_black))
         amount_error.visibility = View.INVISIBLE
+    }
+
+    override fun loadTransactionFee() {
+        viewModel.loadTransactionFee(true)
     }
 
     private fun showConfirmationPage() {
@@ -71,23 +75,7 @@ class DelegationRegisterAmountActivity :
         setAmountHint()
         amount.keyListener = DigitsKeyListener.getInstance("0123456789" + DecimalFormatSymbols.getInstance().decimalSeparator)
         amount.doOnTextChanged { text, _, _, _ ->
-            if (text != null && (text.toString() == DecimalFormatSymbols.getInstance().decimalSeparator.toString() || text.filter { it == DecimalFormatSymbols.getInstance().decimalSeparator }.length > 1)) {
-                amount.setText(text.dropLast(1))
-            }
-            if (amount.text.isNotEmpty() && !amount.text.startsWith("Ͼ")) {
-                amount.setText("Ͼ".plus(amount.text.toString()))
-                amount.setSelection(amount.text.length)
-            }
-            setAmountHint()
-            val stakeAmountInputValidator = getStakeAmountInputValidator()
-            val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString(), fee)
-            if (stakeError != StakeAmountInputValidator.StakeError.OK) {
-                amount_error.text = stakeAmountInputValidator.getErrorText(this, stakeError)
-                showError(stakeError)
-            } else {
-                hideError()
-                viewModel.loadTransactionFee(true)
-            }
+            validateAmountInput(text)
             if (viewModel.isInCoolDown()) {
                 pool_registration_continue.isEnabled = getAmountToStake() > viewModel.bakerDelegationData.oldStakedAmount ?: 0
             } else {
@@ -168,17 +156,6 @@ class DelegationRegisterAmountActivity :
 
     override fun errorLiveData(value: Int) {
         showError(null)
-    }
-
-    private fun setAmountHint() {
-        when {
-            amount.text.isNotEmpty() -> {
-                amount.hint = ""
-            }
-            else -> {
-                amount.hint = "Ͼ0" + DecimalFormatSymbols.getInstance().decimalSeparator + "00"
-            }
-        }
     }
 
     private fun updateContent() {

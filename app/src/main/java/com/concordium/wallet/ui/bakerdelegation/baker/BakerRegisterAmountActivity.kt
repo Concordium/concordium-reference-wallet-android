@@ -93,23 +93,7 @@ class BakerRegisterAmountActivity :
         setAmountHint()
         amount.keyListener = DigitsKeyListener.getInstance("0123456789" + DecimalFormatSymbols.getInstance().decimalSeparator)
         amount.doOnTextChanged { text, _, _, _ ->
-            if (text != null && (text.toString() == DecimalFormatSymbols.getInstance().decimalSeparator.toString() || text.filter { it == DecimalFormatSymbols.getInstance().decimalSeparator }.length > 1)) {
-                amount.setText(text.dropLast(1))
-            }
-            if (amount.text.isNotEmpty() && !amount.text.startsWith("Ͼ")) {
-                amount.setText("Ͼ".plus(amount.text.toString()))
-                amount.setSelection(amount.text.length)
-            }
-            setAmountHint()
-            val stakeAmountInputValidator = getStakeAmountInputValidator()
-            val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString(), fee)
-            if (stakeError != StakeAmountInputValidator.StakeError.OK) {
-                amount_error.text = stakeAmountInputValidator.getErrorText(this, stakeError)
-                showError()
-            } else {
-                hideError()
-                loadTransactionFee()
-            }
+            validateAmountInput(text)
         }
         amount.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (hasFocus && amount.text.isEmpty()) amount.hint = ""
@@ -126,17 +110,7 @@ class BakerRegisterAmountActivity :
         }
     }
 
-    private fun showError() {
-        amount.setTextColor(getColor(R.color.text_pink))
-        amount_error.visibility = View.VISIBLE
-    }
-
-    private fun hideError() {
-        amount.setTextColor(getColor(R.color.theme_blue))
-        amount_error.visibility = View.INVISIBLE
-    }
-
-    private fun loadTransactionFee() {
+    override fun loadTransactionFee() {
         when (viewModel.bakerDelegationData.type) {
             REGISTER_BAKER -> {
                 viewModel.loadTransactionFee(true, requestId = RANGE_MIN_FEE, metadataSizeForced = 0)
@@ -160,15 +134,14 @@ class BakerRegisterAmountActivity :
             viewModel.bakerDelegationData.poolId)
     }
 
-    private fun setAmountHint() {
-        when {
-            amount.text.isNotEmpty() -> {
-                amount.hint = ""
-            }
-            else -> {
-                amount.hint = "Ͼ0" + DecimalFormatSymbols.getInstance().decimalSeparator + "00"
-            }
-        }
+    override fun showError(stakeError: StakeAmountInputValidator.StakeError?) {
+        amount.setTextColor(getColor(R.color.text_pink))
+        amount_error.visibility = View.VISIBLE
+    }
+
+    override fun hideError() {
+        amount.setTextColor(getColor(R.color.theme_blue))
+        amount_error.visibility = View.INVISIBLE
     }
 
     override fun errorLiveData(value: Int) {
@@ -180,8 +153,7 @@ class BakerRegisterAmountActivity :
         val stakeAmountInputValidator = getStakeAmountInputValidator()
         val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString(), fee)
         if (stakeError != StakeAmountInputValidator.StakeError.OK) {
-            amount_error.text = stakeAmountInputValidator.getErrorText(this, stakeError)
-            showError()
+            showError(stakeError)
             return
         }
 
