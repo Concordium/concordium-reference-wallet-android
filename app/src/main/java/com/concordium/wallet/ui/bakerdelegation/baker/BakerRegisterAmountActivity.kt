@@ -150,6 +150,7 @@ class BakerRegisterAmountActivity :
         val stakeAmountInputValidator = getStakeAmountInputValidator()
         val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString(), fee)
         if (stakeError != StakeAmountInputValidator.StakeError.OK) {
+            amount_error.text = stakeAmountInputValidator.getErrorText(this, stakeError)
             showError(stakeError)
             return
         }

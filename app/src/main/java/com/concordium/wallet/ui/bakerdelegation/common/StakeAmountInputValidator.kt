@@ -22,7 +22,7 @@ class StakeAmountInputValidator(
 
     fun validate(amount: String?, fee: Long?): StakeError {
 
-        if (amount == null) return StakeError.NOT_ENOUGH_FUND
+        if (amount == null) return StakeError.MINIMUM
 
         var check = checkAmount(amount)
         if (check != StakeError.OK) return check
