@@ -42,10 +42,7 @@ abstract class BaseDelegationBakerRegisterAmountActivity(layout: Int, titleId: I
         return amountToStake > (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0) * 0.95
     }
 
-    protected fun validateAmountInput(text: CharSequence?) {
-        if (text != null && (text.toString() == DecimalFormatSymbols.getInstance().decimalSeparator.toString() || text.filter { it == DecimalFormatSymbols.getInstance().decimalSeparator }.length > 1)) {
-            amount.setText(text.dropLast(1))
-        }
+    protected fun validateAmountInput() {
         if (amount.text.isNotEmpty() && !amount.text.startsWith("Ͼ")) {
             amount.setText("Ͼ".plus(amount.text.toString()))
             amount.setSelection(amount.text.length)

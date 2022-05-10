@@ -2,7 +2,6 @@ package com.concordium.wallet.ui.bakerdelegation.baker
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.text.method.DigitsKeyListener
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
@@ -21,7 +20,6 @@ import kotlinx.android.synthetic.main.activity_baker_registration_amount.amount_
 import kotlinx.android.synthetic.main.activity_baker_registration_amount.amount_locked
 import kotlinx.android.synthetic.main.activity_baker_registration_amount.balance_amount
 import kotlinx.android.synthetic.main.activity_baker_registration_amount.pool_estimated_transaction_fee
-import java.text.DecimalFormatSymbols
 
 class BakerRegisterAmountActivity :
     BaseDelegationBakerRegisterAmountActivity(R.layout.activity_baker_registration_amount, R.string.baker_registration_amount_title) {
@@ -91,9 +89,8 @@ class BakerRegisterAmountActivity :
             false
         }
         setAmountHint()
-        amount.keyListener = DigitsKeyListener.getInstance("0123456789" + DecimalFormatSymbols.getInstance().decimalSeparator)
-        amount.doOnTextChanged { text, _, _, _ ->
-            validateAmountInput(text)
+        amount.doOnTextChanged { _, _, _, _ ->
+            validateAmountInput()
         }
         amount.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (hasFocus && amount.text.isEmpty()) amount.hint = ""

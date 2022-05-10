@@ -108,7 +108,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
                                 android:gravity="center">
-                                <EditText
+                                <com.concordium.wallet.uicore.view.AmountEditText
                                     android:id="@+id/amount"
                                     style="@style/EditText.Card.Flat"
                                     android:layout_width="match_parent"

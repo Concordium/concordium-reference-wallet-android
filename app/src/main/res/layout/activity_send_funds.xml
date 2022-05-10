@@ -141,7 +141,7 @@
                         android:text="@string/app_gstroke"
                         android:textSize="28dp" />
 
-                    <EditText
+                    <com.concordium.wallet.uicore.view.AmountEditText
                         android:id="@+id/amount_edittext"
                         style="@style/TextView.BlueValueHuge"
                         android:background="@color/theme_white"

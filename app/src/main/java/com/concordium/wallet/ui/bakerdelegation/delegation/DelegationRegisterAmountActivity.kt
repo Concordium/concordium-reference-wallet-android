@@ -2,7 +2,6 @@ package com.concordium.wallet.ui.bakerdelegation.delegation
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.text.method.DigitsKeyListener
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
@@ -22,7 +21,6 @@ import kotlinx.android.synthetic.main.activity_delegation_registration_amount.am
 import kotlinx.android.synthetic.main.activity_delegation_registration_amount.balance_amount
 import kotlinx.android.synthetic.main.activity_delegation_registration_amount.pool_estimated_transaction_fee
 import kotlinx.android.synthetic.main.activity_delegation_registration_amount.pool_registration_continue
-import java.text.DecimalFormatSymbols
 
 class DelegationRegisterAmountActivity :
     BaseDelegationBakerRegisterAmountActivity(R.layout.activity_delegation_registration_amount, R.string.delegation_register_delegation_title) {
@@ -73,11 +71,10 @@ class DelegationRegisterAmountActivity :
                 false
             }
         setAmountHint()
-        amount.keyListener = DigitsKeyListener.getInstance("0123456789" + DecimalFormatSymbols.getInstance().decimalSeparator)
-        amount.doOnTextChanged { text, _, _, _ ->
-            validateAmountInput(text)
+        amount.doOnTextChanged { _, _, _, _ ->
+            validateAmountInput()
             if (viewModel.isInCoolDown()) {
-                pool_registration_continue.isEnabled = getAmountToStake() > viewModel.bakerDelegationData.oldStakedAmount ?: 0
+                pool_registration_continue.isEnabled = getAmountToStake() > (viewModel.bakerDelegationData.oldStakedAmount ?: 0)
             } else {
                 pool_registration_continue.isEnabled = true
             }
@@ -186,12 +183,12 @@ class DelegationRegisterAmountActivity :
         val amountToStake = getAmountToStake()
         if (viewModel.isUpdatingDelegation()) {
             when {
-                (amountToStake == viewModel.bakerDelegationData.oldStakedAmount &&
-                    viewModel.getPoolId() == viewModel.bakerDelegationData.oldDelegationTargetPoolId?.toString() ?: "" &&
+                ((amountToStake == viewModel.bakerDelegationData.oldStakedAmount &&
+                    viewModel.getPoolId() == (viewModel.bakerDelegationData.oldDelegationTargetPoolId?.toString() ?: "") &&
                     viewModel.bakerDelegationData.restake == viewModel.bakerDelegationData.oldRestake &&
-                    viewModel.bakerDelegationData.isBakerPool == viewModel.bakerDelegationData.oldDelegationIsBaker) -> showNoChange()
+                    viewModel.bakerDelegationData.isBakerPool == viewModel.bakerDelegationData.oldDelegationIsBaker)) -> showNoChange()
                 amountToStake == 0L -> showNewAmountZero()
-                amountToStake < viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLongOrNull() ?: 0 -> showReduceWarning()
+                amountToStake < (viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLongOrNull() ?: 0) -> showReduceWarning()
                 moreThan95Percent(amountToStake) -> show95PercentWarning()
                 else -> continueToConfirmation()
             }
@@ -236,7 +233,7 @@ class DelegationRegisterAmountActivity :
 
     private fun continueToConfirmation() {
         viewModel.bakerDelegationData.amount = CurrencyUtil.toGTUValue(amount.text.toString())
-        val intent = if (viewModel.bakerDelegationData.amount ?: 0 == 0L)
+        val intent = if ((viewModel.bakerDelegationData.amount ?: 0) == 0L)
             Intent(this, DelegationRemoveActivity::class.java)
         else
             Intent(this, DelegationRegisterConfirmationActivity::class.java)
