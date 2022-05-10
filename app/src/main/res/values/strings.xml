@@ -250,7 +250,7 @@
 
     <string name="delegation_register_delegation_intro">You can delegate to an open pool of your choice, or you can stake using passive delegation.</string>
     <string name="delegation_register_delegation_desc">If you don’t already know what target baker pool you want to delegate an amount to, you can read more about how to find one here:\n\n developer.concordium.software</string>
-    <string name="delegation_register_delegation_desc_passive">Passive delegation divides the staked tokens shared between all baker pools proportionally to their size, and has a higher commission rate than delegating to a single baker.\n\nFor more info you can visit\ndeveloper.concordium.software</string>
+    <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific baker pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a baker node.\n\nFor more info you can visit\ndeveloper.concordium.software</string>
     <string name="delegation_register_delegation_pool_id_hint">Enter target baker pool ID</string>
     <string name="delegation_register_delegation_pool_id_hint_update">Optional: Enter new target ID</string>
     <string name="delegation_update_delegation_pool_id_baker">Current target: Baker id %1$s</string>
