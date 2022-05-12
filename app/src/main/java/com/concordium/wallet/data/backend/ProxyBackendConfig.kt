@@ -20,22 +20,21 @@ class ProxyBackendConfig(val gson: Gson) {
     }
 
     private fun initializeRetrofit(baseUrl: String): Retrofit {
-
-        val retrofit = Retrofit.Builder()
+        return Retrofit.Builder()
             .baseUrl(baseUrl)
             .client(initializeOkkHttp())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
-        return retrofit
     }
 
     private fun initializeOkkHttp(): OkHttpClient {
-
         var okHttpClientBuilder = OkHttpClient().newBuilder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .cache(null)
+            .addInterceptor(AddCookiesInterceptor())
+            .addInterceptor(ReceivedCookiesInterceptor())
             .addInterceptor(ModifyHeaderInterceptor())
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level =
@@ -45,7 +44,7 @@ class ProxyBackendConfig(val gson: Gson) {
         if (AppConfig.useOfflineMock) {
             okHttpClientBuilder = okHttpClientBuilder.addInterceptor(OfflineMockInterceptor())
         }
-        val okHttpClient = okHttpClientBuilder.build()
-        return okHttpClient
+
+        return okHttpClientBuilder.build()
     }
 }
