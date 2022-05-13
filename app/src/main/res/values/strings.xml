@@ -1008,4 +1008,12 @@
     <string name="account_details_shielded_warning_enable">Show shielded balance on %1$s</string>
     <string name="account_details_shielded_warning_dismiss">Don’t show again</string>
 
+    <string name="force_update_needed_title">Update required</string>
+    <string name="force_update_needed_message">You must update your Concordium Mobile Wallet to continue.</string>
+    <string name="force_update_needed_update_now">Update now</string>
+    <string name="force_update_warning_title">Update ready</string>
+    <string name="force_update_warning_message">There is a new update for the Concordium Mobile Wallet.</string>
+    <string name="force_update_warning_update_now">Update now</string>
+    <string name="force_update_warning_remind_me">Remind me next time I open the wallet</string>
+
 </resources>
