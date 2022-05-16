@@ -249,8 +249,8 @@
     <string name="delegation_status_content_delegation_will_be_stopped">The delegation will be stopped, and the delegation amount will be unlocked on the public balance of the account.</string>
 
     <string name="delegation_register_delegation_intro">You can delegate to an open pool of your choice, or you can stake using passive delegation.</string>
-    <string name="delegation_register_delegation_desc">If you don’t already know what target baker pool you want to delegate an amount to, you can read more about how to find one here:\n\n developer.concordium.software</string>
-    <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific baker pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a baker node.\n\nFor more info you can visit\ndeveloper.concordium.software</string>
+    <string name="delegation_register_delegation_desc">If you don’t already know what target baker pool you want to delegate an amount to, you can read more about how to find one here:\n\n<a href="https://developer.concordium.software">developer.concordium.software</a></string>
+    <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific baker pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a baker node.\n\nFor more info you can visit\n\n<a href="https://developer.concordium.software">developer.concordium.software</a></string>
     <string name="delegation_register_delegation_pool_id_hint">Enter target baker pool ID</string>
     <string name="delegation_register_delegation_pool_id_hint_update">Optional: Enter new target ID</string>
     <string name="delegation_update_delegation_pool_id_baker">Current target: Baker id %1$s</string>
@@ -375,7 +375,7 @@
     <string name="baker_registration_export_notice_ok">OK</string>
 
     <string name="baker_registration_open_title">Add baker</string>
-    <string name="baker_registration_open_explain">You can choose to add a URL with metadata about your baker. Leave it blank if you don’t have any.\n\nYou can read more about the metadata URL on\n\ndeveloper.concordium.software</string>
+    <string name="baker_registration_open_explain">You can choose to add a URL with metadata about your baker. Leave it blank if you don’t have any.\n\nYou can read more about the metadata URL on\n\n<a href="https://developer.concordium.software">developer.concordium.software</a></string>
     <string name="baker_registration_open_continue">Continue</string>
     <string name="baker_registration_open_url_hint">Paste your metadata URL here</string>
 
@@ -480,7 +480,7 @@
     <string name="baker_update_pool_settings_option_close">Close for delegation</string>
     <string name="baker_update_pool_settings_continue">Continue</string>
     <string name="baker_update_pool_settings_current_url">Current URL:\n%s</string>
-    <string name="baker_update_pool_settings_open_url_explain">If you want to set a new metadata URL, you can do so by pasting it below. It’s optional, so you can just leave it blank if you don’t want to make any changes.\n\nYou can read more about the metadata URL on\n\ndeveloper.concordium.software</string>
+    <string name="baker_update_pool_settings_open_url_explain">If you want to set a new metadata URL, you can do so by pasting it below. It’s optional, so you can just leave it blank if you don’t want to make any changes.\n\nYou can read more about the metadata URL on\n\n<a href="https://developer.concordium.software">developer.concordium.software</a></string>
     <string name="baker_update_pool_settings_url_removed">Metadata URL removed</string>
     <string name="baker_update_pool_settings_url_no_changes">No changes</string>
 

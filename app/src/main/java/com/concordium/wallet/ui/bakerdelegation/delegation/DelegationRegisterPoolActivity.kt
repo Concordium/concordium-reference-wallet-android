@@ -2,8 +2,10 @@ package com.concordium.wallet.ui.bakerdelegation.delegation
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.net.Uri
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
@@ -11,6 +13,7 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.U
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.AMOUNT_TOO_LARGE_FOR_POOL
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
+import com.concordium.wallet.uicore.handleUrlClicks
 import com.concordium.wallet.uicore.view.SegmentedControlView
 import com.concordium.wallet.util.KeyboardUtil
 import kotlinx.android.synthetic.main.activity_delegation_registration_pool.*
@@ -118,7 +121,11 @@ class DelegationRegisterPoolActivity :
     private fun updateVisibilities() {
         pool_id.hint = if (viewModel.bakerDelegationData.oldDelegationTargetPoolId == null) getString(R.string.delegation_register_delegation_pool_id_hint) else getString(R.string.delegation_register_delegation_pool_id_hint_update)
         pool_id.visibility = if (viewModel.bakerDelegationData.isLPool) View.GONE else View.VISIBLE
-        pool_desc.text = if (viewModel.bakerDelegationData.isLPool) getString(R.string.delegation_register_delegation_desc_passive) else getString(R.string.delegation_register_delegation_desc)
+        if (viewModel.bakerDelegationData.isLPool) pool_desc.setText(R.string.delegation_register_delegation_desc_passive) else pool_desc.setText(R.string.delegation_register_delegation_desc)
+        pool_desc.handleUrlClicks { url ->
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            ContextCompat.startActivity(this, browserIntent, null)
+        }
         pool_registration_continue.isEnabled = getExistingPoolIdText().isNotEmpty() || viewModel.bakerDelegationData.isLPool || pool_id.text.isNotEmpty()
         hideError()
     }

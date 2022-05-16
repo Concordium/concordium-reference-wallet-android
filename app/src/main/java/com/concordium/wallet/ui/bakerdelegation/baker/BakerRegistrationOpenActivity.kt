@@ -1,12 +1,15 @@
 package com.concordium.wallet.ui.bakerdelegation.baker
 
 import android.content.Intent
+import android.net.Uri
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.concordium.wallet.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_POOL
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.common.GenericFlowActivity
+import com.concordium.wallet.uicore.handleUrlClicks
 import com.concordium.wallet.util.KeyboardUtil
 import kotlinx.android.synthetic.main.activity_baker_registration_open.*
 
@@ -20,12 +23,17 @@ class BakerRegistrationOpenActivity :
 
         if (viewModel.bakerDelegationData.type == UPDATE_BAKER_POOL) {
             setActionBarTitle(R.string.baker_update_pool_settings_title)
-            open_url_explain.text = getString(R.string.baker_update_pool_settings_open_url_explain)
+            open_url_explain.setText(R.string.baker_update_pool_settings_open_url_explain)
             viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.metadataUrl?.let {
                 current_url.text = getString(R.string.baker_update_pool_settings_current_url, it)
                 current_url.visibility = View.VISIBLE
                 open_url.setText(it)
             }
+        }
+
+        open_url_explain.handleUrlClicks { url ->
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            ContextCompat.startActivity(this, browserIntent, null)
         }
 
         baker_registration_open_continue.setOnClickListener {
