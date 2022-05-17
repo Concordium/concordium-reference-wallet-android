@@ -7,8 +7,8 @@ import okhttp3.Response
 class AddCookiesInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val builder = chain.request().newBuilder()
-        App.appCore.setCookie?.let { cookie ->
-            builder.addHeader("Set-Cookie", cookie)
+        App.appCore.sessionCookie?.let { sessionCookie ->
+            builder.addHeader("Cookie", sessionCookie)
         }
         return chain.proceed(builder.build())
     }
