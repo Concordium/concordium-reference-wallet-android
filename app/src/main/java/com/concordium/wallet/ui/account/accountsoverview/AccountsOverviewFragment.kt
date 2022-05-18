@@ -254,7 +254,8 @@ class AccountsOverviewFragment : BaseFragment() {
             gotoAppStore(url)
             activity?.finish()
         }
-        builder.setNegativeButton(getString(R.string.force_update_warning_remind_me)) { dialog, _ -> dialog.dismiss() }
+        builder.setNegativeButton(getString(R.string.force_update_warning_backup)) { _, _ -> gotoBackup() }
+        builder.setNeutralButton(getString(R.string.force_update_warning_remind_me)) { dialog, _ -> dialog.dismiss() }
         builder.create().show()
     }
 
@@ -262,16 +263,21 @@ class AccountsOverviewFragment : BaseFragment() {
         val builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.force_update_needed_title)
         builder.setMessage(getString(R.string.force_update_needed_message))
-        builder.setPositiveButton(getString(R.string.force_update_needed_update_now)) { _, _ ->
+        builder.setNeutralButton(getString(R.string.force_update_needed_update_now)) { _, _ ->
             gotoAppStore(url)
             activity?.finish()
         }
+        builder.setPositiveButton(getString(R.string.force_update_needed_backup)) { _, _ -> gotoBackup() }
         builder.setCancelable(false)
         builder.create().show()
     }
 
     private fun gotoAppStore(url: String) {
         startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(url)))
+    }
+
+    private fun gotoBackup() {
+        startActivity(Intent(context, ExportActivity::class.java))
     }
 
     private fun checkForClosingPools(accountList: List<AccountWithIdentity>) {

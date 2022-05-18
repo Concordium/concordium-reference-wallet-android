@@ -1009,11 +1009,13 @@
     <string name="account_details_shielded_warning_dismiss">Don’t show again</string>
 
     <string name="force_update_needed_title">Update required</string>
-    <string name="force_update_needed_message">You must update your Concordium Mobile Wallet to continue.</string>
+    <string name="force_update_needed_message">You must update your Concordium Mobile Wallet to continue.\n\nIf you don’t have a backup, Concordium strongly recommends making one before updating.</string>
     <string name="force_update_needed_update_now">Update now</string>
+    <string name="force_update_needed_backup">Make backup</string>
     <string name="force_update_warning_title">Update ready</string>
-    <string name="force_update_warning_message">There is a new update for the Concordium Mobile Wallet.</string>
+    <string name="force_update_warning_message">There is a new update for the Concordium Mobile Wallet.\n\nIf you don’t have a backup, Concordium strongly recommends making one before updating.</string>
     <string name="force_update_warning_update_now">Update now</string>
     <string name="force_update_warning_remind_me">Remind me next time I open the wallet</string>
+    <string name="force_update_warning_backup">Make backup</string>
 
 </resources>
