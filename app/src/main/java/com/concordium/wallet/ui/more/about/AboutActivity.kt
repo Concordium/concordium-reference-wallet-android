@@ -3,52 +3,17 @@ package com.concordium.wallet.ui.more.about
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.SpannableStringBuilder
-import android.text.Spanned
-import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
-import android.text.style.URLSpan
-import android.view.View
-import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.concordium.wallet.AppConfig
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.uicore.handleUrlClicks
 import kotlinx.android.synthetic.main.activity_about.*
 
 class AboutActivity : BaseActivity(
     R.layout.activity_about,
     R.string.about_title
 ) {
-
-    //region Lifecycle
-    //************************************************************
-
-    fun TextView.handleUrlClicks(onClicked: ((String) -> Unit)? = null) {
-        //create span builder and replaces current text with it
-        text = SpannableStringBuilder.valueOf(text).apply {
-            //search for all URL spans and replace all spans with our own clickable spans
-            getSpans(0, length, URLSpan::class.java).forEach {
-                //add new clickable span at the same position
-                setSpan(
-                    object : ClickableSpan() {
-                        override fun onClick(widget: View) {
-                            onClicked?.invoke(it.url)
-                        }
-                    },
-                    getSpanStart(it),
-                    getSpanEnd(it),
-                    Spanned.SPAN_INCLUSIVE_EXCLUSIVE
-                )
-                //remove old URLSpan
-                removeSpan(it)
-            }
-        }
-        //make sure movement method is set
-        movementMethod = LinkMovementMethod.getInstance()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +39,4 @@ class AboutActivity : BaseActivity(
 
         about_version_text.text = getString(R.string.app_version_about, AppConfig.appVersion)
     }
-
-    //endregion
-
 }

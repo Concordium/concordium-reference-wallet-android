@@ -2,11 +2,14 @@ package com.concordium.wallet.ui.bakerdelegation.delegation
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.net.Uri
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.DelegationData
+import com.concordium.wallet.uicore.handleUrlClicks
 import com.concordium.wallet.uicore.view.SegmentedControlView
 import com.concordium.wallet.util.KeyboardUtil
 import kotlinx.android.synthetic.main.activity_delegation_registration_pool.*
@@ -116,7 +119,11 @@ class DelegationRegisterPoolActivity :
     private fun updateVisibilities() {
         pool_id.hint = if (viewModel.delegationData.oldDelegationTargetPoolId == null) getString(R.string.delegation_register_delegation_pool_id_hint) else getString(R.string.delegation_register_delegation_pool_id_hint_update)
         pool_id.visibility = if (viewModel.delegationData.isLPool) View.GONE else View.VISIBLE
-        pool_desc.text = if (viewModel.delegationData.isLPool) getString(R.string.delegation_register_delegation_desc_passive) else getString(R.string.delegation_register_delegation_desc)
+        if (viewModel.delegationData.isLPool) pool_desc.setText(R.string.delegation_register_delegation_desc_passive) else pool_desc.setText(R.string.delegation_register_delegation_desc)
+        pool_desc.handleUrlClicks { url ->
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            ContextCompat.startActivity(this, browserIntent, null)
+        }
         pool_registration_continue.isEnabled = getExistingPoolIdText().isNotEmpty() || viewModel.delegationData.isLPool || pool_id.text.isNotEmpty()
         hideError()
     }
