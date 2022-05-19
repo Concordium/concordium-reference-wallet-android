@@ -286,8 +286,8 @@
     <string name="delegation_register_delegation_not_enough_funds">Insufficient funds</string>
     <string name="delegation_register_delegation_pool_limit_will_be_breached">Pool limit will be breached</string>
     <plurals name="delegation_register_delegation_confirmation_desc">
-        <item quantity="one">You are about to submit a delegation transaction. This will lock your delegation amount for at least %d day.</item>
-        <item quantity="other">You are about to submit a delegation transaction. This will lock your delegation amount for at least %d days.</item>
+        <item quantity="one">This will lock your delegation amount. Amount is released after %d day from the time you remove or decrease your delegation.</item>
+        <item quantity="other">This will lock your delegation amount. Amount is released after %d days from the time you remove or decrease your delegation.</item>
     </plurals>
     <plurals name="delegation_register_delegation_confirmation_desc_update">
         <item quantity="one">You are about to submit a delegation transaction that lowers your delegation amount. It will take effect after %d day and the delegation amount cannot be changed during this period of time.</item>
