@@ -20,7 +20,7 @@ interface ProxyBackend {
     @GET("v0/appSettings")
     suspend fun appSettingsSuspended(
         @Query("platform") platform: String,
-        @Query("version") version: Int
+        @Query("appVersion") version: Int
     ): Response<AppSettings>
 
     @GET("v0/submissionStatus/{submissionId}")

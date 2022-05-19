@@ -148,7 +148,7 @@ class DelegationRegisterPoolActivity :
         builder.setTitle(R.string.delegation_amount_too_large_notice_title)
         builder.setMessage(getString(R.string.delegation_amount_too_large_notice_message))
         builder.setPositiveButton(getString(R.string.delegation_amount_too_large_notice_lower)) { _, _ ->
-            viewModel.delegationData.oldDelegationTargetPoolId?.let {
+            viewModel.bakerDelegationData.oldDelegationTargetPoolId?.let {
                 viewModel.setPoolID(it.toString())
             }
             showDetailedPage()
