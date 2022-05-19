@@ -145,7 +145,12 @@ class DelegationRegisterPoolActivity :
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.delegation_amount_too_large_notice_title)
         builder.setMessage(getString(R.string.delegation_amount_too_large_notice_message))
-        builder.setPositiveButton(getString(R.string.delegation_amount_too_large_notice_lower)) { _, _ -> showDetailedPage() }
+        builder.setPositiveButton(getString(R.string.delegation_amount_too_large_notice_lower)) { _, _ ->
+            viewModel.delegationData.oldDelegationTargetPoolId?.let {
+                viewModel.setPoolID(it.toString())
+            }
+            showDetailedPage()
+        }
         builder.setNegativeButton(getString(R.string.delegation_amount_too_large_notice_stop)) { _, _ -> gotoStopDelegation() }
         builder.setNeutralButton(getString(R.string.delegation_amount_too_large_notice_cancel)) { dialog, _ -> dialog.dismiss() }
         builder.create().show()
