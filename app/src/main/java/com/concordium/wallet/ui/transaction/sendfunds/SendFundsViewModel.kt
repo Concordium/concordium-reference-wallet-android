@@ -705,7 +705,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
                 cost = it
             }
             var amount =
-                ((if (isShielded) account.totalShieldedBalance else (account.totalUnshieldedBalance - cost)) )
+                ((if (isShielded) account.totalShieldedBalance else (account.totalUnshieldedBalance - cost - account.getAtDisposalSubstraction())) )
             if (amount < 0) {
                 amount = 0
             }
