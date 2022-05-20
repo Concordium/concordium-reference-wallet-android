@@ -369,7 +369,7 @@ class SendFundsActivity :
         else{
             balance_total_text.text = getString(R.string.accounts_overview_account_total)
             at_disposal_total_text.text = getString(R.string.accounts_overview_at_disposal)
-            balance_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance - viewModel.account.getAtDisposalSubstraction(), withGStroke = true)
+            balance_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance, withGStroke = true)
             at_disposal_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance - viewModel.account.getAtDisposalSubstraction(), withGStroke = true)
         }
 
