@@ -170,7 +170,7 @@
                                 android:layout_marginRight="@dimen/accounts_overview_total_details_side_margins"
                                 android:layout_marginBottom="15dp"
                                 android:visibility="gone"
-                                tools:visibility="visible"
+                                tools:visibility="gone"
                                 android:orientation="vertical">
                                 <TextView
                                     android:id="@+id/accounts_overview_total_title_staked"
@@ -193,16 +193,18 @@
                                 android:layout_marginRight="@dimen/accounts_overview_total_details_side_margins"
                                 android:layout_marginBottom="15dp"
                                 android:visibility="gone"
+                                tools:visibility="visible"
                                 android:orientation="vertical">
                                 <TextView
                                     android:id="@+id/accounts_overview_total_title_baker"
-                                    style="@style/TextView.TotalBalanceDetails"
-                                    android:layout_width="wrap_content"
+                                    style="@style/TextView.BalanceInfo"
+                                    android:layout_gravity="center"
                                     tools:text="@string/account_details_stake_with_baker" />
                                 <TextView
                                     android:id="@+id/accounts_overview_total_details_baker"
                                     style="@style/TextView.TotalBalanceDetails"
-                                    android:layout_width="match_parent"
+                                    android:layout_width="wrap_content"
+                                    android:layout_gravity="center"
                                     tools:text="Ͼ33.00" />
                             </LinearLayout>
 

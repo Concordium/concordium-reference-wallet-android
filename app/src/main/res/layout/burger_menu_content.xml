@@ -48,6 +48,7 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/menu_item_delegation_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/Layout.CardView"
@@ -66,11 +67,11 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/menu_item_baking_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/Layout.CardView"
         android:layout_marginBottom="10dp"
-        android:visibility="gone"
         android:background="@color/theme_white">
         <TextView
             android:id="@+id/menu_item_baking"
@@ -83,9 +84,6 @@
             android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
             android:minHeight="?android:attr/listPreferredItemHeightSmall" />
     </androidx.cardview.widget.CardView>
-
-
-
 
     <androidx.cardview.widget.CardView
         android:id="@+id/menu_show_shielded_container"
@@ -125,7 +123,6 @@
             android:minHeight="?android:attr/listPreferredItemHeightSmall" />
     </androidx.cardview.widget.CardView>
 
-
     <androidx.cardview.widget.CardView
         android:id="@+id/menu_hide_shielded_container"
         android:layout_width="match_parent"
@@ -144,6 +141,5 @@
             android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
             android:minHeight="?android:attr/listPreferredItemHeightSmall" />
     </androidx.cardview.widget.CardView>
-
 
 </LinearLayout>

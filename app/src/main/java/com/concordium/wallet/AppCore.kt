@@ -9,11 +9,9 @@ import com.concordium.wallet.core.crypto.CryptoLibraryReal
 import com.concordium.wallet.core.gson.RawJsonTypeAdapter
 import com.concordium.wallet.data.backend.ProxyBackend
 import com.concordium.wallet.data.backend.ProxyBackendConfig
-import com.concordium.wallet.data.model.IdentityCreationData
 import com.concordium.wallet.data.model.RawJson
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-
 
 class AppCore(val context: Context) {
 
@@ -22,6 +20,7 @@ class AppCore(val context: Context) {
     val cryptoLibrary: CryptoLibrary
     val session: Session = Session(App.appContext)
     var closingPoolsChecked = false
+    var sessionCookie: String? = null
 
     private val authenticationManagerGeneric: AuthenticationManager = AuthenticationManager(session.getBiometricAuthKeyName())
     private var authenticationManagerReset: AuthenticationManager = authenticationManagerGeneric
@@ -44,26 +43,26 @@ class AppCore(val context: Context) {
         return gsonBuilder.create();
     }
 
-    public fun getOriginalAuthenticationManager() : AuthenticationManager {
+    fun getOriginalAuthenticationManager() : AuthenticationManager {
         return authenticationManagerReset
     }
 
-    public fun getCurrentAuthenticationManager() : AuthenticationManager {
+    fun getCurrentAuthenticationManager() : AuthenticationManager {
         return authenticationManager
     }
 
-    public fun startResetAuthFlow(){
+    fun startResetAuthFlow(){
         resetBiometricKeyNameAppendix = System.currentTimeMillis().toString()
         authenticationManagerReset = AuthenticationManager(resetBiometricKeyNameAppendix)
         authenticationManager = authenticationManagerReset
     }
 
-    public fun finalizeResetAuthFlow(){
+    fun finalizeResetAuthFlow(){
         session.setBiometricAuthKeyName(resetBiometricKeyNameAppendix)
         session.hasFinishedSetupPassword()
     }
 
-    public fun cancelResetAuthFlow(){
+    fun cancelResetAuthFlow(){
         authenticationManagerReset = authenticationManagerGeneric
         authenticationManager = authenticationManagerReset
         session.hasFinishedSetupPassword()

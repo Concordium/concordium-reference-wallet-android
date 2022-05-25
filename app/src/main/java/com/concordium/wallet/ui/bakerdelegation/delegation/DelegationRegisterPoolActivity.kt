@@ -8,14 +8,18 @@ import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import com.concordium.wallet.R
-import com.concordium.wallet.data.model.DelegationData
+import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
+import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
+import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.AMOUNT_TOO_LARGE_FOR_POOL
+import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.uicore.handleUrlClicks
 import com.concordium.wallet.uicore.view.SegmentedControlView
 import com.concordium.wallet.util.KeyboardUtil
 import kotlinx.android.synthetic.main.activity_delegation_registration_pool.*
 
 class DelegationRegisterPoolActivity :
-    BaseDelegationActivity(R.layout.activity_delegation_registration_pool, R.string.delegation_register_delegation_title) {
+    BaseDelegationBakerActivity(R.layout.activity_delegation_registration_pool, R.string.delegation_register_delegation_title) {
 
     private lateinit var lPoolControl: View
     private lateinit var bakerPoolControl: View
@@ -32,7 +36,7 @@ class DelegationRegisterPoolActivity :
 
     private fun showDetailedPage() {
         val intent = Intent(this, DelegationRegisterAmountActivity::class.java)
-        intent.putExtra(EXTRA_DELEGATION_DATA, viewModel.delegationData)
+        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 
@@ -79,14 +83,18 @@ class DelegationRegisterPoolActivity :
         updateVisibilities()
 
         initializeWaitingLiveData()
-        initializeShowDetailedLiveData()
-    }
 
-    override fun transactionSuccessLiveData() {
+        viewModel.showDetailedLiveData.observe(this, object : EventObserver<Boolean>() {
+            override fun onUnhandledEvent(value: Boolean) {
+                if (value) {
+                    showDetailedPage()
+                }
+            }
+        })
     }
 
     override fun errorLiveData(value: Int) {
-        if (value == DelegationViewModel.AMOUNT_TOO_LARGE_FOR_POOL) {
+        if (value == AMOUNT_TOO_LARGE_FOR_POOL) {
             showDelegationAmountTooLargeNotice()
         } else {
             pool_id_error.text = getString(value)
@@ -94,18 +102,12 @@ class DelegationRegisterPoolActivity :
         }
     }
 
-    override fun showDetailedLiveData(value: Boolean) {
-        if (value) {
-            showDetailedPage()
-        }
-    }
-
     private fun updateContent() {
-        if (viewModel.delegationData.type == DelegationData.TYPE_UPDATE_DELEGATION) {
+        if (viewModel.bakerDelegationData.type == UPDATE_DELEGATION) {
             setActionBarTitle(R.string.delegation_update_delegation_title)
-            viewModel.delegationData.oldRestake = viewModel.delegationData.account?.accountDelegation?.restakeEarnings
-            viewModel.delegationData.oldDelegationIsBaker = viewModel.isBakerPool()
-            viewModel.delegationData.oldDelegationTargetPoolId = viewModel.delegationData.account?.accountDelegation?.delegationTarget?.bakerId
+            viewModel.bakerDelegationData.oldRestake = viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings
+            viewModel.bakerDelegationData.oldDelegationIsBaker = viewModel.isBakerPool()
+            viewModel.bakerDelegationData.oldDelegationTargetPoolId = viewModel.bakerDelegationData.account?.accountDelegation?.delegationTarget?.bakerId
             if (viewModel.isBakerPool()) {
                 viewModel.selectBakerPool()
                 existing_pool_id.text = getString(R.string.delegation_update_delegation_pool_id_baker, getExistingPoolIdText())
@@ -117,14 +119,14 @@ class DelegationRegisterPoolActivity :
     }
 
     private fun updateVisibilities() {
-        pool_id.hint = if (viewModel.delegationData.oldDelegationTargetPoolId == null) getString(R.string.delegation_register_delegation_pool_id_hint) else getString(R.string.delegation_register_delegation_pool_id_hint_update)
-        pool_id.visibility = if (viewModel.delegationData.isLPool) View.GONE else View.VISIBLE
-        if (viewModel.delegationData.isLPool) pool_desc.setText(R.string.delegation_register_delegation_desc_passive) else pool_desc.setText(R.string.delegation_register_delegation_desc)
+        pool_id.hint = if (viewModel.bakerDelegationData.oldDelegationTargetPoolId == null) getString(R.string.delegation_register_delegation_pool_id_hint) else getString(R.string.delegation_register_delegation_pool_id_hint_update)
+        pool_id.visibility = if (viewModel.bakerDelegationData.isLPool) View.GONE else View.VISIBLE
+        if (viewModel.bakerDelegationData.isLPool) pool_desc.setText(R.string.delegation_register_delegation_desc_passive) else pool_desc.setText(R.string.delegation_register_delegation_desc)
         pool_desc.handleUrlClicks { url ->
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             ContextCompat.startActivity(this, browserIntent, null)
         }
-        pool_registration_continue.isEnabled = getExistingPoolIdText().isNotEmpty() || viewModel.delegationData.isLPool || pool_id.text.isNotEmpty()
+        pool_registration_continue.isEnabled = getExistingPoolIdText().isNotEmpty() || viewModel.bakerDelegationData.isLPool || pool_id.text.isNotEmpty()
         hideError()
     }
 
@@ -135,7 +137,7 @@ class DelegationRegisterPoolActivity :
     }
 
     private fun getExistingPoolIdText(): String {
-        viewModel.delegationData.account?.accountDelegation?.delegationTarget?.bakerId?.let {
+        viewModel.bakerDelegationData.account?.accountDelegation?.delegationTarget?.bakerId?.let {
             return it.toString()
         }
         return ""
@@ -146,7 +148,7 @@ class DelegationRegisterPoolActivity :
         builder.setTitle(R.string.delegation_amount_too_large_notice_title)
         builder.setMessage(getString(R.string.delegation_amount_too_large_notice_message))
         builder.setPositiveButton(getString(R.string.delegation_amount_too_large_notice_lower)) { _, _ ->
-            viewModel.delegationData.oldDelegationTargetPoolId?.let {
+            viewModel.bakerDelegationData.oldDelegationTargetPoolId?.let {
                 viewModel.setPoolID(it.toString())
             }
             showDetailedPage()
@@ -158,7 +160,7 @@ class DelegationRegisterPoolActivity :
 
     private fun gotoStopDelegation() {
         val intent = Intent(this, DelegationRemoveActivity::class.java)
-        intent.putExtra(EXTRA_DELEGATION_DATA, viewModel.delegationData)
+        intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 }

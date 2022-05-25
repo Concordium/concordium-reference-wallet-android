@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.text.method.DigitsKeyListener
 import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -17,7 +16,6 @@ import com.concordium.wallet.CBORUtil
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.backend.BackendError
-import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -27,14 +25,11 @@ import com.concordium.wallet.ui.common.failed.FailedViewModel
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.transaction.sendfundsconfirmed.SendFundsConfirmedActivity
-import com.concordium.wallet.uicore.DecimalTextWatcher
 import com.concordium.wallet.uicore.afterTextChanged
 import kotlinx.android.synthetic.main.activity_send_funds.*
-import kotlinx.android.synthetic.main.item_account.view.*
 import kotlinx.android.synthetic.main.progress.*
 import java.text.DecimalFormatSymbols
 import javax.crypto.Cipher
-
 
 class SendFundsActivity :
     BaseActivity(R.layout.activity_send_funds, R.string.send_funds_title) {
@@ -235,45 +230,6 @@ class SendFundsActivity :
                 else -> false
             }
         }
-        // Allow both . and , but change them in text watcher to decimal separator based on language
-        // We allow them both to avoid problems with some devices (eg. Samsung that have their own keyboard restrictions)
-        amount_edittext.keyListener = DigitsKeyListener.getInstance("0123456789.,")
-        amount_edittext.addTextChangedListener(DecimalTextWatcher(6))
-        amount_edittext.addTextChangedListener(object : TextWatcher {
-
-            private var previousText: String = ""
-            override fun afterTextChanged(editable: Editable) {
-                var change = false
-                var str = editable.toString()
-
-                try {
-                    val intVal = CurrencyUtil.getWholePart(str)
-                    if(intVal != null){
-                        if( intVal > (Long.MAX_VALUE - 999999L)/1000000L) {
-                            change = true
-                        }
-                    }
-                }
-                catch(e: Exception){
-                    change = true
-                }
-
-                if (change) {
-                    editable.replace(0, editable.length, previousText);
-                }
-                else{
-                    previousText = editable.toString()
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-        })
-
         send_funds_paste_recipient.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(editable: Editable) {
                 var address = editable.toString()

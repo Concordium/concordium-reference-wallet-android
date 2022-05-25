@@ -11,5 +11,6 @@ data class BakerPoolStatus(
     val delegatedCapital: String,
     val currentPaydayStatus: PayDayStatus,
     val poolInfo: BakerPoolInfo,
-    val bakerStakePendingChange: BakerStakePendingChange
+    val bakerStakePendingChange: BakerStakePendingChange,
+    val minimumEquityCapital: String
 ) : Serializable

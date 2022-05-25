@@ -159,8 +159,8 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                 val accountListCloned = accountList.toMutableList() // prevent ConcurrentModificationException
                 for (account in accountListCloned) {
                     if ((account.transactionStatus == TransactionStatus.COMMITTED
-                        || account.transactionStatus == TransactionStatus.RECEIVED
-                        || account.transactionStatus == TransactionStatus.UNKNOWN) && !TextUtils.isEmpty(account.submissionId)
+                                || account.transactionStatus == TransactionStatus.RECEIVED
+                                || account.transactionStatus == TransactionStatus.UNKNOWN) && !TextUtils.isEmpty(account.submissionId)
                     ) {
                         val deferred = async {
                             proxyRepository.getAccountSubmissionStatusSuspended(account.submissionId)
@@ -240,22 +240,27 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                 }
 
                 for (request in transferSubmissionStatusRequestList) {
-                    val submissionStatus = request.deferred.await()
+                    try {
+                        val submissionStatus = request.deferred.await()
+                        updateEncryptedAmount(submissionStatus, request.transfer.submissionId, request.transfer.amount.toString())
 
-                    updateEncryptedAmount(submissionStatus, request.transfer.submissionId, request.transfer.amount.toString())
+                        request.transfer.transactionStatus = submissionStatus.status
+                        request.transfer.outcome = submissionStatus.outcome ?: TransactionOutcome.UNKNOWN
+                        if (submissionStatus.cost != null) {
+                            request.transfer.cost = submissionStatus.cost
+                        }
 
-                    request.transfer.transactionStatus = submissionStatus.status
-                    request.transfer.outcome = submissionStatus.outcome ?: TransactionOutcome.UNKNOWN
-                    if (submissionStatus.cost != null) {
-                        request.transfer.cost = submissionStatus.cost
+                        //IF GTU Drop we set cost to 0
+                        if (submissionStatus.status == TransactionStatus.COMMITTED && submissionStatus.sender != request.transfer.fromAddress){
+                            request.transfer.cost = 0
+                        }
+
+                        Log.d("TransferSubmissionStatus Loop item end - ${request.transfer.submissionId} ${submissionStatus.status}")
+                    } catch (httpEx: HttpException) {
+                        //if (httpEx.code() == 502) transferRepository.delete(request.transfer)
+                        //else throw httpEx
+                        // TODO: maybe delete transaction
                     }
-
-                    //IF GTU Drop we set cost to 0
-                    if(submissionStatus.status == TransactionStatus.COMMITTED && submissionStatus.sender != request.transfer.fromAddress){
-                        request.transfer.cost = 0
-                    }
-
-                    Log.d("TransferSubmissionStatus Loop item end - ${request.transfer.submissionId} ${submissionStatus.status}")
                 }
             } catch (e: Exception) {
                 Log.e("TransferSubmissionStatus failed", e)
@@ -316,6 +321,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     request.account.currentBalance = accountBalance.currentBalance?.getAmount() ?: 0
 
                     request.account.accountDelegation = accountBalance.currentBalance?.accountDelegation
+                    request.account.accountBaker = accountBalance.currentBalance?.accountBaker
 
                     request.account.finalizedAccountReleaseSchedule = accountBalance.finalizedBalance?.accountReleaseSchedule
                     accountBalance.finalizedBalance?.let {

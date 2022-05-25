@@ -14,7 +14,6 @@ class AboutActivity : BaseActivity(
     R.layout.activity_about,
     R.string.about_title
 ) {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

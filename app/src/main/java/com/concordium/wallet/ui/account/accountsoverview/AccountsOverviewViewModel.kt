@@ -12,12 +12,14 @@ import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.model.AppSettings
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
+import com.concordium.wallet.util.Log
 import kotlinx.coroutines.*
 
 class AccountsOverviewViewModel(application: Application) : AndroidViewModel(application) {
@@ -53,6 +55,10 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val _poolStatusesLiveData = MutableLiveData<List<Pair<String, String>>>()
     val poolStatusesLiveData: LiveData<List<Pair<String, String>>>
         get() = _poolStatusesLiveData
+
+    private var _appSettingsLiveData = MutableLiveData<AppSettings>()
+    val appSettingsLiveData: LiveData<AppSettings>
+        get() = _appSettingsLiveData
 
     private val identityRepository: IdentityRepository
     private val accountRepository: AccountRepository
@@ -93,6 +99,19 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         identityListLiveData = identityRepository.allIdentities
     }
 
+    fun loadAppSettings(appVersion: Int) {
+        viewModelScope.launch {
+            val response = proxyRepository.getAppSettings("android", appVersion)
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    _appSettingsLiveData.value = it
+                }
+            } else {
+                Log.d("appSettings failed")
+            }
+        }
+    }
+
     fun loadPoolStatuses(poolIds: List<String>) {
         val poolStatuses: MutableList<Pair<String, String>> = mutableListOf()
         viewModelScope.launch {
@@ -130,7 +149,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                 _identityLiveData.value = State.NO_IDENTITIES
             }
 
-            var identitiesPending = identityRepository.getAllPending()
+            val identitiesPending = identityRepository.getAllPending()
             if(!identitiesPending.isNullOrEmpty()){
                 _pendingIdentityForWarningLiveData.value = identitiesPending.first()
             }

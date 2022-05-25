@@ -15,12 +15,11 @@ class ProxyRepository() {
         const val ENCRYPTED_TRANSFER = "encryptedTransfer"
         const val TRANSFER_TO_SECRET = "transferToSecret"
         const val TRANSFER_TO_PUBLIC = "transferToPublic"
-
         const val REGISTER_DELEGATION = "registerDelegation"
         const val UPDATE_DELEGATION = "updateDelegation"
         const val REMOVE_DELEGATION = "removeDelegation"
         const val REGISTER_BAKER = "registerBaker"
-        const val UPDATE_BAKE_STAKE = "updateBakerStake"
+        const val UPDATE_BAKER_STAKE = "updateBakerStake"
         const val UPDATE_BAKER_POOL = "updateBakerPool"
         const val UPDATE_BAKER_KEYS = "updateBakerKeys"
         const val REMOVE_BAKER = "removeBaker"
@@ -53,6 +52,7 @@ class ProxyRepository() {
 
     suspend fun getAccountSubmissionStatusSuspended(submissionId: String) = backend.accountSubmissionStatusSuspended(submissionId)
 
+    suspend fun getAppSettings(platform: String, version: Int) = backend.appSettingsSuspended(platform, version)
 
     fun getBakerPool(
         bakerId: String,
@@ -177,12 +177,12 @@ class ProxyRepository() {
     }
 
 
-    fun getTransferCost(type: String, memoSize: Int?, amount: Long? = null, restake: Boolean? = null, lPool: Boolean? = null, targetChange: Boolean? = null, success: (TransferCost) -> Unit, failure: ((Throwable) -> Unit)?): BackendRequest<TransferCost> {
+    fun getTransferCost(type: String, memoSize: Int?, amount: Long? = null, restake: Boolean? = null, lPool: Boolean? = null, targetChange: Boolean? = null, metadataSize: Int? = null, openStatus: String? = null, success: (TransferCost) -> Unit, failure: ((Throwable) -> Unit)?): BackendRequest<TransferCost> {
 
         val lPoolArg = if (lPool == true) "lPool" else null
         val targetArg = if (targetChange == true) "target" else null
 
-        val call = backend.transferCost(type, memoSize, amount, restake, lPoolArg, targetArg)
+        val call = backend.transferCost(type, memoSize, amount, restake, lPoolArg, targetArg, metadataSize, openStatus)
 
         call.enqueue(object : BackendCallback<TransferCost>() {
 
@@ -222,6 +222,12 @@ class ProxyRepository() {
             failure = failure
         )
     }
+
+    suspend fun getChainParametersSuspended() = backend.chainParametersSuspended()
+
+    suspend fun getPassiveDelegationSuspended() = backend.passiveDelegationSuspended()
+
+    suspend fun getBakerPoolSuspended(poolId: String) = backend.bakerPoolSuspended(poolId)
 
     suspend fun getAccountBalanceSuspended(accountAddress: String) = backend.accountBalanceSuspended(accountAddress)
 

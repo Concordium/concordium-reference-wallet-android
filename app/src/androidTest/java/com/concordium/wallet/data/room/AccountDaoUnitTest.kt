@@ -61,9 +61,15 @@ class AccountDaoUnitTest {
             0,
             0,
             null,
-            null
-
-        )
+            null,
+            ShieldedAccountEncryptionStatus.ENCRYPTED,
+            0,
+            0,
+            false,
+            null,
+            null,
+            null,
+            null)
 
         runBlocking { accountDao.insert(account) }
         val listLiveData = accountDao.getAllAsLiveData()

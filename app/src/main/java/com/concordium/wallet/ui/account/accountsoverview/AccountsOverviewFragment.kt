@@ -4,13 +4,16 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
+import androidx.core.content.pm.PackageInfoCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.data.model.AppSettings
 import com.concordium.wallet.data.model.BakerStakePendingChange
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.preferences.Preferences
@@ -199,6 +202,7 @@ class AccountsOverviewFragment : BaseFragment() {
             showTotalBalance(totalBalance.totalBalanceForAllAccounts, totalBalance.totalContainsEncrypted)
             showDisposalBalance(totalBalance.totalAtDisposalForAllAccounts, totalBalance.totalContainsEncrypted)
             showStakedBalance(totalBalance.totalStakedForAllAccounts)
+            loadAppSettings()
         })
         viewModel.accountListLiveData.observe(this, Observer { accountList ->
             accountList?.let {
@@ -220,6 +224,60 @@ class AccountsOverviewFragment : BaseFragment() {
         viewModel.pendingIdentityForWarningLiveData.observe(this, Observer { identity ->
             updateWarnings()
         })
+
+        viewModel.appSettingsLiveData.observe(this, Observer { appSettings ->
+            checkAppSettings(appSettings)
+        })
+    }
+
+    private fun loadAppSettings() {
+        context?.let {
+            val pInfo = it.packageManager.getPackageInfo(it.packageName, 0)
+            val longVersionCode = PackageInfoCompat.getLongVersionCode(pInfo)
+            val versionCode = longVersionCode.toInt()
+            viewModel.loadAppSettings(versionCode)
+        }
+    }
+
+    private fun checkAppSettings(appSettings: AppSettings) {
+        when (appSettings.status) {
+            AppSettings.APP_VERSION_STATUS_WARNING -> appSettings.url?.let { showAppUpdateWarning(it) }
+            AppSettings.APP_VERSION_STATUS_NEEDS_UPDATE -> appSettings.url?.let { showAppUpdateNeedsUpdate(it) }
+        }
+    }
+
+    private fun showAppUpdateWarning(url: String) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(R.string.force_update_warning_title)
+        builder.setMessage(getString(R.string.force_update_warning_message))
+        builder.setPositiveButton(getString(R.string.force_update_warning_update_now)) { _, _ ->
+            gotoAppStore(url)
+            activity?.finish()
+        }
+        builder.setNegativeButton(getString(R.string.force_update_warning_backup)) { _, _ -> gotoBackup() }
+        builder.setNeutralButton(getString(R.string.force_update_warning_remind_me)) { dialog, _ -> dialog.dismiss() }
+        builder.create().show()
+    }
+
+    private fun showAppUpdateNeedsUpdate(url: String) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(R.string.force_update_needed_title)
+        builder.setMessage(getString(R.string.force_update_needed_message))
+        builder.setNeutralButton(getString(R.string.force_update_needed_update_now)) { _, _ ->
+            gotoAppStore(url)
+            activity?.finish()
+        }
+        builder.setPositiveButton(getString(R.string.force_update_needed_backup)) { _, _ -> gotoBackup() }
+        builder.setCancelable(false)
+        builder.create().show()
+    }
+
+    private fun gotoAppStore(url: String) {
+        startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(url)))
+    }
+
+    private fun gotoBackup() {
+        startActivity(Intent(context, ExportActivity::class.java))
     }
 
     private fun checkForClosingPools(accountList: List<AccountWithIdentity>) {
@@ -337,12 +395,11 @@ class AccountsOverviewFragment : BaseFragment() {
         }
 
         initializeList(view)
-
     }
 
     private fun updateWarnings(){
-        var ident = viewModel.pendingIdentityForWarningLiveData.value
-        if(ident != null && !App.appCore.session.isIdentityPendingWarningAcknowledged(ident.id)){
+        val ident = viewModel.pendingIdentityForWarningLiveData.value
+        if (ident != null && !App.appCore.session.isIdentityPendingWarningAcknowledged(ident.id)) {
             missing_backup.visibility = View.GONE
             identity_pending.visibility = View.VISIBLE
             viewModel.pendingIdentityForWarningLiveData.value

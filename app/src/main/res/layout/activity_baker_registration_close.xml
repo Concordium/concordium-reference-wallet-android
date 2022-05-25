@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    style="@style/Layout.Root">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/toolbar_layout"
+            layout="@layout/app_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/activity_content_margin"
+            android:layout_below="@+id/toolbar_layout">
+
+            <ScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                        android:orientation="vertical">
+                            <TextView
+                                style="@style/TextView.Standard"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
+                                android:gravity="center"
+                                android:text="@string/baker_registration_export_explain" />
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:layout_marginTop="@dimen/activity_content_margin"
+                                android:layout_marginHorizontal="@dimen/activity_content_margin">
+                            <TextView
+                                style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/baker_registration_export_election_verify_key" />
+                            <TextView
+                                android:id="@+id/baker_registration_export_election_verify_key"
+                                style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Large"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                tools:text="14f3632ac857400d417a7277f726c43a8ddf07184f10a429cf0759e985247c33" />
+                            <TextView
+                                style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/baker_registration_export_signature_verify_key" />
+                            <TextView
+                                android:id="@+id/baker_registration_export_signature_verify_key"
+                                style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Large"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                tools:text="7bb9028cc6f7202f1b72608b98ba9e4c43e922cea3b01120eb70b7e01a623df7" />
+                            <TextView
+                                style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/baker_registration_export_aggregation_verify_key" />
+                            <TextView
+                                android:id="@+id/baker_registration_export_aggregation_verify_key"
+                                style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Large"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                tools:text="b9ad84290785866393b631c431616b5f0b6a3e5665ae47b90e6a572b61b724cf5942c68740eba94f532661396eca64cc0e2bc00446632e2dc69fdce4a6c904814fa6416212d582b36551527c370f425bf43c98f50a8b2e34d9fe10f4495f1570" />
+                        </LinearLayout>
+                    </LinearLayout>
+                    <RelativeLayout
+                        android:id="@+id/button_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/activity_vertical_margin"
+                        android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:orientation="horizontal">
+                        <Button
+                            android:id="@+id/baker_registration_export"
+                            style="@style/Button.Standard"
+                            android:layout_width="match_parent"
+                            android:text="@string/baker_registration_export" />
+                    </RelativeLayout>
+
+                </LinearLayout>
+            </ScrollView>
+
+            <include layout="@layout/progress" tools:visibility="gone"/>
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

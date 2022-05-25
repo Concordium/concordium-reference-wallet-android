@@ -75,7 +75,10 @@ data class Account(
     var bakerId: Long? = null,
 
     @ColumnInfo(name = "account_delegation")
-    var accountDelegation: AccountDelegation? = null
+    var accountDelegation: AccountDelegation? = null,
+
+    @ColumnInfo(name = "account_baker")
+    var accountBaker: AccountBaker? = null
 
     ) : Serializable {
 
@@ -104,7 +107,7 @@ data class Account(
     }
 
     fun isBaking(): Boolean {
-        return bakerId != null
+        return accountBaker != null
     }
 
     fun isDelegating(): Boolean {

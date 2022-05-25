@@ -6,7 +6,6 @@ import com.concordium.wallet.data.model.*
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 
-
 class AccountTypeConverters {
 
     @TypeConverter
@@ -21,20 +20,6 @@ class AccountTypeConverters {
         val gson = App.appCore.gson
         return gson.toJson(list)
     }
-
-    @TypeConverter
-    fun jsonToCredential(value: String): Credential {
-        val gson = App.appCore.gson
-        return gson.fromJson(value, Credential::class.java)
-    }
-
-    @TypeConverter
-    fun credentialToJson(credential: Credential): String {
-        val gson = App.appCore.gson
-        return gson.toJson(credential)
-    }
-
-
 
     @TypeConverter
     fun jsonToAccountDelegation(value: String?): AccountDelegation? {
@@ -54,6 +39,23 @@ class AccountTypeConverters {
         return gson.toJson(delegation)
     }
 
+    @TypeConverter
+    fun jsonToAccountBaker(value: String?): AccountBaker? {
+        if(value == null){
+            return null
+        }
+        val gson = App.appCore.gson
+        return gson.fromJson(value, AccountBaker::class.java)
+    }
+
+    @TypeConverter
+    fun accountBakerToJson(baker: AccountBaker?): String? {
+        if(baker == null){
+            return null
+        }
+        val gson = App.appCore.gson
+        return gson.toJson(baker)
+    }
 
     @TypeConverter
     fun jsonToCredentialWrapper(value: String?): CredentialWrapper? {
@@ -96,8 +98,4 @@ class AccountTypeConverters {
         val gson = App.appCore.gson
         return gson.toJson(schedule)
     }
-
-
-
-
 }

@@ -119,33 +119,30 @@ abstract class GenericFlowActivity(titleId: Int) : BaseActivity(R.layout.activit
     //region Control/UI
     //************************************************************
 
-
     private fun updateButtons(){
-
-        if(pager.currentItem == 0){
+        if (pager.currentItem == 0 && getMaxPages() == 1) {
+            create_ident_intro_continue.visibility = View.VISIBLE
+            create_ident_intro_back.visibility = View.GONE
+            create_ident_intro_next.visibility = View.GONE
+        } else if (pager.currentItem == 0) {
             create_ident_intro_continue.visibility = View.GONE
             create_ident_intro_back.visibility = View.GONE
             create_ident_intro_next.visibility = View.VISIBLE
-        }
-        if(pager.currentItem > 0 && pager.currentItem < getMaxPages() -1){
+        } else if (pager.currentItem > 0 && pager.currentItem < getMaxPages() -1) {
             create_ident_intro_continue.visibility = View.GONE
             create_ident_intro_back.visibility = View.VISIBLE
             create_ident_intro_next.visibility = View.VISIBLE
-        }
-        if(pager.currentItem == getMaxPages() -1){
+        } else if (pager.currentItem == getMaxPages() -1) {
             create_ident_intro_continue.visibility = View.VISIBLE
             create_ident_intro_back.visibility = View.VISIBLE
             create_ident_intro_next.visibility = View.GONE
         }
     }
 
-
     private inner class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
         override fun getItemCount(): Int = getMaxPages()
         override fun createFragment(position: Int): Fragment = WebViewPageFragment(getLink(position), getPageTitle(position))
     }
 
-
     //endregion
-
 }

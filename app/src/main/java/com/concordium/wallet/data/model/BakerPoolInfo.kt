@@ -3,7 +3,8 @@ package com.concordium.wallet.data.model
 import java.io.Serializable
 
 data class BakerPoolInfo(
-    val openStatus: String
+    val openStatus: String,
+    val metadataUrl: String? = null
 ) : Serializable {
     companion object {
         val OPEN_STATUS_OPEN_FOR_ALL = "openForAll"

@@ -1,33 +1,29 @@
-package com.concordium.wallet.ui.bakerdelegation.delegation
+package com.concordium.wallet.ui.bakerdelegation.common
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
-import com.concordium.wallet.data.model.DelegationData
+import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_delegation_remove.estimated_transaction_fee
-import kotlinx.android.synthetic.main.activity_delegation_remove.submit_delegation_transaction
+import kotlinx.android.synthetic.main.activity_delegation_remove.*
 import kotlinx.android.synthetic.main.progress.*
 import javax.crypto.Cipher
 
-abstract class BaseDelegationActivity(layout: Int, titleId: Int = R.string.app_name) :
+abstract class BaseDelegationBakerActivity(layout: Int, titleId: Int = R.string.app_name) :
     BaseActivity(layout, titleId) {
 
-    protected lateinit var viewModel: DelegationViewModel
-
-    companion object {
-        const val EXTRA_DELEGATION_DATA = "EXTRA_DELEGATION_DATA"
-    }
+    protected lateinit var viewModel: DelegationBakerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initializeViewModel()
-        viewModel.initialize(intent.extras?.getSerializable(EXTRA_DELEGATION_DATA) as DelegationData)
+        viewModel.initialize(intent.extras?.getSerializable(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA) as BakerDelegationData)
         initViews()
     }
 
@@ -37,15 +33,7 @@ abstract class BaseDelegationActivity(layout: Int, titleId: Int = R.string.app_n
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(DelegationViewModel::class.java)
-    }
-
-    protected fun initializeTransactionLiveData() {
-        viewModel.transactionSuccessLiveData.observe(this, Observer<Boolean> { waiting ->
-            waiting?.let {
-                transactionSuccessLiveData()
-            }
-        })
+        ).get(DelegationBakerViewModel::class.java)
     }
 
     protected fun initializeWaitingLiveData() {
@@ -61,30 +49,15 @@ abstract class BaseDelegationActivity(layout: Int, titleId: Int = R.string.app_n
         })
     }
 
-    protected fun initializeShowDetailedLiveData() {
-        viewModel.showDetailedLiveData.observe(this, object : EventObserver<Boolean>() {
-            override fun onUnhandledEvent(value: Boolean) {
-                showDetailedLiveData(value)
+    protected fun initializeTransactionFeeLiveData() {
+        viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<Long?, Int?>> {
+            override fun onChanged(response: Pair<Long?, Int?>?) {
+                response?.first?.let {
+                    estimated_transaction_fee.text = getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(it))
+                }
             }
         })
-    }
-
-    protected fun initializeTransactionFeeLiveData() {
-        viewModel.transactionFeeLiveData.observe(this,
-            Observer<Long> { value ->
-                value?.let {
-                    estimated_transaction_fee.text = getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(value))
-                }
-            })
         viewModel.loadTransactionFee(false)
-    }
-
-    protected open fun showWaiting(waiting: Boolean) {
-        if (waiting) {
-            progress_layout.visibility = View.VISIBLE
-        } else {
-            progress_layout.visibility = View.GONE
-        }
     }
 
     protected fun initializeShowAuthenticationLiveData() {
@@ -110,9 +83,34 @@ abstract class BaseDelegationActivity(layout: Int, titleId: Int = R.string.app_n
         })
     }
 
-    protected open fun initViews() { }
-
-    abstract fun transactionSuccessLiveData()
     abstract fun errorLiveData(value: Int)
-    abstract fun showDetailedLiveData(value: Boolean)
+
+    protected open fun showWaiting(waiting: Boolean) {
+        if (waiting) {
+            progress_layout.visibility = View.VISIBLE
+        } else {
+            progress_layout.visibility = View.GONE
+        }
+    }
+
+    protected fun showNotEnoughFunds() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.delegation_remove_not_enough_funds_title)
+        builder.setMessage(getString(R.string.delegation_remove_not_enough_funds_message))
+        builder.setPositiveButton(getString(R.string.delegation_remove_not_enough_funds_ok)) { dialog, _ ->
+            dialog.dismiss()
+            finishUntilClass(AccountDetailsActivity::class.java.canonicalName)
+        }
+        builder.create().show()
+    }
+
+    protected fun showNoChange() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.delegation_no_changes_title)
+        builder.setMessage(getString(R.string.delegation_no_changes_message))
+        builder.setPositiveButton(getString(R.string.delegation_no_changes_ok)) { dialog, _ -> dialog.dismiss() }
+        builder.create().show()
+    }
+
+    protected open fun initViews() { }
 }

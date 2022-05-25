@@ -57,6 +57,7 @@ class AuthLoginActivity : BaseActivity(R.layout.activity_auth_login, R.string.au
         viewModel.finishScreenLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
+                    KeyboardUtil.hideKeyboard(this@AuthLoginActivity)
                     finish()
                 }
             }

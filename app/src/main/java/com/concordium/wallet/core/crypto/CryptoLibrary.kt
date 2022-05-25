@@ -1,11 +1,7 @@
 package com.concordium.wallet.core.crypto
 
-
 import com.concordium.wallet.data.cryptolib.*
-import com.concordium.wallet.data.model.ArsInfo
-import com.concordium.wallet.data.model.GlobalParams
-import com.concordium.wallet.data.model.IdentityProviderInfo
-import com.concordium.wallet.data.model.PossibleAccount
+import com.concordium.wallet.data.model.*
 
 interface CryptoLibrary {
 
@@ -17,6 +13,7 @@ interface CryptoLibrary {
         val SEC_TO_PUBLIC_TRANSFER: Int = 2
         val ENCRYPTED_TRANSFER: Int = 3
         val CONFIGURE_DELEGATION_TRANSACTION: Int = 4
+        val CONFIGURE_BAKING_TRANSACTION: Int = 5
     }
 
     suspend fun createIdRequestAndPrivateData(
@@ -37,4 +34,5 @@ interface CryptoLibrary {
 
     suspend fun generateAccounts(generateAccountsInput: GenerateAccountsInput): List<PossibleAccount>?
 
+    suspend fun generateBakerKeys(): BakerKeys?
 }

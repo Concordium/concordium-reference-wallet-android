@@ -1,6 +1,9 @@
 package com.concordium.wallet.data.util
 
 import android.content.Context
+import android.net.Uri
+import androidx.documentfile.provider.DocumentFile
+import com.concordium.wallet.App
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -15,4 +18,15 @@ object FileUtil {
         }
     }
 
+    suspend fun writeFile(destinationUri: Uri, destinationFileName: String, fileContent: String) {
+        withContext(Dispatchers.IO) {
+            val doc = DocumentFile.fromTreeUri(App.appContext, destinationUri)
+            val file = doc?.createFile("txt", destinationFileName)
+            file?.let {
+                val outputStream = App.appContext.contentResolver.openOutputStream(it.uri)
+                outputStream?.write(fileContent.toByteArray())
+                outputStream?.close()
+            }
+        }
+    }
 }
