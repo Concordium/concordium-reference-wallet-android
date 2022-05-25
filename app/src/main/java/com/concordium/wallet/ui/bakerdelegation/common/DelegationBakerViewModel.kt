@@ -117,7 +117,8 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun metadataUrlHasChanged(): Boolean {
-        return bakerDelegationData.metadataUrl != bakerDelegationData.oldMetadataUrl
+        return if (bakerDelegationData.type == REGISTER_BAKER) (bakerDelegationData.metadataUrl?.length ?: 0) > 0
+        else bakerDelegationData.metadataUrl != bakerDelegationData.oldMetadataUrl
     }
 
     fun openStatusHasChanged(): Boolean {
@@ -125,7 +126,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun isUpdateDecreaseAmount(): Boolean {
-        return (bakerDelegationData.isUpdateBaker() || isUpdatingDelegation()) && bakerDelegationData.oldStakedAmount ?: 0 > bakerDelegationData.amount ?: 0
+        return (bakerDelegationData.isUpdateBaker() || isUpdatingDelegation()) && (bakerDelegationData.oldStakedAmount ?: 0) > (bakerDelegationData.amount ?: 0)
     }
 
     fun poolHasChanged(): Boolean {
@@ -133,7 +134,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             return true
         if (bakerDelegationData.isBakerPool && bakerDelegationData.oldDelegationIsBaker != null && bakerDelegationData.oldDelegationIsBaker == false)
             return true
-        if (bakerDelegationData.isBakerPool && bakerDelegationData.oldDelegationIsBaker == true && bakerDelegationData.poolId != bakerDelegationData.oldDelegationTargetPoolId?.toString() ?: "")
+        if (bakerDelegationData.isBakerPool && bakerDelegationData.oldDelegationIsBaker == true && bakerDelegationData.poolId != (bakerDelegationData.oldDelegationTargetPoolId?.toString() ?: ""))
             return true
         return false
     }
@@ -147,7 +148,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun isOpenBaker(): Boolean {
-        return bakerDelegationData?.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL
+        return bakerDelegationData.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL
     }
 
     fun isUpdatingDelegation(): Boolean {
@@ -216,9 +217,11 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                 {
                     bakerDelegationData.bakerPoolStatus = it
                     _waitingLiveData.value = false
-                    if (bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW || bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL)
+                    if (bakerDelegationData.type == UPDATE_DELEGATION && bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL)
                         _errorLiveData.value = Event(R.string.delegation_register_delegation_pool_id_closed)
-                    else if (bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0 > bakerDelegationData.bakerPoolStatus?.delegatedCapitalCap?.toLong() ?: 0)
+                    else if (bakerDelegationData.type == REGISTER_DELEGATION && (bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW || bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL))
+                        _errorLiveData.value = Event(R.string.delegation_register_delegation_pool_id_closed)
+                    else if ((bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0) > (bakerDelegationData.bakerPoolStatus?.delegatedCapitalCap?.toLong() ?: 0))
                         _errorLiveData.value = Event(AMOUNT_TOO_LARGE_FOR_POOL)
                     else
                         _showDetailedLiveData.value = Event(true)

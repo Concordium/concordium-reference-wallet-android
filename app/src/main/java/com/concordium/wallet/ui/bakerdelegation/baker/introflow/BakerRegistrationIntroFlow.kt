@@ -2,7 +2,7 @@ package com.concordium.wallet.ui.bakerdelegation.baker.introflow
 
 import android.content.Intent
 import com.concordium.wallet.R
-import com.concordium.wallet.ui.bakerdelegation.baker.BakerStatusActivity
+import com.concordium.wallet.ui.bakerdelegation.baker.BakerRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 
@@ -16,7 +16,7 @@ class BakerRegistrationIntroFlow :
     }
 
     override fun gotoContinue() {
-        val intent = Intent(this, BakerStatusActivity::class.java)
+        val intent = Intent(this, BakerRegisterAmountActivity::class.java)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }

@@ -114,11 +114,21 @@ data class Account(
         return accountDelegation != null
     }
 
-    fun getAtDisposalSubstraction(): Long {
-        return accountDelegation?.stakedAmount?.toLong() ?: 0
+    fun getAtDisposalSubtraction(): Long {
+        var subtract: Long = 0
+        accountDelegation?.stakedAmount?.let {
+            subtract += it.toLong()
+        }
+        accountBaker?.stakedAmount?.let {
+            subtract += it.toLong()
+        }
+        finalizedAccountReleaseSchedule?.total?.let {
+            subtract += it.toLong()
+        }
+        return subtract
     }
 
-    fun getAtDisosal(): Long {
+    fun getAtDisposal(): Long {
         return finalizedBalance + (finalizedAccountReleaseSchedule?.total?.toLong() ?: 0)
     }
 }

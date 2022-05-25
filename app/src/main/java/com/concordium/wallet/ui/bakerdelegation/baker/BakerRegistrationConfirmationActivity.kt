@@ -172,18 +172,16 @@ class BakerRegistrationConfirmationActivity :
     }
 
     private fun showMetaUrl() {
-        meta_data_url_title.visibility = View.VISIBLE
-        meta_data_url.visibility = View.VISIBLE
         if (viewModel.metadataUrlHasChanged()) {
-            if (viewModel.bakerDelegationData.metadataUrl?.length ?: 0 > 0) meta_data_url.text = viewModel.bakerDelegationData.metadataUrl
+            meta_data_url_title.visibility = View.VISIBLE
+            meta_data_url.visibility = View.VISIBLE
+            if ((viewModel.bakerDelegationData.metadataUrl?.length ?: 0) > 0) meta_data_url.text = viewModel.bakerDelegationData.metadataUrl
             else meta_data_url.text = getString(R.string.baker_update_pool_settings_url_removed)
-        } else {
-            meta_data_url.text = getString(R.string.baker_update_pool_settings_url_no_changes)
         }
     }
 
     private fun onContinueClicked() {
-        if (viewModel.atDisposal() < viewModel.bakerDelegationData.cost ?: 0) {
+        if (viewModel.atDisposal() < (viewModel.bakerDelegationData.cost ?: 0)) {
             showNotEnoughFunds()
             return
         }
@@ -208,12 +206,12 @@ class BakerRegistrationConfirmationActivity :
 
         var noticeMessage = getString(R.string.baker_notice_message)
 
-        if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && viewModel.bakerDelegationData.oldStakedAmount ?: 0 < viewModel.bakerDelegationData.amount ?: 0) {
+        if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount ?: 0) < (viewModel.bakerDelegationData.amount ?: 0)) {
             noticeMessage = getString(R.string.baker_notice_message_update_increase)
-        }  else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && viewModel.bakerDelegationData.oldStakedAmount ?: 0 > viewModel.bakerDelegationData.amount ?: 0) {
+        }  else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount ?: 0) > (viewModel.bakerDelegationData.amount ?: 0)) {
             val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0)
             noticeMessage = resources.getQuantityString(R.plurals.baker_notice_message_update_decrease, gracePeriod, gracePeriod)
-        } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && viewModel.bakerDelegationData.oldStakedAmount ?: 0 == viewModel.bakerDelegationData.amount ?: 0) {
+        } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount ?: 0) == (viewModel.bakerDelegationData.amount ?: 0)) {
             noticeMessage = getString(R.string.baker_notice_message_update_pool)
         } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_POOL) {
             noticeMessage = getString(R.string.baker_notice_message_update_pool)

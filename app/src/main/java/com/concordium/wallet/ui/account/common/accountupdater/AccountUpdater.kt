@@ -456,7 +456,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
             totalBalanceForAllAccounts += account.totalUnshieldedBalance
             if(!account.readOnly){
                 totalBalanceForAllAccountsWithoutReadOnly += account.totalUnshieldedBalance
-                totalAtDisposalForSubstractionForAllAccounts += account.getAtDisposalSubstraction()
+                totalAtDisposalForSubstractionForAllAccounts += account.getAtDisposalSubtraction()
                 totalStakedForAllAccounts += account.totalStaked
             }
 

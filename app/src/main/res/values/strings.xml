@@ -393,7 +393,7 @@
     <string name="baker_status_baker_id">Baker ID</string>
     <string name="baker_status_baker_rewards_will_be">Rewards will be</string>
     <string name="baker_status_baker_added_to_stake">Added to stake</string>
-    <string name="baker_status_baker_at_disposal">At disposal</string>
+    <string name="baker_status_baker_at_disposal">Added to disposable amount</string>
     <string name="baker_status_baker_delegation_pool_status">Delegation pool status</string>
     <string name="baker_status_baker_delegation_pool_status_open">Open for delegation</string>
     <string name="baker_status_baker_delegation_pool_status_closed">Closed for delegation</string>
@@ -437,7 +437,7 @@
     <string name="baker_register_confirmation_receipt_submit_transaction">Submit delegation transaction</string>
     <string name="baker_register_confirmation_receipt_finish">Finish</string>
     <string name="baker_register_confirmation_receipt_added_to_delegation_amount">Added to stake</string>
-    <string name="baker_register_confirmation_receipt_at_disposal">At disposal</string>
+    <string name="baker_register_confirmation_receipt_at_disposal">Added to disposable amount</string>
     <string name="baker_register_confirmation_receipt_meta_data_url">Metadata URL</string>
     <string name="baker_register_transaction_failed">Your baking transaction failed:\n\n%1$s\n\nDo you want to try again?</string>
     <string name="baker_registration_confirmation_remove_title">Stop baking</string>
@@ -482,7 +482,6 @@
     <string name="baker_update_pool_settings_current_url">Current URL:\n%s</string>
     <string name="baker_update_pool_settings_open_url_explain">If you want to set a new metadata URL, you can do so by pasting it below. It’s optional, so you can just leave it blank if you don’t want to make any changes.\n\nYou can read more about the metadata URL on\n\n<a href="https://developer.concordium.software">developer.concordium.software</a></string>
     <string name="baker_update_pool_settings_url_removed">Metadata URL removed</string>
-    <string name="baker_update_pool_settings_url_no_changes">No changes</string>
 
     <string name="baker_notice_title">Notice</string>
     <string name="baker_notice_message">Once your transaction has successfully finalized, the baker registration will take effect from the next pay day.\n\nRemember to restart your node with the baker keys.</string>

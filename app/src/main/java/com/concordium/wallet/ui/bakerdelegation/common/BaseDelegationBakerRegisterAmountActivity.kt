@@ -9,7 +9,7 @@ import java.text.DecimalFormatSymbols
 abstract class BaseDelegationBakerRegisterAmountActivity(layout: Int, titleId: Int = R.string.app_name) :
     BaseDelegationBakerActivity(layout, titleId) {
 
-    protected var fee: Long? = null
+    protected var validateFee: Long? = null
 
     override fun initViews() {
         super.initViews()
@@ -50,7 +50,7 @@ abstract class BaseDelegationBakerRegisterAmountActivity(layout: Int, titleId: I
         setAmountHint()
         if (amount.text.toString().isNotBlank() && amount.text.toString() != "Ͼ") {
             val stakeAmountInputValidator = getStakeAmountInputValidator()
-            val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString(), fee)
+            val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString(), validateFee)
             if (stakeError != StakeAmountInputValidator.StakeError.OK) {
                 amount_error.text = stakeAmountInputValidator.getErrorText(this, stakeError)
                 showError(stakeError)

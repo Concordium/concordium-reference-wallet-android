@@ -113,10 +113,10 @@ class DelegationRegisterAmountActivity :
         viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<Long?, Int?>> {
             override fun onChanged(response: Pair<Long?, Int?>?) {
                 response?.first?.let {
-                    fee = it
+                    validateFee = it
                     pool_estimated_transaction_fee.visibility = View.VISIBLE
                     pool_estimated_transaction_fee.text = getString(
-                        R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(it)
+                        R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(validateFee ?: 0)
                     )
                 }
             }
@@ -142,7 +142,7 @@ class DelegationRegisterAmountActivity :
             if (viewModel.isUpdatingDelegation()) "0" else "1",
             null,
             (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0),
-            viewModel.bakerDelegationData.account?.getAtDisosal(),
+            viewModel.bakerDelegationData.account?.getAtDisposal(),
             viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,
             viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapitalCap,
             viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount,
@@ -173,7 +173,7 @@ class DelegationRegisterAmountActivity :
         if (!pool_registration_continue.isEnabled) return
 
         val stakeAmountInputValidator = getStakeAmountInputValidator()
-        val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString(), fee)
+        val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString(), validateFee)
         if (stakeError != StakeAmountInputValidator.StakeError.OK) {
             amount_error.text = stakeAmountInputValidator.getErrorText(this, stakeError)
             showError(stakeError)

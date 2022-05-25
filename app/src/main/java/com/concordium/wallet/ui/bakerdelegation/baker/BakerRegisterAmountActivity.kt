@@ -52,13 +52,19 @@ class BakerRegisterAmountActivity :
             override fun onChanged(response: Pair<Long?, Int?>?) {
                 response?.second?.let { requestId ->
                     when (requestId) {
-                        SINGLE_FEE -> singleFee = response.first
+                        SINGLE_FEE -> {
+                            singleFee = response.first
+                            validateFee = response.first
+                        }
                         RANGE_MIN_FEE -> minFee = response.first
-                        RANGE_MAX_FEE -> maxFee = response.first
+                        RANGE_MAX_FEE -> {
+                            maxFee = response.first
+                            validateFee = response.first
+                        }
                     }
                     singleFee?.let {
                         pool_estimated_transaction_fee.visibility = View.VISIBLE
-                        pool_estimated_transaction_fee.text = getString(R.string.baker_registration_update_amount_estimated_transaction_fee_single, CurrencyUtil.formatGTU(it))
+                        pool_estimated_transaction_fee.text = getString(R.string.baker_registration_update_amount_estimated_transaction_fee_single, CurrencyUtil.formatGTU(singleFee ?: 0))
                     } ?: run {
                         if (minFee != null && maxFee != null) {
                             pool_estimated_transaction_fee.visibility = View.VISIBLE
@@ -122,7 +128,7 @@ class BakerRegisterAmountActivity :
             viewModel.bakerDelegationData.chainParameters?.minimumEquityCapital,
             viewModel.getStakeInputMax(),
             (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0),
-            viewModel.bakerDelegationData.account?.getAtDisosal(),
+            viewModel.bakerDelegationData.account?.getAtDisposal(),
             viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,
             null,
             viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount,
@@ -148,7 +154,7 @@ class BakerRegisterAmountActivity :
         if (!baker_registration_continue.isEnabled) return
 
         val stakeAmountInputValidator = getStakeAmountInputValidator()
-        val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString(), fee)
+        val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString(), validateFee)
         if (stakeError != StakeAmountInputValidator.StakeError.OK) {
             amount_error.text = stakeAmountInputValidator.getErrorText(this, stakeError)
             showError(stakeError)
