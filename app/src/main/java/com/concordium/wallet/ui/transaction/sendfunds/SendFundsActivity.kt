@@ -285,11 +285,14 @@ class SendFundsActivity :
                 viewModel.setMemo(null);//CBORUtil.encodeCBOR(""))
                 setMemoText("")
             }
-
         }
 
-        send_all.setOnClickListener {
-            viewModel.updateSendAllValue()
+        if (viewModel.isShielded) {
+            send_all.visibility = View.GONE
+        } else {
+            send_all.setOnClickListener {
+                viewModel.updateSendAllValue()
+            }
         }
 
         viewModel.sendAllAmountLiveData.observe(this, object : Observer<Long> {
@@ -308,10 +311,19 @@ class SendFundsActivity :
         }
 
         confirm_button.setOnClickListener {
-
             viewModel.selectedRecipient?.let {
-                if(viewModel.validateAndSaveRecipient(it.name, it.address)){
-                    viewModel.sendFunds(amount_edittext.text.toString())
+                if (viewModel.validateAndSaveRecipient(it.name, it.address)) {
+                    if (viewModel.isShielded) {
+                        val amountValue = CurrencyUtil.toGTUValue(amount_edittext.text.toString())
+                        if (amountValue != null) {
+                            if (amountValue > viewModel.account.totalShieldedBalance * 0.95)
+                                show95PercentWarning()
+                            else
+                                sendFunds()
+                        }
+                    } else {
+                        sendFunds()
+                    }
                 }
             }
         }
@@ -328,7 +340,19 @@ class SendFundsActivity :
             balance_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance, withGStroke = true)
             at_disposal_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance - viewModel.account.getAtDisposalSubtraction(), withGStroke = true)
         }
+    }
 
+    private fun show95PercentWarning() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.send_funds_more_than_95_title)
+        builder.setMessage(getString(R.string.send_funds_more_than_95_message))
+        builder.setPositiveButton(getString(R.string.send_funds_more_than_95_continue)) { _, _ -> sendFunds() }
+        builder.setNegativeButton(getString(R.string.send_funds_more_than_95_new_stake)) { dialog, _ -> dialog.dismiss() }
+        builder.create().show()
+    }
+
+    private fun sendFunds() {
+        viewModel.sendFunds(amount_edittext.text.toString())
     }
 
     //endregion

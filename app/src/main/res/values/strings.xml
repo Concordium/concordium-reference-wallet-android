@@ -752,6 +752,10 @@
     <string name="send_funds_paste_recipient">Paste recipient address</string>
     <string name="send_funds_or">or</string>
 
+    <string name="send_funds_more_than_95_title">Warning</string>
+    <string name="send_funds_more_than_95_message">You are about to shield more than 95% of your available balance.\n\nIf you don’t have enough CCD at disposal on your balance, you might not be able to pay future transaction fees. If you don’t have enough funds to pay for fees, your CCDs cannot be unshielded or transferred.</string>
+    <string name="send_funds_more_than_95_continue">Continue anyway</string>
+    <string name="send_funds_more_than_95_new_stake">Enter a new amount to shield</string>
 
     <string name="send_funds_select_recipient_or_unshield_amount">Select recipient</string>
     <string name="send_funds_select_recipient">Select recipient</string>
