@@ -249,14 +249,14 @@
     <string name="delegation_status_content_delegation_will_be_stopped">The delegation will be stopped, and the delegation amount will be unlocked on the public balance of the account.</string>
 
     <string name="delegation_register_delegation_intro">You can delegate to an open pool of your choice, or you can stake using passive delegation.</string>
-    <string name="delegation_register_delegation_desc">If you don’t already know what target baker pool you want to delegate an amount to, you can read more about how to find one here:\n\n<a href="https://developer.concordium.software">developer.concordium.software</a></string>
-    <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific baker pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a baker node.\n\nFor more info you can visit\n\n<a href="https://developer.concordium.software">developer.concordium.software</a></string>
-    <string name="delegation_register_delegation_pool_id_hint">Enter target baker pool ID</string>
-    <string name="delegation_register_delegation_pool_id_hint_update">Optional: Enter new target ID</string>
+    <string name="delegation_register_delegation_desc">If you don’t already know what baker pool you want to delegate an amount to, you can read more about finding one here:\n\n<a href="https://developer.concordium.software/en/mainnet/net/concepts/concepts-delegation.html">developer.concordium.software</a></string>
+    <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific baker pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a baker node.\n\nFor more info you can visit\n\n<a href="https://developer.concordium.software/en/mainnet/net/concepts/concepts-delegation.html">developer.concordium.software</a></string>
+    <string name="delegation_register_delegation_pool_id_hint">Enter baker pool ID</string>
+    <string name="delegation_register_delegation_pool_id_hint_update">Optional: New baker pool ID</string>
     <string name="delegation_update_delegation_pool_id_baker">Current target: Baker id %1$s</string>
     <string name="delegation_update_delegation_pool_id__passive">Current target: Passive </string>
 
-    <string name="delegation_register_delegation_pool_baker">Baker pool</string>
+    <string name="delegation_register_delegation_pool_baker">Baker</string>
     <string name="delegation_register_delegation_passive">Passive</string>
     <string name="delegation_register_delegation_passive_long">Passive delegation</string>
     <string name="delegation_register_delegation_continue">Continue</string>
