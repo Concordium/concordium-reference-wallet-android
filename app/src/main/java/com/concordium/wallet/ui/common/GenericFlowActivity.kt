@@ -13,6 +13,8 @@ import com.concordium.wallet.ui.account.accountdetails.WebViewPageFragment
 import com.concordium.wallet.ui.base.BaseActivity
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_intro_flow.*
+import kotlinx.android.synthetic.main.activity_intro_flow.pager
+import kotlinx.android.synthetic.main.activity_intro_flow.pagers_tab_layout
 
 abstract class GenericFlowActivity(titleId: Int) : BaseActivity(R.layout.activity_intro_flow, titleId) {
 
@@ -69,6 +71,9 @@ abstract class GenericFlowActivity(titleId: Int) : BaseActivity(R.layout.activit
         create_ident_intro_continue.setOnClickListener{
             gotoContinue()
         }
+        create_ident_intro_skip.setOnClickListener{
+            gotoContinue()
+        }
 
         updateButtons()
 
@@ -121,18 +126,27 @@ abstract class GenericFlowActivity(titleId: Int) : BaseActivity(R.layout.activit
 
     private fun updateButtons(){
         if (pager.currentItem == 0 && getMaxPages() == 1) {
+            create_ident_intro_skip.visibility = View.GONE
             create_ident_intro_continue.visibility = View.VISIBLE
             create_ident_intro_back.visibility = View.GONE
             create_ident_intro_next.visibility = View.GONE
+        } else if (pager.currentItem == 0 && getMaxPages() > 1) {
+            create_ident_intro_skip.visibility = View.VISIBLE
+            create_ident_intro_continue.visibility = View.GONE
+            create_ident_intro_back.visibility = View.GONE
+            create_ident_intro_next.visibility = View.VISIBLE
         } else if (pager.currentItem == 0) {
+            create_ident_intro_skip.visibility = View.GONE
             create_ident_intro_continue.visibility = View.GONE
             create_ident_intro_back.visibility = View.GONE
             create_ident_intro_next.visibility = View.VISIBLE
         } else if (pager.currentItem > 0 && pager.currentItem < getMaxPages() -1) {
+            create_ident_intro_skip.visibility = View.GONE
             create_ident_intro_continue.visibility = View.GONE
             create_ident_intro_back.visibility = View.VISIBLE
             create_ident_intro_next.visibility = View.VISIBLE
         } else if (pager.currentItem == getMaxPages() -1) {
+            create_ident_intro_skip.visibility = View.GONE
             create_ident_intro_continue.visibility = View.VISIBLE
             create_ident_intro_back.visibility = View.VISIBLE
             create_ident_intro_next.visibility = View.GONE
