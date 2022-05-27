@@ -222,8 +222,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             return true
         }
 
-        val totalUnshieldedAtDisposal =
-            account.totalUnshieldedBalance - account.getAtDisposalSubtraction()
+        val totalUnshieldedAtDisposal = account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
 
         if (isShielded) {
             if (isTransferToSameAccount()) {
@@ -706,7 +705,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
                 cost = it
             }
             var amount =
-                ((if (isShielded) account.totalShieldedBalance else (account.totalUnshieldedBalance - cost - account.getAtDisposalSubtraction())) )
+                ((if (isShielded) account.totalShieldedBalance else (account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) - cost)) )
             if (amount < 0) {
                 amount = 0
             }

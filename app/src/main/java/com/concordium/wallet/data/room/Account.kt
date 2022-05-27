@@ -9,6 +9,7 @@ import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.typeconverter.AccountTypeConverters
 import com.google.gson.JsonObject
 import java.io.Serializable
+import kotlin.math.max
 
 @Entity(tableName = "account_table")
 @TypeConverters(AccountTypeConverters::class)
@@ -98,7 +99,7 @@ data class Account(
         return false
     }
 
-    public fun getAccountName(): String {
+    fun getAccountName(): String {
         if (readOnly) {
             return address.substring(0, 8)
         } else {
@@ -114,7 +115,7 @@ data class Account(
         return accountDelegation != null
     }
 
-    fun getAtDisposalSubtraction(): Long {
+    fun getAtDisposalWithoutStakedOrScheduled(totalBalance: Long): Long {
         var subtract: Long = 0
         accountDelegation?.stakedAmount?.let {
             subtract += it.toLong()
@@ -125,7 +126,7 @@ data class Account(
         finalizedAccountReleaseSchedule?.total?.let {
             subtract += it.toLong()
         }
-        return subtract
+        return max(totalBalance - subtract, 0)
     }
 
     fun getAtDisposal(): Long {

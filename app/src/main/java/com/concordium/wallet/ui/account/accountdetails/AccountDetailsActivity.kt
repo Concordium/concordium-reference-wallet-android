@@ -479,7 +479,7 @@ class AccountDetailsActivity :
 
     private fun showTotalBalance(totalBalance: Long) {
         balance_textview.text = CurrencyUtil.formatGTU(totalBalance)
-        accounts_overview_total_details_disposal.text = CurrencyUtil.formatGTU(totalBalance - viewModel.account.getAtDisposalSubtraction(), true)
+        accounts_overview_total_details_disposal.text = CurrencyUtil.formatGTU(viewModel.account.getAtDisposalWithoutStakedOrScheduled(totalBalance), true)
     }
 
     private fun onSendFundsClicked() {

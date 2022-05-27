@@ -378,8 +378,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
 
     private suspend fun calculateTotalBalances(): TotalBalancesData {
         var totalBalanceForAllAccounts = 0L
-        var totalBalanceForAllAccountsWithoutReadOnly = 0L
-        var totalAtDisposalForSubstractionForAllAccounts = 0L
+        var totalAtDisposalWithoutStakedOrScheduledForAllAccounts = 0L
         var totalStakedForAllAccounts = 0L
         var totalContainsEncrypted = false
 
@@ -455,8 +454,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
             //Calculate totals for all accounts
             totalBalanceForAllAccounts += account.totalUnshieldedBalance
             if(!account.readOnly){
-                totalBalanceForAllAccountsWithoutReadOnly += account.totalUnshieldedBalance
-                totalAtDisposalForSubstractionForAllAccounts += account.getAtDisposalSubtraction()
+                totalAtDisposalWithoutStakedOrScheduledForAllAccounts += account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
                 totalStakedForAllAccounts += account.totalStaked
             }
 
@@ -465,7 +463,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
             }
 
         }
-        return TotalBalancesData(totalBalanceForAllAccounts, totalBalanceForAllAccountsWithoutReadOnly - totalAtDisposalForSubstractionForAllAccounts, totalStakedForAllAccounts, totalContainsEncrypted)
+        return TotalBalancesData(totalBalanceForAllAccounts, totalAtDisposalWithoutStakedOrScheduledForAllAccounts, totalStakedForAllAccounts, totalContainsEncrypted)
     }
 
     private suspend fun saveAccounts() {
