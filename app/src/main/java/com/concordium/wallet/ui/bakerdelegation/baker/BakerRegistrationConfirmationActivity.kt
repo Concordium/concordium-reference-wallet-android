@@ -24,6 +24,13 @@ import kotlinx.android.synthetic.main.transaction_submitted_no.*
 class BakerRegistrationConfirmationActivity :
     BaseDelegationBakerActivity(R.layout.activity_baker_registration_confirmation, R.string.baker_registration_confirmation_title) {
 
+    private var receiptMode = false
+
+    override fun onBackPressed() {
+        if (!receiptMode)
+            super.onBackPressed()
+    }
+
     override fun initViews() {
         super.initViews()
         viewModel.chainParametersLoadedLiveData.observe(this, Observer { success ->
@@ -189,6 +196,8 @@ class BakerRegistrationConfirmationActivity :
     }
 
     private fun showPageAsReceipt() {
+        receiptMode = true
+        hideActionBarBack(this)
         submit_baker_transaction.visibility = View.GONE
         submit_baker_finish.visibility = View.VISIBLE
         grace_period.visibility = View.GONE

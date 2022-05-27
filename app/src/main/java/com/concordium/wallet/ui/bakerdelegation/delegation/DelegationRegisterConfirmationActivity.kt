@@ -15,6 +15,13 @@ import kotlinx.android.synthetic.main.transaction_submitted_no.*
 class DelegationRegisterConfirmationActivity :
     BaseDelegationBakerActivity(R.layout.activity_delegation_registration_confirmation, R.string.delegation_register_delegation_title) {
 
+    private var receiptMode = false
+
+    override fun onBackPressed() {
+        if (!receiptMode)
+            super.onBackPressed()
+    }
+
     override fun initViews() {
         super.initViews()
         viewModel.chainParametersLoadedLiveData.observe(this, Observer { success ->
@@ -93,6 +100,8 @@ class DelegationRegisterConfirmationActivity :
     }
 
     private fun showPageAsReceipt() {
+        receiptMode = true
+        hideActionBarBack(this)
         submit_delegation_transaction.visibility = View.GONE
         grace_period.visibility = View.GONE
         submit_delegation_finish.visibility = View.VISIBLE
@@ -101,9 +110,6 @@ class DelegationRegisterConfirmationActivity :
             transaction_submitted_divider.visibility = View.VISIBLE
             transaction_submitted_id.visibility = View.VISIBLE
             transaction_submitted_id.text = it
-        }
-        if (viewModel.isUpdatingDelegation()) {
-            showNotice()
         }
     }
 
