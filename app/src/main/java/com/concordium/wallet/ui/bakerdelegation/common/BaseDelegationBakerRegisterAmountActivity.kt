@@ -10,6 +10,11 @@ abstract class BaseDelegationBakerRegisterAmountActivity(layout: Int, titleId: I
     BaseDelegationBakerActivity(layout, titleId) {
 
     protected var validateFee: Long? = null
+    protected var baseDelegationBakerRegisterAmountListener: BaseDelegationBakerRegisterAmountListener? = null
+
+    interface BaseDelegationBakerRegisterAmountListener {
+        fun onRestakeChanged()
+    }
 
     override fun initViews() {
         super.initViews()
@@ -27,6 +32,7 @@ abstract class BaseDelegationBakerRegisterAmountActivity(layout: Int, titleId: I
             object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
                     viewModel.markRestake(true)
+                    baseDelegationBakerRegisterAmountListener?.onRestakeChanged()
                 }
             }, initiallyRestake)
         restake_options.addControl(
@@ -34,6 +40,7 @@ abstract class BaseDelegationBakerRegisterAmountActivity(layout: Int, titleId: I
             object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
                     viewModel.markRestake(false)
+                    baseDelegationBakerRegisterAmountListener?.onRestakeChanged()
                 }
             }, !initiallyRestake)
     }

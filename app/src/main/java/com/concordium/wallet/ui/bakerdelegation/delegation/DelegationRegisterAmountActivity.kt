@@ -73,11 +73,7 @@ class DelegationRegisterAmountActivity :
         setAmountHint()
         amount.doOnTextChanged { _, _, _, _ ->
             validateAmountInput()
-            if (viewModel.isInCoolDown()) {
-                pool_registration_continue.isEnabled = getAmountToStake() > (viewModel.bakerDelegationData.oldStakedAmount ?: 0)
-            } else {
-                pool_registration_continue.isEnabled = true
-            }
+            pool_registration_continue.isEnabled = hasChanges()
         }
         amount.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
             if (hasFocus && amount.text.isEmpty()) amount.hint = ""
@@ -86,11 +82,6 @@ class DelegationRegisterAmountActivity :
 
         pool_registration_continue.setOnClickListener {
             onContinueClicked()
-        }
-
-        amount_locked.setOnClickListener {
-            amount_locked.visibility = View.GONE
-            amount.isEnabled = true
         }
 
         balance_amount.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.account?.finalizedBalance ?: 0, true)
@@ -135,6 +126,13 @@ class DelegationRegisterAmountActivity :
                 }
             }
         })
+
+        baseDelegationBakerRegisterAmountListener =
+            object : BaseDelegationBakerRegisterAmountListener {
+                override fun onRestakeChanged() {
+                    pool_registration_continue.isEnabled = hasChanges()
+                }
+            }
     }
 
     override fun getStakeAmountInputValidator(): StakeAmountInputValidator {
@@ -159,7 +157,6 @@ class DelegationRegisterAmountActivity :
         if (viewModel.isInCoolDown()) {
             amount_locked.visibility = View.VISIBLE
             amount.isEnabled = false
-            pool_registration_continue.isEnabled = false
         }
         if (viewModel.bakerDelegationData.type == UPDATE_DELEGATION) {
             viewModel.bakerDelegationData.oldStakedAmount = viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0
@@ -183,10 +180,7 @@ class DelegationRegisterAmountActivity :
         val amountToStake = getAmountToStake()
         if (viewModel.isUpdatingDelegation()) {
             when {
-                ((amountToStake == viewModel.bakerDelegationData.oldStakedAmount &&
-                    viewModel.getPoolId() == (viewModel.bakerDelegationData.oldDelegationTargetPoolId?.toString() ?: "") &&
-                    viewModel.bakerDelegationData.restake == viewModel.bakerDelegationData.oldRestake &&
-                    viewModel.bakerDelegationData.isBakerPool == viewModel.bakerDelegationData.oldDelegationIsBaker)) -> showNoChange()
+                !hasChanges() -> showNoChange()
                 amountToStake == 0L -> showNewAmountZero()
                 amountToStake < (viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLongOrNull() ?: 0) -> showReduceWarning()
                 moreThan95Percent(amountToStake) -> show95PercentWarning()
@@ -198,6 +192,13 @@ class DelegationRegisterAmountActivity :
                 else -> continueToConfirmation()
             }
         }
+    }
+
+    private fun hasChanges(): Boolean {
+        return !((getAmountToStake() == viewModel.bakerDelegationData.oldStakedAmount &&
+                viewModel.getPoolId() == (viewModel.bakerDelegationData.oldDelegationTargetPoolId?.toString() ?: "") &&
+                viewModel.bakerDelegationData.restake == viewModel.bakerDelegationData.oldRestake &&
+                viewModel.bakerDelegationData.isBakerPool == viewModel.bakerDelegationData.oldDelegationIsBaker))
     }
 
     private fun getAmountToStake(): Long {
