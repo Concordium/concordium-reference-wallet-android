@@ -99,9 +99,9 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         identityListLiveData = identityRepository.allIdentities
     }
 
-    fun loadAppSettings(appVersion: Int) {
+    fun loadAppSettings() {
         viewModelScope.launch {
-            val response = proxyRepository.getAppSettings("android", appVersion)
+            val response = proxyRepository.getAppSettings(App.appCore.getAppVersion())
             if (response.isSuccessful) {
                 response.body()?.let {
                     _appSettingsLiveData.value = it

@@ -7,7 +7,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
-import androidx.core.content.pm.PackageInfoCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
@@ -202,7 +201,7 @@ class AccountsOverviewFragment : BaseFragment() {
             showTotalBalance(totalBalance.totalBalanceForAllAccounts, totalBalance.totalContainsEncrypted)
             showDisposalBalance(totalBalance.totalAtDisposalForAllAccounts, totalBalance.totalContainsEncrypted)
             showStakedBalance(totalBalance.totalStakedForAllAccounts)
-            loadAppSettings()
+            viewModel.loadAppSettings()
         })
         viewModel.accountListLiveData.observe(this, Observer { accountList ->
             accountList?.let {
@@ -230,15 +229,6 @@ class AccountsOverviewFragment : BaseFragment() {
         })
     }
 
-    private fun loadAppSettings() {
-        context?.let {
-            val pInfo = it.packageManager.getPackageInfo(it.packageName, 0)
-            val longVersionCode = PackageInfoCompat.getLongVersionCode(pInfo)
-            val versionCode = longVersionCode.toInt()
-            viewModel.loadAppSettings(versionCode)
-        }
-    }
-
     private fun checkAppSettings(appSettings: AppSettings) {
         when (appSettings.status) {
             AppSettings.APP_VERSION_STATUS_WARNING -> appSettings.url?.let { showAppUpdateWarning(it) }
@@ -252,7 +242,6 @@ class AccountsOverviewFragment : BaseFragment() {
         builder.setMessage(getString(R.string.force_update_warning_message))
         builder.setPositiveButton(getString(R.string.force_update_warning_update_now)) { _, _ ->
             gotoAppStore(url)
-            activity?.finish()
         }
         builder.setNegativeButton(getString(R.string.force_update_warning_backup)) { _, _ -> gotoBackup() }
         builder.setNeutralButton(getString(R.string.force_update_warning_remind_me)) { dialog, _ -> dialog.dismiss() }

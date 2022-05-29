@@ -52,7 +52,7 @@ class ProxyRepository() {
 
     suspend fun getAccountSubmissionStatusSuspended(submissionId: String) = backend.accountSubmissionStatusSuspended(submissionId)
 
-    suspend fun getAppSettings(platform: String, version: Int) = backend.appSettingsSuspended(platform, version)
+    suspend fun getAppSettings(version: Int) = backend.appSettingsSuspended("android", version)
 
     fun getBakerPool(
         bakerId: String,

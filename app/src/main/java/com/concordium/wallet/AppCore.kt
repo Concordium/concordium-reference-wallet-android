@@ -1,6 +1,7 @@
 package com.concordium.wallet
 
 import android.content.Context
+import androidx.core.content.pm.PackageInfoCompat
 import com.concordium.wallet.core.authentication.AuthenticationManager
 import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.core.crypto.CryptoLibrary
@@ -16,8 +17,8 @@ import com.google.gson.GsonBuilder
 class AppCore(val context: Context) {
 
     val gson: Gson = initializeGson()
-    val proxybackendConfig = ProxyBackendConfig(gson)
-    val cryptoLibrary: CryptoLibrary
+    val proxyBackendConfig = ProxyBackendConfig(gson)
+    val cryptoLibrary: CryptoLibrary = if (BuildConfig.USE_LIB_MOCK) CryptoLibraryMock(gson) else CryptoLibraryReal(gson)
     val session: Session = Session(App.appContext)
     var closingPoolsChecked = false
     var sessionCookie: String? = null
@@ -28,13 +29,11 @@ class AppCore(val context: Context) {
     private var resetBiometricKeyNameAppendix: String = ""
 
     init {
-        cryptoLibrary =
-            if (BuildConfig.USE_LIB_MOCK) CryptoLibraryMock(gson) else CryptoLibraryReal(gson)
         authenticationManager.verifyValidBiometricKeyStore()
     }
 
     fun getProxyBackend(): ProxyBackend {
-        return proxybackendConfig.backend
+        return proxyBackendConfig.backend
     }
 
     private fun initializeGson(): Gson {
@@ -66,5 +65,11 @@ class AppCore(val context: Context) {
         authenticationManagerReset = authenticationManagerGeneric
         authenticationManager = authenticationManagerReset
         session.hasFinishedSetupPassword()
+    }
+
+    fun getAppVersion(): Int {
+        val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        val longVersionCode = PackageInfoCompat.getLongVersionCode(pInfo)
+        return longVersionCode.toInt()
     }
 }
