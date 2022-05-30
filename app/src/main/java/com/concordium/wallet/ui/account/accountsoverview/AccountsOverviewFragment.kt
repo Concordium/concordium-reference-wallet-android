@@ -229,10 +229,13 @@ class AccountsOverviewFragment : BaseFragment() {
         })
     }
 
-    private fun checkAppSettings(appSettings: AppSettings) {
-        when (appSettings.status) {
-            AppSettings.APP_VERSION_STATUS_WARNING -> appSettings.url?.let { showAppUpdateWarning(it) }
-            AppSettings.APP_VERSION_STATUS_NEEDS_UPDATE -> appSettings.url?.let { showAppUpdateNeedsUpdate(it) }
+    private fun checkAppSettings(appSettings: AppSettings?) {
+        appSettings?.let {
+            when (appSettings.status) {
+                AppSettings.APP_VERSION_STATUS_WARNING -> it.url?.let { url -> showAppUpdateWarning(url) }
+                AppSettings.APP_VERSION_STATUS_NEEDS_UPDATE -> it.url?.let { url -> showAppUpdateNeedsUpdate(url) }
+                else -> {}
+            }
         }
     }
 
