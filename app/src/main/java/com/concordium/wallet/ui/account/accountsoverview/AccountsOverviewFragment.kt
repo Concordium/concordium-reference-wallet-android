@@ -6,6 +6,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Process
 import android.view.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -47,7 +48,7 @@ class AccountsOverviewFragment : BaseFragment() {
 
     private var encryptedWarningDialog: AlertDialog? = null
     private var fragmentListener: AccountsOverviewFragmentListener? = null
-
+    private var forceUpdateDialog: AlertDialog? = null
     private var eventListener: Preferences.Listener? = null
 
     private lateinit var viewModel: AccountsOverviewViewModel
@@ -98,6 +99,9 @@ class AccountsOverviewFragment : BaseFragment() {
         eventListener?.let {
             App.appCore.session.addAccountsBackedUpListener(it)
         }
+
+        if (!App.appCore.appSettingsForceUpdateChecked)
+            viewModel.loadAppSettings()
     }
 
     override fun onDestroy() {
@@ -106,7 +110,6 @@ class AccountsOverviewFragment : BaseFragment() {
         eventListener?.let {
             App.appCore.session.removeAccountsBackedUpListener(it)
         }
-
     }
 
     override fun onPause() {
@@ -201,7 +204,6 @@ class AccountsOverviewFragment : BaseFragment() {
             showTotalBalance(totalBalance.totalBalanceForAllAccounts, totalBalance.totalContainsEncrypted)
             showDisposalBalance(totalBalance.totalAtDisposalForAllAccounts, totalBalance.totalContainsEncrypted)
             showStakedBalance(totalBalance.totalStakedForAllAccounts)
-            viewModel.loadAppSettings()
         })
         viewModel.accountListLiveData.observe(this, Observer { accountList ->
             accountList?.let {
@@ -240,6 +242,9 @@ class AccountsOverviewFragment : BaseFragment() {
     }
 
     private fun showAppUpdateWarning(url: String) {
+        if (forceUpdateDialog != null)
+            return
+
         val builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.force_update_warning_title)
         builder.setMessage(getString(R.string.force_update_warning_message))
@@ -247,28 +252,40 @@ class AccountsOverviewFragment : BaseFragment() {
             gotoAppStore(url)
         }
         builder.setNegativeButton(getString(R.string.force_update_warning_backup)) { _, _ -> gotoBackup() }
-        builder.setNeutralButton(getString(R.string.force_update_warning_remind_me)) { dialog, _ -> dialog.dismiss() }
-        builder.create().show()
+        builder.setNeutralButton(getString(R.string.force_update_warning_remind_me)) { dialog, _ ->
+            App.appCore.appSettingsForceUpdateChecked = true
+            dialog.dismiss()
+        }
+        builder.setCancelable(false)
+        forceUpdateDialog = builder.create()
+        forceUpdateDialog?.show()
     }
 
     private fun showAppUpdateNeedsUpdate(url: String) {
+        if (forceUpdateDialog != null)
+            return
+
         val builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.force_update_needed_title)
         builder.setMessage(getString(R.string.force_update_needed_message))
         builder.setNeutralButton(getString(R.string.force_update_needed_update_now)) { _, _ ->
             gotoAppStore(url)
-            activity?.finish()
         }
         builder.setPositiveButton(getString(R.string.force_update_needed_backup)) { _, _ -> gotoBackup() }
         builder.setCancelable(false)
-        builder.create().show()
+        forceUpdateDialog = builder.create()
+        forceUpdateDialog?.show()
     }
 
     private fun gotoAppStore(url: String) {
-        startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(url)))
+        if (url.isNotBlank())
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        Process.killProcess(Process.myPid())
     }
 
     private fun gotoBackup() {
+        forceUpdateDialog?.dismiss()
+        forceUpdateDialog = null
         startActivity(Intent(context, ExportActivity::class.java))
     }
 
