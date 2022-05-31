@@ -99,6 +99,10 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     val fileSavedLiveData: LiveData<Event<Int>>
         get() = _fileSavedLiveData
 
+    private val _bakerPoolStatusLiveData = MutableLiveData<BakerPoolStatus>()
+    val bakerPoolStatusLiveData: LiveData<BakerPoolStatus>
+        get() = _bakerPoolStatusLiveData
+
     init {
         val transferDao = WalletDatabase.getDatabase(application).transferDao()
         transferRepository = TransferRepository(transferDao)
@@ -232,6 +236,16 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                 }
             )
         }
+    }
+
+    fun getBakerPool(bakerId: String) {
+        proxyRepository.getBakerPool(bakerId,
+            {
+                _bakerPoolStatusLiveData.value = it
+            }, {
+                _bakerPoolStatusLiveData.value = null
+            }
+        )
     }
 
     fun loadTransactionFee(notifyObservers: Boolean, requestId: Int? = null, metadataSizeForced: Int? = null) {

@@ -14,6 +14,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.DateTimeUtil.formatTo
 import com.concordium.wallet.util.DateTimeUtil.toDate
 import kotlinx.android.synthetic.main.delegationbaker_status.*
+import kotlinx.android.synthetic.main.progress.*
 
 abstract class StatusActivity(titleId: Int) :
     BaseActivity(R.layout.delegationbaker_status, titleId) {
@@ -42,14 +43,20 @@ abstract class StatusActivity(titleId: Int) :
         addContent(getString(titleRes), text)
     }
 
-    fun addContent(title: String, text: String) {
+    fun addContent(title: String, text: String, titleTextColor: Int? = null) {
         status_empty.visibility = View.GONE
         status_list_container.visibility = View.VISIBLE
 
         val view = LayoutInflater.from(this).inflate(R.layout.delegation_baker_status_content_item, null)
 
         if (title.isNotEmpty())
-            view.findViewById<TextView>(R.id.status_item_title).text = title
+        {
+            val titleView = view.findViewById<TextView>(R.id.status_item_title)
+            titleView.text = title
+            titleTextColor?.let {
+                titleView.setTextColor(getColor(it))
+            }
+        }
         else
             view.findViewById<TextView>(R.id.status_item_title).visibility = View.GONE
 
@@ -98,4 +105,12 @@ abstract class StatusActivity(titleId: Int) :
     }
 
     abstract fun initView()
+
+    protected open fun showWaiting(waiting: Boolean) {
+        if (waiting) {
+            progress_layout.visibility = View.VISIBLE
+        } else {
+            progress_layout.visibility = View.GONE
+        }
+    }
 }

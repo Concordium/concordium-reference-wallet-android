@@ -3,11 +3,13 @@ package com.concordium.wallet.ui.bakerdelegation.delegation
 import android.content.Intent
 import android.view.View
 import android.widget.ImageView
+import androidx.lifecycle.Observer
 import com.concordium.wallet.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_DELEGATION
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_DELEGATION
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
-import com.concordium.wallet.data.model.BakerStakePendingChange
+import com.concordium.wallet.data.model.BakerPoolStatus
+import com.concordium.wallet.data.model.BakerStakePendingChange.Companion.CHANGE_REMOVE_POOL
 import com.concordium.wallet.data.model.DelegationTarget
 import com.concordium.wallet.data.model.PendingChange
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -16,6 +18,8 @@ import com.concordium.wallet.ui.bakerdelegation.common.StatusActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationRemoveIntroFlowActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationUpdateIntroFlowActivity
 import com.concordium.wallet.ui.common.GenericFlowActivity
+import com.concordium.wallet.util.DateTimeUtil.formatTo
+import com.concordium.wallet.util.DateTimeUtil.toDate
 import kotlinx.android.synthetic.main.delegationbaker_status.*
 
 class DelegationStatusActivity :
@@ -71,13 +75,32 @@ class DelegationStatusActivity :
         }
 
         viewModel.bakerDelegationData.bakerPoolStatus?.bakerStakePendingChange?.pendingChangeType.let { pendingChangeType ->
-            if (pendingChangeType == BakerStakePendingChange.CHANGE_REMOVE_POOL) {
+            if (pendingChangeType == CHANGE_REMOVE_POOL) {
                 status_button_top.isEnabled = true
             }
         }
 
         status_button_bottom.setOnClickListener {
             continueToUpdate()
+        }
+
+        viewModel.bakerPoolStatusLiveData.observe(this, Observer<BakerPoolStatus> {
+            showWaiting(false)
+            it?.let { bakerPoolStatus ->
+                if (bakerPoolStatus.bakerStakePendingChange.pendingChangeType == CHANGE_REMOVE_POOL) {
+                    bakerPoolStatus.bakerStakePendingChange.estimatedChangeTime?.let { estimatedChangeTime ->
+                        val prefix = estimatedChangeTime.toDate()?.formatTo("yyyy-MM-dd")
+                        val postfix = estimatedChangeTime.toDate()?.formatTo("HH:mm")
+                        val dateStr = getString(R.string.delegation_status_effective_time, prefix, postfix)
+                        addContent(getString(R.string.delegation_status_pool_deregistered) + "\n" + dateStr, "", R.color.text_pink)
+                    }
+                }
+            }
+        })
+
+        if (accountDelegation.delegationTarget.delegateType == DelegationTarget.TYPE_DELEGATE_TO_BAKER) {
+            showWaiting(true)
+            viewModel.getBakerPool(accountDelegation.delegationTarget.bakerId.toString())
         }
     }
 
