@@ -209,6 +209,9 @@ class CustomDialogFragment : DialogFragment() {
 
         fun newAccountFinalizedDialog(context:Context, accountName: String) {
 
+            if (App.appCore.session.isAccountsBackedUp())
+                return
+
             var title = context.getString(R.string.finalized_account_title_singular)
             var message = context.getString(R.string.finalized_account_message_singular, accountName)
 

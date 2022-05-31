@@ -130,7 +130,7 @@ class AuthPreferences(val context: Context) :
     }
 
     fun isAccountsBackedUp(): Boolean {
-        return getBoolean(PREFKEY_ACCOUNTS_BACKED_UP, true)
+        return getBoolean(PREFKEY_ACCOUNTS_BACKED_UP, false)
     }
 
     fun setAccountsBackedUp(value: Boolean) {
