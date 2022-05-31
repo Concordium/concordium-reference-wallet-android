@@ -73,16 +73,18 @@ abstract class StatusActivity(titleId: Int) :
     }
 
     protected fun addPendingChange(pendingChange: PendingChange, dateStringId: Int, takeEffectOnStringId: Int, removeStakeStringId: Int, reduceStakeStringId: Int) {
-        val prefix = pendingChange.effectiveTime.toDate()?.formatTo("yyyy-MM-dd")
-        val postfix = pendingChange.effectiveTime.toDate()?.formatTo("HH:mm")
-        val dateStr = getString(dateStringId, prefix, postfix)
-        addContent(getString(takeEffectOnStringId) + "\n" + dateStr, "")
-        if (pendingChange.change == "RemoveStake") {
-            status_button_top.isEnabled = false
-            addContent(getString(removeStakeStringId), "")
-        } else if (pendingChange.change == "ReduceStake") {
-            pendingChange.newStake?.let { newStake ->
-                addContent(getString(reduceStakeStringId), CurrencyUtil.formatGTU(newStake, true))
+        pendingChange.estimatedChangeTime?.let { estimatedChangeTime ->
+            val prefix = estimatedChangeTime.toDate()?.formatTo("yyyy-MM-dd")
+            val postfix = estimatedChangeTime.toDate()?.formatTo("HH:mm")
+            val dateStr = getString(dateStringId, prefix, postfix)
+            addContent(getString(takeEffectOnStringId) + "\n" + dateStr, "")
+            if (pendingChange.change == "RemoveStake") {
+                status_button_top.isEnabled = false
+                addContent(getString(removeStakeStringId), "")
+            } else if (pendingChange.change == "ReduceStake") {
+                pendingChange.newStake?.let { newStake ->
+                    addContent(getString(reduceStakeStringId), CurrencyUtil.formatGTU(newStake, true))
+                }
             }
         }
     }

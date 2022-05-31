@@ -4,6 +4,9 @@ import android.app.AlertDialog
 import android.view.View
 import androidx.lifecycle.Observer
 import com.concordium.wallet.R
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_DELEGATION
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_DELEGATION
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
@@ -124,11 +127,24 @@ class DelegationRegisterConfirmationActivity :
         if (viewModel.isInCoolDown()) {
             builder.setMessage(getString(R.string.delegation_notice_message_locked))
         } else {
-            val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0)
-            if (gracePeriod > 0) {
-                builder.setMessage(resources.getQuantityString(R.plurals.delegation_notice_message_decrease, gracePeriod, gracePeriod))
-            } else {
-                builder.setMessage(getString(R.string.delegation_notice_message))
+            var gracePeriod = 0
+            viewModel.bakerDelegationData.chainParameters?.delegatorCooldown?.let { delegatorCooldown ->
+                gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(delegatorCooldown)
+            }
+            when (viewModel.bakerDelegationData.type) {
+                UPDATE_DELEGATION -> {
+                    if ((viewModel.bakerDelegationData.amount ?: 0) < (viewModel.bakerDelegationData.oldStakedAmount ?: 0)) {
+                        builder.setMessage(resources.getQuantityString(R.plurals.delegation_notice_message_decrease, gracePeriod, gracePeriod))
+                    } else {
+                        builder.setMessage(getString(R.string.delegation_notice_message))
+                    }
+                }
+                REMOVE_DELEGATION -> {
+                    builder.setMessage(resources.getQuantityString(R.plurals.delegation_notice_message_remove, gracePeriod, gracePeriod))
+                }
+                else -> {
+                    builder.setMessage(getString(R.string.delegation_notice_message))
+                }
             }
         }
 

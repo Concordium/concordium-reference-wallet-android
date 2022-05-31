@@ -299,7 +299,7 @@
     <string name="delegation_register_delegation_confirmation_receipt_target_pool">Target</string>
     <string name="delegation_register_delegation_confirmation_receipt_rewards_will_be">Rewards will be</string>
     <string name="delegation_register_delegation_reduce_warning_title">Important</string>
-    <string name="delegation_register_delegation_reduce_warning_content">Reducing the delegation amount will lock the total delegation amount for a cool down period. No changes can be made to the amount during this period, and the withdrawal will not take effect before the cool down is over.</string>
+    <string name="delegation_register_delegation_reduce_warning_content">Reducing the delegation amount will lock the total delegation amount for a cool-down period. No changes can be made to the amount during this period, and the withdrawal will not take effect before the cool-down is over.</string>
     <string name="delegation_register_delegation_reduce_warning_cancel">Let me change my amount</string>
     <string name="delegation_register_delegation_reduce_warning_ok">That’s fine</string>
 
@@ -336,18 +336,18 @@
     <string name="delegation_notice_title">Notice</string>
     <string name="delegation_notice_message">Once your transaction has successfully finalized, the delegation will take effect from the next pay day.</string>
     <plurals name="delegation_notice_message_decrease">
-        <item quantity="one">Your decrease to the delegation amount will take effect after a cool down of approximately %d day.\n\nAll other updates will take effect at the next pay day.</item>
-        <item quantity="other">Your decrease to the delegation amount will take effect after a cool down of approximately %d days.\n\nAll other updates will take effect at the next pay day.</item>
+        <item quantity="one">Your decrease of the delegation amount will take effect at the next pay day after a cool-down of %d day.\n\nOnce the transaction has finalized, you can see the time of the release on the delegation status screen.</item>
+        <item quantity="other">Your decrease of the delegation amount will take effect at the next pay day after a cool-down of %d days.\n\nOnce the transaction has finalized, you can see the time of the release on the delegation status screen.</item>
     </plurals>
     <string name="delegation_notice_message_locked">Once your transaction has successfully finalized, the delegation will take effect from the next pay day.</string>
     <plurals name="delegation_notice_message_remove">
-        <item quantity="one">Once your transaction has finalized, the delegation will be stopped after a cool down of %d day.</item>
-        <item quantity="other">Once your transaction has finalized, the delegation will be stopped after a cool down of %d days.</item>
+        <item quantity="one">Your delegation will stop at the next pay day after a cool-down of %d day.\n\nOnce the transaction has finalized, you can see the estimated time on the delegation status screen.</item>
+        <item quantity="other">Your delegation will stop at the next pay day after a cool-down of %d days.\n\nOnce the transaction has finalized, you can see the estimated time on the delegation status screen.</item>
     </plurals>
     <string name="delegation_notice_ok">Okay</string>
 
     <string name="delegation_amount_too_large_notice_title">Current delegation amount too large</string>
-    <string name="delegation_amount_too_large_notice_message">Your current delegation amount will breach the new pool’s limits. To delegate to this pool you must first lower or stop your delegation and then wait for the cool down to pass.</string>
+    <string name="delegation_amount_too_large_notice_message">Your current delegation amount will breach the new pool’s limits. To delegate to this pool you must first lower or stop your delegation and then wait for the cool-down to pass.</string>
     <string name="delegation_amount_too_large_notice_cancel">Cancel</string>
     <string name="delegation_amount_too_large_notice_stop">Stop current delegation</string>
     <string name="delegation_amount_too_large_notice_lower">Lower delegation amount and stay with current pool</string>
@@ -423,7 +423,7 @@
     <string name="baker_update_enter_new_stake">Enter your new total baker stake</string>
 
     <string name="baker_registration_confirmation_title">Register baker</string>
-    <string name="baker_registration_confirmation_explain">You are about to submit a register baker transaction that locks some of your funds in a stake. If you want to unlock the stake again, there will be a cooldown period.</string>
+    <string name="baker_registration_confirmation_explain">You are about to submit a register baker transaction that locks some of your funds in a stake. If you want to unlock the stake again, there will be a cool-down period.</string>
     <string name="baker_register_confirmation_receipt_title">Transaction: Register baker</string>
     <string name="baker_register_confirmation_receipt_account_to_bake_from">Account to register as baker</string>
     <string name="baker_register_confirmation_receipt_amount_to_bake">Baker stake</string>
@@ -453,7 +453,7 @@
     <string name="baker_registration_confirmation_update_stake_transaction_title">Transaction: Update baker stake</string>
     <string name="baker_registration_confirmation_update_affected_account">Affected baker account</string>
     <string name="baker_registration_confirmation_update_stake_update">Account to make baker update</string>
-    <string name="baker_registration_confirmation_update_stake_update_decrease_explain">You are about to submit a transaction that lowers your baker stake. Lowering your stake has a cooldown period, meaning it will not take effect immediately.\n\nThe baker cannot be removed and the stake cannot be changed until the cooldown is over.</string>
+    <string name="baker_registration_confirmation_update_stake_update_decrease_explain">You are about to submit a transaction that lowers your baker stake. Lowering your stake has a cool-down period, meaning it will not take effect immediately.\n\nThe baker cannot be removed and the stake cannot be changed until the cool-down is over.</string>
 
     <string name="baker_update_intro_flow_title">Baking</string>
     <string name="baker_update_intro_subtitle1">Updating baker settings</string>
@@ -487,14 +487,14 @@
     <string name="baker_notice_message">Once your transaction has successfully finalized, the baker registration will take effect from the next pay day.\n\nRemember to restart your node with the baker keys.</string>
     <string name="baker_notice_message_update_increase">Once your transaction has successfully finalized, the baker update will take effect from the next pay day.</string>
     <plurals name="baker_notice_message_update_decrease">
-        <item quantity="one">Your decrease to the baker stake will take effect after a cool down of %d day.\n\nAll other updates will take effect at the next pay day.</item>
-        <item quantity="other">Your decrease to the baker stake will take effect after a cool down of %d days.\n\nAll other updates will take effect at the next pay day.</item>
+        <item quantity="one">Your decrease of the baker stake will take effect at the next pay day after a cool-down of %d day.\n\nOnce the transaction has finalized, you can see the time of the release on the baker status screen.</item>
+        <item quantity="other">Your decrease of the baker stake will take effect at the next pay day after a cool-down of %d days.\n\nOnce the transaction has finalized, you can see the time of the release on the baker status screen.</item>
     </plurals>
     <string name="baker_notice_message_update_pool">Once your transaction has successfully finalized, the pool settings update will take effect from the next pay day.</string>
     <string name="baker_notice_message_update_keys">Once your transaction has successfully finalized, the new baker keys will take effect from the next pay day.\n\nThis means the node should be restarted with the new keys, as close to the next pay day as possible.</string>
     <plurals name="baker_notice_message_remove">
-        <item quantity="one">Once your transaction has finalized, the baker will be deregistered after a cool down of %d day.</item>
-        <item quantity="other">Once your transaction has finalized, the baker will be deregistered after a cool down of %d days.</item>
+        <item quantity="one">Your baker will stop at the next pay day after a cool-down of %d day.\n\nOnce the transaction has finalized, you can see the estimated time on the baker status screen.</item>
+        <item quantity="other">Your baker will stop at the next pay day after a cool-down of %d days.\n\nOnce the transaction has finalized, you can see the estimated time on the baker status screen.</item>
     </plurals>
     <string name="baker_notice_ok">Okay</string>
 
@@ -644,7 +644,7 @@
     <string name="accounts_overview_shielded_balance">Shielded balance</string>
 
     <string name="accounts_overview_closing_pools_notice_title">Delegation update</string>
-    <string name="accounts_overview_closing_pools_notice_message">The target pools of the following accounts will close soon. If you don’t actively change the target pool, your account will keep earning rewards as a passive delegator after the cooldown.\n\nYou can however already change your target pool via the delegation status menu, if you would rather do that.\n\nAffected delegator accounts:</string>
+    <string name="accounts_overview_closing_pools_notice_message">The target pools of the following accounts will close soon. If you don’t actively change the target pool, your account will keep earning rewards as a passive delegator after the cool-down.\n\nYou can however already change your target pool via the delegation status menu, if you would rather do that.\n\nAffected delegator accounts:</string>
     <string name="accounts_overview_closing_pools_notice_ok">Remind me next time I open the wallet</string>
 
 
