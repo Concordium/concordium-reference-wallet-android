@@ -141,8 +141,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
 
         viewModel.titleLiveData.observe(this, Observer<String> { title ->
             title?.let {
-                val actionbar = supportActionBar ?: return@Observer
-                actionbar.setTitle(title)
+                setActionBarTitle(it)
             }
         })
         viewModel.stateLiveData.observe(this, Observer<MainViewModel.State> { state ->
