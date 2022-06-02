@@ -15,6 +15,9 @@ import com.concordium.wallet.util.DateTimeUtil.formatTo
 import com.concordium.wallet.util.DateTimeUtil.toDate
 import kotlinx.android.synthetic.main.delegationbaker_status.*
 import kotlinx.android.synthetic.main.progress.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 abstract class StatusActivity(titleId: Int) :
     BaseActivity(R.layout.delegationbaker_status, titleId) {
@@ -25,6 +28,25 @@ abstract class StatusActivity(titleId: Int) :
         super.onCreate(savedInstanceState)
         initializeViewModel()
         viewModel.initialize(intent.extras?.getSerializable(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA) as BakerDelegationData)
+        initView()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // subscribe to messages from AccountDetailsViewModel
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // unsubscribe from messages from AccountDetailsViewModel
+        EventBus.getDefault().unregister(this)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(bakerDelegationData: BakerDelegationData) {
+        // receive message from AccountDetailsViewModel
+        viewModel.bakerDelegationData = bakerDelegationData
         initView()
     }
 
@@ -77,6 +99,8 @@ abstract class StatusActivity(titleId: Int) :
     fun clearState(){
         status_empty.text = ""
         status_list_container.removeAllViews()
+        status_button_top.isEnabled = true
+        status_button_bottom.isEnabled = true
     }
 
     protected fun addPendingChange(pendingChange: PendingChange, dateStringId: Int, takeEffectOnStringId: Int, removeStakeStringId: Int, reduceStakeStringId: Int) {

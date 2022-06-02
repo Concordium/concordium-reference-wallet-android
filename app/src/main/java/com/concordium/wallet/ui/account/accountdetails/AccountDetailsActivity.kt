@@ -78,9 +78,8 @@ class AccountDetailsActivity :
         viewModel.initiateFrequentUpdater()
     }
 
-
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroy() {
+        super.onDestroy()
         viewModel.stopFrequentUpdater()
     }
 
@@ -376,7 +375,7 @@ class AccountDetailsActivity :
                 cvHideShieldedTV.text = getString(R.string.account_details_menu_hide_shielded, viewModel.account.name)
 
                 // Delegation
-                if (viewModel.account.isBaking()) {
+                if (viewModel.account.isBaking() || viewModel.hasPendingBakingTransactions) {
                     (menuView.findViewById(R.id.menu_item_delegation_card) as CardView).visibility = View.GONE
                 } else {
                     val tvDelegation = menuView.findViewById(R.id.menu_item_delegation) as TextView
@@ -387,7 +386,7 @@ class AccountDetailsActivity :
                 }
 
                 // Baking
-                if (viewModel.account.isDelegating()) {
+                if (viewModel.account.isDelegating() || viewModel.hasPendingDelegationTransactions) {
                     (menuView.findViewById(R.id.menu_item_baking_card) as CardView).visibility = View.GONE
                 } else {
                     val tvBaking = menuView.findViewById(R.id.menu_item_baking) as TextView
@@ -448,9 +447,9 @@ class AccountDetailsActivity :
     }
 
     private fun gotoDelegation(account: Account) {
-        if (account.accountDelegation != null || viewModel.hasPendingTransactions) {
+        if (account.accountDelegation != null || viewModel.hasPendingDelegationTransactions) {
             val intent = Intent(this, DelegationStatusActivity::class.java)
-            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, BakerDelegationData(account, isTransactionInProgress = viewModel.hasPendingTransactions, type = UPDATE_DELEGATION))
+            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, BakerDelegationData(account, isTransactionInProgress = viewModel.hasPendingDelegationTransactions, type = UPDATE_DELEGATION))
             startActivityForResultAndHistoryCheck(intent)
         } else {
             val intent = Intent(this, DelegationCreateIntroFlowActivity::class.java)
@@ -461,9 +460,9 @@ class AccountDetailsActivity :
     }
 
     private fun gotoBaking(account: Account) {
-        if (account.accountBaker != null) {
+        if (account.accountBaker != null || viewModel.hasPendingBakingTransactions) {
             val intent = Intent(this, BakerStatusActivity::class.java)
-            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, BakerDelegationData(account, isTransactionInProgress = viewModel.hasPendingTransactions, type = REGISTER_BAKER))
+            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, BakerDelegationData(account, isTransactionInProgress = viewModel.hasPendingBakingTransactions, type = REGISTER_BAKER))
             startActivityForResultAndHistoryCheck(intent)
         } else {
             val intent = Intent(this, BakerRegistrationIntroFlow::class.java)

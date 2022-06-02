@@ -32,6 +32,13 @@ class DelegationStatusActivity :
         val account = viewModel.bakerDelegationData.account
         val accountDelegation = account?.accountDelegation
 
+        status_button_bottom.text = getString(R.string.delegation_status_update)
+
+        if (viewModel.bakerDelegationData.isTransactionInProgress) {
+            addWaitingForTransaction(R.string.delegation_status_waiting_to_finalize_title, R.string.delegation_status_waiting_to_finalize)
+            return
+        }
+
         if (account == null || accountDelegation == null) {
             findViewById<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_logo_icon_pending)
             setContentTitle(R.string.delegation_status_content_empty_title)
@@ -40,13 +47,6 @@ class DelegationStatusActivity :
             status_button_bottom.setOnClickListener {
                 continueToCreate()
             }
-            return
-        }
-
-        status_button_bottom.text = getString(R.string.delegation_status_update)
-
-        if (viewModel.bakerDelegationData.isTransactionInProgress) {
-            addWaitingForTransaction(R.string.delegation_status_waiting_to_finalize_title, R.string.delegation_status_waiting_to_finalize)
             return
         }
 

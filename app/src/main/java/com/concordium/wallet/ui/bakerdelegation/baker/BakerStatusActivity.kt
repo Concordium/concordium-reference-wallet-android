@@ -33,6 +33,13 @@ class BakerStatusActivity :
         val account = viewModel.bakerDelegationData.account
         val accountBaker = account?.accountBaker
 
+        status_button_bottom.text = getString(R.string.baker_status_update_baker_settings)
+
+        if (viewModel.bakerDelegationData.isTransactionInProgress) {
+            addWaitingForTransaction(R.string.baker_status_baker_waiting_title, R.string.baker_status_baker_waiting)
+            return
+        }
+
         if (account == null || accountBaker == null) {
             findViewById<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_logo_icon_pending)
             setContentTitle(R.string.baker_status_no_baker_title)
@@ -41,13 +48,6 @@ class BakerStatusActivity :
             status_button_bottom.setOnClickListener {
                 continueToBakerAmount()
             }
-            return
-        }
-
-        status_button_bottom.text = getString(R.string.baker_status_update_baker_settings)
-
-        if (viewModel.bakerDelegationData.isTransactionInProgress) {
-            addWaitingForTransaction(R.string.baker_status_baker_waiting_title, R.string.baker_status_baker_waiting)
             return
         }
 

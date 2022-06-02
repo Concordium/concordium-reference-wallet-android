@@ -37,9 +37,9 @@ import com.concordium.wallet.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
 import java.util.*
 import javax.crypto.Cipher
-import kotlin.collections.ArrayList
 
 class AccountDetailsViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -53,7 +53,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     lateinit var account: Account
     var isShielded: Boolean = false
-    var hasPendingTransactions: Boolean = false
+    var hasPendingDelegationTransactions: Boolean = false
+    var hasPendingBakingTransactions: Boolean = false
 
     private val proxyRepository = ProxyRepository()
     private val accountRepository: AccountRepository
@@ -247,6 +248,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             }
             viewModelScope.launch {
                 accountUpdater.updateForAccount(account)
+                val type = if (account.accountDelegation != null) ProxyRepository.UPDATE_DELEGATION else ProxyRepository.REGISTER_BAKER
+                EventBus.getDefault().post(BakerDelegationData(account, isTransactionInProgress = hasPendingDelegationTransactions || hasPendingBakingTransactions , type = type))
             }
         } else {
             _totalBalanceLiveData.value = Pair(0, false)
@@ -294,14 +297,14 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     fun getLocalTransfers() {
         viewModelScope.launch {
-            hasPendingTransactions = false
+            hasPendingDelegationTransactions = false
+            hasPendingBakingTransactions = false
             val recipientList = recipientRepository.getAll()
             transactionMappingHelper = TransactionMappingHelper(account, recipientList)
             val transferList = transferRepository.getAllByAccountId(account.id)
             for (transfer in transferList) {
-                if (transfer.transactionType == TransactionType.LOCAL_DELEGATION || transfer.transactionType == TransactionType.LOCAL_BAKER) {
-                    hasPendingTransactions = true
-                }
+                if (transfer.transactionType == TransactionType.LOCAL_DELEGATION) hasPendingDelegationTransactions = true
+                if (transfer.transactionType == TransactionType.LOCAL_BAKER) hasPendingBakingTransactions = true
                 val transaction = transfer.toTransaction()
                 transactionMappingHelper.addTitlesToTransaction(transaction, transfer, getApplication())
                 nonMergedLocalTransactions.add(transaction)
@@ -513,12 +516,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             }
 
             override fun onFinish() {
-
             }
         }
-
-
-
 
     suspend fun decryptTransactionListUnencryptedAmounts(secretKey: String) {
         _transferListLiveData.value?.forEach {
