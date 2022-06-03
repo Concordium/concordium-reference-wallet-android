@@ -109,16 +109,17 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
                                 android:gravity="center">
+
                                 <com.concordium.wallet.uicore.view.AmountEditText
                                     android:id="@+id/amount"
                                     style="@style/EditText.Card.Flat"
                                     android:layout_width="match_parent"
-                                    android:inputType="numberDecimal"
                                     android:layout_centerInParent="true"
+                                    android:imeOptions="actionDone"
+                                    android:inputType="numberDecimal"
                                     android:textAlignment="center"
-                                    tools:text="Ͼ100.34432354"
                                     android:textSize="24sp"
-                                    android:imeOptions="actionDone" />
+                                    tools:text="Ͼ100.34432354" />
                                 <TextView
                                     android:id="@+id/amount_locked"
                                     android:layout_width="match_parent"
@@ -232,6 +233,7 @@
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
                         android:orientation="horizontal">
+
                         <Button
                             android:id="@+id/pool_registration_continue"
                             style="@style/Button.Standard"

@@ -130,6 +130,6 @@ data class Account(
     }
 
     fun getAtDisposal(): Long {
-        return finalizedBalance + (finalizedAccountReleaseSchedule?.total?.toLong() ?: 0)
+        return finalizedBalance - (finalizedAccountReleaseSchedule?.total?.toLong() ?: 0)
     }
 }

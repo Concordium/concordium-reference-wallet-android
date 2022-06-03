@@ -101,17 +101,26 @@ class DelegationRegisterAmountActivity :
                 CurrencyUtil.formatGTU(it.delegatedCapital, true)
             }
 
+        pool_registration_continue.isEnabled = false
+        amount.isEnabled = false
+        showWaiting(true)
+
         viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<Long?, Int?>> {
             override fun onChanged(response: Pair<Long?, Int?>?) {
                 response?.first?.let {
                     validateFee = it
+                    showWaiting(false)
                     pool_estimated_transaction_fee.visibility = View.VISIBLE
                     pool_estimated_transaction_fee.text = getString(
                         R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(validateFee ?: 0)
                     )
+                    pool_registration_continue.isEnabled = true
+                    amount.isEnabled = true
                 }
             }
         })
+
+        loadTransactionFee()
 
         pool_info.visibility = if (viewModel.bakerDelegationData.isLPool) View.GONE else View.VISIBLE
 
