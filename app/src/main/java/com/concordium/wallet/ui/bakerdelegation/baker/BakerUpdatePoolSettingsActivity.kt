@@ -36,7 +36,7 @@ class BakerUpdatePoolSettingsActivity :
                     viewModel.selectOpenStatus(BakerPoolInfo(OPEN_STATUS_OPEN_FOR_ALL))
                 }
             }, viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL)
-        if (viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL) {
+        if (viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus != OPEN_STATUS_CLOSED_FOR_ALL) {
             pool_options.addControl(
                 getString(R.string.baker_update_pool_settings_option_close_for_new),
                 object : SegmentedControlView.OnItemClickListener {
@@ -51,7 +51,7 @@ class BakerUpdatePoolSettingsActivity :
                 override fun onItemClicked() {
                     viewModel.selectOpenStatus(BakerPoolInfo(OPEN_STATUS_CLOSED_FOR_ALL))
                 }
-            }, viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_NEW || viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_ALL)
+            }, viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_ALL)
 
         when (viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus) {
             OPEN_STATUS_OPEN_FOR_ALL -> pool_settings_current_status.text = getString(R.string.baker_update_pool_settings_current_status_open)
