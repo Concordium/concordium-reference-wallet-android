@@ -25,6 +25,23 @@ import kotlinx.android.synthetic.main.delegationbaker_status.*
 class DelegationStatusActivity :
     StatusActivity(R.string.delegation_status_title) {
 
+    override fun initializeViewModel() {
+        super.initializeViewModel()
+
+        viewModel.bakerPoolStatusLiveData.observe(this, Observer<BakerPoolStatus> {
+            it?.let { bakerPoolStatus ->
+                if (bakerPoolStatus.bakerStakePendingChange.pendingChangeType == CHANGE_REMOVE_POOL) {
+                    bakerPoolStatus.bakerStakePendingChange.estimatedChangeTime?.let { estimatedChangeTime ->
+                        val prefix = estimatedChangeTime.toDate()?.formatTo("yyyy-MM-dd")
+                        val postfix = estimatedChangeTime.toDate()?.formatTo("HH:mm")
+                        val dateStr = getString(R.string.delegation_status_effective_time, prefix, postfix)
+                        addContent(getString(R.string.delegation_status_pool_deregistered) + "\n" + dateStr, "", R.color.text_pink)
+                    }
+                }
+            }
+        })
+    }
+
     override fun initView() {
 
         clearState()
@@ -84,22 +101,7 @@ class DelegationStatusActivity :
             continueToUpdate()
         }
 
-        viewModel.bakerPoolStatusLiveData.observe(this, Observer<BakerPoolStatus> {
-            showWaiting(false)
-            it?.let { bakerPoolStatus ->
-                if (bakerPoolStatus.bakerStakePendingChange.pendingChangeType == CHANGE_REMOVE_POOL) {
-                    bakerPoolStatus.bakerStakePendingChange.estimatedChangeTime?.let { estimatedChangeTime ->
-                        val prefix = estimatedChangeTime.toDate()?.formatTo("yyyy-MM-dd")
-                        val postfix = estimatedChangeTime.toDate()?.formatTo("HH:mm")
-                        val dateStr = getString(R.string.delegation_status_effective_time, prefix, postfix)
-                        addContent(getString(R.string.delegation_status_pool_deregistered) + "\n" + dateStr, "", R.color.text_pink)
-                    }
-                }
-            }
-        })
-
         if (accountDelegation.delegationTarget.delegateType == DelegationTarget.TYPE_DELEGATE_TO_BAKER) {
-            showWaiting(true)
             viewModel.getBakerPool(accountDelegation.delegationTarget.bakerId.toString())
         }
     }

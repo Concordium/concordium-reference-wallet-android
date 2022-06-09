@@ -50,7 +50,7 @@ abstract class StatusActivity(titleId: Int) :
         initView()
     }
 
-    private fun initializeViewModel() {
+    protected open fun initializeViewModel() {
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
