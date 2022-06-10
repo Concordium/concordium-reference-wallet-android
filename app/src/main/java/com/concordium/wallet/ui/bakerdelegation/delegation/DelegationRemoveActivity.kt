@@ -45,7 +45,7 @@ class DelegationRemoveActivity :
     }
 
     private fun validate() {
-        if (viewModel.atDisposal() < viewModel.bakerDelegationData.cost ?: 0) {
+        if (viewModel.atDisposal() < (viewModel.bakerDelegationData.cost ?: 0)) {
             showNotEnoughFunds()
         } else {
             if (viewModel.bakerDelegationData.isBakerPool) {

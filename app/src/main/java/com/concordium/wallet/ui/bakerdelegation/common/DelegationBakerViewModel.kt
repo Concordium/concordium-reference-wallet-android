@@ -165,7 +165,14 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun atDisposal(): Long {
-        return (bakerDelegationData.account?.finalizedBalance ?: 0) - (bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0)
+        var staked: Long = 0
+        bakerDelegationData.account?.accountDelegation?.let {
+            staked = it.stakedAmount.toLong()
+        }
+        bakerDelegationData.account?.accountBaker?.let {
+            staked = it.stakedAmount.toLong()
+        }
+        return (bakerDelegationData.account?.finalizedBalance ?: 0) - staked
     }
 
     fun selectBakerPool() {
@@ -632,14 +639,13 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         val createdAt = Date().time
 
         val accountId = bakerDelegationData.account?.id
-        val amount = bakerDelegationData.amount
         val fromAddress = bakerDelegationData.account?.address
         val submissionId = bakerDelegationData.submissionId
         val transferSubmissionStatus = bakerDelegationData.transferSubmissionStatus
         val cost = bakerDelegationData.cost
         val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
 
-        if (transferSubmissionStatus == null || expiry == null || cost == null || accountId == null || fromAddress == null || submissionId == null) {
+        if (transferSubmissionStatus == null || cost == null || accountId == null || fromAddress == null || submissionId == null) {
             _errorLiveData.value = Event(R.string.app_error_general)
             _waitingLiveData.value = false
             return
