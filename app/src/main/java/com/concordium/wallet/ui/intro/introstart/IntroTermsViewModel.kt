@@ -12,6 +12,7 @@ import com.concordium.wallet.data.model.AppSettings
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class IntroTermsViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -39,15 +40,20 @@ class IntroTermsViewModel(application: Application) : AndroidViewModel(applicati
 
     fun loadAppSettings() {
         viewModelScope.launch {
-            val response = proxyRepository.getAppSettings(App.appCore.getAppVersion())
-            if (response.isSuccessful) {
-                response.body()?.let {
-                    _appSettingsLiveData.value = it
-                } ?: run {
+            try {
+                val response = proxyRepository.getAppSettings(App.appCore.getAppVersion())
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _appSettingsLiveData.value = it
+                    } ?: run {
+                        _appSettingsLiveData.value = null
+                    }
+                } else {
+                    Log.d("appSettings failed")
                     _appSettingsLiveData.value = null
                 }
-            } else {
-                Log.d("appSettings failed")
+            } catch (ex: Exception) {
+                Log.d("appSettings failed -> " + ex.message)
                 _appSettingsLiveData.value = null
             }
         }

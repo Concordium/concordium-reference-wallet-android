@@ -17,7 +17,7 @@ import com.google.gson.GsonBuilder
 class AppCore(val context: Context) {
 
     val gson: Gson = initializeGson()
-    val proxyBackendConfig = ProxyBackendConfig(gson)
+    val proxyBackendConfig = ProxyBackendConfig(context, gson)
     val cryptoLibrary: CryptoLibrary = if (BuildConfig.USE_LIB_MOCK) CryptoLibraryMock(gson) else CryptoLibraryReal(gson)
     val session: Session = Session(App.appContext)
     var closingPoolsChecked = false
