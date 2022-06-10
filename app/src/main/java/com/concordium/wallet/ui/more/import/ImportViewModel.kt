@@ -522,6 +522,7 @@ class ImportViewModel(application: Application) :
     }
 
     private fun confirmImport() {
+        App.appCore.session.setAccountsBackedUp(true)
         _showImportConfirmedLiveData.value = Event(true)
     }
 
