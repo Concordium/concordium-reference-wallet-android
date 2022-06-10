@@ -13,6 +13,7 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
+import com.concordium.wallet.util.KeyboardUtil
 import kotlinx.android.synthetic.main.activity_delegation_registration_amount.*
 import kotlinx.android.synthetic.main.activity_delegation_registration_amount.amount
 import kotlinx.android.synthetic.main.activity_delegation_registration_amount.amount_desc
@@ -115,7 +116,8 @@ class DelegationRegisterAmountActivity :
                         R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(validateFee ?: 0)
                     )
                     pool_registration_continue.isEnabled = true
-                    amount.isEnabled = true
+                    if (!viewModel.isInCoolDown())
+                        amount.isEnabled = true
                 }
             }
         })
