@@ -60,17 +60,8 @@ class BakerUpdatePoolSettingsActivity :
         }
 
         update_pool_settings_continue.setOnClickListener {
-            validate()
+            gotoNextPage()
         }
-    }
-
-    private fun validate() {
-        var gotoNextPage = false
-        if (viewModel.bakerDelegationData.oldOpenStatus != viewModel.bakerDelegationData.bakerPoolInfo?.openStatus || viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL)
-            gotoNextPage = true
-
-        if (gotoNextPage) gotoNextPage()
-        else showNoChange()
     }
 
     private fun gotoNextPage() {
