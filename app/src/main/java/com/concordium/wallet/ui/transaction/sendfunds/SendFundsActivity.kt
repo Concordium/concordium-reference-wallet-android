@@ -97,8 +97,9 @@ class SendFundsActivity :
             viewModel.selectedRecipient = recipient
             updateConfirmButton()
             if(viewModel.account.id == recipient.id){
-                //select_recipient_layout.visibility = View.GONE
                 setActionBarTitle(if(viewModel.isShielded) R.string.send_funds_unshield_title else R.string.send_funds_shield_title)
+                if (!viewModel.isShielded)
+                    send_all.visibility = View.GONE
             }
         }
     }
@@ -287,12 +288,8 @@ class SendFundsActivity :
             }
         }
 
-        if (viewModel.isShielded) {
-            send_all.visibility = View.GONE
-        } else {
-            send_all.setOnClickListener {
-                viewModel.updateSendAllValue()
-            }
+        send_all.setOnClickListener {
+            viewModel.updateSendAllValue()
         }
 
         viewModel.sendAllAmountLiveData.observe(this, object : Observer<Long> {
@@ -313,17 +310,10 @@ class SendFundsActivity :
         confirm_button.setOnClickListener {
             viewModel.selectedRecipient?.let {
                 if (viewModel.validateAndSaveRecipient(it.name, it.address)) {
-                    if (viewModel.isShielded) {
-                        val amountValue = CurrencyUtil.toGTUValue(amount_edittext.text.toString())
-                        if (amountValue != null) {
-                            if (amountValue > viewModel.account.totalShieldedBalance * 0.95)
-                                show95PercentWarning()
-                            else
-                                sendFunds()
-                        }
-                    } else {
+                    if (viewModel.account.address == it.address && !viewModel.isShielded)
+                        check95PercentWarning()
+                    else
                         sendFunds()
-                    }
                 }
             }
         }
@@ -342,13 +332,21 @@ class SendFundsActivity :
         }
     }
 
-    private fun show95PercentWarning() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(R.string.send_funds_more_than_95_title)
-        builder.setMessage(getString(R.string.send_funds_more_than_95_message))
-        builder.setPositiveButton(getString(R.string.send_funds_more_than_95_continue)) { _, _ -> sendFunds() }
-        builder.setNegativeButton(getString(R.string.send_funds_more_than_95_new_stake)) { dialog, _ -> dialog.dismiss() }
-        builder.create().show()
+    private fun check95PercentWarning() {
+        val amountValue = CurrencyUtil.toGTUValue(amount_edittext.text.toString())
+        val atDisposal = viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance)
+        if (amountValue != null) {
+            if (amountValue > atDisposal * 0.95) {
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle(R.string.send_funds_more_than_95_title)
+                builder.setMessage(getString(R.string.send_funds_more_than_95_message))
+                builder.setPositiveButton(getString(R.string.send_funds_more_than_95_continue)) { _, _ -> sendFunds() }
+                builder.setNegativeButton(getString(R.string.send_funds_more_than_95_new_stake)) { dialog, _ -> dialog.dismiss() }
+                builder.create().show()
+            }
+            else
+                sendFunds()
+        }
     }
 
     private fun sendFunds() {
@@ -462,10 +460,11 @@ class SendFundsActivity :
         val hasSufficientFunds = viewModel.hasSufficientFunds(amount_edittext.text.toString())
         error_textview.visibility = if (hasSufficientFunds) View.INVISIBLE else View.VISIBLE
         val enabled = if(isWaiting()) false else {
-            amount_edittext.text.isNotEmpty()
+            (amount_edittext.text.isNotEmpty()
                     && viewModel.selectedRecipient != null
                     && viewModel.transactionFeeLiveData.value != null
                     && hasSufficientFunds
+                    && (CurrencyUtil.toGTUValue(amount_edittext.text.toString()) ?: 0) > 0)
         }
         confirm_button.isEnabled = enabled
         return enabled
