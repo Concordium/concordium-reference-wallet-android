@@ -149,6 +149,7 @@
                         android:drawablePadding="10dp"
                         android:drawableTint="@color/theme_component"
                         android:hint="0.00"
+                        android:imeOptions="actionDone"
                         android:inputType="number"
                         android:textColorHint="@color/theme_component"
                         tools:text="1000000000.00" />

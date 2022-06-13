@@ -713,7 +713,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun validateAndSaveRecipient(name: String, address: String): Boolean {
+    fun validateAndSaveRecipient(address: String): Boolean {
         val isAddressValid = App.appCore.cryptoLibrary.checkAccountAddress(address)
         if (!isAddressValid) {
             _errorLiveData.value = Event(R.string.recipient_error_invalid_address)

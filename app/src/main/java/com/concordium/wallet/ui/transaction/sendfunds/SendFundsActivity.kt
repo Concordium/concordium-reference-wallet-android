@@ -12,6 +12,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.App
 import com.concordium.wallet.CBORUtil
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
@@ -26,6 +27,7 @@ import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.transaction.sendfundsconfirmed.SendFundsConfirmedActivity
 import com.concordium.wallet.uicore.afterTextChanged
+import com.concordium.wallet.util.KeyboardUtil
 import kotlinx.android.synthetic.main.activity_send_funds.*
 import kotlinx.android.synthetic.main.progress.*
 import java.text.DecimalFormatSymbols
@@ -224,8 +226,10 @@ class SendFundsActivity :
         amount_edittext.setOnEditorActionListener { textView, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
-                    if (textView.text.isNotEmpty())
+                    if (textView.text.isNotEmpty() && App.appCore.cryptoLibrary.checkAccountAddress(viewModel.selectedRecipient?.address ?: ""))
                         viewModel.sendFunds(amount_edittext.text.toString())
+                    else
+                        KeyboardUtil.hideKeyboard(this)
                     true
                 }
                 else -> false
@@ -309,7 +313,7 @@ class SendFundsActivity :
 
         confirm_button.setOnClickListener {
             viewModel.selectedRecipient?.let {
-                if (viewModel.validateAndSaveRecipient(it.name, it.address)) {
+                if (viewModel.validateAndSaveRecipient(it.address)) {
                     if (viewModel.account.address == it.address && !viewModel.isShielded)
                         check95PercentWarning()
                     else
