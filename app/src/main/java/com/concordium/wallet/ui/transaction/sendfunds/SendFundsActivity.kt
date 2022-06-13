@@ -226,7 +226,7 @@ class SendFundsActivity :
         amount_edittext.setOnEditorActionListener { textView, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
-                    if (textView.text.isNotEmpty() && App.appCore.cryptoLibrary.checkAccountAddress(viewModel.selectedRecipient?.address ?: ""))
+                    if (enableConfirm())
                         viewModel.sendFunds(amount_edittext.text.toString())
                     else
                         KeyboardUtil.hideKeyboard(this)
@@ -461,17 +461,21 @@ class SendFundsActivity :
     }
 
     private fun updateConfirmButton(): Boolean {
+        confirm_button.isEnabled = enableConfirm()
+        return confirm_button.isEnabled
+    }
+
+    private fun enableConfirm(): Boolean {
         val hasSufficientFunds = viewModel.hasSufficientFunds(amount_edittext.text.toString())
         error_textview.visibility = if (hasSufficientFunds) View.INVISIBLE else View.VISIBLE
-        val enabled = if(isWaiting()) false else {
+        val enable = if(isWaiting()) false else {
             (amount_edittext.text.isNotEmpty()
                     && viewModel.selectedRecipient != null
                     && viewModel.transactionFeeLiveData.value != null
                     && hasSufficientFunds
                     && (CurrencyUtil.toGTUValue(amount_edittext.text.toString()) ?: 0) > 0)
         }
-        confirm_button.isEnabled = enabled
-        return enabled
+        return enable
     }
 
     private fun updateAmountEditText() {
