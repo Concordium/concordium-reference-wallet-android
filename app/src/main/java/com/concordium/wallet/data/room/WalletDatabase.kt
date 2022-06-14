@@ -26,7 +26,7 @@ abstract class WalletDatabase : RoomDatabase() {
 
     companion object {
 
-        const val VERSION_NUMBER = 6
+        const val VERSION_NUMBER = 7
 
         val MIGRATION_3_4: Migration = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
@@ -49,6 +49,13 @@ abstract class WalletDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_6_7: Migration = object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE account_table "
+                        + " ADD COLUMN accountIndex INTEGER");
+            }
+        }
+
         // Singleton prevents multiple instances of database opening at the same time.
         @Volatile
         private var INSTANCE: WalletDatabase? = null
@@ -67,6 +74,7 @@ abstract class WalletDatabase : RoomDatabase() {
                     .addMigrations(MIGRATION_3_4)
                     .addMigrations(MIGRATION_4_5)
                     .addMigrations(MIGRATION_5_6)
+                    .addMigrations(MIGRATION_6_7)
                     .build()
                 INSTANCE = instance
                 return instance

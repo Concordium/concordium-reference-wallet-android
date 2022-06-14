@@ -319,6 +319,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     val accountBalance = request.deferred.await()
                     request.account.finalizedBalance = accountBalance.finalizedBalance?.getAmount() ?: 0
                     request.account.currentBalance = accountBalance.currentBalance?.getAmount() ?: 0
+                    request.account.accountIndex = accountBalance.finalizedBalance?.accountIndex
 
                     request.account.accountDelegation = accountBalance.currentBalance?.accountDelegation
                     request.account.accountBaker = accountBalance.currentBalance?.accountBaker

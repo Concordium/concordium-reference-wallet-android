@@ -8,7 +8,8 @@ data class AccountBalanceInfo(
     val accountNonce: Int,
     val accountReleaseSchedule: AccountReleaseSchedule,
     val accountBaker: AccountBaker?,
-    val accountDelegation: AccountDelegation?
+    val accountDelegation: AccountDelegation?,
+    val accountIndex: Int
 ) : Serializable {
 
     fun getAmount(): Long {

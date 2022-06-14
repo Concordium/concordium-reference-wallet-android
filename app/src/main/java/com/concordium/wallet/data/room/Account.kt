@@ -79,7 +79,10 @@ data class Account(
     var accountDelegation: AccountDelegation? = null,
 
     @ColumnInfo(name = "account_baker")
-    var accountBaker: AccountBaker? = null
+    var accountBaker: AccountBaker? = null,
+
+    @ColumnInfo(name = "accountIndex")
+    var accountIndex: Int? = null
 
     ) : Serializable {
 

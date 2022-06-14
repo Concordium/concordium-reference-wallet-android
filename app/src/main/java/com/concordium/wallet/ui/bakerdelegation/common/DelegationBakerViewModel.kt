@@ -702,7 +702,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     fun bakerKeysJson(): String? {
         _bakerKeysLiveData.value?.let { bakerKeys ->
-            bakerKeys.bakerId = bakerDelegationData.account?.accountBaker?.bakerId
+            bakerKeys.bakerId = bakerDelegationData.account?.accountIndex
             return if (bakerKeys.toString().isNotEmpty()) App.appCore.gson.toJson(bakerKeys) else null
         }
         return null
