@@ -203,19 +203,19 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return bakerDelegationData.poolId
     }
 
-    fun getStakeInputMax(): String? {
-        var max: Double? = null
+    fun getStakeInputMax(): String {
+        var max: Long? = null
         val allPoolTotalCapital = bakerDelegationData.passiveDelegation?.allPoolTotalCapital
-        val capitalBound = bakerDelegationData.chainParameters?.capitalBound
-        if (allPoolTotalCapital != null && capitalBound != null) {
-            max = ((allPoolTotalCapital.toLongOrNull() ?: 0) * capitalBound / 100)
+        val capitalBound: Long = ((bakerDelegationData.chainParameters?.capitalBound?.times(100))?.toLong()) ?: 0
+        if (allPoolTotalCapital != null) {
+            max = ((allPoolTotalCapital.toLongOrNull() ?: 0) * (capitalBound))
             if (bakerDelegationData.type != REGISTER_BAKER) {
                 bakerDelegationData.bakerPoolStatus?.delegatedCapital?.let { delegatedCapital ->
                     max -= (delegatedCapital.toLongOrNull() ?: 0)
                 }
             }
         }
-        return max?.toBigDecimal()?.toLong().toString()
+        return max?.div(100)?.toBigDecimal()?.toLong().toString()
     }
 
     fun validatePoolId() {
