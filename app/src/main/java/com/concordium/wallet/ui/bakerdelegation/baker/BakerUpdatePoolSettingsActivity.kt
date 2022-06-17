@@ -21,10 +21,7 @@ class BakerUpdatePoolSettingsActivity :
         viewModel.bakerDelegationData.oldOpenStatus = viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus
 
         viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.let {
-            if (it.openStatus == OPEN_STATUS_CLOSED_FOR_NEW)
-                viewModel.selectOpenStatus(BakerPoolInfo(OPEN_STATUS_CLOSED_FOR_ALL, it.metadataUrl))
-            else
-                viewModel.selectOpenStatus(it)
+            viewModel.selectOpenStatus(it)
         }
 
         pool_options.clearAll()
