@@ -82,7 +82,8 @@ class StakeAmountInputValidator(
 
     private fun checkPoolLimit(amount: String): StakeError {
         if (currentPool?.toLongOrNull() != null && poolLimit?.toLongOrNull() != null) {
-            if (amount.toLong() + currentPool.toLong() - (previouslyStakedInPool?.toLong() ?: 0) > poolLimit.toLong()) {
+            val prev = if (oldPoolId == newPoolId?.toLongOrNull()) previouslyStakedInPool else "0" // only use previouslyStakedInPool if pool is the same
+            if (amount.toLong() + currentPool.toLong() - (prev?.toLong() ?: 0) > poolLimit.toLong()) {
                 return StakeError.POOL_LIMIT_REACHED
             }
         }
@@ -94,7 +95,8 @@ class StakeAmountInputValidator(
         if (isInCoolDown == true) {
             if ( (oldPoolId == null && !newPoolId.isNullOrEmpty()) || (oldPoolId != null && newPoolId != null && oldPoolId.toString() != newPoolId ) ) {
                 if (currentPool?.toLongOrNull() != null && poolLimit?.toLongOrNull() != null) {
-                    if (amount.toLong() + currentPool.toLong() - (previouslyStakedInPool?.toLong() ?: 0) > poolLimit.toLong()) {
+                    val prev = if (oldPoolId == newPoolId.toLongOrNull()) previouslyStakedInPool else "0" // only use previouslyStakedInPool if pool is the same
+                    if (amount.toLong() + currentPool.toLong() - (prev?.toLong() ?: 0) > poolLimit.toLong()) {
                         return StakeError.POOL_LIMIT_REACHED_COOLDOWN
                     }
                 }
