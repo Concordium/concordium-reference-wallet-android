@@ -12,6 +12,7 @@ import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.AMOUNT_TOO_LARGE_FOR_POOL
+import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.AMOUNT_TOO_LARGE_FOR_POOL_COOLDOWN
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.uicore.handleUrlClicks
 import com.concordium.wallet.uicore.view.SegmentedControlView
@@ -23,6 +24,12 @@ class DelegationRegisterPoolActivity :
 
     private lateinit var lPoolControl: View
     private lateinit var bakerPoolControl: View
+
+    override fun onResume() {
+        super.onResume()
+        if (!pool_id.text.isNullOrBlank())
+            viewModel.setPoolID(pool_id.text.toString())
+    }
 
     fun showError() {
         pool_id.setTextColor(getColor(R.color.text_pink))
@@ -96,11 +103,18 @@ class DelegationRegisterPoolActivity :
     }
 
     override fun errorLiveData(value: Int) {
-        if (value == AMOUNT_TOO_LARGE_FOR_POOL) {
-            showDelegationAmountTooLargeNotice()
-        } else {
-            pool_id_error.text = getString(value)
-            showError()
+        when (value) {
+            AMOUNT_TOO_LARGE_FOR_POOL -> {
+                showDelegationAmountTooLargeNotice()
+            }
+            AMOUNT_TOO_LARGE_FOR_POOL_COOLDOWN -> {
+                pool_id_error.text = getString(R.string.delegation_amount_too_large_while_in_cooldown)
+                showError()
+            }
+            else -> {
+                pool_id_error.text = getString(value)
+                showError()
+            }
         }
     }
 
@@ -153,7 +167,7 @@ class DelegationRegisterPoolActivity :
             viewModel.bakerDelegationData.oldDelegationTargetPoolId?.let {
                 viewModel.setPoolID(it.toString())
             }
-            showDetailedPage()
+            viewModel.validatePoolId()
         }
         builder.setNegativeButton(getString(R.string.delegation_amount_too_large_notice_stop)) { _, _ -> gotoStopDelegation() }
         builder.setNeutralButton(getString(R.string.delegation_amount_too_large_notice_cancel)) { dialog, _ -> dialog.dismiss() }
