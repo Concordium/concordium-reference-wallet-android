@@ -76,6 +76,8 @@ class DelegationRegisterPoolActivity :
         pool_id.doOnTextChanged { text, _, _, _ ->
             if (text != null && text.isNotEmpty())
                 viewModel.setPoolID(text.toString())
+            else if (viewModel.bakerDelegationData.oldDelegationTargetPoolId != null)
+                viewModel.setPoolID(viewModel.bakerDelegationData.oldDelegationTargetPoolId.toString())
             updateVisibilities()
         }
 
