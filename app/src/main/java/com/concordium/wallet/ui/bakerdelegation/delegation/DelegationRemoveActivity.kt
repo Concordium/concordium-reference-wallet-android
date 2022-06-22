@@ -15,6 +15,13 @@ import kotlinx.android.synthetic.main.transaction_submitted_no.*
 class DelegationRemoveActivity :
     BaseDelegationBakerActivity(R.layout.activity_delegation_remove, R.string.delegation_remove_delegation_title) {
 
+    private var receiptMode = false
+
+    override fun onBackPressed() {
+        if (!receiptMode)
+            super.onBackPressed()
+    }
+
     override fun initViews() {
         account_to_remove_delegate_from.text = (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n").plus(viewModel.bakerDelegationData.account?.address ?: "")
         estimated_transaction_fee.text = ""
@@ -63,6 +70,8 @@ class DelegationRemoveActivity :
     }
 
     private fun showPageAsReceipt() {
+        receiptMode = true
+        hideActionBarBack(this)
         delegation_remove_text.visibility = View.GONE
         submit_delegation_transaction.visibility = View.GONE
         submit_delegation_finish.visibility = View.VISIBLE
