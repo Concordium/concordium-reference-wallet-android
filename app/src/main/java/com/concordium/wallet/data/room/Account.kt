@@ -103,10 +103,10 @@ data class Account(
     }
 
     fun getAccountName(): String {
-        if (readOnly) {
-            return address.substring(0, 8)
+        return if (readOnly) {
+            address.substring(0, 8)
         } else {
-            return name
+            name
         }
     }
 
@@ -121,12 +121,12 @@ data class Account(
     fun getAtDisposalWithoutStakedOrScheduled(totalBalance: Long): Long {
         val stakedAmount: Long = accountDelegation?.stakedAmount?.toLong() ?: accountBaker?.stakedAmount?.toLong() ?: 0
         val scheduledTotal: Long = finalizedAccountReleaseSchedule?.total?.toLong() ?: 0
-
-        val subtract = if (scheduledTotal <= stakedAmount)
-            stakedAmount - scheduledTotal
-        else
+        val subtract = if (stakedAmount > 0)
+            stakedAmount
+        else if (stakedAmount == 0L && scheduledTotal > 0)
             scheduledTotal
-
+        else
+            0
         return max(totalBalance - subtract, 0)
     }
 
