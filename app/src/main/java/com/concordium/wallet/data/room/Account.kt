@@ -119,16 +119,14 @@ data class Account(
     }
 
     fun getAtDisposalWithoutStakedOrScheduled(totalBalance: Long): Long {
-        var subtract: Long = 0
-        accountDelegation?.stakedAmount?.let {
-            subtract += it.toLong()
-        }
-        accountBaker?.stakedAmount?.let {
-            subtract += it.toLong()
-        }
-        finalizedAccountReleaseSchedule?.total?.let {
-            subtract += it.toLong()
-        }
+        val stakedAmount: Long = accountDelegation?.stakedAmount?.toLong() ?: accountBaker?.stakedAmount?.toLong() ?: 0
+        val scheduledTotal: Long = finalizedAccountReleaseSchedule?.total?.toLong() ?: 0
+
+        val subtract = if (scheduledTotal <= stakedAmount)
+            stakedAmount - scheduledTotal
+        else
+            scheduledTotal
+
         return max(totalBalance - subtract, 0)
     }
 
