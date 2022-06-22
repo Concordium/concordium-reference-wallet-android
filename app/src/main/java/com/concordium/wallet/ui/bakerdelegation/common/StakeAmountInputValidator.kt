@@ -33,11 +33,13 @@ class StakeAmountInputValidator(
         check = checkMinimum(amount)
         if (check != StakeError.OK) return check
 
-        check = checkPoolLimit(amount)
-        if (check != StakeError.OK) return check
-
-        check = checkPoolLimitCoolDown(amount)
-        if (check != StakeError.OK) return check
+        if (isInCoolDown == true) {
+            check = checkPoolLimitCoolDown(amount)
+            if (check != StakeError.OK) return check
+        } else {
+            check = checkPoolLimit(amount)
+            if (check != StakeError.OK) return check
+        }
 
         check = checkBalance(amount, fee)
         if (check != StakeError.OK) return check

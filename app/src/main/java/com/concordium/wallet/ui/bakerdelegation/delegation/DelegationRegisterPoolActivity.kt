@@ -7,9 +7,11 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.Observer
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
+import com.concordium.wallet.data.model.BakerPoolStatus
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.AMOUNT_TOO_LARGE_FOR_POOL
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.AMOUNT_TOO_LARGE_FOR_POOL_COOLDOWN
@@ -100,6 +102,12 @@ class DelegationRegisterPoolActivity :
                 }
             }
         })
+
+        viewModel.bakerPoolStatusLiveData.observe(this, Observer<BakerPoolStatus> {
+            showWaiting(false)
+            viewModel.bakerDelegationData.bakerPoolStatus = it
+            showDetailedPage()
+        })
     }
 
     override fun errorLiveData(value: Int) {
@@ -108,8 +116,7 @@ class DelegationRegisterPoolActivity :
                 showDelegationAmountTooLargeNotice()
             }
             AMOUNT_TOO_LARGE_FOR_POOL_COOLDOWN -> {
-                pool_id_error.text = getString(R.string.delegation_amount_too_large_while_in_cooldown)
-                showError()
+                showDetailedPage()
             }
             else -> {
                 pool_id_error.text = getString(value)
@@ -167,7 +174,8 @@ class DelegationRegisterPoolActivity :
             viewModel.bakerDelegationData.oldDelegationTargetPoolId?.let {
                 viewModel.setPoolID(it.toString())
             }
-            viewModel.validatePoolId()
+            showWaiting(true)
+            viewModel.getBakerPool(viewModel.getPoolId())
         }
         builder.setNegativeButton(getString(R.string.delegation_amount_too_large_notice_stop)) { _, _ -> gotoStopDelegation() }
         builder.setNeutralButton(getString(R.string.delegation_amount_too_large_notice_cancel)) { dialog, _ -> dialog.dismiss() }

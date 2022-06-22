@@ -229,13 +229,17 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                 {
                     bakerDelegationData.bakerPoolStatus = it
                     _waitingLiveData.value = false
-                    if (bakerDelegationData.type == UPDATE_DELEGATION && bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL)
+                    val stakedAmount: Long = bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0
+                    val delegatedCapital: Long = bakerDelegationData.bakerPoolStatus?.delegatedCapital?.toLong() ?: 0
+                    val delegatedCapitalCap: Long = bakerDelegationData.bakerPoolStatus?.delegatedCapitalCap?.toLong() ?: 0
+                    val openStatus = bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus
+                    if (bakerDelegationData.type == UPDATE_DELEGATION && openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL)
                         _errorLiveData.value = Event(R.string.delegation_register_delegation_pool_id_closed)
-                    else if (bakerDelegationData.type == REGISTER_DELEGATION && (bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW || bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL))
+                    else if (bakerDelegationData.type == REGISTER_DELEGATION && (openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW || openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL))
                         _errorLiveData.value = Event(R.string.delegation_register_delegation_pool_id_closed)
-                    else if (!isInCoolDown() && (bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0) > (bakerDelegationData.bakerPoolStatus?.delegatedCapitalCap?.toLong() ?: 0))
+                    else if (!isInCoolDown() && stakedAmount + delegatedCapital > delegatedCapitalCap)
                         _errorLiveData.value = Event(AMOUNT_TOO_LARGE_FOR_POOL)
-                    else if (isInCoolDown() && (bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0) > (bakerDelegationData.bakerPoolStatus?.delegatedCapitalCap?.toLong() ?: 0))
+                    else if (isInCoolDown() && stakedAmount + delegatedCapital > delegatedCapitalCap)
                         _errorLiveData.value = Event(AMOUNT_TOO_LARGE_FOR_POOL_COOLDOWN)
                     else
                         _showDetailedLiveData.value = Event(true)
