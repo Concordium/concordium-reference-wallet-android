@@ -19,7 +19,10 @@ import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_BAKER
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_DELEGATION
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.BakerDelegationData
+import com.concordium.wallet.data.model.DelegationTarget
+import com.concordium.wallet.data.model.Transaction
+import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil

@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.intro.introstart
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider

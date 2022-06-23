@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.view.View
 import androidx.lifecycle.Observer
 import com.concordium.wallet.R
-import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_DELEGATION
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_DELEGATION
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
 import com.concordium.wallet.data.util.CurrencyUtil

@@ -3,8 +3,6 @@ package com.concordium.wallet.data
 import androidx.lifecycle.LiveData
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.RecipientDao
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class RecipientRepository(private val recipientDao: RecipientDao) {
 

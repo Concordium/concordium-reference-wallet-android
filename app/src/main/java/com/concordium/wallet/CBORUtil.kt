@@ -1,8 +1,7 @@
 package com.concordium.wallet;
 
 import com.concordium.wallet.util.Log
-import com.google.iot.cbor.CborObject;
-import java.lang.Exception
+import com.google.iot.cbor.CborObject
 
 class CBORUtil {
     companion object {

@@ -1,16 +1,13 @@
 package com.concordium.wallet.ui.more.export
 
-import android.app.AlertDialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import androidx.fragment.app.DialogFragment
-import com.concordium.wallet.R
 import androidx.fragment.app.activityViewModels
+import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.uicore.afterTextChanged

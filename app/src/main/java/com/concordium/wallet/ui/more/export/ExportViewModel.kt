@@ -17,7 +17,10 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.export.*
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.CredentialWrapper
+import com.concordium.wallet.data.model.IdentityAttribute
+import com.concordium.wallet.data.model.RawJson
+import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase

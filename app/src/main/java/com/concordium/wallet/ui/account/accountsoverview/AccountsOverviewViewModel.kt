@@ -20,7 +20,7 @@ import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.util.Log
-import kotlinx.coroutines.*
+import kotlinx.coroutines.launch
 
 class AccountsOverviewViewModel(application: Application) : AndroidViewModel(application) {
 

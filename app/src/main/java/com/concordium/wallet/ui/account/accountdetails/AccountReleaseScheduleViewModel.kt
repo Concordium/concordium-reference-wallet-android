@@ -8,12 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.Schedule
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.ui.account.accountdetails.transfers.AdapterItem
 import kotlinx.coroutines.launch
-import java.util.*
-import kotlin.collections.ArrayList
 
 class AccountReleaseScheduleViewModel(application: Application) : AndroidViewModel(application) {
 

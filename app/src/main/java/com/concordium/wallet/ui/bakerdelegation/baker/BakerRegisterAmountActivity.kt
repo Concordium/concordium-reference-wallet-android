@@ -14,12 +14,6 @@ import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
 import com.concordium.wallet.ui.common.GenericFlowActivity
 import kotlinx.android.synthetic.main.activity_baker_registration_amount.*
-import kotlinx.android.synthetic.main.activity_baker_registration_amount.amount
-import kotlinx.android.synthetic.main.activity_baker_registration_amount.amount_desc
-import kotlinx.android.synthetic.main.activity_baker_registration_amount.amount_error
-import kotlinx.android.synthetic.main.activity_baker_registration_amount.amount_locked
-import kotlinx.android.synthetic.main.activity_baker_registration_amount.balance_amount
-import kotlinx.android.synthetic.main.activity_baker_registration_amount.pool_estimated_transaction_fee
 
 class BakerRegisterAmountActivity :
     BaseDelegationBakerRegisterAmountActivity(R.layout.activity_baker_registration_amount, R.string.baker_registration_amount_title) {

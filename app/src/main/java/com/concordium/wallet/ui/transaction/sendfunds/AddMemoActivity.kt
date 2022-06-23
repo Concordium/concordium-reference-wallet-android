@@ -4,27 +4,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
 import android.view.animation.AnimationUtils
-import android.widget.SearchView
-import android.widget.TextView
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.CBORUtil
 import com.concordium.wallet.R
-import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.recipient.recipient.RecipientActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
-import com.concordium.wallet.uicore.recyclerview.touchlistener.RecyclerTouchListener
-import com.concordium.wallet.util.Log
-import com.google.iot.cbor.CborObject
 import kotlinx.android.synthetic.main.activity_add_memo.*
-import kotlinx.android.synthetic.main.activity_recipient_list.*
-import kotlinx.android.synthetic.main.progress.*
 
 
 class AddMemoActivity :

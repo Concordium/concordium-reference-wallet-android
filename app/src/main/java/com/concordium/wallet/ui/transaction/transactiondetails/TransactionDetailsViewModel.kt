@@ -5,7 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.concordium.wallet.App
-import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.RecipientRepository
@@ -18,7 +17,6 @@ import com.concordium.wallet.data.model.TransferSubmissionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
-import com.concordium.wallet.util.Log
 import kotlinx.coroutines.runBlocking
 
 class TransactionDetailsViewModel(application: Application) : AndroidViewModel(application) {

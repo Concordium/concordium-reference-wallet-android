@@ -1,7 +1,5 @@
 package com.concordium.wallet.ui.identity.identitydetails
 
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -13,8 +11,6 @@ import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import kotlinx.android.synthetic.main.activity_identity_details.*
-import kotlinx.android.synthetic.main.activity_identity_details.root_layout
-import kotlinx.android.synthetic.main.activity_transaction_details.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 

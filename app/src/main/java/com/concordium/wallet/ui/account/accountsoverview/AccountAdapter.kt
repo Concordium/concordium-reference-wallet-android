@@ -2,9 +2,7 @@ package com.concordium.wallet.ui.account.accountsoverview
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
-import kotlinx.android.synthetic.main.item_account.view.*
 
 class AccountAdapter :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {

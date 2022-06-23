@@ -8,7 +8,6 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.util.DateTimeUtil

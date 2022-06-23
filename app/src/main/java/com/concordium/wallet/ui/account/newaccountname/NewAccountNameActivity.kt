@@ -2,12 +2,6 @@ package com.concordium.wallet.ui.account.newaccountname
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.InputFilter
-import android.text.InputFilter.LengthFilter
-import android.text.Spanned
-import android.text.TextWatcher
-import android.view.animation.AnimationUtils
 import android.view.inputmethod.EditorInfo
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R

@@ -2,7 +2,9 @@ package com.concordium.wallet.ui.identity.identitiesoverview
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R

@@ -2,7 +2,6 @@ package com.concordium.wallet.ui.transaction.sendfundsconfirmed
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.Transfer
 

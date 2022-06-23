@@ -14,10 +14,6 @@ import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.util.UnitConvertUtil
 import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.*
-import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.estimated_transaction_fee
-import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.grace_period
-import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.rewards_will_be
-import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.rewards_will_be_title
 import kotlinx.android.synthetic.main.transaction_submitted_header.*
 import kotlinx.android.synthetic.main.transaction_submitted_no.*
 

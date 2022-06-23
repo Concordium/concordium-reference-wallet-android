@@ -7,7 +7,9 @@ import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.IdentityStatus
+import com.concordium.wallet.data.model.IdentityTokenContainer
+import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Recipient

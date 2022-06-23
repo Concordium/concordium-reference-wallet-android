@@ -1,7 +1,6 @@
 package com.concordium.wallet.data.preferences
 
 import android.content.Context
-import android.util.Log
 
 class AuthPreferences(val context: Context) :
     Preferences(context, SharedPreferencesKeys.PREF_FILE_AUTH, Context.MODE_PRIVATE) {

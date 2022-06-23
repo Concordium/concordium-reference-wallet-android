@@ -12,7 +12,6 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.concordium.wallet.App
 import com.concordium.wallet.CBORUtil
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver

@@ -2,10 +2,8 @@ package com.concordium.wallet.ui.transaction.transactiondetails
 
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.res.Resources
 import android.os.Bundle
 import android.text.InputType
-import android.text.TextUtils
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider

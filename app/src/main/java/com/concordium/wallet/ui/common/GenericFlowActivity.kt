@@ -13,8 +13,6 @@ import com.concordium.wallet.ui.account.accountdetails.WebViewPageFragment
 import com.concordium.wallet.ui.base.BaseActivity
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.android.synthetic.main.activity_intro_flow.*
-import kotlinx.android.synthetic.main.activity_intro_flow.pager
-import kotlinx.android.synthetic.main.activity_intro_flow.pagers_tab_layout
 
 abstract class GenericFlowActivity(titleId: Int) : BaseActivity(R.layout.activity_intro_flow, titleId) {
 

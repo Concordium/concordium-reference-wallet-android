@@ -3,7 +3,6 @@ package com.concordium.wallet.ui.account.newaccountidentityattributes
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.concordium.wallet.App
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.util.IdentityAttributeConverterUtil
 import com.concordium.wallet.ui.account.common.NewAccountViewModel

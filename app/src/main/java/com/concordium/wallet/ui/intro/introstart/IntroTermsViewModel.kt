@@ -12,7 +12,6 @@ import com.concordium.wallet.data.model.AppSettings
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
 class IntroTermsViewModel(application: Application) : AndroidViewModel(application) {
 

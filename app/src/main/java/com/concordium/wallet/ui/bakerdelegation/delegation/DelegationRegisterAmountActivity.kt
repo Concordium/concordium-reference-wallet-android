@@ -13,15 +13,7 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
-import com.concordium.wallet.util.KeyboardUtil
 import kotlinx.android.synthetic.main.activity_delegation_registration_amount.*
-import kotlinx.android.synthetic.main.activity_delegation_registration_amount.amount
-import kotlinx.android.synthetic.main.activity_delegation_registration_amount.amount_desc
-import kotlinx.android.synthetic.main.activity_delegation_registration_amount.amount_error
-import kotlinx.android.synthetic.main.activity_delegation_registration_amount.amount_locked
-import kotlinx.android.synthetic.main.activity_delegation_registration_amount.balance_amount
-import kotlinx.android.synthetic.main.activity_delegation_registration_amount.pool_estimated_transaction_fee
-import kotlinx.android.synthetic.main.activity_delegation_registration_amount.pool_registration_continue
 
 class DelegationRegisterAmountActivity :
     BaseDelegationBakerRegisterAmountActivity(R.layout.activity_delegation_registration_amount, R.string.delegation_register_delegation_title) {
