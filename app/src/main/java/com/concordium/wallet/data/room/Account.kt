@@ -121,7 +121,9 @@ data class Account(
     fun getAtDisposalWithoutStakedOrScheduled(totalBalance: Long): Long {
         val stakedAmount: Long = accountDelegation?.stakedAmount?.toLong() ?: accountBaker?.stakedAmount?.toLong() ?: 0
         val scheduledTotal: Long = finalizedAccountReleaseSchedule?.total?.toLong() ?: 0
-        val subtract = if (stakedAmount > 0)
+        val subtract = if (stakedAmount > 0 && stakedAmount <= scheduledTotal)
+            scheduledTotal
+        else if (stakedAmount > 0 && stakedAmount > scheduledTotal)
             stakedAmount
         else if (stakedAmount == 0L && scheduledTotal > 0)
             scheduledTotal
