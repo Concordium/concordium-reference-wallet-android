@@ -221,6 +221,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     fun validatePoolId() {
         if (bakerDelegationData.isLPool) {
+            bakerDelegationData.bakerPoolStatus = null
             _showDetailedLiveData.value = Event(true)
         } else {
             _waitingLiveData.value = true
