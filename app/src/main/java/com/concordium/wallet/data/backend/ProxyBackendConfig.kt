@@ -1,5 +1,6 @@
 package com.concordium.wallet.data.backend
 
+import android.content.Context
 import com.concordium.wallet.AppConfig
 import com.concordium.wallet.BuildConfig
 import com.google.gson.Gson
@@ -9,7 +10,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-class ProxyBackendConfig(val gson: Gson) {
+class ProxyBackendConfig(val context: Context, val gson: Gson) {
 
     val retrofit: Retrofit
     val backend: ProxyBackend
@@ -20,22 +21,22 @@ class ProxyBackendConfig(val gson: Gson) {
     }
 
     private fun initializeRetrofit(baseUrl: String): Retrofit {
-
-        val retrofit = Retrofit.Builder()
+        return Retrofit.Builder()
             .baseUrl(baseUrl)
             .client(initializeOkkHttp())
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
-        return retrofit
     }
 
     private fun initializeOkkHttp(): OkHttpClient {
-
         var okHttpClientBuilder = OkHttpClient().newBuilder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
             .cache(null)
+            .addInterceptor(NetworkConnectionInterceptor(context))
+            .addInterceptor(AddCookiesInterceptor())
+            .addInterceptor(ReceivedCookiesInterceptor())
             .addInterceptor(ModifyHeaderInterceptor())
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level =
@@ -45,7 +46,7 @@ class ProxyBackendConfig(val gson: Gson) {
         if (AppConfig.useOfflineMock) {
             okHttpClientBuilder = okHttpClientBuilder.addInterceptor(OfflineMockInterceptor())
         }
-        val okHttpClient = okHttpClientBuilder.build()
-        return okHttpClient
+
+        return okHttpClientBuilder.build()
     }
 }

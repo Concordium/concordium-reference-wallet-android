@@ -2,7 +2,6 @@ package com.concordium.wallet.ui.more.export
 
 import android.app.Application
 import android.net.Uri
-import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -18,7 +17,10 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.export.*
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.CredentialWrapper
+import com.concordium.wallet.data.model.IdentityAttribute
+import com.concordium.wallet.data.model.RawJson
+import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
@@ -27,9 +29,7 @@ import com.concordium.wallet.data.util.FileUtil
 import com.concordium.wallet.util.Log
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileNotFoundException
 import javax.crypto.Cipher
@@ -194,7 +194,8 @@ class ExportViewModel(application: Application) :
             _waitingLiveData.value = true
             try {
                 val fileContent = createExportFileContent(decryptKey, exportPassword)
-                writeFile(destinationUri, fileContent)
+                FileUtil.writeFile(destinationUri, FILE_NAME, fileContent)
+                App.appCore.session.setAccountsBackedUp(true)
                 _errorLiveData.value = Event(R.string.export_backup_saved_local)
                 _waitingLiveData.value = false
             } catch (e: Exception) {
@@ -211,18 +212,6 @@ class ExportViewModel(application: Application) :
                 }
             }
         }
-
-    suspend fun writeFile(destinationUri: Uri, fileContent: String) {
-        withContext(Dispatchers.IO) {
-            val doc = DocumentFile.fromTreeUri(App.appContext, destinationUri)
-            val file = doc?.createFile("txt", FILE_NAME)
-            file?.let {
-                val outputStream = App.appContext.contentResolver.openOutputStream(it.uri)
-                outputStream?.write(fileContent.toByteArray())
-                outputStream?.close()
-            }
-        }
-    }
 
     private fun decryptAndContinue(decryptKey: SecretKey, exportPassword: String) =
         viewModelScope.launch {

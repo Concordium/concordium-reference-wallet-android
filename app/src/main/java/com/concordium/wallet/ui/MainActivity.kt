@@ -4,19 +4,19 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewFragment
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
+import com.concordium.wallet.ui.auth.setup.AuthSetupActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
-
 import com.concordium.wallet.ui.identity.identityconfirmed.IdentityErrorData
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.intro.introstart.IntroTermsActivity
@@ -141,8 +141,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
 
         viewModel.titleLiveData.observe(this, Observer<String> { title ->
             title?.let {
-                val actionbar = supportActionBar ?: return@Observer
-                actionbar.setTitle(title)
+                setActionBarTitle(it)
             }
         })
         viewModel.stateLiveData.observe(this, Observer<MainViewModel.State> { state ->
@@ -243,13 +242,12 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
     //************************************************************
 
     private fun showAuthenticationIfRequired() {
-        if (viewModel.shouldShowUserSetup()) {
-            val intent = Intent(this, IntroTermsActivity::class.java)
-            startActivity(intent)
-        } else {
-            val intent = Intent(this, AuthLoginActivity::class.java)
-            startActivity(intent)
-        }
+        if (viewModel.shouldShowTerms())
+            startActivity(Intent(this, IntroTermsActivity::class.java))
+        else if (App.appCore.session.hasSetupPassword)
+            startActivity(Intent(this, AuthLoginActivity::class.java))
+        else
+            startActivity(Intent(this, AuthSetupActivity::class.java))
     }
 
     override fun loggedOut() {

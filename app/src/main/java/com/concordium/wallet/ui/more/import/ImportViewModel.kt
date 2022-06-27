@@ -10,7 +10,6 @@ import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
-import com.concordium.wallet.core.authentication.AuthenticationManager
 import com.concordium.wallet.core.backend.BackendErrorException
 import com.concordium.wallet.core.security.EncryptionException
 import com.concordium.wallet.core.security.KeystoreEncryptionException
@@ -523,6 +522,7 @@ class ImportViewModel(application: Application) :
     }
 
     private fun confirmImport() {
+        App.appCore.session.setAccountsBackedUp(true)
         _showImportConfirmedLiveData.value = Event(true)
     }
 

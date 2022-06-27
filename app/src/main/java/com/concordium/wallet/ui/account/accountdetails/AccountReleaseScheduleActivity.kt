@@ -1,18 +1,12 @@
 package com.concordium.wallet.ui.account.accountdetails
 
-import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.graphics.Color
-import android.graphics.drawable.Animatable
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
 import android.widget.Toast
-import androidx.cardview.widget.CardView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
@@ -21,7 +15,6 @@ import com.concordium.wallet.data.model.Schedule
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.util.Log
 import kotlinx.android.synthetic.main.account_release_schedule_item.view.*
 import kotlinx.android.synthetic.main.account_release_schedule_item.view.identifier_container
 import kotlinx.android.synthetic.main.account_release_schedule_transaction_item.view.*
@@ -31,8 +24,6 @@ import kotlinx.android.synthetic.main.activity_account_release_schedule.*
 import kotlinx.android.synthetic.main.progress.*
 import java.text.DateFormat
 import java.util.*
-import javax.crypto.Cipher
-import kotlin.collections.ArrayList
 
 
 class AccountReleaseScheduleActivity :

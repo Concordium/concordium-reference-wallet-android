@@ -7,10 +7,8 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -208,6 +206,9 @@ class CustomDialogFragment : DialogFragment() {
 
 
         fun newAccountFinalizedDialog(context:Context, accountName: String) {
+
+            if (App.appCore.session.isAccountsBackedUp())
+                return
 
             var title = context.getString(R.string.finalized_account_title_singular)
             var message = context.getString(R.string.finalized_account_message_singular, accountName)

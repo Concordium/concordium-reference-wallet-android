@@ -12,7 +12,7 @@ object ErrorParser {
             "No Error object could be parsed"
         )
 
-        val retrofit = App.appCore.proxybackendConfig.retrofit
+        val retrofit = App.appCore.proxyBackendConfig.retrofit
         val converter =
             retrofit.responseBodyConverter<BackendError>(
                 BackendError::class.java,

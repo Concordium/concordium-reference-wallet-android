@@ -49,5 +49,13 @@
     <dimen name="indicator_size">5dp</dimen>
 
     <dimen name="create_identity_flow_top_margin">20dp</dimen>
+    <dimen name="segmented_control_height">44dp</dimen>
+
+    <!-- Register delegation -->
+    <dimen name="activity_content_margin">24dp</dimen>
+    <dimen name="activity_receipt_item_vertical_margin">10dp</dimen>
+    <dimen name="activity_receipt_padding">16dp</dimen>
+
+    <dimen name="logo_size_small">38dp</dimen>
 
 </resources>

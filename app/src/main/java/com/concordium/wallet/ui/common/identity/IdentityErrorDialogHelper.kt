@@ -1,24 +1,20 @@
 package com.concordium.wallet.ui.common.identity
 
-import android.app.Activity
-import android.content.*
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
 import android.text.TextUtils
-import android.util.Base64
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.ui.RequestCodes
 import com.concordium.wallet.ui.identity.identityconfirmed.IdentityErrorData
-import com.concordium.wallet.uicore.dialog.CustomDialogFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
-import com.google.android.material.snackbar.Snackbar
 import java.security.MessageDigest
 
 object IdentityErrorDialogHelper {

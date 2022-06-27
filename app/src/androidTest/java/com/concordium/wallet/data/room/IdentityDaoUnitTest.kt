@@ -51,7 +51,7 @@ class IdentityDaoUnitTest {
             IdentityProvider(
                 identityProviderInfo,
                 HashMap<String, ArsInfo>(),
-                IdentityProviderMetaData("", "")
+                IdentityProviderMetaData("", "", null)
             )
         val pubInfoForIP = PubInfoForIp("", RawJson("{}"), "")
         val preIdentityObject =

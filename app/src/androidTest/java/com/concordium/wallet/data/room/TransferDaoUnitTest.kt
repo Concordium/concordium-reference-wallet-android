@@ -51,12 +51,15 @@ class TransferDaoUnitTest {
             "0",
             "0",
             1901176193,
+            "",
             1585643393,
             "0",
             TransactionStatus.UNKNOWN,
             TransactionOutcome.UNKNOWN,
-            TransactionType.TRANSFER
-        )
+            TransactionType.TRANSFER,
+            null,
+            0,
+            null)
 
         runBlocking { transferDao.insert(transfer) }
         val listLiveData = transferDao.getAllAsLiveData()
@@ -92,12 +95,14 @@ class TransferDaoUnitTest {
             "0",
             "0",
             1901176193,
+            "",
             createdAt,
             "0",
             TransactionStatus.UNKNOWN,
             TransactionOutcome.UNKNOWN,
-            TransactionType.TRANSFER
-        )
+            TransactionType.TRANSFER,
+            null,
+            0,
+            null)
     }
-
 }

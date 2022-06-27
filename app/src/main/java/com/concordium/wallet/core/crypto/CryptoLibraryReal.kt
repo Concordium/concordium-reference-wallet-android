@@ -2,16 +2,12 @@ package com.concordium.wallet.core.crypto
 
 import com.concordium.mobile_wallet_lib.*
 import com.concordium.wallet.data.cryptolib.*
-import com.concordium.wallet.data.model.ArsInfo
-import com.concordium.wallet.data.model.GlobalParams
-import com.concordium.wallet.data.model.IdentityProviderInfo
-import com.concordium.wallet.data.model.PossibleAccount
+import com.concordium.wallet.data.model.*
 import com.concordium.wallet.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
 
 class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
 
@@ -48,6 +44,7 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             return@withContext null
         }
 
+
     override suspend fun createTransfer(createTransferInput: CreateTransferInput, type: Int): CreateTransferOutput? =
         withContext(Dispatchers.Default) {
             val input = gson.toJson(createTransferInput)
@@ -64,17 +61,14 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
         }
 
     private fun internalCreateTransfer(input: String, type: Int): ReturnValue {
-        if (type == CryptoLibrary.PUBLIC_TO_SEC_TRANSFER) {
-            return create_pub_to_sec_transfer(input)
+        when (type) {
+            CryptoLibrary.PUBLIC_TO_SEC_TRANSFER -> return create_pub_to_sec_transfer(input)
+            CryptoLibrary.SEC_TO_PUBLIC_TRANSFER -> return create_sec_to_pub_transfer(input)
+            CryptoLibrary.ENCRYPTED_TRANSFER -> return create_encrypted_transfer(input)
+            CryptoLibrary.CONFIGURE_DELEGATION_TRANSACTION -> return create_configure_delegation_transaction(input)
+            CryptoLibrary.CONFIGURE_BAKING_TRANSACTION -> return create_configure_baker_transaction(input)
         }
-        if (type == CryptoLibrary.SEC_TO_PUBLIC_TRANSFER) {
-            return create_sec_to_pub_transfer(input)
-        }
-        if (type == CryptoLibrary.ENCRYPTED_TRANSFER) {
-            return create_encrypted_transfer(input)
-        }
-        //CryptoLibrary.REGULAR_TRANSFER
-        return create_transfer(input)
+        return create_transfer(input) // CryptoLibrary.REGULAR_TRANSFER
     }
 
     override suspend fun decryptEncryptedAmount(input: DecryptAmountInput): String? =
@@ -116,4 +110,15 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             return@withContext null
         }
 
+    override suspend fun generateBakerKeys(): BakerKeys? =
+        withContext(Dispatchers.Default) {
+            loadWalletLib()
+            val result = generate_baker_keys()
+            Log.d("Output (Code ${result.result}): ${result.output}")
+            if (result.result == CryptoLibrary.SUCCESS) {
+                return@withContext gson.fromJson(result.output, BakerKeys::class.java)
+            }
+            Log.e("Cryptolib failed")
+            return@withContext null
+        }
 }

@@ -8,10 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.authentication.Session
-import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
-import com.concordium.wallet.data.RecipientRepository
-import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
@@ -84,8 +81,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         return session.isLoggedIn.value.let { return it == null || it == false  }
     }
 
-    fun shouldShowUserSetup(): Boolean {
-        //return !session.hasSetupPassword
+    fun shouldShowTerms(): Boolean {
         val hashNew = App.appContext.getString(R.string.terms_text).hashCode()
         val hashOld = session.getTermsHashed()
         return hashNew != hashOld

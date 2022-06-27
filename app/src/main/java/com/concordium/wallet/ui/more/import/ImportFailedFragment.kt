@@ -11,12 +11,8 @@ import androidx.lifecycle.Observer
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.ui.base.BaseFragment
-import com.concordium.wallet.uicore.view.ImportResultView
 import kotlinx.android.synthetic.main.fragment_import_confirmed.*
-import kotlinx.android.synthetic.main.fragment_import_confirmed.confirm_button
-import kotlinx.android.synthetic.main.fragment_import_confirmed.root_layout
 import kotlinx.android.synthetic.main.fragment_import_confirmed.view.*
-import kotlinx.android.synthetic.main.fragment_import_failed.*
 
 class ImportFailedFragment(private val txt: Int, titleId: Int? = null) : BaseFragment(titleId) {
 

@@ -3,7 +3,6 @@ package com.concordium.wallet.data.export
 import com.concordium.wallet.core.gson.RawJsonTypeAdapter
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.CredentialWrapper
-import com.concordium.wallet.data.model.IdentityAttribute
 import com.concordium.wallet.data.model.RawJson
 import com.google.gson.annotations.JsonAdapter
 import java.io.Serializable

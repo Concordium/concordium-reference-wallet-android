@@ -2,7 +2,11 @@ body {
     font-family: 'Roboto';
     font-size: 16px;
     font-weight: 400;
-    text-align: center;
+    text-align: left;
+}
+
+a:link, a:visited, a:hover, a:active  {
+  color: black;
 }
 
 p {

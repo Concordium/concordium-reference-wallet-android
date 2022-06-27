@@ -30,7 +30,14 @@ enum class TransactionType(val type: Int) {
     @SerializedName("encryptedAmountTransferWithMemo")
     ENCRYPTEDAMOUNTTRANSFERWITHMEMO(8),
 
+    @SerializedName("delegation")
+    LOCAL_DELEGATION(1001),
+
+    @SerializedName("baker")
+    LOCAL_BAKER(1002),
+
     // This has been added to have a default value
     @SerializedName("unknown")
     UNKNOWN(-1)
 }
+

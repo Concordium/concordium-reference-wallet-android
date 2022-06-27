@@ -1,10 +1,8 @@
 package com.concordium.wallet.data.model
 
 import com.concordium.wallet.CBORUtil
-import com.concordium.wallet.data.room.Account
 import java.io.Serializable
 import java.util.*
-import java.lang.Exception
 
 
 data class Transaction(
@@ -36,6 +34,14 @@ data class Transaction(
 
     fun isRemoteTransaction(): Boolean {
         return transactionStatus == TransactionStatus.FINALIZED
+    }
+
+    fun isBakerTransfer(): Boolean {
+        return details?.type == TransactionType.LOCAL_BAKER
+    }
+
+    fun isDelegationTransfer(): Boolean {
+        return details?.type == TransactionType.LOCAL_DELEGATION
     }
 
     fun isSimpleTransfer(): Boolean {

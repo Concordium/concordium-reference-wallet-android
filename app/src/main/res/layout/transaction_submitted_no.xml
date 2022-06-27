@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="@layout/activity_delegation_registration_confirmation">
+    <View
+        android:id="@+id/transaction_submitted_divider"
+        style="@style/Divider"
+        android:visibility="gone"
+        tools:visibility="visible" />
+    <TextView
+        android:id="@+id/transaction_submitted_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginStart="@dimen/activity_content_margin"
+        android:layout_marginEnd="@dimen/activity_content_margin"
+        style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Gray"
+        android:layout_gravity="center_horizontal"
+        tools:visibility="visible"
+        tools:text="5dcaf8d6d204b54988328d1bf6899690d185d6354a261b82a30402b7da5e2a4b" />
+</merge>

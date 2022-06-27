@@ -2,47 +2,46 @@ package com.concordium.wallet.ui.account.accountdetails
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_BAKER
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_DELEGATION
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
+import com.concordium.wallet.data.model.BakerDelegationData
+import com.concordium.wallet.data.model.DelegationTarget
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
-import com.concordium.wallet.ui.account.accountdetails.transfers.AdapterItem
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
+import com.concordium.wallet.ui.bakerdelegation.baker.BakerStatusActivity
+import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRegistrationIntroFlow
+import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
+import com.concordium.wallet.ui.bakerdelegation.delegation.DelegationStatusActivity
+import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationCreateIntroFlowActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.recipient.recipient.RecipientActivity
-import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
+import com.concordium.wallet.ui.common.GenericFlowActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
-import com.concordium.wallet.util.ImageUtil
 import kotlinx.android.synthetic.main.activity_account_details.*
-import kotlinx.android.synthetic.main.activity_account_details.accounts_overview_total_details_staked
-import kotlinx.android.synthetic.main.activity_account_details.accounts_overview_total_details_disposal
-
-import kotlinx.android.synthetic.main.activity_account_details.root_layout
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.progress.*
-import kotlinx.coroutines.*
-import java.util.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.crypto.Cipher
-
 
 class AccountDetailsActivity :
     BaseActivity(R.layout.activity_account_details, R.string.account_details_title) {
@@ -57,9 +56,7 @@ class AccountDetailsActivity :
         const val EXTRA_CONTINUE_TO_SHIELD_INTRO = "EXTRA_CONTINUE_TO_SHIELD_INTRO"
         const val RESULT_RETRY_ACCOUNT_CREATION = 2
         const val REQUESTCODE_ENABLE_SHIELDING = 1241
-
     }
-
 
     //region Lifecycle
     //************************************************************
@@ -84,9 +81,8 @@ class AccountDetailsActivity :
         viewModel.initiateFrequentUpdater()
     }
 
-
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroy() {
+        super.onDestroy()
         viewModel.stopFrequentUpdater()
     }
 
@@ -190,12 +186,25 @@ class AccountDetailsActivity :
             updateShieldEnabledUI()
         })
 
+        viewModel.accountUpdatedLiveData.observe(this, Observer {
+            initTopContent()
+        })
     }
 
-
     private fun initViews() {
-        setActionBarTitle(getString(if(viewModel.isShielded) R.string.account_details_title_shielded_balance else R.string.account_details_title_regular_balance, viewModel.account.getAccountName()))
         showWaiting(false)
+
+        initTopContent()
+
+
+        initTabs()
+
+        updateShieldEnabledUI()
+
+    }
+
+    private fun initTopContent() {
+        setActionBarTitle(getString(if(viewModel.isShielded) R.string.account_details_title_shielded_balance else R.string.account_details_title_regular_balance, viewModel.account.getAccountName()))
         when (viewModel.account.transactionStatus) {
             TransactionStatus.ABSENT -> {
                 setErrorMode()
@@ -237,11 +246,6 @@ class AccountDetailsActivity :
 
         account_total_details_disposal_text.text = if(viewModel.isShielded) resources.getString(R.string.account_shielded_total_details_disposal, viewModel.account.name) else resources.getString(R.string.account_total_details_disposal)
 
-
-        initTabs()
-
-        updateShieldEnabledUI()
-
     }
 
     private fun updateShieldEnabledUI() {
@@ -260,68 +264,31 @@ class AccountDetailsActivity :
         account_details_layout.visibility = View.VISIBLE
         readonly_desc.visibility = if(viewModel.account.readOnly) View.VISIBLE else View.GONE
 
-        if(viewModel.isShielded){
-            //accounts_overview_total_details_baker_container.visibility = View.GONE
-            accounts_overview_total_details_staked_container.visibility = View.GONE
+        accounts_overview_total_details_baker_container.visibility = View.GONE
+        accounts_overview_total_details_staked_container.visibility = View.GONE
+
+        if (viewModel.isShielded) {
             accounts_overview_total_details_disposal_container.visibility = View.GONE
             send_imageview.setImageResource(R.drawable.ic_icon_send_shielded)
             shield_imageview.setImageResource(R.drawable.ic_unshield)
         }
-        else{
-            //accounts_overview_total_details_baker_container.visibility = View.VISIBLE
-            accounts_overview_total_details_staked_container.visibility = View.VISIBLE
+        else {
             accounts_overview_total_details_disposal_container.visibility = View.VISIBLE
             send_imageview.setImageResource(R.drawable.ic_send)
             shield_imageview.setImageResource(R.drawable.ic_shielded_icon)
-
-            if(viewModel.account.isBaker()){
-                //accounts_overview_total_details_baker_container.visibility = View.VISIBLE
-                accounts_overview_total_details_baker_id.text = viewModel.account.bakerId.toString()
+            if (viewModel.account.isBaking()) {
+                accounts_overview_total_details_baker_container.visibility = View.VISIBLE
+                accounts_overview_total_title_baker.text = getString(R.string.account_details_stake_with_baker, viewModel.account.accountBaker?.bakerId?.toString() ?: "")
+                accounts_overview_total_details_baker.text = CurrencyUtil.formatGTU(viewModel.account.accountBaker?.stakedAmount ?: "0", true)
+            } else if (viewModel.account.isDelegating()) {
                 accounts_overview_total_details_staked_container.visibility = View.VISIBLE
+                if (viewModel.account.accountDelegation?.delegationTarget?.delegateType == DelegationTarget.TYPE_DELEGATE_TO_L_POOL)
+                    accounts_overview_total_title_staked.text = getString(R.string.account_details_delegation_with_passive_pool)
+                else
+                    accounts_overview_total_title_staked.text = getString(R.string.account_details_delegation_with_baker_pool, viewModel.account.accountDelegation?.delegationTarget?.bakerId ?: "")
+                accounts_overview_total_details_staked.text = CurrencyUtil.formatGTU(viewModel.account.accountDelegation?.stakedAmount ?: "", true)
             }
-            else{
-                //accounts_overview_total_details_baker_container.visibility = View.GONE
-                accounts_overview_total_details_staked_container.visibility = View.GONE
-            }
-            accounts_overview_total_title_staked.text = getString(R.string.accounts_overview_total_details_staked, viewModel.account.bakerId )
-            accounts_overview_total_details_staked.text = CurrencyUtil.formatGTU(viewModel.account.totalStaked, true)
         }
-
-        /*
-        if(!viewModel.account.readOnly){
-            send_textview.setTextColor(
-                ContextCompat.getColor(
-                    this,
-                    R.color.theme_white
-                )
-            )
-            shield_textview.setTextColor(
-                ContextCompat.getColor(
-                    this,
-                    R.color.theme_white
-                )
-            )
-            ImageUtil.changeImageViewTintColor(
-                send_imageview,
-                R.color.theme_white
-            )
-            ImageUtil.changeImageViewTintColor(
-                shield_imageview,
-                R.color.theme_white
-            )
-        }
-        address_textview.setTextColor(
-            ContextCompat.getColor(
-                this,
-                R.color.theme_white
-            )
-        )
-        ImageUtil.changeImageViewTintColor(
-            address_imageview,
-            R.color.theme_white
-        )
-
-         */
     }
 
     private fun setErrorMode() {
@@ -410,6 +377,28 @@ class AccountDetailsActivity :
                 }
                 cvHideShieldedTV.text = getString(R.string.account_details_menu_hide_shielded, viewModel.account.name)
 
+                // Delegation
+                if (viewModel.account.isBaking() || viewModel.hasPendingBakingTransactions) {
+                    (menuView.findViewById(R.id.menu_item_delegation_card) as CardView).visibility = View.GONE
+                } else {
+                    val tvDelegation = menuView.findViewById(R.id.menu_item_delegation) as TextView
+                    tvDelegation.setOnClickListener {
+                        mMenuDialog?.dismiss()
+                        gotoDelegation(viewModel.account)
+                    }
+                }
+
+                // Baking
+                if (viewModel.account.isDelegating() || viewModel.hasPendingDelegationTransactions) {
+                    (menuView.findViewById(R.id.menu_item_baking_card) as CardView).visibility = View.GONE
+                } else {
+                    val tvBaking = menuView.findViewById(R.id.menu_item_baking) as TextView
+                    tvBaking.setOnClickListener {
+                        mMenuDialog?.dismiss()
+                        gotoBaking(viewModel.account)
+                    }
+                }
+
                 //Decrypt option
                 val cvDecrypt = menuView.findViewById(R.id.menu_decrypt_container) as CardView
                 cvDecrypt.visibility = if(viewModel.isShielded && viewModel.hasTransactionsToDecrypt) View.VISIBLE else View.GONE
@@ -449,15 +438,41 @@ class AccountDetailsActivity :
 
     private fun gotoAccountReleaseSchedule(item: Account, isShielded: Boolean) {
         val intent = Intent(this, AccountReleaseScheduleActivity::class.java)
-        intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, item)
-        intent.putExtra(AccountDetailsActivity.EXTRA_SHIELDED, isShielded)
+        intent.putExtra(EXTRA_ACCOUNT, item)
+        intent.putExtra(EXTRA_SHIELDED, isShielded)
         startActivity(intent)
     }
 
     private fun gotoTransferFilters(item: Account, isShielded: Boolean) {
         val intent = Intent(this, AccountTransactionsFiltersActivity::class.java)
-        intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, item)
+        intent.putExtra(EXTRA_ACCOUNT, item)
         startActivity(intent)
+    }
+
+    private fun gotoDelegation(account: Account) {
+        if (account.accountDelegation != null || viewModel.hasPendingDelegationTransactions) {
+            val intent = Intent(this, DelegationStatusActivity::class.java)
+            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, BakerDelegationData(account, isTransactionInProgress = viewModel.hasPendingDelegationTransactions, type = UPDATE_DELEGATION))
+            startActivityForResultAndHistoryCheck(intent)
+        } else {
+            val intent = Intent(this, DelegationCreateIntroFlowActivity::class.java)
+            intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
+            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, BakerDelegationData(account, type = REGISTER_DELEGATION))
+            startActivityForResultAndHistoryCheck(intent)
+        }
+    }
+
+    private fun gotoBaking(account: Account) {
+        if (account.accountBaker != null || viewModel.hasPendingBakingTransactions) {
+            val intent = Intent(this, BakerStatusActivity::class.java)
+            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, BakerDelegationData(account, isTransactionInProgress = viewModel.hasPendingBakingTransactions, type = REGISTER_BAKER))
+            startActivityForResultAndHistoryCheck(intent)
+        } else {
+            val intent = Intent(this, BakerRegistrationIntroFlow::class.java)
+            intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
+            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, BakerDelegationData(account, type = REGISTER_BAKER))
+            startActivityForResultAndHistoryCheck(intent)
+        }
     }
 
     private fun showError(stringRes: Int) {
@@ -466,7 +481,7 @@ class AccountDetailsActivity :
 
     private fun showTotalBalance(totalBalance: Long) {
         balance_textview.text = CurrencyUtil.formatGTU(totalBalance)
-        accounts_overview_total_details_disposal.text = CurrencyUtil.formatGTU(totalBalance - viewModel.account.getAtDisposalSubstraction(), true)
+        accounts_overview_total_details_disposal.text = CurrencyUtil.formatGTU(viewModel.account.getAtDisposalWithoutStakedOrScheduled(totalBalance), true)
     }
 
     private fun onSendFundsClicked() {
@@ -484,8 +499,6 @@ class AccountDetailsActivity :
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
     }
-
-
 
     private fun onAddressClicked() {
         val intent = Intent(this, AccountQRCodeActivity::class.java)

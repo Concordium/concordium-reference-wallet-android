@@ -6,13 +6,11 @@ import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.CBORUtil
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
-import com.concordium.wallet.core.authentication.AuthenticationManager
 import com.concordium.wallet.core.backend.BackendError
 import com.concordium.wallet.core.backend.BackendErrorException
 import com.concordium.wallet.core.backend.BackendRequest
@@ -35,14 +33,9 @@ import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
-import com.google.gson.GsonBuilder
-import com.google.iot.cbor.CborMap
-import kotlinx.android.synthetic.main.activity_send_funds.*
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import java.util.*
 import javax.crypto.Cipher
-import kotlin.coroutines.coroutineContext
 
 
 class SendFundsViewModel(application: Application) : AndroidViewModel(application) {
@@ -202,6 +195,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
         proxyRepository.getTransferCost(type,
             if (tempData.memo == null) null else tempData.memo!!.length / 2, //div by 2 because hex takes up twice the length
+            null,null,null, null, null, null,
             {
                 tempData.energy = it.energy
                 _transactionFeeLiveData.value = it.cost.toLong()
@@ -228,8 +222,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             return true
         }
 
-        val totalUnshieldedAtDisposal =
-            account.totalUnshieldedBalance - account.getAtDisposalSubstraction()
+        val totalUnshieldedAtDisposal = account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
 
         if (isShielded) {
             if (isTransferToSameAccount()) {
@@ -379,8 +372,10 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             tempData.globalParams,
             tempData.receiverPublicKey,
             encryptionSecretKey,
-            calculateInputEncryptedAmount(encryptionSecretKey)
-        )
+            calculateInputEncryptedAmount(encryptionSecretKey),
+            null,
+            null,
+            null)
 
         var transactionType =
             if (isShielded) {
@@ -710,7 +705,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
                 cost = it
             }
             var amount =
-                ((if (isShielded) account.totalShieldedBalance else (account.totalUnshieldedBalance - cost)) )
+                ((if (isShielded) account.totalShieldedBalance else (account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) - cost)) )
             if (amount < 0) {
                 amount = 0
             }
@@ -718,7 +713,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun validateAndSaveRecipient(name: String, address: String): Boolean {
+    fun validateAndSaveRecipient(address: String): Boolean {
         val isAddressValid = App.appCore.cryptoLibrary.checkAccountAddress(address)
         if (!isAddressValid) {
             _errorLiveData.value = Event(R.string.recipient_error_invalid_address)

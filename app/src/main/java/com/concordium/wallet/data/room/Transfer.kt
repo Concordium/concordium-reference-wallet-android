@@ -8,7 +8,6 @@ import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
-import com.concordium.wallet.data.room.typeconverter.AccountTypeConverters
 import com.concordium.wallet.data.room.typeconverter.TransactionTypeConverters
 import java.io.Serializable
 

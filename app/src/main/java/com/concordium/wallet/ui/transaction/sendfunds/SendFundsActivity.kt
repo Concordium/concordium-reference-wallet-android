@@ -7,7 +7,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.text.method.DigitsKeyListener
 import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -17,7 +16,6 @@ import com.concordium.wallet.CBORUtil
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.backend.BackendError
-import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -27,14 +25,12 @@ import com.concordium.wallet.ui.common.failed.FailedViewModel
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.transaction.sendfundsconfirmed.SendFundsConfirmedActivity
-import com.concordium.wallet.uicore.DecimalTextWatcher
 import com.concordium.wallet.uicore.afterTextChanged
+import com.concordium.wallet.util.KeyboardUtil
 import kotlinx.android.synthetic.main.activity_send_funds.*
-import kotlinx.android.synthetic.main.item_account.view.*
 import kotlinx.android.synthetic.main.progress.*
 import java.text.DecimalFormatSymbols
 import javax.crypto.Cipher
-
 
 class SendFundsActivity :
     BaseActivity(R.layout.activity_send_funds, R.string.send_funds_title) {
@@ -102,8 +98,9 @@ class SendFundsActivity :
             viewModel.selectedRecipient = recipient
             updateConfirmButton()
             if(viewModel.account.id == recipient.id){
-                //select_recipient_layout.visibility = View.GONE
                 setActionBarTitle(if(viewModel.isShielded) R.string.send_funds_unshield_title else R.string.send_funds_shield_title)
+                if (!viewModel.isShielded)
+                    send_all.visibility = View.GONE
             }
         }
     }
@@ -228,52 +225,15 @@ class SendFundsActivity :
         amount_edittext.setOnEditorActionListener { textView, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
-                    if (textView.text.isNotEmpty())
+                    if (enableConfirm())
                         viewModel.sendFunds(amount_edittext.text.toString())
+                    else
+                        KeyboardUtil.hideKeyboard(this)
                     true
                 }
                 else -> false
             }
         }
-        // Allow both . and , but change them in text watcher to decimal separator based on language
-        // We allow them both to avoid problems with some devices (eg. Samsung that have their own keyboard restrictions)
-        amount_edittext.keyListener = DigitsKeyListener.getInstance("0123456789.,")
-        amount_edittext.addTextChangedListener(DecimalTextWatcher(6))
-        amount_edittext.addTextChangedListener(object : TextWatcher {
-
-            private var previousText: String = ""
-            override fun afterTextChanged(editable: Editable) {
-                var change = false
-                var str = editable.toString()
-
-                try {
-                    val intVal = CurrencyUtil.getWholePart(str)
-                    if(intVal != null){
-                        if( intVal > (Long.MAX_VALUE - 999999L)/1000000L) {
-                            change = true
-                        }
-                    }
-                }
-                catch(e: Exception){
-                    change = true
-                }
-
-                if (change) {
-                    editable.replace(0, editable.length, previousText);
-                }
-                else{
-                    previousText = editable.toString()
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            }
-        })
-
         send_funds_paste_recipient.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(editable: Editable) {
                 var address = editable.toString()
@@ -329,7 +289,6 @@ class SendFundsActivity :
                 viewModel.setMemo(null);//CBORUtil.encodeCBOR(""))
                 setMemoText("")
             }
-
         }
 
         send_all.setOnClickListener {
@@ -352,27 +311,49 @@ class SendFundsActivity :
         }
 
         confirm_button.setOnClickListener {
-
             viewModel.selectedRecipient?.let {
-                if(viewModel.validateAndSaveRecipient(it.name, it.address)){
-                    viewModel.sendFunds(amount_edittext.text.toString())
+                if (viewModel.validateAndSaveRecipient(it.address)) {
+                    if (viewModel.account.address == it.address && !viewModel.isShielded)
+                        check95PercentWarning()
+                    else
+                        sendFunds()
                 }
             }
         }
 
-        if(viewModel.isShielded){
+        if (viewModel.isShielded) {
             balance_total_text.text = getString(R.string.accounts_overview_balance_at_disposal)
             at_disposal_total_text.text = getString(R.string.accounts_overview_shielded_balance)
-            balance_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance - viewModel.account.getAtDisposalSubstraction(), withGStroke = true)
+            balance_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance), withGStroke = true)
             at_disposal_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalShieldedBalance, withGStroke = true)
         }
-        else{
+        else {
             balance_total_text.text = getString(R.string.accounts_overview_account_total)
             at_disposal_total_text.text = getString(R.string.accounts_overview_at_disposal)
-            balance_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance - viewModel.account.getAtDisposalSubstraction(), withGStroke = true)
-            at_disposal_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance - viewModel.account.getAtDisposalSubstraction(), withGStroke = true)
+            balance_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance, withGStroke = true)
+            at_disposal_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance), withGStroke = true)
         }
+    }
 
+    private fun check95PercentWarning() {
+        val amountValue = CurrencyUtil.toGTUValue(amount_edittext.text.toString())
+        val atDisposal = viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance)
+        if (amountValue != null) {
+            if (amountValue > atDisposal * 0.95) {
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle(R.string.send_funds_more_than_95_title)
+                builder.setMessage(getString(R.string.send_funds_more_than_95_message))
+                builder.setPositiveButton(getString(R.string.send_funds_more_than_95_continue)) { _, _ -> sendFunds() }
+                builder.setNegativeButton(getString(R.string.send_funds_more_than_95_new_stake)) { dialog, _ -> dialog.dismiss() }
+                builder.create().show()
+            }
+            else
+                sendFunds()
+        }
+    }
+
+    private fun sendFunds() {
+        viewModel.sendFunds(amount_edittext.text.toString())
     }
 
     //endregion
@@ -479,16 +460,21 @@ class SendFundsActivity :
     }
 
     private fun updateConfirmButton(): Boolean {
+        confirm_button.isEnabled = enableConfirm()
+        return confirm_button.isEnabled
+    }
+
+    private fun enableConfirm(): Boolean {
         val hasSufficientFunds = viewModel.hasSufficientFunds(amount_edittext.text.toString())
         error_textview.visibility = if (hasSufficientFunds) View.INVISIBLE else View.VISIBLE
-        val enabled = if(isWaiting()) false else {
-            amount_edittext.text.isNotEmpty()
+        val enable = if(isWaiting()) false else {
+            (amount_edittext.text.isNotEmpty()
                     && viewModel.selectedRecipient != null
                     && viewModel.transactionFeeLiveData.value != null
                     && hasSufficientFunds
+                    && (CurrencyUtil.toGTUValue(amount_edittext.text.toString()) ?: 0) > 0)
         }
-        confirm_button.isEnabled = enabled
-        return enabled
+        return enable
     }
 
     private fun updateAmountEditText() {

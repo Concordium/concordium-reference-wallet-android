@@ -1,13 +1,17 @@
 package com.concordium.wallet.data.model
 
+import java.io.Serializable
 
 data class AccountBalanceInfo(
     val accountAmount: String,
     val accountEncryptedAmount: AccountEncryptedAmount,
     val accountNonce: Int,
     val accountReleaseSchedule: AccountReleaseSchedule,
-    val accountBaker: AccountBaker
-){
+    val accountBaker: AccountBaker?,
+    val accountDelegation: AccountDelegation?,
+    val accountIndex: Int
+) : Serializable {
+
     fun getAmount(): Long {
         return accountAmount.toLong()
     }
@@ -15,9 +19,4 @@ data class AccountBalanceInfo(
     fun getEncryptedAmount(): AccountEncryptedAmount {
         return accountEncryptedAmount
     }
-
-    fun hasEncryptedAmount(): Boolean {
-        return !accountEncryptedAmount.selfAmount.isEmpty()
-    }
 }
-

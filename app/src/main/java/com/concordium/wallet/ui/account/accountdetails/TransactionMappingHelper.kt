@@ -1,5 +1,7 @@
 package com.concordium.wallet.ui.account.accountdetails
 
+import android.content.Context
+import com.concordium.wallet.R
 import com.concordium.wallet.data.model.RemoteTransaction
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOriginType
@@ -32,13 +34,19 @@ class TransactionMappingHelper(
     }
 
 
-    fun addTitlesToTransaction(transaction: Transaction, transfer: Transfer) {
-        // Transfer is always outgoing, so just use toAddress
-        val recipientResult = findRecipientOrUseAddress(transfer.toAddress)
-        transaction.title = recipientResult.recipientOrAddress
-        transaction.fromAddressTitle = account.name
-        if (recipientResult.hasFoundRecipient) {
-            transaction.toAddressTitle = recipientResult.recipientOrAddress
+    fun addTitlesToTransaction(transaction: Transaction, transfer: Transfer, ctx: Context) {
+        if (transaction.isDelegationTransfer()){
+            transaction.title = ctx.getString(R.string.account_delegation_pending)
+        } else if (transaction.isBakerTransfer()) {
+            transaction.title = ctx.getString(R.string.account_baking_pending)
+        } else {
+            // ...else transfer is always outgoing, so just use toAddress
+            val recipientResult = findRecipientOrUseAddress(transfer.toAddress)
+            transaction.title = recipientResult.recipientOrAddress
+            transaction.fromAddressTitle = account.name
+            if (recipientResult.hasFoundRecipient) {
+                transaction.toAddressTitle = recipientResult.recipientOrAddress
+            }
         }
     }
 

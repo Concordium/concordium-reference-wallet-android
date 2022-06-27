@@ -1,7 +1,6 @@
 package com.concordium.wallet.data.preferences
 
 import android.content.Context
-import android.util.Log
 
 class AuthPreferences(val context: Context) :
     Preferences(context, SharedPreferencesKeys.PREF_FILE_AUTH, Context.MODE_PRIVATE) {
@@ -130,7 +129,7 @@ class AuthPreferences(val context: Context) :
     }
 
     fun isAccountsBackedUp(): Boolean {
-        return getBoolean(PREFKEY_ACCOUNTS_BACKED_UP, true)
+        return getBoolean(PREFKEY_ACCOUNTS_BACKED_UP, false)
     }
 
     fun setAccountsBackedUp(value: Boolean) {

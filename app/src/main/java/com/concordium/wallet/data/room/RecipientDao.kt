@@ -2,9 +2,6 @@ package com.concordium.wallet.data.room
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import java.nio.file.Files.delete
-
-
 
 
 @Dao

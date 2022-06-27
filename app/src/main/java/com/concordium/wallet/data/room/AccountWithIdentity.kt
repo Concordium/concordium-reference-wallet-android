@@ -1,8 +1,7 @@
 package com.concordium.wallet.data.room
 
-import androidx.room.*
-import com.concordium.wallet.data.model.*
-import com.concordium.wallet.data.room.typeconverter.AccountTypeConverters
+import androidx.room.Embedded
+import androidx.room.Relation
 import java.io.Serializable
 
 

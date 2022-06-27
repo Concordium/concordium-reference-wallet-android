@@ -10,8 +10,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_new_account_confirmed.account_view
-import kotlinx.android.synthetic.main.activity_new_account_confirmed.confirm_button
+import kotlinx.android.synthetic.main.activity_new_account_confirmed.*
 import kotlinx.android.synthetic.main.progress.*
 
 class NewAccountConfirmedActivity :

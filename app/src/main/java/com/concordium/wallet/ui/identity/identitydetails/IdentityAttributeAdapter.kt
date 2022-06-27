@@ -9,7 +9,6 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.util.IdentityAttributeConverterUtil
 import kotlinx.android.synthetic.main.item_identity_attribute.view.*
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class IdentityAttributeAdapter(private var data: SortedMap<String, String>) :

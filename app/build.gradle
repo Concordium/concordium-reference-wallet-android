@@ -6,9 +6,9 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def versionBuildNumberSequential = 75
+def versionBuildNumberSequential = 100
 
-def versionBuildNumberMajor = 2
+def versionBuildNumberMajor = 3
 def versionBuildNumberMinor = 0
 def versionBuildNumberPatch = 0
 
@@ -343,4 +343,7 @@ dependencies {
     // Generate QR
     implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
+
+    // EventBus
+    implementation 'org.greenrobot:eventbus:3.1.1'
 }

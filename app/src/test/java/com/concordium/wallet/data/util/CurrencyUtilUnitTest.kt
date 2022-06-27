@@ -1,8 +1,7 @@
 package com.concordium.wallet.data.util
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 import java.text.DecimalFormatSymbols
 
 class CurrencyUtilUnitTest {

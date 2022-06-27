@@ -9,7 +9,7 @@ import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.typeconverter.AccountTypeConverters
 import com.google.gson.JsonObject
 import java.io.Serializable
-
+import kotlin.math.max
 
 @Entity(tableName = "account_table")
 @TypeConverters(AccountTypeConverters::class)
@@ -73,13 +73,21 @@ data class Account(
     var finalizedAccountReleaseSchedule: AccountReleaseSchedule?,
 
     @ColumnInfo(name = "baker_id")
-    var bakerId: Long? = null
+    var bakerId: Long? = null,
 
-) : Serializable {
+    @ColumnInfo(name = "account_delegation")
+    var accountDelegation: AccountDelegation? = null,
 
+    @ColumnInfo(name = "account_baker")
+    var accountBaker: AccountBaker? = null,
+
+    @ColumnInfo(name = "accountIndex")
+    var accountIndex: Int? = null
+
+    ) : Serializable {
 
     fun isInitial(): Boolean {
-        if (readOnly) {
+        if (readOnly || isBaking() || isDelegating()) {
             return false
         }
         val credential = this.credential ?: return true
@@ -94,19 +102,37 @@ data class Account(
         return false
     }
 
-    public fun getAccountName(): String {
-        if (readOnly) {
-            return address.substring(0, 8)
+    fun getAccountName(): String {
+        return if (readOnly) {
+            address.substring(0, 8)
         } else {
-            return name
+            name
         }
     }
 
-    fun isBaker(): Boolean {
-        return bakerId != null
+    fun isBaking(): Boolean {
+        return accountBaker != null
     }
 
-    fun getAtDisposalSubstraction(): Long {
-        return Math.max((finalizedAccountReleaseSchedule?.total?.toLong() ?: 0), totalStaked)
+    fun isDelegating(): Boolean {
+        return accountDelegation != null
+    }
+
+    fun getAtDisposalWithoutStakedOrScheduled(totalBalance: Long): Long {
+        val stakedAmount: Long = accountDelegation?.stakedAmount?.toLong() ?: accountBaker?.stakedAmount?.toLong() ?: 0
+        val scheduledTotal: Long = finalizedAccountReleaseSchedule?.total?.toLong() ?: 0
+        val subtract = if (stakedAmount > 0 && stakedAmount <= scheduledTotal)
+            scheduledTotal
+        else if (stakedAmount > 0 && stakedAmount > scheduledTotal)
+            stakedAmount
+        else if (stakedAmount == 0L && scheduledTotal > 0)
+            scheduledTotal
+        else
+            0
+        return max(totalBalance - subtract, 0)
+    }
+
+    fun getAtDisposal(): Long {
+        return finalizedBalance - (finalizedAccountReleaseSchedule?.total?.toLong() ?: 0)
     }
 }

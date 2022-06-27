@@ -6,18 +6,11 @@ import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.CBORUtil
 import com.concordium.wallet.R
-import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.util.CurrencyUtil
-import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_send_funds.*
 import kotlinx.android.synthetic.main.activity_send_funds_confirmed.*
-import kotlinx.android.synthetic.main.activity_send_funds_confirmed.confirm_button
-import android.app.Activity
-
-
 
 
 class SendFundsConfirmedActivity :

@@ -6,7 +6,6 @@ import com.concordium.wallet.R
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 object DateTimeUtil {
 
     fun nowPlusMinutes(minutes: Int): Date {
@@ -136,14 +135,6 @@ object DateTimeUtil {
         return DateFormat.getTimeFormat(App.appContext).format(date)
     }
 
-    fun formatTime(date: Date?): String {
-        if(date == null){
-            return ""
-        }
-        val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-        return dateFormat.format(date)
-    }
-
     fun formatDateAsLocalMediumWithTime(date: Date?): String {
         // 15. jun. 2018  14.50    Jun 15, 2018 2:50 PM
         if(date == null){
@@ -167,6 +158,20 @@ object DateTimeUtil {
         return DateFormat.getMediumDateFormat(App.appContext).format(date)
     }
 
-    //endregion
+    fun String.toDate(dateFormat: String = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timeZone: TimeZone = TimeZone.getTimeZone("UTC")): Date? {
+        var df = dateFormat
+        if (this.isNotEmpty() && !this.contains("."))
+            df = "yyyy-MM-dd'T'HH:mm:ss'Z'" // needed if wallet-proxy doesn't send milliseconds with timestamps.
+        val parser = SimpleDateFormat(df, Locale.getDefault())
+        parser.timeZone = timeZone
+        return parser.parse(this)
+    }
 
+    fun Date.formatTo(dateFormat: String, timeZone: TimeZone = TimeZone.getDefault()): String {
+        val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
+        formatter.timeZone = timeZone
+        return formatter.format(this)
+    }
+
+    //endregion
 }

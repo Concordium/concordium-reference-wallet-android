@@ -1,0 +1,14 @@
+body {
+    font-family: -apple-system;
+    font-size: 16px;
+    font-weight: 400;
+    text-align: left;
+}
+
+a:link, a:visited, a:hover, a:active  {
+  color: black;
+}
+
+p {
+    text-align: justify;
+}

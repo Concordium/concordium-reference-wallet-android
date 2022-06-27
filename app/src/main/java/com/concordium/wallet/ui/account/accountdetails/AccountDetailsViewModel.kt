@@ -11,7 +11,6 @@ import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
-import com.concordium.wallet.core.authentication.AuthenticationManager
 import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.AccountRepository
@@ -19,7 +18,6 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.cryptolib.CreateCredentialOutput
 import com.concordium.wallet.data.cryptolib.DecryptAmountInput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.*
@@ -36,10 +34,12 @@ import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
 import java.util.*
 import javax.crypto.Cipher
-import kotlin.collections.ArrayList
 
 class AccountDetailsViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -53,6 +53,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     lateinit var account: Account
     var isShielded: Boolean = false
+    var hasPendingDelegationTransactions: Boolean = false
+    var hasPendingBakingTransactions: Boolean = false
 
     private val proxyRepository = ProxyRepository()
     private val accountRepository: AccountRepository
@@ -118,6 +120,10 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private var _selectedTransactionForDecrytionLiveData = MutableLiveData<Transaction>()
     val selectedTransactionForDecrytionLiveData: LiveData<Transaction>
         get() = _selectedTransactionForDecrytionLiveData
+
+    private var _accountUpdatedLiveData = MutableLiveData<Boolean>()
+    val accountUpdatedLiveData: LiveData<Boolean>
+        get() = _accountUpdatedLiveData
 
     init {
         val accountDao = WalletDatabase.getDatabase(application).accountDao()
@@ -242,6 +248,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             }
             viewModelScope.launch {
                 accountUpdater.updateForAccount(account)
+                val type = if (account.accountDelegation != null) ProxyRepository.UPDATE_DELEGATION else ProxyRepository.REGISTER_BAKER
+                EventBus.getDefault().post(BakerDelegationData(account, isTransactionInProgress = hasPendingDelegationTransactions || hasPendingBakingTransactions , type = type))
             }
         } else {
             _totalBalanceLiveData.value = Pair(0, false)
@@ -253,6 +261,12 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             override fun onDone(totalBalances: TotalBalancesData) {
                 _totalBalanceLiveData.value = Pair(if(isShielded) account.totalShieldedBalance else account.totalUnshieldedBalance, totalBalances.totalContainsEncrypted)
                 getLocalTransfers()
+                viewModelScope.launch {
+                    accountRepository.findById(account.id)?.let { accountCandidate ->
+                        account = accountCandidate
+                        _accountUpdatedLiveData.value = true
+                    }
+                }
             }
 
             override fun onNewAccountFinalized(accountName: String) {
@@ -283,12 +297,16 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     fun getLocalTransfers() {
         viewModelScope.launch {
+            hasPendingDelegationTransactions = false
+            hasPendingBakingTransactions = false
             val recipientList = recipientRepository.getAll()
             transactionMappingHelper = TransactionMappingHelper(account, recipientList)
             val transferList = transferRepository.getAllByAccountId(account.id)
             for (transfer in transferList) {
+                if (transfer.transactionType == TransactionType.LOCAL_DELEGATION) hasPendingDelegationTransactions = true
+                if (transfer.transactionType == TransactionType.LOCAL_BAKER) hasPendingBakingTransactions = true
                 val transaction = transfer.toTransaction()
-                transactionMappingHelper.addTitlesToTransaction(transaction, transfer)
+                transactionMappingHelper.addTitlesToTransaction(transaction, transfer, getApplication())
                 nonMergedLocalTransactions.add(transaction)
             }
             loadRemoteTransactions(null)
@@ -498,12 +516,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             }
 
             override fun onFinish() {
-
             }
         }
-
-
-
 
     suspend fun decryptTransactionListUnencryptedAmounts(secretKey: String) {
         _transferListLiveData.value?.forEach {

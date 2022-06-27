@@ -1,14 +1,15 @@
 package com.concordium.wallet.ui.account.newaccountconfirmed
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
-import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
-import com.concordium.wallet.ui.common.identity.IdentityUpdater
 import kotlinx.coroutines.launch
 
 class NewAccountConfirmedViewModel(application: Application) : AndroidViewModel(application) {

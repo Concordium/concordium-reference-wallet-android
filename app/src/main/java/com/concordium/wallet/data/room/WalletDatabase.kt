@@ -5,14 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.concordium.wallet.data.room.WalletDatabase.Companion.VERSION_NUMBER
 import com.concordium.wallet.data.room.typeconverter.GlobalTypeConverters
-import androidx.sqlite.db.SupportSQLiteDatabase
-
-import androidx.room.migration.Migration
-
-
-
 
 @Database(
     entities = arrayOf(Identity::class, Account::class, Transfer::class, Recipient::class, EncryptedAmount::class),
@@ -20,7 +16,7 @@ import androidx.room.migration.Migration
     exportSchema = true
 )
 @TypeConverters(GlobalTypeConverters::class)
-public abstract class WalletDatabase : RoomDatabase() {
+abstract class WalletDatabase : RoomDatabase() {
 
     abstract fun identityDao(): IdentityDao
     abstract fun accountDao(): AccountDao
@@ -30,13 +26,33 @@ public abstract class WalletDatabase : RoomDatabase() {
 
     companion object {
 
-        const val VERSION_NUMBER = 4
-
+        const val VERSION_NUMBER = 7
 
         val MIGRATION_3_4: Migration = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE transfer_table "
                         + " ADD COLUMN memo TEXT");
+            }
+        }
+
+        val MIGRATION_4_5: Migration = object : Migration(4, 5) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE account_table "
+                        + " ADD COLUMN account_delegation TEXT");
+            }
+        }
+
+        val MIGRATION_5_6: Migration = object : Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE account_table "
+                        + " ADD COLUMN account_baker TEXT");
+            }
+        }
+
+        val MIGRATION_6_7: Migration = object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE account_table "
+                        + " ADD COLUMN accountIndex INTEGER");
             }
         }
 
@@ -56,12 +72,13 @@ public abstract class WalletDatabase : RoomDatabase() {
                     "wallet_database"
                 )
                     .addMigrations(MIGRATION_3_4)
+                    .addMigrations(MIGRATION_4_5)
+                    .addMigrations(MIGRATION_5_6)
+                    .addMigrations(MIGRATION_6_7)
                     .build()
                 INSTANCE = instance
                 return instance
             }
         }
-
-
     }
 }

@@ -1,18 +1,20 @@
 package com.concordium.wallet.ui.account.accountsoverview
 
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Process
 import android.view.*
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
-import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
+import com.concordium.wallet.data.model.AppSettings
+import com.concordium.wallet.data.model.BakerStakePendingChange
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
@@ -21,7 +23,6 @@ import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
-import com.concordium.wallet.ui.account.accountdetails.ShieldingIntroActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.account.newaccountname.NewAccountNameActivity
@@ -30,12 +31,7 @@ import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.uicore.dialog.CustomDialogFragment
-import com.concordium.wallet.util.Log
-import kotlinx.android.synthetic.main.activity_account_details.*
 import kotlinx.android.synthetic.main.fragment_accounts_overview.*
-import kotlinx.android.synthetic.main.fragment_accounts_overview.accounts_overview_total_details_disposal
-import kotlinx.android.synthetic.main.fragment_accounts_overview.accounts_overview_total_details_staked
-import kotlinx.android.synthetic.main.fragment_accounts_overview.root_layout
 import kotlinx.android.synthetic.main.fragment_accounts_overview.view.*
 import kotlinx.android.synthetic.main.progress.*
 import kotlinx.android.synthetic.main.progress.view.*
@@ -52,7 +48,7 @@ class AccountsOverviewFragment : BaseFragment() {
 
     private var encryptedWarningDialog: AlertDialog? = null
     private var fragmentListener: AccountsOverviewFragmentListener? = null
-
+    private var forceUpdateDialog: AlertDialog? = null
     private var eventListener: Preferences.Listener? = null
 
     private lateinit var viewModel: AccountsOverviewViewModel
@@ -67,8 +63,6 @@ class AccountsOverviewFragment : BaseFragment() {
 
         setHasOptionsMenu(true)
         initializeViewModel()
-        viewModel.initialize()
-
     }
 
     override fun onCreateView(
@@ -105,6 +99,9 @@ class AccountsOverviewFragment : BaseFragment() {
         eventListener?.let {
             App.appCore.session.addAccountsBackedUpListener(it)
         }
+
+        if (!App.appCore.appSettingsForceUpdateChecked)
+            viewModel.loadAppSettings()
     }
 
     override fun onDestroy() {
@@ -113,7 +110,6 @@ class AccountsOverviewFragment : BaseFragment() {
         eventListener?.let {
             App.appCore.session.removeAccountsBackedUpListener(it)
         }
-
     }
 
     override fun onPause() {
@@ -213,6 +209,7 @@ class AccountsOverviewFragment : BaseFragment() {
             accountList?.let {
                 accountAdapter.setData(it)
                 checkForUnencrypted(it)
+                checkForClosingPools(it)
             }
         })
 
@@ -229,10 +226,108 @@ class AccountsOverviewFragment : BaseFragment() {
             updateWarnings()
         })
 
+        viewModel.appSettingsLiveData.observe(this, Observer { appSettings ->
+            checkAppSettings(appSettings)
+        })
+    }
+
+    private fun checkAppSettings(appSettings: AppSettings?) {
+        appSettings?.let {
+            when (appSettings.status) {
+                AppSettings.APP_VERSION_STATUS_WARNING -> it.url?.let { url -> showAppUpdateWarning(url) }
+                AppSettings.APP_VERSION_STATUS_NEEDS_UPDATE -> it.url?.let { url -> showAppUpdateNeedsUpdate(url) }
+                else -> {}
+            }
+        }
+    }
+
+    private fun showAppUpdateWarning(url: String) {
+        if (forceUpdateDialog != null)
+            return
+
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(R.string.force_update_warning_title)
+        builder.setMessage(getString(R.string.force_update_warning_message))
+        builder.setPositiveButton(getString(R.string.force_update_warning_update_now)) { _, _ ->
+            gotoAppStore(url)
+        }
+        builder.setNegativeButton(getString(R.string.force_update_warning_backup)) { _, _ -> gotoBackup() }
+        builder.setNeutralButton(getString(R.string.force_update_warning_remind_me)) { dialog, _ ->
+            App.appCore.appSettingsForceUpdateChecked = true
+            dialog.dismiss()
+        }
+        builder.setCancelable(false)
+        forceUpdateDialog = builder.create()
+        forceUpdateDialog?.show()
+    }
+
+    private fun showAppUpdateNeedsUpdate(url: String) {
+        if (forceUpdateDialog != null)
+            return
+
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(R.string.force_update_needed_title)
+        builder.setMessage(getString(R.string.force_update_needed_message))
+        builder.setNeutralButton(getString(R.string.force_update_needed_update_now)) { _, _ ->
+            gotoAppStore(url)
+        }
+        builder.setPositiveButton(getString(R.string.force_update_needed_backup)) { _, _ -> gotoBackup() }
+        builder.setCancelable(false)
+        forceUpdateDialog = builder.create()
+        forceUpdateDialog?.show()
+    }
+
+    private fun gotoAppStore(url: String) {
+        if (url.isNotBlank())
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        Process.killProcess(Process.myPid())
+    }
+
+    private fun gotoBackup() {
+        forceUpdateDialog?.dismiss()
+        forceUpdateDialog = null
+        startActivity(Intent(context, ExportActivity::class.java))
+    }
+
+    private fun checkForClosingPools(accountList: List<AccountWithIdentity>) {
+        if (App.appCore.closingPoolsChecked)
+            return
+
+        App.appCore.closingPoolsChecked = true // avoid calling this more than once for each app cold launch
+
+        val poolIds = accountList.mapNotNull { accountWithIdentity ->
+            accountWithIdentity.account.accountDelegation?.delegationTarget?.bakerId?.toString()
+        }.distinct()
+
+        viewModel.poolStatusesLiveData.observe(this, Observer { poolStatuses ->
+            if (poolStatuses.isNotEmpty()) {
+                var affectedAccounts = ""
+                poolStatuses.forEach { poolStatus ->
+                    if (poolStatus.second == BakerStakePendingChange.CHANGE_REMOVE_POOL) {
+                        val accountNames = accountList.filter { it.account.accountDelegation?.delegationTarget?.bakerId?.toString() == poolStatus.first }.map { it.account.name }
+                        accountNames.forEach { accountName ->
+                            if (accountName.isNotEmpty())
+                                affectedAccounts = affectedAccounts.plus("\n").plus(accountName)
+                        }
+                    }
+                }
+                if (affectedAccounts.isNotEmpty()) {
+                    val builder = AlertDialog.Builder(context)
+                    builder.setTitle(R.string.accounts_overview_closing_pools_notice_title)
+                    builder.setMessage(getString(R.string.accounts_overview_closing_pools_notice_message).plus(affectedAccounts))
+                    builder.setPositiveButton(getString(R.string.accounts_overview_closing_pools_notice_ok)) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    builder.create().show()
+                }
+            }
+        })
+
+        viewModel.loadPoolStatuses(poolIds)
     }
 
     private fun checkForUnencrypted(accountList: List<AccountWithIdentity>) {
-        accountList?.forEach {
+        accountList.forEach {
 
             val hasUnencryptedTransactions = it.account.finalizedEncryptedBalance?.incomingAmounts?.isNotEmpty()
             if((hasUnencryptedTransactions != null && hasUnencryptedTransactions == true)
@@ -309,15 +404,11 @@ class AccountsOverviewFragment : BaseFragment() {
         }
 
         initializeList(view)
-
-
-
-
     }
 
     private fun updateWarnings(){
-        var ident = viewModel.pendingIdentityForWarningLiveData.value
-        if(ident != null && !App.appCore.session.isIdentityPendingWarningAcknowledged(ident.id)){
+        val ident = viewModel.pendingIdentityForWarningLiveData.value
+        if (ident != null && !App.appCore.session.isIdentityPendingWarningAcknowledged(ident.id)) {
             missing_backup.visibility = View.GONE
             identity_pending.visibility = View.VISIBLE
             viewModel.pendingIdentityForWarningLiveData.value

@@ -3,12 +3,25 @@ package com.concordium.wallet.data.backend
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.model.*
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.*
 
 interface ProxyBackend {
 
     @PUT("v0/submitCredential")
     fun submitCredential(@Body credential: CredentialWrapper): Call<SubmissionData>
+
+    @GET("v0/bakerPool/{poolId}")
+    fun bakerPool(@Path("poolId") poolId: String): Call<BakerPoolStatus>
+
+    @GET("v0/bakerPool/{poolId}")
+    suspend fun bakerPoolSuspended(@Path("poolId") poolId: String): Response<BakerPoolStatus>
+
+    @GET("v0/appSettings")
+    suspend fun appSettingsSuspended(
+        @Query("platform") platform: String,
+        @Query("appVersion") version: Int
+    ): Response<AppSettings>
 
     @GET("v0/submissionStatus/{submissionId}")
     fun accountSubmissionStatus(@Path("submissionId") submissionId: String): Call<AccountSubmissionStatus>
@@ -31,9 +44,23 @@ interface ProxyBackend {
     @GET("v0/transactionCost")
     fun transferCost(
         @Query("type") type: String,
-        @Query("memoSize") memoSize: Int? = null
+        @Query("memoSize") memoSize: Int? = null,
+        @Query("amount") amount: Long? = null,
+        @Query("restake") restake: Boolean? = null,
+        @Query("lPool") lPool: String? = null,
+        @Query("target") target: String? = null,
+        @Query("metadataSize") metadataSize: Int? = null,
+        @Query("openStatus") openStatus: String? = null
     ): Call<TransferCost>
 
+    @GET("v0/chainParameters")
+    fun chainParameters(): Call<ChainParameters>
+
+    @GET("v0/chainParameters")
+    suspend fun chainParametersSuspended(): Response<ChainParameters>
+
+    @GET("v0/passiveDelegation")
+    suspend fun passiveDelegationSuspended(): Response<PassiveDelegation>
 
     @GET("v0/accBalance/{accountAddress}")
     fun accountBalance(@Path("accountAddress") accountAddress: String): Call<AccountBalance>
