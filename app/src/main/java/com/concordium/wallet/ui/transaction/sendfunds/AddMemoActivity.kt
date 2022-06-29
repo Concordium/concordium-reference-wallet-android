@@ -7,37 +7,37 @@ import android.text.TextWatcher
 import android.view.animation.AnimationUtils
 import com.concordium.wallet.CBORUtil
 import com.concordium.wallet.R
+import com.concordium.wallet.databinding.ActivityAddMemoBinding
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
-import kotlinx.android.synthetic.main.activity_add_memo.*
 
-
-class AddMemoActivity :
-    BaseActivity(R.layout.activity_add_memo, R.string.add_memo_title) {
-
+class AddMemoActivity : BaseActivity() {
     companion object {
         const val EXTRA_MEMO = "EXTRA_MEMO"
     }
 
+    private lateinit var binding: ActivityAddMemoBinding
+
     //region Lifecycle
     //************************************************************
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val memo = intent.getStringExtra(EXTRA_MEMO)
-        memo_edittext.setText(memo)
+        binding = ActivityAddMemoBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.add_memo_title)
 
-        memo_edittext.addTextChangedListener(object : TextWatcher {
+        val memo = intent.getStringExtra(EXTRA_MEMO)
+        binding.memoEdittext.setText(memo)
+
+        binding.memoEdittext.addTextChangedListener(object : TextWatcher {
             private var previousText: String = ""
             override fun afterTextChanged(editable: Editable) {
                 var change = false
-                var str = editable.toString()
-                var bytes = CBORUtil.encodeCBOR(str)
+                val str = editable.toString()
+                val bytes = CBORUtil.encodeCBOR(str)
                 change = bytes.size <= CBORUtil.MAX_BYTES
                 if (!change) {
                     editable.replace(0, editable.length, previousText)
-                    memo_edittext.startAnimation(AnimationUtils.loadAnimation(this@AddMemoActivity, R.anim.anim_shake))
+                    binding.memoEdittext.startAnimation(AnimationUtils.loadAnimation(this@AddMemoActivity, R.anim.anim_shake))
                 }
                 else{
                     previousText = editable.toString()
@@ -45,18 +45,16 @@ class AddMemoActivity :
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
         })
-        confirm_button.setOnClickListener {
+
+        binding.confirmButton.setOnClickListener {
             goBackToSendFunds()
         }
     }
-
-
 
     //endregion
 
@@ -68,11 +66,9 @@ class AddMemoActivity :
     //region Control/UI
     //************************************************************
 
-
-
     private fun goBackToSendFunds() {
         val intent = Intent(this, SendFundsActivity::class.java)
-        intent.putExtra(SendFundsActivity.EXTRA_MEMO, memo_edittext.text.toString())
+        intent.putExtra(SendFundsActivity.EXTRA_MEMO, binding.memoEdittext.text.toString())
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
     }

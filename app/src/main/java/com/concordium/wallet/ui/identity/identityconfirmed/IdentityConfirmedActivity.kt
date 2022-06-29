@@ -11,23 +11,20 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.Identity
+import com.concordium.wallet.databinding.ActivityIdentityConfirmedBinding
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.RequestCodes
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import com.concordium.wallet.uicore.dialog.CustomDialogFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
-import kotlinx.android.synthetic.main.activity_identity_confirmed.*
-import kotlinx.android.synthetic.main.progress.*
 
-
-class IdentityConfirmedActivity : BaseActivity(R.layout.activity_identity_confirmed, R.string.identity_confirmed_title),
-    Dialogs.DialogFragmentListener {
-
+class IdentityConfirmedActivity : BaseActivity(), Dialogs.DialogFragmentListener {
     companion object {
         const val EXTRA_IDENTITY = "EXTRA_IDENTITY"
     }
 
+    private lateinit var binding: ActivityIdentityConfirmedBinding
     private lateinit var viewModel: IdentityConfirmedViewModel
 
     //region Lifecycle
@@ -35,6 +32,9 @@ class IdentityConfirmedActivity : BaseActivity(R.layout.activity_identity_confir
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityIdentityConfirmedBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_confirmed_title)
 
         val identity = intent.extras!!.getSerializable(EXTRA_IDENTITY) as Identity
 
@@ -43,9 +43,9 @@ class IdentityConfirmedActivity : BaseActivity(R.layout.activity_identity_confir
         // This observe has to be done after the initialize, where the live data is set up in the view model
         viewModel.accountWithIdentityLiveData.observe(this, Observer<AccountWithIdentity> { accountWithIdentity ->
             accountWithIdentity?.let {
-                identity_view.setIdentityData(accountWithIdentity.identity)
-                account_view.setAccount(accountWithIdentity)
-                account_view.isEnabled = accountWithIdentity.identity.status == IdentityStatus.DONE
+                binding.identityView.setIdentityData(accountWithIdentity.identity)
+                binding.accountView.setAccount(accountWithIdentity)
+                binding.accountView.isEnabled = accountWithIdentity.identity.status == IdentityStatus.DONE
             }
         })
         initializeViews()
@@ -83,7 +83,7 @@ class IdentityConfirmedActivity : BaseActivity(R.layout.activity_identity_confir
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(IdentityConfirmedViewModel::class.java)
+        )[IdentityConfirmedViewModel::class.java]
 
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let {
@@ -108,14 +108,13 @@ class IdentityConfirmedActivity : BaseActivity(R.layout.activity_identity_confir
                 CustomDialogFragment.newAccountFinalizedDialog(this, newAccount)
             }
         })
-
     }
 
     private fun initializeViews() {
         hideActionBarBack(this)
         showWaiting(true)
 
-        confirm_button.setOnClickListener {
+        binding.confirmButton.setOnClickListener {
             val builder = AlertDialog.Builder(this)
             builder.setTitle(getString(R.string.identity_confirmed_alert_dialog_title))
             builder.setMessage(getString(R.string.identity_confirmed_alert_dialog_text))
@@ -136,9 +135,9 @@ class IdentityConfirmedActivity : BaseActivity(R.layout.activity_identity_confir
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
-            progress_layout.visibility = View.VISIBLE
+            binding.includeProgress.progressLayout.visibility = View.VISIBLE
         } else {
-            progress_layout.visibility = View.GONE
+            binding.includeProgress.progressLayout.visibility = View.GONE
         }
     }
 
@@ -151,12 +150,11 @@ class IdentityConfirmedActivity : BaseActivity(R.layout.activity_identity_confir
 
     private fun updateInfoText(isFirstIdentity: Boolean) {
         if (isFirstIdentity) {
-            info_textview.setText(R.string.identity_confirmed_info_first)
+            binding.infoTextview.setText(R.string.identity_confirmed_info_first)
         } else {
-            info_textview.setText(R.string.identity_confirmed_info)
+            binding.infoTextview.setText(R.string.identity_confirmed_info)
         }
     }
 
     //endregion
-
 }

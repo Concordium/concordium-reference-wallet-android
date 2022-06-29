@@ -11,33 +11,32 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
+import com.concordium.wallet.databinding.ActivityRecipientListBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.recipient.recipient.RecipientActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.uicore.recyclerview.touchlistener.RecyclerTouchListener
 import com.concordium.wallet.util.Log
-import kotlinx.android.synthetic.main.activity_recipient_list.*
-import kotlinx.android.synthetic.main.progress.*
 
-
-class RecipientListActivity :
-    BaseActivity(R.layout.activity_recipient_list, R.string.recipient_list_default_title) {
-
+class RecipientListActivity : BaseActivity() {
     companion object {
         const val EXTRA_SELECT_RECIPIENT_MODE = "EXTRA_SELECT_RECIPIENT_MODE"
         const val EXTRA_SHIELDED = "EXTRA_SHIELDED"
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
     }
 
+    private lateinit var binding: ActivityRecipientListBinding
     private lateinit var viewModel: RecipientListViewModel
     private lateinit var recipientAdapter: RecipientAdapter
-
 
     //region Lifecycle
     //************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityRecipientListBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.recipient_list_default_title)
 
         val selectRecipientMode = intent.getBooleanExtra(EXTRA_SELECT_RECIPIENT_MODE, false)
         val isShielded = intent.getBooleanExtra(EXTRA_SHIELDED, false)
@@ -48,7 +47,7 @@ class RecipientListActivity :
         initializeViews()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.add_item_menu, menu)
         return true
     }
@@ -75,14 +74,12 @@ class RecipientListActivity :
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(RecipientListViewModel::class.java)
-
+        )[RecipientListViewModel::class.java]
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let {
                 showWaiting(waiting)
             }
         })
-
         viewModel.recipientListLiveData.observe(this, Observer {
             it.let {
                 recipientAdapter.setData(it)
@@ -97,13 +94,13 @@ class RecipientListActivity :
             setActionBarTitle(R.string.recipient_list_select_title)
         } else {
             // Hide shield/unshield function in address book
-            recipient_shield_container.visibility = View.GONE
+            binding.recipientShieldContainer.visibility = View.GONE
         }
-        scan_qr_imageview.setOnClickListener {
+        binding.scanQrImageview.setOnClickListener {
             gotoScanBarCode()
         }
 
-        recipient_searchview.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding.recipientSearchview.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(txt: String?): Boolean {
                 recipientAdapter.filter(txt)
                 return true
@@ -116,24 +113,12 @@ class RecipientListActivity :
         })
         initializeList()
         initializeListSwipe()
-
-        /*
-        viewModel.account?.let {
-            val shieldHeaderTextRes = if (viewModel.isShielded) R.string.recipient_list_unshield_amount else R.string.recipient_list_shield_amount
-            recipient_own_account.findViewById<TextView>(R.id.recipient_name_textview).setText(shieldHeaderTextRes)
-            recipient_own_account.findViewById<TextView>(R.id.recipient_address_textview).setText(it.address)
-        }
-        recipient_own_account.setOnClickListener(View.OnClickListener {
-            viewModel.account?.let {
-                goBackToSendFunds(Recipient(it.id, it.name, it.address))
-            }
-        })*/
     }
 
     private fun initializeList() {
         recipientAdapter = RecipientAdapter()
-        recyclerview.setHasFixedSize(true)
-        recyclerview.adapter = recipientAdapter
+        binding.recyclerview.setHasFixedSize(true)
+        binding.recyclerview.adapter = recipientAdapter
 
         recipientAdapter.setOnItemClickListener(object :
             RecipientAdapter.OnItemClickListener {
@@ -153,7 +138,7 @@ class RecipientListActivity :
     }
 
     private fun initializeListSwipe() {
-        val touchListener = RecyclerTouchListener(this, recyclerview)
+        val touchListener = RecyclerTouchListener(this, binding.recyclerview)
         touchListener
             .setSwipeOptionViews(R.id.delete_item_layout)
             .setSwipeable(
@@ -170,7 +155,7 @@ class RecipientListActivity :
                         }
                     }
                 })
-        recyclerview.addOnItemTouchListener(touchListener)
+        binding.recyclerview.addOnItemTouchListener(touchListener)
     }
 
     //endregion
@@ -180,9 +165,9 @@ class RecipientListActivity :
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
-            progress_layout.visibility = View.VISIBLE
+            binding.includeProgress.progressLayout.visibility = View.VISIBLE
         } else {
-            progress_layout.visibility = View.GONE
+            binding.includeProgress.progressLayout.visibility = View.GONE
         }
     }
 

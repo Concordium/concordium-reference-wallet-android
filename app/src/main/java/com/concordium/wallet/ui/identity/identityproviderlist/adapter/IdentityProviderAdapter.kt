@@ -5,18 +5,13 @@ import android.text.Html
 import android.text.TextUtils
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.IdentityProvider
+import com.concordium.wallet.databinding.ItemIdentityProviderBinding
+import com.concordium.wallet.databinding.ItemIdentityProviderHeaderBinding
 import com.concordium.wallet.util.ImageUtil.getImageBitmap
-import kotlinx.android.synthetic.main.item_identity_provider.view.*
-import kotlinx.android.synthetic.main.item_identity_provider.view.header_textview
-import kotlinx.android.synthetic.main.item_identity_provider.view.root_layout
-import kotlinx.android.synthetic.main.item_identity_provider_header.view.*
 
 class IdentityProviderAdapter(
     private val context: Context,
@@ -26,48 +21,10 @@ class IdentityProviderAdapter(
 
     private var onItemClickListener: OnItemClickListener? = null
 
-    class HeaderViewHolder(val view: View, val context: Context) : RecyclerView.ViewHolder(view) {
-        private val infoTextView: TextView = view.info_textview
+    inner class ItemViewHolder(val binding: ItemIdentityProviderBinding): RecyclerView.ViewHolder(binding.root)
+    inner class HeaderViewHolder(val binding: ItemIdentityProviderHeaderBinding): RecyclerView.ViewHolder(binding.root)
 
-        fun bind(identityName: String) {
-            infoTextView.text = Html.fromHtml(context.getString(R.string.identity_create_identity_provider_info, identityName))
-            infoTextView.setMovementMethod(LinkMovementMethod.getInstance());
-            infoTextView.setLinksClickable(true);
-        }
-    }
-
-    class ItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        private val rootLayout: View = view.root_layout
-        private val mainAreaView: View = view.main_area_view
-        private val secondaryAreaView: View = view.secondary_area_view
-        private val imageView: ImageView = view.logo_imageview
-        private val nameTextView: TextView = view.header_textview
-        private val privacyPolicyTextView = view.privacy_policy_textview
-
-        fun bind(item: IdentityProviderItem, onItemClickListener: OnItemClickListener?) {
-            val identityProvider = item.identityProvider
-            if (!TextUtils.isEmpty(identityProvider.metadata.icon)) {
-                val image = getImageBitmap(identityProvider.metadata.icon)
-                imageView.setImageBitmap(image)
-            }
-            val description = identityProvider.ipInfo.ipDescription
-            nameTextView.text = description.name
-
-            // Click
-            if (onItemClickListener != null) {
-                mainAreaView.setOnClickListener {
-                    onItemClickListener.onItemClicked(identityProvider)
-                }
-                secondaryAreaView.setOnClickListener {
-                    onItemClickListener.onItemActionClicked(identityProvider)
-                }
-            }
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return data.size
-    }
+    override fun getItemCount() = data.size
 
     override fun getItemViewType(position: Int): Int {
         val item = data[position]
@@ -77,10 +34,12 @@ class IdentityProviderAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             ItemType.Header.id -> {
-                HeaderViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_identity_provider_header, parent, false), context)
+                val binding = ItemIdentityProviderHeaderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                HeaderViewHolder(binding)
             }
             ItemType.Item.id -> {
-                ItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_identity_provider, parent, false))
+                val binding = ItemIdentityProviderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ItemViewHolder(binding)
             }
             else -> {
                 throw Exception("Invalid item view type")
@@ -89,9 +48,34 @@ class IdentityProviderAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = data.get(position)
-        (holder as? HeaderViewHolder)?.bind(identityName)
-        (holder as? ItemViewHolder)?.bind(item as IdentityProviderItem, onItemClickListener)
+        if (holder is HeaderViewHolder) {
+            with(holder) {
+                binding.infoTextview.text = Html.fromHtml(context.getString(R.string.identity_create_identity_provider_info, identityName))
+                binding.infoTextview.movementMethod = LinkMovementMethod.getInstance()
+                binding.infoTextview.linksClickable = true
+            }
+        } else if (holder is ItemViewHolder) {
+            with(holder) {
+                val item = data[position] as IdentityProviderItem
+                val identityProvider = item.identityProvider
+                if (!TextUtils.isEmpty(identityProvider.metadata.icon)) {
+                    val image = getImageBitmap(identityProvider.metadata.icon)
+                    binding.logoImageview.setImageBitmap(image)
+                }
+                val description = identityProvider.ipInfo.ipDescription
+                binding.headerTextview.text = description.name
+
+                // Click
+                if (onItemClickListener != null) {
+                    binding.mainAreaView.setOnClickListener {
+                        onItemClickListener?.onItemClicked(identityProvider)
+                    }
+                    binding.secondaryAreaView.setOnClickListener {
+                        onItemClickListener?.onItemActionClicked(identityProvider)
+                    }
+                }
+            }
+        }
     }
 
     fun setData(data: List<AdapterItem>) {

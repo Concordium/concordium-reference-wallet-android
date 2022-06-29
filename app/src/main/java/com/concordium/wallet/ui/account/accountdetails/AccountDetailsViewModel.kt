@@ -105,12 +105,12 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     val showPadLockLiveData: LiveData<Boolean>
         get() = _showPadLockLiveData
 
-    private var _transferListLiveData = MutableLiveData<List<AdapterItem>>()
-    val transferListLiveData: LiveData<List<AdapterItem>>
+    private var _transferListLiveData = MutableLiveData<List<AdapterItem>?>()
+    val transferListLiveData: MutableLiveData<List<AdapterItem>?>
         get() = _transferListLiveData
 
-    private var _identityLiveData = MutableLiveData<Identity>()
-    val identityLiveData: LiveData<Identity>
+    private var _identityLiveData = MutableLiveData<Identity?>()
+    val identityLiveData: MutableLiveData<Identity?>
         get() = _identityLiveData
 
     private var _totalBalanceLiveData = MutableLiveData<Pair<Long, Boolean>>()

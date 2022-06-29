@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="24dp"
     android:background="@color/background_light_blue">
-
     <TextView
         android:id="@+id/header_textview"
         style="@style/TextView.ListHeader"
@@ -18,13 +17,4 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Today -  dsf dsfds dsfds fsd dsf dsf sdf dsfsdf sd sdf ds dsf " />
-
-    <!--View
-        android:id="@+id/divider"
-        style="@style/Divider"
-        android:layout_width="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" /-->
-
 </androidx.constraintlayout.widget.ConstraintLayout>

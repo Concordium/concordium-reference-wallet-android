@@ -10,6 +10,7 @@ import android.text.TextWatcher
 import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.CBORUtil
@@ -19,6 +20,7 @@ import com.concordium.wallet.core.backend.BackendError
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.databinding.ActivitySendFundsBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.failed.FailedActivity
 import com.concordium.wallet.ui.common.failed.FailedViewModel
@@ -27,32 +29,29 @@ import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.transaction.sendfundsconfirmed.SendFundsConfirmedActivity
 import com.concordium.wallet.uicore.afterTextChanged
 import com.concordium.wallet.util.KeyboardUtil
-import kotlinx.android.synthetic.main.activity_send_funds.*
-import kotlinx.android.synthetic.main.progress.*
 import java.text.DecimalFormatSymbols
 import javax.crypto.Cipher
 
-class SendFundsActivity :
-    BaseActivity(R.layout.activity_send_funds, R.string.send_funds_title) {
-
+class SendFundsActivity : BaseActivity() {
     companion object {
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
         const val EXTRA_SHIELDED = "EXTRA_SHIELDED"
         const val EXTRA_RECIPIENT = "EXTRA_RECIPIENT"
         const val EXTRA_MEMO = "EXTRA_MEMO"
-        const val REQUESTCODE_SCAN_QR = 2000
-        const val SEND_AMOUNT = 3000
-
     }
 
+    private lateinit var binding: ActivitySendFundsBinding
     private lateinit var viewModel: SendFundsViewModel
-
 
     //region Lifecycle
     //************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivitySendFundsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.send_funds_title)
+
         val account = intent.extras!!.getSerializable(EXTRA_ACCOUNT) as Account
         val isShielded = intent.extras!!.getBoolean(EXTRA_SHIELDED)
         initializeViewModel()
@@ -60,32 +59,12 @@ class SendFundsActivity :
         handleRecipientIntent(intent)
         handleMemo(intent)
         initViews()
-
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         handleRecipientIntent(intent)
         handleMemo(intent)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == REQUESTCODE_SCAN_QR) {
-            if (resultCode == Activity.RESULT_OK) {
-                data?.getStringExtra(ScanQRActivity.EXTRA_BARCODE)?.let { barcode ->
-                    handleRecipient(Recipient(0,"", barcode))
-                }
-            }
-        }
-
-        if (requestCode == SEND_AMOUNT) {
-            if (resultCode == Activity.RESULT_OK) {
-                finish()
-            }
-        }
-
     }
 
     fun handleRecipientIntent(intent: Intent?){
@@ -100,15 +79,15 @@ class SendFundsActivity :
             if(viewModel.account.id == recipient.id){
                 setActionBarTitle(if(viewModel.isShielded) R.string.send_funds_unshield_title else R.string.send_funds_shield_title)
                 if (!viewModel.isShielded)
-                    send_all.visibility = View.GONE
+                    binding.sendAll.visibility = View.GONE
             }
         }
     }
 
-    fun handleMemo(intent: Intent?){
+    private fun handleMemo(intent: Intent?){
         intent?.let {
             if(it.hasExtra(EXTRA_MEMO)){
-                val memo = it.getStringExtra(EXTRA_MEMO) as? String
+                val memo = it.getStringExtra(EXTRA_MEMO)
                 if(memo != null && memo.isNotEmpty()){
                     viewModel.setMemo(CBORUtil.encodeCBOR(memo))
                     setMemoText(memo)
@@ -121,14 +100,14 @@ class SendFundsActivity :
         }
     }
 
-    fun setMemoText(txt: String){
+    private fun setMemoText(txt: String){
         if(txt.isNotEmpty()){
-            memo_textview.text = txt
-            memo_clear.visibility = View.VISIBLE
+            binding.memoTextview.text = txt
+            binding.memoClear.visibility = View.VISIBLE
         }
         else{
-            memo_textview.text = getString(R.string.send_funds_optional_add_memo)
-            memo_clear.visibility = View.INVISIBLE
+            binding.memoTextview.text = getString(R.string.send_funds_optional_add_memo)
+            binding.memoClear.visibility = View.INVISIBLE
         }
     }
 
@@ -141,8 +120,7 @@ class SendFundsActivity :
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(SendFundsViewModel::class.java)
-
+        )[SendFundsViewModel::class.java]
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let {
                 showWaiting(isWaiting())
@@ -196,37 +174,34 @@ class SendFundsActivity :
         viewModel.transactionFeeLiveData.observe(this, object : Observer<Long> {
             override fun onChanged(value: Long?) {
                 value?.let {
-                    fee_info_textview.visibility = View.VISIBLE
-                    fee_info_textview.text = getString(
+                    binding.feeInfoTextview.visibility = View.VISIBLE
+                    binding.feeInfoTextview.text = getString(
                         R.string.send_funds_fee_info, CurrencyUtil.formatGTU(value)
                     )
                     updateConfirmButton()
                 }
             }
         })
-        viewModel.recipientLiveData.observe(this, object : Observer<Recipient> {
-            override fun onChanged(value: Recipient?) {
-                showRecipient(value)
-            }
-        })
+        viewModel.recipientLiveData.observe(this
+        ) { value -> showRecipient(value) }
     }
 
     private fun initViews() {
-        progress_layout.visibility = View.GONE
-        error_textview.visibility = View.INVISIBLE
-        amount_edittext.afterTextChanged { _ ->
-            if (amount_edittext.hasFocus()) { //If it does not have focus, it means we are injecting text programatically
+        binding.includeProgress.progressLayout.visibility = View.GONE
+        binding.errorTextview.visibility = View.INVISIBLE
+        binding.amountEdittext.afterTextChanged { _ ->
+            if (binding.amountEdittext.hasFocus()) { //If it does not have focus, it means we are injecting text programatically
                 viewModel.disableSendAllValue()
             }
             updateConfirmButton()
             updateAmountEditText()
         }
         updateAmountEditText()
-        amount_edittext.setOnEditorActionListener { textView, actionId, _ ->
+        binding.amountEdittext.setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
                     if (enableConfirm())
-                        viewModel.sendFunds(amount_edittext.text.toString())
+                        viewModel.sendFunds(binding.amountEdittext.text.toString())
                     else
                         KeyboardUtil.hideKeyboard(this)
                     true
@@ -234,7 +209,7 @@ class SendFundsActivity :
                 else -> false
             }
         }
-        send_funds_paste_recipient.addTextChangedListener(object : TextWatcher {
+        binding.sendFundsPasteRecipient.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(editable: Editable) {
                 var address = editable.toString()
                 if(viewModel.selectedRecipient == null){
@@ -254,12 +229,12 @@ class SendFundsActivity :
         })
 
         if(viewModel.isTransferToSameAccount()){
-            memo_container.visibility = View.GONE
+            binding.memoContainer.visibility = View.GONE
         }
         else{
-            memo_container.visibility = View.VISIBLE
+            binding.memoContainer.visibility = View.VISIBLE
 
-            memo_container.setOnClickListener {
+            binding.memoContainer.setOnClickListener {
                 if(viewModel.showMemoWarning()){
                     val builder = AlertDialog.Builder(this)
                     builder.setTitle(getString(R.string.transaction_memo_warning_title))
@@ -285,32 +260,32 @@ class SendFundsActivity :
 
             setMemoText("")
 
-            memo_clear.setOnClickListener {
-                viewModel.setMemo(null);//CBORUtil.encodeCBOR(""))
+            binding.memoClear.setOnClickListener {
+                viewModel.setMemo(null)
                 setMemoText("")
             }
         }
 
-        send_all.setOnClickListener {
+        binding.sendAll.setOnClickListener {
             viewModel.updateSendAllValue()
         }
 
         viewModel.sendAllAmountLiveData.observe(this, object : Observer<Long> {
             override fun onChanged(value: Long?) {
                 value?.let {
-                    amount_edittext.setText(CurrencyUtil.formatGTU(value))
+                    binding.amountEdittext.setText(CurrencyUtil.formatGTU(value))
                 }
             }
         })
 
-        search_recipient_layout.setOnClickListener {
+        binding.searchRecipientLayout.setOnClickListener {
             gotoSelectRecipient()
         }
-        scan_qr_recipient_layout.setOnClickListener {
+        binding.scanQrRecipientLayout.setOnClickListener {
             gotoScanBarCode()
         }
 
-        confirm_button.setOnClickListener {
+        binding.confirmButton.setOnClickListener {
             viewModel.selectedRecipient?.let {
                 if (viewModel.validateAndSaveRecipient(it.address)) {
                     if (viewModel.account.address == it.address && !viewModel.isShielded)
@@ -322,21 +297,21 @@ class SendFundsActivity :
         }
 
         if (viewModel.isShielded) {
-            balance_total_text.text = getString(R.string.accounts_overview_balance_at_disposal)
-            at_disposal_total_text.text = getString(R.string.accounts_overview_shielded_balance)
-            balance_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance), withGStroke = true)
-            at_disposal_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalShieldedBalance, withGStroke = true)
+            binding.balanceTotalText.text = getString(R.string.accounts_overview_balance_at_disposal)
+            binding.atDisposalTotalText.text = getString(R.string.accounts_overview_shielded_balance)
+            binding.balanceTotalTextview.text = CurrencyUtil.formatGTU(viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance), withGStroke = true)
+            binding.atDisposalTotalTextview.text = CurrencyUtil.formatGTU(viewModel.account.totalShieldedBalance, withGStroke = true)
         }
         else {
-            balance_total_text.text = getString(R.string.accounts_overview_account_total)
-            at_disposal_total_text.text = getString(R.string.accounts_overview_at_disposal)
-            balance_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance, withGStroke = true)
-            at_disposal_total_textview.text = CurrencyUtil.formatGTU(viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance), withGStroke = true)
+            binding.balanceTotalText.text = getString(R.string.accounts_overview_account_total)
+            binding.atDisposalTotalText.text = getString(R.string.accounts_overview_at_disposal)
+            binding.balanceTotalTextview.text = CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance, withGStroke = true)
+            binding.atDisposalTotalTextview.text = CurrencyUtil.formatGTU(viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance), withGStroke = true)
         }
     }
 
     private fun check95PercentWarning() {
-        val amountValue = CurrencyUtil.toGTUValue(amount_edittext.text.toString())
+        val amountValue = CurrencyUtil.toGTUValue(binding.amountEdittext.text.toString())
         val atDisposal = viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance)
         if (amountValue != null) {
             if (amountValue > atDisposal * 0.95) {
@@ -353,7 +328,7 @@ class SendFundsActivity :
     }
 
     private fun sendFunds() {
-        viewModel.sendFunds(amount_edittext.text.toString())
+        viewModel.sendFunds(binding.amountEdittext.text.toString())
     }
 
     //endregion
@@ -362,15 +337,14 @@ class SendFundsActivity :
     //************************************************************
 
     private fun showWaiting(waiting: Boolean) {
-        progress_layout.visibility = if(waiting) View.VISIBLE else View.GONE
+        binding.includeProgress.progressLayout.visibility = if(waiting) View.VISIBLE else View.GONE
         // Update button enabled state, because it is dependant on waiting state
         updateConfirmButton()
     }
 
     private fun showError(stringRes: Int) {
-        popup.showSnackbar(root_layout, stringRes)
+        popup.showSnackbar(binding.rootLayout, stringRes)
     }
-
 
     private fun gotoSelectRecipient() {
         val intent = Intent(this, RecipientListActivity::class.java)
@@ -380,17 +354,32 @@ class SendFundsActivity :
         startActivity(intent)
     }
 
+    private val getResultScanQr =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                it.data?.getStringExtra(ScanQRActivity.EXTRA_BARCODE)?.let { barcode ->
+                    handleRecipient(Recipient(0,"", barcode))
+                }
+            }
+        }
+
     private fun gotoScanBarCode() {
         val intent = Intent(this, ScanQRActivity::class.java)
-        startActivityForResult(intent, REQUESTCODE_SCAN_QR)
+        getResultScanQr.launch(intent)
     }
-
 
     private fun gotoEnterMemo() {
         val intent = Intent(this, AddMemoActivity::class.java)
         intent.putExtra(AddMemoActivity.EXTRA_MEMO, viewModel.getClearTextMemo())
         startActivity(intent)
     }
+
+    private val getResultSendAmount =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                finish()
+            }
+        }
 
     private fun gotoSendFundsConfirm() {
         val transfer = viewModel.newTransfer
@@ -399,7 +388,7 @@ class SendFundsActivity :
             val intent = Intent(this, SendFundsConfirmedActivity::class.java)
             intent.putExtra(SendFundsConfirmedActivity.EXTRA_TRANSFER, transfer)
             intent.putExtra(SendFundsConfirmedActivity.EXTRA_RECIPIENT, recipient)
-            startActivityForResult(intent, SEND_AMOUNT)
+            getResultSendAmount.launch(intent)
         }
     }
 
@@ -414,31 +403,31 @@ class SendFundsActivity :
 
     private fun updateRecipientEditText(text: String){
         //Only update if they are not identical - else it triggers a refocus and moves cursor
-        if(!send_funds_paste_recipient.text.toString().equals(text)){
-            send_funds_paste_recipient.setText(text)
+        if(!binding.sendFundsPasteRecipient.text.toString().equals(text)){
+            binding.sendFundsPasteRecipient.setText(text)
         }
     }
 
     private fun showRecipient(recipient: Recipient?) {
         if (recipient == null) {
             updateRecipientEditText("")
-            confirm_button.setText(R.string.send_funds_confirm)
+            binding.confirmButton.setText(R.string.send_funds_confirm)
         } else {
             if(viewModel.isShielded){
                 if(viewModel.isTransferToSameAccount()){
-                    recipient_container.visibility = View.GONE
-                    confirm_button.setText(R.string.send_funds_confirm_unshield)
+                    binding.recipientContainer.visibility = View.GONE
+                    binding.confirmButton.setText(R.string.send_funds_confirm_unshield)
                 } else {
                     updateRecipientEditText(recipient.address)
-                    confirm_button.setText(R.string.send_funds_confirm_send_shielded)
+                    binding.confirmButton.setText(R.string.send_funds_confirm_send_shielded)
                 }
             } else {
                 if(viewModel.isTransferToSameAccount()){
-                    recipient_container.visibility = View.GONE
-                    confirm_button.setText(R.string.send_funds_confirm_shield)
+                    binding.recipientContainer.visibility = View.GONE
+                    binding.confirmButton.setText(R.string.send_funds_confirm_shield)
                 } else {
                     updateRecipientEditText(recipient.address)
-                    confirm_button.setText(R.string.send_funds_confirm)
+                    binding.confirmButton.setText(R.string.send_funds_confirm)
                 }
             }
         }
@@ -460,32 +449,32 @@ class SendFundsActivity :
     }
 
     private fun updateConfirmButton(): Boolean {
-        confirm_button.isEnabled = enableConfirm()
-        return confirm_button.isEnabled
+        binding.confirmButton.isEnabled = enableConfirm()
+        return binding.confirmButton.isEnabled
     }
 
     private fun enableConfirm(): Boolean {
-        val hasSufficientFunds = viewModel.hasSufficientFunds(amount_edittext.text.toString())
-        error_textview.visibility = if (hasSufficientFunds) View.INVISIBLE else View.VISIBLE
+        val hasSufficientFunds = viewModel.hasSufficientFunds(binding.amountEdittext.text.toString())
+        binding.errorTextview.visibility = if (hasSufficientFunds) View.INVISIBLE else View.VISIBLE
         val enable = if(isWaiting()) false else {
-            (amount_edittext.text.isNotEmpty()
+            (binding.amountEdittext.text.isNotEmpty()
                     && viewModel.selectedRecipient != null
                     && viewModel.transactionFeeLiveData.value != null
                     && hasSufficientFunds
-                    && (CurrencyUtil.toGTUValue(amount_edittext.text.toString()) ?: 0) > 0)
+                    && (CurrencyUtil.toGTUValue(binding.amountEdittext.text.toString()) ?: 0) > 0)
         }
         return enable
     }
 
     private fun updateAmountEditText() {
-        if (amount_edittext.text.isNotEmpty()) {
+        if (binding.amountEdittext.text.isNotEmpty()) {
             // Only setting this (to one char) to have the width being smaller
             // Width is WRAP_CONTENT and hint text count towards this
-            amount_edittext.setHint("0")
-            amount_edittext.gravity = Gravity.CENTER
+            binding.amountEdittext.setHint("0")
+            binding.amountEdittext.gravity = Gravity.CENTER
         } else {
-            amount_edittext.setHint("0${DecimalFormatSymbols.getInstance().decimalSeparator}00")
-            amount_edittext.gravity = Gravity.NO_GRAVITY
+            binding.amountEdittext.setHint("0${DecimalFormatSymbols.getInstance().decimalSeparator}00")
+            binding.amountEdittext.gravity = Gravity.NO_GRAVITY
         }
     }
 
@@ -516,8 +505,5 @@ class SendFundsActivity :
             }
         }
     }
-
-
-
     //endregion
 }

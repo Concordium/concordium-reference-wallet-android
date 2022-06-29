@@ -3,9 +3,11 @@ package com.concordium.wallet.ui.auth.setup
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.databinding.ActivityAuthSetupBinding
 import com.concordium.wallet.ui.auth.setupbiometrics.AuthSetupBiometricsActivity
 import com.concordium.wallet.ui.auth.setuppassword.AuthSetupPasswordActivity
 import com.concordium.wallet.ui.auth.setuprepeat.AuthSetupRepeatActivity
@@ -13,28 +15,25 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.intro.introsetup.IntroSetupActivity
 import com.concordium.wallet.uicore.view.PasscodeView
 import com.concordium.wallet.util.KeyboardUtil
-import kotlinx.android.synthetic.main.activity_auth_setup.*
 
-class AuthSetupActivity : BaseActivity(R.layout.activity_auth_setup, R.string.auth_setup_title) {
-
+class AuthSetupActivity : BaseActivity() {
     private var continueFlow: Boolean = true
-
-    private val REQUESTCODE_AUTH_SETUP_BIOMETRICS = 2000
-    private val REQUESTCODE_AUTH_SETUP_PASSCODE_REPEAT = 2001
-    private val REQUESTCODE_AUTH_SETUP_FULL_PASSWORD = 2002
 
     companion object {
         val CONTINUE_INITIAL_SETUP = "CONTINUE_INITIAL_SETUP"
     }
 
+    private lateinit var binding: ActivityAuthSetupBinding
     private lateinit var viewModel: AuthSetupViewModel
-
 
     //region Lifecycle
     //************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityAuthSetupBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.auth_setup_title)
 
         continueFlow = intent.getBooleanExtra(CONTINUE_INITIAL_SETUP, true)
 
@@ -47,45 +46,13 @@ class AuthSetupActivity : BaseActivity(R.layout.activity_auth_setup, R.string.au
         // Ignore back press
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == REQUESTCODE_AUTH_SETUP_BIOMETRICS) {
-            if (resultCode == Activity.RESULT_OK) {
-                if(continueFlow) {
-                    viewModel.hasFinishedSetupPassword()
-                }
-                finishSuccess()
-            }
-        }
-        if (requestCode == REQUESTCODE_AUTH_SETUP_PASSCODE_REPEAT) {
-            if (resultCode == Activity.RESULT_OK) {
-                viewModel.setupPassword(passcode_view.getPasscode(), continueFlow)
-            } else {
-                passcode_view.clearPasscode()
-                error_textview.setText(R.string.auth_error_entries_different)
-            }
-        }
-        if (requestCode == REQUESTCODE_AUTH_SETUP_FULL_PASSWORD) {
-            if (resultCode == Activity.RESULT_OK) {
-                if(continueFlow) {
-                    viewModel.hasFinishedSetupPassword()
-                }
-                finishSuccess()
-            }
-        }
-    }
-
     private fun finishSuccess() {
-
         setResult(Activity.RESULT_OK)
         finish()
         if(continueFlow){
             gotoIntroSetup()
         }
     }
-
-
 
     //endregion
 
@@ -96,8 +63,7 @@ class AuthSetupActivity : BaseActivity(R.layout.activity_auth_setup, R.string.au
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(AuthSetupViewModel::class.java)
-
+        )[AuthSetupViewModel::class.java]
         viewModel.errorLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
@@ -123,19 +89,19 @@ class AuthSetupActivity : BaseActivity(R.layout.activity_auth_setup, R.string.au
 
     private fun initializeViews() {
         hideActionBarBack(this)
-        passcode_view.passcodeListener = object : PasscodeView.PasscodeListener {
+        binding.passcodeView.passcodeListener = object : PasscodeView.PasscodeListener {
             override fun onInputChanged() {
-                error_textview.setText("")
+                binding.errorTextview.setText("")
             }
 
             override fun onDone() {
                 onConfirmClicked()
             }
         }
-        full_password_button.setOnClickListener {
+        binding.fullPasswordButton.setOnClickListener {
             gotoAuthSetupPassword()
         }
-        passcode_view.requestFocus()
+        binding.passcodeView.requestFocus()
     }
 
     //endregion
@@ -144,29 +110,59 @@ class AuthSetupActivity : BaseActivity(R.layout.activity_auth_setup, R.string.au
     //************************************************************
 
     private fun onConfirmClicked() {
-        if (viewModel.checkPasswordRequirements(passcode_view.getPasscode())) {
-            viewModel.startSetupPassword(passcode_view.getPasscode())
+        if (viewModel.checkPasswordRequirements(binding.passcodeView.getPasscode())) {
+            viewModel.startSetupPassword(binding.passcodeView.getPasscode())
             gotoAuthSetupPasscodeRepeat()
         } else {
-            passcode_view.clearPasscode()
-            error_textview.setText(R.string.auth_error_passcode_not_valid)
+            binding.passcodeView.clearPasscode()
+            binding.errorTextview.setText(R.string.auth_error_passcode_not_valid)
         }
     }
 
+    private val getResultAuthSetupBiometrics =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                if(continueFlow) {
+                    viewModel.hasFinishedSetupPassword()
+                }
+                finishSuccess()
+            }
+        }
+
     private fun gotoAuthSetupBiometrics() {
         val intent = Intent(this, AuthSetupBiometricsActivity::class.java)
-        startActivityForResult(intent, REQUESTCODE_AUTH_SETUP_BIOMETRICS)
+        getResultAuthSetupBiometrics.launch(intent)
     }
+
+    private val getResultAuthSetupPasscodeRepeat =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                viewModel.setupPassword(binding.passcodeView.getPasscode(), continueFlow)
+            } else {
+                binding.passcodeView.clearPasscode()
+                binding.errorTextview.setText(R.string.auth_error_entries_different)
+            }
+        }
 
     private fun gotoAuthSetupPasscodeRepeat() {
         val intent = Intent(this, AuthSetupRepeatActivity::class.java)
-        startActivityForResult(intent, REQUESTCODE_AUTH_SETUP_PASSCODE_REPEAT)
+        getResultAuthSetupPasscodeRepeat.launch(intent)
     }
+
+    private val getResultAuthSetupFullPassword =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                if(continueFlow) {
+                    viewModel.hasFinishedSetupPassword()
+                }
+                finishSuccess()
+            }
+        }
 
     private fun gotoAuthSetupPassword() {
         val intent = Intent(this, AuthSetupPasswordActivity::class.java)
-        intent.putExtra(AuthSetupPasswordActivity.CONTINUE_INITIAL_SETUP, false);
-        startActivityForResult(intent, REQUESTCODE_AUTH_SETUP_FULL_PASSWORD)
+        intent.putExtra(AuthSetupPasswordActivity.CONTINUE_INITIAL_SETUP, false)
+        getResultAuthSetupFullPassword.launch(intent)
     }
 
     private fun gotoIntroSetup() {
@@ -175,15 +171,13 @@ class AuthSetupActivity : BaseActivity(R.layout.activity_auth_setup, R.string.au
     }
 
     private fun showPasswordError() {
-        passcode_view.clearPasscode()
+        binding.passcodeView.clearPasscode()
         KeyboardUtil.hideKeyboard(this)
-        popup.showSnackbar(root_layout, R.string.auth_error_password_setup)
+        popup.showSnackbar(binding.rootLayout, R.string.auth_error_password_setup)
     }
 
     override fun loggedOut() {
     }
 
     //endregion
-
-
 }

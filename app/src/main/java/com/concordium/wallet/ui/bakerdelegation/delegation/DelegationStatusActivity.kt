@@ -2,13 +2,10 @@ package com.concordium.wallet.ui.bakerdelegation.delegation
 
 import android.content.Intent
 import android.view.View
-import android.widget.ImageView
-import androidx.lifecycle.Observer
 import com.concordium.wallet.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_DELEGATION
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_DELEGATION
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
-import com.concordium.wallet.data.model.BakerPoolStatus
 import com.concordium.wallet.data.model.BakerStakePendingChange.Companion.CHANGE_REMOVE_POOL
 import com.concordium.wallet.data.model.DelegationTarget
 import com.concordium.wallet.data.model.PendingChange
@@ -20,26 +17,28 @@ import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationU
 import com.concordium.wallet.ui.common.GenericFlowActivity
 import com.concordium.wallet.util.DateTimeUtil.formatTo
 import com.concordium.wallet.util.DateTimeUtil.toDate
-import kotlinx.android.synthetic.main.delegationbaker_status.*
 
-class DelegationStatusActivity :
-    StatusActivity(R.string.delegation_status_title) {
-
+class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title) {
     override fun initializeViewModel() {
         super.initializeViewModel()
 
-        viewModel.bakerPoolStatusLiveData.observe(this, Observer<BakerPoolStatus> {
+        viewModel.bakerPoolStatusLiveData.observe(this) {
             it?.let { bakerPoolStatus ->
                 if (bakerPoolStatus.bakerStakePendingChange.pendingChangeType == CHANGE_REMOVE_POOL) {
                     bakerPoolStatus.bakerStakePendingChange.estimatedChangeTime?.let { estimatedChangeTime ->
                         val prefix = estimatedChangeTime.toDate()?.formatTo("yyyy-MM-dd")
                         val postfix = estimatedChangeTime.toDate()?.formatTo("HH:mm")
-                        val dateStr = getString(R.string.delegation_status_effective_time, prefix, postfix)
-                        addContent(getString(R.string.delegation_status_pool_deregistered) + "\n" + dateStr, "", R.color.text_pink)
+                        val dateStr =
+                            getString(R.string.delegation_status_effective_time, prefix, postfix)
+                        addContent(
+                            getString(R.string.delegation_status_pool_deregistered) + "\n" + dateStr,
+                            "",
+                            R.color.text_pink
+                        )
                     }
                 }
             }
-        })
+        }
     }
 
     override fun initView() {
@@ -49,7 +48,7 @@ class DelegationStatusActivity :
         val account = viewModel.bakerDelegationData.account
         val accountDelegation = account?.accountDelegation
 
-        status_button_bottom.text = getString(R.string.delegation_status_update)
+        binding.statusButtonBottom.text = getString(R.string.delegation_status_update)
 
         if (viewModel.bakerDelegationData.isTransactionInProgress) {
             addWaitingForTransaction(R.string.delegation_status_waiting_to_finalize_title, R.string.delegation_status_waiting_to_finalize)
@@ -57,17 +56,17 @@ class DelegationStatusActivity :
         }
 
         if (account == null || accountDelegation == null) {
-            findViewById<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_logo_icon_pending)
+            binding.statusIcon.setImageResource(R.drawable.ic_logo_icon_pending)
             setContentTitle(R.string.delegation_status_content_empty_title)
             setEmptyState(getString(R.string.delegation_status_content_empty_desc))
-            status_button_bottom.text = getString(R.string.delegation_status_continue)
-            status_button_bottom.setOnClickListener {
+            binding.statusButtonBottom.text = getString(R.string.delegation_status_continue)
+            binding.statusButtonBottom.setOnClickListener {
                 continueToCreate()
             }
             return
         }
 
-        findViewById<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_big_logo_ok)
+        binding.statusIcon.setImageResource(R.drawable.ic_big_logo_ok)
         setContentTitle(R.string.delegation_status_content_registered_title)
 
         addContent(R.string.delegation_status_content_delegating_account, account.name + "\n\n" + account.address)
@@ -81,23 +80,23 @@ class DelegationStatusActivity :
 
         viewModel.bakerDelegationData.account?.accountDelegation?.pendingChange?.let { pendingChange ->
             addPendingChange(pendingChange, R.string.delegation_status_effective_time, R.string.delegation_status_content_take_effect_on, R.string.delegation_status_content_delegation_will_be_stopped, R.string.delegation_status_new_amount)
-            status_button_top.isEnabled = pendingChange.change == PendingChange.CHANGE_NO_CHANGE
+            binding.statusButtonTop.isEnabled = pendingChange.change == PendingChange.CHANGE_NO_CHANGE
         }
 
-        status_button_top.visibility = View.VISIBLE
-        status_button_top.text = getString(R.string.delegation_status_stop)
+        binding.statusButtonTop.visibility = View.VISIBLE
+        binding.statusButtonTop.text = getString(R.string.delegation_status_stop)
 
-        status_button_top.setOnClickListener {
+        binding.statusButtonTop.setOnClickListener {
             continueToDelete()
         }
 
         viewModel.bakerDelegationData.bakerPoolStatus?.bakerStakePendingChange?.pendingChangeType.let { pendingChangeType ->
             if (pendingChangeType == CHANGE_REMOVE_POOL) {
-                status_button_top.isEnabled = true
+                binding.statusButtonTop.isEnabled = true
             }
         }
 
-        status_button_bottom.setOnClickListener {
+        binding.statusButtonBottom.setOnClickListener {
             continueToUpdate()
         }
 

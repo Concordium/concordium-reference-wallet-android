@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.account.accountdetails.transfers
 
-
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,47 +11,47 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOriginType
 import com.concordium.wallet.data.model.TransactionType
+import com.concordium.wallet.databinding.FragmentAccountDetailsTransfersBinding
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsViewModel
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsActivity
 import com.concordium.wallet.uicore.recyclerview.pinnedheader.PinnedHeaderItemDecoration
-import kotlinx.android.synthetic.main.fragment_account_details_transfers.*
-import kotlinx.android.synthetic.main.fragment_account_details_transfers.view.*
-
 
 class AccountDetailsTransfersFragment : Fragment() {
+    private var _binding: FragmentAccountDetailsTransfersBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var accountDetailsViewModel: AccountDetailsViewModel
     private lateinit var transactionAdapter: TransactionAdapter
-
 
     //region Lifecycle
     //************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         initializeViewModel()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val rootView =
-            inflater.inflate(R.layout.fragment_account_details_transfers, container, false)
-        initializeViews(rootView)
-        return rootView
+    ): View {
+        _binding = FragmentAccountDetailsTransfersBinding.inflate(inflater, container, false)
+        initializeViews()
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onResume() {
         super.onResume()
         accountDetailsViewModel.populateTransferList()
-
     }
 
     //endregion
@@ -61,10 +60,9 @@ class AccountDetailsTransfersFragment : Fragment() {
     //************************************************************
 
     private fun initializeViewModel() {
-        accountDetailsViewModel = ViewModelProvider(
-            activity!!,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(activity!!.application)
-        ).get(AccountDetailsViewModel::class.java)
+        accountDetailsViewModel = ViewModelProvider(requireActivity(),
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
+        )[AccountDetailsViewModel::class.java]
 
         accountDetailsViewModel.totalBalanceLiveData.observe(this, Observer {
             transactionAdapter.notifyDataSetChanged()
@@ -141,39 +139,36 @@ class AccountDetailsTransfersFragment : Fragment() {
                 }
                 transactionAdapter.notifyDataSetChanged()
                 if (transferList.isEmpty()) {
-                    no_transfers_textview.visibility = View.VISIBLE
+                    binding.noTransfersTextview.visibility = View.VISIBLE
                 } else {
-                    no_transfers_textview.visibility = View.GONE
+                    binding.noTransfersTextview.visibility = View.GONE
                 }
                 accountDetailsViewModel.allowScrollToLoadMore = true
             }
-
         })
-
-
 
         accountDetailsViewModel.showGTUDropLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let { show ->
                 if (show) {
-                    gtu_drop_layout.visibility = View.VISIBLE
-                    gtu_drop_button.isEnabled = true
+                    binding.gtuDropLayout.visibility = View.VISIBLE
+                    binding.gtuDropButton.isEnabled = true
                 } else {
-                    gtu_drop_layout.visibility = View.GONE
+                    binding.gtuDropLayout.visibility = View.GONE
                 }
             }
         })
     }
 
-    private fun initializeViews(view: View) {
-        view.no_transfers_textview.visibility = View.GONE
-        view.gtu_drop_layout.visibility = View.GONE
+    private fun initializeViews() {
+        binding.noTransfersTextview.visibility = View.GONE
+        binding.gtuDropLayout.visibility = View.GONE
 
-        view.gtu_drop_button.setOnClickListener {
-            gtu_drop_button.isEnabled = false
+        binding.gtuDropButton.setOnClickListener {
+            binding.gtuDropButton.isEnabled = false
             accountDetailsViewModel.requestGTUDrop()
         }
 
-        transactionAdapter = TransactionAdapter(accountDetailsViewModel.viewModelScope, AccountUpdater(activity!!.application, accountDetailsViewModel.viewModelScope), context!!, mutableListOf<AdapterItem>())
+        transactionAdapter = TransactionAdapter(requireContext(), accountDetailsViewModel.viewModelScope, AccountUpdater(requireActivity().application, accountDetailsViewModel.viewModelScope), mutableListOf())
         transactionAdapter.setOnDecryptListener(object : TransactionAdapter.OnDecryptClickListenerInterface {
             override fun onDecrypt(ta: Transaction) {
                 accountDetailsViewModel.selectTransactionForDecryption(ta)
@@ -181,13 +176,13 @@ class AccountDetailsTransfersFragment : Fragment() {
             }
         })
         val linearLayoutManager = LinearLayoutManager(context)
-        view.recyclerview.setHasFixedSize(true)
-        view.recyclerview.adapter = transactionAdapter
-        view.recyclerview.layoutManager = linearLayoutManager
+        binding.recyclerview.setHasFixedSize(true)
+        binding.recyclerview.adapter = transactionAdapter
+        binding.recyclerview.layoutManager = linearLayoutManager
 
         // Pinned Header
         val headerItemDecoration = PinnedHeaderItemDecoration(transactionAdapter)
-        view.recyclerview.addItemDecoration(headerItemDecoration)
+        binding.recyclerview.addItemDecoration(headerItemDecoration)
 
         /* Because of pinned headers, we will not use divider item decorations - reasons:
             1) The pinned header will not have a divider at the bottom
@@ -218,7 +213,7 @@ class AccountDetailsTransfersFragment : Fragment() {
         })
 
         // Scroll
-        view.recyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding.recyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
             }
@@ -227,7 +222,7 @@ class AccountDetailsTransfersFragment : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
 
                 if (accountDetailsViewModel.allowScrollToLoadMore) {
-                    val layoutManager = recyclerview.layoutManager as LinearLayoutManager
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                     val visibleItemCount = layoutManager.childCount
                     val totalItemCount = layoutManager.itemCount
                     val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()

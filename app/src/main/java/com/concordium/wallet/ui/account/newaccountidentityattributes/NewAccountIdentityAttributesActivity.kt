@@ -13,6 +13,7 @@ import com.concordium.wallet.core.backend.BackendError
 import com.concordium.wallet.core.security.BiometricPromptCallback
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
+import com.concordium.wallet.databinding.ActivityNewAccountIdentityAttributesBinding
 import com.concordium.wallet.ui.account.newaccountconfirmed.NewAccountConfirmedActivity
 import com.concordium.wallet.ui.account.newaccountsetup.NewAccountSetupActivity
 import com.concordium.wallet.ui.base.BaseActivity
@@ -20,20 +21,15 @@ import com.concordium.wallet.ui.common.failed.FailedActivity
 import com.concordium.wallet.ui.common.failed.FailedViewModel
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
 import com.concordium.wallet.util.KeyboardUtil
-import kotlinx.android.synthetic.main.activity_new_account_identity_attributes.*
-import kotlinx.android.synthetic.main.progress.*
 import javax.crypto.Cipher
 
-class NewAccountIdentityAttributesActivity : BaseActivity(
-    R.layout.activity_new_account_identity_attributes,
-    R.string.new_account_identity_attributes_title
-) {
-
+class NewAccountIdentityAttributesActivity : BaseActivity() {
     companion object {
         const val EXTRA_ACCOUNT_NAME = "EXTRA_ACCOUNT_NAME"
         const val EXTRA_IDENTITY = "EXTRA_IDENTITY"
     }
 
+    private lateinit var binding: ActivityNewAccountIdentityAttributesBinding
     private lateinit var viewModel: NewAccountIdentityAttributesViewModel
     private lateinit var biometricPrompt: BiometricPrompt
     private var identityAttributeAdapter: IdentityAttributeAdapter = IdentityAttributeAdapter()
@@ -44,6 +40,9 @@ class NewAccountIdentityAttributesActivity : BaseActivity(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityNewAccountIdentityAttributesBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.new_account_identity_attributes_title)
 
         val accountName = intent.getStringExtra(NewAccountSetupActivity.EXTRA_ACCOUNT_NAME) as String
         val identity = intent.getSerializableExtra(EXTRA_IDENTITY) as Identity
@@ -62,7 +61,7 @@ class NewAccountIdentityAttributesActivity : BaseActivity(
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(NewAccountIdentityAttributesViewModel::class.java)
+        )[NewAccountIdentityAttributesViewModel::class.java]
 
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let {
@@ -101,9 +100,9 @@ class NewAccountIdentityAttributesActivity : BaseActivity(
     }
 
     private fun initViews() {
-        progress_layout.visibility = View.GONE
+        binding.includeProgress.progressLayout.visibility = View.GONE
 
-        identity_view.setIdentityData(viewModel.identity)
+        binding.identityView.setIdentityData(viewModel.identity)
 
         identityAttributeAdapter.setOnItemClickListener(object :
             IdentityAttributeAdapter.OnItemClickListener {
@@ -113,10 +112,10 @@ class NewAccountIdentityAttributesActivity : BaseActivity(
             override fun onCheckedChanged(item: SelectableIdentityAttribute) {
             }
         })
-        attributes_recyclerview.adapter = identityAttributeAdapter
-        attributes_recyclerview.isNestedScrollingEnabled = false
-        confirm_button.setOnClickListener {
-            confirm_button.isEnabled = false
+        binding.attributesRecyclerview.adapter = identityAttributeAdapter
+        binding.attributesRecyclerview.isNestedScrollingEnabled = false
+        binding.confirmButton.setOnClickListener {
+            binding.confirmButton.isEnabled = false
             viewModel.confirmSelectedAttributes(identityAttributeAdapter.getCheckedAttributes())
         }
     }
@@ -129,17 +128,17 @@ class NewAccountIdentityAttributesActivity : BaseActivity(
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
-            progress_layout.visibility = View.VISIBLE
-            confirm_button.isEnabled = false
+            binding.includeProgress.progressLayout.visibility = View.VISIBLE
+            binding.confirmButton.isEnabled = false
         } else {
-            progress_layout.visibility = View.GONE
-            confirm_button.isEnabled = true
+            binding.includeProgress.progressLayout.visibility = View.GONE
+            binding.confirmButton.isEnabled = true
         }
     }
 
     private fun showError(stringRes: Int) {
         KeyboardUtil.hideKeyboard(this)
-        popup.showSnackbar(root_layout, stringRes)
+        popup.showSnackbar(binding.rootLayout, stringRes)
     }
 
     private fun gotoNewAccountConfirmed(account: Account) {
@@ -215,14 +214,12 @@ class NewAccountIdentityAttributesActivity : BaseActivity(
     }
 
     private fun createPromptInfo(): BiometricPrompt.PromptInfo {
-        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+        return BiometricPrompt.PromptInfo.Builder()
             .setTitle(getString(R.string.auth_login_biometrics_dialog_title))
             .setConfirmationRequired(true)
             .setNegativeButtonText(getString(if (viewModel.usePasscode()) R.string.auth_login_biometrics_dialog_cancel_passcode else R.string.auth_login_biometrics_dialog_cancel_password))
             .build()
-        return promptInfo
     }
 
     //endregion
-
 }

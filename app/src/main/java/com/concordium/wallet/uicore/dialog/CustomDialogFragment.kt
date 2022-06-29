@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
@@ -40,7 +41,7 @@ class CustomDialogFragment : DialogFragment() {
 
         var dialogAccountFinalized: Dialog? = null;
         var dialogAccountFinalizedNoBackup: AlertDialog? = null;
-        var dialogAccountFinalizedMap: HashMap<String, String> = HashMap<String, String>();
+        var dialogAccountFinalizedMap: HashMap<String, String> = HashMap()
 
         //region Create/cancel dialogs
         //************************************************************
@@ -49,7 +50,6 @@ class CustomDialogFragment : DialogFragment() {
             val dialogFragment = activity.supportFragmentManager.findFragmentByTag(TAG)
             if (dialogFragment is DialogFragment) {
                 dialogFragment.dismiss()
-                //dialogFragment?.dismissAllowingStateLoss();
             }
         }
 
@@ -297,7 +297,7 @@ class CustomDialogFragment : DialogFragment() {
             // Do you really not want to back up?!?!
             val builder = AlertDialog.Builder(context)
             builder.setCancelable(true)//This have to be set on dialog to have effect
-            builder.setIcon(android.R.drawable.stat_sys_warning);
+            builder.setIcon(android.R.drawable.stat_sys_warning)
             builder.setTitle(R.string.finalized_account_no_backup_title_warning)
             builder.setMessage(R.string.finalized_account_no_backup_message)
             builder.setNeutralButton(context.getString(R.string.finalized_account_no_backup_dismiss),
@@ -313,13 +313,11 @@ class CustomDialogFragment : DialogFragment() {
             dialogAccountFinalizedNoBackup = builder.create()
             dialogAccountFinalizedNoBackup?.setCanceledOnTouchOutside(false)
             dialogAccountFinalizedNoBackup?.show()
-            //dialogAccountFinalizedNoBackup?.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(context.resources.getColor(R.color.text_green));
             dialogAccountFinalizedNoBackup?.getButton(AlertDialog.BUTTON_NEUTRAL)
-                ?.setTextColor(Color.RED);
+                ?.setTextColor(Color.RED)
             dialogAccountFinalizedNoBackup?.let {
-                val imageView: ImageView? = it.findViewById(android.R.id.icon)
-                if (imageView != null) imageView.setColorFilter(
-                    context.resources.getColor(R.color.warning_orange),
+                it.findViewById<ImageView?>(android.R.id.icon)?.setColorFilter(
+                    ContextCompat.getColor(context, R.color.warning_orange),
                     PorterDuff.Mode.SRC_IN
                 )
             }
@@ -327,8 +325,6 @@ class CustomDialogFragment : DialogFragment() {
 
         //endregion
     }
-
-
 
     private var dialogFragmentListener: Dialogs.DialogFragmentListener? = null
     private var requestCode: Int? = 0
@@ -358,12 +354,10 @@ class CustomDialogFragment : DialogFragment() {
         val title = args.getString(KEY_TITLE, "")
         val message = args.getString(KEY_MESSAGE, "")
         var resPositive = args.getString(KEY_POSITIVE, resources.getString(R.string.dialog_ok))
-        var resNeutral = args.getString(KEY_NEUTRAL, null)
+        val resNeutral = args.getString(KEY_NEUTRAL, null)
         var resNegative = args.getString(KEY_NEGATIVE, resources.getString(R.string.dialog_cancel))
-
-        var uriSession = args.getString(KEY_SUPPORT, null)
-        var supportEmail = args.getString(KEY_SUPPORT_EMAIL, null)
-        var submissionTime = args.getString(KEY_SUPPORT_TIMESTAMP, null)
+        val uriSession = args.getString(KEY_SUPPORT, null)
+        val supportEmail = args.getString(KEY_SUPPORT_EMAIL, null)
         if (type == EDialogType.YesNo) {
             resPositive = resources.getString(R.string.dialog_yes)
             resNegative = resources.getString(R.string.dialog_no)
@@ -372,7 +366,6 @@ class CustomDialogFragment : DialogFragment() {
         val builder = AlertDialog.Builder(requireContext())
         builder.setCancelable(true)//This have to be set on dialog to have effect
         builder.setTitle(title)
-        //builder.setIcon(R.drawable.icon_info_dark);
         builder.setMessage(message)
         builder.setPositiveButton(resPositive,
             DialogInterface.OnClickListener { _, _ ->
@@ -413,12 +406,9 @@ class CustomDialogFragment : DialogFragment() {
         }
 
         val dialog = builder.create()
-        //dialog.setOwnerActivity(getActivity());
         dialog.setCanceledOnTouchOutside(false)
         return dialog
     }
-
-
 
     override fun onCancel(dialog: DialogInterface) {
         super.onCancel(dialog)
@@ -426,5 +416,4 @@ class CustomDialogFragment : DialogFragment() {
     }
 
     //endregion
-
 }

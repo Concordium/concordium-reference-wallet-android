@@ -2,7 +2,6 @@ import java.text.SimpleDateFormat
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
@@ -73,15 +72,12 @@ def buildTimeTicks() {
     return time;
 }
 
-
-
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.0"
+    compileSdkVersion 32
     defaultConfig {
         applicationId "software.concordium.mobilewallet"
         minSdkVersion 26
-        targetSdkVersion 30
+        targetSdkVersion 32
         versionCode versionBuildNumberSequential
         versionName "${versionBuildNumberMajor}.${versionBuildNumberMinor}.${versionBuildNumberPatch}"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -105,8 +101,8 @@ android {
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [
-                        "room.schemaLocation": "$projectDir/schemas".toString(),
-                        "room.incremental"   : "true"]
+                    "room.schemaLocation": "$projectDir/schemas".toString(),
+                    "room.incremental"   : "true"]
             }
         }
     }
@@ -145,7 +141,6 @@ android {
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_MOCK}\"")
 
             buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
-
         }
 
         local {
@@ -254,95 +249,95 @@ android {
                                 formattedDate + ".apk";
             }
         }
-
     }
 
     compileOptions {
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    buildFeatures {
+        viewBinding = true
+    }
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/atomicfu.kotlin_module']
+        }
+    }
 
     // Room - exclude the atomic functions module from the package and prevent warnings.
-    packagingOptions {
-        exclude 'META-INF/atomicfu.kotlin_module'
-    }
 }
 
 dependencies {
-    def lifecycle_version = "2.2.0"
-    def room_version = "2.2.5"
-
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.0"
     // Coroutines
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1"
 
     // Android/Google
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.biometric:biometric:1.0.1'
+    implementation 'androidx.biometric:biometric:1.1.0'
 
     // Lifecycles
+    def lifecycle_version = "2.5.0"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
-    implementation 'androidx.fragment:fragment-ktx:1.1.0'
+    implementation 'androidx.fragment:fragment-ktx:1.5.0'
 
     // Room
+    def room_version = "2.4.2"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
     androidTestImplementation "androidx.room:room-testing:$room_version"
 
     // Barcode
-    implementation 'com.google.android.gms:play-services-vision:20.0.0'
-    implementation 'com.google.android.gms:play-services-vision:20.0.0'
+    implementation 'com.google.android.gms:play-services-vision:20.1.3'
+    implementation 'com.google.android.gms:play-services-vision:20.1.3'
 
     // Chrome custom tabs
-    implementation 'androidx.browser:browser:1.2.0'
+    implementation 'androidx.browser:browser:1.4.0'
 
     // OkHttp/Retrofit
-    implementation 'com.squareup.okhttp3:okhttp:3.12.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.6.2'
-    implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.retrofit2:converter-scalars:2.6.2'
 
     implementation 'com.google.iot.cbor:cbor:0.01.02'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.0.1'
 
-    implementation 'com.google.code.gson:gson:2.8.8'
+    implementation 'com.google.code.gson:gson:2.8.9'
 
     // Navigation
-    def navigationVersion = '2.3.1'
-    implementation "androidx.navigation:navigation-fragment:$navigationVersion"
+    def navigationVersion = '2.5.0'
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
-    implementation "androidx.navigation:navigation-ui:$navigationVersion"
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
 
     // Crypto library
     implementation project(":mobile_wallet_lib-release")
 
     // Test
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
-    testImplementation "android.arch.persistence.room:testing:1.1.1"
 
     // Generate QR
     implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
 
     // EventBus
     implementation 'org.greenrobot:eventbus:3.1.1'

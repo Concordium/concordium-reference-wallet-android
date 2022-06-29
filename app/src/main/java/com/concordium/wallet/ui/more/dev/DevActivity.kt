@@ -4,21 +4,20 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.concordium.wallet.R
+import com.concordium.wallet.databinding.ActivityDevBinding
 import com.concordium.wallet.ui.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_dev.*
-import kotlinx.android.synthetic.main.progress.*
 
-class DevActivity : BaseActivity(R.layout.activity_dev, R.string.app_name) {
-
+class DevActivity : BaseActivity() {
+    private lateinit var binding: ActivityDevBinding
     private lateinit var viewModel: DevViewModel
-
 
     //region Lifecycle
     //************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityDevBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initializeViewModel()
         viewModel.initialize()
@@ -34,8 +33,7 @@ class DevActivity : BaseActivity(R.layout.activity_dev, R.string.app_name) {
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(DevViewModel::class.java)
-
+        )[DevViewModel::class.java]
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let {
                 showWaiting(waiting)
@@ -44,16 +42,15 @@ class DevActivity : BaseActivity(R.layout.activity_dev, R.string.app_name) {
     }
 
     private fun initializeViews() {
-        progress_layout.visibility = View.GONE
+        binding.includeProgress.progressLayout.visibility = View.GONE
 
-        create_data_button.setOnClickListener {
+        binding.createDataButton.setOnClickListener {
             viewModel.createData()
         }
 
-        clear_data_button.setOnClickListener {
+        binding.clearDataButton.setOnClickListener {
             viewModel.clearData()
         }
-
     }
 
     //endregion
@@ -63,12 +60,11 @@ class DevActivity : BaseActivity(R.layout.activity_dev, R.string.app_name) {
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
-            progress_layout.visibility = View.VISIBLE
+            binding.includeProgress.progressLayout.visibility = View.VISIBLE
         } else {
-            progress_layout.visibility = View.GONE
+            binding.includeProgress.progressLayout.visibility = View.GONE
         }
     }
 
     //endregion
-
 }

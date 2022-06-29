@@ -102,8 +102,6 @@
                 </LinearLayout>
             </ScrollView>
 
-            <include layout="@layout/progress" tools:visibility="gone"/>
-
         </RelativeLayout>
     </RelativeLayout>
 

@@ -164,17 +164,15 @@ class IdentityProviderWebviewViewModel(application: Application) : AndroidViewMo
     }
 
     fun parseIdentityAndSave(identity: String) {
-        val identityContainer =
-            gson.fromJson<IdentityContainer>(identity, IdentityContainer::class.java)
+        val identityContainer = gson.fromJson(identity, IdentityContainer::class.java)
         saveNewIdentity(identityContainer.value)
     }
 
     fun parseIdentityError(errorContent: String) {
-        val error: Map<String, Any> =
-            gson.fromJson(errorContent, object : TypeToken<Map<String, Any>>() {}.type)
-        val map: Map<String, Any> = error.get("error") as Map<String, Any>
-        val event = Event(map.get("detail").toString());
-        if (map.get("code")!!.equals("USER_CANCEL")) {
+        val error: Map<String, Any> = gson.fromJson(errorContent, object : TypeToken<Map<String, Any>>() {}.type)
+        val map = error["error"] as Map<*, *>
+        val event = Event(map["detail"].toString())
+        if (map["code"]!! == "USER_CANCEL") {
             _identityCreationUserCancel.value = event
         } else {
             _identityCreationError.value = event

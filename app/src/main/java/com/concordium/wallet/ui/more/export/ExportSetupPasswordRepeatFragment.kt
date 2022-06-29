@@ -8,14 +8,13 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.activityViewModels
 import com.concordium.wallet.R
+import com.concordium.wallet.databinding.FragmentExportSetupPasswordBinding
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.util.KeyboardUtil
-import kotlinx.android.synthetic.main.fragment_export_setup_password.*
-import kotlinx.android.synthetic.main.fragment_export_setup_password.view.*
-
 
 class ExportSetupPasswordRepeatFragment(val titleId: Int?= null) : BaseFragment(titleId) {
-
+    private var _binding: FragmentExportSetupPasswordBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: ExportViewModel by activityViewModels()
 
     //region Lifecycle
@@ -23,31 +22,30 @@ class ExportSetupPasswordRepeatFragment(val titleId: Int?= null) : BaseFragment(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initializeViewModel()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.fragment_export_setup_password, container, false)
-        initializeViews(rootView)
-        return rootView
+        _binding = FragmentExportSetupPasswordBinding.inflate(inflater, container, false)
+        initializeViews(binding.root)
+        return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     //endregion
 
     //region Initialize
     //************************************************************
 
-    private fun initializeViewModel() {
-
-    }
-
     private fun initializeViews(view: View) {
-        view.instruction_textview.setText(R.string.export_setup_password_repeat_info)
-        view.confirm_button.setOnClickListener {
+        binding.instructionTextview.setText(R.string.export_setup_password_repeat_info)
+        binding.confirmButton.setOnClickListener {
             onConfirmClicked()
         }
-        view.password_edittext.setOnEditorActionListener { _, actionId, _ ->
+        binding.passwordEdittext.setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
                     onConfirmClicked()
@@ -59,10 +57,9 @@ class ExportSetupPasswordRepeatFragment(val titleId: Int?= null) : BaseFragment(
 
         Handler().post(object: Runnable {
             override fun run() {
-                context?.let { KeyboardUtil.showKeyboard(it, password_edittext) }
+                context?.let { KeyboardUtil.showKeyboard(it, binding.passwordEdittext) }
             }
         })
-
     }
 
     //endregion
@@ -71,10 +68,8 @@ class ExportSetupPasswordRepeatFragment(val titleId: Int?= null) : BaseFragment(
     //************************************************************
 
     private fun onConfirmClicked() {
-        viewModel.checkExportPassword(password_edittext.text.toString())
+        viewModel.checkExportPassword(binding.passwordEdittext.text.toString())
     }
 
     //endregion
-
-
 }

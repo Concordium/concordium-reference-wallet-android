@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.account.accountsoverview
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import com.concordium.wallet.R
@@ -9,17 +10,17 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.util.CurrencyUtil
-import kotlinx.android.synthetic.main.item_account.view.*
-
+import com.concordium.wallet.databinding.ItemAccountBinding
 
 class AccountItemView(context: Context, attrs: AttributeSet?): LinearLayout(context, attrs) {
+
+    private val binding = ItemAccountBinding.inflate(LayoutInflater.from(context), this, true)
 
     private var accountWithIdentitiy: AccountWithIdentity? = null
     private var hideExpandBar: Boolean = false
 
     init {
-        inflate(context, R.layout.item_account, this)
-        setLayoutParams(LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT));
+        layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
 
         if (attrs != null) {
             val ta = context.obtainStyledAttributes(attrs, R.styleable.AccountItemView, 0, 0)
@@ -31,17 +32,16 @@ class AccountItemView(context: Context, attrs: AttributeSet?): LinearLayout(cont
         }
     }
 
-
     fun setAccount(accountWithIdentitiy: AccountWithIdentity) {
         this.accountWithIdentitiy = accountWithIdentitiy
-        total_textview.text = CurrencyUtil.formatGTU(accountWithIdentitiy.account.totalUnshieldedBalance, withGStroke = true)
-        balance_at_disposal_textview.text = CurrencyUtil.formatGTU(accountWithIdentitiy.account.getAtDisposalWithoutStakedOrScheduled(accountWithIdentitiy.account.totalUnshieldedBalance), withGStroke = true)
-        account_name_area.setData(accountWithIdentitiy)
+        binding.totalTextview.text = CurrencyUtil.formatGTU(accountWithIdentitiy.account.totalUnshieldedBalance, withGStroke = true)
+        binding.balanceAtDisposalTextview.text = CurrencyUtil.formatGTU(accountWithIdentitiy.account.getAtDisposalWithoutStakedOrScheduled(accountWithIdentitiy.account.totalUnshieldedBalance), withGStroke = true)
+        binding.accountNameArea.setData(accountWithIdentitiy)
 
-        var accountPending = if(accountWithIdentitiy.account.transactionStatus == TransactionStatus.COMMITTED || accountWithIdentitiy.account.transactionStatus == TransactionStatus.RECEIVED) true else false
+        val accountPending = accountWithIdentitiy.account.transactionStatus == TransactionStatus.COMMITTED || accountWithIdentitiy.account.transactionStatus == TransactionStatus.RECEIVED
 
-        button_area.visibility = if(accountPending || accountWithIdentitiy.account.readOnly || hideExpandBar) View.GONE else View.VISIBLE
-        root_card_content.setBackgroundColor(if(accountWithIdentitiy.account.readOnly) resources.getColor(R.color.theme_component_background_disabled, null) else resources.getColor(R.color.theme_white, null))
+        binding.buttonArea.visibility = if(accountPending || accountWithIdentitiy.account.readOnly || hideExpandBar) View.GONE else View.VISIBLE
+        binding.rootCardContent.setBackgroundColor(if(accountWithIdentitiy.account.readOnly) resources.getColor(R.color.theme_component_background_disabled, null) else resources.getColor(R.color.theme_white, null))
 
         this.isEnabled = !accountWithIdentitiy.account.readOnly
 
@@ -49,21 +49,20 @@ class AccountItemView(context: Context, attrs: AttributeSet?): LinearLayout(cont
 
     fun setOnItemClickListener(onItemClickListener: OnItemClickListener?) {
         if (onItemClickListener != null) {
-            account_card_action_send.setOnClickListener {
+            binding.accountCardActionSend.setOnClickListener {
                 accountWithIdentitiy?.let { it1 -> onItemClickListener.onSendClicked(it1.account) }
             }
-            account_card_action_receive.setOnClickListener {
+            binding.accountCardActionReceive.setOnClickListener {
                 accountWithIdentitiy?.let { it1 -> onItemClickListener.onReceiveClicked(it1.account) }
             }
-            account_card_action_more.setOnClickListener {
+            binding.accountCardActionMore.setOnClickListener {
                 accountWithIdentitiy?.let { it1 -> onItemClickListener.onMoreClicked(it1.account) }
             }
-            root_card.setOnClickListener {
+            binding.rootCard.setOnClickListener {
                 accountWithIdentitiy?.let { it1 -> onItemClickListener.onMoreClicked(it1.account) }
             }
         }
     }
-
 
     interface OnItemClickListener {
         fun onMoreClicked(item: Account)

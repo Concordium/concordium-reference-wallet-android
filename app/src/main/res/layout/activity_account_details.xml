@@ -415,8 +415,7 @@
                 app:layout_constraintRight_toRightOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <include layout="@layout/progress" android:id="@+id/include_progress" />
 
-
-        <include layout="@layout/progress" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

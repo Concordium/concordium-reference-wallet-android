@@ -14,21 +14,15 @@ import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.Schedule
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.databinding.AccountReleaseScheduleItemBinding
+import com.concordium.wallet.databinding.AccountReleaseScheduleTransactionItemBinding
+import com.concordium.wallet.databinding.ActivityAccountReleaseScheduleBinding
 import com.concordium.wallet.ui.base.BaseActivity
-import kotlinx.android.synthetic.main.account_release_schedule_item.view.*
-import kotlinx.android.synthetic.main.account_release_schedule_item.view.identifier_container
-import kotlinx.android.synthetic.main.account_release_schedule_transaction_item.view.*
-import kotlinx.android.synthetic.main.activity_account_details.*
-import kotlinx.android.synthetic.main.activity_account_details.root_layout
-import kotlinx.android.synthetic.main.activity_account_release_schedule.*
-import kotlinx.android.synthetic.main.progress.*
 import java.text.DateFormat
 import java.util.*
 
-
-class AccountReleaseScheduleActivity :
-    BaseActivity(R.layout.activity_account_release_schedule, R.string.account_release_schedule) {
-
+class AccountReleaseScheduleActivity : BaseActivity() {
+    private lateinit var binding: ActivityAccountReleaseScheduleBinding
     private lateinit var viewModel: AccountReleaseScheduleViewModel
 
     companion object {
@@ -36,12 +30,15 @@ class AccountReleaseScheduleActivity :
         const val EXTRA_SHIELDED = "EXTRA_SHIELDED"
     }
 
-
     //region Lifecycle
     //************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityAccountReleaseScheduleBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.account_release_schedule)
+
         val account = intent.extras!!.getSerializable(EXTRA_ACCOUNT) as Account
         val isShielded = intent.extras!!.getBoolean(EXTRA_SHIELDED)
         initializeViewModel()
@@ -73,7 +70,7 @@ class AccountReleaseScheduleActivity :
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(AccountReleaseScheduleViewModel::class.java)
+        )[AccountReleaseScheduleViewModel::class.java]
 
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let {
@@ -92,20 +89,20 @@ class AccountReleaseScheduleActivity :
         })
         viewModel.scheduledReleasesLiveData.observe(this, Observer<List<Schedule>> { list ->
 
-            account_release_schedule_locked_amount.text = CurrencyUtil.formatGTU(viewModel.account.finalizedAccountReleaseSchedule?.total?.toLong()?:0, true)
+            binding.accountReleaseScheduleLockedAmount.text = CurrencyUtil.formatGTU(viewModel.account.finalizedAccountReleaseSchedule?.total?.toLong() ?: 0, true)
 
-            account_release_schedule_list.removeAllViews();
+            binding.accountReleaseScheduleList.removeAllViews()
             val dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.getDefault())
             list.forEach { release ->
-                val view = LayoutInflater.from(this).inflate(R.layout.account_release_schedule_item, null)
-                view.date.setText(dateFormat.format(Date(release.timestamp)))
+                val view = AccountReleaseScheduleItemBinding.inflate(LayoutInflater.from(this))
+                view.date.text = dateFormat.format(Date(release.timestamp))
 
                 release.transactions.forEach { transaction ->
-                    val viewTransaction = LayoutInflater.from(this).inflate(R.layout.account_release_schedule_transaction_item, null)
-                    viewTransaction.identifier.setText(transaction.subSequence(0,8))
-                    view.identifier_container.addView(viewTransaction)
-                    view.copy.tag = transaction
-                    view.copy.setOnClickListener {
+                    val viewTransaction = AccountReleaseScheduleTransactionItemBinding.inflate(LayoutInflater.from(this))
+                    viewTransaction.identifier.text = transaction.subSequence(0,8)
+                    view.identifierContainer.addView(viewTransaction.root)
+                    viewTransaction.copy.tag = transaction
+                    viewTransaction.copy.setOnClickListener {
                         val clipboard: ClipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                         val clip = ClipData.newPlainText(getString(R.string.account_release_schedule_copy_title),
                             it.tag.toString()
@@ -116,15 +113,13 @@ class AccountReleaseScheduleActivity :
                 }
 
                 view.amount.setText(CurrencyUtil.formatGTU(release.amount.toLong(), true))
-                account_release_schedule_list.addView(view);
+                binding.accountReleaseScheduleList.addView(view.root)
             }
         })
-
-
     }
 
     private fun initViews() {
-        setActionBarTitle(viewModel.account.getAccountName(), getString(R.string.account_release_schedule))
+        setActionBarTitle(binding.toolbarLayout.toolbarSubTitle, viewModel.account.getAccountName(), getString(R.string.account_release_schedule))
         showWaiting(false)
     }
 
@@ -135,20 +130,15 @@ class AccountReleaseScheduleActivity :
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
-            progress_layout.visibility = View.VISIBLE
+            binding.includeProgress.progressLayout.visibility = View.VISIBLE
         } else {
-            progress_layout.visibility = View.GONE
+            binding.includeProgress.progressLayout.visibility = View.GONE
         }
     }
 
     private fun showError(stringRes: Int) {
-        popup.showSnackbar(root_layout, stringRes)
-    }
-
-    private fun showTotalBalance(totalBalance: Long) {
-        balance_textview.text = CurrencyUtil.formatGTU(totalBalance)
+        popup.showSnackbar(binding.rootLayout, stringRes)
     }
 
     //endregion
 }
-

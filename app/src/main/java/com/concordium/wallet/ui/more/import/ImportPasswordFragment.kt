@@ -9,15 +9,14 @@ import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.concordium.wallet.R
+import com.concordium.wallet.databinding.FragmentImportPasswordBinding
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.uicore.afterTextChanged
 import com.concordium.wallet.util.KeyboardUtil
-import kotlinx.android.synthetic.main.fragment_import_password.*
-import kotlinx.android.synthetic.main.fragment_import_password.view.*
-
 
 class ImportPasswordFragment(titleId: Int? = null) : BaseFragment(titleId) {
-
+    private var _binding: FragmentImportPasswordBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: ImportViewModel by activityViewModels()
 
     //region Lifecycle
@@ -29,14 +28,21 @@ class ImportPasswordFragment(titleId: Int? = null) : BaseFragment(titleId) {
         initializeViewModel()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val rootView = inflater.inflate(R.layout.fragment_import_password, container, false)
-        initializeViews(rootView)
-        return rootView
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentImportPasswordBinding.inflate(inflater, container, false)
+        initializeViews(binding.root)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupToolbar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     //endregion
@@ -53,16 +59,16 @@ class ImportPasswordFragment(titleId: Int? = null) : BaseFragment(titleId) {
     }
 
     private fun initializeViews(view: View) {
-        view.confirm_button.setOnClickListener {
+        binding.confirmButton.setOnClickListener {
             onConfirmClicked()
         }
-        view.confirm_button.isEnabled = false
-        view.password_edittext.afterTextChanged {
-            view.error_textview.setText("")
-            view.confirm_button.isEnabled =
-                viewModel.checkPasswordRequirements(view.password_edittext.text.toString())
+        binding.confirmButton.isEnabled = false
+        binding.passwordEdittext.afterTextChanged {
+            binding.errorTextview.setText("")
+            binding.confirmButton.isEnabled =
+                viewModel.checkPasswordRequirements(binding.passwordEdittext.text.toString())
         }
-        view.password_edittext.setOnEditorActionListener { _, actionId, _ ->
+        binding.passwordEdittext.setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
                     onConfirmClicked()
@@ -73,7 +79,7 @@ class ImportPasswordFragment(titleId: Int? = null) : BaseFragment(titleId) {
         }
         Handler().post(object : Runnable {
             override fun run() {
-                context?.let { KeyboardUtil.showKeyboard(it, password_edittext) }
+                context?.let { KeyboardUtil.showKeyboard(it, binding.passwordEdittext) }
             }
         })
     }
@@ -85,23 +91,22 @@ class ImportPasswordFragment(titleId: Int? = null) : BaseFragment(titleId) {
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
-            password_edittext.isEnabled = false
-            confirm_button.isEnabled = false
+            binding.passwordEdittext.isEnabled = false
+            binding.confirmButton.isEnabled = false
         } else {
-            password_edittext.isEnabled = true
-            confirm_button.isEnabled = true
+            binding.passwordEdittext.isEnabled = true
+            binding.confirmButton.isEnabled = true
         }
     }
 
     private fun onConfirmClicked() {
-        if (viewModel.checkPasswordRequirements(password_edittext.text.toString())) {
-            viewModel.startImport(password_edittext.text.toString())
+        if (viewModel.checkPasswordRequirements(binding.passwordEdittext.text.toString())) {
+            viewModel.startImport(binding.passwordEdittext.text.toString())
         } else {
-            password_edittext.setText("")
-            error_textview.setText(R.string.export_error_password_not_valid)
+            binding.passwordEdittext.setText("")
+            binding.errorTextview.setText(R.string.export_error_password_not_valid)
         }
     }
 
     //endregion
-
 }

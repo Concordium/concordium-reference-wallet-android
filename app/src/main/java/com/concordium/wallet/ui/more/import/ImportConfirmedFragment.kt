@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.more.import
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,15 +8,14 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.databinding.FragmentImportConfirmedBinding
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.uicore.view.ImportResultView
-import kotlinx.android.synthetic.main.fragment_import_confirmed.*
-import kotlinx.android.synthetic.main.fragment_import_confirmed.view.*
 
 class ImportConfirmedFragment(titleId: Int? = null) : BaseFragment(titleId) {
-
+    private var _binding: FragmentImportConfirmedBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: ImportViewModel by activityViewModels()
-
 
     //region Lifecycle
     //************************************************************
@@ -31,17 +29,14 @@ class ImportConfirmedFragment(titleId: Int? = null) : BaseFragment(titleId) {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        val rootView = inflater.inflate(R.layout.fragment_import_confirmed, container, false)
-        initializeViews(rootView)
-        return rootView
+        _binding = FragmentImportConfirmedBinding.inflate(inflater, container, false)
+        initializeViews(binding.root)
+        return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     //endregion
@@ -50,7 +45,6 @@ class ImportConfirmedFragment(titleId: Int? = null) : BaseFragment(titleId) {
     //************************************************************
 
     private fun initializeViewModel() {
-
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let {
                 showWaiting(waiting)
@@ -61,17 +55,15 @@ class ImportConfirmedFragment(titleId: Int? = null) : BaseFragment(titleId) {
                 showError(value)
             }
         })
-
-
     }
 
     private fun initializeViews(view: View) {
-        view.confirm_button.setOnClickListener {
+        binding.confirmButton.setOnClickListener {
             viewModel.finishImport()
         }
 
         val importResult = viewModel.importResult
-        view.import_headline_textview.setText(
+        binding.importHeadlineTextview.setText(
             if (importResult.hasAnyFailed())
                 R.string.import_confirmed_header_partially else R.string.import_confirmed_header
         )
@@ -82,18 +74,18 @@ class ImportConfirmedFragment(titleId: Int? = null) : BaseFragment(titleId) {
     private fun addImportResultViews(view: View) {
         val importResult = viewModel.importResult
         for (identityImportResult in importResult.identityResultList) {
-            val importResultView = ImportResultView(activity)
+            val importResultView = ImportResultView(requireActivity())
             importResultView.setIdentityData(identityImportResult)
             addImportResultView(view, importResultView)
         }
 
-        val importResultView = ImportResultView(activity)
+        val importResultView = ImportResultView(requireActivity())
         importResultView.setAddressBookData(importResult)
         addImportResultView(view, importResultView)
     }
 
     private fun addImportResultView(view: View, importResultView: ImportResultView) {
-        view.import_result_layout.addView(importResultView)
+        binding.importResultLayout.addView(importResultView)
     }
 
     //endregion
@@ -103,13 +95,12 @@ class ImportConfirmedFragment(titleId: Int? = null) : BaseFragment(titleId) {
 
     private fun showWaiting(waiting: Boolean) {
         // The 'parent' activity is handling the progress_layout
-        confirm_button.isEnabled = !waiting
+        binding.confirmButton.isEnabled = !waiting
     }
 
     private fun showError(stringRes: Int) {
-        popup.showSnackbar(root_layout, stringRes)
+        popup.showSnackbar(binding.rootLayout, stringRes)
     }
 
     //endregion
-
 }

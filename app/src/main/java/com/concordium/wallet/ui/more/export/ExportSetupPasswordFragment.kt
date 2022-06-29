@@ -9,15 +9,14 @@ import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.activityViewModels
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.databinding.FragmentExportSetupPasswordBinding
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.uicore.afterTextChanged
 import com.concordium.wallet.util.KeyboardUtil
-import kotlinx.android.synthetic.main.fragment_export_setup_password.*
-import kotlinx.android.synthetic.main.fragment_export_setup_password.view.*
-
 
 class ExportSetupPasswordFragment(val titleId: Int?=null) : BaseFragment(titleId) {
-
+    private var _binding: FragmentExportSetupPasswordBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: ExportViewModel by activityViewModels()
 
     //region Lifecycle
@@ -30,9 +29,19 @@ class ExportSetupPasswordFragment(val titleId: Int?=null) : BaseFragment(titleId
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.fragment_export_setup_password, container, false)
-        initializeViews(rootView)
-        return rootView
+        _binding = FragmentExportSetupPasswordBinding.inflate(inflater, container, false)
+        initializeViews(binding.root)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupToolbar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     //endregion
@@ -41,7 +50,6 @@ class ExportSetupPasswordFragment(val titleId: Int?=null) : BaseFragment(titleId
     //************************************************************
 
     private fun initializeViewModel() {
-
         viewModel.errorPasswordLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
@@ -54,27 +62,27 @@ class ExportSetupPasswordFragment(val titleId: Int?=null) : BaseFragment(titleId
             override fun onUnhandledEvent(value: Boolean) {
                 if (!value) {
                     //Failure
-                    password_edittext.setText("")
-                    error_textview.setText(R.string.export_error_entries_different)
+                    binding.passwordEdittext.setText("")
+                    binding.errorTextview.setText(R.string.export_error_entries_different)
                 }
             }
         })
     }
 
     private fun initializeViews(view: View) {
-        view.confirm_button.setOnClickListener {
+        binding.confirmButton.setOnClickListener {
             onConfirmClicked()
         }
-        view.confirm_button.isEnabled = false
-        view.password_edittext.afterTextChanged {
-            view.error_textview.setText("")
-            view.confirm_button.isEnabled =
-                viewModel.checkPasswordRequirements(view.password_edittext.text.toString())
+        binding.confirmButton.isEnabled = false
+        binding.passwordEdittext.afterTextChanged {
+            binding.errorTextview.setText("")
+            binding.confirmButton.isEnabled =
+                viewModel.checkPasswordRequirements(binding.passwordEdittext.text.toString())
         }
-        view.password_edittext.setOnEditorActionListener { _, actionId, _ ->
+        binding.passwordEdittext.setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
-                    if (viewModel.checkPasswordRequirements(view.password_edittext.text.toString())) {
+                    if (viewModel.checkPasswordRequirements(binding.passwordEdittext.text.toString())) {
                         onConfirmClicked()
                     }
                     true
@@ -85,7 +93,7 @@ class ExportSetupPasswordFragment(val titleId: Int?=null) : BaseFragment(titleId
 
         Handler().post(object: Runnable {
             override fun run() {
-                context?.let { KeyboardUtil.showKeyboard(it, password_edittext) }
+                context?.let { KeyboardUtil.showKeyboard(it, binding.passwordEdittext) }
             }
         })
     }
@@ -96,21 +104,19 @@ class ExportSetupPasswordFragment(val titleId: Int?=null) : BaseFragment(titleId
     //************************************************************
 
     private fun onConfirmClicked() {
-        if (viewModel.checkPasswordRequirements(password_edittext.text.toString())) {
-            viewModel.setStartExportPassword(password_edittext.text.toString())
+        if (viewModel.checkPasswordRequirements(binding.passwordEdittext.text.toString())) {
+            viewModel.setStartExportPassword(binding.passwordEdittext.text.toString())
         } else {
-            password_edittext.setText("")
-            error_textview.setText(R.string.export_error_password_not_valid)
+            binding.passwordEdittext.setText("")
+            binding.errorTextview.setText(R.string.export_error_password_not_valid)
         }
     }
 
     private fun showPasswordError() {
-        password_edittext.setText("")
-        KeyboardUtil.hideKeyboard(activity!!.parent)
-        popup.showSnackbar(root_layout, R.string.export_error_password_setup)
+        binding.passwordEdittext.setText("")
+        KeyboardUtil.hideKeyboard(requireActivity().parent)
+        popup.showSnackbar(binding.rootLayout, R.string.export_error_password_setup)
     }
 
     //endregion
-
-
 }

@@ -21,6 +21,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.databinding.FragmentAccountsOverviewBinding
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
@@ -31,12 +32,10 @@ import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.uicore.dialog.CustomDialogFragment
-import kotlinx.android.synthetic.main.fragment_accounts_overview.*
-import kotlinx.android.synthetic.main.fragment_accounts_overview.view.*
-import kotlinx.android.synthetic.main.progress.*
-import kotlinx.android.synthetic.main.progress.view.*
 
 class AccountsOverviewFragment : BaseFragment() {
+    private var _binding: FragmentAccountsOverviewBinding? = null
+    private val binding get() = _binding!!
 
     companion object {
         private const val REQUESTCODE_ACCOUNT_DETAILS = 2000
@@ -67,10 +66,10 @@ class AccountsOverviewFragment : BaseFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
-        val rootView = inflater.inflate(R.layout.fragment_accounts_overview, container, false)
-        initializeViews(rootView)
-        return rootView
+    ): View {
+        _binding = FragmentAccountsOverviewBinding.inflate(inflater, container, false)
+        initializeViews()
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -104,9 +103,13 @@ class AccountsOverviewFragment : BaseFragment() {
             viewModel.loadAppSettings()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-
         eventListener?.let {
             App.appCore.session.removeAccountsBackedUpListener(it)
         }
@@ -115,7 +118,6 @@ class AccountsOverviewFragment : BaseFragment() {
     override fun onPause() {
         super.onPause()
         viewModel.stopFrequentUpdater()
-
         eventListener?.let {
             App.appCore.session.removeAccountsBackedUpListener(it)
         }
@@ -123,7 +125,6 @@ class AccountsOverviewFragment : BaseFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == REQUESTCODE_ACCOUNT_DETAILS) {
             if (resultCode == AccountDetailsActivity.RESULT_RETRY_ACCOUNT_CREATION) {
                 gotoCreateAccount()
@@ -153,7 +154,6 @@ class AccountsOverviewFragment : BaseFragment() {
         } catch (e: ClassCastException) {
             throw ClassCastException(context.toString() + "must implement AccountsOverviewFragmentListener")
         }
-
     }
 
     //endregion
@@ -165,12 +165,11 @@ class AccountsOverviewFragment : BaseFragment() {
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        ).get(AccountsOverviewViewModel::class.java)
+        )[AccountsOverviewViewModel::class.java]
         mainViewModel = ViewModelProvider(
             requireActivity(),
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        ).get(MainViewModel::class.java)
-
+        )[MainViewModel::class.java]
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let {
                 showWaiting(waiting)
@@ -201,8 +200,8 @@ class AccountsOverviewFragment : BaseFragment() {
             }
         })
         viewModel.totalBalanceLiveData.observe(this, Observer<TotalBalancesData> { totalBalance ->
-            showTotalBalance(totalBalance.totalBalanceForAllAccounts, totalBalance.totalContainsEncrypted)
-            showDisposalBalance(totalBalance.totalAtDisposalForAllAccounts, totalBalance.totalContainsEncrypted)
+            showTotalBalance(totalBalance.totalBalanceForAllAccounts)
+            showDisposalBalance(totalBalance.totalAtDisposalForAllAccounts)
             showStakedBalance(totalBalance.totalStakedForAllAccounts)
         })
         viewModel.accountListLiveData.observe(this, Observer { accountList ->
@@ -212,20 +211,16 @@ class AccountsOverviewFragment : BaseFragment() {
                 checkForClosingPools(it)
             }
         })
-
-        viewModel.identityLiveData.observe(this, Observer { state ->
+        viewModel.identityLiveData.observe(this, Observer {
             activity?.invalidateOptionsMenu()
         })
-
-        viewModel.identityListLiveData.observe(this, Observer { identityList ->
+        viewModel.identityListLiveData.observe(this, Observer {
             viewModel.updateState()
             viewModel.initiateFrequentUpdater()
         })
-
-        viewModel.pendingIdentityForWarningLiveData.observe(this, Observer { identity ->
+        viewModel.pendingIdentityForWarningLiveData.observe(this, Observer {
             updateWarnings()
         })
-
         viewModel.appSettingsLiveData.observe(this, Observer { appSettings ->
             checkAppSettings(appSettings)
         })
@@ -366,7 +361,6 @@ class AccountsOverviewFragment : BaseFragment() {
                 encryptedWarningDialog?.show()
             }
         }
-
     }
 
     private fun startShieldedIntroFlow(account: Account) {
@@ -377,21 +371,21 @@ class AccountsOverviewFragment : BaseFragment() {
         startActivityForResult(intent, REQUESTCODE_ACCOUNT_DETAILS)
     }
 
-    private fun initializeViews(view: View) {
+    private fun initializeViews() {
         mainViewModel.setTitle(getString(R.string.accounts_overview_title))
-        view.progress_layout.visibility = View.VISIBLE
-        view.no_identities_layout.visibility = View.GONE
-        view.no_accounts_textview.visibility = View.GONE
-        view.create_account_button.visibility = View.GONE
+        binding.includeProgress.progressLayout.visibility = View.VISIBLE
+        binding.noIdentitiesLayout.visibility = View.GONE
+        binding.noAccountsTextview.visibility = View.GONE
+        binding.createAccountButton.visibility = View.GONE
 
-        view.create_identity_button.setOnClickListener {
+        binding.createIdentityButton.setOnClickListener {
             gotoCreateIdentity()
         }
-        view.create_account_button.setOnClickListener {
+        binding.createAccountButton.setOnClickListener {
             gotoCreateAccount()
         }
 
-        view.missing_backup.setOnClickListener {
+        binding.missingBackup.setOnClickListener {
             gotoExport()
         }
 
@@ -403,52 +397,52 @@ class AccountsOverviewFragment : BaseFragment() {
             }
         }
 
-        initializeList(view)
+        initializeList()
     }
 
     private fun updateWarnings(){
         val ident = viewModel.pendingIdentityForWarningLiveData.value
         if (ident != null && !App.appCore.session.isIdentityPendingWarningAcknowledged(ident.id)) {
-            missing_backup.visibility = View.GONE
-            identity_pending.visibility = View.VISIBLE
+            binding.missingBackup.visibility = View.GONE
+            binding.identityPending.visibility = View.VISIBLE
             viewModel.pendingIdentityForWarningLiveData.value
-            identity_pending_tv.text = getString(R.string.accounts_overview_identity_pending_warning, ident.name)
-            identity_pending_close.setOnClickListener {
+            binding.identityPendingTv.text = getString(R.string.accounts_overview_identity_pending_warning, ident.name)
+            binding.identityPendingClose.setOnClickListener {
                 App.appCore.session.setIdentityPendingWarningAcknowledged(ident.id)
                 updateWarnings()
             }
-            identity_pending.setOnClickListener {
+            binding.identityPending.setOnClickListener {
                 fragmentListener?.identityClicked(ident)
             }
         }
         else{
-            missing_backup.visibility = if(App.appCore.session.isAccountsBackedUp()) View.GONE else View.VISIBLE
-            identity_pending.visibility = View.GONE
+            binding.missingBackup.visibility = if(App.appCore.session.isAccountsBackedUp()) View.GONE else View.VISIBLE
+            binding.identityPending.visibility = View.GONE
         }
 
     }
 
-    private fun initializeList(view: View) {
+    private fun initializeList() {
         accountAdapter = AccountAdapter()
-        view.account_recyclerview.setHasFixedSize(true)
-        view.account_recyclerview.adapter = accountAdapter
+        binding.accountRecyclerview.setHasFixedSize(true)
+        binding.accountRecyclerview.adapter = accountAdapter
 
         accountAdapter.setOnItemClickListener(object : AccountItemView.OnItemClickListener {
 
-            override fun onMoreClicked(account: Account) {
-                gotoAccountDetails(account, false)
+            override fun onMoreClicked(item: Account) {
+                gotoAccountDetails(item, false)
             }
 
-            override fun onReceiveClicked(account: Account) {
+            override fun onReceiveClicked(item: Account) {
                 val intent = Intent(activity, AccountQRCodeActivity::class.java)
-                intent.putExtra(AccountQRCodeActivity.EXTRA_ACCOUNT, account)
+                intent.putExtra(AccountQRCodeActivity.EXTRA_ACCOUNT, item)
                 startActivity(intent)
             }
 
-            override fun onSendClicked(account: Account) {
+            override fun onSendClicked(item: Account) {
                 val intent = Intent(activity, SendFundsActivity::class.java)
                 intent.putExtra(SendFundsActivity.EXTRA_SHIELDED, false)
-                intent.putExtra(SendFundsActivity.EXTRA_ACCOUNT, account)
+                intent.putExtra(SendFundsActivity.EXTRA_ACCOUNT, item)
                 startActivity(intent)
             }
         })
@@ -458,9 +452,6 @@ class AccountsOverviewFragment : BaseFragment() {
 
     //region Control/UI
     //************************************************************
-
-
-
 
     private fun gotoExport() {
         val intent = Intent(activity, ExportActivity::class.java)
@@ -486,62 +477,57 @@ class AccountsOverviewFragment : BaseFragment() {
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
-            progress_layout.visibility = View.VISIBLE
+            binding.includeProgress.progressLayout.visibility = View.VISIBLE
         } else {
-            progress_layout.visibility = View.GONE
+            binding.includeProgress.progressLayout.visibility = View.GONE
         }
     }
 
     private fun showError(stringRes: Int) {
-        popup.showSnackbar(root_layout, stringRes)
+        popup.showSnackbar(binding.rootLayout, stringRes)
     }
 
     private fun showStateNoIdentities() {
         activity?.invalidateOptionsMenu()
-        no_accounts_scrollview.visibility = View.VISIBLE
+        binding.noAccountsScrollview.visibility = View.VISIBLE
         showNoIdentities(true)
         showNoAccounts(false)
     }
 
     private fun showStateNoAccounts() {
         activity?.invalidateOptionsMenu()
-        no_accounts_scrollview.visibility = View.VISIBLE
+        binding.noAccountsScrollview.visibility = View.VISIBLE
         showNoIdentities(false)
         showNoAccounts(true)
     }
 
     private fun showStateDefault() {
         activity?.invalidateOptionsMenu()
-        no_accounts_scrollview.visibility = View.GONE
+        binding.noAccountsScrollview.visibility = View.GONE
         showNoIdentities(false)
         showNoAccounts(false)
     }
 
     private fun showNoIdentities(show: Boolean) {
         val state = if (show) View.VISIBLE else View.GONE
-        no_identities_layout.visibility = state
+        binding.noIdentitiesLayout.visibility = state
     }
 
     private fun showNoAccounts(show: Boolean) {
         val state = if (show) View.VISIBLE else View.GONE
-        no_accounts_textview.visibility = state
-        create_account_button.visibility = state
+        binding.noAccountsTextview.visibility = state
+        binding.createAccountButton.visibility = state
     }
 
-    private fun showTotalBalance(totalBalance: Long, containsEncryptedAmount: Boolean) {
-        total_balance_textview.text = CurrencyUtil.formatGTU(totalBalance)
-        //total_balance_shielded_container.visibility = if(containsEncryptedAmount) View.VISIBLE else View.GONE
+    private fun showTotalBalance(totalBalance: Long) {
+        binding.totalBalanceTextview.text = CurrencyUtil.formatGTU(totalBalance)
     }
-    private fun showDisposalBalance(atDisposal: Long, containsEncryptedAmount: Boolean) {
-        accounts_overview_total_details_disposal.text = CurrencyUtil.formatGTU(atDisposal, true)
-        //total_balance_shielded_container.visibility = if(containsEncryptedAmount) View.VISIBLE else View.GONE
-        //accounts_overview_total_details_disposal_shield.visibility = if(containsEncryptedAmount) View.VISIBLE else View.GONE
+    private fun showDisposalBalance(atDisposal: Long) {
+        binding.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(atDisposal, true)
     }
     private fun showStakedBalance(totalBalance: Long) {
-        accounts_overview_total_details_staked.text = CurrencyUtil.formatGTU(totalBalance, true)
+        binding.accountsOverviewTotalDetailsStaked.text = CurrencyUtil.formatGTU(totalBalance, true)
     }
 
-
     //endregion
-
 }

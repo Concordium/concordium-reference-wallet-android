@@ -1,52 +1,36 @@
 package com.concordium.wallet.ui.common
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Identity
+import com.concordium.wallet.databinding.ItemIdentityBinding
 import com.concordium.wallet.uicore.view.IdentityView
-import kotlinx.android.synthetic.main.item_identity.view.*
 
-class IdentityAdapter :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class IdentityAdapter : RecyclerView.Adapter<IdentityAdapter.ItemViewHolder>() {
 
     private var data: List<Identity> = emptyList()
     private var onItemClickListener: OnItemClickListener? = null
 
-    class ItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        private val identityView: IdentityView = view.identity_view
+    inner class ItemViewHolder(val binding: ItemIdentityBinding): RecyclerView.ViewHolder(binding.root)
 
-        fun bind(item: Identity, onItemClickListener: OnItemClickListener?) {
-            identityView.setIdentityData(item)
+    override fun getItemCount() = data.size
 
-            // Click
-            identityView.setOnItemClickListener(object : IdentityView.OnItemClickListener {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
+        val binding = ItemIdentityBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ItemViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+        with(holder) {
+            val item = data[position]
+            binding.identityView.setIdentityData(item)
+            binding.identityView.setOnItemClickListener(object : IdentityView.OnItemClickListener {
                 override fun onItemClicked(item: Identity) {
                     onItemClickListener?.onItemClicked(item)
                 }
             })
         }
-    }
-
-    override fun getItemCount(): Int {
-        return data.size
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return ItemViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.item_identity,
-                parent,
-                false
-            )
-        )
-    }
-
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = data.get(position)
-        (holder as ItemViewHolder).bind(item, onItemClickListener)
     }
 
     fun setData(data: List<Identity>) {

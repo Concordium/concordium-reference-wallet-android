@@ -8,18 +8,16 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
+import com.concordium.wallet.databinding.ActivityNewAccountConfirmedBinding
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_new_account_confirmed.*
-import kotlinx.android.synthetic.main.progress.*
 
-class NewAccountConfirmedActivity :
-    BaseActivity(R.layout.activity_new_account_confirmed, R.string.new_account_confirmed_title) {
-
+class NewAccountConfirmedActivity : BaseActivity() {
     companion object {
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
     }
 
+    private lateinit var binding: ActivityNewAccountConfirmedBinding
     private lateinit var viewModel: NewAccountConfirmedViewModel
 
     //region Lifecycle
@@ -27,6 +25,9 @@ class NewAccountConfirmedActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityNewAccountConfirmedBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.new_account_confirmed_title)
 
         val account = intent.extras!!.getSerializable(EXTRA_ACCOUNT) as Account
 
@@ -35,7 +36,7 @@ class NewAccountConfirmedActivity :
         // This observe has to be done after the initialize, where the live data is set up in the view model
         viewModel.accountWithIdentityLiveData.observe(this, Observer<AccountWithIdentity> { accountWithIdentity ->
             accountWithIdentity?.let {
-                account_view.setAccount(accountWithIdentity)
+                binding.accountView.setAccount(accountWithIdentity)
             }
         })
         initViews()
@@ -54,7 +55,7 @@ class NewAccountConfirmedActivity :
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(NewAccountConfirmedViewModel::class.java)
+        )[NewAccountConfirmedViewModel::class.java]
 
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let {
@@ -67,11 +68,9 @@ class NewAccountConfirmedActivity :
         hideActionBarBack(this)
         showWaiting(false)
 
-        confirm_button.setOnClickListener {
+        binding.confirmButton.setOnClickListener {
             gotoAccountOverview()
         }
-
-
     }
 
     //endregion
@@ -81,9 +80,9 @@ class NewAccountConfirmedActivity :
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
-            progress_layout.visibility = View.VISIBLE
+            binding.includeProgress.progressLayout.visibility = View.VISIBLE
         } else {
-            progress_layout.visibility = View.GONE
+            binding.includeProgress.progressLayout.visibility = View.GONE
         }
     }
 

@@ -1,15 +1,11 @@
 package com.concordium.wallet.uicore.recyclerview.pinnedheader
 
 import android.graphics.Canvas
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-
-class PinnedHeaderItemDecoration(val listener: PinnedHeaderListener) :
-    RecyclerView.ItemDecoration() {
-
+class PinnedHeaderItemDecoration(val listener: PinnedHeaderListener) : RecyclerView.ItemDecoration() {
     private var headerHeight: Int = 0
 
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
@@ -25,10 +21,7 @@ class PinnedHeaderItemDecoration(val listener: PinnedHeaderListener) :
         val currentHeader = getHeaderViewForItem(topChildPosition, parent)
         fixLayoutSize(parent, currentHeader)
         val contactPoint = currentHeader.getBottom()
-        val childInContact = getChildInContact(parent, contactPoint)
-        if (childInContact == null) {
-            return
-        }
+        val childInContact = getChildInContact(parent, contactPoint) ?: return
 
         if (listener.isHeader(parent.getChildAdapterPosition(childInContact))) {
             moveHeader(c, currentHeader, childInContact)
@@ -36,15 +29,11 @@ class PinnedHeaderItemDecoration(val listener: PinnedHeaderListener) :
         }
 
         drawHeader(c, currentHeader)
-
     }
 
     private fun getHeaderViewForItem(itemPosition: Int, parent: RecyclerView): View {
         val headerPosition = listener.getHeaderPositionForItem(itemPosition)
-        val layoutResId = listener.getHeaderLayout(headerPosition)
-        val header = LayoutInflater.from(parent.context).inflate(layoutResId, parent, false)
-        listener.bindHeaderData(header, headerPosition)
-        return header
+        return listener.bindHeaderData(headerPosition)
     }
 
     private fun drawHeader(c: Canvas, header: View) {
@@ -81,7 +70,6 @@ class PinnedHeaderItemDecoration(val listener: PinnedHeaderListener) :
      * @param parent ViewGroup: RecyclerView in this case.
      */
     private fun fixLayoutSize(parent: ViewGroup, view: View) {
-
         // Specs for parent (RecyclerView)
         val widthSpec = View.MeasureSpec.makeMeasureSpec(parent.width, View.MeasureSpec.EXACTLY)
         val heightSpec =
@@ -105,5 +93,4 @@ class PinnedHeaderItemDecoration(val listener: PinnedHeaderListener) :
         headerHeight = view.measuredHeight
         view.layout(0, 0, view.measuredWidth, view.measuredHeight)
     }
-
 }

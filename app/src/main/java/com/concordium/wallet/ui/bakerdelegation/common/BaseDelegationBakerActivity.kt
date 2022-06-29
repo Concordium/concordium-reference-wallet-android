@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.bakerdelegation.common
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
@@ -11,35 +12,28 @@ import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_delegation_remove.*
-import kotlinx.android.synthetic.main.progress.*
 import javax.crypto.Cipher
 
-abstract class BaseDelegationBakerActivity(layout: Int, titleId: Int = R.string.app_name) :
-    BaseActivity(layout, titleId) {
-
+abstract class BaseDelegationBakerActivity : BaseActivity() {
     protected lateinit var viewModel: DelegationBakerViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initializeViewModel()
         viewModel.initialize(intent.extras?.getSerializable(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA) as BakerDelegationData)
-        initViews()
     }
 
     open fun initializeViewModel() {
-        showWaiting(false)
-
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(DelegationBakerViewModel::class.java)
+        )[DelegationBakerViewModel::class.java]
     }
 
-    protected fun initializeWaitingLiveData() {
+    protected fun initializeWaitingLiveData(progressLayout: View) {
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let {
-                showWaiting(waiting)
+                showWaiting(progressLayout, waiting)
             }
         })
         viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
@@ -49,11 +43,12 @@ abstract class BaseDelegationBakerActivity(layout: Int, titleId: Int = R.string.
         })
     }
 
-    protected fun initializeTransactionFeeLiveData() {
+    protected fun initializeTransactionFeeLiveData(progressLayout: View, estimatedTransactionFee: TextView) {
         viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<Long?, Int?>> {
             override fun onChanged(response: Pair<Long?, Int?>?) {
                 response?.first?.let {
-                    estimated_transaction_fee.text = getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(it))
+                    estimatedTransactionFee.text = getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(it))
+                    showWaiting(progressLayout, false)
                 }
             }
         })
@@ -85,11 +80,11 @@ abstract class BaseDelegationBakerActivity(layout: Int, titleId: Int = R.string.
 
     abstract fun errorLiveData(value: Int)
 
-    protected open fun showWaiting(waiting: Boolean) {
+    protected open fun showWaiting(progressLayout: View, waiting: Boolean) {
         if (waiting) {
-            progress_layout.visibility = View.VISIBLE
+            progressLayout.visibility = View.VISIBLE
         } else {
-            progress_layout.visibility = View.GONE
+            progressLayout.visibility = View.GONE
         }
     }
 

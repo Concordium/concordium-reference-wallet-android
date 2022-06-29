@@ -45,7 +45,7 @@
                             android:text="@string/baker_registration_confirmation_explain"
                             android:gravity="center" />
 
-                        <include layout="@layout/transaction_submitted_header" />
+                        <include layout="@layout/transaction_submitted_header" android:id="@+id/include_transaction_submitted_header" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -199,7 +199,7 @@
                                     tools:visibility="visible"
                                     tools:text="Estimated transaction fee:\nϾ 0.0059" />
                             </LinearLayout>
-                            <include layout="@layout/transaction_submitted_no" />
+                            <include layout="@layout/transaction_submitted_no" android:id="@+id/include_transaction_submitted_no" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -228,8 +228,8 @@
                 </LinearLayout>
             </ScrollView>
 
-            <include layout="@layout/progress"
-                tools:visibility="gone"/>
+            <include layout="@layout/progress" android:id="@+id/include_progress" tools:visibility="gone"/>
+
         </RelativeLayout>
     </RelativeLayout>
 

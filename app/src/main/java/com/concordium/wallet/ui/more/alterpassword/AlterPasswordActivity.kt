@@ -5,45 +5,37 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.databinding.ActivityAlterpasswordBinding
 import com.concordium.wallet.ui.auth.setup.AuthSetupActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.KeyboardUtil
-import kotlinx.android.synthetic.main.activity_alterpassword.confirm_button
-import kotlinx.android.synthetic.main.activity_auth_login.*
-import kotlinx.android.synthetic.main.activity_auth_setup.passcode_view
-import kotlinx.android.synthetic.main.activity_auth_setup.root_layout
-import kotlinx.android.synthetic.main.progress.*
 import javax.crypto.Cipher
 
-class AlterPasswordActivity : BaseActivity(
-    R.layout.activity_alterpassword,
-    R.string.alterpassword_title
-) {
-
+class AlterPasswordActivity : BaseActivity() {
     //region Lifecycle
     //************************************************************
-
-    private val REQUESTCODE_AUTH_RESET = 3001
-
+    private lateinit var binding: ActivityAlterpasswordBinding
     private val viewModel: AlterPasswordViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityAlterpasswordBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.alterpassword_title)
 
-        initializeViewModel()
         viewModel.initialize()
 
         showWaiting(false)
 
-        confirm_button.setOnClickListener {
+        binding.confirmButton.setOnClickListener {
             viewModel.checkAndStartPasscodeChange()
         }
-
 
         viewModel.checkAccountsIdentitiesDoneLiveData.observe(this, Observer<Boolean> { success ->
             if(success){
@@ -71,6 +63,7 @@ class AlterPasswordActivity : BaseActivity(
                 showWaiting(waiting)
             }
         })
+
         viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
                 showError(value)
@@ -80,8 +73,8 @@ class AlterPasswordActivity : BaseActivity(
         viewModel.doneInitialAuthenticationLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 val intent = Intent(baseContext, AuthSetupActivity::class.java)
-                intent.putExtra(AuthSetupActivity.CONTINUE_INITIAL_SETUP, false);
-                startActivityForResult(intent, REQUESTCODE_AUTH_RESET)
+                intent.putExtra(AuthSetupActivity.CONTINUE_INITIAL_SETUP, false)
+                getResultAuthReset.launch(intent)
             }
         })
 
@@ -90,7 +83,6 @@ class AlterPasswordActivity : BaseActivity(
                 Toast.makeText(baseContext, getString(R.string.change_password_initial_error), Toast.LENGTH_LONG).show()
             }
         })
-
 
         viewModel.doneFinalChangePasswordLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
@@ -104,42 +96,29 @@ class AlterPasswordActivity : BaseActivity(
                 Toast.makeText(baseContext, getString(R.string.change_password_final_error), Toast.LENGTH_LONG).show()
             }
         })
-
-
     }
 
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == REQUESTCODE_AUTH_RESET) {
-            if (resultCode == Activity.RESULT_OK) {
-                App.appCore.session.tempPassword?.let {
-                    viewModel.finishPasswordChange(it)
+    private val getResultAuthReset =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                App.appCore.session.tempPassword?.let { tempPassword ->
+                    viewModel.finishPasswordChange(tempPassword)
                 }
             }
         }
-    }
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
-            progress_layout.visibility = View.VISIBLE
+            binding.includeProgress.progressLayout.visibility = View.VISIBLE
         } else {
-            progress_layout.visibility = View.GONE
+            binding.includeProgress.progressLayout.visibility = View.GONE
         }
     }
 
     private fun showError(stringRes: Int) {
-        password_edittext.setText("")
-        passcode_view.clearPasscode()
         KeyboardUtil.hideKeyboard(this)
-        popup.showSnackbar(root_layout, stringRes)
-    }
-
-    private fun initializeViewModel() {
-
+        popup.showSnackbar(binding.rootLayout, stringRes)
     }
 
     //endregion
-
 }

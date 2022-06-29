@@ -157,6 +157,7 @@
             app:layout_constraintRight_toRightOf="parent"
             tools:text="Version 1.2.17" />
 
-        <include layout="@layout/progress" />
+        <include layout="@layout/progress" android:id="@+id/include_progress" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

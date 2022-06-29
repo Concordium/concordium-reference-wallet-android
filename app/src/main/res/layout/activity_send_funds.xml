@@ -359,7 +359,6 @@
         </ScrollView>
     </LinearLayout>
 
-        <include layout="@layout/progress"
-            tools:visibility="gone"/>
+        <include layout="@layout/progress" android:id="@+id/include_progress" tools:visibility="gone"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

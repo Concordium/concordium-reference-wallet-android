@@ -39,8 +39,8 @@ class AppCore(val context: Context) {
 
     private fun initializeGson(): Gson {
         val gsonBuilder = GsonBuilder()
-        gsonBuilder.registerTypeAdapter(RawJson::class.java, RawJsonTypeAdapter());
-        return gsonBuilder.create();
+        gsonBuilder.registerTypeAdapter(RawJson::class.java, RawJsonTypeAdapter())
+        return gsonBuilder.create()
     }
 
     fun getOriginalAuthenticationManager() : AuthenticationManager {

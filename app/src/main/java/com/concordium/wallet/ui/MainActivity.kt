@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Identity
+import com.concordium.wallet.databinding.ActivityMainBinding
 import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewFragment
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.auth.setup.AuthSetupActivity
@@ -25,18 +26,17 @@ import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
 import com.concordium.wallet.uicore.dialog.CustomDialogFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), Dialogs.DialogFragmentListener, AccountsOverviewFragment.AccountsOverviewFragmentListener {
-
+class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOverviewFragment.AccountsOverviewFragmentListener {
     companion object {
         const val EXTRA_SHOW_IDENTITIES = "EXTRA_SHOW_IDENTITIES"
     }
 
+    private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
     private var hasHandledPossibleImportFile = false
 
@@ -46,6 +46,9 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme_NoActionBar)  // Set theme to default to remove launcher theme
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.main_title)
 
         initializeViewModel()
         viewModel.initialize()
@@ -137,7 +140,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(MainViewModel::class.java)
+        )[MainViewModel::class.java]
 
         viewModel.titleLiveData.observe(this, Observer<String> { title ->
             title?.let {
@@ -161,14 +164,11 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
                 CustomDialogFragment.newAccountFinalizedDialog(this, newAccount)
             }
         })
-
-
-
     }
 
     private fun initializeViews() {
         forceMenuSelection(R.id.menuitem_accounts)
-        bottom_navigation_view.setOnNavigationItemSelectedListener {
+        binding.bottomNavigationView.setOnItemSelectedListener {
             onNavigationItemSelected(it)
         }
         hideActionBarBack(this)
@@ -200,7 +200,7 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
     private fun forceMenuSelection(resId: Int) {
         GlobalScope.launch(Dispatchers.Main){
             delay(1)
-            bottom_navigation_view.getMenu().findItem(resId).setChecked(true);
+            binding.bottomNavigationView.menu.findItem(resId).isChecked = true;
         }
     }
 
@@ -277,7 +277,6 @@ class MainActivity : BaseActivity(R.layout.activity_main, R.string.main_title), 
     override fun identityClicked(identity: Identity) {
         switchToIdentities()
     }
-
 
     //endregion
 }

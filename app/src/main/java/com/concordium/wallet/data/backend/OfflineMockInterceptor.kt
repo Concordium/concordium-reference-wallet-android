@@ -7,19 +7,19 @@ import com.concordium.wallet.data.model.*
 import com.concordium.wallet.util.AssetUtil
 import com.concordium.wallet.util.Log
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.ResponseBody.Companion.toResponseBody
 import okio.Buffer
 import java.io.IOException
 
-
 class OfflineMockInterceptor : Interceptor {
-
     companion object {
         const val initialTimestampSecs = 1588593939 // Monday, May 4, 2020 12:05:39 PM
     }
 
     private var submissionStatusCounter = 0
 
-    override fun intercept(chain: Interceptor.Chain): Response? {
+    override fun intercept(chain: Interceptor.Chain): Response {
         var response: Response? = null
         if (BuildConfig.DEBUG) {
             response = transformResponse(chain)
@@ -34,12 +34,10 @@ class OfflineMockInterceptor : Interceptor {
 
     private fun transformResponse(chain: Interceptor.Chain): Response? {
         var asset = ""
-        var responseCode = 200
+        val responseCode = 200
 
-        val requestUri = chain.request().url().uri()
-        //val requestMethod = chain.request().method()
+        val requestUri = chain.request().url.toUri()
         val bodyJson = bodyToString(chain.request())
-        //val queryString = requestUri.query
 
         Log.d("Uri: $requestUri")
         Log.d("Request body: $bodyJson")
@@ -104,8 +102,7 @@ class OfflineMockInterceptor : Interceptor {
             asset = "RX_backend_testnet_gtudrop.json.json"
         }
 
-
-        if (asset.equals("")) {
+        if (asset == "") {
             return null
         }
 
@@ -121,35 +118,28 @@ class OfflineMockInterceptor : Interceptor {
         chain: Interceptor.Chain,
         code: Int = 200
     ): Response {
-
         return Response.Builder()
             .code(code)
             .message(responseString)
             .request(chain.request())
             .protocol(Protocol.HTTP_1_0)
-            .body(
-                ResponseBody.create(
-                    MediaType.parse("application/json"),
-                    responseString.toByteArray()
-                )
-            )
+            .body(responseString.toResponseBody("application/json".toMediaTypeOrNull()))
             .addHeader("content-type", "application/json")
             .build()
     }
 
     private fun bodyToString(request: Request): String {
-        try {
+        return try {
             val copy = request.newBuilder().build()
             val buffer = Buffer()
-            copy.body()?.writeTo(buffer)
-            return buffer.readUtf8()
+            copy.body?.writeTo(buffer)
+            buffer.readUtf8()
         } catch (e: IOException) {
-            return ""
+            ""
         }
     }
 
     private val ONE_HOUR_IN_SECS = 60 * 60
-    private val ONE_MINUTE_IN_SECS = 60
     private var transactionListRequestCount = 1
     private var transactionListBaselineTimestamp = initialTimestampSecs
 
@@ -192,9 +182,7 @@ class OfflineMockInterceptor : Interceptor {
             "",
         0,
         "",
-        ""
-
-        )
+        "")
 
         var timeStamp = transactionListBaselineTimestamp
         for (i in 1..count) {
@@ -220,5 +208,4 @@ class OfflineMockInterceptor : Interceptor {
 
         return App.appCore.gson.toJson(response)
     }
-
 }

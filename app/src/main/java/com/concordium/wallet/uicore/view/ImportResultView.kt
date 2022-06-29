@@ -2,30 +2,25 @@ package com.concordium.wallet.uicore.view
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.concordium.wallet.R
+import com.concordium.wallet.databinding.ViewImportResultBinding
 import com.concordium.wallet.ui.more.import.ImportResult
-import kotlinx.android.synthetic.main.view_import_result.view.*
 
 class ImportResultView : ConstraintLayout {
+    private val binding = ViewImportResultBinding.inflate(LayoutInflater.from(context), this, true)
 
-    constructor (context: Context?) : super(context) {
+    constructor (context: Context) : super(context) {
         init(null)
     }
 
-    constructor(
-        context: Context?,
-        attrs: AttributeSet?
-    ) : super(context, attrs) {
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         init(attrs)
     }
 
-    constructor(
-        context: Context?,
-        attrs: AttributeSet?,
-        defStyleAttr: Int
-    ) : super(context, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         init(attrs)
     }
 
@@ -35,14 +30,14 @@ class ImportResultView : ConstraintLayout {
     }
 
     fun setAddressBookData(importResult: ImportResult) {
-        readonly_header_textview.visibility = View.GONE
-        readonly_content_textview.visibility = View.GONE
-        header_id_textview.visibility = View.GONE
-        subheader_textview.setText(R.string.import_confirmed_recipient_accounts)
+        binding.readonlyHeaderTextview.visibility = View.GONE
+        binding.readonlyContentTextview.visibility = View.GONE
+        binding.headerIdTextview.visibility = View.GONE
+        binding.subheaderTextview.setText(R.string.import_confirmed_recipient_accounts)
         val headerText = StringBuilder(resources.getText(R.string.import_confirmed_address_book))
 
         var hasAddedFirstLine = false
-        var strBuilder = StringBuilder()
+        val strBuilder = StringBuilder()
         for (recipientImportResult in importResult.recipientResultList) {
             if (recipientImportResult.status == ImportResult.Status.Ok) {
                 if (hasAddedFirstLine) {
@@ -84,13 +79,13 @@ class ImportResultView : ConstraintLayout {
             )
             headerText.append("\n$headerStr")
         }
-        content_textview.setText(strBuilder.toString())
-        header_textview.setText(headerText)
+        binding.contentTextview.setText(strBuilder.toString())
+        binding.headerTextview.setText(headerText)
     }
 
     fun setIdentityData(identityImportResult: ImportResult.IdentityImportResult) {
-        header_id_textview.setText(R.string.import_confirmed_id)
-        subheader_textview.setText(R.string.import_confirmed_accounts)
+        binding.headerIdTextview.setText(R.string.import_confirmed_id)
+        binding.subheaderTextview.setText(R.string.import_confirmed_accounts)
         val headerText = StringBuilder()
 
         if (identityImportResult.status == ImportResult.Status.Failed) {
@@ -103,7 +98,7 @@ class ImportResultView : ConstraintLayout {
         }
 
         var hasAddedFirstLine = false
-        var strBuilder = StringBuilder()
+        val strBuilder = StringBuilder()
         if (identityImportResult.status == ImportResult.Status.Failed) {
             strBuilder.append(resources.getText(R.string.import_confirmed_state_id_import_failed_accounts))
         } else {
@@ -139,13 +134,13 @@ class ImportResultView : ConstraintLayout {
                 headerText.append("\n$headerStr")
             }
         }
-        content_textview.setText(strBuilder.toString())
-        header_textview.setText(headerText)
+        binding.contentTextview.setText(strBuilder.toString())
+        binding.headerTextview.setText(headerText)
 
         // Readonly accounts
         if (identityImportResult.readonlyAccountResultList.isEmpty()) {
-            readonly_header_textview.visibility = View.GONE
-            readonly_content_textview.visibility = View.GONE
+            binding.readonlyHeaderTextview.visibility = View.GONE
+            binding.readonlyContentTextview.visibility = View.GONE
         } else {
             addReadOnlyAccounts(identityImportResult)
         }
@@ -153,7 +148,7 @@ class ImportResultView : ConstraintLayout {
 
     private fun addReadOnlyAccounts(identityImportResult: ImportResult.IdentityImportResult) {
         var hasAddedFirstLine = false
-        var strBuilder = StringBuilder()
+        val strBuilder = StringBuilder()
         for (accountImportResult in identityImportResult.readonlyAccountResultList) {
 
             if (hasAddedFirstLine) {
@@ -164,6 +159,6 @@ class ImportResultView : ConstraintLayout {
 
 
         }
-        readonly_content_textview.setText(strBuilder.toString())
+        binding.readonlyContentTextview.setText(strBuilder.toString())
     }
 }

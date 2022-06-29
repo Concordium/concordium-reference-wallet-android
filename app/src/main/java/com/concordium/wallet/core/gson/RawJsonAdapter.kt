@@ -12,7 +12,7 @@ class RawJsonTypeAdapter : TypeAdapter<RawJson>() {
         if (reader == null) {
             return RawJson("")
         }
-        return RawJson(JsonParser().parse(reader).toString())
+        return RawJson(JsonParser.parseReader(reader).toString())
     }
 
     override fun write(writer: JsonWriter?, value: RawJson?) {

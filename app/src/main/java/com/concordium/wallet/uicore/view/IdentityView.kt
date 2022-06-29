@@ -3,6 +3,7 @@ package com.concordium.wallet.uicore.view
 import android.content.Context
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -10,12 +11,12 @@ import androidx.cardview.widget.CardView
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.room.Identity
+import com.concordium.wallet.databinding.ViewIdentityBinding
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.ImageUtil
-import kotlinx.android.synthetic.main.view_identity.view.*
-
 
 class IdentityView : CardView {
+    private val binding = ViewIdentityBinding.inflate(LayoutInflater.from(context), this, true)
 
     private lateinit var rootLayout: View
     private lateinit var nameTextView: TextView
@@ -29,30 +30,21 @@ class IdentityView : CardView {
         init(null)
     }
 
-    constructor(
-        context: Context,
-        attrs: AttributeSet?
-    ) : super(context, attrs) {
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         init(attrs)
     }
 
-    constructor(
-        context: Context,
-        attrs: AttributeSet?,
-        defStyleAttr: Int
-    ) : super(context, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         init(attrs)
     }
 
     @Suppress("UNUSED_PARAMETER")
     private fun init(attrs: AttributeSet?) {
-        val view = View.inflate(context, R.layout.view_identity, this)
-
-        rootLayout = view.root_layout
-        nameTextView = view.name_textview
-        expiresTextView = view.expires_textview
-        iconImageView = view.logo_imageview
-        statusImageView = view.status_imageview
+        rootLayout = binding.rootLayout
+        nameTextView = binding.nameTextview
+        expiresTextView = binding.expiresTextview
+        iconImageView = binding.logoImageview
+        statusImageView = binding.statusImageview
     }
 
     fun setIdentityData(identity: Identity) {

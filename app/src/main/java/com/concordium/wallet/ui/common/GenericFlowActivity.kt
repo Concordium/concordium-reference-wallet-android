@@ -3,19 +3,16 @@ package com.concordium.wallet.ui.common
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import com.concordium.wallet.R
+import com.concordium.wallet.databinding.ActivityIntroFlowBinding
 import com.concordium.wallet.ui.account.accountdetails.WebViewPageFragment
 import com.concordium.wallet.ui.base.BaseActivity
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.android.synthetic.main.activity_intro_flow.*
 
-abstract class GenericFlowActivity(titleId: Int) : BaseActivity(R.layout.activity_intro_flow, titleId) {
-
+abstract class GenericFlowActivity(private val titleId: Int) : BaseActivity() {
     companion object {
         const val EXTRA_HIDE_BACK = "EXTRA_HIDE_BACK"
         const val EXTRA_IGNORE_BACK_PRESS = "EXTRA_IGNORE_BACK_PRESS"
@@ -23,12 +20,17 @@ abstract class GenericFlowActivity(titleId: Int) : BaseActivity(R.layout.activit
 
     protected var hideBack = true
     protected var ignoreBackPress = true
+    private lateinit var binding: ActivityIntroFlowBinding
 
     //region Lifecycle
     //************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityIntroFlowBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, titleId)
+
         hideBack = intent.extras?.getBoolean(EXTRA_HIDE_BACK) == true
         ignoreBackPress = intent.extras?.getBoolean(EXTRA_IGNORE_BACK_PRESS) == true
 
@@ -55,39 +57,29 @@ abstract class GenericFlowActivity(titleId: Int) : BaseActivity(R.layout.activit
 
     private fun initViews() {
 
-        pager.adapter =  ScreenSlidePagerAdapter(this)
+        binding.pager.adapter =  ScreenSlidePagerAdapter(this)
 
-        TabLayoutMediator(pagers_tab_layout, pager)
+        TabLayoutMediator(binding.pagersTabLayout, binding.pager)
         { tab, position ->}.attach()
 
-        create_ident_intro_back.setOnClickListener {
-            pager.setCurrentItem(pager.currentItem-1, true)
+        binding.createIdentIntroBack.setOnClickListener {
+            binding.pager.setCurrentItem(binding.pager.currentItem-1, true)
         }
-        create_ident_intro_next.setOnClickListener {
-            pager.setCurrentItem(pager.currentItem+1, true)
+        binding.createIdentIntroNext.setOnClickListener {
+            binding.pager.setCurrentItem(binding.pager.currentItem+1, true)
         }
-        create_ident_intro_continue.setOnClickListener{
+        binding.createIdentIntroContinue.setOnClickListener{
             gotoContinue()
         }
-        create_ident_intro_skip.setOnClickListener{
+        binding.createIdentIntroSkip.setOnClickListener{
             gotoContinue()
         }
 
         updateButtons()
 
-        pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        binding.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageScrollStateChanged(state: Int) {
-
             }
-
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-            }
-
 
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -95,14 +87,13 @@ abstract class GenericFlowActivity(titleId: Int) : BaseActivity(R.layout.activit
             }
         })
 
-        if(hideBack){
-            val toolbar = findViewById<Toolbar>(R.id.toolbar)
-            toolbar.setNavigationIcon(null);
+        if (hideBack) {
+            binding.toolbarLayout.toolbar.navigationIcon = null
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val id: Int = item.getItemId()
+        val id: Int = item.itemId
         return if (id == android.R.id.home) {
             onBackPressed()
             true
@@ -123,31 +114,31 @@ abstract class GenericFlowActivity(titleId: Int) : BaseActivity(R.layout.activit
     //************************************************************
 
     private fun updateButtons(){
-        if (pager.currentItem == 0 && getMaxPages() == 1) {
-            create_ident_intro_skip.visibility = View.GONE
-            create_ident_intro_continue.visibility = View.VISIBLE
-            create_ident_intro_back.visibility = View.GONE
-            create_ident_intro_next.visibility = View.GONE
-        } else if (pager.currentItem == 0 && getMaxPages() > 1) {
-            create_ident_intro_skip.visibility = View.VISIBLE
-            create_ident_intro_continue.visibility = View.GONE
-            create_ident_intro_back.visibility = View.GONE
-            create_ident_intro_next.visibility = View.VISIBLE
-        } else if (pager.currentItem == 0) {
-            create_ident_intro_skip.visibility = View.GONE
-            create_ident_intro_continue.visibility = View.GONE
-            create_ident_intro_back.visibility = View.GONE
-            create_ident_intro_next.visibility = View.VISIBLE
-        } else if (pager.currentItem > 0 && pager.currentItem < getMaxPages() -1) {
-            create_ident_intro_skip.visibility = View.GONE
-            create_ident_intro_continue.visibility = View.GONE
-            create_ident_intro_back.visibility = View.VISIBLE
-            create_ident_intro_next.visibility = View.VISIBLE
-        } else if (pager.currentItem == getMaxPages() -1) {
-            create_ident_intro_skip.visibility = View.GONE
-            create_ident_intro_continue.visibility = View.VISIBLE
-            create_ident_intro_back.visibility = View.VISIBLE
-            create_ident_intro_next.visibility = View.GONE
+        if (binding.pager.currentItem == 0 && getMaxPages() == 1) {
+            binding.createIdentIntroSkip.visibility = View.GONE
+            binding.createIdentIntroContinue.visibility = View.VISIBLE
+            binding.createIdentIntroBack.visibility = View.GONE
+            binding.createIdentIntroNext.visibility = View.GONE
+        } else if (binding.pager.currentItem == 0 && getMaxPages() > 1) {
+            binding.createIdentIntroSkip.visibility = View.VISIBLE
+            binding.createIdentIntroContinue.visibility = View.GONE
+            binding.createIdentIntroBack.visibility = View.GONE
+            binding.createIdentIntroNext.visibility = View.VISIBLE
+        } else if (binding.pager.currentItem == 0) {
+            binding.createIdentIntroSkip.visibility = View.GONE
+            binding.createIdentIntroContinue.visibility = View.GONE
+            binding.createIdentIntroBack.visibility = View.GONE
+            binding.createIdentIntroNext.visibility = View.VISIBLE
+        } else if (binding.pager.currentItem > 0 && binding.pager.currentItem < getMaxPages() -1) {
+            binding.createIdentIntroSkip.visibility = View.GONE
+            binding.createIdentIntroContinue.visibility = View.GONE
+            binding.createIdentIntroBack.visibility = View.VISIBLE
+            binding.createIdentIntroNext.visibility = View.VISIBLE
+        } else if (binding.pager.currentItem == getMaxPages() -1) {
+            binding.createIdentIntroSkip.visibility = View.GONE
+            binding.createIdentIntroContinue.visibility = View.VISIBLE
+            binding.createIdentIntroBack.visibility = View.VISIBLE
+            binding.createIdentIntroNext.visibility = View.GONE
         }
     }
 

@@ -45,7 +45,7 @@
                             tools:text="You are about to submit a delegation transaction that lowers your delegation amount. It will take effect after %d days and the delegation amount cannot be changed during this period of time."
                             android:gravity="center" />
 
-                        <include layout="@layout/transaction_submitted_header" />
+                        <include layout="@layout/transaction_submitted_header" android:id="@+id/include_transaction_submitted_header" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -120,7 +120,7 @@
                                     android:layout_height="wrap_content"
                                     tools:text="Estimated transaction fee:\nϾ 0.0059" />
                             </LinearLayout>
-                            <include layout="@layout/transaction_submitted_no" />
+                            <include layout="@layout/transaction_submitted_no" android:id="@+id/include_transaction_submitted_no" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -150,8 +150,8 @@
                 </LinearLayout>
             </ScrollView>
 
-            <include layout="@layout/progress"
-                tools:visibility="gone"/>
+            <include layout="@layout/progress" android:id="@+id/include_progress" tools:visibility="gone"/>
+
         </RelativeLayout>
     </RelativeLayout>
 

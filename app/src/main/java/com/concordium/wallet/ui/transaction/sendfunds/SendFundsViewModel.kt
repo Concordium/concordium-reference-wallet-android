@@ -37,7 +37,6 @@ import kotlinx.coroutines.launch
 import java.util.*
 import javax.crypto.Cipher
 
-
 class SendFundsViewModel(application: Application) : AndroidViewModel(application) {
 
     private var sendAll: Boolean = false
@@ -61,7 +60,6 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-
     private val preferences: SendFundsPreferences
         get() {
             return SendFundsPreferences(getApplication(), PREF_SEND_FUNDS, Context.MODE_PRIVATE)
@@ -77,7 +75,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
     private var accountBalanceRequest: BackendRequest<AccountBalance>? = null
 
-    public lateinit var account: Account
+    lateinit var account: Account
     var isShielded: Boolean = false
 
     var selectedRecipient: Recipient? = null
@@ -120,8 +118,8 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
     val waitingReceiverAccountPublicKeyLiveData: LiveData<Boolean>
         get() = _waitingReceiverAccountPublicKeyLiveData
 
-    private val _recipientLiveData = MutableLiveData<Recipient>()
-    val recipientLiveData: LiveData<Recipient>
+    private val _recipientLiveData = MutableLiveData<Recipient?>()
+    val recipientLiveData: MutableLiveData<Recipient?>
         get() = _recipientLiveData
 
     private val _sendAllAmountLiveData = MutableLiveData<Long>()
@@ -176,8 +174,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     private fun loadTransactionFee() {
-
-        var type =
+        val type =
             if (isShielded) {
                 if (isTransferToSameAccount()) {
                     ProxyRepository.TRANSFER_TO_PUBLIC
@@ -191,7 +188,6 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
                     ProxyRepository.SIMPLE_TRANSFER
                 }
             }
-
 
         proxyRepository.getTransferCost(type,
             if (tempData.memo == null) null else tempData.memo!!.length / 2, //div by 2 because hex takes up twice the length
@@ -251,7 +247,6 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         }
         return true
     }
-
 
     fun sendFunds(amount: String) {
         val amountValue = CurrencyUtil.toGTUValue(amount)
@@ -372,7 +367,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             tempData.globalParams,
             tempData.receiverPublicKey,
             encryptionSecretKey,
-            calculateInputEncryptedAmount(encryptionSecretKey),
+            calculateInputEncryptedAmount(),
             null,
             null,
             null)
@@ -441,25 +436,24 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    private suspend fun calculateInputEncryptedAmount(encryptionSecretKey: String): InputEncryptedAmount? {
+    private suspend fun calculateInputEncryptedAmount(): InputEncryptedAmount? {
 
         val lastNounceToInclude = tempData.accountBalance?.finalizedBalance?.accountNonce ?: -2
 
         val allTransfers = transferRepository.getAllByAccountId(account.id)
-        val unfinalisedTransfers = allTransfers?.filter {
-            it.transactionStatus != TransactionStatus.FINALIZED && it.nonce?.nonce ?: -1 >= lastNounceToInclude
+        val unfinalisedTransfers = allTransfers.filter {
+            it.transactionStatus != TransactionStatus.FINALIZED && (it.nonce?.nonce ?: -1) >= lastNounceToInclude
         }
 
-        var aggEncryptedAmount = if (unfinalisedTransfers.size > 0) {
-            val lastTransaction =
-                unfinalisedTransfers.maxWith(Comparator({ a, b -> a.id.compareTo(b.id) }))
+        val aggEncryptedAmount = if (unfinalisedTransfers.isNotEmpty()) {
+            val lastTransaction = unfinalisedTransfers.maxWithOrNull { a, b -> a.id.compareTo(b.id) }
             if (lastTransaction != null) {
                 tempData.accountBalance?.finalizedBalance?.let {
                     val incomingAmounts = it.accountEncryptedAmount.incomingAmounts.filter {
                         accountUpdater.lookupMappedAmount(it) != null
                     }
                     var agg = lastTransaction.newSelfEncryptedAmount ?: ""
-                    for (i in lastTransaction.newStartIndex..(it.accountEncryptedAmount.startIndex + incomingAmounts.count() - 1)) {
+                    for (i in lastTransaction.newStartIndex until it.accountEncryptedAmount.startIndex + incomingAmounts.count()) {
                         agg = App.appCore.cryptoLibrary.combineEncryptedAmounts(
                             agg,
                             incomingAmounts[i]
@@ -482,7 +476,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             } ?: ""
         }
 
-        var aggAmount = tempData.accountBalance?.finalizedBalance?.let {
+        val aggAmount = tempData.accountBalance?.finalizedBalance?.let {
             var agg =
                 accountUpdater.lookupMappedAmount(it.accountEncryptedAmount.selfAmount)?.toLong()
                     ?: 0
@@ -495,7 +489,6 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             agg
         } ?: ""
 
-
         val index = tempData.accountBalance?.finalizedBalance?.let {
             it.accountEncryptedAmount.startIndex + it.accountEncryptedAmount.incomingAmounts.count {
                 accountUpdater.lookupMappedAmount(it) != null
@@ -503,7 +496,6 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         } ?: 0
 
         return InputEncryptedAmount(aggEncryptedAmount, aggAmount.toString(), index)
-
     }
 
     private fun getGlobalInfo() {
@@ -551,7 +543,6 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             }
         )
     }
-
 
     private fun submitTransfer(transfer: CreateTransferOutput) {
         _waitingLiveData.value = true

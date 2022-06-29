@@ -1,21 +1,27 @@
 package com.concordium.wallet.ui.bakerdelegation.delegation
 
 import android.app.AlertDialog
+import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.concordium.wallet.R
+import com.concordium.wallet.databinding.ActivityDelegationRemoveBinding
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.util.UnitConvertUtil
-import kotlinx.android.synthetic.main.activity_delegation_remove.*
-import kotlinx.android.synthetic.main.transaction_submitted_header.*
-import kotlinx.android.synthetic.main.transaction_submitted_no.*
 
-class DelegationRemoveActivity :
-    BaseDelegationBakerActivity(R.layout.activity_delegation_remove, R.string.delegation_remove_delegation_title) {
-
+class DelegationRemoveActivity : BaseDelegationBakerActivity() {
+    private lateinit var binding: ActivityDelegationRemoveBinding
     private var receiptMode = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityDelegationRemoveBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.delegation_remove_delegation_title)
+        initViews()
+    }
 
     override fun onBackPressed() {
         if (!receiptMode)
@@ -23,19 +29,19 @@ class DelegationRemoveActivity :
     }
 
     override fun initViews() {
-        account_to_remove_delegate_from.text = (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n").plus(viewModel.bakerDelegationData.account?.address ?: "")
-        estimated_transaction_fee.text = ""
+        binding.accountToRemoveDelegateFrom.text = (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n").plus(viewModel.bakerDelegationData.account?.address ?: "")
+        binding.estimatedTransactionFee.text = ""
 
-        submit_delegation_transaction.setOnClickListener {
+        binding.submitDelegationTransaction.setOnClickListener {
             onContinueClicked()
         }
 
-        submit_delegation_finish.setOnClickListener {
+        binding.submitDelegationFinish.setOnClickListener {
             showNotice()
         }
 
-        initializeWaitingLiveData()
-        initializeTransactionFeeLiveData()
+        initializeWaitingLiveData(binding.includeProgress.progressLayout)
+        initializeTransactionFeeLiveData(binding.includeProgress.progressLayout, binding.estimatedTransactionFee)
         initializeShowAuthenticationLiveData()
 
         viewModel.transactionSuccessLiveData.observe(this, Observer<Boolean> { waiting ->
@@ -72,14 +78,14 @@ class DelegationRemoveActivity :
     private fun showPageAsReceipt() {
         receiptMode = true
         hideActionBarBack(this)
-        delegation_remove_text.visibility = View.GONE
-        submit_delegation_transaction.visibility = View.GONE
-        submit_delegation_finish.visibility = View.VISIBLE
-        transaction_submitted.visibility = View.VISIBLE
+        binding.delegationRemoveText.visibility = View.GONE
+        binding.submitDelegationTransaction.visibility = View.GONE
+        binding.submitDelegationFinish.visibility = View.VISIBLE
+        binding.includeTransactionSubmittedHeader.transactionSubmitted.visibility = View.VISIBLE
         viewModel.bakerDelegationData.submissionId?.let {
-            transaction_submitted_divider.visibility = View.VISIBLE
-            transaction_submitted_id.visibility = View.VISIBLE
-            transaction_submitted_id.text = it
+            binding.includeTransactionSubmittedNo.transactionSubmittedDivider.visibility = View.VISIBLE
+            binding.includeTransactionSubmittedNo.transactionSubmittedId.visibility = View.VISIBLE
+            binding.includeTransactionSubmittedNo.transactionSubmittedId.text = it
         }
     }
 
@@ -95,8 +101,8 @@ class DelegationRemoveActivity :
         builder.create().show()
     }
 
-    override fun showWaiting(waiting: Boolean) {
-        super.showWaiting(waiting)
-        submit_delegation_transaction.isEnabled = !waiting
+    override fun showWaiting(progressLayout: View, waiting: Boolean) {
+        super.showWaiting(progressLayout, waiting)
+        binding.submitDelegationTransaction.isEnabled = !waiting
     }
 }
