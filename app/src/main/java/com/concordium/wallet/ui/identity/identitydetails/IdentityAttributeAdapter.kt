@@ -1,55 +1,37 @@
 package com.concordium.wallet.ui.identity.identitydetails
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.concordium.wallet.R
 import com.concordium.wallet.data.util.IdentityAttributeConverterUtil
-import kotlinx.android.synthetic.main.item_identity_attribute.view.*
+import com.concordium.wallet.databinding.ItemIdentityAttributeBinding
 import java.util.*
-
 
 class IdentityAttributeAdapter(private var data: SortedMap<String, String>) :
     RecyclerView.Adapter<IdentityAttributeAdapter.ItemViewHolder>() {
 
-    var keys = ArrayList<String>(data.keys)
+    var keys = ArrayList(data.keys)
 
-    class ItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        private val nameTextView: TextView = view.attribute_name_textview
-        private val valueTextView: TextView = view.attribute_value_textview
-
-        fun bind(name: String, value: String) {
-            val attributeKeyValue = IdentityAttributeConverterUtil.convertAttributeValue(
-                view.context,
-                Pair(name, value)
-            )
-            nameTextView.text = attributeKeyValue.first
-            valueTextView.text = attributeKeyValue.second
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return data.size
-    }
+    override fun getItemCount() = data.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        return ItemViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.item_identity_attribute,
-                parent,
-                false
-            )
-        )
+        val binding = ItemIdentityAttributeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ItemViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
-        val name = keys[position]
-        val value = data[name]
-        value?.let {
-            holder.bind(name, value)
+        with(holder) {
+            val name = keys[position]
+            data[name]?.let { value ->
+                val attributeKeyValue = IdentityAttributeConverterUtil.convertAttributeValue(
+                    binding.root.context,
+                    Pair(name, value)
+                )
+                binding.attributeNameTextview.text = attributeKeyValue.first
+                binding.attributeValueTextview.text = attributeKeyValue.second
+            }
         }
-
     }
+
+    inner class ItemViewHolder(val binding: ItemIdentityAttributeBinding): RecyclerView.ViewHolder(binding.root)
 }

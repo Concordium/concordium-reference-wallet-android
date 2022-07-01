@@ -336,7 +336,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 
-        <include layout="@layout/progress"
-            tools:visibility="gone"/>
+        <include layout="@layout/progress" android:id="@+id/include_progress" tools:visibility="gone"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,19 +1,28 @@
 package com.concordium.wallet.ui.bakerdelegation.baker
 
 import android.content.Intent
+import android.os.Bundle
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.BakerPoolInfo
 import com.concordium.wallet.data.model.BakerPoolInfo.Companion.OPEN_STATUS_CLOSED_FOR_ALL
 import com.concordium.wallet.data.model.BakerPoolInfo.Companion.OPEN_STATUS_CLOSED_FOR_NEW
 import com.concordium.wallet.data.model.BakerPoolInfo.Companion.OPEN_STATUS_OPEN_FOR_ALL
+import com.concordium.wallet.databinding.ActivityBakerUpdatePoolSettingsBinding
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.common.GenericFlowActivity
 import com.concordium.wallet.uicore.view.SegmentedControlView
-import kotlinx.android.synthetic.main.activity_baker_update_pool_settings.*
 
-class BakerUpdatePoolSettingsActivity :
-    BaseDelegationBakerActivity(R.layout.activity_baker_update_pool_settings, R.string.baker_update_pool_settings_title) {
+class BakerUpdatePoolSettingsActivity : BaseDelegationBakerActivity() {
+    private lateinit var binding: ActivityBakerUpdatePoolSettingsBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityBakerUpdatePoolSettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.baker_update_pool_settings_title)
+        initViews()
+    }
 
     override fun initViews() {
         super.initViews()
@@ -24,9 +33,9 @@ class BakerUpdatePoolSettingsActivity :
             viewModel.selectOpenStatus(it)
         }
 
-        pool_options.clearAll()
+        binding.poolOptions.clearAll()
 
-        pool_options.addControl(
+        binding.poolOptions.addControl(
             getString(R.string.baker_update_pool_settings_option_open),
             object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
@@ -34,7 +43,7 @@ class BakerUpdatePoolSettingsActivity :
                 }
             }, viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL)
         if (viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus != OPEN_STATUS_CLOSED_FOR_ALL) {
-            pool_options.addControl(
+            binding.poolOptions.addControl(
                 getString(R.string.baker_update_pool_settings_option_close_for_new),
                 object : SegmentedControlView.OnItemClickListener {
                     override fun onItemClicked() {
@@ -42,7 +51,7 @@ class BakerUpdatePoolSettingsActivity :
                     }
                 }, viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_NEW)
         }
-        pool_options.addControl(
+        binding.poolOptions.addControl(
             getString(R.string.baker_update_pool_settings_option_close),
             object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
@@ -51,12 +60,12 @@ class BakerUpdatePoolSettingsActivity :
             }, viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_ALL)
 
         when (viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.openStatus) {
-            OPEN_STATUS_OPEN_FOR_ALL -> pool_settings_current_status.text = getString(R.string.baker_update_pool_settings_current_status_open)
-            OPEN_STATUS_CLOSED_FOR_NEW -> pool_settings_current_status.text = getString(R.string.baker_update_pool_settings_current_status_closed_for_new)
-            else -> pool_settings_current_status.text = getString(R.string.baker_update_pool_settings_current_status_closed)
+            OPEN_STATUS_OPEN_FOR_ALL -> binding.poolSettingsCurrentStatus.text = getString(R.string.baker_update_pool_settings_current_status_open)
+            OPEN_STATUS_CLOSED_FOR_NEW -> binding.poolSettingsCurrentStatus.text = getString(R.string.baker_update_pool_settings_current_status_closed_for_new)
+            else -> binding.poolSettingsCurrentStatus.text = getString(R.string.baker_update_pool_settings_current_status_closed)
         }
 
-        update_pool_settings_continue.setOnClickListener {
+        binding.updatePoolSettingsContinue.setOnClickListener {
             gotoNextPage()
         }
     }

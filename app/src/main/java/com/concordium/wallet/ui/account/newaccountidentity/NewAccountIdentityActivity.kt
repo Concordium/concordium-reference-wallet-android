@@ -9,30 +9,30 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.room.Identity
+import com.concordium.wallet.databinding.ActivityNewAccountIdentityBinding
 import com.concordium.wallet.ui.account.newaccountsetup.NewAccountSetupActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.IdentityAdapter
 import com.concordium.wallet.uicore.dialog.Dialogs
-import kotlinx.android.synthetic.main.activity_new_account_identity.*
-import kotlinx.android.synthetic.main.progress.*
 
-class NewAccountIdentityActivity : BaseActivity(R.layout.activity_new_account_identity, R.string.new_account_identity_title),
-    Dialogs.DialogFragmentListener {
-
+class NewAccountIdentityActivity : BaseActivity(), Dialogs.DialogFragmentListener {
     companion object {
         const val EXTRA_ACCOUNT_NAME = "EXTRA_ACCOUNT_NAME"
         const val REQUESTCODE_ERROR_DIALOG = 1000
     }
 
+    private lateinit var binding: ActivityNewAccountIdentityBinding
     private lateinit var viewModel: NewAccountIdentityViewModel
-    private var identityAdapter: IdentityAdapter =
-        IdentityAdapter()
+    private var identityAdapter: IdentityAdapter = IdentityAdapter()
 
     //region Lifecycle
     //************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityNewAccountIdentityBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.new_account_identity_title)
 
         val accountName = intent.getStringExtra(EXTRA_ACCOUNT_NAME) as String
 
@@ -53,7 +53,7 @@ class NewAccountIdentityActivity : BaseActivity(R.layout.activity_new_account_id
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(NewAccountIdentityViewModel::class.java)
+        )[NewAccountIdentityViewModel::class.java]
 
         viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
@@ -73,13 +73,13 @@ class NewAccountIdentityActivity : BaseActivity(R.layout.activity_new_account_id
     }
 
     private fun initializeViews() {
-        progress_bar.visibility = View.GONE
+        binding.includeProgress.progressBar.visibility = View.GONE
 
         val linearLayoutManager = LinearLayoutManager(this)
 
-        identity_recyclerview.setHasFixedSize(true)
-        identity_recyclerview.layoutManager = linearLayoutManager
-        identity_recyclerview.adapter = identityAdapter
+        binding.identityRecyclerview.setHasFixedSize(true)
+        binding.identityRecyclerview.layoutManager = linearLayoutManager
+        binding.identityRecyclerview.adapter = identityAdapter
 
         identityAdapter.setOnItemClickListener(object :
             IdentityAdapter.OnItemClickListener {
@@ -95,7 +95,7 @@ class NewAccountIdentityActivity : BaseActivity(R.layout.activity_new_account_id
     //************************************************************
 
     private fun showError(stringRes: Int) {
-        popup.showSnackbar(root_layout, stringRes)
+        popup.showSnackbar(binding.rootLayout, stringRes)
     }
 
     private fun showErrorDialog(stringRes: Int) {

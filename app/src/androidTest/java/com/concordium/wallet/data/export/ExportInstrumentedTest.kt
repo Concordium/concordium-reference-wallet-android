@@ -13,7 +13,6 @@ import java.io.UnsupportedEncodingException
 import java.security.InvalidAlgorithmParameterException
 import java.security.InvalidKeyException
 import java.security.NoSuchAlgorithmException
-import java.security.SecureRandom
 import java.security.spec.InvalidKeySpecException
 import java.security.spec.KeySpec
 import javax.crypto.*
@@ -43,10 +42,6 @@ class ExportInstrumentedTest {
 
     @Test
     fun testExportExperiments() {
-        val encData = createEncryptionData()
-        val saltOutput =  Base64.encodeToString(encData.first, Base64.DEFAULT)
-        val ivOutput =  Base64.encodeToString(encData.second, Base64.DEFAULT)
-
         val salt = "Lb9ul7JP2FzxZITi+5PebOM0VMZPyl/ogzRUIZBg3zM=\n"
         val iv = "Iq+RX1R0oMtD61n5MnaonQ==\n"
 
@@ -67,7 +62,6 @@ class ExportInstrumentedTest {
         assertEquals("AES256", decrypted)
 
         assertEquals("A5Si7eMyyaE+uC6bJGMWBMMd+Xi04vD70sVJlE+deaU=\n", pbkdf2("password", "salt", 100000, 32))
-
     }
 
     @Throws(
@@ -185,33 +179,4 @@ class ExportInstrumentedTest {
             }
         }
     }
-
-
-
-    //************************************************************
-
-    fun createEncryptionData(): Pair<ByteArray, ByteArray> {
-        val saltLength = keyLength / 8 // same size as key output
-        val random = SecureRandom()
-        val salt = ByteArray(saltLength)
-        random.nextBytes(salt)
-
-        try {
-            val cipher = Cipher.getInstance(cipherTransformation)
-            val iv = ByteArray(cipher.blockSize)
-            random.nextBytes(iv)
-
-            return Pair(salt, iv)
-        } catch (e: Exception) {
-            when (e) {
-                is NoSuchAlgorithmException,
-                is NoSuchPaddingException -> {
-                    Log.d("Failed creating encryption data", e)
-                    throw EncryptionException(e)
-                }
-                else -> throw e
-            }
-        }
-    }
-
 }

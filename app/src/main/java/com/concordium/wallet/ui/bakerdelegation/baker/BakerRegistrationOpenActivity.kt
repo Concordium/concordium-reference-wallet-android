@@ -2,19 +2,28 @@ package com.concordium.wallet.ui.bakerdelegation.baker
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.concordium.wallet.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_POOL
+import com.concordium.wallet.databinding.ActivityBakerRegistrationOpenBinding
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.common.GenericFlowActivity
 import com.concordium.wallet.uicore.handleUrlClicks
 import com.concordium.wallet.util.KeyboardUtil
-import kotlinx.android.synthetic.main.activity_baker_registration_open.*
 
-class BakerRegistrationOpenActivity :
-    BaseDelegationBakerActivity(R.layout.activity_baker_registration_open, R.string.baker_registration_open_title) {
+class BakerRegistrationOpenActivity : BaseDelegationBakerActivity() {
+    private lateinit var binding: ActivityBakerRegistrationOpenBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityBakerRegistrationOpenBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.baker_registration_open_title)
+        initViews()
+    }
 
     override fun initViews() {
         super.initViews()
@@ -23,22 +32,22 @@ class BakerRegistrationOpenActivity :
 
         if (viewModel.bakerDelegationData.type == UPDATE_BAKER_POOL) {
             setActionBarTitle(R.string.baker_update_pool_settings_title)
-            open_url_explain.setText(R.string.baker_update_pool_settings_open_url_explain)
+            binding.openUrlExplain.setText(R.string.baker_update_pool_settings_open_url_explain)
             viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.metadataUrl?.let {
-                current_url.text = getString(R.string.baker_update_pool_settings_current_url, it)
-                current_url.visibility = View.VISIBLE
-                open_url.setText(it)
+                binding.currentUrl.text = getString(R.string.baker_update_pool_settings_current_url, it)
+                binding.currentUrl.visibility = View.VISIBLE
+                binding.openUrl.setText(it)
             }
         }
 
-        open_url_explain.handleUrlClicks { url ->
+        binding.openUrlExplain.handleUrlClicks { url ->
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             ContextCompat.startActivity(this, browserIntent, null)
         }
 
-        baker_registration_open_continue.setOnClickListener {
+        binding.bakerRegistrationOpenContinue.setOnClickListener {
             KeyboardUtil.hideKeyboard(this)
-            viewModel.bakerDelegationData.metadataUrl = open_url.text?.toString()
+            viewModel.bakerDelegationData.metadataUrl = binding.openUrl.text?.toString()
             validate()
         }
     }

@@ -20,6 +20,7 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
+import com.concordium.wallet.databinding.ActivityScanQrBinding
 import com.concordium.wallet.ui.RequestCodes
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.uicore.dialog.Dialogs
@@ -30,12 +31,9 @@ import com.google.android.gms.vision.Detector
 import com.google.android.gms.vision.Detector.Detections
 import com.google.android.gms.vision.barcode.Barcode
 import com.google.android.gms.vision.barcode.BarcodeDetector
-import kotlinx.android.synthetic.main.activity_scan_qr.*
 import java.io.IOException
 
-class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_title),
-    Dialogs.DialogFragmentListener {
-
+class ScanQRActivity : BaseActivity(), Dialogs.DialogFragmentListener {
     companion object {
         // intent request code to handle updating play services if needed.
         private const val RC_HANDLE_GMS = 9001
@@ -43,6 +41,7 @@ class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_
         const val EXTRA_BARCODE = "EXTRA_BARCODE"
     }
 
+    private lateinit var binding: ActivityScanQrBinding
     private lateinit var viewModel: ScanQRViewModel
 
     private var mCameraSource: CameraSource? = null
@@ -65,10 +64,10 @@ class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_
         override fun run() {
             val now = System.currentTimeMillis()
             if (now - latestInvalidBarcodeShownTime > 2000) {
-                viewModel.setStateDefaultIfAllowed();
+                viewModel.setStateDefaultIfAllowed()
             }
 
-            invalidQRStateHandler.postDelayed(this, INVALID_QR_STATE_TIMER);
+            invalidQRStateHandler.postDelayed(this, INVALID_QR_STATE_TIMER)
         }
     }
 
@@ -77,6 +76,10 @@ class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityScanQrBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.scan_qr_title)
+
         initViewModel()
         viewModel.initialize()
         initializeViews()
@@ -101,18 +104,17 @@ class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_
 
     override fun onPause() {
         super.onPause()
-        camera_preview?.let {
-            camera_preview.stop()
+        binding.cameraPreview.let {
+            binding.cameraPreview.stop()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        camera_preview?.let {
+        binding.cameraPreview.let {
             try {
-                camera_preview.release()
-            }
-            catch (e: Exception){
+                binding.cameraPreview.release()
+            } catch (e: Exception){
                 Log.e("Failed releasing camera: "+e)
             }
         }
@@ -136,8 +138,7 @@ class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(ScanQRViewModel::class.java)
-
+        )[ScanQRViewModel::class.java]
         viewModel.stateLiveData.observe(this, Observer { state ->
             onStateChanged(state)
         })
@@ -160,11 +161,11 @@ class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_
     }
 
     private fun showDefaultUI() {
-        overlay_imageview.setImageResource(R.drawable.ic_qr_overlay)
+        binding.overlayImageview.setImageResource(R.drawable.ic_qr_overlay)
     }
 
     private fun showNotValidQRUI() {
-        overlay_imageview.setImageResource(R.drawable.ic_qr_overlay_bad)
+        binding.overlayImageview.setImageResource(R.drawable.ic_qr_overlay_bad)
     }
 
     private fun goBackWithBarcode(barcode: String) {
@@ -264,7 +265,7 @@ class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_
         mCameraSource?.let { cameraSource ->
             try {
                 if (hasCameraPermission()) {
-                    camera_preview.start(cameraSource)
+                    binding.cameraPreview.start(cameraSource)
                 }
             } catch (e: IOException) {
                 Log.e("Unable to start camera source.", e)
@@ -348,8 +349,8 @@ class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_
         if (hasFoundValidBarcode) {
             val runnable = Runnable {
                 Log.d("Valid barCode found")
-                camera_preview.stop()
-                overlay_imageview.setImageResource(R.drawable.ic_qr_overlay_good)
+                binding.cameraPreview.stop()
+                binding.overlayImageview.setImageResource(R.drawable.ic_qr_overlay_good)
                 goBackWithBarcode(barcode.displayValue)
             }
             runOnUiThread(runnable)
@@ -362,7 +363,7 @@ class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_
                 Log.d("Scanned code is not valid: $text")
                 val runnable = Runnable {
                     viewModel.setStateQRNotValid()
-                    popup.showSnackbar(root_layout, R.string.scan_qr_error_invalid_qr_code)
+                    popup.showSnackbar(binding.rootLayout, R.string.scan_qr_error_invalid_qr_code)
                 }
                 runOnUiThread(runnable)
                 latestInvalidBarcodeShownTime = now

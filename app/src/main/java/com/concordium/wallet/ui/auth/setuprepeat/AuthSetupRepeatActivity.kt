@@ -6,21 +6,22 @@ import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.databinding.ActivityAuthSetupBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.uicore.view.PasscodeView
-import kotlinx.android.synthetic.main.activity_auth_setup.*
 
-class AuthSetupRepeatActivity :
-    BaseActivity(R.layout.activity_auth_setup, R.string.auth_setup_repeat_title) {
-
+class AuthSetupRepeatActivity : BaseActivity() {
+    private lateinit var binding: ActivityAuthSetupBinding
     private lateinit var viewModel: AuthSetupRepeatViewModel
-
 
     //region Lifecycle
     //************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityAuthSetupBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.auth_setup_repeat_title)
 
         initializeViewModel()
         viewModel.initialize()
@@ -36,8 +37,7 @@ class AuthSetupRepeatActivity :
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(AuthSetupRepeatViewModel::class.java)
-
+        )[AuthSetupRepeatViewModel::class.java]
         viewModel.finishScreenLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
@@ -49,8 +49,8 @@ class AuthSetupRepeatActivity :
     }
 
     private fun initializeViews() {
-        instruction_textview.setText(R.string.auth_setup_repeat_info)
-        passcode_view.passcodeListener = object : PasscodeView.PasscodeListener {
+        binding.instructionTextview.setText(R.string.auth_setup_repeat_info)
+        binding.passcodeView.passcodeListener = object : PasscodeView.PasscodeListener {
             override fun onInputChanged() {
             }
 
@@ -58,8 +58,8 @@ class AuthSetupRepeatActivity :
                 onConfirmClicked()
             }
         }
-        full_password_button.visibility = View.GONE
-        passcode_view.requestFocus()
+        binding.fullPasswordButton.visibility = View.GONE
+        binding.passcodeView.requestFocus()
     }
 
     //endregion
@@ -68,10 +68,8 @@ class AuthSetupRepeatActivity :
     //************************************************************
 
     private fun onConfirmClicked() {
-        viewModel.checkPassword(passcode_view.getPasscode())
+        viewModel.checkPassword(binding.passcodeView.getPasscode())
     }
 
     //endregion
-
-
 }

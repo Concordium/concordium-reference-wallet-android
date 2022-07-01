@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.AppConfig
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
+import com.concordium.wallet.databinding.FragmentMoreOverviewBinding
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
@@ -20,12 +21,10 @@ import com.concordium.wallet.ui.more.dev.DevActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
-import kotlinx.android.synthetic.main.fragment_more_overview.view.*
-import kotlinx.android.synthetic.main.progress.*
-import kotlinx.android.synthetic.main.progress.view.*
 
 class MoreOverviewFragment : BaseFragment() {
-
+    private var _binding: FragmentMoreOverviewBinding? = null
+    private val binding get() = _binding!!
     private lateinit var viewModel: MoreOverviewViewModel
     private lateinit var mainViewModel: MainViewModel
 
@@ -36,23 +35,20 @@ class MoreOverviewFragment : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         initializeViewModel()
         viewModel.initialize()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val rootView = inflater.inflate(R.layout.fragment_more_overview, container, false)
-        initializeViews(rootView)
-        return rootView
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentMoreOverviewBinding.inflate(inflater, container, false)
+        initializeViews()
+        return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     //endregion
@@ -63,12 +59,12 @@ class MoreOverviewFragment : BaseFragment() {
     private fun initializeViewModel() {
         viewModel = ViewModelProvider(
             this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(activity!!.application)
-        ).get(MoreOverviewViewModel::class.java)
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
+        )[MoreOverviewViewModel::class.java]
         mainViewModel = ViewModelProvider(
-            activity!!,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(activity!!.application)
-        ).get(MainViewModel::class.java)
+            requireActivity(),
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
+        )[MainViewModel::class.java]
 
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let {
@@ -77,50 +73,49 @@ class MoreOverviewFragment : BaseFragment() {
         })
     }
 
-    private fun initializeViews(view: View) {
-        view.progress_layout.visibility = View.GONE
+    private fun initializeViews() {
+        binding.includeProgress.progressLayout.visibility = View.GONE
         mainViewModel.setTitle(getString(R.string.more_overview_title))
 
-        view.dev_layout.visibility = View.GONE
-        view.dev_layout.setOnClickListener {
+        binding.devLayout.visibility = View.GONE
+        binding.devLayout.setOnClickListener {
             gotoDevConfig()
         }
+
         if (BuildConfig.INCL_DEV_OPTIONS) {
-            view.dev_layout.visibility = View.VISIBLE
+            binding.devLayout.visibility = View.VISIBLE
         }
 
-
-        view.identities.setOnClickListener {
+        binding.identities.setOnClickListener {
             gotoIdentities()
         }
 
-        view.address_book_layout.setOnClickListener {
+        binding.addressBookLayout.setOnClickListener {
             gotoAddressBook()
         }
 
-        view.export_layout.setOnClickListener {
+        binding.exportLayout.setOnClickListener {
             gotoExport()
         }
 
-        view.import_layout.setOnClickListener {
+        binding.importLayout.setOnClickListener {
             import()
         }
 
-        view.about_layout.setOnClickListener {
+        binding.aboutLayout.setOnClickListener {
             about()
         }
 
-        view.alter_layout.setOnClickListener {
+        binding.alterLayout.setOnClickListener {
             alterPassword()
         }
 
-
-        initializeAppVersion(view)
+        initializeAppVersion()
     }
 
-    private fun initializeAppVersion(view: View) {
-        view.version_textview.text = getString(R.string.app_version, AppConfig.appVersion)
-        view.version_textview.setOnClickListener {
+    private fun initializeAppVersion() {
+        binding.versionTextview.text = getString(R.string.app_version, AppConfig.appVersion)
+        binding.versionTextview.setOnClickListener {
             versionNumberPressedCount++
             if (versionNumberPressedCount >= 5) {
                 Toast.makeText(
@@ -139,9 +134,9 @@ class MoreOverviewFragment : BaseFragment() {
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
-            progress_layout.visibility = View.VISIBLE
+            binding.includeProgress.progressLayout.visibility = View.VISIBLE
         } else {
-            progress_layout.visibility = View.GONE
+            binding.includeProgress.progressLayout.visibility = View.GONE
         }
     }
 
@@ -180,7 +175,5 @@ class MoreOverviewFragment : BaseFragment() {
         startActivity(intent)
     }
 
-
     //endregion
-
 }

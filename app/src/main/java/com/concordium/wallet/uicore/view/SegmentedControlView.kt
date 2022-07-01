@@ -7,13 +7,10 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import com.concordium.wallet.R
-import kotlinx.android.synthetic.main.view_segmented_control.view.*
-
-
-
-
+import com.concordium.wallet.databinding.ViewSegmentedControlBinding
 
 class SegmentedControlView : LinearLayout {
+    private val binding = ViewSegmentedControlBinding.inflate(LayoutInflater.from(context), this, true)
 
     private lateinit var rootLayout: LinearLayout
 
@@ -40,11 +37,9 @@ class SegmentedControlView : LinearLayout {
 
     @Suppress("UNUSED_PARAMETER")
     private fun init(attrs: AttributeSet?) {
-        val view = View.inflate(context, R.layout.view_segmented_control, this)
+        rootLayout = binding.containerLayout
 
-        rootLayout = view.container_layout
-
-        if(isInEditMode()){
+        if (isInEditMode) {
             addControl("My test 1", null, false)
             addControl("My test 2", null, true)
             addControl("My test 3", null, false)
@@ -84,7 +79,6 @@ class SegmentedControlView : LinearLayout {
     interface OnItemClickListener {
         fun onItemClicked()
     }
-
 
     //endregion
 }

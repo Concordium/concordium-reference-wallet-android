@@ -13,6 +13,7 @@ import com.concordium.wallet.core.backend.BackendError
 import com.concordium.wallet.core.security.BiometricPromptCallback
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
+import com.concordium.wallet.databinding.ActivityNewAccountSetupBinding
 import com.concordium.wallet.ui.account.newaccountconfirmed.NewAccountConfirmedActivity
 import com.concordium.wallet.ui.account.newaccountidentityattributes.NewAccountIdentityAttributesActivity
 import com.concordium.wallet.ui.base.BaseActivity
@@ -20,20 +21,15 @@ import com.concordium.wallet.ui.common.failed.FailedActivity
 import com.concordium.wallet.ui.common.failed.FailedViewModel
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
 import com.concordium.wallet.util.KeyboardUtil
-import kotlinx.android.synthetic.main.activity_new_account_setup.*
-import kotlinx.android.synthetic.main.progress.*
 import javax.crypto.Cipher
 
-class NewAccountSetupActivity : BaseActivity(
-    R.layout.activity_new_account_setup,
-    R.string.new_account_setup_title
-) {
-
+class NewAccountSetupActivity : BaseActivity() {
     companion object {
         const val EXTRA_ACCOUNT_NAME = "EXTRA_ACCOUNT_NAME"
         const val EXTRA_IDENTITY = "EXTRA_IDENTITY"
     }
 
+    private lateinit var binding: ActivityNewAccountSetupBinding
     private lateinit var viewModel: NewAccountSetupViewModel
     private lateinit var biometricPrompt: BiometricPrompt
 
@@ -43,6 +39,9 @@ class NewAccountSetupActivity : BaseActivity(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityNewAccountSetupBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.new_account_setup_title)
 
         val accountName = intent.getStringExtra(EXTRA_ACCOUNT_NAME) as String
         val identity = intent.getSerializableExtra(EXTRA_IDENTITY) as Identity
@@ -61,8 +60,7 @@ class NewAccountSetupActivity : BaseActivity(
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(NewAccountSetupViewModel::class.java)
-
+        )[NewAccountSetupViewModel::class.java]
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let {
                 showWaiting(waiting)
@@ -95,18 +93,17 @@ class NewAccountSetupActivity : BaseActivity(
     }
 
     private fun initViews() {
-        progress_layout.visibility = View.GONE
+        binding.includeProgress.progressLayout.visibility = View.GONE
 
-        confirm_reveal_button.setOnClickListener {
+        binding.confirmRevealButton.setOnClickListener {
             gotoNewAccountIdentityAttributes(viewModel.accountName, viewModel.identity)
         }
-        confirm_submit_button.setOnClickListener {
-            confirm_reveal_button.isEnabled = false
-            confirm_submit_button.isEnabled = false
+        binding.confirmSubmitButton.setOnClickListener {
+            binding.confirmRevealButton.isEnabled = false
+            binding.confirmSubmitButton.isEnabled = false
             viewModel.confirmWithoutAttributes()
         }
     }
-
 
     //endregion
 
@@ -115,19 +112,19 @@ class NewAccountSetupActivity : BaseActivity(
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
-            progress_layout.visibility = View.VISIBLE
-            confirm_reveal_button.isEnabled = false
-            confirm_submit_button.isEnabled = false
+            binding.includeProgress.progressLayout.visibility = View.VISIBLE
+            binding.confirmRevealButton.isEnabled = false
+            binding.confirmSubmitButton.isEnabled = false
         } else {
-            progress_layout.visibility = View.GONE
-            confirm_reveal_button.isEnabled = true
-            confirm_submit_button.isEnabled = true
+            binding.includeProgress.progressLayout.visibility = View.GONE
+            binding.confirmRevealButton.isEnabled = true
+            binding.confirmSubmitButton.isEnabled = true
         }
     }
 
     private fun showError(stringRes: Int) {
         KeyboardUtil.hideKeyboard(this)
-        popup.showSnackbar(root_layout, stringRes)
+        popup.showSnackbar(binding.rootLayout, stringRes)
     }
 
     private fun gotoNewAccountConfirmed(account: Account) {

@@ -10,25 +10,26 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.security.BiometricPromptCallback
+import com.concordium.wallet.databinding.ActivityAuthLoginBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.uicore.afterTextChanged
 import com.concordium.wallet.uicore.view.PasscodeView
 import com.concordium.wallet.util.KeyboardUtil
-import kotlinx.android.synthetic.main.activity_auth_login.*
-import kotlinx.android.synthetic.main.progress.*
 import javax.crypto.Cipher
 
-class AuthLoginActivity : BaseActivity(R.layout.activity_auth_login, R.string.auth_login_title) {
-
+class AuthLoginActivity : BaseActivity() {
+    private lateinit var binding: ActivityAuthLoginBinding
     private lateinit var viewModel: AuthLoginViewModel
     private lateinit var biometricPrompt: BiometricPrompt
-
 
     //region Lifecycle
     //************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityAuthLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.auth_login_title)
 
         initializeViewModel()
         viewModel.initialize()
@@ -52,8 +53,7 @@ class AuthLoginActivity : BaseActivity(R.layout.activity_auth_login, R.string.au
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(AuthLoginViewModel::class.java)
-
+        )[AuthLoginViewModel::class.java]
         viewModel.finishScreenLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
@@ -83,25 +83,25 @@ class AuthLoginActivity : BaseActivity(R.layout.activity_auth_login, R.string.au
         showWaiting(false)
         hideActionBarBack(this)
         setActionBarTitle(if (viewModel.usePasscode()) R.string.auth_login_info_passcode else R.string.auth_login_info_password)
-        confirm_button.setOnClickListener {
+        binding.confirmButton.setOnClickListener {
             onConfirmClicked()
         }
         if (viewModel.usePasscode()) {
-            password_edittext.visibility = View.GONE
-            confirm_button.visibility = View.INVISIBLE
-            passcode_view.passcodeListener = object : PasscodeView.PasscodeListener {
+            binding.passwordEdittext.visibility = View.GONE
+            binding.confirmButton.visibility = View.INVISIBLE
+            binding.passcodeView.passcodeListener = object : PasscodeView.PasscodeListener {
                 override fun onInputChanged() {
-                    error_textview.setText("")
+                    binding.errorTextview.setText("")
                 }
 
                 override fun onDone() {
                     onConfirmClicked()
                 }
             }
-            passcode_view.requestFocus()
+            binding.passcodeView.requestFocus()
         } else {
-            passcode_view.visibility = View.GONE
-            password_edittext.setOnEditorActionListener { _, actionId, _ ->
+            binding.passcodeView.visibility = View.GONE
+            binding.passwordEdittext.setOnEditorActionListener { _, actionId, _ ->
                 return@setOnEditorActionListener when (actionId) {
                     EditorInfo.IME_ACTION_DONE -> {
                         onConfirmClicked()
@@ -110,10 +110,10 @@ class AuthLoginActivity : BaseActivity(R.layout.activity_auth_login, R.string.au
                     else -> false
                 }
             }
-            password_edittext.afterTextChanged {
-                error_textview.setText("")
+            binding.passwordEdittext.afterTextChanged {
+                binding.errorTextview.setText("")
             }
-            password_edittext.requestFocus()
+            binding.passwordEdittext.requestFocus()
         }
     }
 
@@ -124,17 +124,17 @@ class AuthLoginActivity : BaseActivity(R.layout.activity_auth_login, R.string.au
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
-            progress_layout.visibility = View.VISIBLE
+            binding.includeProgress.progressLayout.visibility = View.VISIBLE
         } else {
-            progress_layout.visibility = View.GONE
+            binding.includeProgress.progressLayout.visibility = View.GONE
         }
     }
 
     private fun onConfirmClicked() {
         if (viewModel.usePasscode()) {
-            viewModel.checkLogin(passcode_view.getPasscode())
+            viewModel.checkLogin(binding.passcodeView.getPasscode())
         } else {
-            viewModel.checkLogin(password_edittext.text.toString())
+            viewModel.checkLogin(binding.passwordEdittext.text.toString())
         }
     }
 
@@ -150,23 +150,22 @@ class AuthLoginActivity : BaseActivity(R.layout.activity_auth_login, R.string.au
     }
 
     private fun showPasswordError(stringRes: Int) {
-        password_edittext.setText("")
-        passcode_view.clearPasscode()
-        error_textview.setText(stringRes)
+        binding.passwordEdittext.setText("")
+        binding.passcodeView.clearPasscode()
+        binding.errorTextview.setText(stringRes)
     }
 
     private fun showError(stringRes: Int) {
-        password_edittext.setText("")
-        passcode_view.clearPasscode()
+        binding.passwordEdittext.setText("")
+        binding.passcodeView.clearPasscode()
         KeyboardUtil.hideKeyboard(this)
-        popup.showSnackbar(root_layout, stringRes)
+        popup.showSnackbar(binding.rootLayout, stringRes)
     }
 
     //endregion
 
     //region Biometrics
     //************************************************************
-
 
     private fun createBiometricPrompt(): BiometricPrompt {
         val executor = ContextCompat.getMainExecutor(this)
@@ -182,13 +181,12 @@ class AuthLoginActivity : BaseActivity(R.layout.activity_auth_login, R.string.au
     }
 
     private fun createPromptInfo(): BiometricPrompt.PromptInfo {
-        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+        return BiometricPrompt.PromptInfo.Builder()
             .setTitle(getString(R.string.auth_login_biometrics_dialog_title))
             .setSubtitle(getString(R.string.auth_login_biometrics_dialog_subtitle))
             .setConfirmationRequired(false)
             .setNegativeButtonText(getString(if (viewModel.usePasscode()) R.string.auth_login_biometrics_dialog_cancel_passcode else R.string.auth_login_biometrics_dialog_cancel_password))
             .build()
-        return promptInfo
     }
 
     override fun loggedOut() {
@@ -198,6 +196,6 @@ class AuthLoginActivity : BaseActivity(R.layout.activity_auth_login, R.string.au
     override fun loggedIn() {
         finish()
     }
-    //endregion
 
+    //endregion
 }

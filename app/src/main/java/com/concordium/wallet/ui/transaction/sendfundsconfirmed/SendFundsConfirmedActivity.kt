@@ -9,26 +9,27 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.databinding.ActivitySendFundsConfirmedBinding
 import com.concordium.wallet.ui.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_send_funds_confirmed.*
 
-
-class SendFundsConfirmedActivity :
-    BaseActivity(R.layout.activity_send_funds_confirmed, R.string.send_funds_confirmed_title) {
-
+class SendFundsConfirmedActivity : BaseActivity() {
     companion object {
         const val EXTRA_TRANSFER = "EXTRA_TRANSFER"
         const val EXTRA_RECIPIENT = "EXTRA_RECIPIENT"
     }
 
+    private lateinit var binding: ActivitySendFundsConfirmedBinding
     private lateinit var viewModel: SendFundsConfirmedViewModel
-
 
     //region Lifecycle
     //************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivitySendFundsConfirmedBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.send_funds_confirmed_title)
+
         val transfer = intent.extras!!.getSerializable(EXTRA_TRANSFER) as Transfer
         val recipient = intent.extras!!.getSerializable(EXTRA_RECIPIENT) as Recipient
 
@@ -50,36 +51,35 @@ class SendFundsConfirmedActivity :
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(SendFundsConfirmedViewModel::class.java)
+        )[SendFundsConfirmedViewModel::class.java]
     }
 
     private fun initViews() {
         hideActionBarBack(this)
 
-        amount_textview.text =
+        binding.amountTextview.text =
             CurrencyUtil.formatGTU(viewModel.transfer.amount, withGStroke = true)
-        fee_textview.text =
+        binding.feeTextview.text =
             getString(
                 R.string.send_funds_confirmed_fee_info,
                 CurrencyUtil.formatGTU(viewModel.transfer.cost)
             )
 
         if(viewModel.transfer.memo.isNullOrEmpty()){
-            memo_confirmation_textview.visibility = View.GONE
+            binding.memoConfirmationTextview.visibility = View.GONE
         }
         else{
-            memo_confirmation_textview.visibility = View.VISIBLE
-            memo_confirmation_textview.text = getString(
+            binding.memoConfirmationTextview.visibility = View.VISIBLE
+            binding.memoConfirmationTextview.text = getString(
                 R.string.send_funds_confirmation_memo,
-                viewModel.transfer?.memo?.let { CBORUtil.decodeHexAndCBOR(it) } ?: ""
+                viewModel.transfer.memo?.let { CBORUtil.decodeHexAndCBOR(it) } ?: ""
             )
         }
 
+        binding.recipientTextview.text = viewModel.recipient.name.ifEmpty { "" }
+        binding.addressTextview.text = viewModel.transfer.toAddress
 
-        recipient_textview.text = if(viewModel.recipient.name.isNullOrEmpty()) { "" } else { viewModel.recipient.name }
-        address_textview.text = viewModel.transfer.toAddress
-
-        confirm_button.setOnClickListener {
+        binding.confirmButton.setOnClickListener {
             gotoAccountDetails()
         }
     }
@@ -93,11 +93,7 @@ class SendFundsConfirmedActivity :
         val returnIntent = Intent()
         setResult(RESULT_OK, returnIntent)
         finish()
-//        val intent = Intent(this, AccountDetailsActivity::class.java)
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-//        startActivity(intent)
     }
 
     //endregion
-
 }

@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.identity.identityproviderwebview
 
-//import com.concordium.mobile_wallet_lib.id_object_response
 import android.app.AlertDialog
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -9,7 +8,9 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.BuildConfig
@@ -19,6 +20,7 @@ import com.concordium.wallet.core.backend.BackendError
 import com.concordium.wallet.data.model.IdentityCreationData
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Identity
+import com.concordium.wallet.databinding.ActivityIdentityProviderWebviewBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.failed.FailedActivity
 import com.concordium.wallet.ui.common.failed.FailedViewModel
@@ -26,16 +28,10 @@ import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import com.concordium.wallet.ui.identity.identityconfirmed.IdentityConfirmedActivity
 import com.concordium.wallet.util.Log
 import com.google.gson.Gson
-import kotlinx.android.synthetic.main.activity_identity_provider_webview.*
-import kotlinx.android.synthetic.main.progress.*
 import java.util.*
 
-
-class IdentityProviderWebviewActivity : BaseActivity(
-    R.layout.activity_identity_provider_webview,
-    R.string.identity_provider_webview_title
-) {
-
+class IdentityProviderWebviewActivity : BaseActivity() {
+    private lateinit var binding: ActivityIdentityProviderWebviewBinding
     private lateinit var viewModel: IdentityProviderWebviewViewModel
 
     companion object {
@@ -58,11 +54,10 @@ class IdentityProviderWebviewActivity : BaseActivity(
         Preferences(context, preferenceName, preferenceMode) {
         fun getIdentityCreationData(): IdentityCreationData? {
             val json = getString(KEY_IDENTITY_CREATION_DATA)
-            if(json == null) {
-                return null
-            }
-            else {
-                return Gson().fromJson(json, IdentityCreationData::class.java)
+            return if(json == null) {
+                null
+            } else {
+                Gson().fromJson(json, IdentityCreationData::class.java)
             }
         }
         fun setIdentityCreationData(data: IdentityCreationData?) {
@@ -70,25 +65,25 @@ class IdentityProviderWebviewActivity : BaseActivity(
         }
     }
 
-
     private val preferences: IdentityDataPreferences
         get() {
             return IdentityDataPreferences(getApplication(),
                 KEY_IDENTITY_CREATION_DATA, Context.MODE_PRIVATE)
         }
 
-
-
     //region Lifecycle
     //************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityIdentityProviderWebviewBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_webview_title)
 
         var handled = false
 
-        var supportCode = BitSet(10) // room for 10 flags
-        var identityCreationData = preferences.getIdentityCreationData()
+        val supportCode = BitSet(10) // room for 10 flags
+        val identityCreationData = preferences.getIdentityCreationData()
 
         // In the case where the activity has been force closed, onCreate needs
         // to handle to receive the callbacl uri
@@ -127,7 +122,6 @@ class IdentityProviderWebviewActivity : BaseActivity(
             }
         }
 
-
         if (!handled) {
             Log.e("No IdentityCreationData saved - this should not happen")
 
@@ -135,7 +129,7 @@ class IdentityProviderWebviewActivity : BaseActivity(
             var dialogMsgAction = R.string.dialog_support
             var dialogMsg = R.string.dialog_popup_support_creation_flow_with_email_client_text
 
-            var errorText = getString(R.string.dialog_support_text, supportCode.toLongArray()[0].toString(), BuildConfig.VERSION_NAME, Build.VERSION.RELEASE)
+            val errorText = getString(R.string.dialog_support_text, supportCode.toLongArray()[0].toString(), BuildConfig.VERSION_NAME, Build.VERSION.RELEASE)
 
             if(!emailFlow){
                 dialogMsgAction = R.string.dialog_copy
@@ -143,7 +137,7 @@ class IdentityProviderWebviewActivity : BaseActivity(
             }
             AlertDialog.Builder(this)
                 .setMessage(dialogMsg)
-                .setPositiveButton(dialogMsgAction) { dialog, which ->
+                .setPositiveButton(dialogMsgAction) { _, _ ->
                     if(emailFlow){
                         IdentityErrorDialogHelper.openGenericSupportEmail(this, resources,getString(R.string.dialog_initial_account_error_title), errorText)
                     }
@@ -152,15 +146,11 @@ class IdentityProviderWebviewActivity : BaseActivity(
                     }
                     finish()
                 }
-                .setNegativeButton(getString(R.string.dialog_cancel)) { dialog, which ->
+                .setNegativeButton(getString(R.string.dialog_cancel)) { _, _ ->
                     finish()
                 }
                 .show()
-
-            //showError(R.string.dialog_support_creation_data_reference)
-            //finish()
         }
-
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -173,8 +163,6 @@ class IdentityProviderWebviewActivity : BaseActivity(
         }
     }
 
-
-
     //endregion
 
     //region Initialize
@@ -184,33 +172,28 @@ class IdentityProviderWebviewActivity : BaseActivity(
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(IdentityProviderWebviewViewModel::class.java)
-
+        )[IdentityProviderWebviewViewModel::class.java]
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let {
                 showWaiting(waiting)
             }
         })
-
         viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
                 showError(value)
             }
         })
-
         viewModel.identityCreationError.observe(this, object : EventObserver<String>() {
             override fun onUnhandledEvent(value: String) {
                 val error = BackendError(0, value)
                 gotoFailed(error)
             }
         })
-
         viewModel.identityCreationUserCancel.observe(this, object : EventObserver<String>() {
             override fun onUnhandledEvent(value: String) {
                 onBackPressed()
             }
         })
-
         viewModel.gotoIdentityConfirmedLiveData.observe(this, object : EventObserver<Identity>() {
             override fun onUnhandledEvent(value: Identity) {
                 gotoIdentityConfirmed(value)
@@ -256,14 +239,14 @@ class IdentityProviderWebviewActivity : BaseActivity(
     }
 
     private fun showError(stringRes: Int) {
-        popup.showSnackbar(root_layout, stringRes)
+        popup.showSnackbar(binding.rootLayout, stringRes)
     }
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
-            progress_layout.visibility = View.VISIBLE
+            binding.includeProgress.progressLayout.visibility = View.VISIBLE
         } else {
-            progress_layout.visibility = View.GONE
+            binding.includeProgress.progressLayout.visibility = View.GONE
         }
     }
 
@@ -302,7 +285,7 @@ class IdentityProviderWebviewActivity : BaseActivity(
             else
             if (!fragmentParts.isNullOrEmpty() && fragmentParts[0] == "error") {
                 supportCode?.set(IDENTITY_CALLBACK_ERROR_BIT_INDEX_ERRORSET) // error is set
-                viewModel.parseIdentityError(fragmentParts[1]);
+                viewModel.parseIdentityError(fragmentParts[1])
             }
             else{
                 supportCode?.set(IDENTITY_CALLBACK_ERROR_BIT_INDEX_NOTHINGSET) // nothing is set
@@ -347,7 +330,10 @@ class IdentityProviderWebviewActivity : BaseActivity(
 
     private fun launchChromeCustomTab(url: String, forceChromeBrowser: Boolean = false) {
         val customTabBuilder = CustomTabsIntent.Builder()
-        customTabBuilder.setToolbarColor(getColor(R.color.theme_white))
+        val colorSchemeParams = CustomTabColorSchemeParams.Builder()
+            .setToolbarColor(ContextCompat.getColor(this, R.color.theme_white))
+            .build()
+        customTabBuilder.setDefaultColorSchemeParams(colorSchemeParams)
         val customTabsIntent = customTabBuilder.build()
         if (forceChromeBrowser) {
             customTabsIntent.intent.setPackage("com.android.chrome")
@@ -357,6 +343,4 @@ class IdentityProviderWebviewActivity : BaseActivity(
     }
 
     //endregion
-
 }
-

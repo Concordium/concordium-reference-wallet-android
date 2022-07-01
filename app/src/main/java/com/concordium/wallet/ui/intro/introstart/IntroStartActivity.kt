@@ -3,21 +3,21 @@ package com.concordium.wallet.ui.intro.introstart
 import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
-import com.concordium.wallet.R
+import com.concordium.wallet.databinding.ActivityIntroStartBinding
 import com.concordium.wallet.ui.auth.setup.AuthSetupActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_intro_start.*
 
-class IntroStartActivity : BaseActivity(R.layout.activity_intro_start, R.string.intro_start_title) {
-
+class IntroStartActivity : BaseActivity() {
+    private lateinit var binding: ActivityIntroStartBinding
     private lateinit var viewModel: IntroStartViewModel
-
 
     //region Lifecycle
     //************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityIntroStartBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initializeViewModel()
         viewModel.initialize()
@@ -36,11 +36,11 @@ class IntroStartActivity : BaseActivity(R.layout.activity_intro_start, R.string.
     private fun initializeViewModel() {
         viewModel = ViewModelProvider(
             this, ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(IntroStartViewModel::class.java)
+        )[IntroStartViewModel::class.java]
     }
 
     private fun initViews() {
-        confirm_button.setOnClickListener {
+        binding.confirmButton.setOnClickListener {
             gotoAuthSetup()
         }
     }
@@ -61,5 +61,4 @@ class IntroStartActivity : BaseActivity(R.layout.activity_intro_start, R.string.
     }
 
     //endregion
-
 }

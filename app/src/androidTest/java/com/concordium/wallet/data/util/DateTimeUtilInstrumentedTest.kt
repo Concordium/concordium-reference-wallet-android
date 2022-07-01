@@ -10,7 +10,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.*
 
-
 @RunWith(AndroidJUnit4::class)
 class DateTimeUtilInstrumentedTest {
 
@@ -29,13 +28,6 @@ class DateTimeUtilInstrumentedTest {
         fun teardown() {
             Locale.setDefault(locale)
         }
-    }
-
-    private fun setLocale(language: String, country: String) {
-        // This does not work for instrumented tests (it does for unit tests)
-        val locale = Locale(language, country)
-        // Update locale for date formatters
-        Locale.setDefault(locale)
     }
 
     @Test

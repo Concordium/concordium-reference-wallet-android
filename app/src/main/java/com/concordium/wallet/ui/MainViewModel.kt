@@ -51,7 +51,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun initialize() {
         try {
-            val dbVersion = WalletDatabase.getDatabase(getApplication())?.openHelper?.readableDatabase?.version.toString()
+            WalletDatabase.getDatabase(getApplication()).openHelper.readableDatabase?.version.toString()
         }
         catch(e: Exception){
             databaseVersionAllowed = false
@@ -78,7 +78,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun shouldShowAuthentication(): Boolean {
-        return session.isLoggedIn.value.let { return it == null || it == false  }
+        if (session.isLoggedIn.value != null) {
+            return session.isLoggedIn.value == false
+        }
+        return true
     }
 
     fun shouldShowTerms(): Boolean {

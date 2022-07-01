@@ -73,10 +73,10 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
 
     override suspend fun decryptEncryptedAmount(input: DecryptAmountInput): String? =
         withContext(Dispatchers.Default) {
-            val input = gson.toJson(input)
-            Log.d("Input: $input")
+            val encryptedInput = gson.toJson(input)
+            Log.d("Input: $encryptedInput")
             loadWalletLib()
-            val result = decrypt_encrypted_amount(input)
+            val result = decrypt_encrypted_amount(encryptedInput)
             Log.d("Output (Code ${result.result}): ${result.output}")
             if (result.result == CryptoLibrary.SUCCESS) {
                 return@withContext result.output
@@ -85,9 +85,9 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             return@withContext null
         }
 
-    override fun combineEncryptedAmounts(input1: String, input2: String): String {
+    override fun combineEncryptedAmounts(selfAmount: String, incomingAmounts: String): String {
         loadWalletLib()
-        val result = combine_encrypted_amounts(gson.toJson(input1), gson.toJson(input2))
+        val result = combine_encrypted_amounts(gson.toJson(selfAmount), gson.toJson(incomingAmounts))
         return gson.fromJson(result.output, String::class.java)
     }
 

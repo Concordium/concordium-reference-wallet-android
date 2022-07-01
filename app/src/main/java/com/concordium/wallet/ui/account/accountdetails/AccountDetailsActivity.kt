@@ -10,8 +10,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.TextView
-import androidx.cardview.widget.CardView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
@@ -26,6 +25,8 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
+import com.concordium.wallet.databinding.BurgerMenuContentBinding
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.bakerdelegation.baker.BakerStatusActivity
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRegistrationIntroFlow
@@ -35,19 +36,16 @@ import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationC
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.GenericFlowActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
-import kotlinx.android.synthetic.main.activity_account_details.*
-import kotlinx.android.synthetic.main.progress.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.crypto.Cipher
 
-class AccountDetailsActivity :
-    BaseActivity(R.layout.activity_account_details, R.string.account_details_title) {
-
+class AccountDetailsActivity : BaseActivity() {
     private var mMenuDialog: AlertDialog? = null
 
+    private lateinit var binding: ActivityAccountDetailsBinding
     private lateinit var viewModel: AccountDetailsViewModel
 
     companion object {
@@ -55,7 +53,6 @@ class AccountDetailsActivity :
         const val EXTRA_SHIELDED = "EXTRA_SHIELDED"
         const val EXTRA_CONTINUE_TO_SHIELD_INTRO = "EXTRA_CONTINUE_TO_SHIELD_INTRO"
         const val RESULT_RETRY_ACCOUNT_CREATION = 2
-        const val REQUESTCODE_ENABLE_SHIELDING = 1241
     }
 
     //region Lifecycle
@@ -63,6 +60,10 @@ class AccountDetailsActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityAccountDetailsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.account_details_title)
+
         val account = intent.extras!!.getSerializable(EXTRA_ACCOUNT) as Account
         val isShielded = intent.extras!!.getBoolean(EXTRA_SHIELDED)
         val continueToShieldIntro = intent.extras!!.getBoolean(EXTRA_CONTINUE_TO_SHIELD_INTRO)
@@ -86,25 +87,6 @@ class AccountDetailsActivity :
         viewModel.stopFrequentUpdater()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUESTCODE_ENABLE_SHIELDING) {
-            if (resultCode == Activity.RESULT_OK) {
-                data?.getBooleanExtra(ShieldingIntroActivity.EXTRA_RESULT_SHIELDING_ENABLED, false)?.let { enabled ->
-                    if(enabled){
-                        viewModel.enableShielded()
-                        //Decouple from main thread allowing UI to update
-                        GlobalScope.launch(Dispatchers.Main){
-                            delay(1)
-                            viewModel.isShielded = true
-                            initViews()
-                            updateShieldEnabledUI()
-                        }
-                    }
-                }
-            }
-        }
-    }
     // endregion
 
     //region Initialize
@@ -114,7 +96,7 @@ class AccountDetailsActivity :
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(AccountDetailsViewModel::class.java)
+        )[AccountDetailsViewModel::class.java]
 
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let {
@@ -170,15 +152,15 @@ class AccountDetailsActivity :
             })
         })
 
-        viewModel.transferListLiveData.observe(this, Observer { transferList ->
+        viewModel.transferListLiveData.observe(this, Observer {
             viewModel.checkForUndecryptedAmounts()
         })
 
-        viewModel.showPadLockLiveData.observe(this, Observer { showPadlock ->
+        viewModel.showPadLockLiveData.observe(this, Observer {
             invalidateOptionsMenu()
         })
 
-        viewModel.shieldingEnabledLiveData.observe(this, Observer { showShielded ->
+        viewModel.shieldingEnabledLiveData.observe(this, Observer {
             //Show non-shielded options
             viewModel.isShielded = false
             initViews()
@@ -193,14 +175,9 @@ class AccountDetailsActivity :
 
     private fun initViews() {
         showWaiting(false)
-
         initTopContent()
-
-
         initTabs()
-
         updateShieldEnabledUI()
-
     }
 
     private fun initTopContent() {
@@ -217,96 +194,94 @@ class AccountDetailsActivity :
             else -> {
             }
         }
-        account_retry_button.setOnClickListener {
+        binding.accountRetryButton.setOnClickListener {
             setResult(RESULT_RETRY_ACCOUNT_CREATION)
             finish()
         }
-        account_remove_button.setOnClickListener {
+        binding.accountRemoveButton.setOnClickListener {
             viewModel.deleteAccountAndFinish()
         }
-        send_funds_layout.setOnClickListener {
+        binding.sendFundsLayout.setOnClickListener {
             onSendFundsClicked()
         }
-        address_layout.setOnClickListener {
+        binding.addressLayout.setOnClickListener {
             onAddressClicked()
         }
-        shield_funds_layout.setOnClickListener {
+        binding.shieldFundsLayout.setOnClickListener {
             onShieldFundsClicked()
         }
-        toggle_balance.setOnClickListener {
+        binding.toggleBalance.setOnClickListener {
             viewModel.isShielded = false
             initViews()
         }
-        toggle_shielded.setOnClickListener {
+        binding.toggleShielded.setOnClickListener {
             viewModel.isShielded = true
             initViews()
         }
 
-        shield_textview.text = if(viewModel.isShielded) resources.getText(R.string.account_details_unshield) else resources.getText(R.string.account_details_shield)
+        binding.shieldTextview.text = if(viewModel.isShielded) resources.getText(R.string.account_details_unshield) else resources.getText(R.string.account_details_shield)
 
-        account_total_details_disposal_text.text = if(viewModel.isShielded) resources.getString(R.string.account_shielded_total_details_disposal, viewModel.account.name) else resources.getString(R.string.account_total_details_disposal)
-
+        binding.accountTotalDetailsDisposalText.text = if(viewModel.isShielded) resources.getString(R.string.account_shielded_total_details_disposal, viewModel.account.name) else resources.getString(R.string.account_total_details_disposal)
     }
 
     private fun updateShieldEnabledUI() {
-        shield_funds_layout.visibility = if(viewModel.shieldingEnabledLiveData.value == true) View.VISIBLE else View.GONE
-        toggle_container.visibility = if(viewModel.shieldingEnabledLiveData.value == true) View.VISIBLE else View.GONE
-        toggle_balance.isSelected = !viewModel.isShielded
-        toggle_shielded.isSelected = viewModel.isShielded
-        shielded_icon.visibility = if(viewModel.shieldingEnabledLiveData.value == true && viewModel.isShielded) View.VISIBLE else View.GONE
+        binding.shieldFundsLayout.visibility = if(viewModel.shieldingEnabledLiveData.value == true) View.VISIBLE else View.GONE
+        binding.toggleContainer.visibility = if(viewModel.shieldingEnabledLiveData.value == true) View.VISIBLE else View.GONE
+        binding.toggleBalance.isSelected = !viewModel.isShielded
+        binding.toggleShielded.isSelected = viewModel.isShielded
+        binding.shieldedIcon.visibility = if(viewModel.shieldingEnabledLiveData.value == true && viewModel.isShielded) View.VISIBLE else View.GONE
     }
 
-
     private fun setFinalizedMode() {
-        send_funds_layout.isEnabled = true && !viewModel.account.readOnly
-        shield_funds_layout.isEnabled = true && !viewModel.account.readOnly
-        address_layout.isEnabled = true
-        account_details_layout.visibility = View.VISIBLE
-        readonly_desc.visibility = if(viewModel.account.readOnly) View.VISIBLE else View.GONE
+        binding.sendFundsLayout.isEnabled = true && !viewModel.account.readOnly
+        binding.shieldFundsLayout.isEnabled = true && !viewModel.account.readOnly
+        binding.addressLayout.isEnabled = true
+        binding.accountDetailsLayout.visibility = View.VISIBLE
+        binding.readonlyDesc.visibility = if(viewModel.account.readOnly) View.VISIBLE else View.GONE
 
-        accounts_overview_total_details_baker_container.visibility = View.GONE
-        accounts_overview_total_details_staked_container.visibility = View.GONE
+        binding.accountsOverviewTotalDetailsBakerContainer.visibility = View.GONE
+        binding.accountsOverviewTotalDetailsStakedContainer.visibility = View.GONE
 
         if (viewModel.isShielded) {
-            accounts_overview_total_details_disposal_container.visibility = View.GONE
-            send_imageview.setImageResource(R.drawable.ic_icon_send_shielded)
-            shield_imageview.setImageResource(R.drawable.ic_unshield)
+            binding.accountsOverviewTotalDetailsDisposalContainer.visibility = View.GONE
+            binding.sendImageview.setImageResource(R.drawable.ic_icon_send_shielded)
+            binding.shieldImageview.setImageResource(R.drawable.ic_unshield)
         }
         else {
-            accounts_overview_total_details_disposal_container.visibility = View.VISIBLE
-            send_imageview.setImageResource(R.drawable.ic_send)
-            shield_imageview.setImageResource(R.drawable.ic_shielded_icon)
+            binding.accountsOverviewTotalDetailsDisposalContainer.visibility = View.VISIBLE
+            binding.sendImageview.setImageResource(R.drawable.ic_send)
+            binding.shieldImageview.setImageResource(R.drawable.ic_shielded_icon)
             if (viewModel.account.isBaking()) {
-                accounts_overview_total_details_baker_container.visibility = View.VISIBLE
-                accounts_overview_total_title_baker.text = getString(R.string.account_details_stake_with_baker, viewModel.account.accountBaker?.bakerId?.toString() ?: "")
-                accounts_overview_total_details_baker.text = CurrencyUtil.formatGTU(viewModel.account.accountBaker?.stakedAmount ?: "0", true)
+                binding.accountsOverviewTotalDetailsBakerContainer.visibility = View.VISIBLE
+                binding.accountsOverviewTotalTitleBaker.text = getString(R.string.account_details_stake_with_baker, viewModel.account.accountBaker?.bakerId?.toString() ?: "")
+                binding.accountsOverviewTotalDetailsBaker.text = CurrencyUtil.formatGTU(viewModel.account.accountBaker?.stakedAmount ?: "0", true)
             } else if (viewModel.account.isDelegating()) {
-                accounts_overview_total_details_staked_container.visibility = View.VISIBLE
+                binding.accountsOverviewTotalDetailsStakedContainer.visibility = View.VISIBLE
                 if (viewModel.account.accountDelegation?.delegationTarget?.delegateType == DelegationTarget.TYPE_DELEGATE_TO_L_POOL)
-                    accounts_overview_total_title_staked.text = getString(R.string.account_details_delegation_with_passive_pool)
+                    binding.accountsOverviewTotalTitleStaked.text = getString(R.string.account_details_delegation_with_passive_pool)
                 else
-                    accounts_overview_total_title_staked.text = getString(R.string.account_details_delegation_with_baker_pool, viewModel.account.accountDelegation?.delegationTarget?.bakerId ?: "")
-                accounts_overview_total_details_staked.text = CurrencyUtil.formatGTU(viewModel.account.accountDelegation?.stakedAmount ?: "", true)
+                    binding.accountsOverviewTotalTitleStaked.text = getString(R.string.account_details_delegation_with_baker_pool, viewModel.account.accountDelegation?.delegationTarget?.bakerId ?: "")
+                binding.accountsOverviewTotalDetailsStaked.text = CurrencyUtil.formatGTU(viewModel.account.accountDelegation?.stakedAmount ?: "", true)
             }
         }
     }
 
     private fun setErrorMode() {
         setPendingMode()
-        account_retry_button.visibility = View.VISIBLE
-        account_remove_button.visibility = View.VISIBLE
+        binding.accountRetryButton.visibility = View.VISIBLE
+        binding.accountRemoveButton.visibility = View.VISIBLE
     }
 
     private fun setPendingMode() {
-        send_funds_layout.isEnabled = false
-        shield_funds_layout.isEnabled = false
-        address_layout.isEnabled = false
+        binding.sendFundsLayout.isEnabled = false
+        binding.shieldFundsLayout.isEnabled = false
+        binding.addressLayout.isEnabled = false
     }
 
     private fun initTabs() {
         val adapter = AccountDetailsPagerAdapter(supportFragmentManager, viewModel.account, this)
-        account_details_pager.adapter = adapter
-        account_details_tablayout.setupWithViewPager(account_details_pager)
+        binding.accountDetailsPager.adapter = adapter
+        binding.accountDetailsTablayout.setupWithViewPager(binding.accountDetailsPager)
     }
 
     //endregion
@@ -316,9 +291,9 @@ class AccountDetailsActivity :
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
-            progress_layout.visibility = View.VISIBLE
+            binding.includeProgress.progressLayout.visibility = View.VISIBLE
         } else {
-            progress_layout.visibility = View.GONE
+            binding.includeProgress.progressLayout.visibility = View.GONE
         }
     }
 
@@ -341,48 +316,41 @@ class AccountDetailsActivity :
                     (item.icon as Animatable).start()
                 }
 
-                //Release schedule
-                val menuView = View.inflate(this, R.layout.burger_menu_content, null)
+                val menuView = BurgerMenuContentBinding.inflate(layoutInflater)
 
-                val tvReleaseSchedule = menuView.findViewById(R.id.menu_item_release) as TextView
-                tvReleaseSchedule.visibility = if(viewModel.isShielded) View.GONE else View.VISIBLE
-                tvReleaseSchedule.setOnClickListener {
+                //Release schedule
+                menuView.menuItemRelease.visibility = if (viewModel.isShielded) View.GONE else View.VISIBLE
+                menuView.menuItemRelease.setOnClickListener {
                     mMenuDialog?.dismiss()
                     gotoAccountReleaseSchedule(viewModel.account, viewModel.isShielded)
                 }
 
                 //Transfer filters settings
-                val tvTransferFilter = menuView.findViewById(R.id.menu_item_filter) as TextView
-                tvTransferFilter.visibility = if(viewModel.isShielded) View.GONE else View.VISIBLE
-                tvTransferFilter.setOnClickListener {
+                menuView.menuItemFilter.visibility = if (viewModel.isShielded) View.GONE else View.VISIBLE
+                menuView.menuItemFilter.setOnClickListener {
                     mMenuDialog?.dismiss()
-                    gotoTransferFilters(viewModel.account, viewModel.isShielded)
+                    gotoTransferFilters(viewModel.account)
                 }
 
-                val cvShowShielded = menuView.findViewById(R.id.menu_show_shielded_container) as CardView
-                val cvShowShieldedTV = menuView.findViewById(R.id.menu_show_shielded) as TextView
-                cvShowShielded.visibility = if(viewModel.shieldingEnabledLiveData.value == true || viewModel.account.readOnly == true) View.GONE else View.VISIBLE
-                cvShowShielded.setOnClickListener {
+                menuView.menuShowShieldedContainer.visibility = if (viewModel.shieldingEnabledLiveData.value == true || viewModel.account.readOnly) View.GONE else View.VISIBLE
+                menuView.menuShowShieldedContainer.setOnClickListener {
                     mMenuDialog?.dismiss()
                     startShieldedIntroFlow()
                 }
-                cvShowShieldedTV.text = getString(R.string.account_details_menu_show_shielded, viewModel.account.name)
+                menuView.menuShowShielded.text = getString(R.string.account_details_menu_show_shielded, viewModel.account.name)
 
-                val cvHideShielded = menuView.findViewById(R.id.menu_hide_shielded_container) as CardView
-                val cvHideShieldedTV = menuView.findViewById(R.id.menu_hide_shielded) as TextView
-                cvHideShielded.visibility = if(viewModel.shieldingEnabledLiveData.value == true && viewModel.account.readOnly != true) View.VISIBLE else View.GONE
-                cvHideShielded.setOnClickListener {
+                menuView.menuHideShieldedContainer.visibility = if (viewModel.shieldingEnabledLiveData.value == true && !viewModel.account.readOnly) View.VISIBLE else View.GONE
+                menuView.menuHideShieldedContainer.setOnClickListener {
                     mMenuDialog?.dismiss()
                     viewModel.disableShielded()
                 }
-                cvHideShieldedTV.text = getString(R.string.account_details_menu_hide_shielded, viewModel.account.name)
+                menuView.menuHideShielded.text = getString(R.string.account_details_menu_hide_shielded, viewModel.account.name)
 
                 // Delegation
                 if (viewModel.account.isBaking() || viewModel.hasPendingBakingTransactions) {
-                    (menuView.findViewById(R.id.menu_item_delegation_card) as CardView).visibility = View.GONE
+                    menuView.menuItemDelegationCard.visibility = View.GONE
                 } else {
-                    val tvDelegation = menuView.findViewById(R.id.menu_item_delegation) as TextView
-                    tvDelegation.setOnClickListener {
+                    menuView.menuItemDelegation.setOnClickListener {
                         mMenuDialog?.dismiss()
                         gotoDelegation(viewModel.account)
                     }
@@ -390,19 +358,17 @@ class AccountDetailsActivity :
 
                 // Baking
                 if (viewModel.account.isDelegating() || viewModel.hasPendingDelegationTransactions) {
-                    (menuView.findViewById(R.id.menu_item_baking_card) as CardView).visibility = View.GONE
+                    menuView.menuItemBakingCard.visibility = View.GONE
                 } else {
-                    val tvBaking = menuView.findViewById(R.id.menu_item_baking) as TextView
-                    tvBaking.setOnClickListener {
+                    menuView.menuItemBaking.setOnClickListener {
                         mMenuDialog?.dismiss()
                         gotoBaking(viewModel.account)
                     }
                 }
 
                 //Decrypt option
-                val cvDecrypt = menuView.findViewById(R.id.menu_decrypt_container) as CardView
-                cvDecrypt.visibility = if(viewModel.isShielded && viewModel.hasTransactionsToDecrypt) View.VISIBLE else View.GONE
-                cvDecrypt.setOnClickListener {
+                menuView.menuDecryptContainer.visibility = if(viewModel.isShielded && viewModel.hasTransactionsToDecrypt) View.VISIBLE else View.GONE
+                menuView.menuDecryptContainer.setOnClickListener {
                     mMenuDialog?.dismiss()
                     showAuthentication(null, viewModel.shouldUseBiometrics(), viewModel.usePasscode(), object : AuthenticationCallback{
                         override fun getCipherForBiometrics() : Cipher?{
@@ -420,9 +386,7 @@ class AccountDetailsActivity :
                     })
                 }
 
-
-
-                builder.setCustomTitle(menuView)
+                builder.setCustomTitle(menuView.root)
                 mMenuDialog = builder.show()
 
                 mMenuDialog?.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -431,9 +395,27 @@ class AccountDetailsActivity :
         return true
     }
 
+    private val getResultEnableShielding =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                it.data?.getBooleanExtra(ShieldingIntroActivity.EXTRA_RESULT_SHIELDING_ENABLED, false)?.let { enabled ->
+                    if(enabled){
+                        viewModel.enableShielded()
+                        //Decouple from main thread allowing UI to update
+                        GlobalScope.launch(Dispatchers.Main){
+                            delay(1)
+                            viewModel.isShielded = true
+                            initViews()
+                            updateShieldEnabledUI()
+                        }
+                    }
+                }
+            }
+        }
+
     private fun startShieldedIntroFlow() {
         val intent = Intent(this, ShieldingIntroActivity::class.java)
-        startActivityForResult(intent, REQUESTCODE_ENABLE_SHIELDING)
+        getResultEnableShielding.launch(intent)
     }
 
     private fun gotoAccountReleaseSchedule(item: Account, isShielded: Boolean) {
@@ -443,7 +425,7 @@ class AccountDetailsActivity :
         startActivity(intent)
     }
 
-    private fun gotoTransferFilters(item: Account, isShielded: Boolean) {
+    private fun gotoTransferFilters(item: Account) {
         val intent = Intent(this, AccountTransactionsFiltersActivity::class.java)
         intent.putExtra(EXTRA_ACCOUNT, item)
         startActivity(intent)
@@ -476,12 +458,12 @@ class AccountDetailsActivity :
     }
 
     private fun showError(stringRes: Int) {
-        popup.showSnackbar(root_layout, stringRes)
+        popup.showSnackbar(binding.rootLayout, stringRes)
     }
 
     private fun showTotalBalance(totalBalance: Long) {
-        balance_textview.text = CurrencyUtil.formatGTU(totalBalance)
-        accounts_overview_total_details_disposal.text = CurrencyUtil.formatGTU(viewModel.account.getAtDisposalWithoutStakedOrScheduled(totalBalance), true)
+        binding.balanceTextview.text = CurrencyUtil.formatGTU(totalBalance)
+        binding.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(viewModel.account.getAtDisposalWithoutStakedOrScheduled(totalBalance), true)
     }
 
     private fun onSendFundsClicked() {

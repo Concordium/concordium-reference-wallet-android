@@ -3,9 +3,6 @@ package com.concordium.wallet.ui.bakerdelegation.baker
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import com.concordium.wallet.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_BAKER
@@ -14,26 +11,23 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.U
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_STAKE
 import com.concordium.wallet.data.model.BakerPoolInfo
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.databinding.MenuUpdateBakerSettingsContentBinding
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRemoveIntroFlow
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerUpdateIntroFlow
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.ui.bakerdelegation.common.StatusActivity
 import com.concordium.wallet.ui.common.GenericFlowActivity
-import kotlinx.android.synthetic.main.delegationbaker_status.*
 
-class BakerStatusActivity :
-    StatusActivity(R.string.baker_status_title) {
-
+class BakerStatusActivity : StatusActivity(R.string.baker_status_title) {
     private var menuDialog: AlertDialog? = null
 
     override fun initView() {
-
         clearState()
 
         val account = viewModel.bakerDelegationData.account
         val accountBaker = account?.accountBaker
 
-        status_button_bottom.text = getString(R.string.baker_status_update_baker_settings)
+        binding.statusButtonBottom.text = getString(R.string.baker_status_update_baker_settings)
 
         if (viewModel.bakerDelegationData.isTransactionInProgress) {
             addWaitingForTransaction(R.string.baker_status_baker_waiting_title, R.string.baker_status_baker_waiting)
@@ -41,17 +35,17 @@ class BakerStatusActivity :
         }
 
         if (account == null || accountBaker == null) {
-            findViewById<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_logo_icon_pending)
+            binding.statusIcon.setImageResource(R.drawable.ic_logo_icon_pending)
             setContentTitle(R.string.baker_status_no_baker_title)
             setEmptyState(getString(R.string.baker_status_no_baker))
-            status_button_bottom.text = getString(R.string.baker_status_register_baker)
-            status_button_bottom.setOnClickListener {
+            binding.statusButtonBottom.text = getString(R.string.baker_status_register_baker)
+            binding.statusButtonBottom.setOnClickListener {
                 continueToBakerAmount()
             }
             return
         }
 
-        findViewById<ImageView>(R.id.status_icon).setImageResource(R.drawable.ic_big_logo_ok)
+        binding.statusIcon.setImageResource(R.drawable.ic_big_logo_ok)
         setContentTitle(R.string.baker_status_baker_registered_title)
 
         addContent(R.string.baker_status_baker_account, account.name + "\n\n" + account.address)
@@ -75,7 +69,7 @@ class BakerStatusActivity :
             addPendingChange(pendingChange, R.string.baker_status_baker_effective_time, R.string.baker_status_baker_take_effect_on, R.string.baker_status_baker_effective_remove, R.string.baker_status_baker_stake_lowered_to)
         }
 
-        status_button_bottom.setOnClickListener {
+        binding.statusButtonBottom.setOnClickListener {
             openUpdateBakerSettingsMenu()
         }
     }
@@ -90,34 +84,30 @@ class BakerStatusActivity :
     private fun openUpdateBakerSettingsMenu() {
 
         val builder = AlertDialog.Builder(this)
-        val menuView = View.inflate(this, R.layout.menu_update_baker_settings_content, null)
+        val menuView = MenuUpdateBakerSettingsContentBinding.inflate(layoutInflater)
 
-        val menuItemUpdateBakerStake = menuView.findViewById(R.id.menu_item_update_baker_stake) as TextView
-        menuItemUpdateBakerStake.setOnClickListener {
+        menuView.menuItemUpdateBakerStake.setOnClickListener {
             gotoBakerUpdateIntroFlow(UPDATE_BAKER_STAKE)
         }
 
-        val menuItemUpdatePolSettings = menuView.findViewById(R.id.menu_item_update_pool_settings) as TextView
-        menuItemUpdatePolSettings.setOnClickListener {
+        menuView.menuItemUpdatePoolSettings.setOnClickListener {
             gotoBakerUpdateIntroFlow(UPDATE_BAKER_POOL)
         }
 
-        val menuItemUpdateBakerKeys = menuView.findViewById(R.id.menu_item_update_baker_keys) as TextView
-        menuItemUpdateBakerKeys.setOnClickListener {
+        menuView.menuItemUpdateBakerKeys.setOnClickListener {
             gotoBakerUpdateIntroFlow(UPDATE_BAKER_KEYS)
         }
 
-        val menuItemStopBaking = menuView.findViewById(R.id.menu_item_stop_baking) as TextView
         if (viewModel.isInCoolDown()) {
-            menuItemStopBaking.isEnabled = false
-            menuItemStopBaking.setTextColor(getColor(R.color.text_grey))
+            menuView.menuItemStopBaking.isEnabled = false
+            menuView.menuItemStopBaking.setTextColor(getColor(R.color.text_grey))
         } else {
-            menuItemStopBaking.setOnClickListener {
+            menuView.menuItemStopBaking.setOnClickListener {
                 gotoBakerRemoveIntroFlow()
             }
         }
 
-        builder.setCustomTitle(menuView)
+        builder.setCustomTitle(menuView.root)
         menuDialog = builder.show()
 
         menuDialog?.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))

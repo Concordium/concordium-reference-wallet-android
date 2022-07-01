@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.bakerdelegation.delegation
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
@@ -10,37 +11,45 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.databinding.ActivityDelegationRegistrationAmountBinding
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
-import kotlinx.android.synthetic.main.activity_delegation_registration_amount.*
 
-class DelegationRegisterAmountActivity :
-    BaseDelegationBakerRegisterAmountActivity(R.layout.activity_delegation_registration_amount, R.string.delegation_register_delegation_title) {
+class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity() {
+    private lateinit var binding: ActivityDelegationRegistrationAmountBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityDelegationRegistrationAmountBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.delegation_register_delegation_title)
+        initViews()
+    }
 
     override fun showError(stakeError: StakeAmountInputValidator.StakeError?) {
-        amount.setTextColor(getColor(R.color.text_pink))
-        amount_error.visibility = View.VISIBLE
+        binding.amount.setTextColor(getColor(R.color.text_pink))
+        binding.amountError.visibility = View.VISIBLE
         if (stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED || stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED_COOLDOWN) {
-            pool_limit_title.setTextColor(getColor(R.color.text_pink))
-            pool_limit.setTextColor(getColor(R.color.text_pink))
+            binding.poolLimitTitle.setTextColor(getColor(R.color.text_pink))
+            binding.poolLimit.setTextColor(getColor(R.color.text_pink))
         } else {
-            pool_limit_title.setTextColor(getColor(R.color.text_black))
-            pool_limit.setTextColor(getColor(R.color.text_black))
+            binding.poolLimitTitle.setTextColor(getColor(R.color.text_black))
+            binding.poolLimit.setTextColor(getColor(R.color.text_black))
         }
         if (stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED_COOLDOWN) {
-            delegation_amount_title.setTextColor(getColor(R.color.text_pink))
-            delegation_amount.setTextColor(getColor(R.color.text_pink))
+            binding.delegationAmountTitle.setTextColor(getColor(R.color.text_pink))
+            binding.delegationAmount.setTextColor(getColor(R.color.text_pink))
         }
     }
 
     override fun hideError() {
-        amount.setTextColor(getColor(R.color.theme_blue))
-        pool_limit_title.setTextColor(getColor(R.color.text_black))
-        pool_limit.setTextColor(getColor(R.color.text_black))
-        delegation_amount_title.setTextColor(getColor(R.color.text_black))
-        delegation_amount.setTextColor(getColor(R.color.text_black))
-        amount_error.visibility = View.INVISIBLE
+        binding.amount.setTextColor(getColor(R.color.theme_blue))
+        binding.poolLimitTitle.setTextColor(getColor(R.color.text_black))
+        binding.poolLimit.setTextColor(getColor(R.color.text_black))
+        binding.delegationAmountTitle.setTextColor(getColor(R.color.text_black))
+        binding.delegationAmount.setTextColor(getColor(R.color.text_black))
+        binding.amountError.visibility = View.INVISIBLE
     }
 
     override fun loadTransactionFee() {
@@ -52,75 +61,76 @@ class DelegationRegisterAmountActivity :
 
     override fun initViews() {
         super.initViews()
+        super.initReStakeOptionsView(binding.restakeOptions)
 
         if (viewModel.isUpdatingDelegation())
             setActionBarTitle(R.string.delegation_update_delegation_title)
 
-        amount.setOnEditorActionListener { _, actionId, _ ->
+        binding.amount.setOnEditorActionListener { _, actionId, _ ->
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     onContinueClicked()
                     true
                 }
                 false
             }
-        setAmountHint()
-        amount.doOnTextChanged { _, _, _, _ ->
-            validateAmountInput()
-            pool_registration_continue.isEnabled = hasChanges()
+        setAmountHint(binding.amount)
+        binding.amount.doOnTextChanged { _, _, _, _ ->
+            validateAmountInput(binding.amount, binding.amountError)
+            binding.poolRegistrationContinue.isEnabled = hasChanges()
         }
-        amount.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && amount.text.isEmpty()) amount.hint = ""
-            else setAmountHint()
+        binding.amount.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && binding.amount.text.isEmpty()) binding.amount.hint = ""
+            else setAmountHint(binding.amount)
         }
 
-        pool_registration_continue.setOnClickListener {
+        binding.poolRegistrationContinue.setOnClickListener {
             onContinueClicked()
         }
 
-        balance_amount.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.account?.finalizedBalance ?: 0, true)
-        delegation_amount.text = CurrencyUtil.formatGTU(0, true)
+        binding.balanceAmount.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.account?.finalizedBalance ?: 0, true)
+        binding.delegationAmount.text = CurrencyUtil.formatGTU(0, true)
         viewModel.bakerDelegationData.account?.let { account ->
             account.accountDelegation?.let { accountDelegation ->
-                delegation_amount.text = CurrencyUtil.formatGTU(accountDelegation.stakedAmount, true)
+                binding.delegationAmount.text = CurrencyUtil.formatGTU(accountDelegation.stakedAmount, true)
             }
         }
 
-        pool_limit.text =
+        binding.poolLimit.text =
             viewModel.bakerDelegationData.bakerPoolStatus?.let {
                 CurrencyUtil.formatGTU(it.delegatedCapitalCap, true)
             }
-        current_pool.text =
+        binding.currentPool.text =
             viewModel.bakerDelegationData.bakerPoolStatus?.let {
                 CurrencyUtil.formatGTU(it.delegatedCapital, true)
             }
 
-        pool_registration_continue.isEnabled = false
-        amount.isEnabled = false
-        showWaiting(true)
+        binding.poolRegistrationContinue.isEnabled = false
+        binding.amount.isEnabled = false
+        showWaiting(binding.includeProgress.progressLayout, true)
 
         viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<Long?, Int?>> {
             override fun onChanged(response: Pair<Long?, Int?>?) {
                 response?.first?.let {
                     validateFee = it
-                    showWaiting(false)
-                    pool_estimated_transaction_fee.visibility = View.VISIBLE
-                    pool_estimated_transaction_fee.text = getString(
+                    showWaiting(binding.includeProgress.progressLayout, false)
+                    binding.poolEstimatedTransactionFee.visibility = View.VISIBLE
+                    binding.poolEstimatedTransactionFee.text = getString(
                         R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(validateFee ?: 0)
                     )
-                    pool_registration_continue.isEnabled = true
+                    binding.poolRegistrationContinue.isEnabled = true
                     if (!viewModel.isInCoolDown())
-                        amount.isEnabled = true
+                        binding.amount.isEnabled = true
                 }
             }
         })
 
         loadTransactionFee()
 
-        pool_info.visibility = if (viewModel.bakerDelegationData.isLPool) View.GONE else View.VISIBLE
+        binding.poolInfo.visibility = if (viewModel.bakerDelegationData.isLPool) View.GONE else View.VISIBLE
 
         updateContent()
 
-        initializeWaitingLiveData()
+        initializeWaitingLiveData(binding.includeProgress.progressLayout)
 
         viewModel.showDetailedLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
@@ -132,8 +142,8 @@ class DelegationRegisterAmountActivity :
 
         baseDelegationBakerRegisterAmountListener =
             object : BaseDelegationBakerRegisterAmountListener {
-                override fun onRestakeChanged() {
-                    pool_registration_continue.isEnabled = hasChanges()
+                override fun onReStakeChanged() {
+                    binding.poolRegistrationContinue.isEnabled = hasChanges()
                 }
             }
     }
@@ -158,24 +168,24 @@ class DelegationRegisterAmountActivity :
 
     private fun updateContent() {
         if (viewModel.isInCoolDown()) {
-            amount_locked.visibility = View.VISIBLE
-            amount.isEnabled = false
+            binding.amountLocked.visibility = View.VISIBLE
+            binding.amount.isEnabled = false
         }
         if (viewModel.bakerDelegationData.type == UPDATE_DELEGATION) {
             viewModel.bakerDelegationData.oldStakedAmount = viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0
-            amount_desc.text = getString(R.string.delegation_update_delegation_amount_enter_amount)
-            amount.setText(viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.let { CurrencyUtil.formatGTU(it,false) })
+            binding.amountDesc.text = getString(R.string.delegation_update_delegation_amount_enter_amount)
+            binding.amount.setText(viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.let { CurrencyUtil.formatGTU(it,false) })
         }
     }
 
     private fun onContinueClicked() {
 
-        if (!pool_registration_continue.isEnabled) return
+        if (!binding.poolRegistrationContinue.isEnabled) return
 
         val stakeAmountInputValidator = getStakeAmountInputValidator()
-        val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString(), validateFee)
+        val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(binding.amount.text.toString())?.toString(), validateFee)
         if (stakeError != StakeAmountInputValidator.StakeError.OK) {
-            amount_error.text = stakeAmountInputValidator.getErrorText(this, stakeError)
+            binding.amountError.text = stakeAmountInputValidator.getErrorText(this, stakeError)
             showError(stakeError)
             return
         }
@@ -205,7 +215,7 @@ class DelegationRegisterAmountActivity :
     }
 
     private fun getAmountToStake(): Long {
-        return CurrencyUtil.toGTUValue(amount.text.toString()) ?: 0
+        return CurrencyUtil.toGTUValue(binding.amount.text.toString()) ?: 0
     }
 
     private fun showNewAmountZero() {
@@ -236,7 +246,7 @@ class DelegationRegisterAmountActivity :
     }
 
     private fun continueToConfirmation() {
-        viewModel.bakerDelegationData.amount = CurrencyUtil.toGTUValue(amount.text.toString())
+        viewModel.bakerDelegationData.amount = CurrencyUtil.toGTUValue(binding.amount.text.toString())
         val intent = if ((viewModel.bakerDelegationData.amount ?: 0) == 0L)
             Intent(this, DelegationRemoveActivity::class.java)
         else

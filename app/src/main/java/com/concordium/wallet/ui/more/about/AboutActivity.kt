@@ -6,23 +6,25 @@ import android.os.Bundle
 import androidx.core.content.ContextCompat
 import com.concordium.wallet.AppConfig
 import com.concordium.wallet.R
+import com.concordium.wallet.databinding.ActivityAboutBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.uicore.handleUrlClicks
-import kotlinx.android.synthetic.main.activity_about.*
 
-class AboutActivity : BaseActivity(
-    R.layout.activity_about,
-    R.string.about_title
-) {
+class AboutActivity : BaseActivity() {
+    private lateinit var binding: ActivityAboutBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityAboutBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.about_title)
 
-        about_contact_text.handleUrlClicks { url ->
+        binding.aboutContactText.handleUrlClicks { url ->
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             ContextCompat.startActivity(this, browserIntent, null)
         }
 
-        about_support_text.handleUrlClicks { url ->
+        binding.aboutSupportText.handleUrlClicks { url ->
             val emailIntent = Intent(Intent.ACTION_SEND)
             emailIntent.data = Uri.parse("mailto:")
             emailIntent.type = "text/plain"
@@ -36,6 +38,6 @@ class AboutActivity : BaseActivity(
             }
         }
 
-        about_version_text.text = getString(R.string.app_version_about, AppConfig.appVersion)
+        binding.aboutVersionText.text = getString(R.string.app_version_about, AppConfig.appVersion)
     }
 }

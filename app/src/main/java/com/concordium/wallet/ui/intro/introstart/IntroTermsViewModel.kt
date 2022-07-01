@@ -22,8 +22,8 @@ class IntroTermsViewModel(application: Application) : AndroidViewModel(applicati
     val hasExistingWalletLiveData: LiveData<Boolean>
         get() = _hasExistingWalletLiveData
 
-    private var _appSettingsLiveData = MutableLiveData<AppSettings>()
-    val appSettingsLiveData: LiveData<AppSettings>
+    private var _appSettingsLiveData = MutableLiveData<AppSettings?>()
+    val appSettingsLiveData: MutableLiveData<AppSettings?>
         get() = _appSettingsLiveData
 
     init {

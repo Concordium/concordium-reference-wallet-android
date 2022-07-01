@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
     tools:showIn="@layout/activity_delegation_registration_confirmation">
     <View
         android:id="@+id/transaction_submitted_divider"
@@ -18,4 +21,4 @@
         android:layout_gravity="center_horizontal"
         tools:visibility="visible"
         tools:text="5dcaf8d6d204b54988328d1bf6899690d185d6354a261b82a30402b7da5e2a4b" />
-</merge>
+</LinearLayout>

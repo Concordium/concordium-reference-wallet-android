@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
@@ -13,33 +14,30 @@ import androidx.lifecycle.Observer
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.security.BiometricPromptCallback
+import com.concordium.wallet.databinding.ActivityImportBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
 import com.concordium.wallet.util.KeyboardUtil
-import kotlinx.android.synthetic.main.activity_import.*
-import kotlinx.android.synthetic.main.progress.*
 import javax.crypto.Cipher
 
-class ImportActivity : BaseActivity(
-    R.layout.activity_import,
-    R.string.import_title
-) {
-
+class ImportActivity : BaseActivity() {
     companion object {
         const val EXTRA_FILE_URI = "EXTRA_FILE_URI"
-        const val REQUESTCODE_SELECT_FILE = 2000
     }
 
+    private lateinit var binding: ActivityImportBinding
     private val viewModel: ImportViewModel by viewModels()
     private lateinit var biometricPrompt: BiometricPrompt
     private var allowBack = true
-
 
     //region Lifecycle
     //************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityImportBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         initializeViewModel()
         viewModel.initialize()
         initViews()
@@ -54,20 +52,6 @@ class ImportActivity : BaseActivity(
             handleImportFile(fileUri)
         } else {
             showFilePicker()
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == REQUESTCODE_SELECT_FILE) {
-            if (resultCode == Activity.RESULT_OK) {
-                data?.data?.also { uri ->
-                    handleImportFile(uri)
-                }
-            } else {
-                finish()
-            }
         }
     }
 
@@ -131,7 +115,7 @@ class ImportActivity : BaseActivity(
     }
 
     private fun initViews() {
-        progress_layout.visibility = View.VISIBLE
+        binding.includeProgress.progressLayout.visibility = View.VISIBLE
     }
 
     //endregion
@@ -141,15 +125,15 @@ class ImportActivity : BaseActivity(
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
-            progress_layout.visibility = View.VISIBLE
+            binding.includeProgress.progressLayout.visibility = View.VISIBLE
         } else {
-            progress_layout.visibility = View.GONE
+            binding.includeProgress.progressLayout.visibility = View.GONE
         }
     }
 
     private fun showError(stringRes: Int) {
         KeyboardUtil.hideKeyboard(this)
-        popup.showSnackbar(root_layout, stringRes)
+        popup.showSnackbar(binding.rootLayout, stringRes)
     }
 
     private fun showImportPassword() {
@@ -208,13 +192,23 @@ class ImportActivity : BaseActivity(
         transaction.commit()
     }
 
+    private val getResultSelectFile =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                it.data?.data?.also { uri ->
+                    handleImportFile(uri)
+                }
+            } else {
+                finish()
+            }
+        }
+
     private fun showFilePicker() {
         val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "*/*"
         }
-
-        startActivityForResult(intent, REQUESTCODE_SELECT_FILE)
+        getResultSelectFile.launch(intent)
     }
 
     private fun handleImportFile(uri: Uri) {

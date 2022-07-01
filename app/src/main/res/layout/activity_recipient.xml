@@ -86,6 +86,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <include layout="@layout/progress" />
+    <include layout="@layout/progress" android:id="@+id/include_progress" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

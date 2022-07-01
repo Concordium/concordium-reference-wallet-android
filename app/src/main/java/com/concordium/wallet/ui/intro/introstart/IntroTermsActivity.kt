@@ -10,17 +10,20 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.AppSettings
+import com.concordium.wallet.databinding.ActivityIntroTermsBinding
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_intro_terms.*
 
-class IntroTermsActivity : BaseActivity(R.layout.activity_intro_terms, R.string.terms_title) {
-
+class IntroTermsActivity : BaseActivity() {
+    private lateinit var binding: ActivityIntroTermsBinding
     private lateinit var viewModel: IntroTermsViewModel
     private var forceUpdateDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityIntroTermsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         initViews()
         initializeViewModel()
         viewModel.checkForExistingWallet()
@@ -33,30 +36,30 @@ class IntroTermsActivity : BaseActivity(R.layout.activity_intro_terms, R.string.
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(IntroTermsViewModel::class.java)
+        )[IntroTermsViewModel::class.java]
 
         viewModel.hasExistingWalletLiveData.observe(this, Observer { hasExistingWallet ->
             if (!hasExistingWallet && !App.appCore.appSettingsForceUpdateChecked)
                 viewModel.loadAppSettings()
             else
-                confirm_button.isEnabled = true
+                binding.confirmButton.isEnabled = true
         })
 
         viewModel.appSettingsLiveData.observe(this, Observer { appSettings ->
             checkAppSettings(appSettings)
-            confirm_button.isEnabled = true
+            binding.confirmButton.isEnabled = true
         })
     }
 
     private fun initViews() {
-        confirm_button.isEnabled = false
-        confirm_button.setOnClickListener {
+        binding.confirmButton.isEnabled = false
+        binding.confirmButton.setOnClickListener {
             gotoStart()
         }
 
         val html = getString(R.string.terms_text)
-        info_webview.isVerticalScrollBarEnabled = false
-        info_webview.loadData(html, "text/html", "UTF-8")
+        binding.infoWebview.isVerticalScrollBarEnabled = false
+        binding.infoWebview.loadData(html, "text/html", "UTF-8")
     }
 
     private fun checkAppSettings(appSettings: AppSettings?) {

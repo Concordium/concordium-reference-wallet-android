@@ -4,66 +4,42 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.databinding.ActivityAuthSetupPasswordBinding
 import com.concordium.wallet.ui.auth.setup.AuthSetupActivity
 import com.concordium.wallet.ui.auth.setupbiometrics.AuthSetupBiometricsActivity
 import com.concordium.wallet.ui.auth.setuppasswordrepeat.AuthSetupPasswordRepeatActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.uicore.afterTextChanged
 import com.concordium.wallet.util.KeyboardUtil
-import kotlinx.android.synthetic.main.activity_auth_setup_password.*
 
-class AuthSetupPasswordActivity :
-    BaseActivity(R.layout.activity_auth_setup_password, R.string.auth_setup_password_title) {
-
-    private val REQUESTCODE_AUTH_SETUP_BIOMETRICS = 2000
-    private val REQUESTCODE_AUTH_SETUP_PASSWORD_REPEAT = 2001
-
+class AuthSetupPasswordActivity : BaseActivity() {
+    private lateinit var binding: ActivityAuthSetupPasswordBinding
     private lateinit var viewModel: AuthSetupPasswordViewModel
 
     private var continueFlow: Boolean = true
 
-
     companion object {
         val CONTINUE_INITIAL_SETUP = "CONTINUE_INITIAL_SETUP"
     }
-
 
     //region Lifecycle
     //************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityAuthSetupPasswordBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.auth_setup_password_title)
 
         continueFlow = intent.getBooleanExtra(AuthSetupActivity.CONTINUE_INITIAL_SETUP, true)
 
         initializeViewModel()
         viewModel.initialize()
         initializeViews()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == REQUESTCODE_AUTH_SETUP_BIOMETRICS) {
-            if (resultCode == Activity.RESULT_OK) {
-                if(continueFlow){
-                    viewModel.hasFinishedSetupPassword()
-                }
-                setResult(Activity.RESULT_OK)
-                finish()
-            }
-        }
-        if (requestCode == REQUESTCODE_AUTH_SETUP_PASSWORD_REPEAT) {
-            if (resultCode == Activity.RESULT_OK) {
-                viewModel.setupPassword(password_edittext.text.toString())
-            } else {
-                password_edittext.setText("")
-                error_textview.setText(R.string.auth_error_entries_different)
-            }
-        }
     }
 
     //endregion
@@ -75,8 +51,7 @@ class AuthSetupPasswordActivity :
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(AuthSetupPasswordViewModel::class.java)
-
+        )[AuthSetupPasswordViewModel::class.java]
         viewModel.errorLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
@@ -102,19 +77,19 @@ class AuthSetupPasswordActivity :
     }
 
     private fun initializeViews() {
-        confirm_button.setOnClickListener {
+        binding.confirmButton.setOnClickListener {
             onConfirmClicked()
         }
-        confirm_button.isEnabled = false
-        password_edittext.afterTextChanged {
-            error_textview.setText("")
-            confirm_button.isEnabled =
-                viewModel.checkPasswordRequirements(password_edittext.text.toString())
+        binding.confirmButton.isEnabled = false
+        binding.passwordEdittext.afterTextChanged {
+            binding.errorTextview.setText("")
+            binding.confirmButton.isEnabled =
+                viewModel.checkPasswordRequirements(binding.passwordEdittext.text.toString())
         }
-        password_edittext.setOnEditorActionListener { _, actionId, _ ->
+        binding.passwordEdittext.setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
-                    if (viewModel.checkPasswordRequirements(password_edittext.text.toString())) {
+                    if (viewModel.checkPasswordRequirements(binding.passwordEdittext.text.toString())) {
                         onConfirmClicked()
                     }
                     true
@@ -122,7 +97,7 @@ class AuthSetupPasswordActivity :
                 else -> false
             }
         }
-        password_edittext.requestFocus()
+        binding.passwordEdittext.requestFocus()
     }
 
     //endregion
@@ -131,32 +106,51 @@ class AuthSetupPasswordActivity :
     //************************************************************
 
     private fun onConfirmClicked() {
-        if (viewModel.checkPasswordRequirements(password_edittext.text.toString())) {
-            viewModel.startSetupPassword(password_edittext.text.toString())
+        if (viewModel.checkPasswordRequirements(binding.passwordEdittext.text.toString())) {
+            viewModel.startSetupPassword(binding.passwordEdittext.text.toString())
             gotoAuthSetupPasswordRepeat()
         } else {
-            password_edittext.setText("")
-            error_textview.setText(R.string.auth_error_password_not_valid)
+            binding.passwordEdittext.setText("")
+            binding.errorTextview.setText(R.string.auth_error_password_not_valid)
         }
     }
 
+    private val getResultAuthSetupBiometrics =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                if(continueFlow){
+                    viewModel.hasFinishedSetupPassword()
+                }
+                setResult(Activity.RESULT_OK)
+                finish()
+            }
+        }
+
     private fun gotoAuthSetupBiometrics() {
         val intent = Intent(this, AuthSetupBiometricsActivity::class.java)
-        startActivityForResult(intent, REQUESTCODE_AUTH_SETUP_BIOMETRICS)
+        getResultAuthSetupBiometrics.launch(intent)
     }
+
+    private val getResultAuthSetupPasswordRepeat =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                viewModel.setupPassword(binding.passwordEdittext.text.toString())
+            } else {
+                binding.passwordEdittext.setText("")
+                binding.errorTextview.setText(R.string.auth_error_entries_different)
+            }
+        }
 
     private fun gotoAuthSetupPasswordRepeat() {
         val intent = Intent(this, AuthSetupPasswordRepeatActivity::class.java)
-        startActivityForResult(intent, REQUESTCODE_AUTH_SETUP_PASSWORD_REPEAT)
+        getResultAuthSetupPasswordRepeat.launch(intent)
     }
 
     private fun showPasswordError() {
-        password_edittext.setText("")
+        binding.passwordEdittext.setText("")
         KeyboardUtil.hideKeyboard(this)
-        popup.showSnackbar(root_layout, R.string.auth_error_password_setup)
+        popup.showSnackbar(binding.rootLayout, R.string.auth_error_password_setup)
     }
 
     //endregion
-
-
 }

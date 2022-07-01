@@ -18,19 +18,14 @@ class AccountAdapter :
         }
     }
 
-    override fun getItemCount(): Int {
-        return data.size
-    }
+    override fun getItemCount() = data.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return ItemViewHolder(
-            AccountItemView(parent.context, null)
-        )
+        return ItemViewHolder(AccountItemView(parent.context, null))
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = data.get(position)
-        (holder as ItemViewHolder).bind(item, onItemClickListener)
+        (holder as ItemViewHolder).bind(data[position], onItemClickListener)
     }
 
     fun setData(data: List<AccountWithIdentity>) {
@@ -40,8 +35,6 @@ class AccountAdapter :
 
     //region OnItemClickListener
     //************************************************************
-
-
 
     fun setOnItemClickListener(onItemClickListener: AccountItemView.OnItemClickListener) {
         this.onItemClickListener = onItemClickListener

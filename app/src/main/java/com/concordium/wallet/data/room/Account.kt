@@ -93,12 +93,11 @@ data class Account(
         val credential = this.credential ?: return true
         val gson = App.appCore.gson
         val credentialValueJsonObject = gson.fromJson(credential.value.json, JsonObject::class.java)
-        if (credentialValueJsonObject.get("type")?.asString == "initial") {
+        if (credentialValueJsonObject["type"]?.asString == "initial") {
             return true
         }
-        if (credentialValueJsonObject.getAsJsonObject("credential")?.get("type")?.asString == "initial") {
+        if (credentialValueJsonObject.getAsJsonObject("credential")?.get("type")?.asString == "initial")
             return true
-        }
         return false
     }
 

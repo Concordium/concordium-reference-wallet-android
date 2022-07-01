@@ -1,6 +1,5 @@
 package com.concordium.wallet.uicore.dialog
 
-import android.content.Context
 import android.os.Bundle
 import android.text.InputType
 import android.view.KeyEvent
@@ -12,13 +11,12 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.concordium.wallet.App
 import com.concordium.wallet.R
+import com.concordium.wallet.databinding.DialogAuthenticationContainerBinding
 import com.concordium.wallet.uicore.afterTextChanged
-import kotlinx.android.synthetic.main.dialog_authentication_container.view.*
-import kotlinx.android.synthetic.main.dialog_authentication_content.*
-import kotlinx.android.synthetic.main.dialog_authentication_content.view.*
 
-class AuthenticationDialogFragment : DialogFragment(),
-    TextView.OnEditorActionListener {
+class AuthenticationDialogFragment : DialogFragment(), TextView.OnEditorActionListener {
+    private var _binding: DialogAuthenticationContainerBinding? = null
+    private val binding get() = _binding!!
 
     companion object {
         const val AUTH_DIALOG_TAG = "AUTH_DIALOG_TAG"
@@ -35,13 +33,11 @@ class AuthenticationDialogFragment : DialogFragment(),
         setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Material_Light_Dialog)
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
+        _binding = DialogAuthenticationContainerBinding.inflate(inflater, container, false)
         dialog?.setTitle(getString(R.string.auth_dialog_password_title))
-        return inflater.inflate(R.layout.dialog_authentication_container, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -49,32 +45,33 @@ class AuthenticationDialogFragment : DialogFragment(),
 
         val alternativeString = arguments?.getString(EXTRA_ALTERNATIVE_TEXT)
         if(alternativeString != null) {
-            view.password_description.setText(alternativeString)
+            binding.includeDialogAuthenticationContent.passwordDescription.text = alternativeString
         } else {
-            view.password_description.setText(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_dialog_passcode_description else R.string.auth_dialog_password_description)
+            binding.includeDialogAuthenticationContent.passwordDescription.setText(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_dialog_passcode_description else R.string.auth_dialog_password_description)
         }
 
-        view.password_edittext.setHint(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_dialog_passcode else R.string.auth_dialog_password)
+        binding.includeDialogAuthenticationContent.passwordEdittext.setHint(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_dialog_passcode else R.string.auth_dialog_password)
         if (App.appCore.getCurrentAuthenticationManager().usePasscode()) {
-            view.password_edittext.inputType =
+            binding.includeDialogAuthenticationContent.passwordEdittext.inputType =
                 InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
         }
 
-        view.password_edittext.setOnEditorActionListener(this)
-        view.password_edittext.afterTextChanged {
-            password_error.setText("")
+        binding.includeDialogAuthenticationContent.passwordEdittext.setOnEditorActionListener(this)
+        binding.includeDialogAuthenticationContent.passwordEdittext.afterTextChanged {
+            binding.includeDialogAuthenticationContent.passwordError.setText("")
         }
-        view.second_dialog_button.setOnClickListener {
+        binding.secondDialogButton.setOnClickListener {
             verifyPassword()
         }
-        view.cancel_button.setOnClickListener {
+        binding.cancelButton.setOnClickListener {
             callback?.onCancelled()
             dismiss()
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     fun setCallback(callback: Callback) {
@@ -82,14 +79,14 @@ class AuthenticationDialogFragment : DialogFragment(),
     }
 
     private fun verifyPassword() {
-        val passwordIsValid = App.appCore.getCurrentAuthenticationManager().checkPassword(password_edittext.text.toString())
+        val passwordIsValid = App.appCore.getCurrentAuthenticationManager().checkPassword(binding.includeDialogAuthenticationContent.passwordEdittext.text.toString())
         if (passwordIsValid) {
-            callback?.onCorrectPassword(password_edittext.text.toString())
-            password_edittext.setText("")
+            callback?.onCorrectPassword(binding.includeDialogAuthenticationContent.passwordEdittext.text.toString())
+            binding.includeDialogAuthenticationContent.passwordEdittext.setText("")
             dismiss()
         } else {
-            password_edittext.setText("")
-            password_error.setText(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_dialog_passcode_error else R.string.auth_dialog_password_error)
+            binding.includeDialogAuthenticationContent.passwordEdittext.setText("")
+            binding.includeDialogAuthenticationContent.passwordError.setText(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_dialog_passcode_error else R.string.auth_dialog_password_error)
         }
     }
 

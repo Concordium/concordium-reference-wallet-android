@@ -13,6 +13,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.biometric.BiometricPrompt
@@ -29,15 +30,13 @@ import com.concordium.wallet.uicore.popup.Popup
 import java.io.Serializable
 import javax.crypto.Cipher
 
-abstract class BaseActivity(private val layout: Int, private val titleId: Int = R.string.app_name) : AppCompatActivity() {
+abstract class BaseActivity : AppCompatActivity() {
 
     private var titleView: TextView? = null
-    private var subtitleView: TextView? = null
     protected lateinit var popup: Popup
     protected lateinit var dialogs: Dialogs
 
     companion object {
-        const val REQUESTCODE_GENERIC_RETURN = 8232
         const val POP_UNTIL_ACTIVITY = "POP_UNTIL_ACTIVITY"
         const val RESULT_FOLDER_PICKER = 101
         const val RESULT_SHARE_FILE = 102
@@ -46,18 +45,8 @@ abstract class BaseActivity(private val layout: Int, private val titleId: Int = 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if(!BuildConfig.DEBUG){
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
-        }
-
-        setContentView(layout)
-
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        if (toolbar != null) {
-            titleView = toolbar.findViewById<TextView>(R.id.toolbar_title)
-            subtitleView = toolbar.findViewById<TextView>(R.id.toolbar_sub_title)
-            setSupportActionBar(toolbar)
-            setupActionBar(this, titleId)
+        if (!BuildConfig.DEBUG) {
+            window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         }
 
         popup = Popup()
@@ -87,26 +76,18 @@ abstract class BaseActivity(private val layout: Int, private val titleId: Int = 
         startActivityForResult(Intent.createChooser(share, null), RESULT_SHARE_FILE)
     }
 
-    /**
-     * Upon returning, we check the result and pop if needed - see @onActivityResult
-     */
-    fun startActivityForResultAndHistoryCheck(intent: Intent) {
-        startActivityForResult(intent, REQUESTCODE_GENERIC_RETURN)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == REQUESTCODE_GENERIC_RETURN) {
-            if (resultCode == Activity.RESULT_OK) {
-                data?.getStringExtra(POP_UNTIL_ACTIVITY)?.let { className ->
+    // Upon returning, we check the result and pop if needed
+    private val getResultGeneric =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                it.data?.getStringExtra(POP_UNTIL_ACTIVITY)?.let { className ->
                     if (this.javaClass.asSubclass(this.javaClass).canonicalName != className) {
-                        finishUntilClass(className, data.getStringExtra("THEN_START"), data.getStringExtra("WITH_KEY"), data.getSerializableExtra("WITH_DATA"))
+                        finishUntilClass(className, it.data?.getStringExtra("THEN_START"), it.data?.getStringExtra("WITH_KEY"), it.data?.getSerializableExtra("WITH_DATA"))
                     } else {
-                        data.getStringExtra("THEN_START")?.let { thenStart ->
+                        it.data?.getStringExtra("THEN_START")?.let { thenStart ->
                             val intent = Intent(this, Class.forName(thenStart))
-                            if (data.getStringExtra("WITH_KEY") != null && data.getSerializableExtra("WITH_DATA") != null) {
-                                intent.putExtra(data.getStringExtra("WITH_KEY"), data.getSerializableExtra("WITH_DATA"))
+                            if (it.data?.getStringExtra("WITH_KEY") != null && it.data?.getSerializableExtra("WITH_DATA") != null) {
+                                intent.putExtra(it.data?.getStringExtra("WITH_KEY"), it.data?.getSerializableExtra("WITH_DATA"))
                             }
                             startActivity(intent)
                         }
@@ -114,6 +95,9 @@ abstract class BaseActivity(private val layout: Int, private val titleId: Int = 
                 }
             }
         }
+
+    fun startActivityForResultAndHistoryCheck(intent: Intent) {
+        getResultGeneric.launch(intent)
     }
 
     protected fun openFolderPicker() {
@@ -160,13 +144,16 @@ abstract class BaseActivity(private val layout: Int, private val titleId: Int = 
         //do nothing
     }
 
-    private fun setupActionBar(activity: AppCompatActivity, titleId: Int?) {
-        val actionbar = activity.supportActionBar ?: return
-        actionbar.setDisplayHomeAsUpEnabled(true)
+    protected fun setupActionBar(toolbar: Toolbar, titleView: TextView, titleId: Int?) {
+        this.titleView = titleView
+
+        setSupportActionBar(toolbar)
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         if (titleId != null) {
-            actionbar.setTitle(titleId)
-            titleView?.setText(titleId)
+            supportActionBar?.setTitle(titleId)
+            titleView.setText(titleId)
         }
     }
 
@@ -175,14 +162,14 @@ abstract class BaseActivity(private val layout: Int, private val titleId: Int = 
     }
 
     fun setActionBarTitle(title: String) {
-        titleView?.setText(title)
+        titleView?.text = title
     }
 
-    fun setActionBarTitle(title: String, subtitle: String?) {
-        titleView?.setText(title)
+    fun setActionBarTitle(subtitleView: TextView, title: String, subtitle: String?) {
+        titleView?.text = title
         titleView?.setSingleLine()
-        subtitleView?.setText(subtitle)
-        subtitleView?.visibility = View.VISIBLE
+        subtitleView.text = subtitle
+        subtitleView.visibility = View.VISIBLE
     }
 
     fun hideActionBarBack(activity: AppCompatActivity) {
@@ -249,7 +236,7 @@ abstract class BaseActivity(private val layout: Int, private val titleId: Int = 
         usePasscode: Boolean,
         callback: AuthenticationCallback
     ) {
-        var biometricPrompt = createBiometricPrompt(text, callback)
+        val biometricPrompt = createBiometricPrompt(text, callback)
 
         val promptInfo = createPromptInfo(text, usePasscode)
         val cipher = callback.getCipherForBiometrics()
@@ -261,7 +248,7 @@ abstract class BaseActivity(private val layout: Int, private val titleId: Int = 
     private fun createBiometricPrompt(text: String?, callback: AuthenticationCallback): BiometricPrompt {
         val executor = ContextCompat.getMainExecutor(this)
 
-        val callback = object : BiometricPromptCallback() {
+        @Suppress("NAME_SHADOWING") val callback = object : BiometricPromptCallback() {
             override fun onNegativeButtonClicked() {
                 showPasswordDialog(text, callback)
             }

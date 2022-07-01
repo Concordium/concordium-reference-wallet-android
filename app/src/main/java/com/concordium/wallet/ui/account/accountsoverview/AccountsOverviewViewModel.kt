@@ -48,8 +48,8 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     val totalBalanceLiveData: LiveData<TotalBalancesData>
         get() = _totalBalanceLiveData
 
-    private val _pendingIdentityForWarningLiveData = MutableLiveData<Identity>()
-    val pendingIdentityForWarningLiveData: LiveData<Identity>
+    private val _pendingIdentityForWarningLiveData = MutableLiveData<Identity?>()
+    val pendingIdentityForWarningLiveData: MutableLiveData<Identity?>
         get() = _pendingIdentityForWarningLiveData
 
     private val _poolStatusesLiveData = MutableLiveData<List<Pair<String, String>>>()

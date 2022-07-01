@@ -13,6 +13,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.security.BiometricPromptCallback
 import com.concordium.wallet.data.model.IdentityProvider
+import com.concordium.wallet.databinding.ActivityIdentityProviderListBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.adapter.AdapterItem
 import com.concordium.wallet.ui.identity.identityproviderlist.adapter.HeaderItem
@@ -21,27 +22,22 @@ import com.concordium.wallet.ui.identity.identityproviderlist.adapter.IdentityPr
 import com.concordium.wallet.ui.identity.identityproviderpolicywebview.IdentityProviderPolicyWebviewActivity
 import com.concordium.wallet.ui.identity.identityproviderwebview.IdentityProviderWebviewActivity
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
-import kotlinx.android.synthetic.main.activity_identity_provider_list.*
-import kotlinx.android.synthetic.main.progress.*
 import javax.crypto.Cipher
 
-class IdentityProviderListActivity :
-    BaseActivity(R.layout.activity_identity_provider_list, R.string.identity_provider_list_title) {
-
+class IdentityProviderListActivity : BaseActivity() {
+    private lateinit var binding: ActivityIdentityProviderListBinding
     private lateinit var viewModel: IdentityProviderListViewModel
     private lateinit var identityProviderAdapter: IdentityProviderAdapter
     private lateinit var biometricPrompt: BiometricPrompt
-
 
     private var longTimeWaitingCountDownTimer =
         object : CountDownTimer(2 * 1000.toLong(), 1000) {
             override fun onTick(millisUntilFinished: Long) {}
 
             override fun onFinish() {
-                popup.showSnackbar(root_layout, R.string.new_account_please_wait)
+                popup.showSnackbar(binding.rootLayout, R.string.new_account_please_wait)
             }
         }
-
 
     companion object {
         const val EXTRA_IDENTITY_CUSTOM_NAME = "EXTRA_IDENTITY_CUSTOM_NAME"
@@ -52,6 +48,9 @@ class IdentityProviderListActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityIdentityProviderListBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_list_title)
 
         val identityCustomName = intent.getStringExtra(EXTRA_IDENTITY_CUSTOM_NAME) as String
         val accountCustomName = intent.getStringExtra(EXTRA_ACCOUNT_CUSTOM_NAME) as String
@@ -77,8 +76,7 @@ class IdentityProviderListActivity :
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(IdentityProviderListViewModel::class.java)
-
+        )[IdentityProviderListViewModel::class.java]
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
             waiting?.let {
                 showWaiting(waiting || viewModel.waitingGlobalData.value!!)
@@ -89,7 +87,6 @@ class IdentityProviderListActivity :
                 showWaiting(waiting || viewModel.waitingLiveData.value!!)
             }
         })
-
         viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
                 showError(value)
@@ -113,21 +110,21 @@ class IdentityProviderListActivity :
     }
 
     private fun initializeViews() {
-        progress_layout.visibility = View.GONE
+        binding.includeProgress.progressLayout.visibility = View.GONE
         initializeList()
     }
 
     private fun initializeList() {
         val linearLayoutManager = LinearLayoutManager(this)
-        recyclerview.setHasFixedSize(true)
-        recyclerview.layoutManager = linearLayoutManager
+        binding.recyclerview.setHasFixedSize(true)
+        binding.recyclerview.layoutManager = linearLayoutManager
 
         viewModel.identityProviderList.observe(this, Observer { list ->
             val items: MutableList<AdapterItem> = list.map { IdentityProviderItem(it) }.toMutableList()
             items.add(0, HeaderItem())
             val newlineSeperatedLinks = list.joinToString (separator = "<br><br>") { it -> "<a href=\"${it.ipInfo.ipDescription.url}\">${it.ipInfo.ipDescription.name}</a>" }
             identityProviderAdapter = IdentityProviderAdapter(this, newlineSeperatedLinks, items)
-            recyclerview.adapter = identityProviderAdapter
+            binding.recyclerview.adapter = identityProviderAdapter
             setItemClickAdapter()
         })
     }
@@ -169,14 +166,14 @@ class IdentityProviderListActivity :
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
-            progress_layout.visibility = View.VISIBLE
+            binding.includeProgress.progressLayout.visibility = View.VISIBLE
         } else {
-            progress_layout.visibility = View.GONE
+            binding.includeProgress.progressLayout.visibility = View.GONE
         }
     }
 
     private fun showError(stringRes: Int) {
-        popup.showSnackbar(root_layout, stringRes)
+        popup.showSnackbar(binding.rootLayout, stringRes)
     }
 
     private fun showAuthentication() {

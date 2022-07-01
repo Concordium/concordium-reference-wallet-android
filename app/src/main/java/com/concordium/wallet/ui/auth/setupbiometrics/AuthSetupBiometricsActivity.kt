@@ -8,22 +8,23 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.security.BiometricPromptCallback
+import com.concordium.wallet.databinding.ActivityAuthSetupBiometricsBinding
 import com.concordium.wallet.ui.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_auth_setup_biometrics.*
 import javax.crypto.Cipher
 
-class AuthSetupBiometricsActivity :
-    BaseActivity(R.layout.activity_auth_setup_biometrics, R.string.auth_setup_biometrics_title) {
-
+class AuthSetupBiometricsActivity : BaseActivity() {
+    private lateinit var binding: ActivityAuthSetupBiometricsBinding
     private lateinit var viewModel: AuthSetupBiometricsViewModel
     private lateinit var biometricPrompt: BiometricPrompt
-
 
     //region Lifecycle
     //************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityAuthSetupBiometricsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.auth_setup_biometrics_title)
 
         initializeViewModel()
         viewModel.initialize()
@@ -45,8 +46,7 @@ class AuthSetupBiometricsActivity :
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(AuthSetupBiometricsViewModel::class.java)
-
+        )[AuthSetupBiometricsViewModel::class.java]
         viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
                 showError(value)
@@ -64,10 +64,10 @@ class AuthSetupBiometricsActivity :
 
     private fun initializeViews() {
         hideActionBarBack(this)
-        enable_biometrics_button.setOnClickListener {
+        binding.enableBiometricsButton.setOnClickListener {
             onEnableBiometricsClicked()
         }
-        cancel_button.setOnClickListener {
+        binding.cancelButton.setOnClickListener {
             onCancelClicked()
         }
     }
@@ -92,7 +92,7 @@ class AuthSetupBiometricsActivity :
     }
 
     private fun showError(stringRes: Int) {
-        popup.showSnackbar(root_layout, stringRes)
+        popup.showSnackbar(binding.rootLayout, stringRes)
     }
 
     //endregion
@@ -114,13 +114,12 @@ class AuthSetupBiometricsActivity :
     }
 
     private fun createPromptInfo(): BiometricPrompt.PromptInfo {
-        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+        return BiometricPrompt.PromptInfo.Builder()
             .setTitle(getString(R.string.auth_setup_biometrics_dialog_title))
             .setSubtitle(getString(R.string.auth_setup_biometrics_dialog_subtitle))
             .setConfirmationRequired(false)
             .setNegativeButtonText(getString(R.string.auth_setup_biometrics_dialog_cancel))
             .build()
-        return promptInfo
     }
 
     //endregion

@@ -10,22 +10,18 @@ import androidx.lifecycle.Observer
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.databinding.ActivityExportBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
 import com.concordium.wallet.util.KeyboardUtil
-import kotlinx.android.synthetic.main.activity_export.*
-import kotlinx.android.synthetic.main.progress.*
 import javax.crypto.Cipher
 
-class ExportActivity : BaseActivity(
-    R.layout.activity_export,
-    R.string.export_title
-) {
-
+class ExportActivity : BaseActivity() {
     private var isShareFlowActive: Boolean = false
     private val BACKSTACK_NAME_PASSWORD = "BACKSTACK_NAME_PASSWORD"
     private val BACKSTACK_NAME_REPEAT_PASSWORD = "BACKSTACK_NAME_REPEAT_PASSWORD"
 
+    private lateinit var binding: ActivityExportBinding
     private val viewModel: ExportViewModel by viewModels()
 
     //region Lifecycle
@@ -33,16 +29,15 @@ class ExportActivity : BaseActivity(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityExportBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         initializeViewModel()
         viewModel.initialize()
         initViews()
         if(null == savedInstanceState) {
-            replaceFragment(ExportFragment(R.string.export_title), "",false);
+            replaceFragment(ExportFragment(R.string.export_title), "",false)
         }
-    }
-
-    override fun onPause() {
-        super.onPause()  //called when share popup is shown
     }
 
     override fun onResume() {
@@ -132,7 +127,7 @@ class ExportActivity : BaseActivity(
     }
 
     private fun initViews() {
-        progress_layout.visibility = View.GONE
+        binding.includeProgress.progressLayout.visibility = View.GONE
     }
 
     //endregion
@@ -141,12 +136,12 @@ class ExportActivity : BaseActivity(
     //************************************************************
 
     private fun showWaiting(waiting: Boolean) {
-        progress_layout.visibility = if(waiting) View.VISIBLE else View.GONE
+        binding.includeProgress.progressLayout.visibility = if(waiting) View.VISIBLE else View.GONE
     }
 
     private fun showError(stringRes: Int) {
         KeyboardUtil.hideKeyboard(this)
-        popup.showSnackbar(root_layout, stringRes)
+        popup.showSnackbar(binding.rootLayout, stringRes)
     }
 
     private fun showRequestExportPassword() {

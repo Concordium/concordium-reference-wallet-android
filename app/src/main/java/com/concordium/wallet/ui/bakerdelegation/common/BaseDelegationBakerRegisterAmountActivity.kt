@@ -1,65 +1,62 @@
 package com.concordium.wallet.ui.bakerdelegation.common
 
+import android.widget.TextView
 import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.uicore.view.AmountEditText
 import com.concordium.wallet.uicore.view.SegmentedControlView
-import kotlinx.android.synthetic.main.activity_baker_registration_amount.*
 import java.text.DecimalFormatSymbols
 
-abstract class BaseDelegationBakerRegisterAmountActivity(layout: Int, titleId: Int = R.string.app_name) :
-    BaseDelegationBakerActivity(layout, titleId) {
-
+abstract class BaseDelegationBakerRegisterAmountActivity : BaseDelegationBakerActivity() {
     protected var validateFee: Long? = null
     protected var baseDelegationBakerRegisterAmountListener: BaseDelegationBakerRegisterAmountListener? = null
 
     interface BaseDelegationBakerRegisterAmountListener {
-        fun onRestakeChanged()
+        fun onReStakeChanged()
     }
 
-    override fun initViews() {
-        super.initViews()
-
-        val initiallyRestake = if (viewModel.bakerDelegationData.isBakerFlow()) {
+    protected fun initReStakeOptionsView(reStakeOptions: SegmentedControlView) {
+        val initiallyReStake = if (viewModel.bakerDelegationData.isBakerFlow()) {
             viewModel.bakerDelegationData.account?.accountBaker?.restakeEarnings == true || viewModel.bakerDelegationData.account?.accountBaker?.restakeEarnings == null
         } else {
             viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings == true || viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings == null
         }
-        viewModel.bakerDelegationData.restake = initiallyRestake
+        viewModel.bakerDelegationData.restake = initiallyReStake
 
-        restake_options.clearAll()
-        restake_options.addControl(
+        reStakeOptions.clearAll()
+        reStakeOptions.addControl(
             getString(R.string.delegation_register_delegation_yes_restake),
             object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
                     viewModel.markRestake(true)
-                    baseDelegationBakerRegisterAmountListener?.onRestakeChanged()
+                    baseDelegationBakerRegisterAmountListener?.onReStakeChanged()
                 }
-            }, initiallyRestake)
-        restake_options.addControl(
+            }, initiallyReStake)
+        reStakeOptions.addControl(
             getString(R.string.delegation_register_delegation_no_restake),
             object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
                     viewModel.markRestake(false)
-                    baseDelegationBakerRegisterAmountListener?.onRestakeChanged()
+                    baseDelegationBakerRegisterAmountListener?.onReStakeChanged()
                 }
-            }, !initiallyRestake)
+            }, !initiallyReStake)
     }
 
     protected fun moreThan95Percent(amountToStake: Long): Boolean {
         return amountToStake > (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0) * 0.95
     }
 
-    protected fun validateAmountInput() {
+    protected fun validateAmountInput(amount: AmountEditText, amountError: TextView) {
         if (amount.text.isNotEmpty() && !amount.text.startsWith("Ͼ")) {
             amount.setText("Ͼ".plus(amount.text.toString()))
             amount.setSelection(amount.text.length)
         }
-        setAmountHint()
+        setAmountHint(amount)
         if (amount.text.toString().isNotBlank() && amount.text.toString() != "Ͼ") {
             val stakeAmountInputValidator = getStakeAmountInputValidator()
             val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString(), validateFee)
             if (stakeError != StakeAmountInputValidator.StakeError.OK) {
-                amount_error.text = stakeAmountInputValidator.getErrorText(this, stakeError)
+                amountError.text = stakeAmountInputValidator.getErrorText(this, stakeError)
                 showError(stakeError)
             } else {
                 hideError()
@@ -70,7 +67,7 @@ abstract class BaseDelegationBakerRegisterAmountActivity(layout: Int, titleId: I
         }
     }
 
-    protected fun setAmountHint() {
+    protected fun setAmountHint(amount: AmountEditText) {
         when {
             amount.text.isNotEmpty() -> {
                 amount.hint = ""

@@ -13,12 +13,15 @@ interface AccountDao {
     @Query("SELECT * FROM account_table ORDER BY read_only ASC, name ASC")
     fun getAllAsLiveData(): LiveData<List<Account>>
 
+    @Transaction
     @Query("SELECT * FROM account_table ORDER BY read_only ASC, name ASC")
     fun getAllWithIdentityAsLiveData(): LiveData<List<AccountWithIdentity>>
 
+    @Transaction
     @Query("SELECT * FROM account_table WHERE identity_id = :id ORDER BY read_only ASC, name ASC")
     fun getAllByIdentityIdWithIdentityAsLiveData(id: Int): LiveData<List<AccountWithIdentity>>
 
+    @Transaction
     @Query("SELECT * FROM account_table WHERE id = :id")
     fun getByIdWithIdentityAsLiveData(id: Int): LiveData<AccountWithIdentity>
 

@@ -22,27 +22,20 @@ abstract class BaseAdapter<T>(val items: MutableList<T>) :
         val FOOTER = 2
     }
 
-    protected var isFooterAdded = false
+    private var isFooterAdded = false
     private var footerPosition = -1
-
 
     val isEmpty: Boolean
         get() = itemCount == 0
-
 
     interface OnItemClickListener {
         fun onItemClick(position: Int, view: View)
     }
 
-    init {
-    }
-
-    override fun getItemCount(): Int {
-        return items.size
-    }
+    override fun getItemCount() = items.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        var viewHolder: RecyclerView.ViewHolder?
+        val viewHolder: RecyclerView.ViewHolder?
 
         if (isItemViewType(viewType)) {
             return onCreateItemViewHolder(parent, viewType)
@@ -78,7 +71,6 @@ abstract class BaseAdapter<T>(val items: MutableList<T>) :
         return viewType == ITEM
     }
 
-
     protected abstract fun onCreateHeaderViewHolder(parent: ViewGroup): RecyclerView.ViewHolder
 
     protected abstract fun onCreateItemViewHolder(
@@ -94,14 +86,13 @@ abstract class BaseAdapter<T>(val items: MutableList<T>) :
 
     protected abstract fun onBindFooterViewHolder(holder: RecyclerView.ViewHolder)
 
-    protected fun displayLoadMoreFooter() {}
+    private fun displayLoadMoreFooter() {}
 
-    protected fun displayErrorFooter() {}
+    private fun displayErrorFooter() {}
 
     abstract fun createDummyItemForFooter(): T
 
-
-    fun getItem(position: Int): T? {
+    private fun getItem(position: Int): T? {
         return items[position]
     }
 
@@ -131,7 +122,7 @@ abstract class BaseAdapter<T>(val items: MutableList<T>) :
         }
     }
 
-    fun isLastPosition(position: Int): Boolean {
+    private fun isLastPosition(position: Int): Boolean {
         return position == items.size - 1
     }
 
@@ -163,10 +154,8 @@ abstract class BaseAdapter<T>(val items: MutableList<T>) :
 
     fun updateFooter(footerType: FooterType) {
         when (footerType) {
-            BaseAdapter.FooterType.LOAD_MORE -> displayLoadMoreFooter()
-            BaseAdapter.FooterType.ERROR -> displayErrorFooter()
+            FooterType.LOAD_MORE -> displayLoadMoreFooter()
+            FooterType.ERROR -> displayErrorFooter()
         }
     }
-
-
 }

@@ -15,6 +15,6 @@ data class ExportValue(
     }
 
     fun hasRequiredIdentities(): Boolean {
-        return identities != null && identities.isNotEmpty()
+        return identities.isNotEmpty()
     }
 }

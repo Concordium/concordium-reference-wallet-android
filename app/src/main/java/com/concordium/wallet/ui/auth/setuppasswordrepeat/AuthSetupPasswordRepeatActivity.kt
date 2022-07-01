@@ -6,20 +6,21 @@ import android.view.inputmethod.EditorInfo
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
+import com.concordium.wallet.databinding.ActivityAuthSetupPasswordBinding
 import com.concordium.wallet.ui.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_auth_setup_password.*
 
-class AuthSetupPasswordRepeatActivity :
-    BaseActivity(R.layout.activity_auth_setup_password, R.string.auth_setup_password_repeat_title) {
-
+class AuthSetupPasswordRepeatActivity : BaseActivity() {
+    private lateinit var binding: ActivityAuthSetupPasswordBinding
     private lateinit var viewModel: AuthSetupPasswordRepeatViewModel
-
 
     //region Lifecycle
     //************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityAuthSetupPasswordBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.auth_setup_password_repeat_title)
 
         initializeViewModel()
         viewModel.initialize()
@@ -35,8 +36,7 @@ class AuthSetupPasswordRepeatActivity :
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        ).get(AuthSetupPasswordRepeatViewModel::class.java)
-
+        )[AuthSetupPasswordRepeatViewModel::class.java]
         viewModel.finishScreenLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
@@ -48,11 +48,11 @@ class AuthSetupPasswordRepeatActivity :
     }
 
     private fun initializeViews() {
-        instruction_textview.setText(R.string.auth_setup_password_repeat_info)
-        confirm_button.setOnClickListener {
+        binding.instructionTextview.setText(R.string.auth_setup_password_repeat_info)
+        binding.confirmButton.setOnClickListener {
             onConfirmClicked()
         }
-        password_edittext.setOnEditorActionListener { _, actionId, _ ->
+        binding.passwordEdittext.setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
                     onConfirmClicked()
@@ -61,7 +61,7 @@ class AuthSetupPasswordRepeatActivity :
                 else -> false
             }
         }
-        password_edittext.requestFocus()
+        binding.passwordEdittext.requestFocus()
     }
 
     //endregion
@@ -70,10 +70,8 @@ class AuthSetupPasswordRepeatActivity :
     //************************************************************
 
     private fun onConfirmClicked() {
-        viewModel.checkPassword(password_edittext.text.toString())
+        viewModel.checkPassword(binding.passwordEdittext.text.toString())
     }
 
     //endregion
-
-
 }

@@ -10,21 +10,25 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_KEYS
 import com.concordium.wallet.data.util.FileUtil
+import com.concordium.wallet.databinding.ActivityBakerRegistrationCloseBinding
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.common.GenericFlowActivity
 import com.concordium.wallet.ui.more.export.ExportChooseMethodFragment
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
-import kotlinx.android.synthetic.main.activity_baker_registration_close.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class BakerRegistrationCloseActivity :
-    BaseDelegationBakerActivity(R.layout.activity_baker_registration_close, R.string.baker_registration_title) {
+class BakerRegistrationCloseActivity : BaseDelegationBakerActivity() {
+    private lateinit var binding: ActivityBakerRegistrationCloseBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityBakerRegistrationCloseBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.baker_registration_title)
+        initViews()
         generateKeys()
     }
 
@@ -32,7 +36,7 @@ class BakerRegistrationCloseActivity :
         if (viewModel.bakerDelegationData.type == UPDATE_BAKER_KEYS)
             setActionBarTitle(R.string.baker_update_keys_settings_title)
 
-        baker_registration_export.setOnClickListener {
+        binding.bakerRegistrationExport.setOnClickListener {
             startExport()
         }
 
@@ -43,9 +47,9 @@ class BakerRegistrationCloseActivity :
         })
 
         viewModel.bakerKeysLiveData.observe(this, Observer { bakerKeys ->
-            baker_registration_export_election_verify_key.text = bakerKeys.electionVerifyKey
-            baker_registration_export_signature_verify_key.text = bakerKeys.signatureVerifyKey
-            baker_registration_export_aggregation_verify_key.text = bakerKeys.aggregationVerifyKey
+            binding.bakerRegistrationExportElectionVerifyKey.text = bakerKeys?.electionVerifyKey ?: ""
+            binding.bakerRegistrationExportSignatureVerifyKey.text = bakerKeys?.signatureVerifyKey ?: ""
+            binding.bakerRegistrationExportAggregationVerifyKey.text = bakerKeys?.aggregationVerifyKey ?: ""
         })
 
         viewModel.fileSavedLiveData.observe(this, object : EventObserver<Int>() {

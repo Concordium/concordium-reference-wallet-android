@@ -5,15 +5,13 @@ import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.databinding.ActivityAccountTransactionFiltersBinding
 import com.concordium.wallet.ui.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_account_transaction_filters.*
 
-
-class AccountTransactionsFiltersActivity :
-    BaseActivity(R.layout.activity_account_transaction_filters, R.string.account_transaction_filters) {
-
+class AccountTransactionsFiltersActivity : BaseActivity() {
     private val session: Session = App.appCore.session
 
+    private lateinit var binding: ActivityAccountTransactionFiltersBinding
     private lateinit var mAccount: Account
 
     companion object {
@@ -26,6 +24,9 @@ class AccountTransactionsFiltersActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityAccountTransactionFiltersBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.account_transaction_filters)
         mAccount = intent.extras!!.getSerializable(EXTRA_ACCOUNT) as Account
         initializeViewModel()
         initViews()
@@ -34,25 +35,24 @@ class AccountTransactionsFiltersActivity :
     override fun onResume() {
         super.onResume()
 
-        filter_show_rewards.isChecked = session.getHasShowRewards(mAccount.id)
-        filter_show_finalizations_rewards.isChecked = session.getHasShowFinalizationRewards(mAccount.id)
-        filter_show_finalizations_rewards.isEnabled = filter_show_rewards.isChecked
+        binding.filterShowRewards.isChecked = session.getHasShowRewards(mAccount.id)
+        binding.filterShowFinalizationsRewards.isChecked = session.getHasShowFinalizationRewards(mAccount.id)
+        binding.filterShowFinalizationsRewards.isEnabled = binding.filterShowRewards.isChecked
 
-        filter_show_rewards.setOnCheckedChangeListener { _, isChecked ->
+        binding.filterShowRewards.setOnCheckedChangeListener { _, isChecked ->
             session.setHasShowRewards(mAccount.id, isChecked)
             if(!isChecked){
-                filter_show_finalizations_rewards.isEnabled = false
-                filter_show_finalizations_rewards.isChecked = false
+                binding.filterShowFinalizationsRewards.isEnabled = false
+                binding.filterShowFinalizationsRewards.isChecked = false
                 session.setHasShowFinalizationRewards(mAccount.id, false)
             }
             else{
-                filter_show_finalizations_rewards.isEnabled = true
+                binding.filterShowFinalizationsRewards.isEnabled = true
             }
         }
-        filter_show_finalizations_rewards.setOnCheckedChangeListener { _, isChecked ->
+        binding.filterShowFinalizationsRewards.setOnCheckedChangeListener { _, isChecked ->
             session.setHasShowFinalizationRewards(mAccount.id, isChecked)
         }
-
     }
 
     // endregion
@@ -61,8 +61,6 @@ class AccountTransactionsFiltersActivity :
     //************************************************************
 
     private fun initializeViewModel() {
-
-
     }
 
     private fun initViews() {
@@ -73,7 +71,5 @@ class AccountTransactionsFiltersActivity :
     //region Control/UI
     //************************************************************
 
-
     //endregion
 }
-

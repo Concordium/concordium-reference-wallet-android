@@ -19,6 +19,6 @@ data class ExportData(
     }
 
     fun hasRequiredIdentities(): Boolean {
-        return value != null && value.hasRequiredIdentities()
+        return value.hasRequiredIdentities()
     }
 }

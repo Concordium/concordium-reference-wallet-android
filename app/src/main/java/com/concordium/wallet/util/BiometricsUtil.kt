@@ -4,10 +4,9 @@ import androidx.biometric.BiometricManager
 import com.concordium.wallet.App
 
 object BiometricsUtil {
-
     fun isBiometricsAvailable(): Boolean {
         val biometricManager = BiometricManager.from(App.appContext)
-        when (biometricManager.canAuthenticate()) {
+        when (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)) {
             BiometricManager.BIOMETRIC_SUCCESS -> {
                 Log.d("App can authenticate using biometrics.")
                 return true
@@ -27,5 +26,4 @@ object BiometricsUtil {
         }
         return false
     }
-
 }

@@ -31,28 +31,28 @@ abstract class WalletDatabase : RoomDatabase() {
         val MIGRATION_3_4: Migration = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE transfer_table "
-                        + " ADD COLUMN memo TEXT");
+                        + " ADD COLUMN memo TEXT")
             }
         }
 
         val MIGRATION_4_5: Migration = object : Migration(4, 5) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE account_table "
-                        + " ADD COLUMN account_delegation TEXT");
+                        + " ADD COLUMN account_delegation TEXT")
             }
         }
 
         val MIGRATION_5_6: Migration = object : Migration(5, 6) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE account_table "
-                        + " ADD COLUMN account_baker TEXT");
+                        + " ADD COLUMN account_baker TEXT")
             }
         }
 
         val MIGRATION_6_7: Migration = object : Migration(6, 7) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE account_table "
-                        + " ADD COLUMN accountIndex INTEGER");
+                        + " ADD COLUMN accountIndex INTEGER")
             }
         }
 
