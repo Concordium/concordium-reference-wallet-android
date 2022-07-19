@@ -210,7 +210,16 @@
         <activity
             android:name=".ui.intro.introsetup.IntroSetupActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" /> <!-- Auth -->
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.passphrase.setup.SetupWalletActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.passphrase.recover.RecoverWalletActivity"
+            android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.auth.login.AuthLoginActivity"
             android:launchMode="singleTop"

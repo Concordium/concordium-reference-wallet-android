@@ -6,8 +6,11 @@ import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.util.AssetUtil
 import com.concordium.wallet.util.Log
-import okhttp3.*
+import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.Protocol
+import okhttp3.Request
+import okhttp3.Response
 import okhttp3.ResponseBody.Companion.toResponseBody
 import okio.Buffer
 import java.io.IOException

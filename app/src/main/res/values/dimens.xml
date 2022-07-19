@@ -58,4 +58,7 @@
 
     <dimen name="logo_size_small">38dp</dimen>
 
+    <!-- Text sizes  -->
+    <dimen name="mono_standard">14sp</dimen>
+
 </resources>

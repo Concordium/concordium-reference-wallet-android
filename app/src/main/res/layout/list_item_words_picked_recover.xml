@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="@android:color/transparent"
+    xmlns:tools="http://schemas.android.com/tools">
+    <RelativeLayout
+        android:id="@+id/rlBorder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/rounded_white_blue_border">
+        <TextView
+            android:id="@+id/tvPosition"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="2dp"
+            android:textColor="@color/theme_black"
+            android:gravity="center_vertical|end"
+            style="@style/TextView.Mono"
+            tools:text="88." />
+        <RelativeLayout
+            android:id="@+id/rlInput"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <EditText
+                android:id="@+id/etTitle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                style="@style/TextView.Mono"
+                android:textColor="@color/theme_black"
+                android:imeOptions="actionNext"
+                android:singleLine="true"
+                android:lines="1"
+                android:maxLines="1"
+                android:inputType="textNoSuggestions|textVisiblePassword"
+                android:textCursorDrawable="@null"
+                android:background="@null"
+                tools:text="hedgehog"
+                android:importantForAutofill="no" />
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                style="@style/TextView.Mono"
+                android:textColor="@color/theme_black"
+                android:gravity="center"
+                android:visibility="gone"
+                tools:visibility="visible"
+                tools:text="hedgehog" />
+        </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>
