@@ -200,9 +200,33 @@
     <!-- Intro setup-->
     <string name="intro_setup_title">Getting started</string>
     <string name="intro_setup_header">Are you new to Concordium?</string>
-    <string name="intro_setup_info">If this is your first time using the Concordium blockchain, you must go through a verification process to obtain your Concordium identity and your initial account. You will be guided through this process in the next pages.\n\nIf you have previously used Concordium Mobile Wallet, you can also import already existing accounts if you have a backup from a previous installation of the Concordium Mobile Wallet.\n\nHow would you like to continue?</string>
-    <string name="intro_setup_confirm_create_initial">I want to create my initial account</string>
-    <string name="intro_setup_confirm_import">I want to import existing accounts</string>
+    <string name="intro_setup_info_1">I\'m new!</string>
+    <string name="intro_setup_info_2">If this is your first time using the Concordium blockchain, you can set up a fresh wallet. This includes:\n\n1. Your secret recovery phrase\n2. A brief introduction to Concordium\n3. Your first Concordium identity\n4. You first Concordium account\n\nYou will be guided through each step of the process.</string>
+    <string name="intro_recover_info_1">I already have a wallet!</string>
+    <string name="intro_recover_info_2">If you previously set up a Concordium wallet with a secret recovery phrase, you can restore your wallet here.</string>
+    <string name="intro_setup_wallet">Set up a fresh wallet</string>
+    <string name="intro_recover_wallet">Recover wallet</string>
+
+    <string name="pass_phrase_title">Secret recovery phrase</string>
+    <string name="pass_phrase_explain">The secret recovery phrase is a very important part of having one or more accounts. If you are not acquainted with the concept, please review the video above carefully before continuing.\n\nYou should also consider using a computer you trust, e.g. a private computer and not one at the library.</string>
+    <string name="pass_phrase_hidden_please_write">Please write all 24 words down in the right order.</string>
+    <string name="pass_phrase_hidden_tap">Tap to reveal your secret recovery phrase. Make sure no one else can see it.</string>
+    <string name="pass_phrase_confirm">I confirm I have written down my 24 word secret recovery phrase.</string>
+    <string name="pass_phrase_pick">Pick the correct suggestion on the right, for each index.</string>
+    <string name="pass_phrase_incorrect">Incorrect secret recovery phrase. Please verify that each index has the right word.</string>
+    <string name="pass_phrase_success">Your secret recovery phrase has been successfully setup!</string>
+
+    <string name="pass_phrase_recover_title">Recover your wallet</string>
+    <string name="pass_phrase_recover_explain_1_title">How to recover your wallet:</string>
+    <string name="pass_phrase_recover_explain_1_text">There are two steps to recovering a wallet:\n\n1. Entering your secret recover phrase\n2. Recovering your accounts and identities\n\nThe first step is manual process, in which you have to enter all your 24 words one by one.\n\nThe second step is most often automatic, but in some cases you will have to make some additional inputs. additional inputs. We\'ll get back to that.\n\nLet\'s get to the secret recovery phrase!</string>
+    <string name="pass_phrase_recover_explain_2_text">If you need a reminder on what exactly the secret recovery phrase is, you can watch the video above… or browse through a carousel… or something.</string>
+    <string name="pass_phrase_recover_input_explain">Enter the correct word for each index.</string>
+    <string name="pass_phrase_recover_input_clear_all">Clear all</string>
+    <string name="pass_phrase_recover_input_clear_below">Clear below</string>
+    <string name="pass_phrase_recover_incorrect">Invalid secret recovery phrase. Please verify that all words are entered correctly.</string>
+    <string name="pass_phrase_recover_success">Your secret recovery phrase has been successfully entered! Tab continue to recover your accounts and identities.</string>
+    <string name="pass_phrase_recover_input_title">Your secret recovery phrase</string>
+
     <string name="intro_flow_title">Introduction</string>
 
     <!-- Delegation intro -->

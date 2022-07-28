@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineVertical50"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintGuide_percent="0.5"
+        android:orientation="vertical" />
+
+    <TextView
+        android:id="@+id/tvHeader"
+        style="@style/TextView.Standard"
+        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+        android:text="@string/pass_phrase_recover_input_explain"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnClearAll"
+        style="@style/Button.Standard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="140dp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvHeader"
+        app:layout_constraintRight_toLeftOf="@+id/guidelineVertical50"
+        android:text="@string/pass_phrase_recover_input_clear_all" />
+
+    <Button
+        android:id="@+id/btnClearBelow"
+        style="@style/Button.Standard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="140dp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginStart="4dp"
+        android:paddingHorizontal="@dimen/activity_horizontal_margin"
+        app:layout_constraintTop_toBottomOf="@+id/tvHeader"
+        app:layout_constraintLeft_toRightOf="@+id/guidelineVertical50"
+        android:text="@string/pass_phrase_recover_input_clear_below" />
+
+    <LinearLayout
+        android:id="@+id/llInputArea"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnClearAll">
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="0dp"
+            android:layout_height="255dp"
+            android:layout_weight="0.45"
+            android:dividerHeight="0dp"
+            android:divider="@null"
+            android:headerDividersEnabled="false"
+            android:footerDividersEnabled="false"
+            android:scrollbars="none"
+            android:background="@android:color/transparent" />
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:src="@drawable/ic_seed_phrase_arrow"
+            android:scaleType="fitXY"
+            android:layout_gravity="center_vertical"
+            tools:ignore="ContentDescription" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="255dp"
+            android:layout_weight="0.45"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/tvSuggest1"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                style="@style/TextView.Mono"
+                tools:text="reflect"
+                android:background="@drawable/suggestion_selector"
+                android:gravity="center" />
+            <TextView
+                android:id="@+id/tvSuggest2"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/suggestion_selector"
+                style="@style/TextView.Mono"
+                tools:text="mosquito"
+                android:gravity="center" />
+            <TextView
+                android:id="@+id/tvSuggest3"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/suggestion_selector"
+                style="@style/TextView.Mono"
+                tools:text="fan"
+                android:gravity="center" />
+            <TextView
+                android:id="@+id/tvSuggest4"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="18dp"
+                android:background="@drawable/suggestion_selector"
+                style="@style/TextView.Mono"
+                tools:text="absent"
+                android:gravity="center" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvError"
+        style="@style/TextView.Standard.Error"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+        android:text="@string/pass_phrase_recover_incorrect"
+        android:gravity="center"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llInputArea" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

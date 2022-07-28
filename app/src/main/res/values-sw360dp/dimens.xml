@@ -1,0 +1,6 @@
+<resources>
+
+    <!-- Text sizes  -->
+    <dimen name="mono_standard">14sp</dimen>
+
+</resources>
