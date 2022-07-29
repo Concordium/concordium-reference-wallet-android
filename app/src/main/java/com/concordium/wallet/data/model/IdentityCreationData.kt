@@ -7,7 +7,6 @@ data class IdentityCreationData(
     val idObjectRequest: RawJson,
     val privateIdObjectDataEncrypted: String,
     val identityName: String,
-    val accountName: String,
     val encryptedAccountData: String,
     val accountAddress: String
 ) : Serializable

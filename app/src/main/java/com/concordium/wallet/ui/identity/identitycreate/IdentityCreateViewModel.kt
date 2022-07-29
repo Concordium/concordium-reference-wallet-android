@@ -9,7 +9,6 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.room.WalletDatabase
 import kotlinx.coroutines.launch
 
-
 class IdentityCreateViewModel(application: Application) : AndroidViewModel(application) {
 
     private val identityRepository: IdentityRepository
@@ -19,10 +18,8 @@ class IdentityCreateViewModel(application: Application) : AndroidViewModel(appli
         get() = _waitingLiveData
 
     private val _isFirstIdentityLiveData = MutableLiveData<Boolean>()
-    val isFirstIdentityLiveData: LiveData<Boolean>
-        get() = _isFirstIdentityLiveData
 
-    var customAccountName: String? = null
+//    var customAccountName: String? = null
 
     init {
         val identityDao = WalletDatabase.getDatabase(application).identityDao()

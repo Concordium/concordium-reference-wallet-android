@@ -7,7 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.AbsListView
-import android.widget.AbsListView.OnScrollListener.*
+import android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE
+import android.widget.AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import cash.z.ecc.android.bip39.Mnemonics

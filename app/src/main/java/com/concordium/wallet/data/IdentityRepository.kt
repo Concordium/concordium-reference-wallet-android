@@ -5,9 +5,7 @@ import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.IdentityDao
 
 class IdentityRepository(private val identityDao: IdentityDao) {
-
     val allIdentities: LiveData<List<Identity>> = identityDao.getAllAsLiveData()
-
     val allDoneIdentities: LiveData<List<Identity>> = identityDao.getAllDoneAsLiveData()
 
     suspend fun getCount(): Int {
@@ -42,16 +40,8 @@ class IdentityRepository(private val identityDao: IdentityDao) {
         return identityDao.insert(identity).first()
     }
 
-    suspend fun insertAll(identityList: List<Identity>) {
-        identityDao.insert(*identityList.toTypedArray())
-    }
-
     suspend fun update(identity: Identity) {
         identityDao.update(identity)
-    }
-
-    suspend fun updateAll(identityList: List<Identity>) {
-        identityDao.update(*identityList.toTypedArray())
     }
 
     suspend fun delete(identity: Identity) {

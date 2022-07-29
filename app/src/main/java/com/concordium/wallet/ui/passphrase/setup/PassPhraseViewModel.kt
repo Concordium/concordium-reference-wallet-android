@@ -12,7 +12,6 @@ import java.io.Serializable
 class PassPhraseViewModel(application: Application) : AndroidViewModel(application), Serializable {
     var mnemonicCodeToConfirm = listOf<CharArray>()
     var wordsPicked = arrayOfNulls<String>(WORD_COUNT + (WordsPickedBaseListAdapter.OFFSET * 2) + 1)
-    var passPhraseConfirmChecked: Boolean = false
 
     companion object {
         val WORD_COUNT: Int = Mnemonics.WordCount.COUNT_24.count
@@ -23,15 +22,22 @@ class PassPhraseViewModel(application: Application) : AndroidViewModel(applicati
     val validate: LiveData<Boolean>
         get() = _validateLiveData
 
+    val continueEnabled: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+
     val reveal = MutableLiveData<Boolean>()
 
     fun generateMnemonicCode() {
         val mnemonicCode: Mnemonics.MnemonicCode = Mnemonics.MnemonicCode(Mnemonics.WordCount.COUNT_24)
         mnemonicCode.forEach { word ->
             if (BuildConfig.DEBUG)
-                println(word)
+                println("LC -> $word")
         }
         mnemonicCodeToConfirm = mnemonicCode.words.toList()
+    }
+
+    fun hack() {
+        if (BuildConfig.DEBUG)
+            _validateLiveData.value = true
     }
 
     fun validateInputCode() {
@@ -41,9 +47,12 @@ class PassPhraseViewModel(application: Application) : AndroidViewModel(applicati
             return
         if (entered.size == WORD_COUNT) {
             val enteredPhrase: String = entered.joinToString(" ") { it }
-            val generatedPhrase = mnemonicCodeToConfirm.joinToString(" ") { String(it) }
-            success = enteredPhrase == generatedPhrase
+            success = enteredPhrase == generatedPhrase()
         }
         _validateLiveData.value = success
+    }
+
+    fun generatedPhrase(): String {
+        return mnemonicCodeToConfirm.joinToString(" ") { String(it) }
     }
 }

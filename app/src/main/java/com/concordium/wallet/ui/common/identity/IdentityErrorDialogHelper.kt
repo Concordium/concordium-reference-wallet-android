@@ -20,10 +20,10 @@ import java.security.MessageDigest
 object IdentityErrorDialogHelper {
 
     fun hash(txt: String): String {
-        val bytes = txt.toString().toByteArray()
+        val bytes = txt.toByteArray()
         val md = MessageDigest.getInstance("SHA-256")
         val digest = md.digest(bytes)
-        return digest.fold("", { str, it -> str + "%02x".format(it) })
+        return digest.fold("") { str, it -> str + "%02x".format(it) }
     }
 
     fun showIdentityError(activity: AppCompatActivity, dialogs: Dialogs, identityErrorData: IdentityErrorData) {
@@ -127,15 +127,10 @@ object IdentityErrorDialogHelper {
         return openSupportEmail(context, context.resources, "","", true)
     }
 
-
-
-
     fun copyToClipboard(context: Context, title: String, content: String) {
         val clipboard: ClipboardManager = context.getSystemService(AppCompatActivity.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText(title, content)
         clipboard.setPrimaryClip(clip)
         Toast.makeText(context, context.resources.getString(R.string.contact_issuance_hash_value_copied), Toast.LENGTH_SHORT).show()
     }
-
-
 }

@@ -1,12 +1,10 @@
 package com.concordium.wallet.ui
 
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
@@ -18,7 +16,6 @@ import com.concordium.wallet.ui.auth.setup.AuthSetupActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
-import com.concordium.wallet.ui.identity.identityconfirmed.IdentityErrorData
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.intro.introstart.IntroTermsActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
@@ -66,18 +63,14 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
     override fun onResume() {
         super.onResume()
 
-        if(!viewModel.databaseVersionAllowed){
+        if (!viewModel.databaseVersionAllowed){
             val builder = AlertDialog.Builder(this)
             builder.setMessage(getString(R.string.error_database))
-            builder.setPositiveButton(getString(R.string.error_database_close), object: DialogInterface.OnClickListener {
-                override fun onClick(dialog: DialogInterface, which:Int) {
-                    finish()
-                }
-            })
+            builder.setPositiveButton(getString(R.string.error_database_close)) { _, _ -> finish() }
             builder.setCancelable(false)
             builder.create().show()
         }
-        else{
+        else {
             if (viewModel.shouldShowAuthentication()) {
                 showAuthenticationIfRequired()
             } else {
@@ -142,28 +135,28 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[MainViewModel::class.java]
 
-        viewModel.titleLiveData.observe(this, Observer<String> { title ->
+        viewModel.titleLiveData.observe(this) { title ->
             title?.let {
                 setActionBarTitle(it)
             }
-        })
-        viewModel.stateLiveData.observe(this, Observer<MainViewModel.State> { state ->
+        }
+        viewModel.stateLiveData.observe(this) { state ->
             state?.let {
                 replaceFragment(state)
             }
-        })
+        }
 
-        viewModel.identityErrorLiveData.observe(this, Observer<IdentityErrorData> { data ->
+        viewModel.identityErrorLiveData.observe(this) { data ->
             data?.let {
                 IdentityErrorDialogHelper.showIdentityError(this, dialogs, data)
             }
-        })
+        }
 
-        viewModel.newFinalizedAccountLiveData.observe(this, Observer<String> { newAccount ->
+        viewModel.newFinalizedAccountLiveData.observe(this) { newAccount ->
             newAccount?.let {
                 CustomDialogFragment.newAccountFinalizedDialog(this, newAccount)
             }
-        })
+        }
     }
 
     private fun initializeViews() {
@@ -200,7 +193,7 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
     private fun forceMenuSelection(resId: Int) {
         GlobalScope.launch(Dispatchers.Main){
             delay(1)
-            binding.bottomNavigationView.menu.findItem(resId).isChecked = true;
+            binding.bottomNavigationView.menu.findItem(resId).isChecked = true
         }
     }
 
@@ -224,15 +217,12 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
             MainViewModel.State.AccountOverview -> AccountsOverviewFragment()
             MainViewModel.State.More -> MoreOverviewFragment()
         }
-        replaceFragment(fragment, false)
+        replaceFragment(fragment)
     }
 
-    private fun replaceFragment(fragment: Fragment, addToBackStack: Boolean = true) {
+    private fun replaceFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fragment_container, fragment)
-        if (addToBackStack) {
-            transaction.addToBackStack(null)
-        }
         transaction.commit()
     }
 
@@ -265,11 +255,8 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
     }
 
     private fun gotoIdentityProviderList() {
-        viewModel.identityErrorLiveData.value?.let { data ->
-            val intent = Intent(this, IdentityProviderListActivity::class.java)
-            intent.putExtra(IdentityProviderListActivity.EXTRA_IDENTITY_CUSTOM_NAME, data.identity.name)
-            intent.putExtra(IdentityProviderListActivity.EXTRA_ACCOUNT_CUSTOM_NAME, data.account?.name ?: data.identity.name)
-            startActivity(intent)
+        viewModel.identityErrorLiveData.value?.let { _ ->
+            startActivity(Intent(this, IdentityProviderListActivity::class.java))
         }
     }
 

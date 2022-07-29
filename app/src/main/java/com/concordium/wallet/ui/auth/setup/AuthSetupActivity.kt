@@ -166,8 +166,7 @@ class AuthSetupActivity : BaseActivity() {
     }
 
     private fun gotoIntroSetup() {
-        val intent = Intent(this, IntroSetupActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(this, IntroSetupActivity::class.java))
     }
 
     private fun showPasswordError() {

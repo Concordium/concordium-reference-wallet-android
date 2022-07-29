@@ -27,7 +27,7 @@ class IdentityCreateAccountNameFragment : BaseFragment(R.string.identity_create_
         sharedViewModel.initialize()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentIdentityCreateAccountNameBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -61,7 +61,7 @@ class IdentityCreateAccountNameFragment : BaseFragment(R.string.identity_create_
             gotoIdentityName()
         }
         binding.accountNameEdittext.afterTextChanged { text ->
-            binding.confirmButton.isEnabled = !text.isNullOrEmpty()
+            binding.confirmButton.isEnabled = text.isNotEmpty()
         }
 
         binding.accountNameEdittext.setOnEditorActionListener { textView, actionId, _ ->
@@ -86,7 +86,7 @@ class IdentityCreateAccountNameFragment : BaseFragment(R.string.identity_create_
             binding.accountNameEdittext.error = getString(R.string.valid_special_chars_error_text)
             return
         }
-        sharedViewModel.customAccountName = binding.accountNameEdittext.text.toString().trim()
+        //sharedViewModel.customAccountName = binding.accountNameEdittext.text.toString().trim()
         findNavController().navigate(IdentityCreateAccountNameFragmentDirections.actionNavIdentityCreateAccountNameToNavIdentityCreateIdentityName())
     }
 

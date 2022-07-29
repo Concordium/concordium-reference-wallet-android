@@ -22,6 +22,7 @@ class AuthPreferences(val context: Context) :
         val PREFKEY_SHIELDING_ENABLED_ = "PREFKEY_SHIELDING_ENABLED_"
         val PREFKEY_SHIELDED_WARNING_DISMISSED_ = "PREFKEY_SHIELDED_WARNING_DISMISSED_"
         val PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED = "PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED_"
+        val PASS_PHRASE = "PASS_PHRASE"
     }
 
     fun setHasSetupUser(value: Boolean) {
@@ -156,4 +157,15 @@ class AuthPreferences(val context: Context) :
         return getBoolean(PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED+id, false)
     }
 
+    fun setPassPhrase(value: String) {
+        setString(PASS_PHRASE, value)
+    }
+
+    fun getPassPhrase(): String {
+        return getString(PASS_PHRASE, "")
+    }
+
+    fun hasPassPhrase(): Boolean {
+        return getPassPhrase() != ""
+    }
 }

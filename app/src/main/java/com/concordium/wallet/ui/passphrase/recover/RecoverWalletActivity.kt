@@ -12,7 +12,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityRecoverWalletBinding
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.passphrase.setup.SetupWalletActivity
+import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessActivity
 
 class RecoverWalletActivity : BaseActivity() {
     private lateinit var binding: ActivityRecoverWalletBinding
@@ -52,10 +52,8 @@ class RecoverWalletActivity : BaseActivity() {
 
         binding.continueButton.setOnClickListener {
             if (binding.pager.currentItem == (binding.pager.adapter as ScreenSlidePagerAdapter).itemCount - 1) {
-                println("LC -> Must go to explain create identity flow")
                 finish()
-                startActivity(Intent(this, MainActivity::class.java))
-                TODO("Must go to explain create identity flow!")
+                startActivity(Intent(this, RecoverProcessActivity::class.java))
             } else {
                 binding.pager.currentItem++
             }

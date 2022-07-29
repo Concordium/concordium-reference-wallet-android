@@ -47,13 +47,16 @@
     <string name="dialog_popup_support_creation_flow_with_email_client_text">The identity issuance failed. You can either try again, or contact Concordium support.\n\nClicking Contact Support will open your e-mail app, with a reference to your submission as subject.\n\n</string>
     <string name="dialog_popup_support_creation_flow_without_email_client_text">The identity issuance failed. You can either try again, or contact Concordium support.\n\nYou can copy the reference below, and then contact Concordium at support@concordium.software</string>
 
-
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
     <string name="dialog_initial_account_error_title">Initial account creation failed</string>
     <string name="dialog_initial_account_error_text">Something went wrong with the initial account creation.\n\nPlease go back and try again, or try at another time.</string>
     <string name="dialog_initial_account_error_text_first">Something went wrong with the initial account creation.\n\nPlease go back and try again.</string>
     <string name="dialog_initial_account_error_positive">Try again</string>
+
+    <string name="dialog_identity_create_error_title">Identity rejected</string>
+    <string name="dialog_identity_create_error_text">Your identity request was unfortunately rejected with the following reason:\n\n%1$s\n\nFor security reasons rejected identity requests cannot be resolved, which means you have to submit a new request.</string>
+    <string name="dialog_identity_create_error_retry">Make new identity request</string>
 
     <!-- Main -->
     <string name="main_title">Accounts</string>
@@ -227,7 +230,24 @@
     <string name="pass_phrase_recover_success">Your secret recovery phrase has been successfully entered! Tab continue to recover your accounts and identities.</string>
     <string name="pass_phrase_recover_input_title">Your secret recovery phrase</string>
 
+    <string name="pass_phrase_recover_process_title">Recovering your accounts and identities</string>
+    <string name="pass_phrase_recover_process_subtitle">Recovering IDs and accounts</string>
+    <string name="pass_phrase_recover_process_scanning">Scanning the Concordium blockchain. Hang on while we find your account and identities.</string>
+    <string name="pass_phrase_recover_process_continue">Continue to wallet</string>
+    <string name="pass_phrase_recover_process_finished">Recovery finished</string>
+    <string name="pass_phrase_recover_process_recovered">You have successfully recovered:</string>
+    <string name="pass_phrase_recover_process_finished_accounts">Accounts:</string>
+    <string name="pass_phrase_recover_process_try_again">Try again</string>
+    <string name="pass_phrase_recover_process_enter_another">Enter another recovery phrase</string>
+    <string name="pass_phrase_recover_process_nothing_subtitle">We found nothing to recover.</string>
+    <string name="pass_phrase_recover_process_nothing_text">There was no accounts to be found for the secret recovery phrase. Did you maybe enter a wrong recovery phrase?\n\nIf you only have an identity and no accounts, this can also be the reason. In this case please specify which identity provider you used to get your identity, so we can send them a request.</string>
+
     <string name="intro_flow_title">Introduction</string>
+
+    <!-- Identity intro flow -->
+    <string name="identity_intro_flow_title">Introduction</string>
+    <string name="identity_intro_flow_subtitle1">The Concordium concepts</string>
+    <string name="identity_intro_flow_subtitle2">You are ready!</string>
 
     <!-- Delegation intro -->
     <string name="delegation_intro_flow_title">Delegation</string>
@@ -274,7 +294,7 @@
     <string name="delegation_status_content_delegation_will_be_stopped">The delegation will be stopped, and the delegation amount will be unlocked on the public balance of the account.</string>
 
     <string name="delegation_register_delegation_intro">You can delegate to an open pool of your choice, or you can stake using passive delegation.</string>
-    <string name="delegation_register_delegation_desc">If you don’t already know what baker pool you want to delegate an amount to, you can read more about finding one here:\n\n<a href="https://developer.concordium.software/en/mainnet/net/concepts/concepts-delegation.html">developer.concordium.software</a></string>
+    <string name="delegation_register_delegation_desc">If you don\'t already know which baker pool you want to delegate an amount to, you can look for one here:\n\n<a href="https://ccdscan.io/staking">https://ccdscan.io/staking</a></string>
     <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific baker pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a baker node.\n\nFor more info you can visit\n\n<a href="https://developer.concordium.software/en/mainnet/net/concepts/concepts-delegation.html">developer.concordium.software</a></string>
     <string name="delegation_register_delegation_pool_id_hint">Enter baker pool ID</string>
     <string name="delegation_register_delegation_pool_id_hint_update">Optional: New baker pool ID</string>
@@ -609,7 +629,7 @@
     <string name="identity_create_identity_provider_privacy_policy">Privacy Policy</string>
 
     <!-- Identity provider list -->
-    <string name="identity_provider_list_title">New Identity Verification</string>
+    <string name="identity_provider_list_title">Your first identity</string>
     <string name="identity_provider_list_note">Selecting a 3rd party Identity Issuer will take you to their
         Identity Issuance flow.You will be returned to the app upon completion.\n\nNote: More Identity Issuers are coming soon!</string>
 
@@ -617,13 +637,18 @@
     <string name="identity_provider_webview_title">Identity Verification</string>
 
     <!-- Identity confirmed -->
-    <string name="identity_confirmed_title">Account</string>
+    <string name="identity">Identity</string>
+    <string name="identity_confirmed_title">Your first identity</string>
     <string name="identity_confirmed_header">Verification request submitted!</string>
     <string name="identity_confirmed_info">Your request has been submitted with the identity provider. Now you just have to wait for a moment for them to process your submission.\n\nYou can press continue to have a look at the app, while you wait.</string>
-    <string name="identity_confirmed_info_first">It might take a little while for the identity provider to finish your request. In the meanwhile, you can have a look at the app.</string>
+    <string name="identity_confirmed_info_first">Your request has been submitted with the identity provider. Now you just have to wait for a moment for them to process your submission. Once your identity is verified, you can create your first account.\n\nYou can press continue to have a look at the app, while you wait.</string>
     <string name="identity_confirmed_confirm">Continue</string>
     <string name="identity_confirmed_failed">Identity issuance failed!</string>
+    <string name="identity_confirmed_confirm_account_submission_toolbar">Your first account</string>
+    <string name="identity_confirmed_confirm_account_submission_title">Account submission</string>
+    <string name="identity_confirmed_confirm_account_submission_text">Once the identity provider has verified your identity, you will be able to submit your first Concordium account. So hang on for a bit and wait for them to finish. You can also come back later to submit your account.\n\nWhen you have submitted your account, you will be taken to the wallet.</string>
 
+    <string name="identity_confirmed_">Identity Issuance</string>
     <string name="identity_confirmed_alert_dialog_title">Identity Issuance</string>
     <string name="identity_confirmed_alert_dialog_text">Please check back in the app regularly, until the response from the identity provider has been received. It’s usually ready within 15 minutes, and can be retrieved for up to seven days.</string>
     <string name="identity_confirmed_alert_dialog_ok">Okay</string>

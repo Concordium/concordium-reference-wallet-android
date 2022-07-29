@@ -44,7 +44,17 @@ class AccountItemView(context: Context, attrs: AttributeSet?): LinearLayout(cont
         binding.rootCardContent.setBackgroundColor(if(accountWithIdentitiy.account.readOnly) resources.getColor(R.color.theme_component_background_disabled, null) else resources.getColor(R.color.theme_white, null))
 
         this.isEnabled = !accountWithIdentitiy.account.readOnly
+    }
 
+    fun setDefault() {
+        binding.accountNameArea.setDefault()
+        binding.totalTextview.text = "123.45"
+        binding.balanceAtDisposalTextview.text = "123.45"
+        binding.buttonArea.visibility = View.GONE
+        val layoutParams = binding.rootCard.layoutParams as MarginLayoutParams
+        layoutParams.setMargins(layoutParams.leftMargin, 0, layoutParams.rightMargin, 0)
+        binding.rootCard.layoutParams = layoutParams
+        isEnabled = false
     }
 
     fun setOnItemClickListener(onItemClickListener: OnItemClickListener?) {

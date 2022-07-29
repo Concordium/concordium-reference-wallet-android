@@ -19,13 +19,9 @@ import com.concordium.wallet.ui.common.BackendErrorHandler
 import kotlinx.coroutines.launch
 import javax.crypto.Cipher
 
-class IdentityProviderListViewModel(application: Application) :
-    AndroidViewModel(application) {
+class IdentityProviderListViewModel(application: Application) : AndroidViewModel(application) {
+    private lateinit var identityCustomName: String
 
-    lateinit var identityCustomName: String
-    lateinit var accountCustomName: String
-
-    private val identityRepository: IdentityRepository
     private val repository: IdentityProviderRepository = IdentityProviderRepository()
     private val gson = App.appCore.gson
 
@@ -35,7 +31,6 @@ class IdentityProviderListViewModel(application: Application) :
     private val tempData = TempData()
     var currentIdentityProvider: IdentityProvider? = null
         private set
-
 
     private val _waitingLiveData = MutableLiveData<Boolean>()
     val waitingLiveData: LiveData<Boolean>
@@ -71,15 +66,17 @@ class IdentityProviderListViewModel(application: Application) :
     }
 
     init {
-        val identityDao = WalletDatabase.getDatabase(application).identityDao()
-        identityRepository = IdentityRepository(identityDao)
         _waitingLiveData.value = true
         _waitingGlobalData.value = true
     }
 
-    fun initialize(identityCustomName: String, accountCustomName: String) {
-        this.identityCustomName = identityCustomName
-        this.accountCustomName = accountCustomName
+    fun initialize(identityNamePrefix: String) {
+        val identityDao = WalletDatabase.getDatabase(getApplication()).identityDao()
+        val identityRepository = IdentityRepository(identityDao)
+        viewModelScope.launch {
+            val identityCount = identityRepository.getCount() + 1
+            identityCustomName = "$identityNamePrefix $identityCount"
+        }
     }
 
     override fun onCleared() {
@@ -128,15 +125,15 @@ class IdentityProviderListViewModel(application: Application) :
     }
 
     fun getCipherForBiometrics(): Cipher? {
-        try {
+        return try {
             val cipher = App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
             if (cipher == null) {
                 _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
             }
-            return cipher
+            cipher
         } catch (e: KeystoreEncryptionException) {
             _errorLiveData.value = Event(R.string.app_error_keystore)
-            return null
+            null
         }
     }
 
@@ -161,11 +158,7 @@ class IdentityProviderListViewModel(application: Application) :
         val output = createIdRequestAndPrivateData()
         if (output != null) {
             val tempCurrentPrivateIdObjectDataJson = gson.toJson(output.privateIdObjectData.value)
-            val encodedEncrypted =
-                App.appCore.getCurrentAuthenticationManager().encryptInBackground(
-                    password,
-                    tempCurrentPrivateIdObjectDataJson
-                )
+            val encodedEncrypted = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, tempCurrentPrivateIdObjectDataJson)
             if (encodedEncrypted != null && encryptAccountData(password, output)) {
                 tempData.privateIdObjectDataEncrypted = encodedEncrypted
                 tempData.idObjectRequest = output.idObjectRequest
@@ -179,7 +172,7 @@ class IdentityProviderListViewModel(application: Application) :
     }
 
     private suspend fun encryptAccountData(password: String, output: IdRequestAndPrivateDataOutput): Boolean {
-        //Encrypt account data for later when saving account
+        // Encrypt account data for later when saving account
         val initialAccountData = output.initialAccountData
         val jsonToBeEncrypted = gson.toJson(initialAccountData)
         val storageAccountDataEncrypted = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, jsonToBeEncrypted)
@@ -198,14 +191,13 @@ class IdentityProviderListViewModel(application: Application) :
             _waitingLiveData.value = false
             return null
         }
-        val output =
-            App.appCore.cryptoLibrary.createIdRequestAndPrivateData(identityProvider.ipInfo, identityProvider.arsInfos, global)
-        if (output != null) {
-            return output
+        val output = App.appCore.cryptoLibrary.createIdRequestAndPrivateData(identityProvider.ipInfo, identityProvider.arsInfos, global)
+        return if (output != null) {
+            output
         } else {
             _errorLiveData.value = Event(R.string.app_error_lib)
             _waitingLiveData.value = false
-            return null
+            null
         }
     }
 
@@ -224,7 +216,6 @@ class IdentityProviderListViewModel(application: Application) :
             idObjectRequest,
             privateIdObjectDataEncrypted,
             identityCustomName,
-            accountCustomName,
             encryptedAccountData,
             accountAddress
         )

@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.auth.login
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -10,8 +11,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.security.BiometricPromptCallback
+import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.databinding.ActivityAuthLoginBinding
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.intro.introsetup.IntroSetupActivity
 import com.concordium.wallet.uicore.afterTextChanged
 import com.concordium.wallet.uicore.view.PasscodeView
 import com.concordium.wallet.util.KeyboardUtil
@@ -194,6 +197,9 @@ class AuthLoginActivity : BaseActivity() {
     }
 
     override fun loggedIn() {
+        if (!AuthPreferences(this).hasPassPhrase()) run {
+            startActivity(Intent(this, IntroSetupActivity::class.java))
+        }
         finish()
     }
 

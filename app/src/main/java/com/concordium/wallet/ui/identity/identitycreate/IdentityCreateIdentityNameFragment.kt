@@ -28,7 +28,7 @@ class IdentityCreateIdentityNameFragment : BaseFragment(R.string.identity_create
         sharedViewModel.initialize()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentIdentityCreateIdentityNameBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -62,7 +62,7 @@ class IdentityCreateIdentityNameFragment : BaseFragment(R.string.identity_create
             gotoIdentityName()
         }
         binding.identityNameEdittext.afterTextChanged { text ->
-            binding.confirmButton.isEnabled = !text.isNullOrEmpty()
+            binding.confirmButton.isEnabled = text.isNotEmpty()
         }
 
         binding.identityNameEdittext.setOnEditorActionListener { textView, actionId, _ ->
@@ -87,12 +87,8 @@ class IdentityCreateIdentityNameFragment : BaseFragment(R.string.identity_create
             binding.identityNameEdittext.error = getString(R.string.valid_special_chars_error_text)
             return
         }
-        sharedViewModel.customAccountName?.let { customAccountName ->
-            val intent = Intent(requireContext(), IdentityProviderListActivity::class.java)
-            intent.putExtra(IdentityProviderListActivity.EXTRA_IDENTITY_CUSTOM_NAME, binding.identityNameEdittext.text.toString().trim())
-            intent.putExtra(IdentityProviderListActivity.EXTRA_ACCOUNT_CUSTOM_NAME, customAccountName)
-            startActivity(intent)
-        }
+
+        startActivity(Intent(requireContext(), IdentityProviderListActivity::class.java))
     }
 
     //endregion

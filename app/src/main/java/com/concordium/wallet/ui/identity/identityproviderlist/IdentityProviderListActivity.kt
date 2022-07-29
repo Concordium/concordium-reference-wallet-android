@@ -20,7 +20,7 @@ import com.concordium.wallet.ui.identity.identityproviderlist.adapter.HeaderItem
 import com.concordium.wallet.ui.identity.identityproviderlist.adapter.IdentityProviderAdapter
 import com.concordium.wallet.ui.identity.identityproviderlist.adapter.IdentityProviderItem
 import com.concordium.wallet.ui.identity.identityproviderpolicywebview.IdentityProviderPolicyWebviewActivity
-import com.concordium.wallet.ui.identity.identityproviderwebview.IdentityProviderWebviewActivity
+import com.concordium.wallet.ui.identity.identityproviderwebview.IdentityProviderWebViewActivity
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
 import javax.crypto.Cipher
 
@@ -39,10 +39,6 @@ class IdentityProviderListActivity : BaseActivity() {
             }
         }
 
-    companion object {
-        const val EXTRA_IDENTITY_CUSTOM_NAME = "EXTRA_IDENTITY_CUSTOM_NAME"
-        const val EXTRA_ACCOUNT_CUSTOM_NAME = "EXTRA_ACCOUNT_CUSTOM_NAME"
-    }
     //region Lifecycle
     //************************************************************
 
@@ -51,12 +47,8 @@ class IdentityProviderListActivity : BaseActivity() {
         binding = ActivityIdentityProviderListBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_list_title)
-
-        val identityCustomName = intent.getStringExtra(EXTRA_IDENTITY_CUSTOM_NAME) as String
-        val accountCustomName = intent.getStringExtra(EXTRA_ACCOUNT_CUSTOM_NAME) as String
-
         initializeViewModel()
-        viewModel.initialize(identityCustomName, accountCustomName)
+        viewModel.initialize(getString(R.string.identity))
         initializeViews()
         viewModel.getIdentityProviders()
         viewModel.getGlobalInfo()
@@ -77,16 +69,16 @@ class IdentityProviderListActivity : BaseActivity() {
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[IdentityProviderListViewModel::class.java]
-        viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
+        viewModel.waitingLiveData.observe(this) { waiting ->
             waiting?.let {
                 showWaiting(waiting || viewModel.waitingGlobalData.value!!)
             }
-        })
-        viewModel.waitingGlobalData.observe(this, Observer<Boolean> { waiting ->
+        }
+        viewModel.waitingGlobalData.observe(this) { waiting ->
             waiting?.let {
                 showWaiting(waiting || viewModel.waitingLiveData.value!!)
             }
-        })
+        }
         viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
                 showError(value)
@@ -102,7 +94,7 @@ class IdentityProviderListActivity : BaseActivity() {
         viewModel.gotoIdentityProviderWebview.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
-                    gotoIdentityProviderWebview()
+                    gotoIdentityProviderWebView()
                     showWaiting(false)
                 }
             }
@@ -122,8 +114,8 @@ class IdentityProviderListActivity : BaseActivity() {
         viewModel.identityProviderList.observe(this, Observer { list ->
             val items: MutableList<AdapterItem> = list.map { IdentityProviderItem(it) }.toMutableList()
             items.add(0, HeaderItem())
-            val newlineSeperatedLinks = list.joinToString (separator = "<br><br>") { it -> "<a href=\"${it.ipInfo.ipDescription.url}\">${it.ipInfo.ipDescription.name}</a>" }
-            identityProviderAdapter = IdentityProviderAdapter(this, newlineSeperatedLinks, items)
+            val newlineSeparatedLinks = list.joinToString (separator = "<br><br>") { it -> "<a href=\"${it.ipInfo.ipDescription.url}\">${it.ipInfo.ipDescription.name}</a>" }
+            identityProviderAdapter = IdentityProviderAdapter(this, newlineSeparatedLinks, items)
             binding.recyclerview.adapter = identityProviderAdapter
             setItemClickAdapter()
         })
@@ -136,7 +128,7 @@ class IdentityProviderListActivity : BaseActivity() {
             }
 
             override fun onItemActionClicked(item: IdentityProvider) {
-                gotoIdentityProviderPolicyWebview(item)
+                gotoIdentityProviderPolicyWebView(item)
             }
         })
     }
@@ -146,18 +138,16 @@ class IdentityProviderListActivity : BaseActivity() {
     //region Control/UI
     //************************************************************
 
-    private fun gotoIdentityProviderWebview() {
+    private fun gotoIdentityProviderWebView() {
         viewModel.getIdentityCreationData()?.let { identityCreationData ->
-            val intent = Intent(this, IdentityProviderWebviewActivity::class.java)
-            intent.putExtra(
-                IdentityProviderWebviewActivity.EXTRA_IDENTITY_CREATION_DATA,
-                identityCreationData
-            )
+            val intent = Intent(this, IdentityProviderWebViewActivity::class.java)
+            intent.putExtra(IdentityProviderWebViewActivity.EXTRA_IDENTITY_CREATION_DATA, identityCreationData)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
         }
     }
 
-    private fun gotoIdentityProviderPolicyWebview(identityProvider: IdentityProvider) {
+    private fun gotoIdentityProviderPolicyWebView(identityProvider: IdentityProvider) {
         identityProvider.metadata
         val intent = Intent(this, IdentityProviderPolicyWebviewActivity::class.java)
         intent.putExtra(IdentityProviderPolicyWebviewActivity.EXTRA_URL, "https://google.com")

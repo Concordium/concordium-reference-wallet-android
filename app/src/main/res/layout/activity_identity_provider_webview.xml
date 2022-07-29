@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout"
     style="@style/Layout.Root"
-    tools:context="com.concordium.wallet.ui.identity.identityproviderwebview.IdentityProviderWebviewActivity">
+    tools:context="com.concordium.wallet.ui.identity.identityproviderwebview.IdentityProviderWebViewActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

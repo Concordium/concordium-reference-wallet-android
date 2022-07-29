@@ -18,8 +18,9 @@ abstract class GenericFlowActivity(private val titleId: Int) : BaseActivity() {
         const val EXTRA_IGNORE_BACK_PRESS = "EXTRA_IGNORE_BACK_PRESS"
     }
 
-    protected var hideBack = true
-    protected var ignoreBackPress = true
+    private var hideBack = true
+    private var ignoreBackPress = true
+    protected var showProgressLine = false
     private lateinit var binding: ActivityIntroFlowBinding
 
     //region Lifecycle
@@ -39,10 +40,10 @@ abstract class GenericFlowActivity(private val titleId: Int) : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        if(ignoreBackPress){
+        if (ignoreBackPress) {
             // Ignore back press
         }
-        else{
+        else {
             super.onBackPressed()
         }
     }
@@ -90,6 +91,11 @@ abstract class GenericFlowActivity(private val titleId: Int) : BaseActivity() {
         if (hideBack) {
             binding.toolbarLayout.toolbar.navigationIcon = null
         }
+    }
+
+    protected fun updateViews() {
+        if (showProgressLine)
+            binding.progressLine.visibility = View.VISIBLE
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

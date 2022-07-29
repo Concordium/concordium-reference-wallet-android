@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Layout.Root">
+    <TextView
+        android:id="@+id/identity_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        style="@style/TextView.Medium.Bold"
+        android:layout_width="match_parent"
+        tools:text="Identity 1" />
+    <TextView
+        android:id="@+id/accounts_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/identity_name"
+        style="@style/TextView.Standard.Bold"
+        android:layout_width="match_parent"
+        android:text="@string/pass_phrase_recover_process_finished_accounts" />
+    <LinearLayout
+        android:id="@+id/accounts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/accounts_title"
+        tools:layout_height="100dp"
+        tools:background="#CCCCCC"
+        android:orientation="vertical" />
+</androidx.constraintlayout.widget.ConstraintLayout>

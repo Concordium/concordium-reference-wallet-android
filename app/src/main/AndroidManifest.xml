@@ -136,6 +136,10 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.identity.identitycreate.IdentityIntroFlow"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.bakerdelegation.delegation.introflow.DelegationCreateIntroFlowActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
@@ -218,7 +222,10 @@
         <activity
             android:name=".ui.passphrase.recover.RecoverWalletActivity"
             android:launchMode="singleTop"
-            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.passphrase.recoverprocess.RecoverProcessActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.auth.login.AuthLoginActivity"
@@ -269,7 +276,7 @@
             android:parentActivityName=".ui.identity.identityproviderlist.IdentityProviderListActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.identity.identityproviderwebview.IdentityProviderWebviewActivity"
+            android:name=".ui.identity.identityproviderwebview.IdentityProviderWebViewActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.identity.identityproviderlist.IdentityProviderListActivity"
             android:screenOrientation="portrait"
@@ -288,7 +295,7 @@
         <activity
             android:name=".ui.identity.identityconfirmed.IdentityConfirmedActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".ui.identity.identityproviderwebview.IdentityProviderWebviewActivity"
+            android:parentActivityName=".ui.identity.identityproviderwebview.IdentityProviderWebViewActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.identity.identitiesoverview.IdentitiesOverviewActivity"

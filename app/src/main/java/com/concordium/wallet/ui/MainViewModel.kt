@@ -9,7 +9,6 @@ import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.data.IdentityRepository
-import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.identity.IdentityUpdater
@@ -17,7 +16,6 @@ import com.concordium.wallet.ui.identity.identityconfirmed.IdentityErrorData
 import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
-
     enum class State {
         AccountOverview, Backup, More
     }
@@ -26,7 +24,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val identityUpdater = IdentityUpdater(application, viewModelScope)
     private val session: Session = App.appCore.session
 
-    public var databaseVersionAllowed = true
+    var databaseVersionAllowed = true
 
     private val _newFinalizedAccountLiveData = MutableLiveData<String>()
     val newFinalizedAccountLiveData: LiveData<String>
@@ -92,21 +90,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun startIdentityUpdate() {
         val updateListener = object: IdentityUpdater.UpdateListener {
-            override fun onError(identity: Identity, account: Account?) {
+            override fun onError(identity: Identity) {
                 viewModelScope.launch {
                     val isFirst = isFirst(identityRepository.getCount())
-                    _identityErrorLiveData.value = IdentityErrorData(identity, account, isFirst)
+                    _identityErrorLiveData.value = IdentityErrorData(identity, isFirst)
                 }
             }
-
             override fun onDone() {
-            }
-
-            override fun onNewAccountFinalized(accountName: String) {
-                viewModelScope.launch {
-                    _newFinalizedAccountLiveData.value = accountName
-                    App.appCore.session.setAccountsBackedUp(false)
-                }
             }
         }
         identityUpdater.checkPendingIdentities(updateListener)
@@ -120,5 +110,4 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         // If we are in the process of creating the first identity, there will be one identity saved at this point
         return (identityCount <= 1)
     }
-
 }
