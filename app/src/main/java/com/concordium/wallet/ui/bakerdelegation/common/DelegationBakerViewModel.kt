@@ -237,7 +237,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                     val changePool = (bakerDelegationData.oldDelegationTargetPoolId ?: 0) != getPoolId().toLong()
                     if (bakerDelegationData.type == UPDATE_DELEGATION && openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL)
                         _errorLiveData.value = Event(R.string.delegation_register_delegation_pool_id_closed)
-                    else if (bakerDelegationData.type == REGISTER_DELEGATION && (openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW || openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL))
+                    else if ((bakerDelegationData.type == REGISTER_DELEGATION || bakerDelegationData.type == UPDATE_DELEGATION) && (openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW || openStatus == BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_ALL))
                         _errorLiveData.value = Event(R.string.delegation_register_delegation_pool_id_closed)
                     else if (changePool && !isInCoolDown() && stakedAmount + delegatedCapital > delegatedCapitalCap)
                         _errorLiveData.value = Event(AMOUNT_TOO_LARGE_FOR_POOL)
