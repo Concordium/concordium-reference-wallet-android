@@ -8,24 +8,27 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.model.IdentityStatus
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.databinding.ActivityIdentityConfirmedBinding
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.RequestCodes
-import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.common.account.BaseAccountActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.uicore.dialog.Dialogs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class IdentityConfirmedActivity : BaseActivity(), Dialogs.DialogFragmentListener {
+class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentListener {
     companion object {
         const val EXTRA_IDENTITY = "EXTRA_IDENTITY"
     }
 
     private lateinit var binding: ActivityIdentityConfirmedBinding
     private lateinit var viewModel: IdentityConfirmedViewModel
+
     private var identity: Identity? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +37,8 @@ class IdentityConfirmedActivity : BaseActivity(), Dialogs.DialogFragmentListener
         setContentView(binding.root)
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_confirmed_title)
         identity = intent.extras!!.getSerializable(EXTRA_IDENTITY) as Identity
+        initializeNewAccountViewModel()
+        initializeAuthenticationObservers()
         initializeViewModel()
         initializeViews()
         // If we're being restored from a previous state
@@ -83,7 +88,7 @@ class IdentityConfirmedActivity : BaseActivity(), Dialogs.DialogFragmentListener
             }
         }
         viewModel.identityDoneLiveData.observe(this) {
-            gotoIdentityOverview()
+            showSubmitAccount()
         }
     }
 
@@ -102,11 +107,8 @@ class IdentityConfirmedActivity : BaseActivity(), Dialogs.DialogFragmentListener
         binding.rlAccount.visibility = View.GONE
 
         binding.btnSubmitAccount.setOnClickListener {
-            //create account her
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle(R.string.dialog_identity_create_error_title)
-            builder.setMessage("sdgdsfg")
-            builder.create().show()
+            viewModelNewAccount.initialize("Account 9", identity!!)  // skal være identity fra viewmodel
+            viewModelNewAccount.confirmWithoutAttributes()
         }
     }
 
@@ -127,12 +129,12 @@ class IdentityConfirmedActivity : BaseActivity(), Dialogs.DialogFragmentListener
         val builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.identity_confirmed_alert_dialog_title))
         builder.setMessage(getString(R.string.identity_confirmed_alert_dialog_text))
-        builder.setPositiveButton(getString(R.string.identity_confirmed_alert_dialog_ok)) { _, _ -> gotoIdentityOverview() }
+        builder.setPositiveButton(getString(R.string.identity_confirmed_alert_dialog_ok)) { _, _ -> showSubmitAccount() }
         builder.setCancelable(true)
         builder.create().show()
     }
 
-    private fun showWaiting(waiting: Boolean) {
+     override fun showWaiting(waiting: Boolean) {
         if (waiting) {
             binding.includeProgress.progressLayout.visibility = View.VISIBLE
         } else {
@@ -140,7 +142,17 @@ class IdentityConfirmedActivity : BaseActivity(), Dialogs.DialogFragmentListener
         }
     }
 
-    private fun gotoIdentityOverview() {
+    override fun showError(stringRes: Int) {
+        // error will be shown on account overview page later
+    }
+
+    override fun accountCreated(account: Account) {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
+    }
+
+    private fun showSubmitAccount() {
         CoroutineScope(Dispatchers.IO).launch {
             val identityDao = WalletDatabase.getDatabase(application).identityDao()
             val identityRepository = IdentityRepository(identityDao)
@@ -160,9 +172,6 @@ class IdentityConfirmedActivity : BaseActivity(), Dialogs.DialogFragmentListener
                     setActionBarTitle(R.string.identity_confirmed_confirm_account_submission_toolbar)
                     binding.tvHeader.text = getString(R.string.identity_confirmed_confirm_account_submission_title)
                     binding.infoTextview.text = getString(R.string.identity_confirmed_confirm_account_submission_text)
-
-                    //skift overdkrivt og tekst og bobler
-                    //    blur noget
                 }
             }
         }

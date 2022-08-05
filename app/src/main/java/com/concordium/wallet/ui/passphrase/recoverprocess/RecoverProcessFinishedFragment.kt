@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentRecoverProcessFinishedBinding
 import com.concordium.wallet.databinding.ItemIdentityWithAccountsBinding
 import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessViewModel.Companion.RECOVER_PROCESS_DATA
@@ -39,7 +40,7 @@ class RecoverProcessFinishedFragment : RecoverProcessBaseFragment() {
             itemIdentityWithAccounts.identityName.text = identityWithAccounts.identity.name
             identityWithAccounts.accounts.forEach { account ->
                 val accountTextView = TextView(context)
-                accountTextView.textSize = 14f
+                accountTextView.setTextAppearance(R.style.TextView_Standard)
                 val accountText = "${account.name} - ${account.totalBalance}"
                 accountTextView.text = accountText
                 itemIdentityWithAccounts.accounts.addView(accountTextView)

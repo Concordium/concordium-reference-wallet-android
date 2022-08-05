@@ -17,10 +17,10 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.cryptolib.CreateCredentialInput
-import com.concordium.wallet.data.cryptolib.GenerateAccountsInput
+import com.concordium.wallet.data.cryptolib.CreateCredentialInputV1
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
@@ -77,8 +77,7 @@ open class NewAccountViewModel(application: Application) :
     }
 
     private class TempData {
-        var revealedAttributeList: List<SelectableIdentityAttribute> =
-            ArrayList<SelectableIdentityAttribute>()
+        var revealedAttributeList: List<SelectableIdentityAttribute> = ArrayList()
         var globalParams: GlobalParams? = null
         var submissionStatus: TransactionStatus? = null
         var submissionId: String? = null
@@ -144,17 +143,17 @@ open class NewAccountViewModel(application: Application) :
     }
 
     fun getCipherForBiometrics(): Cipher? {
-        try {
+        return try {
             val cipher = App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
             if (cipher == null) {
                 _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
                 _waitingLiveData.value = false
             }
-            return cipher
+            cipher
         } catch (e: KeystoreEncryptionException) {
             _errorLiveData.value = Event(R.string.app_error_keystore)
             _waitingLiveData.value = false
-            return null
+            null
         }
     }
 
@@ -175,34 +174,20 @@ open class NewAccountViewModel(application: Application) :
     }
 
     private suspend fun decryptAndContinue(password: String) {
-        // Decrypt the private data
         val globalParams = tempData.globalParams
-        val privateIdObjectDataEncrypted = identity.privateIdObjectDataEncrypted
         if (globalParams == null) {
             _errorLiveData.value = Event(R.string.app_error_general)
             _waitingLiveData.value = false
             return
         }
-        val decryptedJson =
-            App.appCore.getCurrentAuthenticationManager().decryptInBackground(password, privateIdObjectDataEncrypted)
-        if (decryptedJson != null) {
-            val privateIdObjectData = gson.fromJson(decryptedJson, RawJson::class.java)
-            createCredentials(password, privateIdObjectData, globalParams)
-        } else {
-            _errorLiveData.value = Event(R.string.app_error_encryption)
-            _waitingLiveData.value = false
-        }
+        createCredentials(password, globalParams)
     }
 
-    private suspend fun createCredentials(
-        password: String,
-        privateIdObjectData: RawJson,
-        globalParams: GlobalParams
-    ) {
+    private suspend fun createCredentials(password: String, globalParams: GlobalParams) {
         val identityProvider = identity.identityProvider
         val identityObject = identity.identityObject
         val idProviderInfo = identityProvider.ipInfo
-        val arsInfos = identityProvider.arsInfos
+        val info = identityProvider.arsInfos
 
         if (identityObject == null) {
             Log.e("Identity is not ready to use for account creation (no identityObject")
@@ -211,28 +196,29 @@ open class NewAccountViewModel(application: Application) :
             return
         }
 
-        val generateAccountsInput = GenerateAccountsInput(globalParams, identityObject, privateIdObjectData)
-        val nextAccountNumber = findNextAccountNumber(generateAccountsInput)
-        if (nextAccountNumber == null) {
-            // Error has been handled
-            return
-        }
+        val nextAccountNumber = findNextAccountNumber()
         val revealedAttributes = JsonArray()
         for (identityAttribute in tempData.revealedAttributeList) {
             revealedAttributes.add(identityAttribute.name)
         }
 
-        val credentialInput = CreateCredentialInput(
-            identityObject!!,
-            privateIdObjectData,
-            globalParams,
+        val seed = AuthPreferences(getApplication()).getSeedPhrase()
+        val net = "Mainnet"
+        val identityIndex = 1
+
+        val credentialInput = CreateCredentialInputV1(
             idProviderInfo,
+            info,
+            globalParams,
+            identityObject,
             revealedAttributes,
+            seed,
+            net,
+            identityIndex,
             nextAccountNumber,
-            arsInfos,
             (DateTimeUtil.nowPlusMinutes(5).time) / 1000
         )
-        val output = App.appCore.cryptoLibrary.createCredential(credentialInput)
+        val output = App.appCore.cryptoLibrary.createCredentialV1(credentialInput)
         if (output == null) {
             _errorLiveData.value = Event(R.string.app_error_lib)
             _waitingLiveData.value = false
@@ -252,7 +238,12 @@ open class NewAccountViewModel(application: Application) :
         }
     }
 
-    private suspend fun findNextAccountNumber(generateAccountsInput: GenerateAccountsInput): Int? {
+    private suspend fun findNextAccountNumber(): Int {
+        val identityDao = WalletDatabase.getDatabase(getApplication()).identityDao()
+        val identityRepository = IdentityRepository(identityDao)
+        return identityRepository.nextAccountNumber()
+
+        /*
         var nextAccountNumber = identity.nextAccountNumber
         Log.d("nextAccountNumber: $nextAccountNumber")
         val maxAccounts = identity.identityObject!!.attributeList.maxAccounts
@@ -287,36 +278,7 @@ open class NewAccountViewModel(application: Application) :
             identityRepository.update(identity)
         }
         return nextAccountNumber
-    }
-
-    /**
-     * Returns the index for the first unused account
-     */
-    private suspend fun checkExistingAccounts(possibleAccountList: List<PossibleAccount>, startIndex: Int): Int? {
-        var index = startIndex
-        while (index < possibleAccountList.size) {
-            try {
-                Log.d("Get account balance for index $index")
-                val accountBalance = proxyRepository.getAccountBalanceSuspended(possibleAccountList[index].accountAddress)
-                Log.d("AccountBalance: ${accountBalance}")
-                if (!accountBalance.accountExists()) {
-                    Log.d("Unused account address")
-                    return index
-                }
-                index++
-            } catch (e: Exception) {
-                val ex = BackendErrorHandler.getCoroutineBackendException(e)
-                return if (ex != null && ex is BackendErrorException) {
-                    Log.d("Backend error - unused account address", ex)
-                    index
-                } else {
-                    // Other exceptions like connection problems should not let the account be created
-                    Log.e("Unexpected exception when getting account balance", e)
-                    null
-                }
-            }
-        }
-        return null
+        */
     }
 
     private fun submitCredential(credentialWrapper: CredentialWrapper) {

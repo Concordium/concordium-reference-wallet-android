@@ -5,13 +5,9 @@ import com.concordium.wallet.data.model.RawJson
 import com.concordium.wallet.data.model.RawJsonWrapper
 import com.google.gson.annotations.JsonAdapter
 
-data class IdRequestAndPrivateDataOutput(
+data class IdRequestAndPrivateDataOutputV1(
     @JsonAdapter(RawJsonTypeAdapter::class)
-    val idObjectRequest: RawJson,
-    val privateIdObjectData: RawJsonWrapper,
-    val initialAccountData: StorageAccountData
-){
-
-
-}
-
+    val idObjectRequest: RawJson
+//    val privateIdObjectData: RawJsonWrapper,
+//    val initialAccountData: StorageAccountData
+)

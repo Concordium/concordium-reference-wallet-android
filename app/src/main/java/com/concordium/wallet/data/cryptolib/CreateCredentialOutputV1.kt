@@ -6,13 +6,12 @@ import com.concordium.wallet.data.model.CredentialWrapper
 import com.concordium.wallet.data.model.RawJson
 import com.google.gson.annotations.JsonAdapter
 
-data class CreateCredentialOutput(
-    val accountAddress: String,
-    val accountKeys: AccountData,
+data class CreateCredentialOutputV1(
     val credential: CredentialWrapper,
+    val accountKeys: AccountData,
+    val accountAddress: String,
     val encryptionPublicKey: String,
     val encryptionSecretKey: String,
     @JsonAdapter(RawJsonTypeAdapter::class)
     val commitmentsRandomness: RawJson
-
 )

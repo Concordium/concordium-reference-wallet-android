@@ -63,7 +63,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
             PreIdentityObject(
                 RawJson("{}"), pubInfoForIP, "",
                 RawJson("{}"), "",
-                RawJson("{}"), ""
+                RawJson("{}"), "", ""
             )
         val identityObject =
             IdentityObject(

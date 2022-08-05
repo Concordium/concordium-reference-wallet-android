@@ -14,6 +14,7 @@ import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
+import com.concordium.wallet.data.cryptolib.IdRequestAndPrivateDataOutputV1
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
@@ -21,6 +22,11 @@ import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
+
+data class IdentityContainer2(
+    val value: PreIdentityObject,
+    val v: Int
+)
 
 class IdentityProviderWebViewViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
@@ -108,10 +114,10 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
             IdentityStatus.DONE,
             "",
             "",
-            1,  //Next account number is set to 1, because 0 has been used for the initial account created by the id provider
+            0, // Next account number is set to 0, because we don't create an initial account
             identityCreationData.identityProvider,
             identityObject,
-            identityCreationData.privateIdObjectDataEncrypted
+            ""
         )
         saveNewIdentity(identity)
     }
@@ -123,12 +129,21 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
     }
 
     fun parseIdentityAndSavePending(callbackUri: String) {
+        val  ll =  identityCreationData.idObjectRequest
+
+        val ff = gson.fromJson(ll.json, IdentityContainer2::class.java)
+
         val pubInfoForIP = PubInfoForIp("", RawJson("{}"), "")
         val preIdentityObject =
             PreIdentityObject(
-                RawJson("{}"), pubInfoForIP, "",
-                RawJson("{}"), "",
-                RawJson("{}"), ""
+                RawJson("{}"),
+                pubInfoForIP,
+                "",
+                RawJson("{}"),
+                "",
+                RawJson("{}"),
+                "",
+                ff.value.idCredPub
             )
         val identity = Identity(
             0,
@@ -136,14 +151,14 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
             IdentityStatus.PENDING,
             "",
             callbackUri,
-            1,  //Next account number is set to 1, because 0 has been used for the initial account created by the id provider
+            0, // Next account number is set to 0, because we don't create an initial account
             identityCreationData.identityProvider,
             IdentityObject(
                 AttributeList(HashMap(), "", 0, "0"),
                 preIdentityObject,
                 RawJson("{}")
             ),
-            identityCreationData.privateIdObjectDataEncrypted
+            ""
         )
         saveNewIdentity(identity)
     }

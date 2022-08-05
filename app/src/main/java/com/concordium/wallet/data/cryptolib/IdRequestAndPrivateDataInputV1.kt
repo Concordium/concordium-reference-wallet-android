@@ -4,10 +4,11 @@ import com.concordium.wallet.data.model.ArsInfo
 import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.IdentityProviderInfo
 
-// equivalent to CreateIDRequest.swift
-data class IdRequestAndPrivateDataInput(
+data class IdRequestAndPrivateDataInputV1(
     val ipInfo: IdentityProviderInfo,
     val global: GlobalParams?,
-    val arsInfos: Map<String, ArsInfo>
-
+    val arsInfos: Map<String, ArsInfo>,
+    val seed: String,
+    val net: String,
+    val identityIndex: Int
 )

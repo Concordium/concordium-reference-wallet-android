@@ -12,8 +12,9 @@ import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
-import com.concordium.wallet.data.cryptolib.IdRequestAndPrivateDataOutput
+import com.concordium.wallet.data.cryptolib.IdRequestAndPrivateDataOutputV1
 import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import kotlinx.coroutines.launch
@@ -60,9 +61,9 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         var globalParams: GlobalParams? = null
         var identityProvider: IdentityProvider? = null
         var idObjectRequest: RawJson? = null
-        var privateIdObjectDataEncrypted: String? = null
+        //var privateIdObjectDataEncrypted: String? = null
         var encryptedAccountData: String? = null
-        var accountAddress: String? = null
+        //var accountAddress: String? = null
     }
 
     init {
@@ -154,25 +155,33 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
     }
 
     private suspend fun encryptAndContinue(password: String) {
-        // Create and encrypt the private data
-        val output = createIdRequestAndPrivateData()
+/*
+        val output = createIdRequestAndPrivateDataV1()
         if (output != null) {
             val tempCurrentPrivateIdObjectDataJson = gson.toJson(output.privateIdObjectData.value)
             val encodedEncrypted = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, tempCurrentPrivateIdObjectDataJson)
             if (encodedEncrypted != null && encryptAccountData(password, output)) {
                 tempData.privateIdObjectDataEncrypted = encodedEncrypted
                 tempData.idObjectRequest = output.idObjectRequest
-                tempData.accountAddress = output.initialAccountData.accountAddress
+                tempData.accountAddress = output.initialAccountData?.accountAddress
                 _gotoIdentityProviderWebview.value = Event(true)
             } else {
                 _errorLiveData.value = Event(R.string.app_error_encryption)
                 _waitingLiveData.value = false
             }
         }
+*/
+        val output = createIdRequestAndPrivateDataV1()
+        if (output != null) {
+            tempData.idObjectRequest = output.idObjectRequest
+            _gotoIdentityProviderWebview.value = Event(true)
+        } else {
+            _errorLiveData.value = Event(R.string.app_error_encryption)
+            _waitingLiveData.value = false
+        }
     }
-
-    private suspend fun encryptAccountData(password: String, output: IdRequestAndPrivateDataOutput): Boolean {
-        // Encrypt account data for later when saving account
+/*
+    private suspend fun encryptAccountData(password: String, output: IdRequestAndPrivateDataOutputV1): Boolean {
         val initialAccountData = output.initialAccountData
         val jsonToBeEncrypted = gson.toJson(initialAccountData)
         val storageAccountDataEncrypted = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, jsonToBeEncrypted)
@@ -182,8 +191,8 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         }
         return false
     }
-
-    private suspend fun createIdRequestAndPrivateData(): IdRequestAndPrivateDataOutput? {
+*/
+    private suspend fun createIdRequestAndPrivateDataV1(): IdRequestAndPrivateDataOutputV1? {
         val identityProvider = tempData.identityProvider
         val global = tempData.globalParams
         if (identityProvider == null) {
@@ -191,7 +200,12 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
             _waitingLiveData.value = false
             return null
         }
-        val output = App.appCore.cryptoLibrary.createIdRequestAndPrivateData(identityProvider.ipInfo, identityProvider.arsInfos, global)
+
+        val seed = AuthPreferences(getApplication()).getSeedPhrase()
+        val net = "Mainnet"
+        val identityIndex = 1
+
+        val output = App.appCore.cryptoLibrary.createIdRequestAndPrivateDataV1(identityProvider.ipInfo, identityProvider.arsInfos, global, seed, net, identityIndex)
         return if (output != null) {
             output
         } else {
@@ -204,20 +218,18 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
     fun getIdentityCreationData(): IdentityCreationData? {
         val identityProvider = tempData.identityProvider
         val idObjectRequest = tempData.idObjectRequest
-        val privateIdObjectDataEncrypted = tempData.privateIdObjectDataEncrypted
-        val encryptedAccountData = tempData.encryptedAccountData
-        val accountAddress = tempData.accountAddress
-        if (identityProvider == null || idObjectRequest == null || privateIdObjectDataEncrypted == null || encryptedAccountData == null || accountAddress == null) {
+        //val privateIdObjectDataEncrypted = tempData.privateIdObjectDataEncrypted
+        //val encryptedAccountData = tempData.encryptedAccountData
+        //val accountAddress = tempData.accountAddress
+        if (identityProvider == null || idObjectRequest == null) {
             _errorLiveData.value = Event(R.string.app_error_general)
             return null
         }
         return IdentityCreationData(
             identityProvider,
             idObjectRequest,
-            privateIdObjectDataEncrypted,
-            identityCustomName,
-            encryptedAccountData,
-            accountAddress
+            identityCustomName
+            //encryptedAccountData
         )
     }
 

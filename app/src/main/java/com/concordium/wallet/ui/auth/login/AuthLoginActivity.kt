@@ -197,7 +197,7 @@ class AuthLoginActivity : BaseActivity() {
     }
 
     override fun loggedIn() {
-        if (!AuthPreferences(this).hasPassPhrase()) run {
+        if (!AuthPreferences(this).hasSeedPhrase()) run {
             startActivity(Intent(this, IntroSetupActivity::class.java))
         }
         finish()

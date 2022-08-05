@@ -18,7 +18,7 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.cryptolib.GenerateAccountsInput
+import com.concordium.wallet.data.cryptolib.GenerateAccountsInputV1
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.export.AccountExport
 import com.concordium.wallet.data.export.EncryptedExportData
@@ -102,7 +102,7 @@ class ImportViewModel(application: Application) :
     }
 
     fun handleImportFile(importFile: ImportFile) = viewModelScope.launch {
-        var fileContent: String
+        val fileContent: String
         try {
             fileContent = importFile.getContentAsString(getApplication())
         } catch (e: IOException) {
@@ -135,15 +135,15 @@ class ImportViewModel(application: Application) :
     }
 
     fun getCipherForBiometrics(): Cipher? {
-        try {
+        return try {
             val cipher = App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
             if (cipher == null) {
                 _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
             }
-            return cipher
+            cipher
         } catch (e: KeystoreEncryptionException) {
             _errorLiveData.value = Event(R.string.app_error_keystore)
-            return null
+            null
         }
     }
 
@@ -183,7 +183,7 @@ class ImportViewModel(application: Application) :
             _errorLiveData.value = Event(R.string.app_error_general)
             return
         }
-        var exportData: ExportData?
+        val exportData: ExportData?
         try {
             val decryptedImportData = ExportEncryptionHelper.decryptExportData(importPassword, encryptedExportData)
             exportData = gson.fromJson(decryptedImportData, ExportData::class.java)
@@ -267,7 +267,7 @@ class ImportViewModel(application: Application) :
             var identityId: Long? = null
             var identityImportResult = ImportResult.IdentityImportResult("", ImportResult.Status.Failed)
             try {
-                identity = encryptAndMapIdentity(identityExport, secretKey)
+                identity = mapIdentityFromExport(identityExport)
             } catch (e: Exception) {
                 // In case the mandatory fields are not present
                 // Setting state is handled below
@@ -305,7 +305,7 @@ class ImportViewModel(application: Application) :
                         identityImportResult.addAccountResult(accountImportResult)
                     } else {
                         var status = ImportResult.Status.Ok
-                        val existingDuplicate = existingAccountList.firstOrNull() { existingAccount -> existingAccount.address == account.address }
+                        val existingDuplicate = existingAccountList.firstOrNull { existingAccount -> existingAccount.address == account.address }
                         if (existingDuplicate == null) {
                             accountList.add(account)
                         } else {
@@ -345,17 +345,17 @@ class ImportViewModel(application: Application) :
         identityId: Long,
         identityImportResult: ImportResult.IdentityImportResult
     ) {
-        var globalParams: GlobalParams?
+        val globalParams: GlobalParams?
         try {
             val globalParamsWrapper = identityProviderRepository.getGlobalInfoSuspended()
             globalParams = globalParamsWrapper.value
         } catch (e: Exception) {
             return
         }
-        val generateAccountsInput = GenerateAccountsInput(globalParams, identityExport.identityObject, identityExport.privateIdObjectData)
-        val possibleAccountList = App.appCore.cryptoLibrary.generateAccounts(generateAccountsInput) ?: return
-        Log.d("Generated account info for ${possibleAccountList.size} accounts")
-        checkExistingAccountsForReadOnly(possibleAccountList, 0, existingAccountList, identityId, identityImportResult)
+        val generateAccountsInput = GenerateAccountsInputV1(globalParams, identityExport.identityObject)
+        //val possibleAccountList = App.appCore.cryptoLibrary.generateAccounts(generateAccountsInput) ?: return
+        //Log.d("Generated account info for ${possibleAccountList.size} accounts")
+        //checkExistingAccountsForReadOnly(possibleAccountList, 0, existingAccountList, identityId, identityImportResult)
     }
 
     private suspend fun checkExistingAccountsForReadOnly(
@@ -366,13 +366,13 @@ class ImportViewModel(application: Application) :
         identityImportResult: ImportResult.IdentityImportResult
     ) {
         val readOnlyAccountList = mutableListOf<Account>()
-        var shouldContinue = true
+        val shouldContinue = true
         var index = startIndex
         while (index < possibleAccountList.size && shouldContinue) {
             try {
                 val possibleAccount = possibleAccountList[index]
                 val accountBalance = proxyRepository.getAccountBalanceSuspended(possibleAccount.accountAddress)
-                Log.d("Got account balance for index $index and accountAddress ${possibleAccount.accountAddress} accountBalance ${accountBalance}")
+                Log.d("Got account balance for index $index and accountAddress ${possibleAccount.accountAddress} accountBalance $accountBalance")
                 if (accountBalance.accountExists()) {
                     // Check if the account exists
                     val isAccountDuplicate = existingAccountList.any { existingAccount -> existingAccount.address == possibleAccount.accountAddress }
@@ -406,40 +406,22 @@ class ImportViewModel(application: Application) :
         return identityExport.accounts != null
     }
 
-    private suspend fun encryptAndMapIdentity(
-        identityExport: IdentityExport,
-        secretKey: SecretKey
-    ): Identity? {
-        val privateIdObjectDataJson = gson.toJson(identityExport.privateIdObjectData)
-        val privateIdObjectDataEncrypted = App.appCore.getCurrentAuthenticationManager().encryptInBackground(secretKey, privateIdObjectDataJson)
-        if (privateIdObjectDataEncrypted == null) {
-            Log.e("Could not encrypt privateIdObjectData for identity: ${identityExport.name}")
-            return null
-        } else {
-            return mapIdentityFromExport(identityExport, privateIdObjectDataEncrypted)
-        }
-    }
-
     private suspend fun encryptAndMapAccount(
         accountExport: AccountExport,
         identityId: Long,
         secretKey: SecretKey
     ): Account? {
-
         val accountDataJson = gson.toJson(StorageAccountData(accountExport.address, accountExport.accountKeys, accountExport.encryptionSecretKey, accountExport.commitmentsRandomness))
         val accountDataEncrypted = App.appCore.getCurrentAuthenticationManager().encryptInBackground(secretKey, accountDataJson)
-        if (accountDataEncrypted == null) {
+        return if (accountDataEncrypted == null) {
             Log.e("Could not encrypt accountData for account: ${accountExport.name}")
-            return null
+            null
         } else {
-            return mapAccountFromExport(accountExport, identityId, accountDataEncrypted)
+            mapAccountFromExport(accountExport, identityId, accountDataEncrypted)
         }
     }
 
-    private fun mapIdentityFromExport(
-        identityExport: IdentityExport,
-        privateIdObjectDataEncrypted: String
-    ): Identity {
+    private fun mapIdentityFromExport(identityExport: IdentityExport): Identity {
         return Identity(
             0,
             identityExport.name,
@@ -449,7 +431,7 @@ class ImportViewModel(application: Application) :
             identityExport.nextAccountNumber,
             identityExport.identityProvider,
             identityExport.identityObject,
-            privateIdObjectDataEncrypted
+            ""
         )
     }
 

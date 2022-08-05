@@ -14,6 +14,6 @@ data class PreIdentityObject(
     val prfKeyCommitmentWithIP: String,
     @JsonAdapter(RawJsonTypeAdapter::class)
     val prfKeySharingCoeffCommitments: RawJson,
-    val proofsOfKnowledge: String
-
+    val proofsOfKnowledge: String,
+    val idCredPub: String
 ) : Serializable

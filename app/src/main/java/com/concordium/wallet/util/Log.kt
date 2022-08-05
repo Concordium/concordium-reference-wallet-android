@@ -4,9 +4,8 @@ import java.io.PrintWriter
 import java.io.StringWriter
 
 object Log {
-
-    val TAG = "app"
-    val DELIM = "\r\n   "
+    private const val TAG = "app"
+    private const val DELIMITER = "\r\n   "
     private var silent = false
 
     fun setSilent(silent: Boolean) {
@@ -17,52 +16,46 @@ object Log {
         if (silent) return
         val maxLogSize = 1000
         if(msg.length <= maxLogSize){
-            android.util.Log.d(TAG, "[DEBUG]" + prefix() + DELIM + msg)
+            android.util.Log.d(TAG, "[DEBUG]" + prefix() + DELIMITER + msg)
         }
         else {
             for (i in 0..msg.length / maxLogSize) {
                 val start = i * maxLogSize
                 var end = (i + 1) * maxLogSize
                 end = if (end > msg.length) msg.length else end
-                android.util.Log.d(TAG, "[DEBUG]" + prefix() + DELIM + msg.substring(start, end))
+                android.util.Log.d(TAG, "[DEBUG]" + prefix() + DELIMITER + msg.substring(start, end))
             }
         }
-
     }
 
     fun d(msg: String, t: Throwable) {
         if (silent) return
-        android.util.Log.d(TAG, "[DEBUG]" + prefix() + DELIM + msg, t)
+        android.util.Log.d(TAG, "[DEBUG]" + prefix() + DELIMITER + msg, t)
     }
 
     fun i(msg: String) {
         if (silent) return
-        android.util.Log.i(TAG, "[INFO]" + prefix() + DELIM + msg)
+        android.util.Log.i(TAG, "[INFO]" + prefix() + DELIMITER + msg)
     }
 
     fun i(msg: String, t: Throwable) {
         if (silent) return
-        android.util.Log.i(TAG, "[INFO]" + prefix() + DELIM + msg, t)
+        android.util.Log.i(TAG, "[INFO]" + prefix() + DELIMITER + msg, t)
     }
 
     fun w(msg: String) {
         if (silent) return
-        android.util.Log.w(TAG, "[WARN]" + prefix() + DELIM + msg)
-    }
-
-    fun w(msg: String, t: Throwable) {
-        if (silent) return
-        android.util.Log.w(TAG, "[WARN]" + prefix() + DELIM + msg, t)
+        android.util.Log.w(TAG, "[WARN]" + prefix() + DELIMITER + msg)
     }
 
     fun e(msg: String) {
         if (silent) return
-        android.util.Log.e(TAG, "[ERROR]" + prefix() + DELIM + msg)
+        android.util.Log.e(TAG, "[ERROR]" + prefix() + DELIMITER + msg)
     }
 
     fun e(msg: String, t: Throwable) {
         if (silent) return
-        android.util.Log.e(TAG, "[ERROR]" + prefix() + DELIM + msg, t)
+        android.util.Log.e(TAG, "[ERROR]" + prefix() + DELIMITER + msg, t)
     }
 
     private fun prefix(): String {
@@ -85,18 +78,6 @@ object Log {
             }
         }
         return ""
-    }
-
-    fun stackTraceToString(elements: Array<StackTraceElement>): String {
-        var res = ""
-        for (i in elements.indices) {
-            val s = elements[i]
-            res = res + s.toString()
-            if (i != elements.size - 1) {
-                res = res + "\r\n"
-            }
-        }
-        return res
     }
 
     /**

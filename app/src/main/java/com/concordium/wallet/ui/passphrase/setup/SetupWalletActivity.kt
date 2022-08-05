@@ -71,7 +71,7 @@ class SetupWalletActivity : BaseActivity() {
     private fun initObservers() {
         viewModel.validate.observe(this) { success ->
             if (success) {
-                AuthPreferences(this).setPassPhrase(viewModel.generatedPhrase())
+                AuthPreferences(this).setSeedPhrase(viewModel.generatedPhrase())
                 moveNext()
             }
         }

@@ -25,7 +25,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
     val statusChanged: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
 
     fun startScanning() {
-        val passPhrase = AuthPreferences(getApplication()).getPassPhrase()
+        val passPhrase = AuthPreferences(getApplication()).getSeedPhrase()
 
         viewModelScope.launch {
             val data = mutableListOf<IdentityWithAccounts>()
@@ -108,7 +108,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             PreIdentityObject(
                 RawJson("{}"), pubInfoForIP, "",
                 RawJson("{}"), "",
-                RawJson("{}"), ""
+                RawJson("{}"), "", ""
             )
         val identityObject =
             IdentityObject(

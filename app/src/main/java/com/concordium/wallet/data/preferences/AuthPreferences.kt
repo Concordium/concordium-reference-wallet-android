@@ -1,28 +1,30 @@
 package com.concordium.wallet.data.preferences
 
 import android.content.Context
+import cash.z.ecc.android.bip39.Mnemonics
+import cash.z.ecc.android.bip39.toSeed
 
 class AuthPreferences(val context: Context) :
     Preferences(context, SharedPreferencesKeys.PREF_FILE_AUTH, Context.MODE_PRIVATE) {
 
     companion object {
-        val PREFKEY_HAS_SETUP_USER = "PREFKEY_HAS_SETUP_USER"
-        val PREFKEY_USE_PASSCODE = "PREFKEY_USE_PASSCODE"
-        val PREFKEY_USE_BIOMETRICS = "PREFKEY_USE_BIOMETRICS"
-        val PREFKEY_PASSWORD_CHECK = "PREFKEY_PASSWORD_CHECK"
-        val PREFKEY_PASSWORD_CHECK_ENCRYPTED = "PREFKEY_PASSWORD_CHECK_ENCRYPTED"
-        val PREFKEY_PASSWORD_ENCRYPTION_SALT = "PREFKEY_PASSWORD_ENCRYPTION_SALT"
-        val PREFKEY_PASSWORD_ENCRYPTION_INITVECTOR = "PREFKEY_PASSWORD_ENCRYPTION_INITVECTOR"
-        val PREFKEY_ENCRYPTED_PASSWORD = "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY"
-        val PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR = "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR"
-        val PREFKEY_BIOMETRIC_KEY = "PREFKEY_BIOMETRIC_KEY"
-        val PREFKEY_TERMS_HASHED = "PREFKEY_TERMS_HASHED"
-        val PREFKEY_ACCOUNTS_BACKED_UP = "PREFKEY_ACCOUNTS_BACKED_UP"
-        val PREFKEY_VERSION_BACKED_UP = "PREFKEY_VERSION_BACKED_UP"
-        val PREFKEY_SHIELDING_ENABLED_ = "PREFKEY_SHIELDING_ENABLED_"
-        val PREFKEY_SHIELDED_WARNING_DISMISSED_ = "PREFKEY_SHIELDED_WARNING_DISMISSED_"
-        val PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED = "PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED_"
-        val PASS_PHRASE = "PASS_PHRASE"
+        const val PREFKEY_HAS_SETUP_USER = "PREFKEY_HAS_SETUP_USER"
+        const val PREFKEY_USE_PASSCODE = "PREFKEY_USE_PASSCODE"
+        const val PREFKEY_USE_BIOMETRICS = "PREFKEY_USE_BIOMETRICS"
+        const val PREFKEY_PASSWORD_CHECK = "PREFKEY_PASSWORD_CHECK"
+        const val PREFKEY_PASSWORD_CHECK_ENCRYPTED = "PREFKEY_PASSWORD_CHECK_ENCRYPTED"
+        const val PREFKEY_PASSWORD_ENCRYPTION_SALT = "PREFKEY_PASSWORD_ENCRYPTION_SALT"
+        const val PREFKEY_PASSWORD_ENCRYPTION_INITVECTOR = "PREFKEY_PASSWORD_ENCRYPTION_INITVECTOR"
+        const val PREFKEY_ENCRYPTED_PASSWORD = "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY"
+        const val PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR = "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR"
+        const val PREFKEY_BIOMETRIC_KEY = "PREFKEY_BIOMETRIC_KEY"
+        const val PREFKEY_TERMS_HASHED = "PREFKEY_TERMS_HASHED"
+        const val PREFKEY_ACCOUNTS_BACKED_UP = "PREFKEY_ACCOUNTS_BACKED_UP"
+        const val PREFKEY_VERSION_BACKED_UP = "PREFKEY_VERSION_BACKED_UP"
+        const val PREFKEY_SHIELDING_ENABLED_ = "PREFKEY_SHIELDING_ENABLED_"
+        const val PREFKEY_SHIELDED_WARNING_DISMISSED_ = "PREFKEY_SHIELDED_WARNING_DISMISSED_"
+        const val PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED = "PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED_"
+        const val SEED_PHRASE = "SEED_PHRASE"
     }
 
     fun setHasSetupUser(value: Boolean) {
@@ -157,15 +159,21 @@ class AuthPreferences(val context: Context) :
         return getBoolean(PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED+id, false)
     }
 
-    fun setPassPhrase(value: String) {
-        setString(PASS_PHRASE, value)
+    fun setSeedPhrase(value: String) {
+        val seed = Mnemonics.MnemonicCode(value).toSeed()
+        val seedEncoded = seed.toHexString()
+        setString(SEED_PHRASE, seedEncoded)
     }
 
-    fun getPassPhrase(): String {
-        return getString(PASS_PHRASE, "")
+    fun getSeedPhrase(): String {
+        return getString(SEED_PHRASE, "")
     }
 
-    fun hasPassPhrase(): Boolean {
-        return getPassPhrase() != ""
+    fun hasSeedPhrase(): Boolean {
+        return getSeedPhrase() != ""
+    }
+
+    private fun ByteArray.toHexString() = joinToString("") {
+        Integer.toUnsignedString(java.lang.Byte.toUnsignedInt(it), 16).padStart(2, '0')
     }
 }
