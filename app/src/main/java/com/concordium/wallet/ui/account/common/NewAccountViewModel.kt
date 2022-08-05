@@ -32,9 +32,7 @@ import com.google.gson.JsonArray
 import kotlinx.coroutines.launch
 import javax.crypto.Cipher
 
-open class NewAccountViewModel(application: Application) :
-    AndroidViewModel(application) {
-
+open class NewAccountViewModel(application: Application) : AndroidViewModel(application) {
     private val identityProviderRepository = IdentityProviderRepository()
     private val proxyRepository = ProxyRepository()
     private val identityRepository: IdentityRepository
@@ -70,6 +68,10 @@ open class NewAccountViewModel(application: Application) :
     val gotoFailedLiveData: LiveData<Event<Pair<Boolean, BackendError?>>>
         get() = _gotoFailedLiveData
 
+
+    open fun initialize(identity: Identity) {
+        this.identity = identity
+    }
 
     open fun initialize(accountName: String, identity: Identity) {
         this.accountName = accountName
@@ -109,6 +111,10 @@ open class NewAccountViewModel(application: Application) :
         } else {
             _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(throwable))
         }
+    }
+
+    suspend fun nextAccountNumber(): Int {
+        return identityRepository.nextAccountNumber()
     }
 
     fun confirmWithoutAttributes() {
@@ -196,15 +202,15 @@ open class NewAccountViewModel(application: Application) :
             return
         }
 
-        val nextAccountNumber = findNextAccountNumber()
+        val nextAccountNumber = identityRepository.nextAccountNumber()
         val revealedAttributes = JsonArray()
         for (identityAttribute in tempData.revealedAttributeList) {
             revealedAttributes.add(identityAttribute.name)
         }
 
-        val seed = AuthPreferences(getApplication()).getSeedPhrase()
         val net = "Mainnet"
-        val identityIndex = 1
+        val identityIndex = identity.id
+        val seed = AuthPreferences(getApplication()).getSeedPhrase()
 
         val credentialInput = CreateCredentialInputV1(
             idProviderInfo,
@@ -236,49 +242,6 @@ open class NewAccountViewModel(application: Application) :
                 _waitingLiveData.value = false
             }
         }
-    }
-
-    private suspend fun findNextAccountNumber(): Int {
-        val identityDao = WalletDatabase.getDatabase(getApplication()).identityDao()
-        val identityRepository = IdentityRepository(identityDao)
-        return identityRepository.nextAccountNumber()
-
-        /*
-        var nextAccountNumber = identity.nextAccountNumber
-        Log.d("nextAccountNumber: $nextAccountNumber")
-        val maxAccounts = identity.identityObject!!.attributeList.maxAccounts
-
-        val possibleAccountList = App.appCore.cryptoLibrary.generateAccounts(generateAccountsInput)
-        if (possibleAccountList == null) {
-            Log.e("Could not generate accounts, so do not allow account creation")
-            _errorLiveData.value = Event(R.string.app_error_lib)
-            _waitingLiveData.value = false
-            return null
-        } else {
-            Log.d("Generated account info for ${possibleAccountList.size} accounts")
-            val next = checkExistingAccounts(possibleAccountList, nextAccountNumber)
-            if (next == null) {
-                _errorLiveData.value = Event(R.string.app_error_backend_unknown)
-                _waitingLiveData.value = false
-                return null
-            } else {
-                nextAccountNumber = next
-            }
-        }
-
-        Log.d("nextAccountNumber used: $nextAccountNumber")
-        // Next account number starts from 0
-        if (nextAccountNumber >= maxAccounts) {
-            _errorLiveData.value = Event(R.string.new_account_identity_attributes_error_max_accounts_alt)
-            _waitingLiveData.value = false
-            return null
-        }
-        identity.nextAccountNumber = nextAccountNumber + 1
-        viewModelScope.launch {
-            identityRepository.update(identity)
-        }
-        return nextAccountNumber
-        */
     }
 
     private fun submitCredential(credentialWrapper: CredentialWrapper) {
@@ -366,5 +329,4 @@ open class NewAccountViewModel(application: Application) :
     fun usePasscode(): Boolean {
         return App.appCore.getCurrentAuthenticationManager().usePasscode()
     }
-
 }

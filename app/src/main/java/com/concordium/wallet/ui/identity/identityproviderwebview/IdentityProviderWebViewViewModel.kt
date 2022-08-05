@@ -14,7 +14,6 @@ import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
-import com.concordium.wallet.data.cryptolib.IdRequestAndPrivateDataOutputV1
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
@@ -22,11 +21,6 @@ import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
-
-data class IdentityContainer2(
-    val value: PreIdentityObject,
-    val v: Int
-)
 
 class IdentityProviderWebViewViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
@@ -129,10 +123,7 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
     }
 
     fun parseIdentityAndSavePending(callbackUri: String) {
-        val  ll =  identityCreationData.idObjectRequest
-
-        val ff = gson.fromJson(ll.json, IdentityContainer2::class.java)
-
+        val idObjectRequest = gson.fromJson(identityCreationData.idObjectRequest.json, PreIdentityContainer::class.java)
         val pubInfoForIP = PubInfoForIp("", RawJson("{}"), "")
         val preIdentityObject =
             PreIdentityObject(
@@ -143,7 +134,7 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
                 "",
                 RawJson("{}"),
                 "",
-                ff.value.idCredPub
+                idObjectRequest.value.idCredPub
             )
         val identity = Identity(
             0,

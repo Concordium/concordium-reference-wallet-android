@@ -107,8 +107,13 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
         binding.rlAccount.visibility = View.GONE
 
         binding.btnSubmitAccount.setOnClickListener {
-            viewModelNewAccount.initialize("Account 9", identity!!)  // skal være identity fra viewmodel
-            viewModelNewAccount.confirmWithoutAttributes()
+            CoroutineScope(Dispatchers.IO).launch {
+                val nextAccountNumber = viewModelNewAccount.nextAccountNumber()
+                runOnUiThread {
+                    viewModelNewAccount.initialize("${getString(R.string.account)} $nextAccountNumber", identity!!)
+                    viewModelNewAccount.confirmWithoutAttributes()
+                }
+            }
         }
     }
 

@@ -66,7 +66,7 @@ class AccountItemNameAreaView(context: Context, attrs: AttributeSet?): LinearLay
 
     fun setDefault() {
         binding.statusImageview.visibility = View.GONE
-        binding.nameTextview.text = "Account 1"
+        binding.nameTextview.text = "Account 0"
         binding.accountIdentityName.text = "Identity 1"
         binding.statusText.text = context.getString(R.string.view_account_initial)
         binding.statusIcon.visibility = View.GONE

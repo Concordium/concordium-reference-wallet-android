@@ -91,7 +91,7 @@ class IdentityProviderListActivity : BaseActivity() {
                 }
             }
         })
-        viewModel.gotoIdentityProviderWebview.observe(this, object : EventObserver<Boolean>() {
+        viewModel.gotoIdentityProviderWebView.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
                     gotoIdentityProviderWebView()
@@ -179,7 +179,7 @@ class IdentityProviderListActivity : BaseActivity() {
         dialogFragment.setCallback(object : AuthenticationDialogFragment.Callback {
             override fun onCorrectPassword(password: String) {
                 longTimeWaitingCountDownTimer.start()
-                viewModel.continueWithPassword(password)
+                viewModel.continueWithPassword()
             }
 
             override fun onCancelled() {

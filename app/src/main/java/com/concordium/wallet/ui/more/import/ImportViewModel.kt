@@ -18,7 +18,6 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.cryptolib.GenerateAccountsInputV1
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.export.AccountExport
 import com.concordium.wallet.data.export.EncryptedExportData
@@ -332,13 +331,13 @@ class ImportViewModel(application: Application) :
             // The account list used to check for existing account must include the ones that was just added for this identity
             if (identityId != null) {
                 accountList.addAll(existingAccountList)
-                handleReadOnlyAccounts(accountList, identityExport, identityId, identityImportResult)
+                //handleReadOnlyAccounts(accountList, identityExport, identityId, identityImportResult)
             }
         } // End of identity
         confirmImport()
         _waitingLiveData.value = false
     }
-
+/*
     private suspend fun handleReadOnlyAccounts(
         existingAccountList: List<Account>,
         identityExport: IdentityExport,
@@ -357,7 +356,8 @@ class ImportViewModel(application: Application) :
         //Log.d("Generated account info for ${possibleAccountList.size} accounts")
         //checkExistingAccountsForReadOnly(possibleAccountList, 0, existingAccountList, identityId, identityImportResult)
     }
-
+*/
+    /*
     private suspend fun checkExistingAccountsForReadOnly(
         possibleAccountList: List<PossibleAccount>,
         startIndex: Int,
@@ -399,7 +399,7 @@ class ImportViewModel(application: Application) :
         accountRepository.insertAll(readOnlyAccountList)
         recipientRepository.insertAll(readOnlyAccountList.map { Recipient(0, name = it.address.substring(0,8), address = it.address) }.toMutableList())
     }
-
+*/
     @Suppress("SENSELESS_COMPARISON")
     private fun hasAccountList(identityExport: IdentityExport): Boolean {
         // Because the data is parsed by Gson, the non-nullable members can actually be null
@@ -464,7 +464,7 @@ class ImportViewModel(application: Application) :
             null
         )
     }
-
+/*
     private fun createReadOnlyAccount(
         possibleAccount: PossibleAccount,
         identityId: Long
@@ -493,7 +493,7 @@ class ImportViewModel(application: Application) :
             null
 
         )
-    }
+    }*/
 
     private fun mapRevealedAttributes(map: HashMap<String, String>): List<IdentityAttribute> {
         val list = mutableListOf<IdentityAttribute>()

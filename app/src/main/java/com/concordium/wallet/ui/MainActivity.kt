@@ -23,10 +23,7 @@ import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
 import com.concordium.wallet.uicore.dialog.CustomDialogFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOverviewFragment.AccountsOverviewFragmentListener {
     companion object {
@@ -63,7 +60,7 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
     override fun onResume() {
         super.onResume()
 
-        if (!viewModel.databaseVersionAllowed){
+        if (!viewModel.databaseVersionAllowed) {
             val builder = AlertDialog.Builder(this)
             builder.setMessage(getString(R.string.error_database))
             builder.setPositiveButton(getString(R.string.error_database_close)) { _, _ -> finish() }

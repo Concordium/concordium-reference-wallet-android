@@ -24,14 +24,13 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
     private lateinit var identityCustomName: String
 
     private val repository: IdentityProviderRepository = IdentityProviderRepository()
-    private val gson = App.appCore.gson
+    private val identityRepository: IdentityRepository
 
     private var identityProviderInfoRequest: BackendRequest<ArrayList<IdentityProvider>>? = null
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
 
     private val tempData = TempData()
-    var currentIdentityProvider: IdentityProvider? = null
-        private set
+    private var currentIdentityProvider: IdentityProvider? = null
 
     private val _waitingLiveData = MutableLiveData<Boolean>()
     val waitingLiveData: LiveData<Boolean>
@@ -53,29 +52,26 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
     val showAuthenticationLiveData: LiveData<Event<Boolean>>
         get() = _showAuthenticationLiveData
 
-    private val _gotoIdentityProviderWebview = MutableLiveData<Event<Boolean>>()
-    val gotoIdentityProviderWebview: LiveData<Event<Boolean>>
-        get() = _gotoIdentityProviderWebview
+    private val _gotoIdentityProviderWebView = MutableLiveData<Event<Boolean>>()
+    val gotoIdentityProviderWebView: LiveData<Event<Boolean>>
+        get() = _gotoIdentityProviderWebView
 
     private class TempData {
         var globalParams: GlobalParams? = null
         var identityProvider: IdentityProvider? = null
         var idObjectRequest: RawJson? = null
-        //var privateIdObjectDataEncrypted: String? = null
-        var encryptedAccountData: String? = null
-        //var accountAddress: String? = null
     }
 
     init {
         _waitingLiveData.value = true
         _waitingGlobalData.value = true
+        val identityDao = WalletDatabase.getDatabase(getApplication()).identityDao()
+        identityRepository = IdentityRepository(identityDao)
     }
 
     fun initialize(identityNamePrefix: String) {
-        val identityDao = WalletDatabase.getDatabase(getApplication()).identityDao()
-        val identityRepository = IdentityRepository(identityDao)
         viewModelScope.launch {
-            val identityCount = identityRepository.getCount() + 1
+            val identityCount = identityRepository.nextIdentityNumber()
             identityCustomName = "$identityNamePrefix $identityCount"
         }
     }
@@ -138,60 +134,33 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         }
     }
 
-    fun continueWithPassword(password: String) = viewModelScope.launch {
+    fun continueWithPassword() = viewModelScope.launch {
         _waitingLiveData.value = true
-        encryptAndContinue(password)
+        encryptAndContinue()
     }
 
     fun checkLogin(cipher: Cipher) = viewModelScope.launch {
         _waitingLiveData.value = true
         val password = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
         if (password != null) {
-            encryptAndContinue(password)
+            encryptAndContinue()
         } else {
             _errorLiveData.value = Event(R.string.app_error_encryption)
             _waitingLiveData.value = false
         }
     }
 
-    private suspend fun encryptAndContinue(password: String) {
-/*
-        val output = createIdRequestAndPrivateDataV1()
-        if (output != null) {
-            val tempCurrentPrivateIdObjectDataJson = gson.toJson(output.privateIdObjectData.value)
-            val encodedEncrypted = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, tempCurrentPrivateIdObjectDataJson)
-            if (encodedEncrypted != null && encryptAccountData(password, output)) {
-                tempData.privateIdObjectDataEncrypted = encodedEncrypted
-                tempData.idObjectRequest = output.idObjectRequest
-                tempData.accountAddress = output.initialAccountData?.accountAddress
-                _gotoIdentityProviderWebview.value = Event(true)
-            } else {
-                _errorLiveData.value = Event(R.string.app_error_encryption)
-                _waitingLiveData.value = false
-            }
-        }
-*/
+    private suspend fun encryptAndContinue() {
         val output = createIdRequestAndPrivateDataV1()
         if (output != null) {
             tempData.idObjectRequest = output.idObjectRequest
-            _gotoIdentityProviderWebview.value = Event(true)
+            _gotoIdentityProviderWebView.value = Event(true)
         } else {
             _errorLiveData.value = Event(R.string.app_error_encryption)
             _waitingLiveData.value = false
         }
     }
-/*
-    private suspend fun encryptAccountData(password: String, output: IdRequestAndPrivateDataOutputV1): Boolean {
-        val initialAccountData = output.initialAccountData
-        val jsonToBeEncrypted = gson.toJson(initialAccountData)
-        val storageAccountDataEncrypted = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, jsonToBeEncrypted)
-        if (storageAccountDataEncrypted != null) {
-            tempData.encryptedAccountData = storageAccountDataEncrypted
-            return true
-        }
-        return false
-    }
-*/
+
     private suspend fun createIdRequestAndPrivateDataV1(): IdRequestAndPrivateDataOutputV1? {
         val identityProvider = tempData.identityProvider
         val global = tempData.globalParams
@@ -201,9 +170,9 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
             return null
         }
 
-        val seed = AuthPreferences(getApplication()).getSeedPhrase()
         val net = "Mainnet"
-        val identityIndex = 1
+        val identityIndex = identityRepository.nextIdentityNumber()
+        val seed = AuthPreferences(getApplication()).getSeedPhrase()
 
         val output = App.appCore.cryptoLibrary.createIdRequestAndPrivateDataV1(identityProvider.ipInfo, identityProvider.arsInfos, global, seed, net, identityIndex)
         return if (output != null) {
@@ -218,9 +187,6 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
     fun getIdentityCreationData(): IdentityCreationData? {
         val identityProvider = tempData.identityProvider
         val idObjectRequest = tempData.idObjectRequest
-        //val privateIdObjectDataEncrypted = tempData.privateIdObjectDataEncrypted
-        //val encryptedAccountData = tempData.encryptedAccountData
-        //val accountAddress = tempData.accountAddress
         if (identityProvider == null || idObjectRequest == null) {
             _errorLiveData.value = Event(R.string.app_error_general)
             return null
@@ -229,7 +195,6 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
             identityProvider,
             idObjectRequest,
             identityCustomName
-            //encryptedAccountData
         )
     }
 

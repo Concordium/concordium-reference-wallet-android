@@ -3,14 +3,10 @@ package com.concordium.wallet.ui.account.newaccountsetup
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
-import com.concordium.wallet.core.arch.EventObserver
-import com.concordium.wallet.core.backend.BackendError
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.databinding.ActivityNewAccountSetupBinding
-import com.concordium.wallet.ui.account.common.NewAccountViewModel
 import com.concordium.wallet.ui.account.newaccountconfirmed.NewAccountConfirmedActivity
 import com.concordium.wallet.ui.account.newaccountidentityattributes.NewAccountIdentityAttributesActivity
 import com.concordium.wallet.ui.common.account.BaseAccountActivity

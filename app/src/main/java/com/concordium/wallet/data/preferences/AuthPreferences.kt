@@ -3,6 +3,7 @@ package com.concordium.wallet.data.preferences
 import android.content.Context
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
+import com.concordium.wallet.util.toHex
 
 class AuthPreferences(val context: Context) :
     Preferences(context, SharedPreferencesKeys.PREF_FILE_AUTH, Context.MODE_PRIVATE) {
@@ -161,7 +162,7 @@ class AuthPreferences(val context: Context) :
 
     fun setSeedPhrase(value: String) {
         val seed = Mnemonics.MnemonicCode(value).toSeed()
-        val seedEncoded = seed.toHexString()
+        val seedEncoded = seed.toHex()
         setString(SEED_PHRASE, seedEncoded)
     }
 
@@ -171,9 +172,5 @@ class AuthPreferences(val context: Context) :
 
     fun hasSeedPhrase(): Boolean {
         return getSeedPhrase() != ""
-    }
-
-    private fun ByteArray.toHexString() = joinToString("") {
-        Integer.toUnsignedString(java.lang.Byte.toUnsignedInt(it), 16).padStart(2, '0')
     }
 }

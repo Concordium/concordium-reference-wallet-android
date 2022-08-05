@@ -26,7 +26,5 @@ interface CryptoLibrary {
 
     suspend fun decryptEncryptedAmount(input: DecryptAmountInput): String?
 
-//    suspend fun generateAccounts(generateAccountsInput: GenerateAccountsInputV1): List<PossibleAccount>?
-
     suspend fun generateBakerKeys(): BakerKeys?
 }
