@@ -25,7 +25,6 @@ class IdentityCreateIdentityNameFragment : BaseFragment(R.string.identity_create
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initializeViewModel()
-        sharedViewModel.initialize()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

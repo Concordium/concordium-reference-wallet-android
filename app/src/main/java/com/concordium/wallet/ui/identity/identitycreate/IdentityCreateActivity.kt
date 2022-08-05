@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.identity.identitycreate
 
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityIdentityCreateBinding
 import com.concordium.wallet.ui.base.BaseActivity
 
@@ -9,21 +10,13 @@ class IdentityCreateActivity : BaseActivity() {
     private lateinit var binding: ActivityIdentityCreateBinding
     private lateinit var viewModel: IdentityCreateViewModel
 
-    //region Lifecycle
-    //************************************************************
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityIdentityCreateBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initializeViewModel()
-        viewModel.initialize()
+        initializeViews()
     }
-
-    //endregion
-
-    //region Initialize
-    //************************************************************
 
     private fun initializeViewModel() {
         viewModel = ViewModelProvider(
@@ -32,5 +25,9 @@ class IdentityCreateActivity : BaseActivity() {
         )[IdentityCreateViewModel::class.java]
     }
 
-    //endregion
+    private fun initializeViews() {
+        supportFragmentManager.beginTransaction()
+            .add(R.id.fragment_container, IdentityCreateIdentityNameFragment())
+            .commit()
+    }
 }

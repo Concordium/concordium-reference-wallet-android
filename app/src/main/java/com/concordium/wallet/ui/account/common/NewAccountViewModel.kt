@@ -320,9 +320,9 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
 
     private fun saveNewAccount(account: Account) = viewModelScope.launch {
         val accountId = accountRepository.insert(account)
+        identity.nextAccountNumber++
+        identityRepository.update(identity)
         account.id = accountId.toInt()
-        // Also save a recipient representing this account
-        // JVE not here, later when we know we are finalised recipientRepository.insert(Recipient(0, account.name, account.address))
         _gotoAccountCreatedLiveData.value = Event(account)
     }
 
