@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityRecoverWalletBinding
 import com.concordium.wallet.ui.MainActivity
@@ -26,6 +27,13 @@ class RecoverWalletActivity : BaseActivity() {
         initializeViewModel()
         initViews()
         initObservers()
+
+        if (BuildConfig.DEBUG) {
+            binding.toolbarLayout.toolbarTitle.isClickable = true
+            binding.toolbarLayout.toolbarTitle.setOnClickListener {
+                viewModel.hack()
+            }
+        }
     }
 
     private fun initializeViewModel() {

@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
+import com.concordium.wallet.BuildConfig
+import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.ui.passphrase.common.WordsPickedBaseListAdapter
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toHex
@@ -31,6 +33,13 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
 
     fun clearWordsPicked() {
         wordsPicked = arrayOfNulls(wordsPicked.size)
+    }
+
+    fun hack() {
+        if (BuildConfig.DEBUG) {
+            AuthPreferences(getApplication()).setSeedPhrase("skirt bid lock hollow eyebrow joke pole foam cattle gain prosper crack decline prevent shrimp drastic color shine click pact surge ketchup stumble toward")
+            _validateLiveData.value = true
+        }
     }
 
     fun validateInputCode() {

@@ -188,8 +188,6 @@ class PassPhraseInputFragment : PassPhraseBaseFragment() {
             isEditing = viewModel.wordsPicked[arrayAdapter.currentPosition] != null
             viewModel.wordsPicked[arrayAdapter.currentPosition] = tvSuggestion.text.toString()
 
-            //viewModel.check(arrayAdapter.currentPosition)
-
             if (isEditing) {
                 populateFourSuggestions(arrayAdapter.currentPosition)
                 setColorsSuggestions()

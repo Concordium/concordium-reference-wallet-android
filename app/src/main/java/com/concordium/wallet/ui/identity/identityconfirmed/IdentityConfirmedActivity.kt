@@ -84,7 +84,7 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
         }
         viewModel.identityErrorLiveData.observe(this) { data ->
             data?.let {
-                showCreateIdentityError(data.identity.name)
+                showCreateIdentityError(it.identity.status)
             }
         }
         viewModel.identityDoneLiveData.observe(this) {

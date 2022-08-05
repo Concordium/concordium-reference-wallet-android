@@ -140,6 +140,7 @@ class IdentityProviderListActivity : BaseActivity() {
 
     private fun gotoIdentityProviderWebView() {
         viewModel.getIdentityCreationData()?.let { identityCreationData ->
+            finish()
             val intent = Intent(this, IdentityProviderWebViewActivity::class.java)
             intent.putExtra(IdentityProviderWebViewActivity.EXTRA_IDENTITY_CREATION_DATA, identityCreationData)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

@@ -58,7 +58,7 @@ class IdentityDaoUnitTest {
             PreIdentityObject(
                 RawJson("{}"), pubInfoForIP, "",
                 RawJson("{}"), "",
-                RawJson("{}"), ""
+                RawJson("{}"), "", ""
             )
         val identityObject = IdentityObject(
             AttributeList(HashMap(), "203012", 255, "20200101"),
