@@ -67,7 +67,8 @@
             android:layout_height="wrap_content"
             style="@style/TextView.Standard"
             android:paddingHorizontal="8dp"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin_extended"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:enabled="false"
             android:text="@string/pass_phrase_confirm" />
     </LinearLayout>
