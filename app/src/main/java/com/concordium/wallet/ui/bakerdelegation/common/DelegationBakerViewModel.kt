@@ -165,6 +165,14 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return bakerDelegationData.account?.accountDelegation?.pendingChange != null || bakerDelegationData.account?.accountBaker?.pendingChange != null
     }
 
+    fun isLoweringDelegation(): Boolean {
+        bakerDelegationData.amount?.let { amount ->
+            if (amount < (bakerDelegationData.oldStakedAmount ?: 0))
+                return true
+        }
+        return false
+    }
+
     fun atDisposal(): Long {
         var staked: Long = 0
         bakerDelegationData.account?.accountDelegation?.let {
