@@ -631,9 +631,8 @@
     <string name="identity_create_identity_provider_privacy_policy">Privacy Policy</string>
 
     <!-- Identity provider list -->
-    <string name="identity_provider_list_title">Your first identity</string>
-    <string name="identity_provider_list_note">Selecting a 3rd party Identity Issuer will take you to their
-        Identity Issuance flow.You will be returned to the app upon completion.\n\nNote: More Identity Issuers are coming soon!</string>
+    <string name="identity_provider_list_first_title">Your first identity</string>
+    <string name="identity_provider_list_title">Request a new identity</string>
 
     <!-- Identity Provider Webview -->
     <string name="identity_provider_webview_title">Identity Verification</string>

@@ -15,6 +15,7 @@ import com.concordium.wallet.ui.common.IdentityAdapter
 import com.concordium.wallet.ui.identity.identityconfirmed.IdentityConfirmedActivity
 import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
 import com.concordium.wallet.ui.identity.identitydetails.IdentityDetailsActivity
+import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 
 class IdentitiesOverviewActivity : BaseActivity() {
     private lateinit var binding: ActivityIdentitiesOverviewBinding
@@ -114,8 +115,7 @@ class IdentitiesOverviewActivity : BaseActivity() {
     }
 
     private fun gotoCreateIdentity() {
-        val intent = Intent(this, IdentityCreateActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(this, IdentityProviderListActivity::class.java))
     }
 
     private fun showWaiting(waiting: Boolean) {

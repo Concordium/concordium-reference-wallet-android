@@ -154,8 +154,6 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
             val identityRepository = IdentityRepository(identityDao)
             identity?.let {
                 identity = identityRepository.findById(it.id)
-            }
-            identity?.let {
                 runOnUiThread {
                     binding.identityView.setIdentityData(it)
                     binding.accountView.setDefault()

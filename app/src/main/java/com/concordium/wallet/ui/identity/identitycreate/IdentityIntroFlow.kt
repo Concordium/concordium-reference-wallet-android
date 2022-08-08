@@ -20,7 +20,9 @@ class IdentityIntroFlow : GenericFlowActivity(R.string.identity_intro_flow_title
     }
 
     override fun gotoContinue() {
-        startActivity(Intent(this, IdentityProviderListActivity::class.java))
+        val intent = Intent(this, IdentityProviderListActivity::class.java)
+        intent.putExtra(IdentityProviderListActivity.SHOW_FOR_FIRST_IDENTITY, true)
+        startActivity(intent)
     }
 
     override fun getMaxPages(): Int {

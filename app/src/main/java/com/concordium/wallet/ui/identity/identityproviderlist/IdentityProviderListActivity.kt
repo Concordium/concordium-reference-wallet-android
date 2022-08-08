@@ -29,6 +29,11 @@ class IdentityProviderListActivity : BaseActivity() {
     private lateinit var viewModel: IdentityProviderListViewModel
     private lateinit var identityProviderAdapter: IdentityProviderAdapter
     private lateinit var biometricPrompt: BiometricPrompt
+    private var showForFirstIdentity = false
+
+    companion object {
+        const val SHOW_FOR_FIRST_IDENTITY = "SHOW_FOR_FIRST_IDENTITY"
+    }
 
     private var longTimeWaitingCountDownTimer =
         object : CountDownTimer(2 * 1000.toLong(), 1000) {
@@ -46,7 +51,16 @@ class IdentityProviderListActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityIdentityProviderListBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_list_title)
+
+        showForFirstIdentity = intent.extras?.getBoolean(SHOW_FOR_FIRST_IDENTITY, false) ?: false
+
+        if (showForFirstIdentity) {
+            setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_list_first_title)
+        } else {
+            setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_list_title)
+            //hide the dots
+        }
+
         initializeViewModel()
         viewModel.initialize(getString(R.string.identity))
         initializeViews()
@@ -115,7 +129,7 @@ class IdentityProviderListActivity : BaseActivity() {
             val items: MutableList<AdapterItem> = list.map { IdentityProviderItem(it) }.toMutableList()
             items.add(0, HeaderItem())
             val newlineSeparatedLinks = list.joinToString (separator = "<br><br>") { it -> "<a href=\"${it.ipInfo.ipDescription.url}\">${it.ipInfo.ipDescription.name}</a>" }
-            identityProviderAdapter = IdentityProviderAdapter(this, newlineSeparatedLinks, items)
+            identityProviderAdapter = IdentityProviderAdapter(this, newlineSeparatedLinks, showForFirstIdentity, items)
             binding.recyclerview.adapter = identityProviderAdapter
             setItemClickAdapter()
         })
@@ -227,12 +241,11 @@ class IdentityProviderListActivity : BaseActivity() {
     }
 
     private fun createPromptInfo(): BiometricPrompt.PromptInfo {
-        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+        return BiometricPrompt.PromptInfo.Builder()
             .setTitle(getString(R.string.auth_login_biometrics_dialog_title))
             .setConfirmationRequired(true)
             .setNegativeButtonText(getString(if (viewModel.usePasscode()) R.string.auth_login_biometrics_dialog_cancel_passcode else R.string.auth_login_biometrics_dialog_cancel_password))
             .build()
-        return promptInfo
     }
 
     //endregion
