@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.identity.identityconfirmed
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.Display
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
@@ -15,6 +16,7 @@ import com.concordium.wallet.databinding.ActivityIdentityConfirmedBinding
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.RequestCodes
 import com.concordium.wallet.ui.common.account.BaseAccountActivity
+import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.uicore.dialog.Dialogs
 import kotlinx.coroutines.CoroutineScope
@@ -22,19 +24,23 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentListener {
-    companion object {
-        const val EXTRA_IDENTITY = "EXTRA_IDENTITY"
-    }
-
     private lateinit var binding: ActivityIdentityConfirmedBinding
     private lateinit var viewModel: IdentityConfirmedViewModel
-
+    private var showForFirstIdentity = false
     private var identity: Identity? = null
+
+    companion object {
+        const val EXTRA_IDENTITY = "EXTRA_IDENTITY"
+        const val SHOW_FOR_FIRST_IDENTITY = "SHOW_FOR_FIRST_IDENTITY"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityIdentityConfirmedBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        showForFirstIdentity = intent.extras?.getBoolean(SHOW_FOR_FIRST_IDENTITY, false) ?: false
+
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_confirmed_title)
         identity = intent.extras!!.getSerializable(EXTRA_IDENTITY) as Identity
         initializeNewAccountViewModel()
@@ -88,7 +94,11 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
             }
         }
         viewModel.identityDoneLiveData.observe(this) {
-            showSubmitAccount()
+            if (showForFirstIdentity)
+                showSubmitAccount()
+            else {
+                updateIdentityView()
+            }
         }
     }
 
@@ -97,7 +107,10 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
         showWaiting(true)
 
         binding.confirmButton.setOnClickListener {
-            showSubmitAccount()
+            if (showForFirstIdentity)
+                showSubmitAccount()
+            else
+                gotoMainWithIdentityListOnTop()
         }
 
         identity?.let {
@@ -105,6 +118,13 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
         }
 
         binding.rlAccount.visibility = View.GONE
+
+        if (showForFirstIdentity) {
+            binding.confirmButton.text = getString(R.string.identity_confirmed_confirm)
+        } else {
+            binding.confirmButton.text = getString(R.string.identity_confirmed_finish_button)
+            binding.progressLine.visibility = View.GONE
+        }
 
         binding.btnSubmitAccount.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
@@ -117,17 +137,33 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
         }
     }
 
+    private fun updateIdentityView() {
+        CoroutineScope(Dispatchers.IO).launch {
+            identity?.let {
+                viewModel.getIdentityFromId(it.id)?.let { refreshedIdentity ->
+                    identity = refreshedIdentity
+                    runOnUiThread {
+                        binding.identityView.setIdentityData(refreshedIdentity)
+                    }
+                }
+            }
+        }
+    }
+
     private fun showCreateIdentityError(errorFromIdentityProvider: String) {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.dialog_identity_create_error_title)
         builder.setMessage(getString(R.string.dialog_identity_create_error_text, errorFromIdentityProvider))
-        builder.setPositiveButton(getString(R.string.dialog_identity_create_error_retry)) { _, _ -> gotoIdentityList() }
+        builder.setPositiveButton(getString(R.string.dialog_identity_create_error_retry)) { _, _ -> gotoMainWithIdentityListOnTop() }
         builder.create().show()
     }
 
-    private fun gotoIdentityList() {
+    private fun gotoMainWithIdentityListOnTop() {
         finish()
-        startActivity(Intent(this, IdentityProviderListActivity::class.java))
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.putExtra(MainActivity.EXTRA_SHOW_IDENTITIES, true)
+        startActivity(intent)
     }
 
      override fun showWaiting(waiting: Boolean) {

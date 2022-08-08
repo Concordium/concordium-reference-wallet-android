@@ -6,7 +6,6 @@ import android.os.CountDownTimer
 import android.view.View
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.concordium.wallet.R
@@ -58,7 +57,6 @@ class IdentityProviderListActivity : BaseActivity() {
             setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_list_first_title)
         } else {
             setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_list_title)
-            //hide the dots
         }
 
         initializeViewModel()
@@ -125,14 +123,17 @@ class IdentityProviderListActivity : BaseActivity() {
         binding.recyclerview.setHasFixedSize(true)
         binding.recyclerview.layoutManager = linearLayoutManager
 
-        viewModel.identityProviderList.observe(this, Observer { list ->
-            val items: MutableList<AdapterItem> = list.map { IdentityProviderItem(it) }.toMutableList()
+        viewModel.identityProviderList.observe(this) { list ->
+            val items: MutableList<AdapterItem> =
+                list.map { IdentityProviderItem(it) }.toMutableList()
             items.add(0, HeaderItem())
-            val newlineSeparatedLinks = list.joinToString (separator = "<br><br>") { it -> "<a href=\"${it.ipInfo.ipDescription.url}\">${it.ipInfo.ipDescription.name}</a>" }
-            identityProviderAdapter = IdentityProviderAdapter(this, newlineSeparatedLinks, showForFirstIdentity, items)
+            val newlineSeparatedLinks =
+                list.joinToString(separator = "<br><br>") { "<a href=\"${it.ipInfo.ipDescription.url}\">${it.ipInfo.ipDescription.name}</a>" }
+            identityProviderAdapter =
+                IdentityProviderAdapter(this, newlineSeparatedLinks, showForFirstIdentity, items)
             binding.recyclerview.adapter = identityProviderAdapter
             setItemClickAdapter()
-        })
+        }
     }
 
     private fun setItemClickAdapter() {
@@ -236,8 +237,7 @@ class IdentityProviderListActivity : BaseActivity() {
             }
         }
 
-        val biometricPrompt = BiometricPrompt(this, executor, callback)
-        return biometricPrompt
+        return BiometricPrompt(this, executor, callback)
     }
 
     private fun createPromptInfo(): BiometricPrompt.PromptInfo {

@@ -649,6 +649,7 @@
     <string name="identity_confirmed_confirm_account_submission_toolbar">Your first account</string>
     <string name="identity_confirmed_confirm_account_submission_title">Account submission</string>
     <string name="identity_confirmed_confirm_account_submission_text">Once the identity provider has verified your identity, you will be able to submit your first Concordium account. So hang on for a bit and wait for them to finish. You can also come back later to submit your account.\n\nWhen you have submitted your account, you will be taken to the wallet.</string>
+    <string name="identity_confirmed_finish_button">Finish</string>
 
     <!-- Identity attributes -->
     <string name="identity_attribute_first_name">First name</string>
