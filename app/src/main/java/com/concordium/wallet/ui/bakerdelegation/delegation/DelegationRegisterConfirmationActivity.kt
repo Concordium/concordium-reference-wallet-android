@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.view.View
 import androidx.lifecycle.Observer
 import com.concordium.wallet.R
+import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_DELEGATION
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_DELEGATION
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -42,9 +43,14 @@ class DelegationRegisterConfirmationActivity :
         if (viewModel.isUpdatingDelegation()) {
             setActionBarTitle(R.string.delegation_update_delegation_title)
             delegation_transaction_title.text = getString(R.string.delegation_update_delegation_transaction_title)
-            grace_period.text = resources.getQuantityString(R.plurals.delegation_register_delegation_confirmation_desc_update, gracePeriod, gracePeriod)
-        } else {
+        }
+
+        if (viewModel.bakerDelegationData.type == REGISTER_DELEGATION) {
             grace_period.text = resources.getQuantityString(R.plurals.delegation_register_delegation_confirmation_desc, gracePeriod, gracePeriod)
+        } else if (viewModel.bakerDelegationData.type == UPDATE_DELEGATION) {
+            if (viewModel.isLoweringDelegation()) {
+                grace_period.text = resources.getQuantityString(R.plurals.delegation_register_delegation_confirmation_desc_update, gracePeriod, gracePeriod)
+            }
         }
 
         submit_delegation_transaction.setOnClickListener {
