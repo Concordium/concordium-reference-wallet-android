@@ -28,6 +28,7 @@ import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.account.newaccountname.NewAccountNameActivity
 import com.concordium.wallet.ui.base.BaseFragment
+import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
 import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
@@ -464,7 +465,8 @@ class AccountsOverviewFragment : BaseFragment() {
     }
 
     private fun gotoCreateAccount() {
-        val intent = Intent(activity, NewAccountNameActivity::class.java)
+        val intent = Intent(activity, IdentitiesOverviewActivity::class.java)
+        intent.putExtra(IdentitiesOverviewActivity.SHOW_FOR_CREATE_ACCOUNT, true)
         startActivity(intent)
     }
 

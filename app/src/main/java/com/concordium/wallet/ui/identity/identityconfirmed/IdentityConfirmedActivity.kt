@@ -97,7 +97,7 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
         showWaiting(true)
 
         binding.confirmButton.setOnClickListener {
-            continueClicked()
+            showSubmitAccount()
         }
 
         identity?.let {
@@ -128,15 +128,6 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
     private fun gotoIdentityList() {
         finish()
         startActivity(Intent(this, IdentityProviderListActivity::class.java))
-    }
-
-    private fun continueClicked() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(getString(R.string.identity_confirmed_alert_dialog_title))
-        builder.setMessage(getString(R.string.identity_confirmed_alert_dialog_text))
-        builder.setPositiveButton(getString(R.string.identity_confirmed_alert_dialog_ok)) { _, _ -> showSubmitAccount() }
-        builder.setCancelable(true)
-        builder.create().show()
     }
 
      override fun showWaiting(waiting: Boolean) {

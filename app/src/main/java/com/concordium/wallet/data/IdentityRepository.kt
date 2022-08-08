@@ -54,7 +54,7 @@ class IdentityRepository(private val identityDao: IdentityDao) {
 
     suspend fun nextAccountNumber(): Int {
         val allIdentities = getAll()
-        return allIdentities.maxOfOrNull { it.nextAccountNumber } ?: 0
+        return allIdentities.maxOfOrNull { it.nextAccountNumber } ?: 1
     }
 
     suspend fun nextIdentityNumber(): Int {
