@@ -161,6 +161,14 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return false
     }
 
+    fun isLoweringDelegation(): Boolean {
+        bakerDelegationData.amount?.let { amount ->
+            if (amount < (bakerDelegationData.oldStakedAmount ?: 0))
+                return true
+        }
+        return false
+    }
+
     fun isInCoolDown(): Boolean {
         return bakerDelegationData.account?.accountDelegation?.pendingChange != null || bakerDelegationData.account?.accountBaker?.pendingChange != null
     }
