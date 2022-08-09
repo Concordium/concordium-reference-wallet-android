@@ -82,7 +82,7 @@
                         android:layout_marginHorizontal="@dimen/activity_vertical_margin"
                         android:layout_marginTop="@dimen/activity_vertical_margin"
                         android:gravity="start"
-                        tools:text="@string/identity_confirmed_info" />
+                        android:text="@string/identity_confirmed_info" />
 
                     <com.concordium.wallet.uicore.view.IdentityView
                         android:id="@+id/identity_view"

@@ -237,6 +237,7 @@ class IdentityProviderWebViewActivity : BaseActivity() {
     }
 
     private fun gotoFailed(error: BackendError?) {
+        finish()
         val intent = Intent(this, FailedActivity::class.java)
         intent.putExtra(FailedActivity.EXTRA_SOURCE, FailedViewModel.Source.Identity)
         error?.let {
