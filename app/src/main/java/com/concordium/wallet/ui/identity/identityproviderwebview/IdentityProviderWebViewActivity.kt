@@ -33,11 +33,12 @@ import java.util.*
 class IdentityProviderWebViewActivity : BaseActivity() {
     private lateinit var binding: ActivityIdentityProviderWebviewBinding
     private lateinit var viewModel: IdentityProviderWebViewViewModel
+    private var showForFirstIdentity = false
 
     companion object {
         const val EXTRA_IDENTITY_CREATION_DATA = "EXTRA_IDENTITY_CREATION_DATA"
         const val KEY_IDENTITY_CREATION_DATA = "KEY_IDENTITY_CREATION_DATA"
-
+        const val SHOW_FOR_FIRST_IDENTITY = "SHOW_FOR_FIRST_IDENTITY"
         const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_DATAWEREAVAILABLE = 1 // data were available
         const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_VALIDCALLBACKURI = 2 // valid callback uri
         const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_NOIDENTITYDATA = 3 // identityCreationData was not null
@@ -78,6 +79,9 @@ class IdentityProviderWebViewActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityIdentityProviderWebviewBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        showForFirstIdentity = intent.extras?.getBoolean(SHOW_FOR_FIRST_IDENTITY, false) ?: false
+
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_webview_title)
 
         var handled = false
@@ -227,6 +231,8 @@ class IdentityProviderWebViewActivity : BaseActivity() {
         val intent = Intent(this, IdentityConfirmedActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         intent.putExtra(IdentityConfirmedActivity.EXTRA_IDENTITY, identity)
+        if (showForFirstIdentity)
+            intent.putExtra(IdentityConfirmedActivity.SHOW_FOR_FIRST_IDENTITY, true)
         startActivity(intent)
     }
 

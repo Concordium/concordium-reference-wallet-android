@@ -38,7 +38,11 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
 
         showForFirstIdentity = intent.extras?.getBoolean(SHOW_FOR_FIRST_IDENTITY, false) ?: false
 
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_confirmed_title)
+        if (showForFirstIdentity)
+            setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_confirmed_title)
+        else
+            setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identities_overview_create_account_title)
+
         identity = intent.extras!!.getSerializable(EXTRA_IDENTITY) as Identity
         initializeNewAccountViewModel()
         initializeAuthenticationObservers()
@@ -91,11 +95,8 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
             }
         }
         viewModel.identityDoneLiveData.observe(this) {
-            if (showForFirstIdentity)
-                showSubmitAccount()
-            else {
-                updateIdentityView()
-            }
+            updateIdentityView()
+            showSubmitAccount()
         }
     }
 
@@ -118,9 +119,14 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
 
         if (showForFirstIdentity) {
             binding.confirmButton.text = getString(R.string.identity_confirmed_confirm)
+            binding.tvHeader.text = getString(R.string.identity_confirmed_header)
+            binding.infoTextview.text = getString(R.string.identity_confirmed_info)
         } else {
-            binding.confirmButton.text = getString(R.string.identity_confirmed_finish_button)
             binding.progressLine.visibility = View.GONE
+            binding.tvHeader.text = getString(R.string.identity_confirmed_confirm_account_submission_title)
+            binding.infoTextview.text = getString(R.string.identity_confirmed_submit_new_account_for_identity, identity?.id ?: "")
+            binding.accountView.visibility = View.VISIBLE
+            binding.btnSubmitAccount.isEnabled = true
         }
 
         binding.btnSubmitAccount.setOnClickListener {
@@ -183,13 +189,15 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
             val identityRepository = IdentityRepository(identityDao)
             identity?.let {
                 identity = identityRepository.findById(it.id)
-                runOnUiThread {
+            }
+            runOnUiThread {
+                identity?.let {
                     binding.identityView.setIdentityData(it)
                     binding.accountView.setDefault()
                     binding.accountView.visibility = View.VISIBLE
                     binding.btnSubmitAccount.isEnabled = it.status == IdentityStatus.DONE
+                    binding.confirmButton.visibility = View.GONE
                     binding.rlAccount.visibility = View.VISIBLE
-                    binding.confirmButton.visibility = View.INVISIBLE
                     binding.progressLine.setFilledDots(4)
                     binding.progressLine.invalidate()
                     setActionBarTitle(R.string.identity_confirmed_confirm_account_submission_toolbar)
