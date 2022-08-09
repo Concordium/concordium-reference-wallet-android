@@ -1,7 +1,10 @@
 package com.concordium.wallet.core.crypto
 
 import com.concordium.wallet.data.cryptolib.*
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.ArsInfo
+import com.concordium.wallet.data.model.BakerKeys
+import com.concordium.wallet.data.model.GlobalParams
+import com.concordium.wallet.data.model.IdentityProviderInfo
 
 interface CryptoLibrary {
     companion object {

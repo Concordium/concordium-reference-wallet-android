@@ -15,7 +15,7 @@ import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.auth.setup.AuthSetupActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
-import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
+import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewFragment
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.intro.introstart.IntroTermsActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
@@ -23,7 +23,10 @@ import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
 import com.concordium.wallet.uicore.dialog.CustomDialogFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOverviewFragment.AccountsOverviewFragmentListener {
     companion object {
@@ -108,9 +111,15 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
         }
     }
 
+    override fun onBackPressed() {
+        if (viewModel.stateLiveData.value == MainViewModel.State.IdentitiesOverview)
+            viewModel.setState(MainViewModel.State.AccountOverview)
+        else
+            super.onBackPressed()
+    }
+
     private fun switchToIdentities() {
-        val intent = Intent(this, IdentitiesOverviewActivity::class.java)
-        startActivity(intent)
+        viewModel.setState(MainViewModel.State.IdentitiesOverview)
     }
 
     override fun onDialogResult(requestCode: Int, resultCode: Int, data: Intent) {
@@ -209,10 +218,16 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
     }
 
     private fun replaceFragment(state: MainViewModel.State) {
+        hideActionBarBack(this)
         val fragment = when (state) {
             MainViewModel.State.Backup -> AccountsOverviewFragment() // is triggering start of BackupExport
             MainViewModel.State.AccountOverview -> AccountsOverviewFragment()
             MainViewModel.State.More -> MoreOverviewFragment()
+            MainViewModel.State.IdentitiesOverview -> {
+                setActionBarTitle(R.string.identities_overview_title)
+                showActionBarBack(this)
+                IdentitiesOverviewFragment()
+            }
         }
         replaceFragment(fragment)
     }

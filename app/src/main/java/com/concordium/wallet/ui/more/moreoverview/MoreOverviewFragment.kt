@@ -14,7 +14,6 @@ import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentMoreOverviewBinding
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.base.BaseFragment
-import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
 import com.concordium.wallet.ui.more.about.AboutActivity
 import com.concordium.wallet.ui.more.alterpassword.AlterPasswordActivity
 import com.concordium.wallet.ui.more.dev.DevActivity
@@ -87,7 +86,8 @@ class MoreOverviewFragment : BaseFragment() {
         }
 
         binding.identities.setOnClickListener {
-            gotoIdentities()
+            mainViewModel.setState(MainViewModel.State.IdentitiesOverview)
+            //gotoIdentities()
         }
 
         binding.addressBookLayout.setOnClickListener {
@@ -142,11 +142,6 @@ class MoreOverviewFragment : BaseFragment() {
 
     private fun gotoDevConfig() {
         val intent = Intent(activity, DevActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun gotoIdentities() {
-        val intent = Intent(activity, IdentitiesOverviewActivity::class.java)
         startActivity(intent)
     }
 

@@ -10,7 +10,6 @@ import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
-import com.concordium.wallet.core.backend.BackendErrorException
 import com.concordium.wallet.core.security.EncryptionException
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.AccountRepository
@@ -23,14 +22,15 @@ import com.concordium.wallet.data.export.AccountExport
 import com.concordium.wallet.data.export.EncryptedExportData
 import com.concordium.wallet.data.export.ExportData
 import com.concordium.wallet.data.export.IdentityExport
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.IdentityAttribute
+import com.concordium.wallet.data.model.IdentityStatus
+import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
+import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.util.ExportEncryptionHelper
-import com.concordium.wallet.ui.common.BackendErrorHandler
-import com.concordium.wallet.uicore.Formatter
 import com.concordium.wallet.util.Log
 import com.google.gson.JsonIOException
 import com.google.gson.JsonSyntaxException

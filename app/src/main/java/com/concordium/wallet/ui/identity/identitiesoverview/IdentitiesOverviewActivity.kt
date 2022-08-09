@@ -13,7 +13,6 @@ import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.IdentityAdapter
 import com.concordium.wallet.ui.identity.identityconfirmed.IdentityConfirmedActivity
-import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
 import com.concordium.wallet.ui.identity.identitydetails.IdentityDetailsActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 

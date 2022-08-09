@@ -172,6 +172,11 @@ abstract class BaseActivity : AppCompatActivity() {
         subtitleView.visibility = View.VISIBLE
     }
 
+    fun showActionBarBack(activity: AppCompatActivity) {
+        val actionbar = activity.supportActionBar ?: return
+        actionbar.setDisplayHomeAsUpEnabled(true)
+    }
+
     fun hideActionBarBack(activity: AppCompatActivity) {
         val actionbar = activity.supportActionBar ?: return
         actionbar.setDisplayHomeAsUpEnabled(false)

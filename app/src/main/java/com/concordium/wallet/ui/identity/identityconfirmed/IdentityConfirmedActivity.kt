@@ -3,7 +3,6 @@ package com.concordium.wallet.ui.identity.identityconfirmed
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.view.Display
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
@@ -16,8 +15,6 @@ import com.concordium.wallet.databinding.ActivityIdentityConfirmedBinding
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.RequestCodes
 import com.concordium.wallet.ui.common.account.BaseAccountActivity
-import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
-import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.uicore.dialog.Dialogs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -160,10 +157,6 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
 
     private fun gotoMainWithIdentityListOnTop() {
         finish()
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        intent.putExtra(MainActivity.EXTRA_SHOW_IDENTITIES, true)
-        startActivity(intent)
     }
 
      override fun showWaiting(waiting: Boolean) {

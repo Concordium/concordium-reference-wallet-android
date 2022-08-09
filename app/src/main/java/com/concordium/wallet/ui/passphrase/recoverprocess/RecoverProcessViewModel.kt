@@ -12,7 +12,6 @@ import com.concordium.wallet.data.room.IdentityWithAccounts
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.Serializable
-import java.util.*
 
 class RecoverProcessViewModel(application: Application) : AndroidViewModel(application), Serializable {
     companion object {

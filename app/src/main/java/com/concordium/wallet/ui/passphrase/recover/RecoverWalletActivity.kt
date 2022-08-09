@@ -11,7 +11,6 @@ import androidx.viewpager2.widget.ViewPager2
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityRecoverWalletBinding
-import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessActivity
 
