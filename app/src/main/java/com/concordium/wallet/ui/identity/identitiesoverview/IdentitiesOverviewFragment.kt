@@ -6,9 +6,7 @@ import android.view.*
 import android.widget.LinearLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.concordium.wallet.App
 import com.concordium.wallet.R
-import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.databinding.FragmentIdentitiesOverviewBinding
 import com.concordium.wallet.ui.base.BaseFragment
@@ -17,12 +15,6 @@ import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import com.concordium.wallet.ui.identity.identitydetails.IdentityDetailsActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.util.*
-import kotlin.concurrent.schedule
 
 class IdentitiesOverviewFragment : BaseFragment(), IdentityStatusDelegate by IdentityStatusDelegateImpl() {
     private var _binding: FragmentIdentitiesOverviewBinding? = null
@@ -46,7 +38,12 @@ class IdentitiesOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ide
 
     override fun onResume() {
         super.onResume()
-        checkForPendingIdentity()
+        startCheckForPendingIdentity(activity)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopCheckForPendingIdentity()
     }
 
     override fun onDestroyView() {
@@ -63,24 +60,6 @@ class IdentitiesOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ide
             R.id.add_item_menu -> gotoCreateIdentity()
         }
         return true
-    }
-
-    private fun checkForPendingIdentity() {
-        App.appCore.newIdentityPending?.let { pendingIdentity ->
-            CoroutineScope(Dispatchers.IO).launch {
-                val identity = viewModel.findIdentityById(pendingIdentity.id)
-                identity?.let {
-                    activity?.runOnUiThread {
-                        when (identity.status) {
-                            IdentityStatus.PENDING -> checkForPendingIdentity()
-                            IdentityStatus.DONE -> identityDone(requireActivity(), identity)
-                            IdentityStatus.ERROR -> identityError(requireActivity(), identity)
-                        }
-                    }
-                }
-                delay(1000)
-            }
-        }
     }
 
     private fun gotoCreateIdentity() {

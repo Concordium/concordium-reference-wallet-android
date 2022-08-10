@@ -27,13 +27,15 @@ import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.base.BaseFragment
+import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
+import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
 import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.uicore.dialog.CustomDialogFragment
 
-class AccountsOverviewFragment : BaseFragment() {
+class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by IdentityStatusDelegateImpl() {
     private var _binding: FragmentAccountsOverviewBinding? = null
     private val binding get() = _binding!!
 
@@ -101,6 +103,8 @@ class AccountsOverviewFragment : BaseFragment() {
 
         if (!App.appCore.appSettingsForceUpdateChecked)
             viewModel.loadAppSettings()
+
+        startCheckForPendingIdentity(activity)
     }
 
     override fun onDestroyView() {
@@ -117,6 +121,7 @@ class AccountsOverviewFragment : BaseFragment() {
 
     override fun onPause() {
         super.onPause()
+        stopCheckForPendingIdentity()
         viewModel.stopFrequentUpdater()
         eventListener?.let {
             App.appCore.session.removeAccountsBackedUpListener(it)
