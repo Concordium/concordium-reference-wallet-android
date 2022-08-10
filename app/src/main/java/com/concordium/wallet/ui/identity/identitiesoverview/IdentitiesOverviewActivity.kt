@@ -44,7 +44,6 @@ class IdentitiesOverviewActivity : BaseActivity() {
 
         initializeViewModel()
         initializeViews()
-        viewModel.initialize()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

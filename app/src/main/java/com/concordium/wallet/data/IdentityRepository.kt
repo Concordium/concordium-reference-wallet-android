@@ -52,9 +52,9 @@ class IdentityRepository(private val identityDao: IdentityDao) {
         identityDao.deleteAll()
     }
 
-    suspend fun nextAccountNumber(): Int {
-        val allIdentities = getAll()
-        return allIdentities.maxOfOrNull { it.nextAccountNumber } ?: 1
+    suspend fun nextAccountNumber(identityId: Int): Int {
+        val identity = findById(identityId)
+        return identity?.nextAccountNumber ?: 1
     }
 
     suspend fun nextIdentityNumber(): Int {

@@ -607,6 +607,10 @@
     <string name="identities_overview_no_identities">You have no identities yet.</string>
     <string name="identities_overview_create_account_title">Create new account</string>
     <string name="identities_overview_create_account_select_identity">Select identity to submit account with</string>
+    <string name="identities_overview_identity_verified_title">Identity verified</string>
+    <string name="identities_overview_identity_verified_message">Identity %1$s has been verified by the identity provider. You can now start using the identity to create accounts in the Concordium Mobile Wallet.</string>
+    <string name="identities_overview_identity_create_account_now">Create account now</string>
+    <string name="identities_overview_identity_later">Later</string>
 
     <!-- Identity details -->
     <string name="identity_details_title">Identity</string>
@@ -651,6 +655,7 @@
     <string name="identity_confirmed_confirm_account_submission_text">Once the identity provider has verified your identity, you will be able to submit your first Concordium account. So hang on for a bit and wait for them to finish. You can also come back later to submit your account.\n\nWhen you have submitted your account, you will be taken to the wallet.</string>
     <string name="identity_confirmed_finish_button">Finish</string>
     <string name="identity_confirmed_submit_new_account_for_identity">Submit a new account for Identity %1$s?</string>
+    <string name="identity_confirmed_create_new_account">Create new account</string>
 
     <!-- Identity attributes -->
     <string name="identity_attribute_first_name">First name</string>

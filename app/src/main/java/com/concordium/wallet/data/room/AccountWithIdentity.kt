@@ -7,7 +7,7 @@ import java.io.Serializable
 
 data class AccountWithIdentity(
     @Embedded
-    val account: Account,
+    var account: Account,
     @Relation(
         parentColumn = "identity_id",
         entityColumn = "id"

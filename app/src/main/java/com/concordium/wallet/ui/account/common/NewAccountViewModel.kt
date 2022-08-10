@@ -113,8 +113,8 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    suspend fun nextAccountNumber(): Int {
-        return identityRepository.nextAccountNumber()
+    suspend fun nextAccountNumber(identityId: Int): Int {
+        return identityRepository.nextAccountNumber(identityId)
     }
 
     fun confirmWithoutAttributes() {
@@ -202,7 +202,7 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
             return
         }
 
-        val nextAccountNumber = identityRepository.nextAccountNumber()
+        val nextAccountNumber = identityRepository.nextAccountNumber(identity.id)
         val revealedAttributes = JsonArray()
         for (identityAttribute in tempData.revealedAttributeList) {
             revealedAttributes.add(identityAttribute.name)
@@ -324,6 +324,7 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
         identityRepository.update(identity)
         account.id = accountId.toInt()
         _gotoAccountCreatedLiveData.value = Event(account)
+        _waitingLiveData.value = false
     }
 
     fun usePasscode(): Boolean {

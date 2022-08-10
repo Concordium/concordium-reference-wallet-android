@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.model.IdentityStatus
@@ -25,11 +26,13 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
     private lateinit var binding: ActivityIdentityConfirmedBinding
     private lateinit var viewModel: IdentityConfirmedViewModel
     private var showForFirstIdentity = false
+    private var showForCreateAccount = false
     private var identity: Identity? = null
 
     companion object {
         const val EXTRA_IDENTITY = "EXTRA_IDENTITY"
         const val SHOW_FOR_FIRST_IDENTITY = "SHOW_FOR_FIRST_IDENTITY"
+        const val SHOW_FOR_CREATE_ACCOUNT = "SHOW_FOR_CREATE_ACCOUNT"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,21 +41,29 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
         setContentView(binding.root)
 
         showForFirstIdentity = intent.extras?.getBoolean(SHOW_FOR_FIRST_IDENTITY, false) ?: false
+        showForCreateAccount = intent.extras?.getBoolean(SHOW_FOR_CREATE_ACCOUNT, false) ?: false
 
         if (showForFirstIdentity)
             setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_confirmed_title)
-        else
-            setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_list_title)
+        else {
+            if (showForCreateAccount)
+                setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_confirmed_create_new_account)
+            else
+                setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_list_title)
+        }
 
         identity = intent.extras!!.getSerializable(EXTRA_IDENTITY) as Identity
+
         initializeNewAccountViewModel()
         initializeAuthenticationObservers()
         initializeViewModel()
         initializeViews()
+
         // If we're being restored from a previous state
         if (savedInstanceState != null) {
             return
         }
+
         viewModel.startIdentityUpdate()
     }
 
@@ -112,8 +123,11 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
         binding.confirmButton.setOnClickListener {
             if (showForFirstIdentity)
                 showSubmitAccount()
-            else
+            else {
+                if (!showForCreateAccount)
+                    App.appCore.newIdentityPending = identity
                 finish()
+            }
         }
 
         identity?.let {
@@ -125,16 +139,22 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
         if (showForFirstIdentity) {
             binding.confirmButton.text = getString(R.string.identity_confirmed_confirm)
         } else {
+            if (showForCreateAccount) {
+                showSubmitAccount()
+            }
             binding.progressLine.visibility = View.GONE
             binding.confirmButton.text = getString(R.string.identity_confirmed_finish_button)
         }
 
         binding.btnSubmitAccount.setOnClickListener {
+            binding.btnSubmitAccount.visibility = View.GONE
             CoroutineScope(Dispatchers.IO).launch {
-                val nextAccountNumber = viewModelNewAccount.nextAccountNumber()
-                runOnUiThread {
-                    viewModelNewAccount.initialize("${getString(R.string.account)} $nextAccountNumber", identity!!)
-                    viewModelNewAccount.confirmWithoutAttributes()
+                identity?.let { indent ->
+                    val nextAccountNumber = viewModelNewAccount.nextAccountNumber(indent.id)
+                    runOnUiThread {
+                        viewModelNewAccount.initialize("${getString(R.string.account)} $nextAccountNumber", indent)
+                        viewModelNewAccount.confirmWithoutAttributes()
+                    }
                 }
             }
         }
@@ -177,9 +197,14 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
     }
 
     override fun accountCreated(account: Account) {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        startActivity(intent)
+        if (showForFirstIdentity) {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            startActivity(intent)
+        } else {
+            binding.confirmButton.visibility = View.VISIBLE
+            binding.accountView.setAccount(account)
+        }
     }
 
     private fun showSubmitAccount() {
@@ -192,16 +217,22 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
             runOnUiThread {
                 identity?.let {
                     binding.identityView.setIdentityData(it)
-                    binding.accountView.setDefault()
+                    binding.accountView.setDefault("${getString(R.string.identity)} ${it.id}", "${getString(R.string.account)} ${it.nextAccountNumber}")
                     binding.accountView.visibility = View.VISIBLE
                     binding.btnSubmitAccount.isEnabled = it.status == IdentityStatus.DONE
                     binding.confirmButton.visibility = View.GONE
                     binding.rlAccount.visibility = View.VISIBLE
                     binding.progressLine.setFilledDots(4)
                     binding.progressLine.invalidate()
-                    setActionBarTitle(R.string.identity_confirmed_confirm_account_submission_toolbar)
+                    if (showForCreateAccount) {
+                        setActionBarTitle(R.string.identity_confirmed_create_new_account)
+                        binding.infoTextview.text = getString(R.string.identity_confirmed_submit_new_account_for_identity, it.id.toString())
+                    }
+                    else {
+                        setActionBarTitle(R.string.identity_confirmed_confirm_account_submission_toolbar)
+                        binding.infoTextview.text = getString(R.string.identity_confirmed_confirm_account_submission_text)
+                    }
                     binding.tvHeader.text = getString(R.string.identity_confirmed_confirm_account_submission_title)
-                    binding.infoTextview.text = getString(R.string.identity_confirmed_confirm_account_submission_text)
                 }
             }
         }
