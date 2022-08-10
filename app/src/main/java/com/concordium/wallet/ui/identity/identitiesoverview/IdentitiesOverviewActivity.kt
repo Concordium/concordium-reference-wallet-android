@@ -44,6 +44,7 @@ class IdentitiesOverviewActivity : BaseActivity() {
 
         initializeViewModel()
         initializeViews()
+        viewModel.loadIdentities()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -133,8 +134,10 @@ class IdentitiesOverviewActivity : BaseActivity() {
     }
 
     private fun gotoSubAccount(identity: Identity) {
+        finish()
         val intent = Intent(this, IdentityConfirmedActivity::class.java)
         intent.putExtra(IdentityConfirmedActivity.EXTRA_IDENTITY, identity)
+        intent.putExtra(IdentityConfirmedActivity.SHOW_FOR_CREATE_ACCOUNT, true)
         startActivity(intent)
     }
 }

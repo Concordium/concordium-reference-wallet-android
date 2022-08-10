@@ -19,6 +19,7 @@ import com.concordium.wallet.ui.identity.identitydetails.IdentityDetailsActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.concurrent.schedule
@@ -35,8 +36,12 @@ class IdentitiesOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ide
         initializeViewModel()
         initializeViews()
         registerObservers()
-        viewModel.loadIdentities()
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.loadIdentities()
     }
 
     override fun onResume() {
@@ -62,19 +67,18 @@ class IdentitiesOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ide
 
     private fun checkForPendingIdentity() {
         App.appCore.newIdentityPending?.let { pendingIdentity ->
-            Timer().schedule(1000) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val identity = viewModel.findIdentityById(pendingIdentity.id)
-                    identity?.let {
-                        requireActivity().runOnUiThread {
-                            when (identity.status) {
-                                IdentityStatus.PENDING -> checkForPendingIdentity()
-                                IdentityStatus.DONE -> identityDone(requireActivity(), identity)
-                                IdentityStatus.ERROR -> identityError(requireActivity(), identity)
-                            }
+            CoroutineScope(Dispatchers.IO).launch {
+                val identity = viewModel.findIdentityById(pendingIdentity.id)
+                identity?.let {
+                    activity?.runOnUiThread {
+                        when (identity.status) {
+                            IdentityStatus.PENDING -> checkForPendingIdentity()
+                            IdentityStatus.DONE -> identityDone(requireActivity(), identity)
+                            IdentityStatus.ERROR -> identityError(requireActivity(), identity)
                         }
                     }
                 }
+                delay(1000)
             }
         }
     }
