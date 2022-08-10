@@ -611,6 +611,9 @@
     <string name="identities_overview_identity_verified_message">Identity %1$s has been verified by the identity provider. You can now start using the identity to create accounts in the Concordium Mobile Wallet.</string>
     <string name="identities_overview_identity_create_account_now">Create account now</string>
     <string name="identities_overview_identity_later">Later</string>
+    <string name="identities_overview_identity_rejected_title">Identity rejected</string>
+    <string name="identities_overview_identity_rejected_text">Your identity request was unfortunately rejected with the following reason:\n\n%1$s\n\nRejected identity requests cannot be resolved, so the rejected identity will be discarded, after dismissing this notification.\n\nDo you want to make another request now?</string>
+    <string name="identities_overview_identity_request_another">Request another identity</string>
 
     <!-- Identity details -->
     <string name="identity_details_title">Identity</string>

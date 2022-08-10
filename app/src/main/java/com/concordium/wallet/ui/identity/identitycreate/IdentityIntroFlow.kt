@@ -20,6 +20,7 @@ class IdentityIntroFlow : GenericFlowActivity(R.string.identity_intro_flow_title
     }
 
     override fun gotoContinue() {
+        finish()
         val intent = Intent(this, IdentityProviderListActivity::class.java)
         intent.putExtra(IdentityProviderListActivity.SHOW_FOR_FIRST_IDENTITY, true)
         startActivity(intent)

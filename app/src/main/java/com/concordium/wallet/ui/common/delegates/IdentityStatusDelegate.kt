@@ -11,6 +11,7 @@ import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.identity.identityconfirmed.IdentityConfirmedActivity
+import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 
@@ -74,6 +75,19 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
     }
 
     override fun identityError(activity: ComponentActivity, identity: Identity) {
-
+        App.appCore.newIdentityPending = null
+        val builder = AlertDialog.Builder(activity)
+        builder.setTitle(R.string.identities_overview_identity_rejected_title)
+        builder.setMessage(activity.getString(R.string.identities_overview_identity_rejected_text, identity.id.toString()))
+        builder.setPositiveButton(activity.getString(R.string.identities_overview_identity_request_another)) { dialog, _ ->
+            dialog.dismiss()
+            activity.startActivity(Intent(activity, IdentityProviderListActivity::class.java))
+        }
+        builder.setNegativeButton(activity.getString(R.string.identities_overview_identity_later)) { dialog, _ ->
+            dialog.dismiss()
+        }
+        val dialog = builder.create()
+        dialog.setCanceledOnTouchOutside(false)
+        dialog.show()
     }
 }

@@ -31,8 +31,4 @@ class IdentitiesOverviewViewModel(application: Application) : AndroidViewModel(a
             _identityListLiveData.value = identityRepository.getAll()
         }
     }
-
-    suspend fun findIdentityById(id: Int): Identity? {
-        return identityRepository.findById(id)
-    }
 }

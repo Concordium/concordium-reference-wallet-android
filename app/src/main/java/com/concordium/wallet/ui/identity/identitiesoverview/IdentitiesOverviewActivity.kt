@@ -127,9 +127,7 @@ class IdentitiesOverviewActivity : BaseActivity() {
 
     private fun gotoIdentityDetails(identity: Identity) {
         val intent = Intent(this, IdentityDetailsActivity::class.java)
-        intent.putExtra(
-            IdentityDetailsActivity.EXTRA_IDENTITY, identity
-        )
+        intent.putExtra(IdentityDetailsActivity.EXTRA_IDENTITY, identity)
         startActivity(intent)
     }
 

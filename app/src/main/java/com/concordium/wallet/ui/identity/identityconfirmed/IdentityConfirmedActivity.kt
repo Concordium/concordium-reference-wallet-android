@@ -103,7 +103,9 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
         }
         viewModel.identityErrorLiveData.observe(this) { data ->
             data?.let {
-                showCreateIdentityError(it.identity.status)
+                runOnUiThread {
+                    showCreateIdentityError(it.identity.status)
+                }
             }
         }
         viewModel.identityDoneLiveData.observe(this) {
@@ -179,9 +181,14 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
         builder.setMessage(getString(R.string.dialog_identity_create_error_text, errorFromIdentityProvider))
         builder.setPositiveButton(getString(R.string.dialog_identity_create_error_retry)) { _, _ ->
             finish()
-            startActivity(Intent(this, IdentityProviderListActivity::class.java))
+            val intent = Intent(this, IdentityProviderListActivity::class.java)
+            if (showForFirstIdentity)
+                intent.putExtra(IdentityProviderListActivity.SHOW_FOR_FIRST_IDENTITY, true)
+            startActivity(intent)
         }
-        builder.create().show()
+        val dialog = builder.create()
+        dialog.setCanceledOnTouchOutside(false)
+        dialog.show()
     }
 
      override fun showWaiting(waiting: Boolean) {
