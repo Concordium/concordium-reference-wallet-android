@@ -37,7 +37,7 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
 
     fun hack() {
         if (BuildConfig.DEBUG) {
-            AuthPreferences(getApplication()).setSeedPhrase("skirt bid lock hollow eyebrow joke pole foam cattle gain prosper crack decline prevent shrimp drastic color shine click pact surge ketchup stumble toward")
+            AuthPreferences(getApplication()).setSeedPhrase("ability salmon weapon apart awkward sudden glue budget fox paddle romance delay remove near clip cabbage exact off motion oxygen connect modify rotate vehicle")
             _validateLiveData.value = true
         }
     }

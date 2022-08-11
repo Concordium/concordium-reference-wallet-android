@@ -2,13 +2,23 @@ package com.concordium.wallet.ui.passphrase.recoverprocess
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.App
+import com.concordium.wallet.core.arch.Event
+import com.concordium.wallet.core.backend.BackendRequest
+import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
+import com.concordium.wallet.data.cryptolib.CreateCredentialInputV1
+import com.concordium.wallet.data.cryptolib.GenerateRecoveryRequestInput
+import com.concordium.wallet.data.cryptolib.GenerateRecoveryRequestOutput
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.IdentityWithAccounts
+import com.concordium.wallet.ui.common.BackendErrorHandler
+import com.concordium.wallet.util.DateTimeUtil
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.Serializable
@@ -22,7 +32,42 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
 
     var identitiesWithAccounts: List<IdentityWithAccounts> = mutableListOf()
     val statusChanged: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 
+    fun startScanning() {
+
+        val net = "Mainnet"
+        val identityIndex = 1
+        val seed = AuthPreferences(getApplication()).getSeedPhrase()
+
+        viewModelScope.launch {
+            waiting.value = true
+
+            val repository = IdentityProviderRepository()
+            val globalInfo = repository.getGlobalInfoSuspended()
+            val identityProviders = repository.getIdentityProviderInfoSuspended()
+
+            identityProviders.forEach { identityProvider ->
+                val recoveryRequestInput = GenerateRecoveryRequestInput(
+                    identityProvider.ipInfo,
+                    globalInfo.value,
+                    seed,
+                    net,
+                    identityIndex,
+                    System.currentTimeMillis() / 1000
+                )
+
+                val output = App.appCore.cryptoLibrary.generateRecoveryRequest(recoveryRequestInput)
+
+                println(output)
+            }
+
+            waiting.value = false
+            statusChanged.value = 1
+        }
+
+    }
+/*
     fun startScanning() {
         val passPhrase = AuthPreferences(getApplication()).getSeedPhrase()
 
@@ -118,4 +163,5 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         val identity = Identity(id, "Identity $id", "", "","", 0, identityProvider, identityObject, "")
         return identity
     }
+*/
 }

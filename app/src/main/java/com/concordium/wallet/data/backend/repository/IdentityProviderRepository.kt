@@ -8,7 +8,7 @@ import com.concordium.wallet.data.model.IdentityContainer
 import com.concordium.wallet.data.model.IdentityProvider
 import com.concordium.wallet.data.model.IdentityRequest
 
-class IdentityProviderRepository() {
+class IdentityProviderRepository {
 
     private val gson = App.appCore.gson
     private val backend = App.appCore.getProxyBackend()
@@ -29,7 +29,7 @@ class IdentityProviderRepository() {
             }
         })
 
-        return BackendRequest<ArrayList<IdentityProvider>>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
@@ -37,6 +37,7 @@ class IdentityProviderRepository() {
     }
 
     suspend fun getGlobalInfoSuspended() = backend.getGlobalInfoSuspended()
+    suspend fun getIdentityProviderInfoSuspended() = backend.getIdentityProviderInfoSuspended()
 
     fun getIGlobalInfo(
         success: (GlobalParamsWrapper) -> Unit,
@@ -54,7 +55,7 @@ class IdentityProviderRepository() {
             }
         })
 
-        return BackendRequest<GlobalParamsWrapper>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
@@ -83,11 +84,10 @@ class IdentityProviderRepository() {
             }
         })
 
-        return BackendRequest<IdentityContainer>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
         )
     }
-
 }

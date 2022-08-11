@@ -46,7 +46,6 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             return@withContext null
         }
 
-
     override suspend fun createTransfer(createTransferInput: CreateTransferInput, type: Int): CreateTransferOutput? =
         withContext(Dispatchers.Default) {
             val input = gson.toJson(createTransferInput)
@@ -69,7 +68,7 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             CryptoLibrary.CONFIGURE_DELEGATION_TRANSACTION -> return create_configure_delegation_transaction(input)
             CryptoLibrary.CONFIGURE_BAKING_TRANSACTION -> return create_configure_baker_transaction(input)
         }
-        return create_transfer(input) // CryptoLibrary.REGULAR_TRANSFER
+        return create_transfer(input)
     }
 
     override suspend fun decryptEncryptedAmount(input: DecryptAmountInput): String? =
@@ -104,6 +103,20 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             Log.d("Output (Code ${result.result}): ${result.output}")
             if (result.result == CryptoLibrary.SUCCESS) {
                 return@withContext gson.fromJson(result.output, BakerKeys::class.java)
+            }
+            Log.e("CryptoLib failed")
+            return@withContext null
+        }
+
+    override suspend fun generateRecoveryRequest(recoveryRequestInput: GenerateRecoveryRequestInput): GenerateRecoveryRequestOutput? =
+        withContext(Dispatchers.Default) {
+            val input = gson.toJson(recoveryRequestInput)
+            loadWalletLib()
+            val result = generate_recovery_request(input)
+            Log.d("Output (Code ${result.result}): ${result.output}")
+            if (result.result == CryptoLibrary.SUCCESS) {
+                return@withContext gson.fromJson(result.output,
+                    GenerateRecoveryRequestOutput::class.java)
             }
             Log.e("CryptoLib failed")
             return@withContext null

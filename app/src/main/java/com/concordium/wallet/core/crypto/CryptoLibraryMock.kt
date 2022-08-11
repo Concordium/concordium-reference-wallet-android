@@ -49,4 +49,8 @@ class CryptoLibraryMock(val gson: Gson) : CryptoLibrary {
         val output = AssetUtil.loadFromAsset(App.appContext, "5.3.2.RX_generate_baker_keys.json")
         return gson.fromJson(output, BakerKeys::class.java)
     }
+
+    override suspend fun generateRecoveryRequest(recoveryRequestInput: GenerateRecoveryRequestInput): GenerateRecoveryRequestOutput? {
+        TODO("Not yet implemented")
+    }
 }

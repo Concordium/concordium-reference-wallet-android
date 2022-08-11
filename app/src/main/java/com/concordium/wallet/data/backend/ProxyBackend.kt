@@ -84,6 +84,9 @@ interface ProxyBackend {
     @GET("v0/ip_info")
     fun getIdentityProviderInfo(): Call<ArrayList<IdentityProvider>>
 
+    @GET("v0/ip_info")
+    suspend fun getIdentityProviderInfoSuspended(): ArrayList<IdentityProvider>
+
     @GET("v0/global")
     fun getGlobalInfo(): Call<GlobalParamsWrapper>
 

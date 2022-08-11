@@ -55,6 +55,11 @@ class RecoverProcessActivity : BaseActivity() {
     }
 
     private fun initObservers() {
+        viewModel.waiting.observe(this) { waiting ->
+            waiting?.let {
+                showWaiting(waiting)
+            }
+        }
         viewModel.statusChanged.observe(this) { status ->
             runOnUiThread {
                 when (status) {
@@ -84,5 +89,9 @@ class RecoverProcessActivity : BaseActivity() {
         binding.continueButton.visibility = View.GONE
         binding.tryAgainButton.visibility = View.GONE
         binding.enterAnotherPhraseButton.visibility = View.GONE
+    }
+
+    private fun showWaiting(waiting: Boolean) {
+        binding.includeProgress.progressLayout.visibility = if (waiting) View.VISIBLE else View.GONE
     }
 }

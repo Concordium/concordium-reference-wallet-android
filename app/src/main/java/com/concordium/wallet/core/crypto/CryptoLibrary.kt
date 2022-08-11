@@ -30,4 +30,6 @@ interface CryptoLibrary {
     suspend fun decryptEncryptedAmount(input: DecryptAmountInput): String?
 
     suspend fun generateBakerKeys(): BakerKeys?
+
+    suspend fun generateRecoveryRequest(recoveryRequestInput: GenerateRecoveryRequestInput): GenerateRecoveryRequestOutput?
 }
