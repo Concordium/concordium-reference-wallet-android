@@ -108,15 +108,14 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             return@withContext null
         }
 
-    override suspend fun generateRecoveryRequest(recoveryRequestInput: GenerateRecoveryRequestInput): GenerateRecoveryRequestOutput? =
+    override suspend fun generateRecoveryRequest(recoveryRequestInput: GenerateRecoveryRequestInput): String? =
         withContext(Dispatchers.Default) {
             val input = gson.toJson(recoveryRequestInput)
             loadWalletLib()
             val result = generate_recovery_request(input)
             Log.d("Output (Code ${result.result}): ${result.output}")
             if (result.result == CryptoLibrary.SUCCESS) {
-                return@withContext gson.fromJson(result.output,
-                    GenerateRecoveryRequestOutput::class.java)
+                return@withContext result.output
             }
             Log.e("CryptoLib failed")
             return@withContext null

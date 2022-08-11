@@ -31,5 +31,5 @@ interface CryptoLibrary {
 
     suspend fun generateBakerKeys(): BakerKeys?
 
-    suspend fun generateRecoveryRequest(recoveryRequestInput: GenerateRecoveryRequestInput): GenerateRecoveryRequestOutput?
+    suspend fun generateRecoveryRequest(recoveryRequestInput: GenerateRecoveryRequestInput): String?
 }

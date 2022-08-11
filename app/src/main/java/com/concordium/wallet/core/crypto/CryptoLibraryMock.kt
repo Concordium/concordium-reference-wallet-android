@@ -50,7 +50,7 @@ class CryptoLibraryMock(val gson: Gson) : CryptoLibrary {
         return gson.fromJson(output, BakerKeys::class.java)
     }
 
-    override suspend fun generateRecoveryRequest(recoveryRequestInput: GenerateRecoveryRequestInput): GenerateRecoveryRequestOutput? {
+    override suspend fun generateRecoveryRequest(recoveryRequestInput: GenerateRecoveryRequestInput): String? {
         TODO("Not yet implemented")
     }
 }

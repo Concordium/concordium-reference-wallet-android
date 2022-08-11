@@ -71,10 +71,6 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
     override fun onResume() {
         super.onResume()
 
-        //startActivity(Intent(this, RecoverProcessActivity::class.java))
-        //finish()
-
-
         if (!viewModel.databaseVersionAllowed) {
             val builder = AlertDialog.Builder(this)
             builder.setMessage(getString(R.string.error_database))
