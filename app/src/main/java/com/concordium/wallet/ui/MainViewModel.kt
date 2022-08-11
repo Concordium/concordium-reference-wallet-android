@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     enum class State {
-        AccountOverview, Backup, More, IdentitiesOverview
+        AccountOverview, More, IdentitiesOverview
     }
 
     private val identityRepository: IdentityRepository

@@ -5,14 +5,12 @@ import android.content.SharedPreferences
 
 open class Preferences {
 
-    protected lateinit var sharedPreferences: SharedPreferences
+    private var sharedPreferences: SharedPreferences
 
-    protected val editor: android.content.SharedPreferences.Editor
+    private val editor: SharedPreferences.Editor
         get() = sharedPreferences.edit()
 
     private val changeListeners = HashMap<Listener, String>()
-
-    constructor() {}
 
     interface Listener {
         fun onChange()
@@ -37,11 +35,7 @@ open class Preferences {
         editor.commit()
     }
 
-    public fun addListener(key: String, listener: Listener){
-        changeListeners.put(listener, key)
-    }
-
-    public fun removeListener(listener: Listener){
+    fun removeListener(listener: Listener){
         changeListeners.remove(listener)
     }
 
@@ -97,24 +91,4 @@ open class Preferences {
     protected fun getInt(key: String): Int {
         return sharedPreferences.getInt(key, 0)
     }
-
-    protected fun setLong(key: String, value: Long) {
-        val editor = editor
-        editor.remove(key)
-        editor.putLong(key, value)
-        editor.commit()
-        triggerChangeEvent(key)
-    }
-
-    protected fun getLong(key: String, def: Long): Long {
-        return sharedPreferences.getLong(key, def)
-    }
-
-    protected fun getLong(key: String): Long {
-        return sharedPreferences.getLong(key, 0)
-    }
-
-
-
-
 }

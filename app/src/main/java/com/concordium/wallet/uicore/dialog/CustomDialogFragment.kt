@@ -1,52 +1,37 @@
 package com.concordium.wallet.uicore.dialog
 
-
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.PorterDuff
 import android.os.Build
 import android.os.Bundle
-import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
-import com.concordium.wallet.ui.more.export.ExportActivity
-
 
 class CustomDialogFragment : DialogFragment() {
-
     companion object {
-
-        val TAG = "CustomDialogFragmentTag"
-        val KEY_REQUEST_CODE = "key_request_code"
-        val KEY_TYPE = "key_type"
-        val KEY_TITLE = "key_title"
-        val KEY_MESSAGE = "key_message"
-        val KEY_POSITIVE = "key_positive"
-        val KEY_NEUTRAL = "key_neutral"
-        val KEY_NEGATIVE = "key_negative"
-        val KEY_SUPPORT = "key_support"
-        val KEY_SUPPORT_EMAIL = "key_support_email"
-
-        val KEY_SUPPORT_TIMESTAMP = "key_support_timestamp"
-
-        var dialogAccountFinalized: Dialog? = null;
-        var dialogAccountFinalizedNoBackup: AlertDialog? = null;
-        var dialogAccountFinalizedMap: HashMap<String, String> = HashMap()
+        const val TAG = "CustomDialogFragmentTag"
+        const val KEY_REQUEST_CODE = "key_request_code"
+        const val KEY_TYPE = "key_type"
+        const val KEY_TITLE = "key_title"
+        const val KEY_MESSAGE = "key_message"
+        const val KEY_POSITIVE = "key_positive"
+        const val KEY_NEUTRAL = "key_neutral"
+        const val KEY_NEGATIVE = "key_negative"
+        const val KEY_SUPPORT = "key_support"
+        const val KEY_SUPPORT_EMAIL = "key_support_email"
 
         //region Create/cancel dialogs
         //************************************************************
 
-        fun dismissCustomDialog(activity: AppCompatActivity) {
+        private fun dismissCustomDialog(activity: AppCompatActivity) {
             val dialogFragment = activity.supportFragmentManager.findFragmentByTag(TAG)
             if (dialogFragment is DialogFragment) {
                 dialogFragment.dismiss()
@@ -87,7 +72,7 @@ class CustomDialogFragment : DialogFragment() {
             if (dialogType == EDialogType.OK && positiveButton != null) {
                 args.putString(KEY_POSITIVE, positiveButton)
             }
-            fragment.setArguments(args)
+            fragment.arguments = args
             return fragment
         }
 
@@ -204,125 +189,6 @@ class CustomDialogFragment : DialogFragment() {
             )
         }
 
-
-        fun newAccountFinalizedDialog(context:Context, accountName: String) {
-
-            if (App.appCore.session.isAccountsBackedUp())
-                return
-
-            var title = context.getString(R.string.finalized_account_title_singular)
-            var message = context.getString(R.string.finalized_account_message_singular, accountName)
-
-            dialogAccountFinalizedMap.set(accountName, accountName)
-
-            if(dialogAccountFinalized != null && dialogAccountFinalizedMap.count() > 1){ // we are already showing one dialog, meaning we finalised more accounts
-                dialogAccountFinalized?.dismiss()
-                title = context.getString(R.string.finalized_account_title_plural)
-                message = context.getString(R.string.finalized_account_message_plural)
-            }
-
-            val builder = AlertDialog.Builder(context)
-            builder.setCancelable(true)//This have to be set on dialog to have effect
-            builder.setTitle(title)
-            builder.setMessage(message)
-            builder.setNeutralButton(context.getString(R.string.finalized_account_ok),
-                DialogInterface.OnClickListener { _, _ ->
-                    dialogAccountFinalized?.dismiss()
-                    dialogAccountFinalized = null
-                    dialogAccountFinalizedMap.clear()
-
-                    // Do you really not want to back up?!?!
-                    showDoYouReallyNotWantToBackUp(context)
-
-                })
-            builder.setPositiveButton(context.getString(R.string.finalized_account_backup),
-                DialogInterface.OnClickListener { _, _ ->
-                    dialogAccountFinalized?.dismiss()
-                    dialogAccountFinalized = null
-                    dialogAccountFinalizedMap.clear()
-
-                    val intent = Intent(context, ExportActivity::class.java)
-                    context.startActivity(intent)
-                })
-
-            //Clear and dismiss any existing popups
-            if(dialogAccountFinalized != null){
-                dialogAccountFinalized?.dismiss()
-                dialogAccountFinalized = null
-            }
-
-            dialogAccountFinalized = builder.create()
-            dialogAccountFinalized?.setCanceledOnTouchOutside(false)
-            dialogAccountFinalized?.show()
-        }
-
-
-        fun showAppUpdateBackupWarningDialog(context:Context) {
-
-            var title = context.getString(R.string.app_update_account_no_backup_title_warning)
-            var message = context.getString(R.string.app_update_account_no_backup_message)
-
-            val builder = AlertDialog.Builder(context)
-            builder.setCancelable(true)//This have to be set on dialog to have effect
-            builder.setTitle(title)
-            builder.setMessage(message)
-            builder.setNeutralButton(context.getString(R.string.app_update_account_no_backup_dismiss),
-                DialogInterface.OnClickListener { _, _ ->
-                    dialogAccountFinalized?.dismiss()
-                    dialogAccountFinalized = null
-
-                    showDoYouReallyNotWantToBackUp(context)
-                })
-            builder.setPositiveButton(context.getString(R.string.app_update_account_no_backup_now),
-                DialogInterface.OnClickListener { _, _ ->
-                    dialogAccountFinalized?.dismiss()
-                    dialogAccountFinalized = null
-
-                    val intent = Intent(context, ExportActivity::class.java)
-                    context.startActivity(intent)
-                })
-
-            //Clear and dismiss any existing popups
-            if(dialogAccountFinalized != null){
-                dialogAccountFinalized?.dismiss()
-                dialogAccountFinalized = null
-            }
-
-            dialogAccountFinalized = builder.create()
-            dialogAccountFinalized?.setCanceledOnTouchOutside(false)
-            dialogAccountFinalized?.show()
-        }
-
-        fun showDoYouReallyNotWantToBackUp(context:Context) {
-            // Do you really not want to back up?!?!
-            val builder = AlertDialog.Builder(context)
-            builder.setCancelable(true)//This have to be set on dialog to have effect
-            builder.setIcon(android.R.drawable.stat_sys_warning)
-            builder.setTitle(R.string.finalized_account_no_backup_title_warning)
-            builder.setMessage(R.string.finalized_account_no_backup_message)
-            builder.setNeutralButton(context.getString(R.string.finalized_account_no_backup_dismiss),
-                DialogInterface.OnClickListener { _, _ ->
-                    dialogAccountFinalizedNoBackup?.dismiss()
-                    dialogAccountFinalizedNoBackup = null
-                })
-            builder.setPositiveButton(context.getString(R.string.finalized_account_backup),
-                DialogInterface.OnClickListener { _, _ ->
-                    val intent = Intent(context, ExportActivity::class.java)
-                    context.startActivity(intent)
-                })
-            dialogAccountFinalizedNoBackup = builder.create()
-            dialogAccountFinalizedNoBackup?.setCanceledOnTouchOutside(false)
-            dialogAccountFinalizedNoBackup?.show()
-            dialogAccountFinalizedNoBackup?.getButton(AlertDialog.BUTTON_NEUTRAL)
-                ?.setTextColor(Color.RED)
-            dialogAccountFinalizedNoBackup?.let {
-                it.findViewById<ImageView?>(android.R.id.icon)?.setColorFilter(
-                    ContextCompat.getColor(context, R.color.warning_orange),
-                    PorterDuff.Mode.SRC_IN
-                )
-            }
-        }
-
         //endregion
     }
 
@@ -343,11 +209,10 @@ class CustomDialogFragment : DialogFragment() {
         } catch (e: ClassCastException) {
             throw ClassCastException(context.toString() + "must implement DialogFragmentListener")
         }
-
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val resources = App.appContext.getResources()
+        val resources = App.appContext.resources
         val args: Bundle = requireArguments()
         requestCode = args.getInt(KEY_REQUEST_CODE, 0)
         val type = EDialogType.values()[args.getInt(KEY_TYPE, 0)]
@@ -367,42 +232,43 @@ class CustomDialogFragment : DialogFragment() {
         builder.setCancelable(true)//This have to be set on dialog to have effect
         builder.setTitle(title)
         builder.setMessage(message)
-        builder.setPositiveButton(resPositive,
-            DialogInterface.OnClickListener { _, _ ->
-                dialogFragmentListener?.onDialogResult(requestCode!!, Dialogs.POSITIVE, Intent())
-            })
+        builder.setPositiveButton(resPositive) { _, _ ->
+            dialogFragmentListener?.onDialogResult(requestCode!!, Dialogs.POSITIVE, Intent())
+        }
         if (type != EDialogType.OK && type != EDialogType.PositiveSupport) {
-            builder.setNegativeButton(resNegative,
-                DialogInterface.OnClickListener { _, _ ->
-                    dialogFragmentListener?.onDialogResult(
-                        requestCode!!,
-                        Dialogs.NEGATIVE,
-                        Intent()
-                    )
-                })
+            builder.setNegativeButton(resNegative) { _, _ ->
+                dialogFragmentListener?.onDialogResult(
+                    requestCode!!,
+                    Dialogs.NEGATIVE,
+                    Intent()
+                )
+            }
         }
         if (type == EDialogType.PositiveSupport) {
-            builder.setNeutralButton(resNeutral,
-                DialogInterface.OnClickListener { _, _ ->
-                    context?.let{
-                        if(IdentityErrorDialogHelper.canOpenSupportEmail(it)){
-                            IdentityErrorDialogHelper.openSupportEmail(it, resources, supportEmail, uriSession)
-                        }
-                        else{
-                            IdentityErrorDialogHelper.copyToClipboard(it, title.toString(), resources.getString(R.string.dialog_support_text, uriSession, BuildConfig.VERSION_NAME, Build.VERSION.RELEASE))
-                        }
+            builder.setNeutralButton(resNeutral) { _, _ ->
+                context?.let {
+                    if (IdentityErrorDialogHelper.canOpenSupportEmail(it)) {
+                        IdentityErrorDialogHelper.openSupportEmail(it,
+                            resources,
+                            supportEmail,
+                            uriSession)
+                    } else {
+                        IdentityErrorDialogHelper.copyToClipboard(it,
+                            title.toString(),
+                            resources.getString(R.string.dialog_support_text,
+                                uriSession,
+                                BuildConfig.VERSION_NAME,
+                                Build.VERSION.RELEASE))
                     }
-                })
-            builder.setNegativeButton(resNegative,
-                DialogInterface.OnClickListener { _, _ ->
-                    dismiss()
-                })
-            builder.setPositiveButton(resPositive,
-                DialogInterface.OnClickListener { _, _ ->
-                    val intent = Intent(activity, IdentityCreateActivity::class.java)
-                    startActivity(intent)
-                })
-
+                }
+            }
+            builder.setNegativeButton(resNegative) { _, _ ->
+                dismiss()
+            }
+            builder.setPositiveButton(resPositive) { _, _ ->
+                val intent = Intent(activity, IdentityCreateActivity::class.java)
+                startActivity(intent)
+            }
         }
 
         val dialog = builder.create()

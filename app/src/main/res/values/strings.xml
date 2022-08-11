@@ -2,7 +2,6 @@
 <resources>
     <!-- App -->
     <string name="app_name">Concordium</string>
-    <string name="app_menu_item_backup">Backup</string>
     <string name="app_menu_item_accounts">Accounts</string>
     <string name="app_menu_item_identities">Identities</string>
     <string name="app_menu_item_more">More</string>
@@ -687,7 +686,6 @@
 
     <!-- Accounts overview -->
     <string name="accounts_overview_identity_pending_warning">Your identity %1$s is still getting verified.</string>
-    <string name="accounts_overview_backup_warning">As your accounts are not backed up, you risk losing your tokens.</string>
     <string name="accounts_overview_title">Accounts</string>
     <string name="accounts_overview_create_identity">Create new identity</string>
     <string name="accounts_overview_create_account">Create account</string>
@@ -1038,22 +1036,6 @@
     <string name="transaction_memo_warning_dont_show">Don’t show again</string>
     <string name="transaction_memo_warning_ok">Okay</string>
     <string name="send_funds_optional_add_memo">Optional: Add memo</string>
-
-    <string name="finalized_account_title_singular">Your new account is ready!</string>
-    <string name="finalized_account_title_plural">Your new accounts are ready!</string>
-    <string name="finalized_account_message_singular">Your account %1$s has finalized, and is now ready for use.\n\nA backup file is the only way to restore private keys if you lose your phone or re-install the wallet. Without the private keys, you cannot access your accounts. Concordium cannot recover your private keys or export password and you will lose your CCDs. You should export a new backup file EVERY time a new account is created. Protect your export password.\n\nRemember to store the file named concordium-backup.concordiumwallet securely.</string>
-    <string name="finalized_account_message_plural">Your new accounts are now finalized and ready for use.\n\nA backup file is the only way to restore private keys if you lose your phone or re-install the wallet. Without the private keys, you cannot access your accounts. Concordium cannot recover your private keys or export password and you will lose your CCDs. You should export a new backup file EVERY time a new account is created. Protect your export password.\n\nRemember to store the file named concordium-backup.concordiumwallet securely.</string>
-    <string name="finalized_account_backup">Make backup</string>
-    <string name="finalized_account_ok">Okay</string>
-
-    <string name="finalized_account_no_backup_title_warning">WARNING</string>
-    <string name="finalized_account_no_backup_dismiss">Dismiss</string>
-    <string name="finalized_account_no_backup_message">Are you sure that you do not want to create a backup? You risk losing your CCDs.\n\nIf you lose your phone and do not have a backup you will no longer have access to your account(s) and will lose your CCDs.</string>
-
-    <string name="app_update_account_no_backup_title_warning">Welcome back!</string>
-    <string name="app_update_account_no_backup_message">Did you make a backup of your identities and accounts recently?\n\nA backup file is the only way to restore private keys if you lose your phone or re-install the wallet. Without the private keys, you cannot access your accounts. Concordium cannot recover your private keys or export password and you will lose your CCDs. You should export a new backup file EVERY time a new account is created. Protect your export password.\n\nRemember to store the file named concordium-backup.concordiumwallet securely.</string>
-    <string name="app_update_account_no_backup_dismiss">Not now</string>
-    <string name="app_update_account_no_backup_now">Make backup</string>
 
     <string name="account_card_action_send">Send</string>
     <string name="account_card_action_receive">Receive</string>

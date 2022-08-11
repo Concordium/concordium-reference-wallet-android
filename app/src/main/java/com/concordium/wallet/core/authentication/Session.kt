@@ -5,13 +5,10 @@ import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.concordium.wallet.App
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.preferences.FilterPreferences
-import com.concordium.wallet.data.preferences.Preferences
 
-class Session {
-
+class Session(context: Context) {
     private var authPreferences: AuthPreferences
     private var filterPreferences: FilterPreferences
 
@@ -21,15 +18,9 @@ class Session {
     var tempPassword: String? = null
         private set
 
-    private val _isLoggedIn = MutableLiveData<Boolean>(false)
+    private val _isLoggedIn = MutableLiveData(false)
     val isLoggedIn: LiveData<Boolean>
         get() = _isLoggedIn
-
-    constructor(context: Context) {
-        authPreferences = AuthPreferences(context)
-        hasSetupPassword = authPreferences.getHasSetupUser()
-        filterPreferences = FilterPreferences(context)
-    }
 
     fun setHasShowRewards(id: Int, value: Boolean) {
         filterPreferences.setHasShowRewards(id, value)
@@ -63,7 +54,7 @@ class Session {
     }
 
     fun checkPassword(password: String): Boolean {
-        return password.equals(tempPassword)
+        return password == tempPassword
     }
 
     fun hasLoggedInUser() {
@@ -78,7 +69,7 @@ class Session {
         }
     }
 
-    var inactivityCountDownTimer =
+    private var inactivityCountDownTimer =
         object : CountDownTimer(60 * 5 * 1000.toLong(), 1000) {
             override fun onTick(millisUntilFinished: Long) {}
 
@@ -103,12 +94,7 @@ class Session {
         return authPreferences.setTermsHashed(key)
     }
 
-    fun isAccountsBackedUp(): Boolean {
-        return authPreferences.isAccountsBackedUp()
-    }
-
     fun setAccountsBackedUp(value: Boolean) {
-        return authPreferences.setAccountsBackedUp(value)
     }
 
     fun isIdentityPendingWarningAcknowledged(id: Int): Boolean {
@@ -135,31 +121,9 @@ class Session {
         return authPreferences.setShieldedWarningDismissed(accountAddress, value)
     }
 
-
-
-    fun addAccountsBackedUpListener(listener: Preferences.Listener) {
-        authPreferences.addAccountsBackedUpListener(listener)
+    init {
+        authPreferences = AuthPreferences(context)
+        hasSetupPassword = authPreferences.getHasSetupUser()
+        filterPreferences = FilterPreferences(context)
     }
-    fun removeAccountsBackedUpListener(listener: Preferences.Listener) {
-        authPreferences.removeListener(listener)
-    }
-
-    fun shouldPromptForBackedUp(context: Context): Boolean {
-        val isFirstTimeInstall = with(context.packageManager.getPackageInfo(context.packageName, 0)) {
-            firstInstallTime == lastUpdateTime
-        }
-        val versionBackedUp = authPreferences.getVersionBackedUp()
-        authPreferences.setVersionBackedUp(BuildConfig.VERSION_CODE)
-        if(isFirstTimeInstall){
-            return false
-        }
-        if(versionBackedUp == 0){
-            authPreferences.setAccountsBackedUp(false)
-            return true
-        }
-        return false
-    }
-
-
-
 }

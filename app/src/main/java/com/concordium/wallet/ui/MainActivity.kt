@@ -18,10 +18,8 @@ import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewFragment
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.intro.introstart.IntroTermsActivity
-import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
-import com.concordium.wallet.uicore.dialog.CustomDialogFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -72,6 +70,10 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
 
     override fun onResume() {
         super.onResume()
+
+        //startActivity(Intent(this, RecoverProcessActivity::class.java))
+        //finish()
+
 
         if (!viewModel.databaseVersionAllowed) {
             val builder = AlertDialog.Builder(this)
@@ -166,16 +168,13 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
                 replaceFragment(state)
             }
         }
-
         viewModel.identityErrorLiveData.observe(this) { data ->
             data?.let {
                 IdentityErrorDialogHelper.showIdentityError(this, dialogs, data)
             }
         }
-
         viewModel.newFinalizedAccountLiveData.observe(this) { newAccount ->
             newAccount?.let {
-                CustomDialogFragment.newAccountFinalizedDialog(this, newAccount)
             }
         }
     }
@@ -195,17 +194,9 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
 
     private fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
         menuItem.isChecked = true
-
         val state = getState(menuItem)
         if (state != null) {
-            //We are keeping the existing state and starting the Backup flow
-            if(state == MainViewModel.State.Backup){
-                forceMenuSelection(if(viewModel.stateLiveData.value == MainViewModel.State.AccountOverview) R.id.menuitem_accounts else R.id.menuitem_more)
-                startBackup()
-            }
-            else{
-                viewModel.setState(state)
-            }
+            viewModel.setState(state)
             return true
         }
         return false
@@ -218,15 +209,9 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
         }
     }
 
-    private fun startBackup() {
-        val intent = Intent(this, ExportActivity::class.java)
-        startActivity(intent)
-    }
-
     private fun getState(menuItem: MenuItem): MainViewModel.State? {
         return when (menuItem.itemId) {
             R.id.menuitem_accounts -> MainViewModel.State.AccountOverview
-            R.id.menuitem_backup -> MainViewModel.State.Backup
             R.id.menuitem_more -> MainViewModel.State.More
             else -> null
         }
@@ -235,7 +220,6 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
     private fun replaceFragment(state: MainViewModel.State) {
         hideActionBarBack(this)
         val fragment = when (state) {
-            MainViewModel.State.Backup -> AccountsOverviewFragment() // is triggering start of BackupExport
             MainViewModel.State.AccountOverview -> AccountsOverviewFragment()
             MainViewModel.State.More -> MoreOverviewFragment()
             MainViewModel.State.IdentitiesOverview -> {

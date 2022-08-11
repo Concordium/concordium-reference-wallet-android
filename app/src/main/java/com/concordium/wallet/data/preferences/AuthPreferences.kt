@@ -20,8 +20,6 @@ class AuthPreferences(val context: Context) :
         const val PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR = "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR"
         const val PREFKEY_BIOMETRIC_KEY = "PREFKEY_BIOMETRIC_KEY"
         const val PREFKEY_TERMS_HASHED = "PREFKEY_TERMS_HASHED"
-        const val PREFKEY_ACCOUNTS_BACKED_UP = "PREFKEY_ACCOUNTS_BACKED_UP"
-        const val PREFKEY_VERSION_BACKED_UP = "PREFKEY_VERSION_BACKED_UP"
         const val PREFKEY_SHIELDING_ENABLED_ = "PREFKEY_SHIELDING_ENABLED_"
         const val PREFKEY_SHIELDED_WARNING_DISMISSED_ = "PREFKEY_SHIELDED_WARNING_DISMISSED_"
         const val PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED = "PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED_"
@@ -130,26 +128,6 @@ class AuthPreferences(val context: Context) :
 
     fun setShieldedWarningDismissed(accountAddress: String, value: Boolean) {
         return setBoolean(PREFKEY_SHIELDED_WARNING_DISMISSED_+accountAddress, value)
-    }
-
-    fun isAccountsBackedUp(): Boolean {
-        return getBoolean(PREFKEY_ACCOUNTS_BACKED_UP, false)
-    }
-
-    fun setAccountsBackedUp(value: Boolean) {
-        return setBoolean(PREFKEY_ACCOUNTS_BACKED_UP, value)
-    }
-
-    fun addAccountsBackedUpListener(listener: Listener) {
-        addListener(PREFKEY_ACCOUNTS_BACKED_UP, listener)
-    }
-
-    fun getVersionBackedUp(): Int {
-        return getInt(PREFKEY_VERSION_BACKED_UP, 0)
-    }
-
-    fun setVersionBackedUp(value: Int) {
-        return setInt(PREFKEY_VERSION_BACKED_UP, value)
     }
 
     fun setIdentityPendingWarningAcknowledged(id: Int) {
