@@ -9,12 +9,16 @@ import com.concordium.wallet.App
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
 import com.concordium.wallet.data.cryptolib.GenerateRecoveryRequestInput
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.GlobalParamsWrapper
+import com.concordium.wallet.data.model.IdentityProvider
+import com.concordium.wallet.data.model.IdentityTokenContainer
+import com.concordium.wallet.data.model.RecoverResponse
 import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.IdentityWithAccounts
 import com.concordium.wallet.data.room.WalletDatabase
-import kotlinx.coroutines.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -62,7 +66,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
 
             val data = mutableListOf<IdentityWithAccounts>()
             identityRepository.getAll().forEach { identity ->
-                data.add(IdentityWithAccounts(identity, listOf()))
+                data.add(IdentityWithAccounts(identity, listOf())) // TODO add accounts here, when they are recovered
             }
             identitiesWithAccounts = data
 

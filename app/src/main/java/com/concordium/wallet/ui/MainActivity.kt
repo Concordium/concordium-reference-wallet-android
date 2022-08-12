@@ -18,7 +18,6 @@ import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewFragment
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.intro.introstart.IntroTermsActivity
-import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
 import com.concordium.wallet.uicore.dialog.Dialogs
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +35,6 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewModel
-    private var hasHandledPossibleImportFile = false
 
     //region Lifecycle
     //************************************************************
@@ -83,16 +81,6 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
                 showAuthenticationIfRequired()
             } else {
                 viewModel.setInitialStateIfNotSet()
-
-                if (!hasHandledPossibleImportFile) {
-                    hasHandledPossibleImportFile = true
-                    val handlingImportFile = handlePossibleImportFile()
-                    if(handlingImportFile){
-                        // Do not start identity update, since we are leaving this page
-                        return
-                    }
-                }
-
                 viewModel.startIdentityUpdate()
             }
         }
@@ -115,7 +103,6 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
         intent?.data?.let { _ ->
             // Save this new intent to handle it in onResume (in case of an import file)
             this.intent = intent
-            hasHandledPossibleImportFile = false
         }
     }
 
@@ -248,17 +235,6 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
     }
 
     override fun loggedOut() {
-    }
-
-    private fun handlePossibleImportFile(): Boolean {
-        val uri = intent?.data
-        if (uri != null) {
-            val intent = Intent(this, ImportActivity::class.java)
-            intent.putExtra(ImportActivity.EXTRA_FILE_URI, uri)
-            startActivity(intent)
-            return true
-        }
-        return false
     }
 
     private fun gotoIdentityProviderList() {

@@ -1,4 +1,4 @@
-package com.concordium.wallet.ui.more.export
+package com.concordium.wallet.ui.bakerdelegation.baker
 
 import android.app.Dialog
 import android.os.Bundle

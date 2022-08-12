@@ -28,7 +28,6 @@ import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
 import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
-import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 
 class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by IdentityStatusDelegateImpl() {
@@ -224,7 +223,6 @@ class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ident
         builder.setPositiveButton(getString(R.string.force_update_warning_update_now)) { _, _ ->
             gotoAppStore(url)
         }
-        builder.setNegativeButton(getString(R.string.force_update_warning_backup)) { _, _ -> gotoBackup() }
         builder.setNeutralButton(getString(R.string.force_update_warning_remind_me)) { dialog, _ ->
             App.appCore.appSettingsForceUpdateChecked = true
             dialog.dismiss()
@@ -244,7 +242,6 @@ class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ident
         builder.setNeutralButton(getString(R.string.force_update_needed_update_now)) { _, _ ->
             gotoAppStore(url)
         }
-        builder.setPositiveButton(getString(R.string.force_update_needed_backup)) { _, _ -> gotoBackup() }
         builder.setCancelable(false)
         forceUpdateDialog = builder.create()
         forceUpdateDialog?.show()
@@ -254,12 +251,6 @@ class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ident
         if (url.isNotBlank())
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         Process.killProcess(Process.myPid())
-    }
-
-    private fun gotoBackup() {
-        forceUpdateDialog?.dismiss()
-        forceUpdateDialog = null
-        startActivity(Intent(context, ExportActivity::class.java))
     }
 
     private fun checkForClosingPools(accountList: List<AccountWithIdentity>) {

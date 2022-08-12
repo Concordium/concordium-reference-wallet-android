@@ -17,8 +17,6 @@ import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.more.about.AboutActivity
 import com.concordium.wallet.ui.more.alterpassword.AlterPasswordActivity
 import com.concordium.wallet.ui.more.dev.DevActivity
-import com.concordium.wallet.ui.more.export.ExportActivity
-import com.concordium.wallet.ui.more.import.ImportActivity
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 
 class MoreOverviewFragment : BaseFragment() {
@@ -94,14 +92,6 @@ class MoreOverviewFragment : BaseFragment() {
             gotoAddressBook()
         }
 
-        binding.exportLayout.setOnClickListener {
-            gotoExport()
-        }
-
-        binding.importLayout.setOnClickListener {
-            import()
-        }
-
         binding.aboutLayout.setOnClickListener {
             about()
         }
@@ -147,16 +137,6 @@ class MoreOverviewFragment : BaseFragment() {
 
     private fun gotoAddressBook() {
         val intent = Intent(activity, RecipientListActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun gotoExport() {
-        val intent = Intent(activity, ExportActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun import() {
-        val intent = Intent(activity, ImportActivity::class.java)
         startActivity(intent)
     }
 

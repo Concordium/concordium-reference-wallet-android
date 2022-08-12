@@ -17,18 +17,12 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
-
-
-            more_overview_export
-
             <LinearLayout
                 android:id="@+id/identities"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height"
                 android:background="@drawable/list_item"
                 android:orientation="horizontal">
-
                 <TextView
                     style="@style/TextView.MoreMenuItem"
                     android:layout_gravity="center_vertical"
@@ -44,7 +38,6 @@
                 android:layout_height="@dimen/list_item_height"
                 android:background="@drawable/list_item"
                 android:orientation="horizontal">
-
                 <TextView
                     style="@style/TextView.MoreMenuItem"
                     android:layout_gravity="center_vertical"
@@ -55,44 +48,11 @@
             <View style="@style/Divider" />
 
             <LinearLayout
-                android:id="@+id/export_layout"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/list_item_height"
-                android:background="@drawable/list_item"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/TextView.MoreMenuItem"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:text="@string/more_overview_item_export" />
-            </LinearLayout>
-
-            <View style="@style/Divider" />
-
-            <LinearLayout
-                android:id="@+id/import_layout"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/list_item_height"
-                android:background="@drawable/list_item"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/TextView.MoreMenuItem"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:text="@string/more_overview_item_import" />
-            </LinearLayout>
-
-            <View style="@style/Divider" />
-
-            <LinearLayout
                 android:id="@+id/alter_layout"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height"
                 android:background="@drawable/list_item"
                 android:orientation="horizontal">
-
                 <TextView
                     style="@style/TextView.MoreMenuItem"
                     android:layout_gravity="center_vertical"
@@ -108,7 +68,6 @@
                 android:layout_height="@dimen/list_item_height"
                 android:background="@drawable/list_item"
                 android:orientation="horizontal">
-
                 <TextView
                     style="@style/TextView.MoreMenuItem"
                     android:layout_gravity="center_vertical"
@@ -118,14 +77,11 @@
 
             <View style="@style/Divider" />
 
-
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/dev_layout"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height"
                 android:background="@drawable/list_item">
-
                 <TextView
                     style="@style/TextView.MoreMenuItem"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -133,20 +89,14 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-
                 <View
                     style="@style/Divider"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent" />
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
         </LinearLayout>
-
-
 
         <TextView
             android:id="@+id/version_textview"

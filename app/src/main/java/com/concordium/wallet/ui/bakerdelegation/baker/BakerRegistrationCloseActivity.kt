@@ -14,7 +14,6 @@ import com.concordium.wallet.databinding.ActivityBakerRegistrationCloseBinding
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.common.GenericFlowActivity
-import com.concordium.wallet.ui.more.export.ExportChooseMethodFragment
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

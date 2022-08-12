@@ -10,10 +10,6 @@
     <string name="app_error_general">Unexpected error</string>
     <string name="app_error_lib">An unexpected error occurred, please try again</string>
     <string name="app_error_encryption">Unexpected encryption/decryption error</string>
-    <string name="app_error_json">Unexpected json format</string>
-    <string name="app_import_missing_identities">The file imported did not contain any identities. This indicates a corrupted backup file.</string>
-
-    <string name="app_error_wrong_environment">Files exported on Concordium Mainnet, TestNet or StageNet are not compatible with the other chains. Please import on the correct chain.</string>
 
     <string name="app_error_keystore">Unexpected keystore error</string>
     <string name="app_error_keystore_key_invalidated">Biometrics has been changed and therefore disabled.</string>
@@ -543,6 +539,7 @@
     <string name="baker_notice_ok">Okay</string>
 
     <string name="baker_update_keys_settings_title">Update baker keys</string>
+    <string name="baker_keys_saved_local">Your backup has been saved to local storage.</string>
 
 
     <!-- ***** Auth ***** -->
@@ -860,40 +857,15 @@
     <string name="more_overview_title">More</string>
     <string name="more_overview_identities">Your identity cards</string>
     <string name="more_overview_item_address_book">Address Book</string>
-    <string name="more_overview_item_export">Make backup</string>
-    <string name="more_overview_item_import">Restore from backup</string>
     <string name="more_overview_item_about">About</string>
     <string name="more_overview_item_alter_password"><![CDATA[Update Passcode & Biometrics]]></string>
     <string name="more_overview_item_developer_options">Developer Options</string>
 
-    <!-- Export -->
-    <string name="export_title">Export</string>
-    <string name="export_confirm">Export</string>
-    <string name="export_continue">Continue</string>
-    <string name="export_error_file">Could not write to file.</string>
-    <string name="export_description">Here you can export your identities, accounts and the address book.\n\nThe exported data includes private keys which give access to your identities and accounts. For this reason the data will be encrypted under a password that you will be asked to select during the process. It is important that you store the password safely and securely. The password will be needed for access to exported data (e.g. if you want to import an account into the Concordium Client).</string>
-
-    <string name="export_setup_password_title">Enter Export Password</string>
-    <string name="export_setup_password_repeat_title">Re-enter Export Password</string>
-    <string name="export_setup_password_info">Select an export password.\nThe password will be needed during import.</string>
-    <string name="export_setup_password_repeat_info">Re-enter your export password.</string>
-    <string name="export_password">Export Password</string>
-    <string name="export_error_entries_different">Entries do not match! Please try again.</string>
-    <string name="export_error_password_not_valid">Password is not valid - minimum length is 6.</string>
-    <string name="export_error_password_setup">Failed to setup password</string>
-
-    <string name="export_error_account_not_finalised">The following accounts are either failed or not ready on the chain, so they cannot be exported.\n\n</string>
-    <string name="export_error_account_not_finalised_name">%s. %s\n</string>
-    <string name="export_error_account_not_finalised_cancel">Cancel</string>
-    <string name="export_error_account_not_finalised_continue">Continue</string>
-
     <string name="export_method_question">Do you want to export your backup via another app, or save it to local storage?</string>
     <string name="export_method_another_app">Another app</string>
     <string name="export_method_local_storage">Local storage</string>
-    <string name="export_backup_saved_local">Your backup has been saved to local storage.</string>
 
     <!-- About -->
-
     <string name="about_title">About</string>
     <string name="about_support">Support</string>
     <string name="about_support_text">If you encountered a problem, or need help with something, you can reach out to us via <a href="support@concordium.software">support@concordium.software</a></string>
@@ -901,49 +873,6 @@
     <string name="about_contact_text">For more info about Concordium you can visit <a href="https://concordium.com">concordium.com</a></string>
     <string name="about_version">App Version</string>
     <string name="about_version_text">%s</string>
-
-
-    <!-- Import -->
-    <string name="import_title">Import</string>
-    <string name="import_confirm">Ok, thanks</string>
-    <string name="import_error_file">Could not read import file</string>
-    <string name="import_error_format">Unexpected import json format</string>
-    <string name="import_error_password_or_file_content">Invalid password or import file corrupted</string>
-
-    <string name="import_password_title">Enter Export Password</string>
-    <string name="import_password_info">Enter the password created when exporting the file.</string>
-    <string name="import_password_confirm">Continue</string>
-    <string name="import_password_error_password_not_valid">Password is not valid - minimum length is 6.</string>
-
-    <string name="import_failed_header">Import failed</string>
-    <string name="import_confirmed_title">Import</string>
-    <string name="import_confirmed_header">Imported successfully</string>
-    <string name="import_confirmed_header_partially">Import partially succeeded</string>
-    <string name="import_confirmed_info">You have successfully imported:</string>
-    <string name="import_confirmed_id">ID:</string>
-    <string name="import_confirmed_accounts">Accounts:</string>
-    <string name="import_confirmed_address_book">Address Book</string>
-    <string name="import_confirmed_recipient_accounts">Recipient accounts:</string>
-    <string name="import_confirmed_state_id_import_failed">ID import failed</string>
-    <string name="import_confirmed_state_id_import_failed_accounts">Account import failed</string>
-    <string name="import_confirmed_state_duplicate">(Already existed)</string>
-    <plurals name="import_confirmed_state_errors">
-        <item quantity="one">(Imported with %d error)</item>
-        <item quantity="other">(Imported with %d errors)</item>
-    </plurals>
-    <plurals name="import_confirmed_state_recipients_duplicate">
-        <item quantity="one">(%d recipient account was not imported, as it already existed)</item>
-        <item quantity="other">(%d recipient accounts were not imported, as they already existed)</item>
-    </plurals>
-    <plurals name="import_confirmed_state_recipients_failed">
-        <item quantity="one">(%d recipient account import failed)</item>
-        <item quantity="other">(%d recipient account imports failed)</item>
-    </plurals>
-    <plurals name="import_confirmed_state_accounts_failed">
-        <item quantity="one">(%d account import failed)</item>
-        <item quantity="other">(%d account imports failed)</item>
-    </plurals>
-    <string name="import_confirmed_readonly_accounts_header">Accounts found on chain (read only):</string>
 
     <!-- Change Password -->
     <string name="alterpassword_title"><![CDATA[Update Passcode & Biometrics]]></string>
@@ -1053,12 +982,10 @@
     <string name="force_update_needed_title">Update required</string>
     <string name="force_update_needed_message">You must update your Concordium Mobile Wallet to continue.\n\nIf you don’t have a backup, Concordium strongly recommends making one before updating.</string>
     <string name="force_update_needed_update_now">Update now</string>
-    <string name="force_update_needed_backup">Make backup</string>
     <string name="force_update_warning_title">Update ready</string>
     <string name="force_update_warning_message">There is a new update for the Concordium Mobile Wallet.\n\nIf you don’t have a backup, Concordium strongly recommends making one before updating.</string>
     <string name="force_update_warning_update_now">Update now</string>
     <string name="force_update_warning_remind_me">Remind me next time I open the wallet</string>
-    <string name="force_update_warning_backup">Make backup</string>
 
     <string name="force_update_intro_needed_title">Update required</string>
     <string name="force_update_intro_needed_message">You must update your Concordium Mobile Wallet to continue.</string>

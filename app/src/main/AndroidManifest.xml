@@ -33,18 +33,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-
-        <provider
-            android:name=".DataFileProvider"
-            android:authorities="@string/PROVIDER_AUTHORITY"
-            android:enabled="true"
-            android:exported="true"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_provider" />
-        </provider>
-
         <activity
             android:name=".ui.MainActivity"
             android:launchMode="singleTask"
@@ -53,70 +41,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-            <!-- Import file, with an empty mimeType -->
-            <intent-filter
-                android:icon="@mipmap/ic_launcher_round"
-                android:label="@string/app_name"
-                android:priority="50">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="file" />
-                <data android:scheme="content" />
-                <data android:host="*" />
-                <data android:mimeType="*/*" />
-                <data android:pathPattern=".*\\.concordiumwallet" />
-                <data android:pathPattern=".*\\..*\\.concordiumwallet" />
-                <data android:pathPattern=".*\\..*\\..*\\.concordiumwallet" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\.concordiumwallet" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.concordiumwallet" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.concordiumwallet" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.concordiumwallet" />
-            </intent-filter>
-            <!-- Import file, with no mimeType -->
-            <intent-filter
-                android:icon="@mipmap/ic_launcher_round"
-                android:label="@string/app_name"
-                android:priority="50">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="file" />
-                <data android:scheme="content" />
-                <data android:host="*" />
-                <data android:pathPattern=".*\\.concordiumwallet" />
-                <data android:pathPattern=".*\\..*\\.concordiumwallet" />
-                <data android:pathPattern=".*\\..*\\..*\\.concordiumwallet" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\.concordiumwallet" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\.concordiumwallet" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.concordiumwallet" />
-                <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.concordiumwallet" />
-            </intent-filter>
-            <!--
-                 Import file, with json mimeType. This catches all json files, but if pathPattern
-                 is added, it does not even  catch the ones with the correct file extension.
-            -->
-            <intent-filter
-                android:icon="@mipmap/ic_launcher_round"
-                android:label="@string/app_name"
-                android:priority="50">
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="file" />
-                <data android:scheme="content" />
-                <data android:host="*" />
-                <data android:mimeType="application/json" />
             </intent-filter>
         </activity> <!-- Common -->
         <activity
@@ -382,16 +307,6 @@
             android:screenOrientation="portrait" /> <!-- More -->
         <activity
             android:name=".ui.more.dev.DevActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.more.export.ExportActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.more.import.ImportActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait" />
