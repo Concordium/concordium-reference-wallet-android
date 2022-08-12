@@ -26,7 +26,7 @@ class RecoverProcessScanningFragment : RecoverProcessBaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.startScanning()
+        viewModel.recoverIdentitiesAndAccounts()
     }
 
     override fun onDestroyView() {
