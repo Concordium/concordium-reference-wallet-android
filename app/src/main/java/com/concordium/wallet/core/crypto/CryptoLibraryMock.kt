@@ -53,4 +53,12 @@ class CryptoLibraryMock(val gson: Gson) : CryptoLibrary {
     override suspend fun generateRecoveryRequest(recoveryRequestInput: GenerateRecoveryRequestInput): String? {
         TODO("Not yet implemented")
     }
+
+    override suspend fun getIdentityKeysAndRandomness(identityKeysAndRandomnessInput: IdentityKeysAndRandomnessInput): IdentityKeysAndRandomnessOutput? {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getAccountKeysAndRandomness(accountKeysAndRandomnessInput: AccountKeysAndRandomnessInput): AccountKeysAndRandomnessOutput? {
+        TODO("Not yet implemented")
+    }
 }

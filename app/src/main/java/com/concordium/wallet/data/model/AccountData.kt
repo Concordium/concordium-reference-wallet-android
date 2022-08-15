@@ -7,8 +7,4 @@ data class AccountData(
     @JsonAdapter(RawJsonTypeAdapter::class)
     val keys: RawJson,
     val threshold: Int
-) {
-
-}
-
-
+)

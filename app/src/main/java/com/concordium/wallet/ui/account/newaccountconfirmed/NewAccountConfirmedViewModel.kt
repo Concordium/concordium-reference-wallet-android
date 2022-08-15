@@ -22,7 +22,6 @@ class NewAccountConfirmedViewModel(application: Application) : AndroidViewModel(
         get() = _waitingLiveData
 
     lateinit var account: Account
-
     lateinit var accountWithIdentityLiveData: LiveData<AccountWithIdentity>
 
     init {
@@ -44,6 +43,4 @@ class NewAccountConfirmedViewModel(application: Application) : AndroidViewModel(
 
         }
     }
-
-
 }

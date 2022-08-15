@@ -9,13 +9,15 @@ import com.concordium.wallet.databinding.FragmentRecoverProcessScanningBinding
 class RecoverProcessScanningFragment : RecoverProcessBaseFragment() {
     private var _binding: FragmentRecoverProcessScanningBinding? = null
     private val binding get() = _binding!!
+    private lateinit var _password: String
 
     companion object {
         @JvmStatic
-        fun newInstance(viewModel: RecoverProcessViewModel) = RecoverProcessScanningFragment().apply {
+        fun newInstance(viewModel: RecoverProcessViewModel, password: String) = RecoverProcessScanningFragment().apply {
             arguments = Bundle().apply {
                 putSerializable(RecoverProcessViewModel.RECOVER_PROCESS_DATA, viewModel)
             }
+            _password = password
         }
     }
 
@@ -26,7 +28,7 @@ class RecoverProcessScanningFragment : RecoverProcessBaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.recoverIdentitiesAndAccounts()
+        viewModel.recoverIdentitiesAndAccounts(_password)
     }
 
     override fun onDestroyView() {

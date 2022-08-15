@@ -120,4 +120,30 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             Log.e("CryptoLib failed")
             return@withContext null
         }
+
+    override suspend fun getIdentityKeysAndRandomness(identityKeysAndRandomnessInput: IdentityKeysAndRandomnessInput): IdentityKeysAndRandomnessOutput? =
+        withContext(Dispatchers.Default) {
+            val input = gson.toJson(identityKeysAndRandomnessInput)
+            loadWalletLib()
+            val result = get_identity_keys_and_randomness(input)
+            Log.d("Output (Code ${result.result}): ${result.output}")
+            if (result.result == CryptoLibrary.SUCCESS) {
+                return@withContext gson.fromJson(result.output, IdentityKeysAndRandomnessOutput::class.java)
+            }
+            Log.e("CryptoLib failed")
+            return@withContext null
+        }
+
+    override suspend fun getAccountKeysAndRandomness(accountKeysAndRandomnessInput: AccountKeysAndRandomnessInput): AccountKeysAndRandomnessOutput? =
+        withContext(Dispatchers.Default) {
+            val input = gson.toJson(accountKeysAndRandomnessInput)
+            loadWalletLib()
+            val result = get_account_keys_and_randomness(input)
+            Log.d("Output (Code ${result.result}): ${result.output}")
+            if (result.result == CryptoLibrary.SUCCESS) {
+                return@withContext gson.fromJson(result.output, AccountKeysAndRandomnessOutput::class.java)
+            }
+            Log.e("CryptoLib failed")
+            return@withContext null
+        }
 }

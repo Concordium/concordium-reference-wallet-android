@@ -8,8 +8,10 @@ import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityRecoverProcessBinding
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.common.delegates.AuthDelegate
+import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 
-class RecoverProcessActivity : BaseActivity() {
+class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
     private lateinit var binding: ActivityRecoverProcessBinding
     private lateinit var viewModel: RecoverProcessViewModel
 
@@ -85,10 +87,16 @@ class RecoverProcessActivity : BaseActivity() {
     }
 
     private fun scanningView() {
-        supportFragmentManager.beginTransaction().add(R.id.fragment_container, RecoverProcessScanningFragment.newInstance(viewModel), null).commit()
-        binding.continueButton.visibility = View.GONE
-        binding.tryAgainButton.visibility = View.GONE
-        binding.enterAnotherPhraseButton.visibility = View.GONE
+        showAuthentication(this) { password ->
+            password?.let {
+                runOnUiThread {
+                    supportFragmentManager.beginTransaction().add(R.id.fragment_container, RecoverProcessScanningFragment.newInstance(viewModel, it), null).commit()
+                    binding.continueButton.visibility = View.GONE
+                    binding.tryAgainButton.visibility = View.GONE
+                    binding.enterAnotherPhraseButton.visibility = View.GONE
+                }
+            }
+        }
     }
 
     private fun showWaiting(waiting: Boolean) {

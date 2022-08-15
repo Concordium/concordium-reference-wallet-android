@@ -61,4 +61,8 @@ class AccountRepository(private val accountDao: AccountDao) {
     suspend fun deleteAll() {
         accountDao.deleteAll()
     }
+
+    suspend fun insertAccountAndCountUpNextAccountNumber(account: Account) {
+        accountDao.insertAccountAndCountUpNextAccountNumber(account)
+    }
 }

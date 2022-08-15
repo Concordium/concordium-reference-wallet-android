@@ -32,4 +32,8 @@ interface CryptoLibrary {
     suspend fun generateBakerKeys(): BakerKeys?
 
     suspend fun generateRecoveryRequest(recoveryRequestInput: GenerateRecoveryRequestInput): String?
+
+    suspend fun getIdentityKeysAndRandomness(identityKeysAndRandomnessInput: IdentityKeysAndRandomnessInput): IdentityKeysAndRandomnessOutput?
+
+    suspend fun getAccountKeysAndRandomness(accountKeysAndRandomnessInput: AccountKeysAndRandomnessInput): AccountKeysAndRandomnessOutput?
 }
