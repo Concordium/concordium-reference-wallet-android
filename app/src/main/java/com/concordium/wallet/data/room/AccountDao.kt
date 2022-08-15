@@ -47,7 +47,7 @@ interface AccountDao {
     suspend fun insertAccountAndCountUpNextAccountNumber(account: Account) {
         insert(account)
         findIdentityById(account.identityId)?.let { identity ->
-            identity.nextAccountNumber = account.accountIndex?.plus(1) ?: 1
+            identity.nextAccountNumber = identity.nextAccountNumber + 1
             updateIdentity(identity)
         }
     }
