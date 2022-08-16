@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
@@ -39,6 +40,8 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         const val RECOVER_PROCESS_DATA = "RECOVER_PROCESS_DATA"
         const val STATUS_OK = 1
         const val STATUS_NOTHING_TO_RECOVER = 2
+        private var IDENTITY_GAP_MAX = 20
+        private var ACCOUNT_GAP_MAX = 20
     }
 
     var identitiesWithAccounts: List<IdentityWithAccounts> = mutableListOf()
@@ -51,7 +54,15 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
     private val accountRepository = AccountRepository(accountDao)
     private val proxyRepository = ProxyRepository()
 
+    private var identityGap = 0
+    private var accountGap = 0
+
     fun recoverIdentitiesAndAccounts(password: String) {
+        if (BuildConfig.DEBUG) {
+            IDENTITY_GAP_MAX = 1
+            ACCOUNT_GAP_MAX = 1
+        }
+
         val net = "Mainnet"
         val seed = AuthPreferences(getApplication()).getSeedPhrase()
         val repository = IdentityProviderRepository()
@@ -66,10 +77,12 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             val identityProviders = repository.getIdentityProviderInfoSuspended()
             identityProviders.forEach { identityProvider ->
                 val identityIndex = 1
+                identityGap = 0
                 getIdentityFromProvider(identityProvider, globalInfo, seed, net, identityProviderService, identityIndex)
             }
 
             identityRepository.getAllDone().forEach { doneIdentity ->
+                accountGap = 0
                 recoverAccount(password, seed, net, doneIdentity.id, globalInfo)
             }
 
@@ -111,13 +124,20 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
     }
 
     private suspend fun getIdentityFromProvider(identityProvider: IdentityProvider, globalInfo: GlobalParamsWrapper, seed: String, net: String, identityProviderService: IdentityProviderApi, identityIndex: Int) {
+        if (identityGap >= IDENTITY_GAP_MAX) {
+            return
+        }
+
         val recoverRequestUrl = getRecoverRequestUrl(identityProvider, globalInfo, seed, net, identityIndex)
         val recoverInfo = identityProviderService.recover(recoverRequestUrl)
         val identityTokenContainer = identityProviderService.identity(recoverInfo.identityRetrievalUrl)
         if (identityTokenContainer.token != null) {
             saveIdentity(identityTokenContainer, identityProvider, identityIndex)
-            getIdentityFromProvider(identityProvider, globalInfo, seed, net, identityProviderService, identityIndex + 1)
+        } else {
+            identityGap++
         }
+
+        getIdentityFromProvider(identityProvider, globalInfo, seed, net, identityProviderService, identityIndex + 1)
     }
 
     private suspend fun saveIdentity(identityTokenContainer: IdentityTokenContainer, identityProvider: IdentityProvider, id: Int) {
@@ -136,6 +156,10 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
     }
 
     private suspend fun recoverAccount(password: String, seed: String, net: String, identityId: Int, globalInfo: GlobalParamsWrapper) {
+        if (accountGap >= ACCOUNT_GAP_MAX) {
+            return
+        }
+
         val identity = identityRepository.findById(identityId)
             ?: return
 
@@ -202,8 +226,10 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             )
 
             accountRepository.insertAccountAndCountUpNextAccountNumber(account)
-
-            recoverAccount(password, seed, net, identityId, globalInfo)
+        } else {
+            accountGap++
         }
+
+        recoverAccount(password, seed, net, identityId, globalInfo)
     }
 }
