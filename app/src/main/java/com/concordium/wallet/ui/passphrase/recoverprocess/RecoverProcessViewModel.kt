@@ -20,7 +20,6 @@ import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.util.DateTimeUtil
 import com.google.gson.JsonArray
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -134,13 +133,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
     }
 
     private suspend fun recoverAccount(password: String, seed: String, net: String, identityId: Int, globalInfo: GlobalParamsWrapper) {
-
         val identity = identityRepository.findById(identityId) ?: return
-
-        //val identityKeysAndRandomnessInput = IdentityKeysAndRandomnessInput(seed, net, identity.id)
-        //val identityKeysAndRandomnessOutput = App.appCore.cryptoLibrary.getIdentityKeysAndRandomness(identityKeysAndRandomnessInput)
-
-        //println("LC -> identityKeysAndRandomnessOutput = $identityKeysAndRandomnessOutput")
 
         identity.identityObject?.let { identityObject ->
             val credentialInput = CreateCredentialInputV1(
@@ -157,71 +150,49 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             )
 
             App.appCore.cryptoLibrary.createCredentialV1(credentialInput)?.let { createCredentialOutput ->
-
-                println("LC -> createCredentialOutput = $createCredentialOutput")
-
-                proxyRepository.getAccountBalanceSuspended(createCredentialOutput.accountAddress).let { accountBalance ->
-
-                    println("LC -> accountBalance = $accountBalance   ${createCredentialOutput.accountAddress}")
-
-                    val accountKeysAndRandomnessInput = AccountKeysAndRandomnessInput(seed, net, identity.id, createCredentialOutput.credential.v)
-                    App.appCore.cryptoLibrary.getAccountKeysAndRandomness(accountKeysAndRandomnessInput)?.let { accountKeysAndRandomnessOutput2 ->
-
-                        println("LC -> accountKeysAndRandomnessOutput = $accountKeysAndRandomnessOutput2")
-
-                        // identityKeysAndRandomnessOutput.prfKey
-                        // accountKeysAndRandomnessOutput.signKey
-
-                        val jsonToBeEncrypted = App.appCore.gson.toJson(
-                            StorageAccountData(
-                                accountAddress = createCredentialOutput.accountAddress,
-                                accountKeys = createCredentialOutput.accountKeys,
-                                encryptionSecretKey = createCredentialOutput.encryptionSecretKey,
-                                commitmentsRandomness = createCredentialOutput.commitmentsRandomness
-                            )
+                val accountBalance = proxyRepository.getAccountBalanceSuspended(createCredentialOutput.accountAddress)
+                if (accountBalance.finalizedBalance != null) {
+                    val jsonToBeEncrypted = App.appCore.gson.toJson(
+                        StorageAccountData(
+                            accountAddress = createCredentialOutput.accountAddress,
+                            accountKeys = createCredentialOutput.accountKeys,
+                            encryptionSecretKey = createCredentialOutput.encryptionSecretKey,
+                            commitmentsRandomness = createCredentialOutput.commitmentsRandomness
                         )
+                    )
 
-                        val encryptedAccountData = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, jsonToBeEncrypted)
+                    val encryptedAccountData = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, jsonToBeEncrypted)
+                    val account = Account(
+                        id = 0,
+                        identityId = identity.id,
+                        name = "Account ${identity.nextAccountNumber}",
+                        address = createCredentialOutput.accountAddress,
+                        submissionId = "",
+                        transactionStatus = TransactionStatus.FINALIZED,
+                        encryptedAccountData = encryptedAccountData ?: "",
+                        revealedAttributes = listOf(),
+                        credential = createCredentialOutput.credential,
+                        finalizedBalance = accountBalance.finalizedBalance.accountAmount.toLong(),
+                        currentBalance = accountBalance.currentBalance?.accountAmount?.toLong() ?: 0,
+                        totalBalance = 0,
+                        totalUnshieldedBalance = accountBalance.finalizedBalance.accountAmount.toLong(),
+                        totalShieldedBalance = 0,
+                        finalizedEncryptedBalance = accountBalance.finalizedBalance.accountEncryptedAmount,
+                        currentEncryptedBalance = accountBalance.currentBalance?.accountEncryptedAmount,
+                        encryptedBalanceStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
+                        totalStaked = if (accountBalance.finalizedBalance.accountBaker != null) accountBalance.finalizedBalance.accountBaker.stakedAmount.toLong() else
+                            if (accountBalance.finalizedBalance.accountDelegation != null) accountBalance.finalizedBalance.accountDelegation.stakedAmount.toLong() else 0,
+                        totalAtDisposal = 0,
+                        readOnly = false,
+                        finalizedAccountReleaseSchedule = accountBalance.finalizedBalance.accountReleaseSchedule,
+                        bakerId = accountBalance.finalizedBalance.accountBaker?.bakerId?.toLong(),
+                        accountDelegation = accountBalance.finalizedBalance.accountDelegation,
+                        accountBaker = accountBalance.finalizedBalance.accountBaker,
+                        accountIndex = accountBalance.finalizedBalance.accountIndex
+                    )
 
-                        println("LC -> encryptedAccountData = $encryptedAccountData")
-
-                        val account = Account(
-                            id = identity.nextAccountNumber,
-                            identityId = identity.id,
-                            name = "Account ${identity.nextAccountNumber}",
-                            address = createCredentialOutput.accountAddress,
-                            submissionId = "",
-                            transactionStatus = TransactionStatus.FINALIZED,
-                            encryptedAccountData = encryptedAccountData ?: "",
-                            revealedAttributes = listOf(),
-                            credential = createCredentialOutput.credential,
-                            finalizedBalance = accountBalance.finalizedBalance?.accountAmount?.toLong() ?: 0,
-                            currentBalance = accountBalance.currentBalance?.accountAmount?.toLong() ?: 0,
-                            totalBalance = 0,
-                            totalUnshieldedBalance = accountBalance.finalizedBalance?.accountAmount?.toLong() ?: 0,
-                            totalShieldedBalance = 0,
-                            finalizedEncryptedBalance = accountBalance.finalizedBalance?.accountEncryptedAmount,
-                            currentEncryptedBalance = accountBalance.currentBalance?.accountEncryptedAmount,
-                            encryptedBalanceStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
-                            totalStaked = if (accountBalance.finalizedBalance?.accountBaker != null) accountBalance.finalizedBalance.accountBaker.stakedAmount.toLong() else
-                                if (accountBalance.finalizedBalance?.accountDelegation != null) accountBalance.finalizedBalance.accountDelegation.stakedAmount.toLong() else 0,
-                            totalAtDisposal = 0,
-                            readOnly = false,
-                            finalizedAccountReleaseSchedule = accountBalance.finalizedBalance?.accountReleaseSchedule,
-                            bakerId = accountBalance.finalizedBalance?.accountBaker?.bakerId?.toLong(),
-                            accountDelegation = accountBalance.finalizedBalance?.accountDelegation,
-                            accountBaker = accountBalance.finalizedBalance?.accountBaker,
-                            accountIndex = accountBalance.finalizedBalance?.accountIndex
-                        )
-
-                        println("LC -> account = $account")
-
-                        accountRepository.insertAccountAndCountUpNextAccountNumber(account)
-
-                        //recoverAccount(password, seed, net, identityId, globalInfo)
-
-
-                    }
+                    accountRepository.insertAccountAndCountUpNextAccountNumber(account)
+                    recoverAccount(password, seed, net, identityId, globalInfo)
                 }
             }
         }
