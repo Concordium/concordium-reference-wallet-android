@@ -79,6 +79,9 @@ class AccountItemView(context: Context, attrs: AttributeSet?): LinearLayout(cont
             binding.accountCardActionReceive.setOnClickListener {
                 accountWithIdentity?.let { it1 -> onItemClickListener.onReceiveClicked(it1.account) }
             }
+            binding.accountCardActionEarn.setOnClickListener {
+                accountWithIdentity?.let { it1 -> onItemClickListener.onEarnClicked(it1.account) }
+            }
             binding.accountCardActionMore.setOnClickListener {
                 accountWithIdentity?.let { it1 -> onItemClickListener.onMoreClicked(it1.account) }
             }
@@ -89,6 +92,7 @@ class AccountItemView(context: Context, attrs: AttributeSet?): LinearLayout(cont
     }
 
     interface OnItemClickListener {
+        fun onEarnClicked(item: Account)
         fun onMoreClicked(item: Account)
         fun onReceiveClicked(item: Account)
         fun onSendClicked(item: Account)

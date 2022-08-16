@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Layout.Root">
+
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/app_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:id="@+id/scrollViewInfo"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/activity_vertical_margin"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_layout"
+        app:layout_constraintBottom_toTopOf="@+id/nothing_to_recover_buttons">
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+            android:orientation="vertical">
+            <TextView
+                style="@style/TextView.Standard"
+                android:text="@string/earn_subtitle"
+                android:layout_marginTop="@dimen/activity_vertical_margin" />
+            <TextView
+                style="@style/TextView.Standard.Bold"
+                android:text="@string/earn_baker_title"
+                android:layout_marginTop="@dimen/activity_vertical_margin" />
+            <TextView
+                android:id="@+id/tvBakerDescription"
+                style="@style/TextView.Standard"
+                android:text="@string/earn_baker_description" />
+            <TextView
+                style="@style/TextView.Standard.Bold"
+                android:text="@string/earn_delegation_title"
+                android:layout_marginTop="@dimen/activity_vertical_margin" />
+            <TextView
+                style="@style/TextView.Standard"
+                android:text="@string/earn_delegation_description" />
+            <TextView
+                style="@style/TextView.Standard"
+                android:text="@string/earn_description"
+                android:layout_marginTop="@dimen/activity_vertical_margin" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </ScrollView>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/nothing_to_recover_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <Button
+            android:id="@+id/btnBaker"
+            style="@style/Button.Standard.Intro"
+            android:layout_width="match_parent"
+            android:text="@string/earn_baker_button" />
+        <Button
+            android:id="@+id/btnDelegation"
+            style="@style/Button.Standard.Intro"
+            android:layout_width="match_parent"
+            android:text="@string/earn_delegation_button" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <include layout="@layout/progress" android:id="@+id/include_progress" android:visibility="gone" tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -64,7 +64,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     private val gson = App.appCore.gson
 
-
     private lateinit var transactionMappingHelper: TransactionMappingHelper
     private val accountUpdater = AccountUpdater(application, viewModelScope)
 
@@ -86,8 +85,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         get() = _waitingLiveData
 
     private val _newFinalizedAccountLiveData = MutableLiveData<String>()
-    val newFinalizedAccountLiveData: LiveData<String>
-        get() = _newFinalizedAccountLiveData
 
     private val _errorLiveData = MutableLiveData<Event<Int>>()
     val errorLiveData: LiveData<Event<Int>>
@@ -135,7 +132,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
         recipientRepository = RecipientRepository(recipientDao)
         initializeAccountUpdater()
-
     }
 
     fun initialize(account: Account, isShielded: Boolean) {
@@ -282,16 +278,13 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         })
     }
 
-    fun getIncludeRewards(): String? {
-
+    private fun getIncludeRewards(): String {
         if (session.getHasShowRewards(account.id) && !session.getHasShowFinalizationRewards(account.id)) {
             return "allButFinalization"
         }
-
         if (session.getHasShowRewards(account.id) && session.getHasShowFinalizationRewards(account.id)) {
             return "all"
         }
-
         return "none"
     }
 
@@ -433,7 +426,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         decryptAndContinue(password, transfersOnly, transaction)
     }
 
-
     fun checkLogin(cipher: Cipher, transfersOnly: Boolean = false, transaction: Transaction? = null) = viewModelScope.launch {
         _waitingLiveData.value = true
         val password = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
@@ -468,7 +460,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-
     private suspend fun decryptData(
         secretKey: String,
         transfersOnly: Boolean = false,
@@ -493,7 +484,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             _waitingLiveData.value = false
         }
     }
-
 
     fun initiateFrequentUpdater() {
         updater.cancel()
@@ -594,14 +584,14 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         return App.appCore.getCurrentAuthenticationManager().usePasscode()
     }
 
-    fun checkForUndecryptedAmounts() {
+    fun checkForEncryptedAmounts() {
         GlobalScope.launch(Dispatchers.IO) {
             var showPadlock = false
             _transferListLiveData.value?.forEach {
                 if(it.getItemType() == AdapterItem.ItemType.Item){
                     val transactionItem = it as TransactionItem
                     val transaction = transactionItem.transaction
-                    if(transaction != null && transaction.encrypted != null && transaction.encrypted.encryptedAmount != null){
+                    if (transaction?.encrypted?.encryptedAmount != null) {
                         if(accountUpdater.lookupMappedAmount(transaction.encrypted.encryptedAmount) == null){
                             showPadlock = true
                         }
@@ -614,9 +604,5 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
-
-
-
     // endregion
-
 }

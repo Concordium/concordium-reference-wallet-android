@@ -24,13 +24,15 @@ import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.base.BaseFragment
+import com.concordium.wallet.ui.common.delegates.EarnDelegate
+import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
 import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 
-class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by IdentityStatusDelegateImpl() {
+class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by IdentityStatusDelegateImpl(), EarnDelegate by EarnDelegateImpl() {
     private var _binding: FragmentAccountsOverviewBinding? = null
     private val binding get() = _binding!!
 
@@ -200,6 +202,9 @@ class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ident
         }
         viewModel.appSettingsLiveData.observe(this) { appSettings ->
             checkAppSettings(appSettings)
+        }
+        viewModel.localTransfersLoaded.observe(this) { account ->
+            activity?.let { gotoEarn(it, account, viewModel.hasPendingDelegationTransactions, viewModel.hasPendingBakingTransactions) }
         }
     }
 
@@ -389,6 +394,10 @@ class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ident
 
             override fun onMoreClicked(item: Account) {
                 gotoAccountDetails(item, false)
+            }
+
+            override fun onEarnClicked(item: Account) {
+                viewModel.loadLocalTransfers(item)
             }
 
             override fun onReceiveClicked(item: Account) {

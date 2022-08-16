@@ -11,9 +11,12 @@ import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
+import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.AppSettings
 import com.concordium.wallet.data.model.TransactionStatus
+import com.concordium.wallet.data.model.TransactionType
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
@@ -23,7 +26,6 @@ import com.concordium.wallet.util.Log
 import kotlinx.coroutines.launch
 
 class AccountsOverviewViewModel(application: Application) : AndroidViewModel(application) {
-
     private val _waitingLiveData = MutableLiveData<Boolean>()
     val waitingLiveData: LiveData<Boolean>
         get() = _waitingLiveData
@@ -60,14 +62,17 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     val appSettingsLiveData: LiveData<AppSettings>
         get() = _appSettingsLiveData
 
+    val localTransfersLoaded: MutableLiveData<Account> by lazy { MutableLiveData<Account>() }
+
     private val identityRepository: IdentityRepository
     private val accountRepository: AccountRepository
     private val accountUpdater = AccountUpdater(application, viewModelScope)
     private val proxyRepository = ProxyRepository()
+    var hasPendingDelegationTransactions: Boolean = false
+    var hasPendingBakingTransactions: Boolean = false
 
     val accountListLiveData: LiveData<List<AccountWithIdentity>>
     val identityListLiveData: LiveData<List<Identity>>
-
 
     enum class State {
         NO_IDENTITIES, NO_ACCOUNTS, DEFAULT, VALID_IDENTITIES
@@ -182,6 +187,21 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                     updateSubmissionStatesAndBalances(notifyWaitingLiveData)
                 }
             }
+        }
+    }
+
+    fun loadLocalTransfers(account: Account) {
+        viewModelScope.launch {
+            hasPendingDelegationTransactions = false
+            hasPendingBakingTransactions = false
+            val transferDao = WalletDatabase.getDatabase(getApplication()).transferDao()
+            val transferRepository = TransferRepository(transferDao)
+            val transferList = transferRepository.getAllByAccountId(account.id)
+            for (transfer in transferList) {
+                if (transfer.transactionType == TransactionType.LOCAL_DELEGATION) hasPendingDelegationTransactions = true
+                if (transfer.transactionType == TransactionType.LOCAL_BAKER) hasPendingBakingTransactions = true
+            }
+            localTransfersLoaded.value = account
         }
     }
 

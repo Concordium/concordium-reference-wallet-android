@@ -153,6 +153,10 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.account.earn.EarnInfoActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.auth.login.AuthLoginActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"

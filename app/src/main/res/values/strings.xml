@@ -239,6 +239,16 @@
 
     <string name="intro_flow_title">Introduction</string>
 
+    <string name="earn_title">Earning rewards</string>
+    <string name="earn_subtitle">There are two options for earning rewards on Concordium: Baking and delegation.</string>
+    <string name="earn_baker_title">Baking</string>
+    <string name="earn_baker_description">As a baker you participate in the network by baking blocks on the Concordium network. This requires a minimum of %1$s CCD and access to a dedicated node.</string>
+    <string name="earn_delegation_title">Delegation</string>
+    <string name="earn_delegation_description">If you don\'t have access to your own node you may delegate your stake to one of the other bakers. There is no minimum amount of CCD required when delegating.</string>
+    <string name="earn_description">Choose the option that suits you below to learn more.\n\nNOTE: A single account cannot both be a baker and delegator, but it is possible to stop one and change to the other.</string>
+    <string name="earn_delegation_button">Continue to delegation setup</string>
+    <string name="earn_baker_button">Continue to baker setup</string>
+
     <!-- Identity intro flow -->
     <string name="identity_intro_flow_title">Introduction</string>
     <string name="identity_intro_flow_subtitle1">The Concordium concepts</string>
@@ -745,6 +755,7 @@
     <string name="account_details_transfers_title">Transfers</string>
     <string name="account_details_identity_data_title">Identity Data</string>
     <string name="account_details_send">Send</string>
+    <string name="account_details_earn">Earn</string>
     <string name="account_details_unshield">Unshield</string>
     <string name="account_details_shield">Shield</string>
     <string name="account_details_address">Receive</string>
@@ -921,8 +932,6 @@
     <string name="accounts_overview_total_details_staked_no_id">Stake with baker</string>
     <string name="account_details_menu_release_schedule">Release schedule</string>
     <string name="account_details_menu_transfer_filter">Transfer filters</string>
-    <string name="account_details_menu_delegation">Delegation</string>
-    <string name="account_details_menu_baking">Baking</string>
     <string name="account_details_menu_show_shielded">Show shielded balance on %1$s</string>
     <string name="account_details_menu_hide_shielded">Hide shielded balance on %1$s</string>
     <string name="account_details_menu_decrypt">Decrypt</string>
