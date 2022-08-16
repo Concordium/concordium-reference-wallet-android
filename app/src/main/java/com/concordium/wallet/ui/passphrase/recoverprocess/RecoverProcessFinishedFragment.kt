@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.concordium.wallet.R
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentRecoverProcessFinishedBinding
 import com.concordium.wallet.databinding.ItemIdentityWithAccountsBinding
 import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessViewModel.Companion.RECOVER_PROCESS_DATA
@@ -41,7 +42,8 @@ class RecoverProcessFinishedFragment : RecoverProcessBaseFragment() {
             identityWithAccounts.accounts.forEach { account ->
                 val accountTextView = TextView(context)
                 accountTextView.setTextAppearance(R.style.TextView_Standard)
-                val accountText = "${account.name} - ${account.totalBalance}"
+                val finalizedBalance = CurrencyUtil.formatGTU(account.finalizedBalance, true)
+                val accountText = "${account.name} - $finalizedBalance"
                 accountTextView.text = accountText
                 itemIdentityWithAccounts.accounts.addView(accountTextView)
             }

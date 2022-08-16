@@ -10,7 +10,10 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.cryptolib.*
+import com.concordium.wallet.data.cryptolib.CreateCredentialInputV1
+import com.concordium.wallet.data.cryptolib.CreateCredentialOutputV1
+import com.concordium.wallet.data.cryptolib.GenerateRecoveryRequestInput
+import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.room.Account
@@ -133,14 +136,16 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
     }
 
     private suspend fun recoverAccount(password: String, seed: String, net: String, identityId: Int, globalInfo: GlobalParamsWrapper) {
-        val identity = identityRepository.findById(identityId) ?: return
+        val identity = identityRepository.findById(identityId)
+            ?: return
 
-        identity.identityObject?.let { identityObject ->
+        var createCredentialOutput: CreateCredentialOutputV1? = null
+        if (identity.identityObject != null) {
             val credentialInput = CreateCredentialInputV1(
                 identity.identityProvider.ipInfo,
                 identity.identityProvider.arsInfos,
                 globalInfo.value,
-                identityObject,
+                identity.identityObject!!,
                 JsonArray(),
                 seed,
                 net,
@@ -148,53 +153,57 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                 identity.nextAccountNumber,
                 (DateTimeUtil.nowPlusMinutes(5).time) / 1000
             )
+            createCredentialOutput = App.appCore.cryptoLibrary.createCredentialV1(credentialInput)
+        }
 
-            App.appCore.cryptoLibrary.createCredentialV1(credentialInput)?.let { createCredentialOutput ->
-                val accountBalance = proxyRepository.getAccountBalanceSuspended(createCredentialOutput.accountAddress)
-                if (accountBalance.finalizedBalance != null) {
-                    val jsonToBeEncrypted = App.appCore.gson.toJson(
-                        StorageAccountData(
-                            accountAddress = createCredentialOutput.accountAddress,
-                            accountKeys = createCredentialOutput.accountKeys,
-                            encryptionSecretKey = createCredentialOutput.encryptionSecretKey,
-                            commitmentsRandomness = createCredentialOutput.commitmentsRandomness
-                        )
-                    )
+        if (createCredentialOutput == null)
+            return
 
-                    val encryptedAccountData = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, jsonToBeEncrypted)
-                    val account = Account(
-                        id = 0,
-                        identityId = identity.id,
-                        name = "Account ${identity.nextAccountNumber}",
-                        address = createCredentialOutput.accountAddress,
-                        submissionId = "",
-                        transactionStatus = TransactionStatus.FINALIZED,
-                        encryptedAccountData = encryptedAccountData ?: "",
-                        revealedAttributes = listOf(),
-                        credential = createCredentialOutput.credential,
-                        finalizedBalance = accountBalance.finalizedBalance.accountAmount.toLong(),
-                        currentBalance = accountBalance.currentBalance?.accountAmount?.toLong() ?: 0,
-                        totalBalance = 0,
-                        totalUnshieldedBalance = accountBalance.finalizedBalance.accountAmount.toLong(),
-                        totalShieldedBalance = 0,
-                        finalizedEncryptedBalance = accountBalance.finalizedBalance.accountEncryptedAmount,
-                        currentEncryptedBalance = accountBalance.currentBalance?.accountEncryptedAmount,
-                        encryptedBalanceStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
-                        totalStaked = if (accountBalance.finalizedBalance.accountBaker != null) accountBalance.finalizedBalance.accountBaker.stakedAmount.toLong() else
-                            if (accountBalance.finalizedBalance.accountDelegation != null) accountBalance.finalizedBalance.accountDelegation.stakedAmount.toLong() else 0,
-                        totalAtDisposal = 0,
-                        readOnly = false,
-                        finalizedAccountReleaseSchedule = accountBalance.finalizedBalance.accountReleaseSchedule,
-                        bakerId = accountBalance.finalizedBalance.accountBaker?.bakerId?.toLong(),
-                        accountDelegation = accountBalance.finalizedBalance.accountDelegation,
-                        accountBaker = accountBalance.finalizedBalance.accountBaker,
-                        accountIndex = accountBalance.finalizedBalance.accountIndex
-                    )
+        val jsonToBeEncrypted = App.appCore.gson.toJson(
+            StorageAccountData(
+                accountAddress = createCredentialOutput.accountAddress,
+                accountKeys = createCredentialOutput.accountKeys,
+                encryptionSecretKey = createCredentialOutput.encryptionSecretKey,
+                commitmentsRandomness = createCredentialOutput.commitmentsRandomness
+            )
+        )
+        val encryptedAccountData = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, jsonToBeEncrypted)
+            ?: return
 
-                    accountRepository.insertAccountAndCountUpNextAccountNumber(account)
-                    recoverAccount(password, seed, net, identityId, globalInfo)
-                }
-            }
+        val accountBalance = proxyRepository.getAccountBalanceSuspended(createCredentialOutput.accountAddress)
+
+        if (accountBalance.finalizedBalance != null) {
+            val account = Account(
+                id = 0,
+                identityId = identity.id,
+                name = "Account ${identity.nextAccountNumber}",
+                address = createCredentialOutput.accountAddress,
+                submissionId = "",
+                transactionStatus = TransactionStatus.FINALIZED,
+                encryptedAccountData = encryptedAccountData,
+                revealedAttributes = listOf(),
+                credential = createCredentialOutput.credential,
+                finalizedBalance = accountBalance.finalizedBalance.accountAmount.toLong(),
+                currentBalance = accountBalance.currentBalance?.accountAmount?.toLong() ?: 0,
+                totalBalance = 0,
+                totalUnshieldedBalance = accountBalance.finalizedBalance.accountAmount.toLong(),
+                totalShieldedBalance = 0,
+                finalizedEncryptedBalance = accountBalance.finalizedBalance.accountEncryptedAmount,
+                currentEncryptedBalance = accountBalance.currentBalance?.accountEncryptedAmount,
+                encryptedBalanceStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
+                totalStaked = if (accountBalance.finalizedBalance.accountBaker != null) accountBalance.finalizedBalance.accountBaker.stakedAmount.toLong() else 0,
+                totalAtDisposal = 0,
+                readOnly = false,
+                finalizedAccountReleaseSchedule = accountBalance.finalizedBalance.accountReleaseSchedule,
+                bakerId = accountBalance.finalizedBalance.accountBaker?.bakerId?.toLong(),
+                accountDelegation = accountBalance.finalizedBalance.accountDelegation,
+                accountBaker = accountBalance.finalizedBalance.accountBaker,
+                accountIndex = accountBalance.finalizedBalance.accountIndex
+            )
+
+            accountRepository.insertAccountAndCountUpNextAccountNumber(account)
+
+            recoverAccount(password, seed, net, identityId, globalInfo)
         }
     }
 }

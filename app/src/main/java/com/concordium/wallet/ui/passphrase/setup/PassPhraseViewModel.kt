@@ -30,7 +30,7 @@ class PassPhraseViewModel(application: Application) : AndroidViewModel(applicati
         val mnemonicCode: Mnemonics.MnemonicCode = Mnemonics.MnemonicCode(Mnemonics.WordCount.COUNT_24)
         mnemonicCode.forEach { word ->
             if (BuildConfig.DEBUG)
-                println("LC -> $word")
+                println(word)
         }
         mnemonicCodeToConfirm = mnemonicCode.words.toList()
     }

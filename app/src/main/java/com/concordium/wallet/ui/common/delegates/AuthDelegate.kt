@@ -7,7 +7,9 @@ import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.security.BiometricPromptCallback
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.crypto.Cipher
 
 interface AuthDelegate {
