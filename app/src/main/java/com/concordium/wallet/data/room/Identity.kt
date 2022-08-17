@@ -14,7 +14,7 @@ import java.io.Serializable
 data class Identity(
     @PrimaryKey(autoGenerate = true)
     var id: Int,
-    val name: String,
+    var name: String,
     var status: String,
     var detail: String?,
     @ColumnInfo(name = "code_uri")

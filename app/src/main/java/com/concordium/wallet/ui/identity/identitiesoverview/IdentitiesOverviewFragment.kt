@@ -31,14 +31,10 @@ class IdentitiesOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ide
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        viewModel.loadIdentities()
-    }
-
     override fun onResume() {
         super.onResume()
         startCheckForPendingIdentity(activity)
+        viewModel.loadIdentities()
     }
 
     override fun onPause() {
