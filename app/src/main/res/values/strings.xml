@@ -935,9 +935,15 @@
     <string name="account_details_menu_show_shielded">Show shielded balance on %1$s</string>
     <string name="account_details_menu_hide_shielded">Hide shielded balance on %1$s</string>
     <string name="account_details_menu_decrypt">Decrypt</string>
+    <string name="account_details_menu_change_name">Change account name</string>
     <string name="account_details_delegation_with_baker_pool">Delegation with baker pool %1$s</string>
     <string name="account_details_delegation_with_passive_pool">Passive delegation</string>
     <string name="account_details_stake_with_baker">Stake with baker %1$s</string>
+
+    <string name="account_details_change_name_popup_title">Change account name</string>
+    <string name="account_details_change_name_popup_subtitle">You can enter the new account name here.</string>
+    <string name="account_details_change_name_popup_cancel">Cancel</string>
+    <string name="account_details_change_name_popup_save">Save</string>
 
     <string name="account_details_toggle_shielded">Shielded balance</string>
     <string name="account_details_toggle_balance">Balance</string>

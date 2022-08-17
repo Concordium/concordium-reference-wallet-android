@@ -169,6 +169,14 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         _shieldingEnabledLiveData.value = false
     }
 
+    fun changeAccountName(name: String) {
+        viewModelScope.launch {
+            account.name = name
+            accountRepository.update(account)
+            _accountUpdatedLiveData.value = true
+        }
+    }
+
     fun requestGTUDrop() {
         _waitingLiveData.value = true
         proxyRepository.requestGTUDrop(

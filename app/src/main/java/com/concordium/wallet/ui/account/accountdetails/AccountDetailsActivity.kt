@@ -7,10 +7,13 @@ import android.graphics.Color
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
@@ -26,6 +29,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
+import com.concordium.wallet.uicore.setEditText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -315,11 +319,11 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
                 finish()
             }
             R.id.item_menu -> {
-                item.icon = resources.getDrawable(R.drawable.burger_closed_to_open_anim, null)
+                item.icon = AppCompatResources.getDrawable(this, R.drawable.burger_closed_to_open_anim)
                 (item.icon as Animatable).start()
                 val builder = AlertDialog.Builder(this)
                 builder.setOnDismissListener {
-                    item.icon = resources.getDrawable(R.drawable.burger_open_to_closed_anim, null)
+                    item.icon = AppCompatResources.getDrawable(this, R.drawable.burger_open_to_closed_anim)
                     (item.icon as Animatable).start()
                 }
 
@@ -373,6 +377,12 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
                     })
                 }
 
+                // Change account name
+                menuView.menuChangeAccountNameContainer.setOnClickListener {
+                    mMenuDialog?.dismiss()
+                    showChangeNameDialog()
+                }
+
                 builder.setCustomTitle(menuView.root)
                 mMenuDialog = builder.show()
 
@@ -380,6 +390,23 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
            }
         }
         return true
+    }
+
+    private fun showChangeNameDialog() {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.account_details_change_name_popup_title))
+        builder.setMessage(getString(R.string.account_details_change_name_popup_subtitle))
+        val input = AppCompatEditText(this)
+        input.hint = viewModel.account.name
+        input.inputType = InputType.TYPE_CLASS_TEXT
+        builder.setEditText(this, input)
+        builder.setPositiveButton(getString(R.string.account_details_change_name_popup_save)) { _, _ ->
+            viewModel.changeAccountName(input.text.toString())
+        }
+        builder.setNegativeButton(getString(R.string.account_details_change_name_popup_cancel)) { dialog, _ ->
+            dialog.cancel()
+        }
+        builder.show()
     }
 
     private val getResultEnableShielding =
@@ -450,4 +477,3 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
     //endregion
 }
-
