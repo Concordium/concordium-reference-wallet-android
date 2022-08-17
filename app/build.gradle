@@ -23,7 +23,7 @@ def URL_PROXY_BASE_PROD_TESTNET = "https://wallet-proxy.testnet.concordium.com"
 def URL_PROXY_BASE_PRODUCTION = "https://wallet-proxy.mainnet.concordium.software"
 
 
-def PROVIDER_AUTHORITY_BASE = "software.concordium.mobilewallet.DataFileProvider"
+def PROVIDER_AUTHORITY_BASE = "software.concordium.mobilewallet.seedphrase.DataFileProvider"
 def PROVIDER_AUTHORITY_LOCAL = PROVIDER_AUTHORITY_BASE+"-local"
 def PROVIDER_AUTHORITY_MOCK = PROVIDER_AUTHORITY_BASE+"-mock"
 def PROVIDER_AUTHORITY_STAGING = PROVIDER_AUTHORITY_BASE+"-staging"
@@ -75,7 +75,7 @@ def buildTimeTicks() {
 android {
     compileSdkVersion 32
     defaultConfig {
-        applicationId "software.concordium.mobilewallet"
+        applicationId "software.concordium.mobilewallet.seedphrase"
         minSdkVersion 26
         targetSdkVersion 32
         versionCode versionBuildNumberSequential
