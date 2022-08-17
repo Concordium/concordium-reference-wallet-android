@@ -17,7 +17,7 @@ interface ProxyBackend {
     @GET("v0/bakerPool/{poolId}")
     suspend fun bakerPoolSuspended(@Path("poolId") poolId: String): Response<BakerPoolStatus>
 
-    @GET("v0/appSettings")
+    @GET("v1/appSettings")
     suspend fun appSettingsSuspended(
         @Query("platform") platform: String,
         @Query("appVersion") version: Int
