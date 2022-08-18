@@ -9,8 +9,10 @@ import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderLi
 class IdentityIntroFlow : GenericFlowActivity(R.string.identity_intro_flow_title) {
     companion object {
         val TITLES = intArrayOf(R.string.identity_intro_flow_subtitle1,
-            R.string.identity_intro_flow_subtitle2)
-        const val MAX_PAGES = 2
+            R.string.identity_intro_flow_subtitle2,
+            R.string.identity_intro_flow_subtitle3,
+            R.string.identity_intro_flow_subtitle4)
+        const val MAX_PAGES = 4
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

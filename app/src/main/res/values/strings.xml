@@ -189,12 +189,6 @@
     <string name="intro_start_info">Before you start using the Concordium Mobile Wallet, you have to set up a passcode and optionally biometrics.\n\nIt is very important to keep your passcode safe, because it is the only way to access your accounts. Concordium is not be able to change your passcode or help you unlock your wallet if you lose your passcode.\n\nSimilarly, if someone gets your passcode, they will be able to access your accounts.\n\nSo remember to keep your passcode safe!</string>
     <string name="intro_start_confirm">Continue</string>
 
-    <string name="intro_start_create_intro_subtitle1">Welcome to Concordium</string>
-    <string name="intro_start_create_intro_subtitle2">Verifying your identity</string>
-    <string name="intro_start_create_intro_subtitle3">The initial account</string>
-    <string name="intro_start_create_intro_subtitle4">Backup your private keys</string>
-    <string name="intro_start_create_intro_subtitle5">You are ready!</string>
-
     <!-- Intro setup-->
     <string name="intro_setup_title">Getting started</string>
     <string name="intro_setup_header">Are you new to Concordium?</string>
@@ -206,7 +200,7 @@
     <string name="intro_recover_wallet">Recover wallet</string>
 
     <string name="pass_phrase_title">Secret recovery phrase</string>
-    <string name="pass_phrase_explain">The secret recovery phrase is a very important part of having one or more accounts. If you are not acquainted with the concept, please review the video above carefully before continuing.\n\nYou should also consider using a computer you trust, e.g. a private computer and not one at the library.</string>
+    <string name="pass_phrase_explain">It is now time to set up your secret recovery phrase.\n\nThe secret recovery phrase is a series of 24 words that will grant you access to create accounts and identities on Concordium.\n\nAt the same time, it is also the only way to regain access to your accounts and identities if you lose your device or it breaks. This means that it is very important that you write it down and keep it somewhere safe. It it also very important that no one but you has access to the secret recovery phrase.\n\nConcordium cannot recreate your secret recovery phrase or help you regain access to your accounts without it.\n\nIf you lose your secret recovery phrase, you risk losing your accounts!</string>
     <string name="pass_phrase_hidden_please_write">Please write all 24 words down in the right order.</string>
     <string name="pass_phrase_hidden_tap">Tap to reveal your secret recovery phrase. Make sure no one else can see it.</string>
     <string name="pass_phrase_confirm">I confirm I have written down my 24 word secret recovery phrase.</string>
@@ -237,8 +231,6 @@
     <string name="pass_phrase_recover_process_nothing_subtitle">We found nothing to recover.</string>
     <string name="pass_phrase_recover_process_nothing_text">There was no accounts to be found for the secret recovery phrase. Did you maybe enter a wrong recovery phrase?\n\nIf you only have an identity and no accounts, this can also be the reason. In this case please specify which identity provider you used to get your identity, so we can send them a request.</string>
 
-    <string name="intro_flow_title">Introduction</string>
-
     <string name="earn_title">Earning rewards</string>
     <string name="earn_subtitle">There are two options for earning rewards on Concordium: Baking and delegation.</string>
     <string name="earn_baker_title">Baking</string>
@@ -251,8 +243,10 @@
 
     <!-- Identity intro flow -->
     <string name="identity_intro_flow_title">Introduction</string>
-    <string name="identity_intro_flow_subtitle1">The Concordium concepts</string>
-    <string name="identity_intro_flow_subtitle2">You are ready!</string>
+    <string name="identity_intro_flow_subtitle1">Welcome to Concordium</string>
+    <string name="identity_intro_flow_subtitle2">A Concordium Identity</string>
+    <string name="identity_intro_flow_subtitle3">Getting verified</string>
+    <string name="identity_intro_flow_subtitle4">Your first account</string>
 
     <!-- Delegation intro -->
     <string name="delegation_intro_flow_title">Delegation</string>
@@ -640,7 +634,7 @@
     <string name="identity_create_identity_name_identity_name">Identity card name</string>
     <string name="identity_create_identity_name_confirm">Continue</string>
     <string name="identity_create_identity_provider_header">Choosing an identity provider</string>
-    <string name="identity_create_identity_provider_info"><![CDATA[The identity provider will verify your identity using a government issued identity document, some identity attributes you provide, and a selfie.<br><br>You can pick one from the list below. To read more about them before deciding, click the links below.<br><br>%1$s]]></string>
+    <string name="identity_create_identity_provider_info"><![CDATA[As mentioned, the identity provider will verify your identity using a government issued identity document, some identity attributes you provide, and a selfie.<br><br>You can pick one from the list below. To read more about them before deciding, click the links below.<br><br>%1$s]]></string>
     <string name="identity_create_identity_provider_privacy_policy">Privacy Policy</string>
 
     <!-- Identity provider list -->
@@ -995,10 +989,10 @@
     <string name="account_details_shielded_warning_dismiss">Don’t show again</string>
 
     <string name="force_update_needed_title">Update required</string>
-    <string name="force_update_needed_message">You must update your Concordium Mobile Wallet to continue.\n\nIf you don’t have a backup, Concordium strongly recommends making one before updating.</string>
+    <string name="force_update_needed_message">You must update your Concordium Mobile Wallet to continue.</string>
     <string name="force_update_needed_update_now">Update now</string>
     <string name="force_update_warning_title">Update ready</string>
-    <string name="force_update_warning_message">There is a new update for the Concordium Mobile Wallet.\n\nIf you don’t have a backup, Concordium strongly recommends making one before updating.</string>
+    <string name="force_update_warning_message">There is a new update for the Concordium Mobile Wallet.</string>
     <string name="force_update_warning_update_now">Update now</string>
     <string name="force_update_warning_remind_me">Remind me next time I open the wallet</string>
 
