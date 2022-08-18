@@ -86,8 +86,6 @@
                 <Button
                     android:id="@+id/create_ident_intro_back"
                     style="@style/Button.Standard.Intro"
-                    android:drawableStart="@drawable/ic_button_back"
-                    android:drawableTint="@color/text_white"
                     tools:visibility="visible"
                     android:text="@string/shielding_intro_back" />
                 <Button
