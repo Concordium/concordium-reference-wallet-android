@@ -86,20 +86,22 @@
                 <Button
                     android:id="@+id/create_ident_intro_back"
                     style="@style/Button.Standard.Intro"
-                    android:drawableLeft="@drawable/ic_button_back"
-                    tools:visibility="gone"
+                    android:drawableStart="@drawable/ic_button_back"
+                    android:drawableTint="@color/text_white"
+                    tools:visibility="visible"
                     android:text="@string/shielding_intro_back" />
                 <Button
                     android:id="@+id/create_ident_intro_next"
                     style="@style/Button.Standard.Intro"
-                    android:layout_alignParentRight="true"
-                    android:drawableRight="@drawable/ic_button_next"
+                    android:layout_alignParentEnd="true"
+                    android:drawableEnd="@drawable/ic_button_next"
+                    android:drawableTint="@color/text_white"
                     android:text="@string/shielding_intro_next" />
                 <Button
                     android:id="@+id/create_ident_intro_continue"
                     style="@style/Button.Standard.Intro"
                     tools:visibility="gone"
-                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
                     android:text="@string/shielding_intro_continue"/>
             </RelativeLayout>
         </RelativeLayout>

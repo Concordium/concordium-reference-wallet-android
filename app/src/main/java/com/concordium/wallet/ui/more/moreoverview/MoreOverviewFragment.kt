@@ -85,7 +85,6 @@ class MoreOverviewFragment : BaseFragment() {
 
         binding.identities.setOnClickListener {
             mainViewModel.setState(MainViewModel.State.IdentitiesOverview)
-            //gotoIdentities()
         }
 
         binding.addressBookLayout.setOnClickListener {
