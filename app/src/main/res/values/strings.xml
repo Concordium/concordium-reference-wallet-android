@@ -209,9 +209,8 @@
     <string name="pass_phrase_success">Your secret recovery phrase has been successfully setup!</string>
 
     <string name="pass_phrase_recover_title">Recover your wallet</string>
-    <string name="pass_phrase_recover_explain_1_title">How to recover your wallet:</string>
-    <string name="pass_phrase_recover_explain_1_text">There are two steps to recovering a wallet:\n\n1. Entering your secret recover phrase\n2. Recovering your accounts and identities\n\nThe first step is manual process, in which you have to enter all your 24 words one by one.\n\nThe second step is most often automatic, but in some cases you will have to make some additional inputs. additional inputs. We\'ll get back to that.\n\nLet\'s get to the secret recovery phrase!</string>
-    <string name="pass_phrase_recover_explain_2_text">If you need a reminder on what exactly the secret recovery phrase is, you can watch the video above… or browse through a carousel… or something.</string>
+    <string name="pass_phrase_recover_explain_title">How to recover your wallet:</string>
+    <string name="pass_phrase_recover_explain_text">There are two steps to recovering a wallet:\n\n1. Entering your secret recover phrase\n2. Recovering your accounts and identities\n\nThe first step is manual process, in which you have to enter all your 24 words one by one.\n\nThe second step is most often automatic, but in some cases you will have to make some additional inputs. additional inputs. We\'ll get back to that.\n\nLet\'s get to the secret recovery phrase!</string>
     <string name="pass_phrase_recover_input_explain">Enter the correct word for each index.</string>
     <string name="pass_phrase_recover_input_clear_all">Clear all</string>
     <string name="pass_phrase_recover_input_clear_below">Clear below</string>

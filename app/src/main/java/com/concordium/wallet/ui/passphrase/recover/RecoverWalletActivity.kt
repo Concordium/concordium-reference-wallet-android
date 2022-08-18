@@ -75,13 +75,12 @@ class RecoverWalletActivity : BaseActivity() {
     }
 
     private inner class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
-        override fun getItemCount(): Int = 4
+        override fun getItemCount(): Int = 3
         override fun createFragment(position: Int): Fragment {
             return when (position) {
-                0 -> PassPhraseRecoverExplain1Fragment()
-                1 -> PassPhraseRecoverExplain2Fragment()
-                2 -> PassPhraseRecoverInputFragment.newInstance(viewModel)
-                3 -> PassPhraseRecoverSuccessFragment()
+                0 -> PassPhraseRecoverExplainFragment()
+                1 -> PassPhraseRecoverInputFragment.newInstance(viewModel)
+                2 -> PassPhraseRecoverSuccessFragment()
                 else -> Fragment()
             }
         }

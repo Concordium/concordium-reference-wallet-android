@@ -24,7 +24,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:src="@drawable/ic_pending"
@@ -40,7 +40,7 @@
                         android:layout_margin="5dp"
                         android:paddingRight="5dp"
                         android:text="@string/accounts_overview_identity_pending_warning" />
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/identity_pending_close"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -121,7 +121,7 @@
                             android:textSize="24dp"
                             android:text="+" />
 
-                        <ImageView
+                        <androidx.appcompat.widget.AppCompatImageView
                             style="@style/Image"
                             android:layout_height="17dp"
                             android:layout_width="15dp"
@@ -176,7 +176,7 @@
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginLeft="6dp"
                                 android:text="+" />
-                            <ImageView
+                            <androidx.appcompat.widget.AppCompatImageView
                                 style="@style/Image"
                                 android:layout_height="13dp"
                                 android:layout_width="11dp"
