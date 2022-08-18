@@ -14,6 +14,7 @@ import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewFragmen
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.auth.setup.AuthSetupActivity
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewFragment
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
@@ -202,13 +203,19 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
 
     private fun replaceFragment(state: MainViewModel.State) {
         hideActionBarBack(this)
-        val fragment = when (state) {
-            MainViewModel.State.AccountOverview -> AccountsOverviewFragment()
-            MainViewModel.State.More -> MoreOverviewFragment()
+        val fragment: BaseFragment
+        when (state) {
+            MainViewModel.State.AccountOverview -> {
+                fragment = AccountsOverviewFragment()
+                forceMenuSelection(R.id.menuitem_accounts)
+            }
+            MainViewModel.State.More -> {
+                fragment = MoreOverviewFragment()
+            }
             MainViewModel.State.IdentitiesOverview -> {
+                fragment = IdentitiesOverviewFragment()
                 setActionBarTitle(R.string.identities_overview_title)
                 showActionBarBack(this)
-                IdentitiesOverviewFragment()
             }
         }
         replaceFragment(fragment)
