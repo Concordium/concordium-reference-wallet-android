@@ -114,14 +114,17 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/account_card_action_receive"
                     style="@style/ActionCardButtonSmall"
+                    android:layout_marginStart="1dp"
                     android:src="@drawable/ic_icon_qr" />
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/account_card_action_earn"
                     style="@style/ActionCardButtonSmall"
+                    android:layout_marginStart="1dp"
                     android:src="@drawable/ic_earn" />
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/account_card_action_more"
                     style="@style/ActionCardButtonSmall"
+                    android:layout_marginStart="1dp"
                     android:src="@drawable/ic_more" />
             </LinearLayout>
 
