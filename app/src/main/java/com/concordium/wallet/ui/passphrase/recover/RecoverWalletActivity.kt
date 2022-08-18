@@ -48,7 +48,7 @@ class RecoverWalletActivity : BaseActivity() {
         binding.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                if (position == 2)
+                if (position == 1)
                     binding.continueButton.visibility = View.GONE
                 else
                     binding.continueButton.visibility = View.VISIBLE
