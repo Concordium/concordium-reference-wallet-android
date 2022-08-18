@@ -149,8 +149,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             "",
             1, // Next account number is set to 1, because we don't have any account yet
             identityProvider,
-            identityTokenContainer.token?.identityObject?.value,
-            ""
+            identityTokenContainer.token?.identityObject?.value
         )
         identityRepository.insert(identity)
     }

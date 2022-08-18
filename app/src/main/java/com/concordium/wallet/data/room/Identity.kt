@@ -24,7 +24,5 @@ data class Identity(
     @ColumnInfo(name = "identity_provider")
     var identityProvider: IdentityProvider,
     @ColumnInfo(name = "identity_object")
-    var identityObject: IdentityObject?,
-    @ColumnInfo(name = "private_id_object_data_encrypted")
-    var privateIdObjectDataEncrypted: String
+    var identityObject: IdentityObject?
 ) : Serializable
