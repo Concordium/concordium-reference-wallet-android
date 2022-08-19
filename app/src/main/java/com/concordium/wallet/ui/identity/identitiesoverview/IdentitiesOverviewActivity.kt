@@ -48,7 +48,8 @@ class IdentitiesOverviewActivity : BaseActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.add_item_menu, menu)
+        if (!showForCreateAccount)
+            menuInflater.inflate(R.menu.add_item_menu, menu)
         return true
     }
 

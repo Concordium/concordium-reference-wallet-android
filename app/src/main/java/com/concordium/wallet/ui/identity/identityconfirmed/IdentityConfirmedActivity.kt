@@ -43,11 +43,14 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
         showForFirstIdentity = intent.extras?.getBoolean(SHOW_FOR_FIRST_IDENTITY, false) ?: false
         showForCreateAccount = intent.extras?.getBoolean(SHOW_FOR_CREATE_ACCOUNT, false) ?: false
 
+        hideActionBarBack(this)
         if (showForFirstIdentity)
             setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_confirmed_title)
         else {
-            if (showForCreateAccount)
+            if (showForCreateAccount) {
+                showActionBarBack(this)
                 setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_confirmed_create_new_account)
+            }
             else
                 setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_list_title)
         }
@@ -73,7 +76,8 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
     }
 
     override fun onBackPressed() {
-        // Ignore back press
+        if (!showForFirstIdentity && showForCreateAccount)
+            super.onBackPressed()
     }
 
     override fun onDialogResult(requestCode: Int, resultCode: Int, data: Intent) {
@@ -119,7 +123,6 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
     }
 
     private fun initializeViews() {
-        hideActionBarBack(this)
         showWaiting(true)
 
         binding.confirmButton.setOnClickListener {
