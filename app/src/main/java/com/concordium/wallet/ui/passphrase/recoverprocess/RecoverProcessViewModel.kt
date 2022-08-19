@@ -113,10 +113,10 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         )
 
         val output = App.appCore.cryptoLibrary.generateRecoveryRequest(recoveryRequestInput)
-        val urlFromIpInfo = "https://id-service.stagenet.concordium.com/api/v1/recover?state=" // TODO must come from ip_info endpoint
 
         if (output != null) {
             val encoded = Uri.encode(output)
+            val urlFromIpInfo = "https://id-service.stagenet.concordium.com/api/v1/recover?state=" // TODO must come from ip_info endpoint
             return "$urlFromIpInfo$encoded"
         }
 

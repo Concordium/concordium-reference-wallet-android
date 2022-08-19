@@ -5,15 +5,18 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
+import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.databinding.ActivityRecoverProcessBinding
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
+import com.concordium.wallet.ui.passphrase.recover.RecoverWalletActivity
 
 class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
     private lateinit var binding: ActivityRecoverProcessBinding
     private lateinit var viewModel: RecoverProcessViewModel
+    private var passwordSet = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,21 +41,27 @@ class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl(
     }
 
     private fun initViews() {
-        scanningView()
         initButtons()
+        startScanning()
     }
 
     private fun initButtons() {
         binding.continueButton.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            startActivity(intent)
+            if (passwordSet) {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                startActivity(intent)
+            } else {
+                startScanning()
+            }
         }
         binding.tryAgainButton.setOnClickListener {
-            scanningView()
+            startScanning()
         }
         binding.enterAnotherPhraseButton.setOnClickListener {
-            // clean up stuff first
+            AuthPreferences(this).setSeedPhrase("")
+            finish()
+            startActivity(Intent(this, RecoverWalletActivity::class.java))
         }
     }
 
@@ -86,17 +95,22 @@ class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl(
         binding.enterAnotherPhraseButton.visibility = View.GONE
     }
 
-    private fun scanningView() {
+    private fun startScanning() {
         showAuthentication(this) { password ->
             password?.let {
+                passwordSet = true
                 runOnUiThread {
-                    supportFragmentManager.beginTransaction().add(R.id.fragment_container, RecoverProcessScanningFragment.newInstance(viewModel, it), null).commit()
-                    binding.continueButton.visibility = View.GONE
-                    binding.tryAgainButton.visibility = View.GONE
-                    binding.enterAnotherPhraseButton.visibility = View.GONE
+                    scanningView(password)
                 }
             }
         }
+    }
+
+    private fun scanningView(password: String) {
+        supportFragmentManager.beginTransaction().add(R.id.fragment_container, RecoverProcessScanningFragment.newInstance(viewModel, password), null).commit()
+        binding.continueButton.visibility = View.GONE
+        binding.tryAgainButton.visibility = View.GONE
+        binding.enterAnotherPhraseButton.visibility = View.GONE
     }
 
     private fun showWaiting(waiting: Boolean) {
