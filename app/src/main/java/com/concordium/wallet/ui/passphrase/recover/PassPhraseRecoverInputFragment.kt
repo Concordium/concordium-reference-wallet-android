@@ -123,7 +123,7 @@ class PassPhraseRecoverInputFragment : Fragment() {
             arrayAdapter.notifyDataSetChanged()
         }
         binding.btnClearBelow.setOnClickListener {
-            for (i in arrayAdapter.currentPosition + 1 until viewModel.wordsPicked.size - 2) {
+            for (i in arrayAdapter.currentPosition + 1 until viewModel.wordsPicked.size - 3) {
                 viewModel.wordsPicked[i] = null
             }
             arrayAdapter.notifyDataSetChanged()
