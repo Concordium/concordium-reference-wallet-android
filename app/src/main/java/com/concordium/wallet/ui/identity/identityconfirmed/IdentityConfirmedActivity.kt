@@ -43,17 +43,18 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
         showForFirstIdentity = intent.extras?.getBoolean(SHOW_FOR_FIRST_IDENTITY, false) ?: false
         showForCreateAccount = intent.extras?.getBoolean(SHOW_FOR_CREATE_ACCOUNT, false) ?: false
 
-        hideActionBarBack(this)
         if (showForFirstIdentity)
             setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_confirmed_title)
         else {
-            if (showForCreateAccount) {
-                showActionBarBack(this)
+            if (showForCreateAccount)
                 setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_confirmed_create_new_account)
-            }
             else
                 setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_list_title)
         }
+
+        hideActionBarBack()
+        if (!showForFirstIdentity && showForCreateAccount)
+            showActionBarBack()
 
         identity = intent.extras!!.getSerializable(EXTRA_IDENTITY) as Identity
 

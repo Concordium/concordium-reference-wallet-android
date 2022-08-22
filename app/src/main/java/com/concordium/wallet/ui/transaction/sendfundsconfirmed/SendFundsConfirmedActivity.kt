@@ -55,7 +55,7 @@ class SendFundsConfirmedActivity : BaseActivity() {
     }
 
     private fun initViews() {
-        hideActionBarBack(this)
+        hideActionBarBack()
 
         binding.amountTextview.text =
             CurrencyUtil.formatGTU(viewModel.transfer.amount, withGStroke = true)

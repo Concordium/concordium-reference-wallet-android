@@ -32,7 +32,7 @@ class IntroSetupActivity : BaseActivity() {
     }
 
     private fun initViews() {
-        hideActionBarBack(this)
+        hideActionBarBack()
         binding.setupWallet.setOnClickListener {
             gotoSetupWallet()
         }

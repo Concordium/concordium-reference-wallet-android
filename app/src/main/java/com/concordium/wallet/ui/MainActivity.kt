@@ -168,7 +168,7 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
         binding.bottomNavigationView.setOnItemSelectedListener {
             onNavigationItemSelected(it)
         }
-        hideActionBarBack(this)
+        hideActionBarBack()
     }
 
     //endregion
@@ -202,7 +202,7 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
     }
 
     private fun replaceFragment(state: MainViewModel.State) {
-        hideActionBarBack(this)
+        hideActionBarBack()
         val fragment: BaseFragment
         when (state) {
             MainViewModel.State.AccountOverview -> {
@@ -215,7 +215,7 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
             MainViewModel.State.IdentitiesOverview -> {
                 fragment = IdentitiesOverviewFragment()
                 setActionBarTitle(R.string.identities_overview_title)
-                showActionBarBack(this)
+                showActionBarBack()
             }
         }
         replaceFragment(fragment)

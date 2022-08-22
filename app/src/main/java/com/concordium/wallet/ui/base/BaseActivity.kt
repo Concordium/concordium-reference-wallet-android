@@ -18,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
@@ -52,16 +51,15 @@ abstract class BaseActivity : AppCompatActivity() {
         popup = Popup()
         dialogs = Dialogs()
 
-        App.appCore.session.isLoggedIn.observe(this, Observer<Boolean> { loggedin ->
-            if(App.appCore.session.hasSetupPassword){
-                if(loggedin){
+        App.appCore.session.isLoggedIn.observe(this) { loggedIn ->
+            if (App.appCore.session.hasSetupPassword) {
+                if (loggedIn) {
                     loggedIn()
-                }
-                else{
+                } else {
                     loggedOut()
                 }
             }
-        })
+        }
     }
 
     protected fun shareFile(fileName: Uri) {
@@ -172,18 +170,18 @@ abstract class BaseActivity : AppCompatActivity() {
         subtitleView.visibility = View.VISIBLE
     }
 
-    fun showActionBarBack(activity: AppCompatActivity) {
-        val actionbar = activity.supportActionBar ?: return
+    fun showActionBarBack() {
+        val actionbar = supportActionBar ?: return
         actionbar.setDisplayHomeAsUpEnabled(true)
     }
 
-    fun hideActionBarBack(activity: AppCompatActivity) {
-        val actionbar = activity.supportActionBar ?: return
+    fun hideActionBarBack() {
+        val actionbar = supportActionBar ?: return
         actionbar.setDisplayHomeAsUpEnabled(false)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.getItemId()) {
+        return when (item.itemId) {
             android.R.id.home -> {
                 onBackPressed()
                 true
@@ -250,7 +248,10 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    private fun createBiometricPrompt(text: String?, callback: AuthenticationCallback): BiometricPrompt {
+    private fun createBiometricPrompt(
+        text: String?,
+        callback: AuthenticationCallback
+    ): BiometricPrompt {
         val executor = ContextCompat.getMainExecutor(this)
 
         @Suppress("NAME_SHADOWING") val callback = object : BiometricPromptCallback() {
@@ -268,18 +269,19 @@ abstract class BaseActivity : AppCompatActivity() {
             }
         }
 
-        val biometricPrompt = BiometricPrompt(this, executor, callback)
-        return biometricPrompt
+        return BiometricPrompt(this, executor, callback)
     }
 
-    private fun createPromptInfo(description: String?, usePasscode: Boolean): BiometricPrompt.PromptInfo {
-        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+    private fun createPromptInfo(
+        description: String?,
+        usePasscode: Boolean
+    ): BiometricPrompt.PromptInfo {
+        return BiometricPrompt.PromptInfo.Builder()
             .setTitle(getString(R.string.auth_login_biometrics_dialog_title))
             .setDescription(description)
             .setConfirmationRequired(true)
             .setNegativeButtonText(getString(if (usePasscode) R.string.auth_login_biometrics_dialog_cancel_passcode else R.string.auth_login_biometrics_dialog_cancel_password))
             .build()
-        return promptInfo
     }
 
     override fun dispatchTouchEvent(event: MotionEvent): Boolean {

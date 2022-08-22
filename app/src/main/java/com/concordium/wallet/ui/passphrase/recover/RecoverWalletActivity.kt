@@ -35,6 +35,11 @@ class RecoverWalletActivity : BaseActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        if (binding.pager.currentItem != 2)
+            super.onBackPressed()
+    }
+
     private fun initializeViewModel() {
         viewModel = ViewModelProvider(
             this,
@@ -52,6 +57,11 @@ class RecoverWalletActivity : BaseActivity() {
                     binding.continueButton.visibility = View.GONE
                 else
                     binding.continueButton.visibility = View.VISIBLE
+                if (position == 2) {
+                    hideActionBarBack()
+                } else {
+                    showActionBarBack()
+                }
             }
         })
 

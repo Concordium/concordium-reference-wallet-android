@@ -77,7 +77,7 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity() {
 
     private fun showPageAsReceipt() {
         receiptMode = true
-        hideActionBarBack(this)
+        hideActionBarBack()
         binding.delegationRemoveText.visibility = View.GONE
         binding.submitDelegationTransaction.visibility = View.GONE
         binding.submitDelegationFinish.visibility = View.VISIBLE

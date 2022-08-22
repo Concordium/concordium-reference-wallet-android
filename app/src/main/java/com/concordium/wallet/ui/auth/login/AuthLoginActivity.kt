@@ -84,7 +84,7 @@ class AuthLoginActivity : BaseActivity() {
 
     private fun initializeViews() {
         showWaiting(false)
-        hideActionBarBack(this)
+        hideActionBarBack()
         setActionBarTitle(if (viewModel.usePasscode()) R.string.auth_login_info_passcode else R.string.auth_login_info_password)
         binding.confirmButton.setOnClickListener {
             onConfirmClicked()

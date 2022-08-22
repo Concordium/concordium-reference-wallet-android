@@ -53,7 +53,7 @@ class FailedActivity : BaseActivity() {
     }
 
     private fun initViews() {
-        hideActionBarBack(this)
+        hideActionBarBack()
 
         when (viewModel.source) {
             FailedViewModel.Source.Identity -> {

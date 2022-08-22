@@ -55,7 +55,7 @@ class NewAccountConfirmedActivity : BaseActivity() {
     }
 
     private fun initViews() {
-        hideActionBarBack(this)
+        hideActionBarBack()
         showWaiting(false)
 
         binding.confirmButton.setOnClickListener {

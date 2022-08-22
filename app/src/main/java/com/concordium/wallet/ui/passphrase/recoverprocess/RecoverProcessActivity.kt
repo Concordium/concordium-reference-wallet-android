@@ -23,7 +23,7 @@ class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl(
         binding = ActivityRecoverProcessBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.pass_phrase_recover_process_title)
-        hideActionBarBack(this)
+        hideActionBarBack()
         initializeViewModel()
         initViews()
         initObservers()

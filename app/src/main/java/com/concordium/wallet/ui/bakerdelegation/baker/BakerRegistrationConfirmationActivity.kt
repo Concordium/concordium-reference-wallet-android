@@ -200,7 +200,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
 
     private fun showPageAsReceipt() {
         receiptMode = true
-        hideActionBarBack(this)
+        hideActionBarBack()
         binding.submitBakerTransaction.visibility = View.GONE
         binding.submitBakerFinish.visibility = View.VISIBLE
         binding.gracePeriod.visibility = View.GONE

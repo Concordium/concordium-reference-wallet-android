@@ -88,7 +88,7 @@ class AuthSetupActivity : BaseActivity() {
     }
 
     private fun initializeViews() {
-        hideActionBarBack(this)
+        hideActionBarBack()
         binding.passcodeView.passcodeListener = object : PasscodeView.PasscodeListener {
             override fun onInputChanged() {
                 binding.errorTextview.setText("")
