@@ -144,6 +144,7 @@ class AlterPasswordViewModel(application: Application) :
             _waitingLiveData.value = true
             var allSuccess = true
             try {
+                initialDecryptedIdentityList = ArrayList()
                 initialDecryptedIdentityList = identityRepository.getAllDone()
                 for (identity in initialDecryptedIdentityList) {
                     val tmpInitialDecryptedAccountsList = accountRepository.getAllByIdentityId(identity.id)

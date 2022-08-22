@@ -53,6 +53,9 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
             try {
                 val result = Mnemonics.MnemonicCode(enteredPhrase).toSeed()
                 success = result.isNotEmpty() && result.size == 64 && result.toHex().length == 128
+                if (success) {
+                    AuthPreferences(getApplication()).setSeedPhrase(enteredPhrase)
+                }
             } catch (ex: Exception) {
                 Log.d(ex.message ?: "")
             }
