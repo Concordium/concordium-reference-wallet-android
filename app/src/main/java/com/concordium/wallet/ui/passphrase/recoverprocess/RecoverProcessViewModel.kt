@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.AppConfig
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
@@ -63,7 +64,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             ACCOUNT_GAP_MAX = 1
         }
 
-        val net = "Mainnet"
+        val net = AppConfig.net
         val seed = AuthPreferences(getApplication()).getSeedPhrase()
         val repository = IdentityProviderRepository()
         val retrofit = Retrofit.Builder().baseUrl("https://some.api.url/").addConverterFactory(GsonConverterFactory.create()).build()
@@ -114,9 +115,9 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
 
         val output = App.appCore.cryptoLibrary.generateRecoveryRequest(recoveryRequestInput)
 
-        if (output != null) {
+        if (output != null && identityProvider.metadata.recoveryStart != null) {
             val encoded = Uri.encode(output)
-            val urlFromIpInfo = "https://id-service.stagenet.concordium.com/api/v1/recover?state=" // TODO must come from ip_info endpoint
+            val urlFromIpInfo = "${identityProvider.metadata.recoveryStart}?state="
             return "$urlFromIpInfo$encoded"
         }
 
@@ -129,10 +130,14 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         }
 
         val recoverRequestUrl = getRecoverRequestUrl(identityProvider, globalInfo, seed, net, identityIndex)
-        val recoverInfo = identityProviderService.recover(recoverRequestUrl)
-        val identityTokenContainer = identityProviderService.identity(recoverInfo.identityRetrievalUrl)
-        if (identityTokenContainer.token != null) {
-            saveIdentity(identityTokenContainer, identityProvider, identityIndex)
+        if (recoverRequestUrl != null) {
+            val recoverInfo = identityProviderService.recover(recoverRequestUrl)
+            val identityTokenContainer = identityProviderService.identity(recoverInfo.identityRetrievalUrl)
+            if (identityTokenContainer.token != null) {
+                saveIdentity(identityTokenContainer, identityProvider, identityIndex)
+            } else {
+                identityGap++
+            }
         } else {
             identityGap++
         }

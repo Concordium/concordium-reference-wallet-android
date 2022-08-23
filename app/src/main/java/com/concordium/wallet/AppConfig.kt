@@ -12,4 +12,6 @@ object AppConfig {
             BuildConfig.VERSION_NAME +" ("+BuildConfig.BUILD_NUMBER+") "+ (if (BuildConfig.DEBUG) " (debug)" else "")
         } else BuildConfig.VERSION_NAME
 
+    val net: String
+        get() = if (BuildConfig.ENV_NAME.equals("production")) "Mainnet" else "Testnet"
 }

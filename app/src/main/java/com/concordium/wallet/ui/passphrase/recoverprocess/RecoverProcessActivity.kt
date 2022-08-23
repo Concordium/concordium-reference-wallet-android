@@ -59,7 +59,7 @@ class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl(
             startScanning()
         }
         binding.enterAnotherPhraseButton.setOnClickListener {
-            AuthPreferences(this).setSeedPhrase("")
+            AuthPreferences(this).resetSeedPhrase()
             finish()
             startActivity(Intent(this, RecoverWalletActivity::class.java))
         }

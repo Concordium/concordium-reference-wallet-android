@@ -5,7 +5,8 @@ import java.io.Serializable
 data class IdentityProviderMetaData(
     val icon: String,
     val issuanceStart: String,
-    val support: String?
+    val support: String?,
+    val recoveryStart: String?
 
 ) : Serializable {
     fun getSupportWithDefault(): String {

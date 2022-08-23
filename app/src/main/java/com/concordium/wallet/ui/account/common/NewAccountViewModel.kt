@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.AppConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendError
@@ -208,7 +209,7 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
             revealedAttributes.add(identityAttribute.name)
         }
 
-        val net = "Mainnet"
+        val net = AppConfig.net
         val identityIndex = identity.id
         val seed = AuthPreferences(getApplication()).getSeedPhrase()
 

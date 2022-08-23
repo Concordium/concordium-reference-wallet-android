@@ -138,6 +138,10 @@ class AuthPreferences(val context: Context) :
         return getBoolean(PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED+id, false)
     }
 
+    fun resetSeedPhrase() {
+        setString(SEED_PHRASE, "")
+    }
+
     fun setSeedPhrase(value: String) {
         val seed = Mnemonics.MnemonicCode(value).toSeed()
         val seedEncoded = seed.toHex()

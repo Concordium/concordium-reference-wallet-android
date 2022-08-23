@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.AppConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendRequest
@@ -170,7 +171,7 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
             return null
         }
 
-        val net = "Mainnet"
+        val net = AppConfig.net
         val identityIndex = identityRepository.nextIdentityNumber()
         val seed = AuthPreferences(getApplication()).getSeedPhrase()
 

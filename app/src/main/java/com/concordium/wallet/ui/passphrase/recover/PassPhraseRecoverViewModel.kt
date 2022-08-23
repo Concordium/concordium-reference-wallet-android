@@ -38,7 +38,8 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
     fun hack() {
         if (BuildConfig.DEBUG) {
             //AuthPreferences(getApplication()).setSeedPhrase("ability salmon weapon apart awkward sudden glue budget fox paddle romance delay remove near clip cabbage exact off motion oxygen connect modify rotate vehicle")
-            AuthPreferences(getApplication()).setSeedPhrase("rifle vehicle onion typical base book trick child entry trick wedding festival zone sport coil verify mirror flame arena sustain coin state north blame")
+            //AuthPreferences(getApplication()).setSeedPhrase("rifle vehicle onion typical base book trick child entry trick wedding festival zone sport coil verify mirror flame arena sustain coin state north blame")
+            AuthPreferences(getApplication()).setSeedPhrase("chimney under robot witness female jaguar position rare acid puppy argue cancel kangaroo thing spring disease still predict movie announce throw entry lab tourist")
             _validateLiveData.value = true
         }
     }
