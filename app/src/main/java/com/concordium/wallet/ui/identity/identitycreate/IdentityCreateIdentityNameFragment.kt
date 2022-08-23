@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentIdentityCreateIdentityNameBinding
 import com.concordium.wallet.ui.base.BaseFragment
@@ -17,15 +16,6 @@ import com.concordium.wallet.util.ValidationUtil
 class IdentityCreateIdentityNameFragment : BaseFragment(R.string.identity_create_title) {
     private var _binding: FragmentIdentityCreateIdentityNameBinding? = null
     private val binding get() = _binding!!
-    private lateinit var sharedViewModel: IdentityCreateViewModel
-
-    //region Lifecycle
-    //************************************************************
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        initializeViewModel()
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentIdentityCreateIdentityNameBinding.inflate(inflater, container, false)
@@ -41,18 +31,6 @@ class IdentityCreateIdentityNameFragment : BaseFragment(R.string.identity_create
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    //endregion
-
-    //region Initialize
-    //************************************************************
-
-    private fun initializeViewModel() {
-        sharedViewModel = ViewModelProvider(
-            requireActivity(),
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[IdentityCreateViewModel::class.java]
     }
 
     private fun initializeViews() {
@@ -76,11 +54,6 @@ class IdentityCreateIdentityNameFragment : BaseFragment(R.string.identity_create
         }
     }
 
-    //endregion
-
-    //region Control/UI
-    //************************************************************
-
     private fun gotoIdentityName() {
         if (!ValidationUtil.validateName(binding.identityNameEdittext.text.toString())) {
             binding.identityNameEdittext.error = getString(R.string.valid_special_chars_error_text)
@@ -89,6 +62,4 @@ class IdentityCreateIdentityNameFragment : BaseFragment(R.string.identity_create
 
         startActivity(Intent(requireContext(), IdentityProviderListActivity::class.java))
     }
-
-    //endregion
 }
