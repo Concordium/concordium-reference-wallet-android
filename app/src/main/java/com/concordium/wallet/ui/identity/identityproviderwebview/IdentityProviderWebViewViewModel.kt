@@ -108,7 +108,7 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
             IdentityStatus.DONE,
             "",
             "",
-            1, // Next account number is set to 1, because we don't create an initial account
+            0, // Next account number is set to 0, because we don't create an initial account
             identityCreationData.identityProvider,
             identityObject
         )
@@ -141,7 +141,7 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
             IdentityStatus.PENDING,
             "",
             callbackUri,
-            1, // Next account number is set to 1, because we don't create an initial account
+            0, // Next account number is set to 0, because we don't create an initial account
             identityCreationData.identityProvider,
             IdentityObject(
                 AttributeList(HashMap(), "", 0, "0"),

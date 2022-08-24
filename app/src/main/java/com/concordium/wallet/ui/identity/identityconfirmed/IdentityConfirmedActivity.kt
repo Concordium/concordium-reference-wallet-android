@@ -228,7 +228,7 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
             runOnUiThread {
                 identity?.let {
                     binding.identityView.setIdentityData(it)
-                    binding.accountView.setDefault("${getString(R.string.identity)} ${it.id}", "${getString(R.string.account)} ${it.nextAccountNumber}")
+                    binding.accountView.setDefault("${it.name}", "${getString(R.string.account)} ${it.nextAccountNumber}")
                     binding.accountView.visibility = View.VISIBLE
                     binding.btnSubmitAccount.isEnabled = it.status == IdentityStatus.DONE
                     binding.confirmButton.visibility = View.GONE
@@ -237,7 +237,7 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
                     binding.progressLine.invalidate()
                     if (showForCreateAccount) {
                         setActionBarTitle(R.string.identity_confirmed_create_new_account)
-                        binding.infoTextview.text = getString(R.string.identity_confirmed_submit_new_account_for_identity, it.id.toString())
+                        binding.infoTextview.text = getString(R.string.identity_confirmed_submit_new_account_for_identity, it.name)
                     }
                     else {
                         setActionBarTitle(R.string.identity_confirmed_confirm_account_submission_toolbar)

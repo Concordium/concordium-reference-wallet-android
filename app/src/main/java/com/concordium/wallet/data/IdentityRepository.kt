@@ -54,11 +54,11 @@ class IdentityRepository(private val identityDao: IdentityDao) {
 
     suspend fun nextAccountNumber(identityId: Int): Int {
         val identity = findById(identityId)
-        return identity?.nextAccountNumber ?: 1
+        return identity?.nextAccountNumber ?: 0
     }
 
     suspend fun nextIdentityNumber(): Int {
         val allIdentities = getAll()
-        return allIdentities.maxOfOrNull { it.id + 1 } ?: 1
+        return allIdentities.maxOfOrNull { it.id } ?: 0
     }
 }

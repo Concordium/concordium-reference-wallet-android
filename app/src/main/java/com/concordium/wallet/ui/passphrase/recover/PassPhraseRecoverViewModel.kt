@@ -37,9 +37,10 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
 
     fun hack() {
         if (BuildConfig.DEBUG) {
-            //AuthPreferences(getApplication()).setSeedPhrase("ability salmon weapon apart awkward sudden glue budget fox paddle romance delay remove near clip cabbage exact off motion oxygen connect modify rotate vehicle")
-            //AuthPreferences(getApplication()).setSeedPhrase("rifle vehicle onion typical base book trick child entry trick wedding festival zone sport coil verify mirror flame arena sustain coin state north blame")
-            AuthPreferences(getApplication()).setSeedPhrase("chimney under robot witness female jaguar position rare acid puppy argue cancel kangaroo thing spring disease still predict movie announce throw entry lab tourist")
+            //AuthPreferences(getApplication()).setSeedPhrase("ability salmon weapon apart awkward sudden glue budget fox paddle romance delay remove near clip cabbage exact off motion oxygen connect modify rotate vehicle") // Mainnet - virker ikke
+            //AuthPreferences(getApplication()).setSeedPhrase("rifle vehicle onion typical base book trick child entry trick wedding festival zone sport coil verify mirror flame arena sustain coin state north blame") // Mainnet - virker ikke
+            //AuthPreferences(getApplication()).setSeedPhrase("gaze illness evolve foil describe bar flee illegal match code soap cushion impact situate spray puzzle sadness bomb poem cable fiscal beach hybrid wrestle") // Testnet fra Android
+            AuthPreferences(getApplication()).setSeedPhrase("trust deal squeeze drastic sport squeeze evoke note fatigue peanut tissue crazy rough knock denial brick swift bus amateur just merit bind enforce peace") // Testnet fra iOS
             _validateLiveData.value = true
         }
     }

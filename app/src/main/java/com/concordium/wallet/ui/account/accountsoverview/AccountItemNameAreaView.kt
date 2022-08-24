@@ -49,7 +49,7 @@ class AccountItemNameAreaView(context: Context, attrs: AttributeSet?): LinearLay
                 binding.statusText.visibility = View.GONE
         }
 
-        binding.accountIdentityName.text = context.getString(R.string.view_account_name_container,accountWithIdentitiy.identity.name)
+        binding.accountIdentityName.text = context.getString(R.string.view_account_name_container, accountWithIdentitiy.identity.name)
 
         // Fix for a weird error where name is truncated wrong and at random
         // This fixes it. We expand if text is truncated, else we wrap.

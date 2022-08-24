@@ -210,7 +210,7 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
         }
 
         val net = AppConfig.net
-        val identityIndex = identity.id
+        val identityIndex = identity.id - 1
         val seed = AuthPreferences(getApplication()).getSeedPhrase()
 
         val credentialInput = CreateCredentialInputV1(

@@ -77,8 +77,8 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
 
             val identityProviders = repository.getIdentityProviderInfoSuspended()
             identityProviders.forEach { identityProvider ->
-                val identityIndex = 1
                 identityGap = 0
+                val identityIndex = 0
                 getIdentityFromProvider(identityProvider, globalInfo, seed, net, identityProviderService, identityIndex)
             }
 
@@ -134,7 +134,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             val recoverInfo = identityProviderService.recover(recoverRequestUrl)
             val identityTokenContainer = identityProviderService.identity(recoverInfo.identityRetrievalUrl)
             if (identityTokenContainer.token != null) {
-                saveIdentity(identityTokenContainer, identityProvider, identityIndex)
+                saveIdentity(identityTokenContainer, identityProvider, identityIndex + 1)
             } else {
                 identityGap++
             }
@@ -148,11 +148,11 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
     private suspend fun saveIdentity(identityTokenContainer: IdentityTokenContainer, identityProvider: IdentityProvider, id: Int) {
         val identity = Identity(
             id,
-            "Identity $id",
+            "Identity ${id - 1}",
             identityTokenContainer.status,
             identityTokenContainer.detail,
             "",
-            1, // Next account number is set to 1, because we don't have any account yet
+            0, // Next account number is set to 0, because we don't have any account yet
             identityProvider,
             identityTokenContainer.token?.identityObject?.value
         )
@@ -177,7 +177,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                 JsonArray(),
                 seed,
                 net,
-                identity.id,
+                identity.id - 1,
                 identity.nextAccountNumber,
                 (DateTimeUtil.nowPlusMinutes(5).time) / 1000
             )

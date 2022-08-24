@@ -50,8 +50,8 @@ class IdentityDaoUnitTest {
         val identityProvider =
             IdentityProvider(
                 identityProviderInfo,
-                HashMap<String, ArsInfo>(),
-                IdentityProviderMetaData("", "", null)
+                HashMap(),
+                IdentityProviderMetaData("", "", null, null)
             )
         val pubInfoForIP = PubInfoForIp("", RawJson("{}"), "")
         val preIdentityObject =
@@ -66,7 +66,7 @@ class IdentityDaoUnitTest {
             RawJson("{}")
         )
         val identity =
-            Identity(0, "identity name", "", "", "", 0, identityProvider, identityObject, "")
+            Identity(0, "identity name", "", "", "", 0, identityProvider, identityObject)
 
         runBlocking { identityDao.insert(identity) }
         val listLiveData = identityDao.getAllAsLiveData()
