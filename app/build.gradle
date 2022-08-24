@@ -273,8 +273,6 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    // Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.10"
     // Coroutines
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1"
 
@@ -342,5 +340,5 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.1.1'
 
     // BIP39
-    implementation "cash.z.ecc.android:kotlin-bip39:1.0.2"
+    implementation "cash.z.ecc.android:kotlin-bip39:1.0.4"
 }
