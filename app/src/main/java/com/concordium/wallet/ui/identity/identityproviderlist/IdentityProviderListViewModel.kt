@@ -22,8 +22,6 @@ import kotlinx.coroutines.launch
 import javax.crypto.Cipher
 
 class IdentityProviderListViewModel(application: Application) : AndroidViewModel(application) {
-    private lateinit var identityCustomName: String
-
     private val repository: IdentityProviderRepository = IdentityProviderRepository()
     private val identityRepository: IdentityRepository
 
@@ -61,6 +59,7 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         var globalParams: GlobalParams? = null
         var identityProvider: IdentityProvider? = null
         var idObjectRequest: RawJson? = null
+        var identityIndex = 0
     }
 
     init {
@@ -68,13 +67,6 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         _waitingGlobalData.value = true
         val identityDao = WalletDatabase.getDatabase(getApplication()).identityDao()
         identityRepository = IdentityRepository(identityDao)
-    }
-
-    fun initialize(identityNamePrefix: String) {
-        viewModelScope.launch {
-            val identityCount = identityRepository.nextIdentityNumber()
-            identityCustomName = "$identityNamePrefix $identityCount"
-        }
     }
 
     override fun onCleared() {
@@ -172,10 +164,10 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         }
 
         val net = AppConfig.net
-        val identityIndex = identityRepository.nextIdentityNumber()
+        tempData.identityIndex = identityRepository.nextIdentityIndex(identityProvider.ipInfo.ipIdentity)
         val seed = AuthPreferences(getApplication()).getSeedPhrase()
 
-        val output = App.appCore.cryptoLibrary.createIdRequestAndPrivateDataV1(identityProvider.ipInfo, identityProvider.arsInfos, global, seed, net, identityIndex)
+        val output = App.appCore.cryptoLibrary.createIdRequestAndPrivateDataV1(identityProvider.ipInfo, identityProvider.arsInfos, global, seed, net, tempData.identityIndex)
         return if (output != null) {
             output
         } else {
@@ -195,7 +187,8 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         return IdentityCreationData(
             identityProvider,
             idObjectRequest,
-            identityCustomName
+            "Identity ${tempData.identityIndex}",
+            tempData.identityIndex
         )
     }
 

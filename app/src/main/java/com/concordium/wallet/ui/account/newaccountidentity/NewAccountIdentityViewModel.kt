@@ -38,7 +38,6 @@ class NewAccountIdentityViewModel(application: Application) : AndroidViewModel(a
 
     fun canCreateAccountForIdentity(identity: Identity): Boolean {
         val nextAccountNumber = identity.nextAccountNumber
-        Log.d("nextAccountNumber: $nextAccountNumber")
         val maxAccounts = identity.identityObject!!.attributeList.maxAccounts
         if (nextAccountNumber >= maxAccounts) {
             _errorDialogLiveData.value =

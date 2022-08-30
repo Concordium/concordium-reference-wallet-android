@@ -71,7 +71,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 preIdentityObject,
                 RawJson("{}")
             )
-        val identity = Identity(0, "identity name", "", "","", 0, identityProvider, identityObject)
+        val identity = Identity(0, "identity name", "", "","", 0, identityProvider, identityObject, 0, 0)
         identityRepository.insert(identity)
     }
 

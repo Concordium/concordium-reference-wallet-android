@@ -60,7 +60,6 @@ class IdentityProviderListActivity : BaseActivity() {
         }
 
         initializeViewModel()
-        viewModel.initialize(getString(R.string.identity))
         initializeViews()
         viewModel.getIdentityProviders()
         viewModel.getGlobalInfo()

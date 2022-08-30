@@ -110,7 +110,9 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
             "",
             0, // Next account number is set to 0, because we don't create an initial account
             identityCreationData.identityProvider,
-            identityObject
+            identityObject,
+            identityCreationData.identityProvider.ipInfo.ipIdentity,
+            identityCreationData.identityIndex
         )
         saveNewIdentity(identity)
     }
@@ -147,7 +149,9 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
                 AttributeList(HashMap(), "", 0, "0"),
                 preIdentityObject,
                 RawJson("{}")
-            )
+            ),
+            identityCreationData.identityProvider.ipInfo.ipIdentity,
+            identityCreationData.identityIndex
         )
         saveNewIdentity(identity)
     }

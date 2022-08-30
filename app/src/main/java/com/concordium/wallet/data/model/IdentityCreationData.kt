@@ -5,5 +5,6 @@ import java.io.Serializable
 data class IdentityCreationData(
     val identityProvider: IdentityProvider,
     val idObjectRequest: RawJson,
-    val identityName: String
+    val identityName: String,
+    val identityIndex: Int
 ) : Serializable

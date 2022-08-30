@@ -134,7 +134,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             val recoverInfo = identityProviderService.recover(recoverRequestUrl)
             val identityTokenContainer = identityProviderService.identity(recoverInfo.identityRetrievalUrl)
             if (identityTokenContainer.token != null) {
-                saveIdentity(identityTokenContainer, identityProvider, identityIndex + 1)
+                saveIdentity(identityTokenContainer, identityProvider, identityIndex)
             } else {
                 identityGap++
             }
@@ -145,16 +145,18 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         getIdentityFromProvider(identityProvider, globalInfo, seed, net, identityProviderService, identityIndex + 1)
     }
 
-    private suspend fun saveIdentity(identityTokenContainer: IdentityTokenContainer, identityProvider: IdentityProvider, id: Int) {
+    private suspend fun saveIdentity(identityTokenContainer: IdentityTokenContainer, identityProvider: IdentityProvider, identityIndex: Int) {
         val identity = Identity(
-            id,
-            "Identity ${id - 1}",
+            0,
+            "Identity $identityIndex",
             identityTokenContainer.status,
             identityTokenContainer.detail,
             "",
             0, // Next account number is set to 0, because we don't have any account yet
             identityProvider,
-            identityTokenContainer.token?.identityObject?.value
+            identityTokenContainer.token?.identityObject?.value,
+            identityProvider.ipInfo.ipIdentity,
+            identityIndex
         )
         identityRepository.insert(identity)
     }

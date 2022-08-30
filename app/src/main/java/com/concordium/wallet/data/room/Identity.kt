@@ -24,5 +24,9 @@ data class Identity(
     @ColumnInfo(name = "identity_provider")
     var identityProvider: IdentityProvider,
     @ColumnInfo(name = "identity_object")
-    var identityObject: IdentityObject?
+    var identityObject: IdentityObject?,
+    @ColumnInfo(name = "identity_provider_id")
+    var identityProviderId: Int,
+    @ColumnInfo(name = "identity_index")
+    var identityIndex: Int
 ) : Serializable
