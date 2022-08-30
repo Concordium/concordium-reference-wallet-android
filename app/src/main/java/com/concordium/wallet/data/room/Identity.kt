@@ -1,15 +1,12 @@
 package com.concordium.wallet.data.room
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
+import androidx.room.*
 import com.concordium.wallet.data.model.IdentityObject
 import com.concordium.wallet.data.model.IdentityProvider
 import com.concordium.wallet.data.room.typeconverter.IdentityTypeConverters
 import java.io.Serializable
 
-@Entity(tableName = "identity_table")
+@Entity(tableName = "identity_table", indices = [Index(value = ["identity_provider_id", "identity_index"], unique = true)])
 @TypeConverters(IdentityTypeConverters::class)
 data class Identity(
     @PrimaryKey(autoGenerate = true)

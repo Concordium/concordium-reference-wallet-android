@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.AppConfig
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
@@ -22,65 +21,49 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.IdentityWithAccounts
 import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.ui.passphrase.recoverprocess.retrofit.IdentityProviderApiInstance
 import com.concordium.wallet.util.DateTimeUtil
 import com.google.gson.JsonArray
 import kotlinx.coroutines.launch
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Url
 import java.io.Serializable
 
-interface IdentityProviderApi {
-    @GET suspend fun recover(@Url url: String?): RecoverResponse
-    @GET suspend fun identity(@Url url: String?): IdentityTokenContainer
-}
+data class RecoverProcessData(
+    var identitiesWithAccounts: List<IdentityWithAccounts> = mutableListOf(),
+    var noResponseFrom: MutableSet<String> = mutableSetOf()
+): Serializable
 
-class RecoverProcessViewModel(application: Application) : AndroidViewModel(application), Serializable {
+class RecoverProcessViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
         const val RECOVER_PROCESS_DATA = "RECOVER_PROCESS_DATA"
-        const val STATUS_OK = 1
-        const val STATUS_NOTHING_TO_RECOVER = 2
-        private var IDENTITY_GAP_MAX = 20
-        private var ACCOUNT_GAP_MAX = 20
+        const val STATUS_DONE = 1
+        private const val IDENTITY_GAP_MAX = 10
+        private const val ACCOUNT_GAP_MAX = 10
     }
-
-    var identitiesWithAccounts: List<IdentityWithAccounts> = mutableListOf()
-    val statusChanged: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
-    val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-
-    private val identityDao = WalletDatabase.getDatabase(getApplication()).identityDao()
-    private val identityRepository = IdentityRepository(identityDao)
-    private val accountDao = WalletDatabase.getDatabase(getApplication()).accountDao()
-    private val accountRepository = AccountRepository(accountDao)
-    private val proxyRepository = ProxyRepository()
 
     private var identityGap = 0
     private var accountGap = 0
+    val statusChanged: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val recoverProcessData = RecoverProcessData()
 
     fun recoverIdentitiesAndAccounts(password: String) {
-        if (BuildConfig.DEBUG) {
-            IDENTITY_GAP_MAX = 1
-            ACCOUNT_GAP_MAX = 1
-        }
-
         val net = AppConfig.net
         val seed = AuthPreferences(getApplication()).getSeedPhrase()
         val repository = IdentityProviderRepository()
-        val retrofit = Retrofit.Builder().baseUrl("https://some.api.url/").addConverterFactory(GsonConverterFactory.create()).build()
-        val identityProviderService = retrofit.create(IdentityProviderApi::class.java)
 
         viewModelScope.launch {
             waiting.value = true
 
             val globalInfo = repository.getGlobalInfoSuspended()
-
             val identityProviders = repository.getIdentityProviderInfoSuspended()
+
             identityProviders.forEach { identityProvider ->
                 identityGap = 0
                 val identityIndex = 0
-                getIdentityFromProvider(identityProvider, globalInfo, seed, net, identityProviderService, identityIndex)
+                getIdentityFromProvider(identityProvider, globalInfo, seed, net, identityIndex)
             }
+
+            val identityRepository = IdentityRepository(WalletDatabase.getDatabase(getApplication()).identityDao())
 
             identityRepository.getAllDone().forEach { doneIdentity ->
                 accountGap = 0
@@ -89,17 +72,16 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
 
             val data = mutableListOf<IdentityWithAccounts>()
             identityRepository.getAll().forEach { identity ->
+                val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
                 val accounts = accountRepository.getAllByIdentityId(identity.id)
                 data.add(IdentityWithAccounts(identity, accounts))
             }
-            identitiesWithAccounts = data
+
+            recoverProcessData.identitiesWithAccounts = data
 
             waiting.value = false
 
-            if (data.isNotEmpty())
-                statusChanged.value = STATUS_OK
-            else
-                statusChanged.value = STATUS_NOTHING_TO_RECOVER
+            statusChanged.value = STATUS_DONE
         }
     }
 
@@ -124,25 +106,39 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         return null
     }
 
-    private suspend fun getIdentityFromProvider(identityProvider: IdentityProvider, globalInfo: GlobalParamsWrapper, seed: String, net: String, identityProviderService: IdentityProviderApi, identityIndex: Int) {
+    private suspend fun getIdentityFromProvider(identityProvider: IdentityProvider, globalInfo: GlobalParamsWrapper, seed: String, net: String, identityIndex: Int) {
         if (identityGap >= IDENTITY_GAP_MAX) {
             return
         }
 
         val recoverRequestUrl = getRecoverRequestUrl(identityProvider, globalInfo, seed, net, identityIndex)
         if (recoverRequestUrl != null) {
-            val recoverInfo = identityProviderService.recover(recoverRequestUrl)
-            val identityTokenContainer = identityProviderService.identity(recoverInfo.identityRetrievalUrl)
-            if (identityTokenContainer.token != null) {
-                saveIdentity(identityTokenContainer, identityProvider, identityIndex)
+            val recoverResponse = IdentityProviderApiInstance.safeRecoverCall(recoverRequestUrl)
+            if (recoverResponse != null) {
+                if (recoverResponse.identityRetrievalUrl.isNotBlank()) {
+                    val identityTokenContainer = IdentityProviderApiInstance.safeIdentityCall(recoverResponse.identityRetrievalUrl)
+                    if (identityTokenContainer != null) {
+                        if (identityTokenContainer.token != null) {
+                            saveIdentity(identityTokenContainer, identityProvider, identityIndex)
+                        } else {
+                            identityGap++
+                        }
+                    } else {
+                        recoverProcessData.noResponseFrom.add(identityProvider.ipInfo.ipDescription.name)
+                        identityGap++
+                    }
+                } else {
+                    identityGap++
+                }
             } else {
+                recoverProcessData.noResponseFrom.add(identityProvider.ipInfo.ipDescription.name)
                 identityGap++
             }
         } else {
             identityGap++
         }
 
-        getIdentityFromProvider(identityProvider, globalInfo, seed, net, identityProviderService, identityIndex + 1)
+        getIdentityFromProvider(identityProvider, globalInfo, seed, net, identityIndex + 1)
     }
 
     private suspend fun saveIdentity(identityTokenContainer: IdentityTokenContainer, identityProvider: IdentityProvider, identityIndex: Int) {
@@ -158,7 +154,9 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             identityProvider.ipInfo.ipIdentity,
             identityIndex
         )
-        identityRepository.insert(identity)
+        val identityRepository = IdentityRepository(WalletDatabase.getDatabase(getApplication()).identityDao())
+        if (identityRepository.findByProviderIdAndIndex(identityProvider.ipInfo.ipIdentity, identityIndex) == null)
+            identityRepository.insert(identity)
     }
 
     private suspend fun recoverAccount(password: String, seed: String, net: String, identityId: Int, globalInfo: GlobalParamsWrapper) {
@@ -166,6 +164,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             return
         }
 
+        val identityRepository = IdentityRepository(WalletDatabase.getDatabase(getApplication()).identityDao())
         val identity = identityRepository.findById(identityId)
             ?: return
 
@@ -200,7 +199,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         val encryptedAccountData = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, jsonToBeEncrypted)
             ?: return
 
-        val accountBalance = proxyRepository.getAccountBalanceSuspended(createCredentialOutput.accountAddress)
+        val accountBalance = ProxyRepository().getAccountBalanceSuspended(createCredentialOutput.accountAddress)
 
         if (accountBalance.finalizedBalance != null) {
             val account = Account(
@@ -231,7 +230,9 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                 accountIndex = accountBalance.finalizedBalance.accountIndex
             )
 
-            accountRepository.insertAccountAndCountUpNextAccountNumber(account)
+            val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+            if (accountRepository.findByAddress(account.address) == null)
+                accountRepository.insertAccountAndCountUpNextAccountNumber(account)
         } else {
             accountGap++
         }

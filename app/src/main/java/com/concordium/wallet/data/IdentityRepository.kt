@@ -36,6 +36,10 @@ class IdentityRepository(private val identityDao: IdentityDao) {
         return identityDao.findById(id)
     }
 
+    suspend fun findByProviderIdAndIndex(identityProviderId: Int, identityIndex: Int): Identity? {
+        return identityDao.findByIdentityProviderAndIndex(identityProviderId, identityIndex)
+    }
+
     suspend fun insert(identity: Identity): Long {
         return identityDao.insert(identity).first()
     }

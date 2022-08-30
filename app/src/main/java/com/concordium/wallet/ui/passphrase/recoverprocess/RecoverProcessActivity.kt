@@ -5,13 +5,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
-import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.databinding.ActivityRecoverProcessBinding
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
-import com.concordium.wallet.ui.passphrase.recover.RecoverWalletActivity
 
 class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
     private lateinit var binding: ActivityRecoverProcessBinding
@@ -48,6 +46,7 @@ class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl(
     private fun initButtons() {
         binding.continueButton.setOnClickListener {
             if (passwordSet) {
+                finish()
                 val intent = Intent(this, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
@@ -58,11 +57,6 @@ class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl(
         binding.tryAgainButton.setOnClickListener {
             startScanning()
         }
-        binding.enterAnotherPhraseButton.setOnClickListener {
-            AuthPreferences(this).resetSeedPhrase()
-            finish()
-            startActivity(Intent(this, RecoverWalletActivity::class.java))
-        }
     }
 
     private fun initObservers() {
@@ -71,28 +65,23 @@ class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl(
                 showWaiting(waiting)
             }
         }
-        viewModel.statusChanged.observe(this) { status ->
+        viewModel.statusChanged.observe(this) {
             runOnUiThread {
-                when (status) {
-                    RecoverProcessViewModel.STATUS_OK -> finishScanningView()
-                    RecoverProcessViewModel.STATUS_NOTHING_TO_RECOVER -> nothingToRecoverView()
-                }
+                finishScanningView()
             }
         }
     }
 
-    private fun nothingToRecoverView() {
-        supportFragmentManager.beginTransaction().add(R.id.fragment_container, RecoverProcessNothingToRecoverFragment(), null).commit()
-        binding.continueButton.visibility = View.GONE
-        binding.tryAgainButton.visibility = View.VISIBLE
-        binding.enterAnotherPhraseButton.visibility = View.VISIBLE
-    }
-
     private fun finishScanningView() {
-        supportFragmentManager.beginTransaction().add(R.id.fragment_container, RecoverProcessFinishedFragment.newInstance(viewModel), null).commit()
+        supportFragmentManager.beginTransaction().add(R.id.fragment_container, RecoverProcessFinishedFragment.newInstance(viewModel.recoverProcessData), null).commit()
         binding.continueButton.visibility = View.VISIBLE
-        binding.tryAgainButton.visibility = View.GONE
-        binding.enterAnotherPhraseButton.visibility = View.GONE
+        if (viewModel.recoverProcessData.noResponseFrom.size > 0) {
+            binding.tryAgainButton.visibility = View.VISIBLE
+            binding.continueButton.text = getString(R.string.pass_phrase_recover_process_continue)
+        } else {
+            binding.tryAgainButton.visibility = View.GONE
+            binding.continueButton.text = getString(R.string.pass_phrase_recover_process_continue_to_wallet)
+        }
     }
 
     private fun startScanning() {
@@ -107,10 +96,9 @@ class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl(
     }
 
     private fun scanningView(password: String) {
-        supportFragmentManager.beginTransaction().add(R.id.fragment_container, RecoverProcessScanningFragment.newInstance(viewModel, password), null).commit()
+        supportFragmentManager.beginTransaction().add(R.id.fragment_container, RecoverProcessScanningFragment.newInstance(viewModel, viewModel.recoverProcessData, password), null).commit()
         binding.continueButton.visibility = View.GONE
         binding.tryAgainButton.visibility = View.GONE
-        binding.enterAnotherPhraseButton.visibility = View.GONE
     }
 
     private fun showWaiting(waiting: Boolean) {

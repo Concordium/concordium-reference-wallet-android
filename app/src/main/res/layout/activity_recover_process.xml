@@ -35,30 +35,24 @@
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
         <Button
-            android:id="@+id/continueButton"
-            style="@style/Button.Standard.Intro"
-            android:layout_width="match_parent"
-            android:text="@string/pass_phrase_recover_process_continue" />
-        <Button
             android:id="@+id/tryAgainButton"
             style="@style/Button.Standard.Intro"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
             android:visibility="gone"
             tools:visibility="visible"
             android:text="@string/pass_phrase_recover_process_try_again" />
         <Button
-            android:id="@+id/enterAnotherPhraseButton"
+            android:id="@+id/continueButton"
             style="@style/Button.Standard.Intro"
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            tools:visibility="visible"
-            android:text="@string/pass_phrase_recover_process_enter_another" />
-
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:text="@string/pass_phrase_recover_process_continue" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <include layout="@layout/progress" android:id="@+id/include_progress" android:visibility="gone" tools:visibility="visible" />

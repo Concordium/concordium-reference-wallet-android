@@ -221,14 +221,15 @@
     <string name="pass_phrase_recover_process_title">Recovering your accounts and identities</string>
     <string name="pass_phrase_recover_process_subtitle">Recovering IDs and accounts</string>
     <string name="pass_phrase_recover_process_scanning">Scanning the Concordium blockchain. Hang on while we find your account and identities.</string>
-    <string name="pass_phrase_recover_process_continue">Continue to wallet</string>
+    <string name="pass_phrase_recover_process_continue">Continue</string>
+    <string name="pass_phrase_recover_process_continue_to_wallet">Continue to wallet</string>
     <string name="pass_phrase_recover_process_finished">Recovery finished</string>
+    <string name="pass_phrase_recover_process_partial">Recovery may be partial</string>
+    <string name="pass_phrase_recover_process_partial_description">There was a problem contacting some identity providers. This means that some identities and accounts may not have been recovered. If you can see that something is missing, you can try to restart the recovery process, or you can try again later by starting the recovery process from the settings menu. The affected identity providers:</string>
     <string name="pass_phrase_recover_process_recovered">You have successfully recovered:</string>
     <string name="pass_phrase_recover_process_finished_accounts">Accounts:</string>
     <string name="pass_phrase_recover_process_try_again">Try again</string>
     <string name="pass_phrase_recover_process_enter_another">Enter another recovery phrase</string>
-    <string name="pass_phrase_recover_process_nothing_subtitle">We found nothing to recover.</string>
-    <string name="pass_phrase_recover_process_nothing_text">There was no accounts to be found for the secret recovery phrase. Did you maybe enter a wrong recovery phrase?\n\nIf you only have an identity and no accounts, this can also be the reason. In this case please specify which identity provider you used to get your identity, so we can send them a request.</string>
 
     <string name="earn_title">Earning rewards</string>
     <string name="earn_subtitle">There are two options for earning rewards on Concordium: Baking and delegation.</string>
@@ -861,6 +862,7 @@
     <string name="more_overview_title">More</string>
     <string name="more_overview_identities">Your identity cards</string>
     <string name="more_overview_item_address_book">Address Book</string>
+    <string name="more_overview_item_recover">Recovery</string>
     <string name="more_overview_item_about">About</string>
     <string name="more_overview_item_alter_password"><![CDATA[Update Passcode & Biometrics]]></string>
     <string name="more_overview_item_developer_options">Developer Options</string>

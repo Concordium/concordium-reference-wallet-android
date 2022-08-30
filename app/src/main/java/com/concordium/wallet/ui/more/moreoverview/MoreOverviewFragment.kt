@@ -17,6 +17,7 @@ import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.more.about.AboutActivity
 import com.concordium.wallet.ui.more.alterpassword.AlterPasswordActivity
 import com.concordium.wallet.ui.more.dev.DevActivity
+import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessActivity
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 
 class MoreOverviewFragment : BaseFragment() {
@@ -91,6 +92,10 @@ class MoreOverviewFragment : BaseFragment() {
             gotoAddressBook()
         }
 
+        binding.recoverLayout.setOnClickListener {
+            recover()
+        }
+
         binding.aboutLayout.setOnClickListener {
             about()
         }
@@ -130,23 +135,24 @@ class MoreOverviewFragment : BaseFragment() {
     }
 
     private fun gotoDevConfig() {
-        val intent = Intent(activity, DevActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(activity, DevActivity::class.java))
     }
 
     private fun gotoAddressBook() {
-        val intent = Intent(activity, RecipientListActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(activity, RecipientListActivity::class.java))
+    }
+
+    private fun recover() {
+        activity?.finish()
+        startActivity(Intent(activity, RecoverProcessActivity::class.java))
     }
 
     private fun about() {
-        val intent = Intent(activity, AboutActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(activity, AboutActivity::class.java))
     }
 
     private fun alterPassword() {
-        val intent = Intent(activity, AlterPasswordActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(activity, AlterPasswordActivity::class.java))
     }
 
     //endregion

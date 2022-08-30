@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentRecoverProcessFinishedBinding
@@ -17,9 +18,9 @@ class RecoverProcessFinishedFragment : RecoverProcessBaseFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(viewModel: RecoverProcessViewModel) = RecoverProcessFinishedFragment().apply {
+        fun newInstance(recoverProcessData: RecoverProcessData) = RecoverProcessFinishedFragment().apply {
             arguments = Bundle().apply {
-                putSerializable(RECOVER_PROCESS_DATA, viewModel)
+                putSerializable(RECOVER_PROCESS_DATA, recoverProcessData)
             }
         }
     }
@@ -36,7 +37,21 @@ class RecoverProcessFinishedFragment : RecoverProcessBaseFragment() {
     }
 
     private fun initViews() {
-        viewModel.identitiesWithAccounts.forEach { identityWithAccounts ->
+        if (recoverProcessData.noResponseFrom.size > 0) {
+            binding.resultIcon.setImageDrawable(context?.let { ContextCompat.getDrawable(it, R.drawable.ic_logo_icon_error) })
+            binding.partialTextview.visibility = View.VISIBLE
+            binding.providerNames.visibility = View.VISIBLE
+            binding.providerNames.text = recoverProcessData.noResponseFrom.joinToString("\n") { it }
+            binding.headerTextview.text = getString(R.string.pass_phrase_recover_process_partial)
+        }
+        else {
+            binding.resultIcon.setImageDrawable(context?.let { ContextCompat.getDrawable(it, R.drawable.ic_big_logo_ok) })
+            binding.partialTextview.visibility = View.GONE
+            binding.providerNames.visibility = View.GONE
+            binding.headerTextview.text = getString(R.string.pass_phrase_recover_process_finished)
+        }
+
+        recoverProcessData.identitiesWithAccounts.forEach { identityWithAccounts ->
             val itemIdentityWithAccounts = ItemIdentityWithAccountsBinding.inflate(LayoutInflater.from(context), null, false)
             itemIdentityWithAccounts.identityName.text = identityWithAccounts.identity.name
             identityWithAccounts.accounts.forEach { account ->
