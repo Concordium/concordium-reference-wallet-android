@@ -9,6 +9,7 @@ import com.concordium.wallet.App
 import com.concordium.wallet.AppConfig
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
+import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.CreateCredentialInputV1
@@ -17,10 +18,7 @@ import com.concordium.wallet.data.cryptolib.GenerateRecoveryRequestInput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.preferences.AuthPreferences
-import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.Identity
-import com.concordium.wallet.data.room.IdentityWithAccounts
-import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.data.room.*
 import com.concordium.wallet.ui.passphrase.recoverprocess.retrofit.IdentityProviderApiInstance
 import com.concordium.wallet.util.DateTimeUtil
 import com.google.gson.JsonArray
@@ -240,6 +238,10 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
             if (accountRepository.findByAddress(account.address) == null) {
                 accountRepository.insertAccountAndCountUpNextAccountNumber(account)
+                val recipientRepository = RecipientRepository(WalletDatabase.getDatabase(getApplication()).recipientDao())
+                if (recipientRepository.getRecipientByAddress(account.address) == null) {
+                    recipientRepository.insert(Recipient(0, account.name, account.address))
+                }
                 val iWithAFound = identityWithAccountsFound.firstOrNull { it.identity.identityProviderId == identity.identityProviderId && it.identity.identityIndex == identity.identityIndex }
                 if (iWithAFound != null)
                     iWithAFound.accounts.add(account)
