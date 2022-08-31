@@ -26,6 +26,7 @@ class RecoverProcessScanningFragment : RecoverProcessBaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentRecoverProcessScanningBinding.inflate(inflater, container, false)
+        initObservers()
         return binding.root
     }
 
@@ -37,5 +38,22 @@ class RecoverProcessScanningFragment : RecoverProcessBaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun initObservers() {
+        _viewModel.waiting.observe(viewLifecycleOwner) { waiting ->
+            waiting?.let {
+                showWaiting(waiting)
+            }
+        }
+        _viewModel.progress.observe(viewLifecycleOwner) { progress ->
+            progress?.let {
+                binding.progressBar.progress = progress
+            }
+        }
+    }
+
+    private fun showWaiting(waiting: Boolean) {
+        binding.progressBar.visibility = if (waiting) View.VISIBLE else View.GONE
     }
 }

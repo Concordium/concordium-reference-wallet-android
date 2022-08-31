@@ -36,8 +36,8 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
     companion object {
         const val RECOVER_PROCESS_DATA = "RECOVER_PROCESS_DATA"
         const val STATUS_DONE = 1
-        private const val IDENTITY_GAP_MAX = 10
-        private const val ACCOUNT_GAP_MAX = 10
+        private const val IDENTITY_GAP_MAX = 20
+        private const val ACCOUNT_GAP_MAX = 20
     }
 
     private var identityGap = 0
@@ -45,6 +45,9 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
     val statusChanged: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val recoverProcessData = RecoverProcessData()
+    val progress: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    private var progressValue = 0
+    private var step = 0
 
     fun recoverIdentitiesAndAccounts(password: String) {
         val net = AppConfig.net
@@ -53,9 +56,11 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
 
         viewModelScope.launch {
             waiting.value = true
+            progress.value = 0
 
             val globalInfo = repository.getGlobalInfoSuspended()
             val identityProviders = repository.getIdentityProviderInfoSuspended()
+            step = 500 / (identityProviders.size * IDENTITY_GAP_MAX)
 
             identityProviders.forEach { identityProvider ->
                 identityGap = 0
@@ -63,9 +68,13 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                 getIdentityFromProvider(identityProvider, globalInfo, seed, net, identityIndex)
             }
 
-            val identityRepository = IdentityRepository(WalletDatabase.getDatabase(getApplication()).identityDao())
+            setProgress(1000, 500)
 
-            identityRepository.getAllDone().forEach { doneIdentity ->
+            val identityRepository = IdentityRepository(WalletDatabase.getDatabase(getApplication()).identityDao())
+            val allIdentitiesFound = identityRepository.getAllDone()
+            step = 500 / (allIdentitiesFound.size * ACCOUNT_GAP_MAX)
+
+            allIdentitiesFound.forEach { doneIdentity ->
                 accountGap = 0
                 recoverAccount(password, seed, net, doneIdentity.id, globalInfo)
             }
@@ -79,6 +88,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
 
             recoverProcessData.identitiesWithAccounts = data
 
+            setProgress(1000, 1000)
             waiting.value = false
 
             statusChanged.value = STATUS_DONE
@@ -138,6 +148,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             identityGap++
         }
 
+        setProgress(step, 500)
         getIdentityFromProvider(identityProvider, globalInfo, seed, net, identityIndex + 1)
     }
 
@@ -237,6 +248,15 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             accountGap++
         }
 
+        setProgress(step, 1000)
         recoverAccount(password, seed, net, identityId, globalInfo)
+    }
+
+    private fun setProgress(step: Int, maxValue: Int) {
+        if (progressValue + step <= maxValue)
+            progressValue += step
+        else
+            progressValue = maxValue
+        progress.value = progressValue
     }
 }

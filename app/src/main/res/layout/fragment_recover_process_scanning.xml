@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     style="@style/Layout.Root">
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/pending_imageview"
@@ -20,6 +21,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pending_imageview" />
     <TextView
+        android:id="@+id/description_textview"
         style="@style/TextView.Standard.Light"
         android:text="@string/pass_phrase_recover_process_scanning"
         android:layout_marginTop="@dimen/activity_vertical_margin_extended"
@@ -27,4 +29,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_textview" />
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:min="0"
+        android:max="1000"
+        tools:progress="33"
+        android:layout_margin="@dimen/activity_vertical_margin_extended"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/description_textview" />
 </androidx.constraintlayout.widget.ConstraintLayout>

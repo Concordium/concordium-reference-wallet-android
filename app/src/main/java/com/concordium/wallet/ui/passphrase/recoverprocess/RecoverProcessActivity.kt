@@ -60,11 +60,6 @@ class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl(
     }
 
     private fun initObservers() {
-        viewModel.waiting.observe(this) { waiting ->
-            waiting?.let {
-                showWaiting(waiting)
-            }
-        }
         viewModel.statusChanged.observe(this) {
             runOnUiThread {
                 finishScanningView()
@@ -99,9 +94,5 @@ class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl(
         supportFragmentManager.beginTransaction().add(R.id.fragment_container, RecoverProcessScanningFragment.newInstance(viewModel, viewModel.recoverProcessData, password), null).commit()
         binding.continueButton.visibility = View.GONE
         binding.tryAgainButton.visibility = View.GONE
-    }
-
-    private fun showWaiting(waiting: Boolean) {
-        binding.includeProgress.progressLayout.visibility = if (waiting) View.VISIBLE else View.GONE
     }
 }

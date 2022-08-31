@@ -55,6 +55,4 @@
             android:text="@string/pass_phrase_recover_process_continue" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <include layout="@layout/progress" android:id="@+id/include_progress" android:visibility="gone" tools:visibility="visible" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
