@@ -6,7 +6,6 @@ import android.os.CountDownTimer
 import android.view.View
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.concordium.wallet.R
@@ -20,7 +19,7 @@ import com.concordium.wallet.ui.identity.identityproviderlist.adapter.HeaderItem
 import com.concordium.wallet.ui.identity.identityproviderlist.adapter.IdentityProviderAdapter
 import com.concordium.wallet.ui.identity.identityproviderlist.adapter.IdentityProviderItem
 import com.concordium.wallet.ui.identity.identityproviderpolicywebview.IdentityProviderPolicyWebviewActivity
-import com.concordium.wallet.ui.identity.identityproviderwebview.IdentityProviderWebviewActivity
+import com.concordium.wallet.ui.identity.identityproviderwebview.IdentityProviderWebViewActivity
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
 import javax.crypto.Cipher
 
@@ -29,6 +28,11 @@ class IdentityProviderListActivity : BaseActivity() {
     private lateinit var viewModel: IdentityProviderListViewModel
     private lateinit var identityProviderAdapter: IdentityProviderAdapter
     private lateinit var biometricPrompt: BiometricPrompt
+    private var showForFirstIdentity = false
+
+    companion object {
+        const val SHOW_FOR_FIRST_IDENTITY = "SHOW_FOR_FIRST_IDENTITY"
+    }
 
     private var longTimeWaitingCountDownTimer =
         object : CountDownTimer(2 * 1000.toLong(), 1000) {
@@ -39,10 +43,6 @@ class IdentityProviderListActivity : BaseActivity() {
             }
         }
 
-    companion object {
-        const val EXTRA_IDENTITY_CUSTOM_NAME = "EXTRA_IDENTITY_CUSTOM_NAME"
-        const val EXTRA_ACCOUNT_CUSTOM_NAME = "EXTRA_ACCOUNT_CUSTOM_NAME"
-    }
     //region Lifecycle
     //************************************************************
 
@@ -50,13 +50,16 @@ class IdentityProviderListActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityIdentityProviderListBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_list_title)
 
-        val identityCustomName = intent.getStringExtra(EXTRA_IDENTITY_CUSTOM_NAME) as String
-        val accountCustomName = intent.getStringExtra(EXTRA_ACCOUNT_CUSTOM_NAME) as String
+        showForFirstIdentity = intent.extras?.getBoolean(SHOW_FOR_FIRST_IDENTITY, false) ?: false
+
+        if (showForFirstIdentity) {
+            setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_list_first_title)
+        } else {
+            setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_list_title)
+        }
 
         initializeViewModel()
-        viewModel.initialize(identityCustomName, accountCustomName)
         initializeViews()
         viewModel.getIdentityProviders()
         viewModel.getGlobalInfo()
@@ -77,16 +80,16 @@ class IdentityProviderListActivity : BaseActivity() {
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[IdentityProviderListViewModel::class.java]
-        viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
+        viewModel.waitingLiveData.observe(this) { waiting ->
             waiting?.let {
                 showWaiting(waiting || viewModel.waitingGlobalData.value!!)
             }
-        })
-        viewModel.waitingGlobalData.observe(this, Observer<Boolean> { waiting ->
+        }
+        viewModel.waitingGlobalData.observe(this) { waiting ->
             waiting?.let {
                 showWaiting(waiting || viewModel.waitingLiveData.value!!)
             }
-        })
+        }
         viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
                 showError(value)
@@ -99,10 +102,10 @@ class IdentityProviderListActivity : BaseActivity() {
                 }
             }
         })
-        viewModel.gotoIdentityProviderWebview.observe(this, object : EventObserver<Boolean>() {
+        viewModel.gotoIdentityProviderWebView.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
-                    gotoIdentityProviderWebview()
+                    gotoIdentityProviderWebView()
                     showWaiting(false)
                 }
             }
@@ -119,14 +122,17 @@ class IdentityProviderListActivity : BaseActivity() {
         binding.recyclerview.setHasFixedSize(true)
         binding.recyclerview.layoutManager = linearLayoutManager
 
-        viewModel.identityProviderList.observe(this, Observer { list ->
-            val items: MutableList<AdapterItem> = list.map { IdentityProviderItem(it) }.toMutableList()
+        viewModel.identityProviderList.observe(this) { list ->
+            val items: MutableList<AdapterItem> =
+                list.map { IdentityProviderItem(it) }.toMutableList()
             items.add(0, HeaderItem())
-            val newlineSeperatedLinks = list.joinToString (separator = "<br><br>") { it -> "<a href=\"${it.ipInfo.ipDescription.url}\">${it.ipInfo.ipDescription.name}</a>" }
-            identityProviderAdapter = IdentityProviderAdapter(this, newlineSeperatedLinks, items)
+            val newlineSeparatedLinks =
+                list.joinToString(separator = "<br><br>") { "<a href=\"${it.ipInfo.ipDescription.url}\">${it.ipInfo.ipDescription.name}</a>" }
+            identityProviderAdapter =
+                IdentityProviderAdapter(this, newlineSeparatedLinks, showForFirstIdentity, items)
             binding.recyclerview.adapter = identityProviderAdapter
             setItemClickAdapter()
-        })
+        }
     }
 
     private fun setItemClickAdapter() {
@@ -136,7 +142,7 @@ class IdentityProviderListActivity : BaseActivity() {
             }
 
             override fun onItemActionClicked(item: IdentityProvider) {
-                gotoIdentityProviderPolicyWebview(item)
+                gotoIdentityProviderPolicyWebView(item)
             }
         })
     }
@@ -146,18 +152,19 @@ class IdentityProviderListActivity : BaseActivity() {
     //region Control/UI
     //************************************************************
 
-    private fun gotoIdentityProviderWebview() {
+    private fun gotoIdentityProviderWebView() {
         viewModel.getIdentityCreationData()?.let { identityCreationData ->
-            val intent = Intent(this, IdentityProviderWebviewActivity::class.java)
-            intent.putExtra(
-                IdentityProviderWebviewActivity.EXTRA_IDENTITY_CREATION_DATA,
-                identityCreationData
-            )
+            finish()
+            val intent = Intent(this, IdentityProviderWebViewActivity::class.java)
+            intent.putExtra(IdentityProviderWebViewActivity.EXTRA_IDENTITY_CREATION_DATA, identityCreationData)
+            if (showForFirstIdentity)
+                intent.putExtra(IdentityProviderWebViewActivity.SHOW_FOR_FIRST_IDENTITY, true)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
         }
     }
 
-    private fun gotoIdentityProviderPolicyWebview(identityProvider: IdentityProvider) {
+    private fun gotoIdentityProviderPolicyWebView(identityProvider: IdentityProvider) {
         identityProvider.metadata
         val intent = Intent(this, IdentityProviderPolicyWebviewActivity::class.java)
         intent.putExtra(IdentityProviderPolicyWebviewActivity.EXTRA_URL, "https://google.com")
@@ -189,7 +196,7 @@ class IdentityProviderListActivity : BaseActivity() {
         dialogFragment.setCallback(object : AuthenticationDialogFragment.Callback {
             override fun onCorrectPassword(password: String) {
                 longTimeWaitingCountDownTimer.start()
-                viewModel.continueWithPassword(password)
+                viewModel.continueWithPassword()
             }
 
             override fun onCancelled() {
@@ -231,17 +238,15 @@ class IdentityProviderListActivity : BaseActivity() {
             }
         }
 
-        val biometricPrompt = BiometricPrompt(this, executor, callback)
-        return biometricPrompt
+        return BiometricPrompt(this, executor, callback)
     }
 
     private fun createPromptInfo(): BiometricPrompt.PromptInfo {
-        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+        return BiometricPrompt.PromptInfo.Builder()
             .setTitle(getString(R.string.auth_login_biometrics_dialog_title))
             .setConfirmationRequired(true)
             .setNegativeButtonText(getString(if (viewModel.usePasscode()) R.string.auth_login_biometrics_dialog_cancel_passcode else R.string.auth_login_biometrics_dialog_cancel_password))
             .build()
-        return promptInfo
     }
 
     //endregion

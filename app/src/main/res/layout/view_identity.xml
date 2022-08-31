@@ -48,16 +48,19 @@
         <TextView
             android:id="@+id/name_textview"
             style="@style/TextView.MediumLarge"
-            android:layout_width="0dp"
-            android:layout_marginHorizontal="@dimen/list_item_horizontal_margin"
-            android:ellipsize="end"
-            android:gravity="center_horizontal"
-            android:maxLines="2"
-            app:layout_constraintBottom_toTopOf="@id/expires_textview"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintHorizontal_weight="1"
             app:layout_constraintTop_toBottomOf="@id/identity_textview"
-            tools:text="Concordium Name xxxxxxxxxxxxxxxxxx xxxxxxxxxxxxxxxxxxxx" />
+            app:layout_constraintBottom_toTopOf="@id/expires_textview"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:lines="2"
+            tools:text="Identity 1"
+            android:paddingStart="@dimen/activity_horizontal_margin"
+            android:paddingEnd="@dimen/activity_horizontal_margin_double" />
 
         <TextView
             android:id="@+id/expires_textview"

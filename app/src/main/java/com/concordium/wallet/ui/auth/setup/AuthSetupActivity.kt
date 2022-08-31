@@ -88,10 +88,10 @@ class AuthSetupActivity : BaseActivity() {
     }
 
     private fun initializeViews() {
-        hideActionBarBack(this)
+        hideActionBarBack()
         binding.passcodeView.passcodeListener = object : PasscodeView.PasscodeListener {
             override fun onInputChanged() {
-                binding.errorTextview.setText("")
+                binding.errorTextview.text = ""
             }
 
             override fun onDone() {
@@ -166,8 +166,7 @@ class AuthSetupActivity : BaseActivity() {
     }
 
     private fun gotoIntroSetup() {
-        val intent = Intent(this, IntroSetupActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(this, IntroSetupActivity::class.java))
     }
 
     private fun showPasswordError() {

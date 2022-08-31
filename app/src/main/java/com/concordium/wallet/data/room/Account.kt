@@ -1,9 +1,6 @@
 package com.concordium.wallet.data.room
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
+import androidx.room.*
 import com.concordium.wallet.App
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.typeconverter.AccountTypeConverters
@@ -11,7 +8,7 @@ import com.google.gson.JsonObject
 import java.io.Serializable
 import kotlin.math.max
 
-@Entity(tableName = "account_table")
+@Entity(tableName = "account_table", indices = [Index(value = ["address"], unique = true)])
 @TypeConverters(AccountTypeConverters::class)
 data class Account(
     @PrimaryKey(autoGenerate = true)
@@ -19,7 +16,9 @@ data class Account(
 
     @ColumnInfo(name = "identity_id")
     val identityId: Int,
+
     var name: String,
+
     var address: String,
 
     @ColumnInfo(name = "submission_id")

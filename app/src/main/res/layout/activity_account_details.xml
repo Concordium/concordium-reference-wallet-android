@@ -71,11 +71,13 @@
                                     android:textColor="@color/text_grey"
                                     android:textSize="11sp" />
 
-                                <ImageView
+                                <androidx.appcompat.widget.AppCompatImageView
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
+                                    android:layout_height="match_parent"
                                     android:layout_gravity="center"
-                                    android:layout_margin="4dp"
+                                    android:layout_marginStart="4dp"
+                                    android:layout_marginVertical="2dp"
+                                    android:scaleType="fitStart"
                                     android:src="@drawable/ic_read_only"
                                     android:tint="@color/text_grey" />
                             </LinearLayout>
@@ -233,10 +235,11 @@
                         <RelativeLayout
                             android:id="@+id/toggle_shielded"
                             style="@style/ActionCardButtonContainer">
+
                             <TextView
                                 style="@style/ActionCardButton"
-                                android:textAllCaps="false"
-                                android:text="@string/account_details_toggle_shielded" />
+                                android:text="@string/account_details_toggle_shielded"
+                                android:textAllCaps="false" />
                         </RelativeLayout>
                     </LinearLayout>
 
@@ -264,8 +267,7 @@
                     android:layout_marginBottom="@dimen/activity_vertical_margin_half"
                     android:layout_marginStart="3dp"
                     android:layout_marginEnd="6dp">
-
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/send_imageview"
                         style="@style/Image"
                         android:layout_width="25dp"
@@ -278,7 +280,6 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_chainStyle="packed" />
-
                     <TextView
                         android:id="@+id/send_textview"
                         style="@style/TextView.CardButton"
@@ -291,6 +292,40 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/earn_layout"
+                    style="@style/Layout.CardButton"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="@dimen/account_details_button_height"
+                    android:layout_marginTop="@dimen/activity_vertical_margin_half"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin_half"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginEnd="6dp">
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/earn_imageview"
+                        style="@style/Image"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:src="@drawable/ic_earn"
+                        android:tint="@color/theme_white"
+                        app:layout_constraintBottom_toTopOf="@+id/earn_textview"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_chainStyle="packed" />
+                    <TextView
+                        android:id="@+id/earn_textview"
+                        style="@style/TextView.CardButton"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/account_details_earn"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/earn_imageview" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/shield_funds_layout"
                     style="@style/Layout.CardButton"
                     android:layout_width="0dp"
@@ -300,8 +335,7 @@
                     android:layout_marginBottom="@dimen/activity_vertical_margin_half"
                     android:layout_marginEnd="6dp"
                     android:layout_marginStart="6dp">
-
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/shield_imageview"
                         style="@style/Image"
                         android:layout_width="25dp"
@@ -314,7 +348,6 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_chainStyle="packed" />
-
                     <TextView
                         android:id="@+id/shield_textview"
                         style="@style/TextView.CardButton"
@@ -336,8 +369,7 @@
                     android:layout_marginBottom="@dimen/activity_vertical_margin_half"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="3dp">
-
-                    <ImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/address_imageview"
                         style="@style/Image"
                         android:layout_width="25dp"
@@ -350,7 +382,6 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_chainStyle="packed" />
-
                     <TextView
                         android:id="@+id/address_textview"
                         style="@style/TextView.CardButton"
@@ -360,12 +391,9 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/address_imageview" />
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-
             </LinearLayout>
-
 
             <androidx.viewpager.widget.ViewPager
                 android:id="@+id/account_details_pager"

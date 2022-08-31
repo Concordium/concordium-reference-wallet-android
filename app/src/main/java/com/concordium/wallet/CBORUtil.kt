@@ -1,4 +1,4 @@
-package com.concordium.wallet;
+package com.concordium.wallet
 
 import com.concordium.wallet.util.Log
 import com.google.iot.cbor.CborObject

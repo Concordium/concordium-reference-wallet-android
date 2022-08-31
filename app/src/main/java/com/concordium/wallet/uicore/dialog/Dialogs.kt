@@ -21,7 +21,7 @@ class Dialogs {
     //************************************************************
 
     fun showOkDialog(activity: AppCompatActivity, requestCode: Int, titleId: Int, messageId: Int, positive: Int? = null) {
-        val resources = App.appContext.getResources()
+        val resources = App.appContext.resources
         showOkDialog(
             activity,
             requestCode,
@@ -53,7 +53,7 @@ class Dialogs {
         titleId: Int,
         messageId: Int
     ) {
-        val resources = App.appContext.getResources()
+        val resources = App.appContext.resources
         showOkCancelDialog(
             activity,
             requestCode,
@@ -84,7 +84,7 @@ class Dialogs {
         titleId: Int,
         messageId: Int
     ) {
-        val resources = App.appContext.getResources()
+        val resources = App.appContext.resources
         showYesNoDialog(
             activity,
             requestCode,
@@ -116,7 +116,7 @@ class Dialogs {
         positive: Int,
         negative: Int
     ) {
-        val resources = App.appContext.getResources()
+        val resources = App.appContext.resources
         showPositiveNegativeDialog(
             activity,
             requestCode,
@@ -166,7 +166,7 @@ class Dialogs {
             uri: String,
             supportEmail: String
     ) {
-        val resources = App.appContext.getResources()
+        val resources = App.appContext.resources
         showPositiveSupportDialog(
                 activity,
                 requestCode,
@@ -191,7 +191,7 @@ class Dialogs {
         uri: String,
         supportEmail: String
     ) {
-        val resources = App.appContext.getResources()
+        val resources = App.appContext.resources
         showPositiveSupportDialog(
             activity,
             requestCode,

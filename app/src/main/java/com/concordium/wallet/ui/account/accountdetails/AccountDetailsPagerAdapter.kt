@@ -31,7 +31,7 @@ class AccountDetailsPagerAdapter(
     }
 
     override fun getCount(): Int {
-        return 2
+        return 1
     }
 
     private fun getFirstPositionFragment(): Fragment {

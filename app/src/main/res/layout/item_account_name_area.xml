@@ -54,7 +54,7 @@
             android:textColor="@color/text_grey"
             android:layout_width="wrap_content"
             android:text="@string/view_account_delegating" />
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/status_icon"
             style="@style/Image"
             android:layout_width="14dp"

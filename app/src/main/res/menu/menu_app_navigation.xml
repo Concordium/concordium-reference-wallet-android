@@ -2,19 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menuitem_backup"
-        android:orderInCategory="1"
-        android:title="@string/app_menu_item_backup"
-        android:icon="@drawable/ic_menu_backup"
-        app:showAsAction="always" />
-
-    <item
         android:id="@+id/menuitem_accounts"
         android:orderInCategory="2"
         android:title="@string/app_menu_item_accounts"
         android:icon="@drawable/ic_menu_accounts"
         app:showAsAction="always" />
-
     <item
         android:id="@+id/menuitem_more"
         android:orderInCategory="3"

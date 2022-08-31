@@ -16,14 +16,8 @@ import javax.crypto.Cipher
 import javax.crypto.IllegalBlockSizeException
 import javax.crypto.SecretKey
 
-
-class AuthenticationManager(biometricKeyName: String) {
-
-
-    private val biometricKeyName: String = biometricKeyName
+class AuthenticationManager(private val biometricKeyName: String) {
     private val authPreferences = AuthPreferences(App.appContext)
-
-    //region Biometrics
 
     fun setupBiometrics(password: String, cipher: Cipher): Boolean {
         try {
@@ -74,23 +68,20 @@ class AuthenticationManager(biometricKeyName: String) {
     fun initBiometricsCipherForDecryption(): Cipher? {
         try {
             val initVector = authPreferences.getBiometricsKeyEncryptionInitVector(biometricKeyName)
-            val cipher =  KeystoreHelper().initCipherForDecryption(
+            val cipher = KeystoreHelper().initCipherForDecryption(
                 biometricKeyName,
                 Base64.decode(initVector, Base64.DEFAULT)
             )
-
-            if(cipher == null){
+            if(cipher == null) {
                 authPreferences.setUseBiometrics(biometricKeyName, false)
             }
-            return cipher;
+            return cipher
         }
         catch (e:KeystoreEncryptionException){
             authPreferences.setUseBiometrics(biometricKeyName,false)
             throw e
         }
     }
-
-    //endregion
 
     fun createPasswordCheck(password: String): Boolean {
         // Create encryption data used for encryption and decryption with password derived key
@@ -123,13 +114,13 @@ class AuthenticationManager(biometricKeyName: String) {
         val iv = Base64.decode(encodedIV, Base64.DEFAULT)
         val passwordCheckEncrypted = Base64.decode(encodedPasswordCheckEncrypted, Base64.DEFAULT)
         // Derive password key and decrypt password check
-        try {
+        return try {
             val decryptedString =
                 EncryptionHelper.decrypt(password, salt, iv, passwordCheckEncrypted)
             val savedPasswordCheck = authPreferences.getPasswordCheck(biometricKeyName)
-            return decryptedString.equals(savedPasswordCheck)
+            decryptedString == savedPasswordCheck
         } catch (e: EncryptionException) {
-            return false
+            false
         }
     }
 
@@ -141,7 +132,7 @@ class AuthenticationManager(biometricKeyName: String) {
         withContext(Dispatchers.Default) {
             try {
                 val encodedEncryptedPassword = getEncryptedPassword()
-                var encryptedPassword = Base64.decode(encodedEncryptedPassword, Base64.DEFAULT)
+                val encryptedPassword = Base64.decode(encodedEncryptedPassword, Base64.DEFAULT)
 
                 val decryptedByteArray = cipher.doFinal(encryptedPassword)
                 val decryptedPasswordString = String(decryptedByteArray, charset("UTF-8"))
@@ -173,8 +164,7 @@ class AuthenticationManager(biometricKeyName: String) {
 
             // Derive password key and encrypt
             try {
-                val encodedEncrypted = EncryptionHelper.encrypt(password, salt, iv, toBeEncrypted)
-                return@withContext encodedEncrypted
+                return@withContext EncryptionHelper.encrypt(password, salt, iv, toBeEncrypted)
             } catch (e: EncryptionException) {
                 return@withContext null
             }
@@ -190,8 +180,10 @@ class AuthenticationManager(biometricKeyName: String) {
             // Derive password key and decrypt
             val toBeDecryptedByteArray = Base64.decode(encodedToBeDecrypted, Base64.DEFAULT)
             try {
-                val decrypted = EncryptionHelper.decrypt(password, salt, iv, toBeDecryptedByteArray)
-                return@withContext decrypted
+                return@withContext EncryptionHelper.decrypt(password,
+                    salt,
+                    iv,
+                    toBeDecryptedByteArray)
             } catch (e: EncryptionException) {
                 return@withContext null
             }
@@ -202,8 +194,7 @@ class AuthenticationManager(biometricKeyName: String) {
         val salt = Base64.decode(encodedSalt, Base64.DEFAULT)
         // Derive password key
         try {
-            val key = EncryptionHelper.generateKey(password, salt)
-            return@withContext key
+            return@withContext EncryptionHelper.generateKey(password, salt)
         } catch (e: EncryptionException) {
             return@withContext null
         }
@@ -215,8 +206,7 @@ class AuthenticationManager(biometricKeyName: String) {
 
         // Derive password key and encrypt
         try {
-            val encodedEncrypted = EncryptionHelper.encrypt(key, iv, toBeEncrypted)
-            return@withContext encodedEncrypted
+            return@withContext EncryptionHelper.encrypt(key, iv, toBeEncrypted)
         } catch (e: EncryptionException) {
             return@withContext null
         }
@@ -229,8 +219,7 @@ class AuthenticationManager(biometricKeyName: String) {
         // Derive password key and decrypt
         val toBeDecryptedByteArray = Base64.decode(encodedToBeDecrypted, Base64.DEFAULT)
         try {
-            val decrypted = EncryptionHelper.decrypt(key, iv, toBeDecryptedByteArray)
-            return@withContext decrypted
+            return@withContext EncryptionHelper.decrypt(key, iv, toBeDecryptedByteArray)
         } catch (e: EncryptionException) {
             return@withContext null
         }
@@ -244,7 +233,7 @@ class AuthenticationManager(biometricKeyName: String) {
         return authPreferences.getUseBiometrics(biometricKeyName)
     }
 
-    fun getEncryptedPassword(): String {
+    private fun getEncryptedPassword(): String {
         return authPreferences.getEncryptedPassword(biometricKeyName)
     }
 
@@ -252,15 +241,10 @@ class AuthenticationManager(biometricKeyName: String) {
         authPreferences.setUsePasscode(biometricKeyName, passcodeUsed)
     }
 
-    /**
-     * If the secret key cannot be found, we no longer want to try and authenticate with
-     * biometric auth.
-     * This can happen after a restore from a backup.
-     */
+    // If the secret key cannot be found, we no longer want to try and authenticate with biometric auth.
     fun verifyValidBiometricKeyStore() {
         if(KeystoreHelper().getSecretKey(biometricKeyName) == null){
             authPreferences.setUseBiometrics(biometricKeyName, false)
         }
     }
-
 }

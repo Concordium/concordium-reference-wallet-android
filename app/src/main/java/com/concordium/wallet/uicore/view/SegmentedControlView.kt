@@ -55,7 +55,7 @@ class SegmentedControlView : LinearLayout {
         view.text = title
         val param = LayoutParams(0, LayoutParams.MATCH_PARENT)
         param.weight = 1f
-        view.setLayoutParams(param)
+        view.layoutParams = param
         view.isSelected = initiallySelected
         view.setOnClickListener {
             selectItem(it as Button)
@@ -66,7 +66,7 @@ class SegmentedControlView : LinearLayout {
     }
 
     fun selectItem(item: Button){
-        for (i in 0 until rootLayout.getChildCount()) {
+        for (i in 0 until rootLayout.childCount) {
             val child = rootLayout.getChildAt(i) as Button
             child.isSelected = false
         }

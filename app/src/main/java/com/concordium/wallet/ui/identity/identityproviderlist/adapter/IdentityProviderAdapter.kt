@@ -5,6 +5,7 @@ import android.text.Html
 import android.text.TextUtils
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.concordium.wallet.R
@@ -16,6 +17,7 @@ import com.concordium.wallet.util.ImageUtil.getImageBitmap
 class IdentityProviderAdapter(
     private val context: Context,
     private val identityName: String,
+    private val showProgressLine: Boolean,
     private var data: List<AdapterItem>
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -35,6 +37,7 @@ class IdentityProviderAdapter(
         return when (viewType) {
             ItemType.Header.id -> {
                 val binding = ItemIdentityProviderHeaderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                binding.progressLine.visibility = if (showProgressLine) View.VISIBLE else View.GONE
                 HeaderViewHolder(binding)
             }
             ItemType.Item.id -> {

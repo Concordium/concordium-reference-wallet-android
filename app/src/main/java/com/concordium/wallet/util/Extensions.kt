@@ -1,8 +1,5 @@
 package com.concordium.wallet.util
 
-fun ByteArray.toHex(): String {
-    val sb = StringBuilder(size * 2)
-    for (b in this)
-        sb.append(String.format("%02x", b))
-    return sb.toString()
+fun ByteArray.toHex() = joinToString("") {
+    Integer.toUnsignedString(java.lang.Byte.toUnsignedInt(it), 16).padStart(2, '0')
 }

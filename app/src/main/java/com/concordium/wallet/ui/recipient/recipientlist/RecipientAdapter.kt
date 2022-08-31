@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.databinding.ItemRecipientBinding
+import java.util.*
 
 class RecipientAdapter :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -72,7 +73,7 @@ class RecipientAdapter :
 
     private fun getFilteredList(allData: List<Recipient>, filterString: String): List<Recipient> {
         return allData.filter { recipient ->
-            recipient.name.toLowerCase().contains(filterString.toLowerCase())
+            recipient.name.lowercase(Locale.getDefault()).contains(filterString.lowercase(Locale.getDefault()))
         }
     }
 

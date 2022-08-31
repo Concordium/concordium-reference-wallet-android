@@ -9,7 +9,6 @@ import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
-import com.concordium.wallet.util.Log
 
 class NewAccountIdentityViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -38,7 +37,6 @@ class NewAccountIdentityViewModel(application: Application) : AndroidViewModel(a
 
     fun canCreateAccountForIdentity(identity: Identity): Boolean {
         val nextAccountNumber = identity.nextAccountNumber
-        Log.d("nextAccountNumber: $nextAccountNumber")
         val maxAccounts = identity.identityObject!!.attributeList.maxAccounts
         if (nextAccountNumber >= maxAccounts) {
             _errorDialogLiveData.value =

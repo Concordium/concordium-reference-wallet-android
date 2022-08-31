@@ -5,9 +5,9 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def versionBuildNumberSequential = 100
+def versionBuildNumberSequential = 3
 
-def versionBuildNumberMajor = 3
+def versionBuildNumberMajor = 1
 def versionBuildNumberMinor = 0
 def versionBuildNumberPatch = 0
 
@@ -23,7 +23,7 @@ def URL_PROXY_BASE_PROD_TESTNET = "https://wallet-proxy.testnet.concordium.com"
 def URL_PROXY_BASE_PRODUCTION = "https://wallet-proxy.mainnet.concordium.software"
 
 
-def PROVIDER_AUTHORITY_BASE = "software.concordium.mobilewallet.DataFileProvider"
+def PROVIDER_AUTHORITY_BASE = "software.concordium.mobilewallet.seedphrase.DataFileProvider"
 def PROVIDER_AUTHORITY_LOCAL = PROVIDER_AUTHORITY_BASE+"-local"
 def PROVIDER_AUTHORITY_MOCK = PROVIDER_AUTHORITY_BASE+"-mock"
 def PROVIDER_AUTHORITY_STAGING = PROVIDER_AUTHORITY_BASE+"-staging"
@@ -75,7 +75,7 @@ def buildTimeTicks() {
 android {
     compileSdkVersion 32
     defaultConfig {
-        applicationId "software.concordium.mobilewallet"
+        applicationId "software.concordium.mobilewallet.seedphrase"
         minSdkVersion 26
         targetSdkVersion 32
         versionCode versionBuildNumberSequential
@@ -137,7 +137,6 @@ android {
             buildConfigField("String", "SCHEME", "\"${SCHEME_MOCK}\"")
             resValue "string", "scheme", "\"${SCHEME_MOCK}\""
 
-            resValue "string", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_MOCK}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_MOCK}\"")
 
             buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
@@ -157,7 +156,6 @@ android {
             buildConfigField("String", "SCHEME", "\"${SCHEME_LOCAL}\"")
             resValue "string", "scheme", "\"${SCHEME_LOCAL}\""
 
-            resValue "string", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_LOCAL}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_LOCAL}\"")
 
             buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
@@ -181,7 +179,6 @@ android {
             buildConfigField("String", "SCHEME", "\"${SCHEME_STAGING}\"")
             resValue "string", "scheme", "\"${SCHEME_STAGING}\""
 
-            resValue "string", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_STAGING}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_STAGING}\"")
 
             buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
@@ -202,7 +199,6 @@ android {
             buildConfigField("String", "SCHEME", "\"${SCHEME_TESTNET}\"")
             resValue "string", "scheme", "\"${SCHEME_TESTNET}\""
 
-            resValue "string", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_TESTNET}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_TESTNET}\"")
 
             buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
@@ -222,7 +218,6 @@ android {
             buildConfigField("String", "SCHEME", "\"${SCHEME_PROD}\"")
             resValue "string", "scheme", "\"${SCHEME_PROD}\""
 
-            resValue "string", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_PROD}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_PROD}\"")
 
             buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
@@ -273,13 +268,11 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    // Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.7.0"
     // Coroutines
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1"
 
     // Android/Google
-    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.appcompat:appcompat:1.5.0'
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
@@ -288,15 +281,15 @@ dependencies {
     implementation 'androidx.biometric:biometric:1.1.0'
 
     // Lifecycles
-    def lifecycle_version = "2.5.0"
+    def lifecycle_version = "2.5.1"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
-    implementation 'androidx.fragment:fragment-ktx:1.5.0'
+    implementation 'androidx.fragment:fragment-ktx:1.5.2'
 
     // Room
-    def room_version = "2.4.2"
+    def room_version = "2.4.3"
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
@@ -310,7 +303,7 @@ dependencies {
     implementation 'androidx.browser:browser:1.4.0'
 
     // OkHttp/Retrofit
-    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
@@ -321,7 +314,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.9'
 
     // Navigation
-    def navigationVersion = '2.5.0'
+    def navigationVersion = '2.5.1'
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
@@ -337,11 +330,10 @@ dependencies {
 
     // Generate QR
     implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
-    implementation 'androidx.appcompat:appcompat:1.4.2'
 
     // EventBus
     implementation 'org.greenrobot:eventbus:3.1.1'
 
     // BIP39
-    implementation "cash.z.ecc.android:kotlin-bip39:1.0.2"
+    implementation "cash.z.ecc.android:kotlin-bip39:1.0.4"
 }

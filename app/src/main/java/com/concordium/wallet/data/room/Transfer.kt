@@ -39,7 +39,4 @@ data class Transfer(
     var newStartIndex: Int,
     var nonce: AccountNonce?
 
-) : Serializable {
-
-
-}
+) : Serializable

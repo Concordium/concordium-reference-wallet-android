@@ -8,11 +8,12 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
+import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.databinding.ActivitySetupWalletBinding
-import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import com.google.android.material.tabs.TabLayoutMediator
+import com.concordium.wallet.ui.identity.identitycreate.IdentityIntroFlow
 
 class SetupWalletActivity : BaseActivity() {
     private lateinit var binding: ActivitySetupWalletBinding
@@ -26,6 +27,13 @@ class SetupWalletActivity : BaseActivity() {
         initializeViewModel()
         initViews()
         initObservers()
+
+        if (BuildConfig.DEBUG) {
+            binding.toolbarLayout.toolbarTitle.isClickable = true
+            binding.toolbarLayout.toolbarTitle.setOnClickListener {
+                viewModel.hack()
+            }
+        }
     }
 
     private fun initializeViewModel() {
@@ -38,12 +46,10 @@ class SetupWalletActivity : BaseActivity() {
     private fun initViews() {
         binding.pager.adapter = ScreenSlidePagerAdapter(this)
 
-        TabLayoutMediator(binding.pagersTabLayout, binding.pager) { _, _ -> }.attach()
-
         binding.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                if (position == 3)
+                if (position == 2)
                     binding.continueButton.visibility = View.GONE
                 else
                     binding.continueButton.visibility = View.VISIBLE
@@ -54,10 +60,8 @@ class SetupWalletActivity : BaseActivity() {
 
         binding.continueButton.setOnClickListener {
             if (binding.pager.currentItem == (binding.pager.adapter as ScreenSlidePagerAdapter).itemCount - 1) {
-                println("LC -> Must go to explain create identity flow")
                 finish()
-                startActivity(Intent(this, MainActivity::class.java))
-                TODO("Must go to recover accounts and identities flow!")
+                startActivity(Intent(this, IdentityIntroFlow::class.java))
             } else {
                 moveNext()
             }
@@ -66,31 +70,38 @@ class SetupWalletActivity : BaseActivity() {
 
     private fun initObservers() {
         viewModel.validate.observe(this) { success ->
-            if (success) moveNext()
+            if (success) {
+                AuthPreferences(this).setSeedPhrase(viewModel.generatedPhrase())
+                moveNext()
+            }
         }
 
         viewModel.reveal.observe(this) { success ->
             if (success) moveNext()
         }
+
+        viewModel.continueEnabled.observe(this) { enabled ->
+            binding.continueButton.isEnabled = enabled
+        }
     }
 
-    private inner class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
-        override fun getItemCount(): Int = 5
+    private inner class ScreenSlidePagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
+        override fun getItemCount(): Int = 4
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> PassPhraseExplainFragment()
-                1 -> PassPhraseHiddenFragment.newInstance(viewModel)
-                2 -> PassPhraseRevealedFragment.newInstance(viewModel)
-                3 -> PassPhraseInputFragment.newInstance(viewModel)
-                4 -> PassPhraseSuccessFragment()
+                1 -> PassPhraseRevealedFragment.newInstance(viewModel)
+                2 -> PassPhraseInputFragment.newInstance(viewModel)
+                3 -> PassPhraseSuccessFragment()
                 else -> Fragment()
             }
         }
     }
 
     private fun moveNext() {
-        if (binding.pager.currentItem != 2 || viewModel.passPhraseConfirmChecked)
-            binding.pager.currentItem++
+        binding.pager.currentItem++
+        if (binding.pager.currentItem == 1)
+            binding.continueButton.isEnabled = false
     }
 }

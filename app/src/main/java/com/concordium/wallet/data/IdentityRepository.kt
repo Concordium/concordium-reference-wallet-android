@@ -5,9 +5,7 @@ import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.IdentityDao
 
 class IdentityRepository(private val identityDao: IdentityDao) {
-
     val allIdentities: LiveData<List<Identity>> = identityDao.getAllAsLiveData()
-
     val allDoneIdentities: LiveData<List<Identity>> = identityDao.getAllDoneAsLiveData()
 
     suspend fun getCount(): Int {
@@ -38,20 +36,16 @@ class IdentityRepository(private val identityDao: IdentityDao) {
         return identityDao.findById(id)
     }
 
+    suspend fun findByProviderIdAndIndex(identityProviderId: Int, identityIndex: Int): Identity? {
+        return identityDao.findByIdentityProviderAndIndex(identityProviderId, identityIndex)
+    }
+
     suspend fun insert(identity: Identity): Long {
         return identityDao.insert(identity).first()
     }
 
-    suspend fun insertAll(identityList: List<Identity>) {
-        identityDao.insert(*identityList.toTypedArray())
-    }
-
     suspend fun update(identity: Identity) {
         identityDao.update(identity)
-    }
-
-    suspend fun updateAll(identityList: List<Identity>) {
-        identityDao.update(*identityList.toTypedArray())
     }
 
     suspend fun delete(identity: Identity) {
@@ -60,5 +54,15 @@ class IdentityRepository(private val identityDao: IdentityDao) {
 
     suspend fun deleteAll() {
         identityDao.deleteAll()
+    }
+
+    suspend fun nextAccountNumber(identityId: Int): Int {
+        val identity = findById(identityId)
+        return identity?.nextAccountNumber ?: 0
+    }
+
+    suspend fun nextIdentityIndex(identityProviderId: Int): Int {
+        val identities = identityDao.findByIdentityProvider(identityProviderId)
+        return identities.maxOfOrNull { it.identityIndex + 1 } ?: 0
     }
 }

@@ -21,12 +21,11 @@ import kotlinx.coroutines.launch
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 
-
 class AlterPasswordViewModel(application: Application) :
     AndroidViewModel(application) {
 
-    private var inititalDecryptedAccountsList: ArrayList<Account> = ArrayList()
-    private var inititalDecryptedIdentityList: List<Identity> = emptyList()
+    private var initialDecryptedAccountsList: ArrayList<Account> = ArrayList()
+    private var initialDecryptedIdentityList: List<Identity> = emptyList()
 
     private var database: WalletDatabase
 
@@ -88,15 +87,15 @@ class AlterPasswordViewModel(application: Application) :
     }
 
     fun getCipherForBiometrics(): Cipher? {
-        try {
+        return try {
             val cipher = App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
             if (cipher == null) {
                 _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
             }
-            return cipher
+            cipher
         } catch (e: KeystoreEncryptionException) {
             _errorLiveData.value = Event(R.string.app_error_keystore)
-            return null
+            null
         }
     }
 
@@ -145,28 +144,21 @@ class AlterPasswordViewModel(application: Application) :
             _waitingLiveData.value = true
             var allSuccess = true
             try {
-                inititalDecryptedIdentityList = identityRepository.getAllDone()
-                for (identity in inititalDecryptedIdentityList) {
-                    val tmpInititalDecryptedAccountsList = accountRepository.getAllByIdentityId(identity.id)
-                    for (account in tmpInititalDecryptedAccountsList) {
-
-                        if(!account.encryptedAccountData.isEmpty()){
-                            val accountDataDecryped = App.appCore.getOriginalAuthenticationManager().decryptInBackground(decryptKey, account.encryptedAccountData)
-                            if(accountDataDecryped != null && isJson(accountDataDecryped)){
-                                account.encryptedAccountData = accountDataDecryped
+                initialDecryptedIdentityList = ArrayList()
+                initialDecryptedIdentityList = identityRepository.getAllDone()
+                for (identity in initialDecryptedIdentityList) {
+                    val tmpInitialDecryptedAccountsList = accountRepository.getAllByIdentityId(identity.id)
+                    for (account in tmpInitialDecryptedAccountsList) {
+                        if (account.encryptedAccountData.isNotEmpty()) {
+                            val accountDataDecrypted = App.appCore.getOriginalAuthenticationManager().decryptInBackground(decryptKey, account.encryptedAccountData)
+                            if(accountDataDecrypted != null && isJson(accountDataDecrypted)){
+                                account.encryptedAccountData = accountDataDecrypted
                             }
                             else{
                                 allSuccess = false
                             }
                         }
-                        inititalDecryptedAccountsList.add(account)
-                    }
-                    val privateIdObjectDataDecryped = App.appCore.getOriginalAuthenticationManager().decryptInBackground(decryptKey, identity.privateIdObjectDataEncrypted)
-                    if(privateIdObjectDataDecryped != null && isJson(privateIdObjectDataDecryped)){
-                        identity.privateIdObjectDataEncrypted = privateIdObjectDataDecryped
-                    }
-                    else{
-                        allSuccess = false
+                        initialDecryptedAccountsList.add(account)
                     }
                 }
 
@@ -193,31 +185,21 @@ class AlterPasswordViewModel(application: Application) :
             database.withTransaction {
                 var allSuccess = true
                 try {
-                    for (account in inititalDecryptedAccountsList) {
-                        if(!account.encryptedAccountData.isEmpty()){
-                            val accountDataEncryped = App.appCore.getOriginalAuthenticationManager().encryptInBackground(encryptKey, account.encryptedAccountData)//Which is decrypted by now!
-                            if(accountDataEncryped != null){
-                                account.encryptedAccountData = accountDataEncryped
+                    for (account in initialDecryptedAccountsList) {
+                        if (account.encryptedAccountData.isNotEmpty()) {
+                            val accountDataEncrypted = App.appCore.getOriginalAuthenticationManager().encryptInBackground(encryptKey, account.encryptedAccountData)//Which is decrypted by now!
+                            if (accountDataEncrypted != null) {
+                                account.encryptedAccountData = accountDataEncrypted
                                 accountRepository.update(account)
                             }
-                            else{
+                            else {
                                 allSuccess = false
                             }
                         }
                     }
-                    for (identity in inititalDecryptedIdentityList) {
-                        val privateIdObjectDataEncryped = App.appCore.getOriginalAuthenticationManager().encryptInBackground(encryptKey, identity.privateIdObjectDataEncrypted)//Which is decrypted by now!
-                        if(privateIdObjectDataEncryped != null){
-                            identity.privateIdObjectDataEncrypted = privateIdObjectDataEncryped
-                            identityRepository.update(identity)
-                        }
-                        else{
-                            allSuccess = false
-                        }
-                    }
 
-                    inititalDecryptedAccountsList = ArrayList()
-                    inititalDecryptedIdentityList = emptyList()
+                    initialDecryptedAccountsList = ArrayList()
+                    initialDecryptedIdentityList = emptyList()
                 } catch (e: Exception) {
                     allSuccess = false
                 }
@@ -236,14 +218,12 @@ class AlterPasswordViewModel(application: Application) :
             }
         }
 
-    fun isJson(Json: String?): Boolean {
+    private fun isJson(Json: String?): Boolean {
         val gson = Gson()
         return try {
             gson.fromJson(Json, Any::class.java)
             val jsonObjType: Any = gson.fromJson(Json, Any::class.java).javaClass
-            if (jsonObjType == String::class.java) {
-                false
-            } else true
+            jsonObjType != String::class.java
         } catch (ex: JsonSyntaxException) {
             false
         }

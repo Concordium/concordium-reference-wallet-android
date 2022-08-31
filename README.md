@@ -6,7 +6,7 @@
 **Concordium Wallet App** is a free and open-source app reference implementation for Android 8.0+ devices. 
 
 ## Google Play
-You can download the latest version on [Google Play](https://play.google.com/store/apps/details?id=software.concordium.mobilewallet.mainnet) 
+You can download the latest version on [Google Play](https://play.google.com/store/apps/details?id=software.concordium.mobilewallet.seedphrase.mainnet) 
 
 ## Getting started
 In order to build the project you need [Android Studio 4.1 or later](https://developer.android.com/studio) 

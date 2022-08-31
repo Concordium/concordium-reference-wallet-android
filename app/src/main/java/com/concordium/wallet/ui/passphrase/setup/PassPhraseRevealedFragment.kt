@@ -1,5 +1,7 @@
 package com.concordium.wallet.ui.passphrase.setup
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,7 +12,6 @@ import android.widget.TextView
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentPassPhraseRevealBinding
 import com.concordium.wallet.ui.passphrase.setup.PassPhraseViewModel.Companion.PASS_PHRASE_DATA
-import com.concordium.wallet.uicore.afterMeasured
 
 class PassPhraseRevealedFragment : PassPhraseBaseFragment() {
     private var _binding: FragmentPassPhraseRevealBinding? = null
@@ -32,18 +33,35 @@ class PassPhraseRevealedFragment : PassPhraseBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        /*
-        binding.gvReveal.afterMeasured {
-            // in Figma the view is 367 x 334 in size
-            val layoutParams = binding.gvReveal.layoutParams
-            layoutParams.height = (binding.root.width.toFloat() * (367f / 334f)).toInt()
-            binding.gvReveal.layoutParams = layoutParams
-        }*/
         binding.cbConfirm.setOnCheckedChangeListener { _, checked ->
-            viewModel.passPhraseConfirmChecked = checked
+            viewModel.continueEnabled.postValue(checked)
         }
         viewModel.generateMnemonicCode()
         binding.gvReveal.adapter = WordsAdapter(requireContext(), viewModel.mnemonicCodeToConfirm)
+        binding.llTapToReveal.setOnClickListener {
+            crossFade()
+            binding.cbConfirm.isEnabled = true
+        }
+    }
+
+    private fun crossFade() {
+        val shortAnimationDuration = 500L
+        binding.gvReveal.apply {
+            alpha = 0f
+            visibility = View.VISIBLE
+            animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration)
+                .setListener(null)
+        }
+        binding.llTapToReveal.animate()
+            .alpha(0f)
+            .setDuration(shortAnimationDuration)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    binding.llTapToReveal.visibility = View.GONE
+                }
+            })
     }
 
     class WordsAdapter internal constructor(private val context: Context, private val items: List<CharArray>) : BaseAdapter() {

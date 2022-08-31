@@ -2,19 +2,13 @@
 <resources>
     <!-- App -->
     <string name="app_name">Concordium</string>
-    <string name="app_menu_item_backup">Backup</string>
     <string name="app_menu_item_accounts">Accounts</string>
-    <string name="app_menu_item_identities">Identities</string>
     <string name="app_menu_item_more">More</string>
     <string name="app_menu_item_add_recipient">Add</string>
     <string name="app_menu_item_burger">Menu</string>
     <string name="app_error_general">Unexpected error</string>
     <string name="app_error_lib">An unexpected error occurred, please try again</string>
     <string name="app_error_encryption">Unexpected encryption/decryption error</string>
-    <string name="app_error_json">Unexpected json format</string>
-    <string name="app_import_missing_identities">The file imported did not contain any identities. This indicates a corrupted backup file.</string>
-
-    <string name="app_error_wrong_environment">Files exported on Concordium Mainnet, TestNet or StageNet are not compatible with the other chains. Please import on the correct chain.</string>
 
     <string name="app_error_keystore">Unexpected keystore error</string>
     <string name="app_error_keystore_key_invalidated">Biometrics has been changed and therefore disabled.</string>
@@ -23,7 +17,6 @@
     <string name="app_error_backend_unknown_sockettimeout_exception">Connection to server timed out. Please check the internet connection.</string>
     <string name="app_error_backend_internal_server">Cannot establish communication with the server.</string>
     <string name="app_error_backend_unknown_error_code">Cannot establish communication with the server.</string>
-    <string name="app_error_backend_unknown">Unknown backend error.</string>
     <string name="app_error_backend_unknown2">Unknown backend error</string>
     <string name="app_version">Version %1$s</string>
     <string name="app_version_about">%1$s</string>
@@ -37,7 +30,6 @@
 
     <string name="dialog_support_subject_reference">Issuance reference: %1$s</string>
     <string name="dialog_support_text">Hi! My identity issuance failed.\n\nHere is my info:\n\nIssuance reference:\n%1$s\n\nMobile Wallet version:\nv%2$s\n\nPlatform:\nAndroid %3$s</string>
-    <string name="dialog_support_creation_data_reference">Identity issuance failed - please try again</string>
 
     <string name="dialog_support">Contact Support</string>
     <string name="dialog_copy">Copy reference</string>
@@ -47,13 +39,16 @@
     <string name="dialog_popup_support_creation_flow_with_email_client_text">The identity issuance failed. You can either try again, or contact Concordium support.\n\nClicking Contact Support will open your e-mail app, with a reference to your submission as subject.\n\n</string>
     <string name="dialog_popup_support_creation_flow_without_email_client_text">The identity issuance failed. You can either try again, or contact Concordium support.\n\nYou can copy the reference below, and then contact Concordium at support@concordium.software</string>
 
-
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
     <string name="dialog_initial_account_error_title">Initial account creation failed</string>
     <string name="dialog_initial_account_error_text">Something went wrong with the initial account creation.\n\nPlease go back and try again, or try at another time.</string>
     <string name="dialog_initial_account_error_text_first">Something went wrong with the initial account creation.\n\nPlease go back and try again.</string>
     <string name="dialog_initial_account_error_positive">Try again</string>
+
+    <string name="dialog_identity_create_error_title">Identity rejected</string>
+    <string name="dialog_identity_create_error_text">Your identity request was unfortunately rejected with the following reason:\n\n%1$s\n\nFor security reasons rejected identity requests cannot be resolved, which means you have to submit a new request.</string>
+    <string name="dialog_identity_create_error_retry">Make new identity request</string>
 
     <!-- Main -->
     <string name="main_title">Accounts</string>
@@ -186,16 +181,9 @@
 
 
     <!-- Intro start-->
-    <string name="intro_start_title">Intro start</string>
     <string name="intro_start_header">Before you begin</string>
     <string name="intro_start_info">Before you start using the Concordium Mobile Wallet, you have to set up a passcode and optionally biometrics.\n\nIt is very important to keep your passcode safe, because it is the only way to access your accounts. Concordium is not be able to change your passcode or help you unlock your wallet if you lose your passcode.\n\nSimilarly, if someone gets your passcode, they will be able to access your accounts.\n\nSo remember to keep your passcode safe!</string>
     <string name="intro_start_confirm">Continue</string>
-
-    <string name="intro_start_create_intro_subtitle1">Welcome to Concordium</string>
-    <string name="intro_start_create_intro_subtitle2">Verifying your identity</string>
-    <string name="intro_start_create_intro_subtitle3">The initial account</string>
-    <string name="intro_start_create_intro_subtitle4">Backup your private keys</string>
-    <string name="intro_start_create_intro_subtitle5">You are ready!</string>
 
     <!-- Intro setup-->
     <string name="intro_setup_title">Getting started</string>
@@ -208,7 +196,7 @@
     <string name="intro_recover_wallet">Recover wallet</string>
 
     <string name="pass_phrase_title">Secret recovery phrase</string>
-    <string name="pass_phrase_explain">The secret recovery phrase is a very important part of having one or more accounts. If you are not acquainted with the concept, please review the video above carefully before continuing.\n\nYou should also consider using a computer you trust, e.g. a private computer and not one at the library.</string>
+    <string name="pass_phrase_explain">It is now time to set up your secret recovery phrase.\n\nThe secret recovery phrase is a series of 24 words that will grant you access to create accounts and identities on Concordium.\n\nAt the same time, it is also the only way to regain access to your accounts and identities if you lose your device or it breaks. This means that it is very important that you write it down and keep it somewhere safe. It it also very important that no one but you has access to the secret recovery phrase.\n\nConcordium cannot recreate your secret recovery phrase or help you regain access to your accounts without it.\n\nIf you lose your secret recovery phrase, you risk losing your accounts!</string>
     <string name="pass_phrase_hidden_please_write">Please write all 24 words down in the right order.</string>
     <string name="pass_phrase_hidden_tap">Tap to reveal your secret recovery phrase. Make sure no one else can see it.</string>
     <string name="pass_phrase_confirm">I confirm I have written down my 24 word secret recovery phrase.</string>
@@ -217,9 +205,8 @@
     <string name="pass_phrase_success">Your secret recovery phrase has been successfully setup!</string>
 
     <string name="pass_phrase_recover_title">Recover your wallet</string>
-    <string name="pass_phrase_recover_explain_1_title">How to recover your wallet:</string>
-    <string name="pass_phrase_recover_explain_1_text">There are two steps to recovering a wallet:\n\n1. Entering your secret recover phrase\n2. Recovering your accounts and identities\n\nThe first step is manual process, in which you have to enter all your 24 words one by one.\n\nThe second step is most often automatic, but in some cases you will have to make some additional inputs. additional inputs. We\'ll get back to that.\n\nLet\'s get to the secret recovery phrase!</string>
-    <string name="pass_phrase_recover_explain_2_text">If you need a reminder on what exactly the secret recovery phrase is, you can watch the video above… or browse through a carousel… or something.</string>
+    <string name="pass_phrase_recover_explain_title">How to recover your wallet:</string>
+    <string name="pass_phrase_recover_explain_text">There are two steps to recovering a wallet:\n\n1. Entering your secret recover phrase\n2. Recovering your accounts and identities\n\nThe first step is manual process, in which you have to enter all your 24 words one by one.\n\nThe second step is most often automatic, but in some cases you will have to make some additional inputs. additional inputs. We\'ll get back to that.\n\nLet\'s get to the secret recovery phrase!</string>
     <string name="pass_phrase_recover_input_explain">Enter the correct word for each index.</string>
     <string name="pass_phrase_recover_input_clear_all">Clear all</string>
     <string name="pass_phrase_recover_input_clear_below">Clear below</string>
@@ -227,7 +214,35 @@
     <string name="pass_phrase_recover_success">Your secret recovery phrase has been successfully entered! Tab continue to recover your accounts and identities.</string>
     <string name="pass_phrase_recover_input_title">Your secret recovery phrase</string>
 
-    <string name="intro_flow_title">Introduction</string>
+    <string name="pass_phrase_recover_process_title">Recovering your accounts and identities</string>
+    <string name="pass_phrase_recover_process_subtitle">Recovering IDs and accounts</string>
+    <string name="pass_phrase_recover_process_scanning">Scanning the Concordium blockchain. Hang on while we find your account and identities.</string>
+    <string name="pass_phrase_recover_process_continue">Continue</string>
+    <string name="pass_phrase_recover_process_continue_to_wallet">Continue to wallet</string>
+    <string name="pass_phrase_recover_process_finished">Recovery finished</string>
+    <string name="pass_phrase_recover_process_partial">Recovery may be partial</string>
+    <string name="pass_phrase_recover_process_partial_description">There was a problem contacting some identity providers. This means that some identities and accounts may not have been recovered. If you can see that something is missing, you can try to restart the recovery process, or you can try again later by starting the recovery process from the settings menu. The affected identity providers:</string>
+    <string name="pass_phrase_recover_process_recovered">You have successfully recovered:</string>
+    <string name="pass_phrase_recover_process_nothing_new">Nothing new was found.</string>
+    <string name="pass_phrase_recover_process_finished_accounts">Accounts:</string>
+    <string name="pass_phrase_recover_process_try_again">Try again</string>
+
+    <string name="earn_title">Earning rewards</string>
+    <string name="earn_subtitle">There are two options for earning rewards on Concordium: Baking and delegation.</string>
+    <string name="earn_baker_title">Baking</string>
+    <string name="earn_baker_description">As a baker you participate in the network by baking blocks on the Concordium network. This requires a minimum of %1$s CCD and access to a dedicated node.</string>
+    <string name="earn_delegation_title">Delegation</string>
+    <string name="earn_delegation_description">If you don\'t have access to your own node you may delegate your stake to one of the other bakers. There is no minimum amount of CCD required when delegating.</string>
+    <string name="earn_description">Choose the option that suits you below to learn more.\n\nNOTE: A single account cannot both be a baker and delegator, but it is possible to stop one and change to the other.</string>
+    <string name="earn_delegation_button">Continue to delegation setup</string>
+    <string name="earn_baker_button">Continue to baker setup</string>
+
+    <!-- Identity intro flow -->
+    <string name="identity_intro_flow_title">Introduction</string>
+    <string name="identity_intro_flow_subtitle1">Welcome to Concordium</string>
+    <string name="identity_intro_flow_subtitle2">A Concordium Identity</string>
+    <string name="identity_intro_flow_subtitle3">Getting verified</string>
+    <string name="identity_intro_flow_subtitle4">Your first account</string>
 
     <!-- Delegation intro -->
     <string name="delegation_intro_flow_title">Delegation</string>
@@ -274,7 +289,7 @@
     <string name="delegation_status_content_delegation_will_be_stopped">The delegation will be stopped, and the delegation amount will be unlocked on the public balance of the account.</string>
 
     <string name="delegation_register_delegation_intro">You can delegate to an open pool of your choice, or you can stake using passive delegation.</string>
-    <string name="delegation_register_delegation_desc">If you don’t already know what baker pool you want to delegate an amount to, you can read more about finding one here:\n\n<a href="https://developer.concordium.software/en/mainnet/net/concepts/concepts-delegation.html">developer.concordium.software</a></string>
+    <string name="delegation_register_delegation_desc">If you don\'t already know which baker pool you want to delegate an amount to, you can look for one here:\n\n<a href="https://ccdscan.io/staking">https://ccdscan.io/staking</a></string>
     <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific baker pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a baker node.\n\nFor more info you can visit\n\n<a href="https://developer.concordium.software/en/mainnet/net/concepts/concepts-delegation.html">developer.concordium.software</a></string>
     <string name="delegation_register_delegation_pool_id_hint">Enter baker pool ID</string>
     <string name="delegation_register_delegation_pool_id_hint_update">Optional: New baker pool ID</string>
@@ -294,11 +309,9 @@
 
     <string name="delegation_register_delegation_amount_current_amount">Current amounts on your account:</string>
     <string name="delegation_register_delegation_amount_balance">Balance:</string>
-    <string name="delegation_register_delegation_amount_at_disposal">At disposal:</string>
     <string name="delegation_register_delegation_amount_delegation">Delegation:</string>
     <string name="delegation_register_delegation_amount_enter_amount">Enter the amount you want to delegate</string>
     <string name="delegation_update_delegation_amount_enter_amount">Optional: Enter new delegation amount</string>
-    <string name="delegation_register_delegation_amount_hint">0.00</string>
     <string name="delegation_register_delegation_amount_locked">Amount locked</string>
     <string name="delegation_register_delegation_amount_insufficient_error">Insufficient funds</string>
     <string name="delegation_register_delegation_amount_current_pool">Current pool:</string>
@@ -412,7 +425,6 @@
     <string name="baker_status_baker_waiting_title">Waiting for baker transaction to finalize.</string>
     <string name="baker_status_baker_waiting">Waiting for transaction to finalize.</string>
     <string name="baker_status_baker_registered_title">Your baker is registered.</string>
-    <string name="baker_status_baker_remove">Remove baker</string>
     <string name="baker_status_baker_account">Baker account</string>
     <string name="baker_status_baker_stake">Baker stake</string>
     <string name="baker_status_baker_id">Baker ID</string>
@@ -424,10 +436,6 @@
     <string name="baker_status_baker_delegation_pool_status_closed">Closed for delegation</string>
     <string name="baker_status_baker_delegation_pool_status_closed_for_new">Closed for new delegation</string>
     <string name="baker_status_baker_metadata_url">Metadata URL</string>
-    <plurals name="baker_status_baker_take_effect_in">
-        <item quantity="one">The following changes will take effect in approximately %d day</item>
-        <item quantity="other">The following changes will take effect in approximately %d days</item>
-    </plurals>
     <string name="baker_status_baker_effective_remove">The baker will be deregistered, and the stake will be unlocked on the public balance of the account.</string>
     <string name="baker_status_baker_effective_time">%1$s at %2$s</string>
     <string name="baker_status_baker_take_effect_on">The following changes will take effect on</string>
@@ -524,6 +532,7 @@
     <string name="baker_notice_ok">Okay</string>
 
     <string name="baker_update_keys_settings_title">Update baker keys</string>
+    <string name="baker_keys_saved_local">Your backup has been saved to local storage.</string>
 
 
     <!-- ***** Auth ***** -->
@@ -585,6 +594,15 @@
     <!-- Identities overview -->
     <string name="identities_overview_title">Identities</string>
     <string name="identities_overview_no_identities">You have no identities yet.</string>
+    <string name="identities_overview_create_account_title">Create new account</string>
+    <string name="identities_overview_create_account_select_identity">Select identity to submit account with</string>
+    <string name="identities_overview_identity_verified_title">Identity verified</string>
+    <string name="identities_overview_identity_verified_message">Identity %1$s has been verified by the identity provider. You can now start using the identity to create accounts in the Concordium Mobile Wallet.</string>
+    <string name="identities_overview_identity_create_account_now">Create account now</string>
+    <string name="identities_overview_identity_later">Later</string>
+    <string name="identities_overview_identity_rejected_title">Identity rejected</string>
+    <string name="identities_overview_identity_rejected_text">Your identity request was unfortunately rejected with the following reason:\n\n%1$s\n\nRejected identity requests cannot be resolved, so the rejected identity will be discarded, after dismissing this notification.\n\nDo you want to make another request now?</string>
+    <string name="identities_overview_identity_request_another">Request another identity</string>
 
     <!-- Identity details -->
     <string name="identity_details_title">Identity</string>
@@ -592,41 +610,35 @@
 
     <!-- Identity create -->
     <string name="identity_create_title">Initial account creation</string>
-    <string name="identity_create_info_header">The initial account</string>
-    <string name="identity_create_info_info">On the following pages you will be guided through the three step process of requesting an initial account and an identity:\n\n1. Naming your initial account.\n2. Naming your identity.\n3. Requesting the initial account and identity from a provider of your choice.</string>
-    <string name="identity_create_info_info_first">The initial account, is an account created by an identity provider of your choice. This account is created at the same time as you request an identity from an identity provider. You will have to request both the identity and the initial account, before you can start using the Concordium block-chain.\n\nOn the following pages you will be guided through the three step process of requesting the initial account and an identity:\n\n1. Naming your initial account.\n2. Naming your identity.\n3. Requesting the initial account and identity from a provider of your choice.</string>
-    <string name="identity_create_info_confirm">Okay, got it!</string>
-    <string name="identity_create_account_name_header">Name your initial account</string>
-    <string name="identity_create_account_name_info">For easy identification of accounts in your wallet, all accounts have a name. This name is only visible to you and you can name it whatever you want. It does not have to be your actual name. The name is not the account address.\n\nType the name you want to give your initial account below.</string>
-    <string name="identity_create_account_name_account_name">Initial account name</string>
-    <string name="identity_create_account_name_confirm">Continue</string>
     <string name="identity_create_identity_name_header">Name your identity card</string>
     <string name="identity_create_identity_name_info">You should also give your identity card a name to easily keep track of it. Similar to the name you gave the initial account, this name is only visible to you, and you can name it whatever you want.\n\nType the name you want to give your identity card in your wallet below.</string>
     <string name="identity_create_identity_name_identity_name">Identity card name</string>
     <string name="identity_create_identity_name_confirm">Continue</string>
     <string name="identity_create_identity_provider_header">Choosing an identity provider</string>
-    <string name="identity_create_identity_provider_info"><![CDATA[The identity provider will verify your identity using a government issued identity document, some identity attributes you provide, and a selfie.<br><br>You can pick one from the list below. To read more about them before deciding, click the links below.<br><br>%1$s]]></string>
+    <string name="identity_create_identity_provider_info"><![CDATA[As mentioned, the identity provider will verify your identity using a government issued identity document, some identity attributes you provide, and a selfie.<br><br>You can pick one from the list below. To read more about them before deciding, click the links below.<br><br>%1$s]]></string>
     <string name="identity_create_identity_provider_privacy_policy">Privacy Policy</string>
 
     <!-- Identity provider list -->
-    <string name="identity_provider_list_title">New Identity Verification</string>
-    <string name="identity_provider_list_note">Selecting a 3rd party Identity Issuer will take you to their
-        Identity Issuance flow.You will be returned to the app upon completion.\n\nNote: More Identity Issuers are coming soon!</string>
+    <string name="identity_provider_list_first_title">Your first identity</string>
+    <string name="identity_provider_list_title">Request a new identity</string>
 
     <!-- Identity Provider Webview -->
     <string name="identity_provider_webview_title">Identity Verification</string>
 
     <!-- Identity confirmed -->
-    <string name="identity_confirmed_title">Account</string>
+    <string name="account">Account</string>
+    <string name="identity_confirmed_title">Your first identity</string>
     <string name="identity_confirmed_header">Verification request submitted!</string>
     <string name="identity_confirmed_info">Your request has been submitted with the identity provider. Now you just have to wait for a moment for them to process your submission.\n\nYou can press continue to have a look at the app, while you wait.</string>
-    <string name="identity_confirmed_info_first">It might take a little while for the identity provider to finish your request. In the meanwhile, you can have a look at the app.</string>
+    <string name="identity_confirmed_info_first">Your request has been submitted with the identity provider. Now you just have to wait for a moment for them to process your submission. Once your identity is verified, you can create your first account.\n\nYou can press continue to have a look at the app, while you wait.</string>
     <string name="identity_confirmed_confirm">Continue</string>
     <string name="identity_confirmed_failed">Identity issuance failed!</string>
-
-    <string name="identity_confirmed_alert_dialog_title">Identity Issuance</string>
-    <string name="identity_confirmed_alert_dialog_text">Please check back in the app regularly, until the response from the identity provider has been received. It’s usually ready within 15 minutes, and can be retrieved for up to seven days.</string>
-    <string name="identity_confirmed_alert_dialog_ok">Okay</string>
+    <string name="identity_confirmed_confirm_account_submission_toolbar">Your first account</string>
+    <string name="identity_confirmed_confirm_account_submission_title">Account submission</string>
+    <string name="identity_confirmed_confirm_account_submission_text">Once the identity provider has verified your identity, you will be able to submit your first Concordium account. So hang on for a bit and wait for them to finish. You can also come back later to submit your account.\n\nWhen you have submitted your account, you will be taken to the wallet.</string>
+    <string name="identity_confirmed_finish_button">Finish</string>
+    <string name="identity_confirmed_submit_new_account_for_identity">Submit a new account for Identity %1$s?</string>
+    <string name="identity_confirmed_create_new_account">Create new account</string>
 
     <!-- Identity attributes -->
     <string name="identity_attribute_first_name">First name</string>
@@ -655,7 +667,6 @@
 
     <!-- Accounts overview -->
     <string name="accounts_overview_identity_pending_warning">Your identity %1$s is still getting verified.</string>
-    <string name="accounts_overview_backup_warning">As your accounts are not backed up, you risk losing your tokens.</string>
     <string name="accounts_overview_title">Accounts</string>
     <string name="accounts_overview_create_identity">Create new identity</string>
     <string name="accounts_overview_create_account">Create account</string>
@@ -680,8 +691,6 @@
     <string name="new_account_name_account_name_hint">Account name</string>
 
     <!-- Identity overview -->
-    <string name="identity_verification_failed">Verification failed</string>
-    <string name="identity_verification_pending">Verification in progress</string>
 
     <!-- New account identity -->
     <string name="new_account_identity_title">Add Identity Data</string>
@@ -697,10 +706,8 @@
     <!-- New account identity attributes -->
     <string name="new_account_identity_attributes_title">Reveal Identity Data</string>
     <string name="new_account_identity_attributes_confirm">Submit account</string>
-    <string name="new_account_identity_attributes_header">Select identity data</string>
     <string name="new_account_identity_attributes_error_max_accounts_title">Error</string>
     <string name="new_account_identity_attributes_error_max_accounts">Ooops! This identity already has too many accounts submitted to the chain. Please select another identity to continue.</string>
-    <string name="new_account_identity_attributes_error_max_accounts_alt">You already have the maximum number of accounts for this identity.</string>
 
     <!-- New account created -->
     <string name="new_account_confirmed_title">Account Creation</string>
@@ -718,6 +725,7 @@
     <string name="account_details_transfers_title">Transfers</string>
     <string name="account_details_identity_data_title">Identity Data</string>
     <string name="account_details_send">Send</string>
+    <string name="account_details_earn">Earn</string>
     <string name="account_details_unshield">Unshield</string>
     <string name="account_details_shield">Shield</string>
     <string name="account_details_address">Receive</string>
@@ -782,10 +790,6 @@
     <string name="send_funds_more_than_95_continue">Continue anyway</string>
     <string name="send_funds_more_than_95_new_stake">Enter a new amount to shield</string>
 
-    <string name="send_funds_select_recipient_or_unshield_amount">Select recipient</string>
-    <string name="send_funds_select_recipient">Select recipient</string>
-    <string name="send_funds_recipient_shield">Amount will be shielded</string>
-    <string name="send_funds_recipient_unshield">Amount will be unshielded</string>
     <string name="send_funds_confirm">Send amount</string>
     <string name="send_funds_confirm_shield">Shield amount</string>
     <string name="send_funds_confirm_unshield">Unshield amount</string>
@@ -796,7 +800,6 @@
     <string name="send_funds_confirmation_send_shielded">Confirm to send shielded amount\n%1$s to %2$s\nEstimated transaction fee:\n%3$s\n%4$s</string>
     <string name="send_funds_confirmation_memo">Memo: %1$s</string>
     <string name="send_funds_confirmation_memo_with_linebreak">Memo:\n%1$s</string>
-    <string name="send_funds_error_same_account">Recipient account is not allowed to be the same as sending account.</string>
 
     <!-- Add Memo -->
     <string name="add_memo_title">Add memo</string>
@@ -830,90 +833,22 @@
     <string name="more_overview_title">More</string>
     <string name="more_overview_identities">Your identity cards</string>
     <string name="more_overview_item_address_book">Address Book</string>
-    <string name="more_overview_item_export">Make backup</string>
-    <string name="more_overview_item_import">Restore from backup</string>
+    <string name="more_overview_item_recover">Recovery</string>
     <string name="more_overview_item_about">About</string>
     <string name="more_overview_item_alter_password"><![CDATA[Update Passcode & Biometrics]]></string>
     <string name="more_overview_item_developer_options">Developer Options</string>
 
-    <!-- Export -->
-    <string name="export_title">Export</string>
-    <string name="export_confirm">Export</string>
-    <string name="export_continue">Continue</string>
-    <string name="export_error_file">Could not write to file.</string>
-    <string name="export_description">Here you can export your identities, accounts and the address book.\n\nThe exported data includes private keys which give access to your identities and accounts. For this reason the data will be encrypted under a password that you will be asked to select during the process. It is important that you store the password safely and securely. The password will be needed for access to exported data (e.g. if you want to import an account into the Concordium Client).</string>
-
-    <string name="export_setup_password_title">Enter Export Password</string>
-    <string name="export_setup_password_repeat_title">Re-enter Export Password</string>
-    <string name="export_setup_password_info">Select an export password.\nThe password will be needed during import.</string>
-    <string name="export_setup_password_repeat_info">Re-enter your export password.</string>
-    <string name="export_password">Export Password</string>
-    <string name="export_error_entries_different">Entries do not match! Please try again.</string>
-    <string name="export_error_password_not_valid">Password is not valid - minimum length is 6.</string>
-    <string name="export_error_password_setup">Failed to setup password</string>
-
-    <string name="export_error_account_not_finalised">The following accounts are either failed or not ready on the chain, so they cannot be exported.\n\n</string>
-    <string name="export_error_account_not_finalised_name">%s. %s\n</string>
-    <string name="export_error_account_not_finalised_cancel">Cancel</string>
-    <string name="export_error_account_not_finalised_continue">Continue</string>
-
     <string name="export_method_question">Do you want to export your backup via another app, or save it to local storage?</string>
     <string name="export_method_another_app">Another app</string>
     <string name="export_method_local_storage">Local storage</string>
-    <string name="export_backup_saved_local">Your backup has been saved to local storage.</string>
 
     <!-- About -->
-
     <string name="about_title">About</string>
     <string name="about_support">Support</string>
     <string name="about_support_text">If you encountered a problem, or need help with something, you can reach out to us via <a href="support@concordium.software">support@concordium.software</a></string>
     <string name="about_contact">Website</string>
     <string name="about_contact_text">For more info about Concordium you can visit <a href="https://concordium.com">concordium.com</a></string>
     <string name="about_version">App Version</string>
-    <string name="about_version_text">%s</string>
-
-
-    <!-- Import -->
-    <string name="import_title">Import</string>
-    <string name="import_confirm">Ok, thanks</string>
-    <string name="import_error_file">Could not read import file</string>
-    <string name="import_error_format">Unexpected import json format</string>
-    <string name="import_error_password_or_file_content">Invalid password or import file corrupted</string>
-
-    <string name="import_password_title">Enter Export Password</string>
-    <string name="import_password_info">Enter the password created when exporting the file.</string>
-    <string name="import_password_confirm">Continue</string>
-    <string name="import_password_error_password_not_valid">Password is not valid - minimum length is 6.</string>
-
-    <string name="import_failed_header">Import failed</string>
-    <string name="import_confirmed_title">Import</string>
-    <string name="import_confirmed_header">Imported successfully</string>
-    <string name="import_confirmed_header_partially">Import partially succeeded</string>
-    <string name="import_confirmed_info">You have successfully imported:</string>
-    <string name="import_confirmed_id">ID:</string>
-    <string name="import_confirmed_accounts">Accounts:</string>
-    <string name="import_confirmed_address_book">Address Book</string>
-    <string name="import_confirmed_recipient_accounts">Recipient accounts:</string>
-    <string name="import_confirmed_state_id_import_failed">ID import failed</string>
-    <string name="import_confirmed_state_id_import_failed_accounts">Account import failed</string>
-    <string name="import_confirmed_state_duplicate">(Already existed)</string>
-    <plurals name="import_confirmed_state_errors">
-        <item quantity="one">(Imported with %d error)</item>
-        <item quantity="other">(Imported with %d errors)</item>
-    </plurals>
-    <plurals name="import_confirmed_state_recipients_duplicate">
-        <item quantity="one">(%d recipient account was not imported, as it already existed)</item>
-        <item quantity="other">(%d recipient accounts were not imported, as they already existed)</item>
-    </plurals>
-    <plurals name="import_confirmed_state_recipients_failed">
-        <item quantity="one">(%d recipient account import failed)</item>
-        <item quantity="other">(%d recipient account imports failed)</item>
-    </plurals>
-    <plurals name="import_confirmed_state_accounts_failed">
-        <item quantity="one">(%d account import failed)</item>
-        <item quantity="other">(%d account imports failed)</item>
-    </plurals>
-    <string name="import_confirmed_readonly_accounts_header">Accounts found on chain (read only):</string>
 
     <!-- Change Password -->
     <string name="alterpassword_title"><![CDATA[Update Passcode & Biometrics]]></string>
@@ -927,8 +862,6 @@
     <string name="recipient_list_default_title">Address Book</string>
     <string name="recipient_list_select_title">Select Recipient</string>
     <string name="recipient_list_search_hint">Search recipients</string>
-    <string name="recipient_list_shield_amount">Shield amount</string>
-    <string name="recipient_list_unshield_amount">Unshield amount</string>
 
     <!-- New recipient -->
     <string name="recipient_edit_title">Edit Address</string>
@@ -958,18 +891,21 @@
     <string name="error_database_close">Close</string>
 
     <string name="accounts_overview_total_details_disposal">Total currently at disposal</string>
-    <string name="accounts_overview_total_details_staked">Stake with baker %1$d</string>
     <string name="accounts_overview_total_details_staked_no_id">Stake with baker</string>
     <string name="account_details_menu_release_schedule">Release schedule</string>
     <string name="account_details_menu_transfer_filter">Transfer filters</string>
-    <string name="account_details_menu_delegation">Delegation</string>
-    <string name="account_details_menu_baking">Baking</string>
     <string name="account_details_menu_show_shielded">Show shielded balance on %1$s</string>
     <string name="account_details_menu_hide_shielded">Hide shielded balance on %1$s</string>
     <string name="account_details_menu_decrypt">Decrypt</string>
+    <string name="account_details_menu_change_name">Change account name</string>
     <string name="account_details_delegation_with_baker_pool">Delegation with baker pool %1$s</string>
     <string name="account_details_delegation_with_passive_pool">Passive delegation</string>
     <string name="account_details_stake_with_baker">Stake with baker %1$s</string>
+
+    <string name="account_details_change_name_popup_title">Change account name</string>
+    <string name="account_details_change_name_popup_subtitle">You can enter the new account name here.</string>
+    <string name="account_details_change_name_popup_cancel">Cancel</string>
+    <string name="account_details_change_name_popup_save">Save</string>
 
     <string name="account_details_toggle_shielded">Shielded balance</string>
     <string name="account_details_toggle_balance">Balance</string>
@@ -979,7 +915,6 @@
     <string name="account_release_schedule_amount">Amount</string>
     <string name="account_release_schedule_copied">Transaction copied</string>
     <string name="account_release_schedule_copy_title">Account address</string>
-    <string name="account_details_baker_id">Baker ID:</string>
 
     <string name="account_total_details_disposal">Balance total</string>
     <string name="account_shielded_total_details_disposal">Shielded balance total of %1$s</string>
@@ -1000,32 +935,12 @@
 
     <string name="contact_issuance_hash_value_copied">Reference text copied</string>
 
-    <string name="send_fund_optional_memo">You can enter an optional memo here.</string>
     <string name="transaction_memo_warning_title">Transaction memos</string>
     <string name="transaction_memo_warning_text">Transaction memos are public and visible to everyone on the blockchain. Any memo sent with a transaction are permament, and will be visible forever, so be careful what you write in the memo.\n\nAdding a memo will increase the transaction fee.</string>
     <string name="transaction_memo_warning_dont_show">Don’t show again</string>
     <string name="transaction_memo_warning_ok">Okay</string>
     <string name="send_funds_optional_add_memo">Optional: Add memo</string>
 
-    <string name="finalized_account_title_singular">Your new account is ready!</string>
-    <string name="finalized_account_title_plural">Your new accounts are ready!</string>
-    <string name="finalized_account_message_singular">Your account %1$s has finalized, and is now ready for use.\n\nA backup file is the only way to restore private keys if you lose your phone or re-install the wallet. Without the private keys, you cannot access your accounts. Concordium cannot recover your private keys or export password and you will lose your CCDs. You should export a new backup file EVERY time a new account is created. Protect your export password.\n\nRemember to store the file named concordium-backup.concordiumwallet securely.</string>
-    <string name="finalized_account_message_plural">Your new accounts are now finalized and ready for use.\n\nA backup file is the only way to restore private keys if you lose your phone or re-install the wallet. Without the private keys, you cannot access your accounts. Concordium cannot recover your private keys or export password and you will lose your CCDs. You should export a new backup file EVERY time a new account is created. Protect your export password.\n\nRemember to store the file named concordium-backup.concordiumwallet securely.</string>
-    <string name="finalized_account_backup">Make backup</string>
-    <string name="finalized_account_ok">Okay</string>
-
-    <string name="finalized_account_no_backup_title_warning">WARNING</string>
-    <string name="finalized_account_no_backup_dismiss">Dismiss</string>
-    <string name="finalized_account_no_backup_message">Are you sure that you do not want to create a backup? You risk losing your CCDs.\n\nIf you lose your phone and do not have a backup you will no longer have access to your account(s) and will lose your CCDs.</string>
-
-    <string name="app_update_account_no_backup_title_warning">Welcome back!</string>
-    <string name="app_update_account_no_backup_message">Did you make a backup of your identities and accounts recently?\n\nA backup file is the only way to restore private keys if you lose your phone or re-install the wallet. Without the private keys, you cannot access your accounts. Concordium cannot recover your private keys or export password and you will lose your CCDs. You should export a new backup file EVERY time a new account is created. Protect your export password.\n\nRemember to store the file named concordium-backup.concordiumwallet securely.</string>
-    <string name="app_update_account_no_backup_dismiss">Not now</string>
-    <string name="app_update_account_no_backup_now">Make backup</string>
-
-    <string name="account_card_action_send">Send</string>
-    <string name="account_card_action_receive">Receive</string>
-    <string name="account_card_action_more">More</string>
     <string name="shielding_intro_skip">Skip</string>
     <string name="shielding_intro_back">Back</string>
     <string name="shielding_intro_next">Next</string>
@@ -1037,14 +952,12 @@
     <string name="account_details_shielded_warning_dismiss">Don’t show again</string>
 
     <string name="force_update_needed_title">Update required</string>
-    <string name="force_update_needed_message">You must update your Concordium Mobile Wallet to continue.\n\nIf you don’t have a backup, Concordium strongly recommends making one before updating.</string>
+    <string name="force_update_needed_message">You must update your Concordium Mobile Wallet to continue.</string>
     <string name="force_update_needed_update_now">Update now</string>
-    <string name="force_update_needed_backup">Make backup</string>
     <string name="force_update_warning_title">Update ready</string>
-    <string name="force_update_warning_message">There is a new update for the Concordium Mobile Wallet.\n\nIf you don’t have a backup, Concordium strongly recommends making one before updating.</string>
+    <string name="force_update_warning_message">There is a new update for the Concordium Mobile Wallet.</string>
     <string name="force_update_warning_update_now">Update now</string>
     <string name="force_update_warning_remind_me">Remind me next time I open the wallet</string>
-    <string name="force_update_warning_backup">Make backup</string>
 
     <string name="force_update_intro_needed_title">Update required</string>
     <string name="force_update_intro_needed_message">You must update your Concordium Mobile Wallet to continue.</string>

@@ -8,11 +8,11 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityRecoverWalletBinding
-import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.passphrase.setup.SetupWalletActivity
+import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessActivity
 
 class RecoverWalletActivity : BaseActivity() {
     private lateinit var binding: ActivityRecoverWalletBinding
@@ -26,6 +26,18 @@ class RecoverWalletActivity : BaseActivity() {
         initializeViewModel()
         initViews()
         initObservers()
+
+        if (BuildConfig.DEBUG) {
+            binding.toolbarLayout.toolbarTitle.isClickable = true
+            binding.toolbarLayout.toolbarTitle.setOnClickListener {
+                viewModel.hack()
+            }
+        }
+    }
+
+    override fun onBackPressed() {
+        if (binding.pager.currentItem != 2)
+            super.onBackPressed()
     }
 
     private fun initializeViewModel() {
@@ -41,10 +53,15 @@ class RecoverWalletActivity : BaseActivity() {
         binding.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                if (position == 2)
+                if (position == 1)
                     binding.continueButton.visibility = View.GONE
                 else
                     binding.continueButton.visibility = View.VISIBLE
+                if (position == 2) {
+                    hideActionBarBack()
+                } else {
+                    showActionBarBack()
+                }
             }
         })
 
@@ -52,10 +69,8 @@ class RecoverWalletActivity : BaseActivity() {
 
         binding.continueButton.setOnClickListener {
             if (binding.pager.currentItem == (binding.pager.adapter as ScreenSlidePagerAdapter).itemCount - 1) {
-                println("LC -> Must go to explain create identity flow")
                 finish()
-                startActivity(Intent(this, MainActivity::class.java))
-                TODO("Must go to explain create identity flow!")
+                startActivity(Intent(this, RecoverProcessActivity::class.java))
             } else {
                 binding.pager.currentItem++
             }
@@ -70,13 +85,12 @@ class RecoverWalletActivity : BaseActivity() {
     }
 
     private inner class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
-        override fun getItemCount(): Int = 4
+        override fun getItemCount(): Int = 3
         override fun createFragment(position: Int): Fragment {
             return when (position) {
-                0 -> PassPhraseRecoverExplain1Fragment()
-                1 -> PassPhraseRecoverExplain2Fragment()
-                2 -> PassPhraseRecoverInputFragment.newInstance(viewModel)
-                3 -> PassPhraseRecoverSuccessFragment()
+                0 -> PassPhraseRecoverExplainFragment()
+                1 -> PassPhraseRecoverInputFragment.newInstance(viewModel)
+                2 -> PassPhraseRecoverSuccessFragment()
                 else -> Fragment()
             }
         }

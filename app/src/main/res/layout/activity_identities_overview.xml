@@ -18,6 +18,19 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/select_identity_title"
+            style="@style/TextView.BlueHeader"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_layout"
+            android:layout_marginVertical="@dimen/activity_vertical_margin"
+            android:paddingHorizontal="@dimen/activity_horizontal_margin"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:textAlignment="center"
+            android:text="@string/identities_overview_create_account_select_identity" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/identity_recyclerview"
             android:layout_width="0dp"
@@ -26,7 +39,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar_layout"
+            app:layout_constraintTop_toBottomOf="@+id/select_identity_title"
             tools:listitem="@layout/item_identity_provider"
             android:scrollbars="vertical"
             tools:visibility="visible" />

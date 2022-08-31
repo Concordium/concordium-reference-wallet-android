@@ -72,7 +72,7 @@ object DateTimeUtil {
             return date.time
         }
         catch(e:Exception){
-            return null;
+            return null
         }
     }
 
@@ -90,7 +90,7 @@ object DateTimeUtil {
             return date.time
         }
         catch(e:Exception){
-            return null;
+            return null
         }
     }
 

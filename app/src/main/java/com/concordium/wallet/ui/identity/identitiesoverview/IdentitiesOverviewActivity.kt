@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Identity
@@ -13,31 +12,44 @@ import com.concordium.wallet.databinding.ActivityIdentitiesOverviewBinding
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.IdentityAdapter
-import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
+import com.concordium.wallet.ui.identity.identityconfirmed.IdentityConfirmedActivity
 import com.concordium.wallet.ui.identity.identitydetails.IdentityDetailsActivity
+import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 
 class IdentitiesOverviewActivity : BaseActivity() {
     private lateinit var binding: ActivityIdentitiesOverviewBinding
     private lateinit var viewModel: IdentitiesOverviewViewModel
     private lateinit var mainViewModel: MainViewModel
     private lateinit var identityAdapter: IdentityAdapter
+    private var showForCreateAccount = false
 
-    //region Lifecycle
-    //************************************************************
+    companion object {
+        const val SHOW_FOR_CREATE_ACCOUNT = "SHOW_FOR_CREATE_ACCOUNT"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityIdentitiesOverviewBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identities_overview_title)
+
+        showForCreateAccount = intent.extras?.getBoolean(SHOW_FOR_CREATE_ACCOUNT, false) ?: false
+
+        if (showForCreateAccount) {
+            setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identities_overview_create_account_title)
+            binding.selectIdentityTitle.visibility = View.VISIBLE
+        }
+        else {
+            setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identities_overview_title)
+        }
 
         initializeViewModel()
         initializeViews()
-        viewModel.initialize()
+        viewModel.loadIdentities()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.add_item_menu, menu)
+        if (!showForCreateAccount)
+            menuInflater.inflate(R.menu.add_item_menu, menu)
         return true
     }
 
@@ -48,11 +60,6 @@ class IdentitiesOverviewActivity : BaseActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    //endregion
-
-    //region Initialize
-    //************************************************************
-
     private fun initializeViewModel() {
         viewModel = ViewModelProvider(
             this,
@@ -62,12 +69,12 @@ class IdentitiesOverviewActivity : BaseActivity() {
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(this.application)
         )[MainViewModel::class.java]
-        viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
+        viewModel.waitingLiveData.observe(this) { waiting ->
             waiting?.let {
                 showWaiting(waiting)
             }
-        })
-        viewModel.identityListLiveData.observe(this, Observer { identityList ->
+        }
+        viewModel.identityListLiveData.observe(this) { identityList ->
             identityList?.let {
                 identityAdapter.setData(it)
                 showWaiting(false)
@@ -77,7 +84,7 @@ class IdentitiesOverviewActivity : BaseActivity() {
                     binding.noIdentityLayout.visibility = View.GONE
                 }
             }
-        })
+        }
     }
 
     private fun initializeViews() {
@@ -99,19 +106,16 @@ class IdentitiesOverviewActivity : BaseActivity() {
 
         identityAdapter.setOnItemClickListener(object : IdentityAdapter.OnItemClickListener {
             override fun onItemClicked(item: Identity) {
-                gotoIdentityDetails(item)
+                if (showForCreateAccount)
+                    gotoSubAccount(item)
+                else
+                    gotoIdentityDetails(item)
             }
         })
     }
 
-    //endregion
-
-    //region Control/UI
-    //************************************************************
-
     private fun gotoCreateIdentity() {
-        val intent = Intent(this, IdentityCreateActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(this, IdentityProviderListActivity::class.java))
     }
 
     private fun showWaiting(waiting: Boolean) {
@@ -124,11 +128,15 @@ class IdentitiesOverviewActivity : BaseActivity() {
 
     private fun gotoIdentityDetails(identity: Identity) {
         val intent = Intent(this, IdentityDetailsActivity::class.java)
-        intent.putExtra(
-            IdentityDetailsActivity.EXTRA_IDENTITY, identity
-        )
+        intent.putExtra(IdentityDetailsActivity.EXTRA_IDENTITY, identity)
         startActivity(intent)
     }
 
-    //endregion
+    private fun gotoSubAccount(identity: Identity) {
+        finish()
+        val intent = Intent(this, IdentityConfirmedActivity::class.java)
+        intent.putExtra(IdentityConfirmedActivity.EXTRA_IDENTITY, identity)
+        intent.putExtra(IdentityConfirmedActivity.SHOW_FOR_CREATE_ACCOUNT, true)
+        startActivity(intent)
+    }
 }

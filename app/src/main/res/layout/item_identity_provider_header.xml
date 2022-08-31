@@ -8,22 +8,46 @@
     android:paddingTop="20dp"
     android:paddingBottom="20dp">
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineVertical36"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintGuide_percent="0.36"
+        android:orientation="vertical" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineVertical64"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintGuide_percent="0.64"
+        android:orientation="vertical" />
+
+    <com.concordium.wallet.uicore.ProgressLine
+        android:id="@+id/progressLine"
+        android:layout_width="0dp"
+        android:layout_height="7dp"
+        app:layout_constraintStart_toStartOf="@+id/guidelineVertical36"
+        app:layout_constraintEnd_toEndOf="@+id/guidelineVertical64"
+        app:layout_constraintTop_toTopOf="parent"
+        app:numberOfDots="4"
+        app:filledDots="3" />
+
     <TextView
         android:id="@+id/header_textview"
         style="@style/TextView.BlueHeader"
         android:gravity="center_horizontal"
         android:layout_width="0dp"
-        android:layout_marginTop="@dimen/create_identity_flow_top_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin_extended"
         android:text="@string/identity_create_identity_provider_header"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/progressLine" />
 
     <TextView
         android:id="@+id/info_textview"
         style="@style/TextView.Standard.Light"
         android:layout_width="match_parent"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
         android:gravity="left"
         android:text="@string/identity_create_identity_provider_info"
         app:layout_constraintEnd_toEndOf="parent"

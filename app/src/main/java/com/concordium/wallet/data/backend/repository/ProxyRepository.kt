@@ -6,7 +6,7 @@ import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.model.*
 
-class ProxyRepository() {
+class ProxyRepository {
 
     private val backend = App.appCore.getProxyBackend()
 

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.cardview.widget.CardView
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.IdentityStatus
@@ -25,6 +26,7 @@ class IdentityView : CardView {
     private lateinit var statusImageView: ImageView
 
     private var onItemClickListener: OnItemClickListener? = null
+    private var onChangeNameClickListener: OnChangeNameClickListener? = null
 
     constructor (context: Context) : super(context) {
         init(null)
@@ -47,6 +49,15 @@ class IdentityView : CardView {
         statusImageView = binding.statusImageview
     }
 
+    fun enableChangeNameOption(identity: Identity) {
+        binding.nameTextview.compoundDrawablePadding = 20
+        val drawable = AppCompatResources.getDrawable(context, R.drawable.ic_edit)
+        binding.nameTextview.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, drawable, null)
+        binding.nameTextview.setOnClickListener {
+            onChangeNameClickListener?.onChangeNameClicked(identity)
+        }
+    }
+
     fun setIdentityData(identity: Identity) {
         if (!TextUtils.isEmpty(identity.identityProvider.metadata.icon)) {
             val image = ImageUtil.getImageBitmap(identity.identityProvider.metadata.icon)
@@ -62,7 +73,8 @@ class IdentityView : CardView {
             }
         )
 
-        foreground = context.getDrawable( if(identity.status == IdentityStatus.DONE || identity.status == IdentityStatus.PENDING) R.drawable.bg_cardview_border else R.drawable.bg_cardview_error_border)
+        val drawableResource = if (identity.status == IdentityStatus.DONE || identity.status == IdentityStatus.PENDING) R.drawable.bg_cardview_border else R.drawable.bg_cardview_error_border
+        foreground = AppCompatResources.getDrawable(context, drawableResource)
         isEnabled = identity.status != IdentityStatus.PENDING
 
         nameTextView.text = identity.name
@@ -75,22 +87,24 @@ class IdentityView : CardView {
             expiresTextView.text = ""
         }
 
-        // Click
         rootLayout.setOnClickListener {
             onItemClickListener?.onItemClicked(identity)
         }
     }
 
-    //region OnItemClickListener
-    //************************************************************
-
     interface OnItemClickListener {
         fun onItemClicked(item: Identity)
+    }
+
+    interface OnChangeNameClickListener {
+        fun onChangeNameClicked(item: Identity)
     }
 
     fun setOnItemClickListener(onItemClickListener: OnItemClickListener) {
         this.onItemClickListener = onItemClickListener
     }
 
-    //endregion
+    fun setOnChangeNameClickListener(onChangeNameClickListener: OnChangeNameClickListener) {
+        this.onChangeNameClickListener = onChangeNameClickListener
+    }
 }

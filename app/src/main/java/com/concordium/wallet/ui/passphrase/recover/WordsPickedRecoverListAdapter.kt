@@ -52,8 +52,12 @@ class WordsPickedRecoverListAdapter(private val context: Context, private val ar
                 holder.binding.tvPosition.setTextColor(ContextCompat.getColor(context, R.color.theme_white))
                 holder.binding.etTitle.setTextColor(ContextCompat.getColor(context, R.color.theme_white))
                 holder.binding.tvTitle.setTextColor(ContextCompat.getColor(context, R.color.theme_white))
+                holder.binding.rlBorder.elevation = 0f
                 when (position) {
-                    currentPosition -> holder.binding.rlBorder.background = AppCompatResources.getDrawable(context, R.drawable.rounded_blue_gradient_border)
+                    currentPosition -> {
+                        holder.binding.rlBorder.background = AppCompatResources.getDrawable(context, R.drawable.rounded_blue)
+                        holder.binding.rlBorder.elevation = 5f
+                    }
                     2 -> holder.binding.rlBorder.background = AppCompatResources.getDrawable(context, R.drawable.rounded_top_blue)
                     25 -> holder.binding.rlBorder.background = AppCompatResources.getDrawable(context, R.drawable.rounded_bottom_blue)
                     else -> {
@@ -71,8 +75,12 @@ class WordsPickedRecoverListAdapter(private val context: Context, private val ar
             holder.binding.etTitle.setTextColor(ContextCompat.getColor(context, R.color.theme_black))
             holder.binding.tvTitle.setTextColor(ContextCompat.getColor(context, R.color.theme_black))
             holder.binding.rlBorder.background = AppCompatResources.getDrawable(context, R.drawable.rounded_white_blue_border)
+            holder.binding.rlBorder.elevation = 0f
             when (position) {
-                currentPosition -> holder.binding.rlBorder.background = AppCompatResources.getDrawable(context, R.drawable.rounded_white_gradient_border)
+                currentPosition -> {
+                    holder.binding.rlBorder.background = AppCompatResources.getDrawable(context, R.drawable.rounded_white)
+                    holder.binding.rlBorder.elevation = 5f
+                }
                 2 -> holder.binding.rlBorder.background = AppCompatResources.getDrawable(context, R.drawable.rounded_top_transparent)
                 25 -> holder.binding.rlBorder.background = AppCompatResources.getDrawable(context, R.drawable.rounded_bottom_transparent)
                 else -> holder.binding.rlBorder.background = AppCompatResources.getDrawable(context, R.drawable.rectangle_start_end_border)
@@ -87,13 +95,12 @@ class WordsPickedRecoverListAdapter(private val context: Context, private val ar
             onTextChangeListener?.onTextChange(text.toString())
         }
 
-        val marginTopBottom = 0
         val layoutParams = holder.binding.rlBorder.layoutParams as LinearLayout.LayoutParams
 
         if (position == currentPosition) {
-            layoutParams.setMargins(0, marginTopBottom, 0, marginTopBottom)
+            layoutParams.setMargins(0, 3, 0, 3)
         } else {
-            layoutParams.setMargins(10, marginTopBottom, 10, marginTopBottom)
+            layoutParams.setMargins(20, 0, 20, 0)
         }
         holder.binding.rlBorder.layoutParams = layoutParams
 

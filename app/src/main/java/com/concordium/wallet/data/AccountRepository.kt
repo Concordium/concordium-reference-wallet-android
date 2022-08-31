@@ -8,13 +8,7 @@ import com.concordium.wallet.data.room.AccountWithIdentity
 
 class AccountRepository(private val accountDao: AccountDao) {
 
-    val allAccounts: LiveData<List<Account>> = accountDao.getAllAsLiveData()
-
     val allAccountsWithIdentity: LiveData<List<AccountWithIdentity>> = accountDao.getAllWithIdentityAsLiveData()
-
-    fun getAllByIdentityIdWithIdentity(id: Int): LiveData<List<AccountWithIdentity>> {
-        return accountDao.getAllByIdentityIdWithIdentityAsLiveData(id)
-    }
 
     fun getByIdWithIdentityAsLiveData(id: Int): LiveData<AccountWithIdentity> {
         return accountDao.getByIdWithIdentityAsLiveData(id)
@@ -68,5 +62,7 @@ class AccountRepository(private val accountDao: AccountDao) {
         accountDao.deleteAll()
     }
 
-
+    suspend fun insertAccountAndCountUpNextAccountNumber(account: Account) {
+        accountDao.insertAccountAndCountUpNextAccountNumber(account)
+    }
 }

@@ -33,6 +33,7 @@ import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.toHex
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.crypto.Cipher
@@ -647,13 +648,9 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         _gotoSendFundsConfirmLiveData.value = Event(true)
     }
 
-    fun ByteArray.toHexString() = joinToString("") {
-        Integer.toUnsignedString(java.lang.Byte.toUnsignedInt(it), 16).padStart(2, '0')
-    }
-
     fun setMemo(memo: ByteArray?) {
         if (memo != null) {
-            tempData.memo = memo.toHexString()
+            tempData.memo = memo.toHex()
         } else {
             tempData.memo = null
         }

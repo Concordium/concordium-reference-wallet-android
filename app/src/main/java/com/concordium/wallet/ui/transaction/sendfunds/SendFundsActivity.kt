@@ -470,10 +470,10 @@ class SendFundsActivity : BaseActivity() {
         if (binding.amountEdittext.text.isNotEmpty()) {
             // Only setting this (to one char) to have the width being smaller
             // Width is WRAP_CONTENT and hint text count towards this
-            binding.amountEdittext.setHint("0")
+            binding.amountEdittext.hint = "0"
             binding.amountEdittext.gravity = Gravity.CENTER
         } else {
-            binding.amountEdittext.setHint("0${DecimalFormatSymbols.getInstance().decimalSeparator}00")
+            binding.amountEdittext.hint = "0${DecimalFormatSymbols.getInstance().decimalSeparator}00"
             binding.amountEdittext.gravity = Gravity.NO_GRAVITY
         }
     }

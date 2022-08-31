@@ -64,7 +64,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
 
     private val gson = App.appCore.gson
 
-
     private lateinit var transactionMappingHelper: TransactionMappingHelper
     private val accountUpdater = AccountUpdater(application, viewModelScope)
 
@@ -86,8 +85,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         get() = _waitingLiveData
 
     private val _newFinalizedAccountLiveData = MutableLiveData<String>()
-    val newFinalizedAccountLiveData: LiveData<String>
-        get() = _newFinalizedAccountLiveData
 
     private val _errorLiveData = MutableLiveData<Event<Int>>()
     val errorLiveData: LiveData<Event<Int>>
@@ -135,7 +132,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
         recipientRepository = RecipientRepository(recipientDao)
         initializeAccountUpdater()
-
     }
 
     fun initialize(account: Account, isShielded: Boolean) {
@@ -171,6 +167,18 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     fun disableShielded() {
         App.appCore.session.setShieldingEnabled(account.address, false)
         _shieldingEnabledLiveData.value = false
+    }
+
+    fun changeAccountName(name: String) {
+        viewModelScope.launch {
+            account.name = name
+            accountRepository.update(account)
+            recipientRepository.getRecipientByAddress(account.address)?.let { recipient ->
+                recipient.name = name
+                recipientRepository.update(recipient)
+            }
+            _accountUpdatedLiveData.value = true
+        }
     }
 
     fun requestGTUDrop() {
@@ -282,16 +290,13 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         })
     }
 
-    fun getIncludeRewards(): String? {
-
+    private fun getIncludeRewards(): String {
         if (session.getHasShowRewards(account.id) && !session.getHasShowFinalizationRewards(account.id)) {
             return "allButFinalization"
         }
-
         if (session.getHasShowRewards(account.id) && session.getHasShowFinalizationRewards(account.id)) {
             return "all"
         }
-
         return "none"
     }
 
@@ -433,7 +438,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         decryptAndContinue(password, transfersOnly, transaction)
     }
 
-
     fun checkLogin(cipher: Cipher, transfersOnly: Boolean = false, transaction: Transaction? = null) = viewModelScope.launch {
         _waitingLiveData.value = true
         val password = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
@@ -468,7 +472,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-
     private suspend fun decryptData(
         secretKey: String,
         transfersOnly: Boolean = false,
@@ -493,7 +496,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             _waitingLiveData.value = false
         }
     }
-
 
     fun initiateFrequentUpdater() {
         updater.cancel()
@@ -550,10 +552,10 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                                     newSelfAmount = output.toLong()
                                 }
                             }
-                            if (it.details?.inputEncryptedAmount != null) {
+                            if (it.details.inputEncryptedAmount != null) {
                                 val output = App.appCore.cryptoLibrary.decryptEncryptedAmount(
                                     DecryptAmountInput(
-                                        it.details?.inputEncryptedAmount,
+                                        it.details.inputEncryptedAmount,
                                         secretKey
                                     )
                                 )
@@ -561,7 +563,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                                     inputAmount = output.toLong()
                                 }
                             }
-                            it.encrypted.encryptedAmount?.let {
+                            it.encrypted.encryptedAmount.let {
                                 accountUpdater.saveDecryptedAmount(it, (-(newSelfAmount - inputAmount)).toString())
                                 GlobalScope.launch(Dispatchers.Main) {
                                     _transferListLiveData.forceRefresh()
@@ -569,7 +571,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                             }
                         }
                         else
-                        if (it.encrypted?.encryptedAmount != null) {
+                        if (it.encrypted.encryptedAmount != null) {
                             val output =
                                 App.appCore.cryptoLibrary.decryptEncryptedAmount(DecryptAmountInput(it.encrypted.encryptedAmount, secretKey))
                             if (output != null) {
@@ -594,14 +596,14 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         return App.appCore.getCurrentAuthenticationManager().usePasscode()
     }
 
-    fun checkForUndecryptedAmounts() {
+    fun checkForEncryptedAmounts() {
         GlobalScope.launch(Dispatchers.IO) {
             var showPadlock = false
             _transferListLiveData.value?.forEach {
                 if(it.getItemType() == AdapterItem.ItemType.Item){
                     val transactionItem = it as TransactionItem
                     val transaction = transactionItem.transaction
-                    if(transaction != null && transaction.encrypted != null && transaction.encrypted.encryptedAmount != null){
+                    if (transaction?.encrypted?.encryptedAmount != null) {
                         if(accountUpdater.lookupMappedAmount(transaction.encrypted.encryptedAmount) == null){
                             showPadlock = true
                         }
@@ -614,9 +616,5 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
-
-
-
     // endregion
-
 }

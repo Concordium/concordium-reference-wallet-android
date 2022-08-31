@@ -1,27 +1,29 @@
 package com.concordium.wallet.data.preferences
 
 import android.content.Context
+import cash.z.ecc.android.bip39.Mnemonics
+import cash.z.ecc.android.bip39.toSeed
+import com.concordium.wallet.util.toHex
 
 class AuthPreferences(val context: Context) :
     Preferences(context, SharedPreferencesKeys.PREF_FILE_AUTH, Context.MODE_PRIVATE) {
 
     companion object {
-        val PREFKEY_HAS_SETUP_USER = "PREFKEY_HAS_SETUP_USER"
-        val PREFKEY_USE_PASSCODE = "PREFKEY_USE_PASSCODE"
-        val PREFKEY_USE_BIOMETRICS = "PREFKEY_USE_BIOMETRICS"
-        val PREFKEY_PASSWORD_CHECK = "PREFKEY_PASSWORD_CHECK"
-        val PREFKEY_PASSWORD_CHECK_ENCRYPTED = "PREFKEY_PASSWORD_CHECK_ENCRYPTED"
-        val PREFKEY_PASSWORD_ENCRYPTION_SALT = "PREFKEY_PASSWORD_ENCRYPTION_SALT"
-        val PREFKEY_PASSWORD_ENCRYPTION_INITVECTOR = "PREFKEY_PASSWORD_ENCRYPTION_INITVECTOR"
-        val PREFKEY_ENCRYPTED_PASSWORD = "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY"
-        val PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR = "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR"
-        val PREFKEY_BIOMETRIC_KEY = "PREFKEY_BIOMETRIC_KEY"
-        val PREFKEY_TERMS_HASHED = "PREFKEY_TERMS_HASHED"
-        val PREFKEY_ACCOUNTS_BACKED_UP = "PREFKEY_ACCOUNTS_BACKED_UP"
-        val PREFKEY_VERSION_BACKED_UP = "PREFKEY_VERSION_BACKED_UP"
-        val PREFKEY_SHIELDING_ENABLED_ = "PREFKEY_SHIELDING_ENABLED_"
-        val PREFKEY_SHIELDED_WARNING_DISMISSED_ = "PREFKEY_SHIELDED_WARNING_DISMISSED_"
-        val PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED = "PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED_"
+        const val PREFKEY_HAS_SETUP_USER = "PREFKEY_HAS_SETUP_USER"
+        const val PREFKEY_USE_PASSCODE = "PREFKEY_USE_PASSCODE"
+        const val PREFKEY_USE_BIOMETRICS = "PREFKEY_USE_BIOMETRICS"
+        const val PREFKEY_PASSWORD_CHECK = "PREFKEY_PASSWORD_CHECK"
+        const val PREFKEY_PASSWORD_CHECK_ENCRYPTED = "PREFKEY_PASSWORD_CHECK_ENCRYPTED"
+        const val PREFKEY_PASSWORD_ENCRYPTION_SALT = "PREFKEY_PASSWORD_ENCRYPTION_SALT"
+        const val PREFKEY_PASSWORD_ENCRYPTION_INITVECTOR = "PREFKEY_PASSWORD_ENCRYPTION_INITVECTOR"
+        const val PREFKEY_ENCRYPTED_PASSWORD = "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY"
+        const val PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR = "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR"
+        const val PREFKEY_BIOMETRIC_KEY = "PREFKEY_BIOMETRIC_KEY"
+        const val PREFKEY_TERMS_HASHED = "PREFKEY_TERMS_HASHED"
+        const val PREFKEY_SHIELDING_ENABLED_ = "PREFKEY_SHIELDING_ENABLED_"
+        const val PREFKEY_SHIELDED_WARNING_DISMISSED_ = "PREFKEY_SHIELDED_WARNING_DISMISSED_"
+        const val PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED = "PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED_"
+        const val SEED_PHRASE = "SEED_PHRASE"
     }
 
     fun setHasSetupUser(value: Boolean) {
@@ -128,26 +130,6 @@ class AuthPreferences(val context: Context) :
         return setBoolean(PREFKEY_SHIELDED_WARNING_DISMISSED_+accountAddress, value)
     }
 
-    fun isAccountsBackedUp(): Boolean {
-        return getBoolean(PREFKEY_ACCOUNTS_BACKED_UP, false)
-    }
-
-    fun setAccountsBackedUp(value: Boolean) {
-        return setBoolean(PREFKEY_ACCOUNTS_BACKED_UP, value)
-    }
-
-    fun addAccountsBackedUpListener(listener: Listener) {
-        addListener(PREFKEY_ACCOUNTS_BACKED_UP, listener)
-    }
-
-    fun getVersionBackedUp(): Int {
-        return getInt(PREFKEY_VERSION_BACKED_UP, 0)
-    }
-
-    fun setVersionBackedUp(value: Int) {
-        return setInt(PREFKEY_VERSION_BACKED_UP, value)
-    }
-
     fun setIdentityPendingWarningAcknowledged(id: Int) {
         return setBoolean(PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED+id, true)
     }
@@ -156,4 +138,21 @@ class AuthPreferences(val context: Context) :
         return getBoolean(PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED+id, false)
     }
 
+    fun resetSeedPhrase() {
+        setString(SEED_PHRASE, "")
+    }
+
+    fun setSeedPhrase(value: String) {
+        val seed = Mnemonics.MnemonicCode(value).toSeed()
+        val seedEncoded = seed.toHex()
+        setString(SEED_PHRASE, seedEncoded)
+    }
+
+    fun getSeedPhrase(): String {
+        return getString(SEED_PHRASE, "")
+    }
+
+    fun hasSeedPhrase(): Boolean {
+        return getSeedPhrase() != ""
+    }
 }

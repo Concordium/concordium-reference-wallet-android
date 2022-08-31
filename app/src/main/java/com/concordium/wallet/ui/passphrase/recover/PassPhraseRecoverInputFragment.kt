@@ -7,11 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.AbsListView
-import android.widget.AbsListView.OnScrollListener.*
+import android.widget.AbsListView.OnScrollListener.SCROLL_STATE_IDLE
+import android.widget.AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import cash.z.ecc.android.bip39.Mnemonics
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentPassPhraseRecoverInputBinding
 import com.concordium.wallet.ui.base.BaseActivity
@@ -58,11 +58,6 @@ class PassPhraseRecoverInputFragment : Fragment() {
         viewModel.loadAllWords()
         initViews()
         initObservers()
-        if (BuildConfig.DEBUG) {
-            val mnemonicCode: Mnemonics.MnemonicCode = Mnemonics.MnemonicCode(Mnemonics.WordCount.COUNT_24)
-            val words = mnemonicCode.words.toList().joinToString(" ") { String(it) }
-            println("LC -> $words")
-        }
     }
 
     override fun onResume() {
@@ -74,7 +69,7 @@ class PassPhraseRecoverInputFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        KeyboardUtil.hideKeyboard(activity!!)
+        KeyboardUtil.hideKeyboard(requireActivity())
     }
 
     override fun onDestroyView() {
@@ -128,7 +123,7 @@ class PassPhraseRecoverInputFragment : Fragment() {
             arrayAdapter.notifyDataSetChanged()
         }
         binding.btnClearBelow.setOnClickListener {
-            for (i in arrayAdapter.currentPosition + 1 until viewModel.wordsPicked.size - 2) {
+            for (i in arrayAdapter.currentPosition + 1 until viewModel.wordsPicked.size - 3) {
                 viewModel.wordsPicked[i] = null
             }
             arrayAdapter.notifyDataSetChanged()

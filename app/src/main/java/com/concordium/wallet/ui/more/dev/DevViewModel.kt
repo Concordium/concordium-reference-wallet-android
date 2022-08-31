@@ -55,15 +55,15 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
             ""
         )
         val arsInfos = HashMap<String, ArsInfo>()
-        arsInfos.put("1",ArsInfo(1, "", ArDescription("","", "")))
+        arsInfos["1"] = ArsInfo(1, "", ArDescription("","", ""))
         val identityProvider =
-            IdentityProvider(identityProviderInfo, arsInfos, IdentityProviderMetaData("", "", ""))
+            IdentityProvider(identityProviderInfo, arsInfos, IdentityProviderMetaData("", "", "", ""))
         val pubInfoForIP = PubInfoForIp("", RawJson("{}"), "")
         val preIdentityObject =
             PreIdentityObject(
                 RawJson("{}"), pubInfoForIP, "",
                 RawJson("{}"), "",
-                RawJson("{}"), ""
+                RawJson("{}"), "", ""
             )
         val identityObject =
             IdentityObject(
@@ -71,7 +71,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 preIdentityObject,
                 RawJson("{}")
             )
-        val identity = Identity(0, "identity name", "", "","", 0, identityProvider, identityObject, "")
+        val identity = Identity(0, "identity name", "", "","", 0, identityProvider, identityObject, 0, 0)
         identityRepository.insert(identity)
     }
 

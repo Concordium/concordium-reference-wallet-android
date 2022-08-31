@@ -1,5 +1,7 @@
 package com.concordium.wallet.uicore
 
+import android.app.AlertDialog
+import android.content.Context
 import android.text.Editable
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -8,9 +10,11 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.URLSpan
 import android.view.View
-import android.view.ViewTreeObserver
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatEditText
+import com.concordium.wallet.R
 
 fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
     this.addTextChangedListener(object : TextWatcher {
@@ -24,6 +28,27 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
             afterTextChanged.invoke(editable.toString())
         }
     })
+}
+
+fun AlertDialog.Builder.setEditText(context: Context, editText: AppCompatEditText): AlertDialog.Builder {
+    val container = FrameLayout(context)
+    container.addView(editText)
+    val containerParams = FrameLayout.LayoutParams(
+        FrameLayout.LayoutParams.MATCH_PARENT,
+        FrameLayout.LayoutParams.WRAP_CONTENT
+    )
+
+    val marginHorizontal = context.resources.getDimension(R.dimen.activity_horizontal_margin)
+    containerParams.leftMargin = marginHorizontal.toInt()
+    containerParams.rightMargin = marginHorizontal.toInt()
+    container.layoutParams = containerParams
+
+    val superContainer = FrameLayout(context)
+    superContainer.addView(container)
+
+    setView(superContainer)
+
+    return this
 }
 
 fun TextView.handleUrlClicks(onClicked: ((String) -> Unit)? = null) {
@@ -48,15 +73,4 @@ fun TextView.handleUrlClicks(onClicked: ((String) -> Unit)? = null) {
     }
     //make sure movement method is set
     movementMethod = LinkMovementMethod.getInstance()
-}
-
-inline fun View.afterMeasured(crossinline f: View.() -> Unit) {
-    viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-        override fun onGlobalLayout() {
-            if (measuredWidth > 0 && measuredHeight > 0) {
-                viewTreeObserver.removeOnGlobalLayoutListener(this)
-                f()
-            }
-        }
-    })
 }

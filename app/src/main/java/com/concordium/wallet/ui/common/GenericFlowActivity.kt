@@ -1,16 +1,22 @@
 package com.concordium.wallet.ui.common
 
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityIntroFlowBinding
 import com.concordium.wallet.ui.account.accountdetails.WebViewPageFragment
 import com.concordium.wallet.ui.base.BaseActivity
 import com.google.android.material.tabs.TabLayoutMediator
+
 
 abstract class GenericFlowActivity(private val titleId: Int) : BaseActivity() {
     companion object {
@@ -18,8 +24,9 @@ abstract class GenericFlowActivity(private val titleId: Int) : BaseActivity() {
         const val EXTRA_IGNORE_BACK_PRESS = "EXTRA_IGNORE_BACK_PRESS"
     }
 
-    protected var hideBack = true
-    protected var ignoreBackPress = true
+    private var hideBack = true
+    private var ignoreBackPress = true
+    protected var showProgressLine = false
     private lateinit var binding: ActivityIntroFlowBinding
 
     //region Lifecycle
@@ -39,10 +46,10 @@ abstract class GenericFlowActivity(private val titleId: Int) : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        if(ignoreBackPress){
+        if (ignoreBackPress) {
             // Ignore back press
         }
-        else{
+        else {
             super.onBackPressed()
         }
     }
@@ -60,13 +67,13 @@ abstract class GenericFlowActivity(private val titleId: Int) : BaseActivity() {
         binding.pager.adapter =  ScreenSlidePagerAdapter(this)
 
         TabLayoutMediator(binding.pagersTabLayout, binding.pager)
-        { tab, position ->}.attach()
+        { _, _ ->}.attach()
 
         binding.createIdentIntroBack.setOnClickListener {
-            binding.pager.setCurrentItem(binding.pager.currentItem-1, true)
+            binding.pager.setCurrentItem(binding.pager.currentItem - 1, true)
         }
         binding.createIdentIntroNext.setOnClickListener {
-            binding.pager.setCurrentItem(binding.pager.currentItem+1, true)
+            binding.pager.setCurrentItem(binding.pager.currentItem + 1, true)
         }
         binding.createIdentIntroContinue.setOnClickListener{
             gotoContinue()
@@ -92,6 +99,11 @@ abstract class GenericFlowActivity(private val titleId: Int) : BaseActivity() {
         }
     }
 
+    protected fun updateViews() {
+        if (showProgressLine)
+            binding.progressLine.visibility = View.VISIBLE
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id: Int = item.itemId
         return if (id == android.R.id.home) {
@@ -113,7 +125,10 @@ abstract class GenericFlowActivity(private val titleId: Int) : BaseActivity() {
     //region Control/UI
     //************************************************************
 
-    private fun updateButtons(){
+    private fun updateButtons() {
+        setBackButtonDrawableArrow(ContextCompat.getColor(applicationContext, R.color.text_white))
+        binding.createIdentIntroBack.background = AppCompatResources.getDrawable(this, R.drawable.button_standard)
+        binding.createIdentIntroBack.setTextColor(ContextCompat.getColor(this, R.color.text_white))
         if (binding.pager.currentItem == 0 && getMaxPages() == 1) {
             binding.createIdentIntroSkip.visibility = View.GONE
             binding.createIdentIntroContinue.visibility = View.VISIBLE
@@ -138,7 +153,20 @@ abstract class GenericFlowActivity(private val titleId: Int) : BaseActivity() {
             binding.createIdentIntroSkip.visibility = View.GONE
             binding.createIdentIntroContinue.visibility = View.VISIBLE
             binding.createIdentIntroBack.visibility = View.VISIBLE
+            setBackButtonDrawableArrow(ContextCompat.getColor(applicationContext, R.color.text_grey))
+            binding.createIdentIntroBack.background = AppCompatResources.getDrawable(this, R.drawable.button_standard_white)
+            binding.createIdentIntroBack.setTextColor(ContextCompat.getColor(this, R.color.text_grey))
             binding.createIdentIntroNext.visibility = View.GONE
+        }
+    }
+
+    private fun setBackButtonDrawableArrow(color: Int) {
+        ContextCompat.getDrawable(this, R.drawable.ic_button_back)?.apply {
+            DrawableCompat.wrap(this).apply{
+                setTint(color)
+                setTintMode(PorterDuff.Mode.SRC_IN)
+                binding.createIdentIntroBack.setCompoundDrawablesRelativeWithIntrinsicBounds(this, null, null, null)
+            }
         }
     }
 

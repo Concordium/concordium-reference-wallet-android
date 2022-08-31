@@ -20,7 +20,7 @@ class PinnedHeaderItemDecoration(val listener: PinnedHeaderListener) : RecyclerV
 
         val currentHeader = getHeaderViewForItem(topChildPosition, parent)
         fixLayoutSize(parent, currentHeader)
-        val contactPoint = currentHeader.getBottom()
+        val contactPoint = currentHeader.bottom
         val childInContact = getChildInContact(parent, contactPoint) ?: return
 
         if (listener.isHeader(parent.getChildAdapterPosition(childInContact))) {

@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
-import com.concordium.wallet.DataFileProvider
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendRequest
@@ -158,6 +158,14 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     fun isUpdatingDelegation(): Boolean {
         bakerDelegationData.account?.accountDelegation?.let { return it.stakedAmount.isNotBlank() }
+        return false
+    }
+
+    fun isLoweringDelegation(): Boolean {
+        bakerDelegationData.amount?.let { amount ->
+            if (amount < (bakerDelegationData.oldStakedAmount ?: 0))
+                return true
+        }
         return false
     }
 
@@ -705,7 +713,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         bakerKeysJson()?.let { bakerKeysJson ->
             viewModelScope.launch {
                 FileUtil.writeFile(destinationUri, FILE_NAME_BAKER_KEYS, bakerKeysJson)
-                _fileSavedLiveData.value = Event(R.string.export_backup_saved_local)
+                _fileSavedLiveData.value = Event(R.string.baker_keys_saved_local)
             }
         }
     }
@@ -718,5 +726,5 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return null
     }
 
-    fun getTempFileWithPath(): Uri = Uri.parse("content://" + DataFileProvider.AUTHORITY + File.separator.toString() + FILE_NAME_BAKER_KEYS)
+    fun getTempFileWithPath(): Uri = Uri.parse("content://" + BuildConfig.PROVIDER_AUTHORITY + File.separator.toString() + FILE_NAME_BAKER_KEYS)
 }

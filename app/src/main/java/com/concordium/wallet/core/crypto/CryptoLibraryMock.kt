@@ -2,27 +2,30 @@ package com.concordium.wallet.core.crypto
 
 import com.concordium.wallet.App
 import com.concordium.wallet.data.cryptolib.*
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.ArsInfo
+import com.concordium.wallet.data.model.BakerKeys
+import com.concordium.wallet.data.model.GlobalParams
+import com.concordium.wallet.data.model.IdentityProviderInfo
 import com.concordium.wallet.util.AssetUtil
 import com.google.gson.Gson
 
 class CryptoLibraryMock(val gson: Gson) : CryptoLibrary {
-
-    override suspend fun createIdRequestAndPrivateData(
+    override suspend fun createIdRequestAndPrivateDataV1(
         identityProviderInfo: IdentityProviderInfo,
         arsInfo: Map<String, ArsInfo>,
-        global: GlobalParams?
-    ): IdRequestAndPrivateDataOutput? {
+        global: GlobalParams?,
+        seed: String, net: String, identityIndex: Int
+    ): IdRequestAndPrivateDataOutputV1? {
         val output = AssetUtil.loadFromAsset(
             App.appContext,
             "1.2.2.RX-lib_create_id_request_and_private_data.json"
         )
-        return gson.fromJson(output, IdRequestAndPrivateDataOutput::class.java)
+        return gson.fromJson(output, IdRequestAndPrivateDataOutputV1::class.java)
     }
 
-    override suspend fun createCredential(credentialInput: CreateCredentialInput): CreateCredentialOutput? {
+    override suspend fun createCredentialV1(credentialInput: CreateCredentialInputV1): CreateCredentialOutputV1? {
         val output = AssetUtil.loadFromAsset(App.appContext, "2.2.2.RX-lib_create_credential.json")
-        return gson.fromJson(output, CreateCredentialOutput::class.java)
+        return gson.fromJson(output, CreateCredentialOutputV1::class.java)
     }
 
     override suspend fun createTransfer(createTransferInput: CreateTransferInput, type: Int): CreateTransferOutput? {
@@ -42,12 +45,20 @@ class CryptoLibraryMock(val gson: Gson) : CryptoLibrary {
         TODO("Not yet implemented")
     }
 
-    override suspend fun generateAccounts(generateAccountsInput: GenerateAccountsInput): List<PossibleAccount>? {
-        return null
-    }
-
     override suspend fun generateBakerKeys(): BakerKeys? {
         val output = AssetUtil.loadFromAsset(App.appContext, "5.3.2.RX_generate_baker_keys.json")
         return gson.fromJson(output, BakerKeys::class.java)
+    }
+
+    override suspend fun generateRecoveryRequest(recoveryRequestInput: GenerateRecoveryRequestInput): String? {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getIdentityKeysAndRandomness(identityKeysAndRandomnessInput: IdentityKeysAndRandomnessInput): IdentityKeysAndRandomnessOutput? {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getAccountKeysAndRandomness(accountKeysAndRandomnessInput: AccountKeysAndRandomnessInput): AccountKeysAndRandomnessOutput? {
+        TODO("Not yet implemented")
     }
 }

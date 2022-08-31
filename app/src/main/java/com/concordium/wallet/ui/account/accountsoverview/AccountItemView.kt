@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.account.accountsoverview
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -16,7 +17,7 @@ class AccountItemView(context: Context, attrs: AttributeSet?): LinearLayout(cont
 
     private val binding = ItemAccountBinding.inflate(LayoutInflater.from(context), this, true)
 
-    private var accountWithIdentitiy: AccountWithIdentity? = null
+    private var accountWithIdentity: AccountWithIdentity? = null
     private var hideExpandBar: Boolean = false
 
     init {
@@ -32,39 +33,66 @@ class AccountItemView(context: Context, attrs: AttributeSet?): LinearLayout(cont
         }
     }
 
-    fun setAccount(accountWithIdentitiy: AccountWithIdentity) {
-        this.accountWithIdentitiy = accountWithIdentitiy
-        binding.totalTextview.text = CurrencyUtil.formatGTU(accountWithIdentitiy.account.totalUnshieldedBalance, withGStroke = true)
-        binding.balanceAtDisposalTextview.text = CurrencyUtil.formatGTU(accountWithIdentitiy.account.getAtDisposalWithoutStakedOrScheduled(accountWithIdentitiy.account.totalUnshieldedBalance), withGStroke = true)
-        binding.accountNameArea.setData(accountWithIdentitiy)
+    fun setAccount(account: Account) {
+        binding.totalTextview.text = CurrencyUtil.formatGTU(account.totalUnshieldedBalance, withGStroke = true)
+        binding.balanceAtDisposalTextview.text = CurrencyUtil.formatGTU(account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance), withGStroke = true)
 
-        val accountPending = accountWithIdentitiy.account.transactionStatus == TransactionStatus.COMMITTED || accountWithIdentitiy.account.transactionStatus == TransactionStatus.RECEIVED
+        val accountPending = account.transactionStatus == TransactionStatus.COMMITTED || account.transactionStatus == TransactionStatus.RECEIVED
 
-        binding.buttonArea.visibility = if(accountPending || accountWithIdentitiy.account.readOnly || hideExpandBar) View.GONE else View.VISIBLE
-        binding.rootCardContent.setBackgroundColor(if(accountWithIdentitiy.account.readOnly) resources.getColor(R.color.theme_component_background_disabled, null) else resources.getColor(R.color.theme_white, null))
+        binding.buttonArea.visibility = if(accountPending || account.readOnly || hideExpandBar) View.GONE else View.VISIBLE
+        binding.rootCardContent.setBackgroundColor(if(account.readOnly) resources.getColor(R.color.theme_component_background_disabled, null) else resources.getColor(R.color.theme_white, null))
 
-        this.isEnabled = !accountWithIdentitiy.account.readOnly
+        this.isEnabled = !account.readOnly
+    }
 
+    fun setAccount(accountWithIdentity: AccountWithIdentity) {
+        this.accountWithIdentity = accountWithIdentity
+        binding.totalTextview.text = CurrencyUtil.formatGTU(accountWithIdentity.account.totalUnshieldedBalance, withGStroke = true)
+        binding.balanceAtDisposalTextview.text = CurrencyUtil.formatGTU(accountWithIdentity.account.getAtDisposalWithoutStakedOrScheduled(accountWithIdentity.account.totalUnshieldedBalance), withGStroke = true)
+        binding.accountNameArea.setData(accountWithIdentity)
+
+        val accountPending = accountWithIdentity.account.transactionStatus == TransactionStatus.COMMITTED || accountWithIdentity.account.transactionStatus == TransactionStatus.RECEIVED
+
+        binding.buttonArea.visibility = if(accountPending || accountWithIdentity.account.readOnly || hideExpandBar) View.GONE else View.VISIBLE
+        binding.rootCardContent.setBackgroundColor(if(accountWithIdentity.account.readOnly) resources.getColor(R.color.theme_component_background_disabled, null) else resources.getColor(R.color.theme_white, null))
+
+        this.isEnabled = !accountWithIdentity.account.readOnly
+    }
+
+    @SuppressLint("SetTextI18n")
+    fun setDefault(identityName: String, accountName: String) {
+        binding.accountNameArea.setDefault(identityName, accountName)
+        binding.totalTextview.text = "123.45"
+        binding.balanceAtDisposalTextview.text = "123.45"
+        binding.buttonArea.visibility = View.GONE
+        val layoutParams = binding.rootCard.layoutParams as MarginLayoutParams
+        layoutParams.setMargins(layoutParams.leftMargin, 0, layoutParams.rightMargin, 0)
+        binding.rootCard.layoutParams = layoutParams
+        isEnabled = false
     }
 
     fun setOnItemClickListener(onItemClickListener: OnItemClickListener?) {
         if (onItemClickListener != null) {
             binding.accountCardActionSend.setOnClickListener {
-                accountWithIdentitiy?.let { it1 -> onItemClickListener.onSendClicked(it1.account) }
+                accountWithIdentity?.let { it1 -> onItemClickListener.onSendClicked(it1.account) }
             }
             binding.accountCardActionReceive.setOnClickListener {
-                accountWithIdentitiy?.let { it1 -> onItemClickListener.onReceiveClicked(it1.account) }
+                accountWithIdentity?.let { it1 -> onItemClickListener.onReceiveClicked(it1.account) }
+            }
+            binding.accountCardActionEarn.setOnClickListener {
+                accountWithIdentity?.let { it1 -> onItemClickListener.onEarnClicked(it1.account) }
             }
             binding.accountCardActionMore.setOnClickListener {
-                accountWithIdentitiy?.let { it1 -> onItemClickListener.onMoreClicked(it1.account) }
+                accountWithIdentity?.let { it1 -> onItemClickListener.onMoreClicked(it1.account) }
             }
             binding.rootCard.setOnClickListener {
-                accountWithIdentitiy?.let { it1 -> onItemClickListener.onMoreClicked(it1.account) }
+                accountWithIdentity?.let { it1 -> onItemClickListener.onMoreClicked(it1.account) }
             }
         }
     }
 
     interface OnItemClickListener {
+        fun onEarnClicked(item: Account)
         fun onMoreClicked(item: Account)
         fun onReceiveClicked(item: Account)
         fun onSendClicked(item: Account)

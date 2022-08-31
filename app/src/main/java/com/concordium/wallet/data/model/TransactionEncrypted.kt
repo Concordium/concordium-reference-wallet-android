@@ -7,6 +7,4 @@ data class TransactionEncrypted(
     val newSelfEncryptedAmount: String?,
     val encryptedAmount: String?,
     val newIndex: Int?
-) : Serializable {
-
-}
+) : Serializable

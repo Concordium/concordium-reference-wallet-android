@@ -14,7 +14,7 @@ class IdentityProviderPolicyWebviewActivity : BaseActivity() {
     }
 
     private lateinit var binding: ActivityIdentityProviderPolicyWebviewBinding
-    private lateinit var viewModel: IdentityProviderPolicyWebviewViewModel
+    private lateinit var viewModel: IdentityProviderPolicyWebViewViewModel
 
     //region Lifecycle
     //************************************************************
@@ -40,7 +40,7 @@ class IdentityProviderPolicyWebviewActivity : BaseActivity() {
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[IdentityProviderPolicyWebviewViewModel::class.java]
+        )[IdentityProviderPolicyWebViewViewModel::class.java]
     }
 
     fun initViews() {

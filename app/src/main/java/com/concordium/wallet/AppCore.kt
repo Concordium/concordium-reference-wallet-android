@@ -11,6 +11,7 @@ import com.concordium.wallet.core.gson.RawJsonTypeAdapter
 import com.concordium.wallet.data.backend.ProxyBackend
 import com.concordium.wallet.data.backend.ProxyBackendConfig
 import com.concordium.wallet.data.model.RawJson
+import com.concordium.wallet.data.room.Identity
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 
@@ -23,6 +24,7 @@ class AppCore(val context: Context) {
     var closingPoolsChecked = false
     var sessionCookie: String? = null
     var appSettingsForceUpdateChecked = false
+    var newIdentityPending: Identity? = null
 
     private val authenticationManagerGeneric: AuthenticationManager = AuthenticationManager(session.getBiometricAuthKeyName())
     private var authenticationManagerReset: AuthenticationManager = authenticationManagerGeneric

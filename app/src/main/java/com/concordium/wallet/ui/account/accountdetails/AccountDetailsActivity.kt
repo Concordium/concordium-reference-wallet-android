@@ -7,20 +7,17 @@ import android.graphics.Color
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.lifecycle.Observer
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
-import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_BAKER
-import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_DELEGATION
-import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
-import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.model.DelegationTarget
-import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
@@ -28,21 +25,18 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
 import com.concordium.wallet.databinding.BurgerMenuContentBinding
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
-import com.concordium.wallet.ui.bakerdelegation.baker.BakerStatusActivity
-import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRegistrationIntroFlow
-import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
-import com.concordium.wallet.ui.bakerdelegation.delegation.DelegationStatusActivity
-import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationCreateIntroFlowActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.common.GenericFlowActivity
+import com.concordium.wallet.ui.common.delegates.EarnDelegate
+import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
+import com.concordium.wallet.uicore.setEditText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.crypto.Cipher
 
-class AccountDetailsActivity : BaseActivity() {
+class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl() {
     private var mMenuDialog: AlertDialog? = null
 
     private lateinit var binding: ActivityAccountDetailsBinding
@@ -98,11 +92,11 @@ class AccountDetailsActivity : BaseActivity() {
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[AccountDetailsViewModel::class.java]
 
-        viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
+        viewModel.waitingLiveData.observe(this) { waiting ->
             waiting?.let {
                 showWaiting(waiting)
             }
-        })
+        }
         viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
                 showError(value)
@@ -113,64 +107,75 @@ class AccountDetailsActivity : BaseActivity() {
                 finish()
             }
         })
-        viewModel.totalBalanceLiveData.observe(this, Observer<Pair<Long,Boolean>> { totalBalance ->
-            if(viewModel.isShielded && totalBalance.second){
-                showAuthentication(null, viewModel.shouldUseBiometrics(), viewModel.usePasscode(), object : AuthenticationCallback{
-                    override fun getCipherForBiometrics() : Cipher?{
+        viewModel.totalBalanceLiveData.observe(this) { totalBalance ->
+            if (viewModel.isShielded && totalBalance.second) {
+                showAuthentication(null,
+                    viewModel.shouldUseBiometrics(),
+                    viewModel.usePasscode(),
+                    object : AuthenticationCallback {
+                        override fun getCipherForBiometrics(): Cipher? {
+                            return viewModel.getCipherForBiometrics()
+                        }
+
+                        override fun onCorrectPassword(password: String) {
+                            viewModel.continueWithPassword(password)
+                        }
+
+                        override fun onCipher(cipher: Cipher) {
+                            viewModel.checkLogin(cipher)
+                        }
+
+                        override fun onCancelled() {
+                            finish()
+                        }
+                    })
+            } else {
+                showTotalBalance(totalBalance.first)
+            }
+        }
+
+        viewModel.selectedTransactionForDecrytionLiveData.observe(this) { transaction ->
+            showAuthentication(null,
+                viewModel.shouldUseBiometrics(),
+                viewModel.usePasscode(),
+                object : AuthenticationCallback {
+                    override fun getCipherForBiometrics(): Cipher? {
                         return viewModel.getCipherForBiometrics()
                     }
+
                     override fun onCorrectPassword(password: String) {
-                        viewModel.continueWithPassword(password)
+                        viewModel.continueWithPassword(password, true, transaction)
                     }
+
                     override fun onCipher(cipher: Cipher) {
-                        viewModel.checkLogin(cipher)
+                        viewModel.checkLogin(cipher, true, transaction)
                     }
+
                     override fun onCancelled() {
                         finish()
                     }
                 })
-            }
-            else{
-                showTotalBalance(totalBalance.first)
-            }
-        })
+        }
 
-        viewModel.selectedTransactionForDecrytionLiveData.observe(this, Observer<Transaction> { transaction ->
-            showAuthentication(null, viewModel.shouldUseBiometrics(), viewModel.usePasscode(), object : AuthenticationCallback{
-                override fun getCipherForBiometrics() : Cipher?{
-                    return viewModel.getCipherForBiometrics()
-                }
-                override fun onCorrectPassword(password: String) {
-                    viewModel.continueWithPassword(password, true, transaction)
-                }
-                override fun onCipher(cipher: Cipher) {
-                    viewModel.checkLogin(cipher, true, transaction)
-                }
-                override fun onCancelled() {
-                    finish()
-                }
-            })
-        })
+        viewModel.transferListLiveData.observe(this) {
+            viewModel.checkForEncryptedAmounts()
+        }
 
-        viewModel.transferListLiveData.observe(this, Observer {
-            viewModel.checkForUndecryptedAmounts()
-        })
-
-        viewModel.showPadLockLiveData.observe(this, Observer {
+        viewModel.showPadLockLiveData.observe(this) {
             invalidateOptionsMenu()
-        })
+        }
 
-        viewModel.shieldingEnabledLiveData.observe(this, Observer {
+        viewModel.shieldingEnabledLiveData.observe(this) {
             //Show non-shielded options
             viewModel.isShielded = false
             initViews()
             //...then hide shielding options
             updateShieldEnabledUI()
-        })
+        }
 
-        viewModel.accountUpdatedLiveData.observe(this, Observer {
+        viewModel.accountUpdatedLiveData.observe(this) {
             initTopContent()
-        })
+        }
     }
 
     private fun initViews() {
@@ -218,6 +223,9 @@ class AccountDetailsActivity : BaseActivity() {
             viewModel.isShielded = true
             initViews()
         }
+        binding.earnLayout.setOnClickListener {
+            gotoEarn(this, viewModel.account, viewModel.hasPendingDelegationTransactions, viewModel.hasPendingBakingTransactions)
+        }
 
         binding.shieldTextview.text = if(viewModel.isShielded) resources.getText(R.string.account_details_unshield) else resources.getText(R.string.account_details_shield)
 
@@ -230,11 +238,13 @@ class AccountDetailsActivity : BaseActivity() {
         binding.toggleBalance.isSelected = !viewModel.isShielded
         binding.toggleShielded.isSelected = viewModel.isShielded
         binding.shieldedIcon.visibility = if(viewModel.shieldingEnabledLiveData.value == true && viewModel.isShielded) View.VISIBLE else View.GONE
+        binding.earnLayout.visibility = if ((viewModel.shieldingEnabledLiveData.value == true && !viewModel.isShielded) || viewModel.shieldingEnabledLiveData.value == false) View.VISIBLE else View.GONE
     }
 
     private fun setFinalizedMode() {
         binding.sendFundsLayout.isEnabled = true && !viewModel.account.readOnly
         binding.shieldFundsLayout.isEnabled = true && !viewModel.account.readOnly
+        binding.earnLayout.isEnabled = true && !viewModel.account.readOnly
         binding.addressLayout.isEnabled = true
         binding.accountDetailsLayout.visibility = View.VISIBLE
         binding.readonlyDesc.visibility = if(viewModel.account.readOnly) View.VISIBLE else View.GONE
@@ -276,6 +286,7 @@ class AccountDetailsActivity : BaseActivity() {
         binding.sendFundsLayout.isEnabled = false
         binding.shieldFundsLayout.isEnabled = false
         binding.addressLayout.isEnabled = false
+        binding.earnLayout.isEnabled = false
     }
 
     private fun initTabs() {
@@ -308,11 +319,11 @@ class AccountDetailsActivity : BaseActivity() {
                 finish()
             }
             R.id.item_menu -> {
-                item.icon = resources.getDrawable(R.drawable.burger_closed_to_open_anim, null)
+                item.icon = AppCompatResources.getDrawable(this, R.drawable.burger_closed_to_open_anim)
                 (item.icon as Animatable).start()
                 val builder = AlertDialog.Builder(this)
                 builder.setOnDismissListener {
-                    item.icon = resources.getDrawable(R.drawable.burger_open_to_closed_anim, null)
+                    item.icon = AppCompatResources.getDrawable(this, R.drawable.burger_open_to_closed_anim)
                     (item.icon as Animatable).start()
                 }
 
@@ -346,26 +357,6 @@ class AccountDetailsActivity : BaseActivity() {
                 }
                 menuView.menuHideShielded.text = getString(R.string.account_details_menu_hide_shielded, viewModel.account.name)
 
-                // Delegation
-                if (viewModel.account.isBaking() || viewModel.hasPendingBakingTransactions) {
-                    menuView.menuItemDelegationCard.visibility = View.GONE
-                } else {
-                    menuView.menuItemDelegation.setOnClickListener {
-                        mMenuDialog?.dismiss()
-                        gotoDelegation(viewModel.account)
-                    }
-                }
-
-                // Baking
-                if (viewModel.account.isDelegating() || viewModel.hasPendingDelegationTransactions) {
-                    menuView.menuItemBakingCard.visibility = View.GONE
-                } else {
-                    menuView.menuItemBaking.setOnClickListener {
-                        mMenuDialog?.dismiss()
-                        gotoBaking(viewModel.account)
-                    }
-                }
-
                 //Decrypt option
                 menuView.menuDecryptContainer.visibility = if(viewModel.isShielded && viewModel.hasTransactionsToDecrypt) View.VISIBLE else View.GONE
                 menuView.menuDecryptContainer.setOnClickListener {
@@ -386,6 +377,12 @@ class AccountDetailsActivity : BaseActivity() {
                     })
                 }
 
+                // Change account name
+                menuView.menuChangeAccountNameContainer.setOnClickListener {
+                    mMenuDialog?.dismiss()
+                    showChangeNameDialog()
+                }
+
                 builder.setCustomTitle(menuView.root)
                 mMenuDialog = builder.show()
 
@@ -393,6 +390,23 @@ class AccountDetailsActivity : BaseActivity() {
            }
         }
         return true
+    }
+
+    private fun showChangeNameDialog() {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.account_details_change_name_popup_title))
+        builder.setMessage(getString(R.string.account_details_change_name_popup_subtitle))
+        val input = AppCompatEditText(this)
+        input.hint = viewModel.account.name
+        input.inputType = InputType.TYPE_CLASS_TEXT
+        builder.setEditText(this, input)
+        builder.setPositiveButton(getString(R.string.account_details_change_name_popup_save)) { _, _ ->
+            viewModel.changeAccountName(input.text.toString())
+        }
+        builder.setNegativeButton(getString(R.string.account_details_change_name_popup_cancel)) { dialog, _ ->
+            dialog.cancel()
+        }
+        builder.show()
     }
 
     private val getResultEnableShielding =
@@ -431,32 +445,6 @@ class AccountDetailsActivity : BaseActivity() {
         startActivity(intent)
     }
 
-    private fun gotoDelegation(account: Account) {
-        if (account.accountDelegation != null || viewModel.hasPendingDelegationTransactions) {
-            val intent = Intent(this, DelegationStatusActivity::class.java)
-            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, BakerDelegationData(account, isTransactionInProgress = viewModel.hasPendingDelegationTransactions, type = UPDATE_DELEGATION))
-            startActivityForResultAndHistoryCheck(intent)
-        } else {
-            val intent = Intent(this, DelegationCreateIntroFlowActivity::class.java)
-            intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
-            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, BakerDelegationData(account, type = REGISTER_DELEGATION))
-            startActivityForResultAndHistoryCheck(intent)
-        }
-    }
-
-    private fun gotoBaking(account: Account) {
-        if (account.accountBaker != null || viewModel.hasPendingBakingTransactions) {
-            val intent = Intent(this, BakerStatusActivity::class.java)
-            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, BakerDelegationData(account, isTransactionInProgress = viewModel.hasPendingBakingTransactions, type = REGISTER_BAKER))
-            startActivityForResultAndHistoryCheck(intent)
-        } else {
-            val intent = Intent(this, BakerRegistrationIntroFlow::class.java)
-            intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
-            intent.putExtra(EXTRA_DELEGATION_BAKER_DATA, BakerDelegationData(account, type = REGISTER_BAKER))
-            startActivityForResultAndHistoryCheck(intent)
-        }
-    }
-
     private fun showError(stringRes: Int) {
         popup.showSnackbar(binding.rootLayout, stringRes)
     }
@@ -489,4 +477,3 @@ class AccountDetailsActivity : BaseActivity() {
     }
     //endregion
 }
-

@@ -49,7 +49,7 @@ class AccountItemNameAreaView(context: Context, attrs: AttributeSet?): LinearLay
                 binding.statusText.visibility = View.GONE
         }
 
-        binding.accountIdentityName.text = context.getString(R.string.view_account_name_container,accountWithIdentitiy.identity.name)
+        binding.accountIdentityName.text = context.getString(R.string.view_account_name_container, accountWithIdentitiy.identity.name)
 
         // Fix for a weird error where name is truncated wrong and at random
         // This fixes it. We expand if text is truncated, else we wrap.
@@ -62,5 +62,13 @@ class AccountItemNameAreaView(context: Context, attrs: AttributeSet?): LinearLay
                 binding.nameTextview.layoutParams = LayoutParams(0, LayoutParams.WRAP_CONTENT,1f)
             }
         }
+    }
+
+    fun setDefault(identityName: String, accountName: String) {
+        binding.statusImageview.visibility = View.GONE
+        binding.nameTextview.text = identityName
+        binding.accountIdentityName.text = accountName
+        binding.statusText.text = context.getString(R.string.view_account_initial)
+        binding.statusIcon.visibility = View.GONE
     }
 }

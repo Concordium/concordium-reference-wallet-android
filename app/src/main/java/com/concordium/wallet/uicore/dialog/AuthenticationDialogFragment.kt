@@ -58,7 +58,7 @@ class AuthenticationDialogFragment : DialogFragment(), TextView.OnEditorActionLi
 
         binding.includeDialogAuthenticationContent.passwordEdittext.setOnEditorActionListener(this)
         binding.includeDialogAuthenticationContent.passwordEdittext.afterTextChanged {
-            binding.includeDialogAuthenticationContent.passwordError.setText("")
+            binding.includeDialogAuthenticationContent.passwordError.text = ""
         }
         binding.secondDialogButton.setOnClickListener {
             verifyPassword()

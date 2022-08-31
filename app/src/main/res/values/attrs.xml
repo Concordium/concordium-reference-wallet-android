@@ -9,4 +9,8 @@
     <declare-styleable name="MaxShakeTextInputEditText">
         <attr name="maxLength" format="integer" />
     </declare-styleable>
+    <declare-styleable name="ProgressLine">
+        <attr name="numberOfDots" format="integer" />
+        <attr name="filledDots" format="integer" />
+    </declare-styleable>
 </resources>

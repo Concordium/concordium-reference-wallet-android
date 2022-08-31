@@ -14,12 +14,10 @@ import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentMoreOverviewBinding
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.base.BaseFragment
-import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
 import com.concordium.wallet.ui.more.about.AboutActivity
 import com.concordium.wallet.ui.more.alterpassword.AlterPasswordActivity
 import com.concordium.wallet.ui.more.dev.DevActivity
-import com.concordium.wallet.ui.more.export.ExportActivity
-import com.concordium.wallet.ui.more.import.ImportActivity
+import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessActivity
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 
 class MoreOverviewFragment : BaseFragment() {
@@ -87,19 +85,15 @@ class MoreOverviewFragment : BaseFragment() {
         }
 
         binding.identities.setOnClickListener {
-            gotoIdentities()
+            mainViewModel.setState(MainViewModel.State.IdentitiesOverview)
         }
 
         binding.addressBookLayout.setOnClickListener {
             gotoAddressBook()
         }
 
-        binding.exportLayout.setOnClickListener {
-            gotoExport()
-        }
-
-        binding.importLayout.setOnClickListener {
-            import()
+        binding.recoverLayout.setOnClickListener {
+            recover()
         }
 
         binding.aboutLayout.setOnClickListener {
@@ -141,38 +135,24 @@ class MoreOverviewFragment : BaseFragment() {
     }
 
     private fun gotoDevConfig() {
-        val intent = Intent(activity, DevActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun gotoIdentities() {
-        val intent = Intent(activity, IdentitiesOverviewActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(activity, DevActivity::class.java))
     }
 
     private fun gotoAddressBook() {
-        val intent = Intent(activity, RecipientListActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(activity, RecipientListActivity::class.java))
     }
 
-    private fun gotoExport() {
-        val intent = Intent(activity, ExportActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun import() {
-        val intent = Intent(activity, ImportActivity::class.java)
-        startActivity(intent)
+    private fun recover() {
+        activity?.finish()
+        startActivity(Intent(activity, RecoverProcessActivity::class.java))
     }
 
     private fun about() {
-        val intent = Intent(activity, AboutActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(activity, AboutActivity::class.java))
     }
 
     private fun alterPassword() {
-        val intent = Intent(activity, AlterPasswordActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(activity, AlterPasswordActivity::class.java))
     }
 
     //endregion

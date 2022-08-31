@@ -63,7 +63,7 @@ class AuthSetupBiometricsActivity : BaseActivity() {
     }
 
     private fun initializeViews() {
-        hideActionBarBack(this)
+        hideActionBarBack()
         binding.enableBiometricsButton.setOnClickListener {
             onEnableBiometricsClicked()
         }

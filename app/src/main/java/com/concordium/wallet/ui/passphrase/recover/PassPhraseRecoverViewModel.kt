@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
+import com.concordium.wallet.BuildConfig
+import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.ui.passphrase.common.WordsPickedBaseListAdapter
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toHex
@@ -33,6 +35,15 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
         wordsPicked = arrayOfNulls(wordsPicked.size)
     }
 
+    fun hack() {
+        if (BuildConfig.DEBUG) {
+            //AuthPreferences(getApplication()).setSeedPhrase("rifle vehicle onion typical base book trick child entry trick wedding festival zone sport coil verify mirror flame arena sustain coin state north blame") // This should not work
+            //AuthPreferences(getApplication()).setSeedPhrase("trust deal squeeze drastic sport squeeze evoke note fatigue peanut tissue crazy rough knock denial brick swift bus amateur just merit bind enforce peace") // Testnet ( created from iOS)
+            AuthPreferences(getApplication()).setSeedPhrase("close orchard gesture rib income script attract wash surge badge catch page model option hire host tuition invite milk favorite foil kitchen glove brave")  // Testnet (created from Android)
+            _validateLiveData.value = true
+        }
+    }
+
     fun validateInputCode() {
         var success = false
         val entered = wordsPicked.filterNotNull().filter { it != WordsPickedBaseListAdapter.BLANK }
@@ -43,6 +54,9 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
             try {
                 val result = Mnemonics.MnemonicCode(enteredPhrase).toSeed()
                 success = result.isNotEmpty() && result.size == 64 && result.toHex().length == 128
+                if (success) {
+                    AuthPreferences(getApplication()).setSeedPhrase(enteredPhrase)
+                }
             } catch (ex: Exception) {
                 Log.d(ex.message ?: "")
             }

@@ -43,9 +43,23 @@ interface AccountDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg account: Account): List<Long>
 
+    @Transaction
+    suspend fun insertAccountAndCountUpNextAccountNumber(account: Account) {
+        insert(account)
+        findIdentityById(account.identityId)?.let { identity ->
+            identity.nextAccountNumber = identity.nextAccountNumber + 1
+            updateIdentity(identity)
+        }
+    }
+
+    @Update
+    suspend fun updateIdentity(vararg identity: Identity)
+
+    @Query("SELECT * FROM identity_table WHERE id = :id")
+    suspend fun findIdentityById(id: Int): Identity?
+
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(vararg account: Account)
-
 
     @Transaction
     suspend fun updateExceptFinalState(vararg accounts: Account) {
