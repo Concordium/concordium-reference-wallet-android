@@ -24,6 +24,7 @@ import com.concordium.wallet.util.DateTimeUtil
 import com.google.gson.JsonArray
 import kotlinx.coroutines.launch
 import java.io.Serializable
+import kotlin.math.max
 
 data class RecoverProcessData(
     var identitiesWithAccounts: List<IdentityWithAccounts> = mutableListOf(),
@@ -59,7 +60,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
 
             val globalInfo = repository.getGlobalInfoSuspended()
             val identityProviders = repository.getIdentityProviderInfoSuspended()
-            step = 500 / (identityProviders.size * IDENTITY_GAP_MAX)
+            step = 500 / (max(identityProviders.size, 1) * IDENTITY_GAP_MAX)
 
             identityProviders.forEach { identityProvider ->
                 identityGap = 0
@@ -71,7 +72,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
 
             val identityRepository = IdentityRepository(WalletDatabase.getDatabase(getApplication()).identityDao())
             val allIdentitiesFound = identityRepository.getAllDone()
-            step = 500 / (allIdentitiesFound.size * ACCOUNT_GAP_MAX)
+            step = 500 / (max(allIdentitiesFound.size, 1) * ACCOUNT_GAP_MAX)
 
             allIdentitiesFound.forEach { identityFound ->
                 accountGap = 0
