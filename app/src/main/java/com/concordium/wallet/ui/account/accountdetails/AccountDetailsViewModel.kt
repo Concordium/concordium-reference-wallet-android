@@ -173,6 +173,10 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         viewModelScope.launch {
             account.name = name
             accountRepository.update(account)
+            recipientRepository.getRecipientByAddress(account.address)?.let { recipient ->
+                recipient.name = name
+                recipientRepository.update(recipient)
+            }
             _accountUpdatedLiveData.value = true
         }
     }
