@@ -270,7 +270,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         Log.d("end")
     }
 
-    public fun updateEncryptedAmount(submissionStatus: TransferSubmissionStatus, submissionId: String, amount: String?) {
+    fun updateEncryptedAmount(submissionStatus: TransferSubmissionStatus, submissionId: String, amount: String?) {
         viewModelScope.launch {
             if(submissionStatus.encryptedAmount != null){
                 val amount = lookupMappedAmount(submissionId)
@@ -328,14 +328,15 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     accountBalance.finalizedBalance?.let {
 
                         if(it.accountBaker != null && it.accountBaker.stakedAmount != null){
-                            it.accountBaker?.stakedAmount?.toLong()?.let { request.account.totalStaked = it }
+                            it.accountBaker.stakedAmount.toLong()
+                                .let { request.account.totalStaked = it }
                         }
                         else{
                             request.account.totalStaked = 0
                         }
 
                         if(it.accountBaker != null && it.accountBaker.bakerId != null){
-                            it.accountBaker?.bakerId?.toLong()?.let { request.account.bakerId = it }
+                            it.accountBaker.bakerId.toLong().let { request.account.bakerId = it }
                         }
                         else{
                             request.account.bakerId = null
@@ -499,7 +500,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         }
     }
 
-    public suspend fun decryptAndSaveAmount(key: String, encryptedAmount: String):String? {
+    suspend fun decryptAndSaveAmount(key: String, encryptedAmount: String):String? {
         val output = App.appCore.cryptoLibrary.decryptEncryptedAmount(DecryptAmountInput(encryptedAmount,key))
         output?.let {
             if(lookupMappedAmount(encryptedAmount) == null){
@@ -509,7 +510,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         return output
     }
 
-    public suspend fun lookupMappedAmount(key: String):String? {
+    suspend fun lookupMappedAmount(key: String):String? {
         if(DEFAULT_EMPTY_ENCRYPTED_AMOUNT.equals(key)){
             return 0.toString()
         }
@@ -518,13 +519,13 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         return result
     }
 
-    public suspend fun saveDecryptedAmount(key: String, amount: String?) {
+    suspend fun saveDecryptedAmount(key: String, amount: String?) {
         encryptedAmountRepository.insert(EncryptedAmount(key, amount))
     }
 
     suspend fun decryptAllUndecryptedAmounts(secretPrivateKey: String) {
         val list = encryptedAmountRepository.findAllUndecrypted()
-        list?.forEach {
+        list.forEach {
             val secretAmount = it.encryptedkey
             val output = App.appCore.cryptoLibrary.decryptEncryptedAmount(DecryptAmountInput(secretAmount,secretPrivateKey))
             output?.let {

@@ -137,7 +137,6 @@ android {
             buildConfigField("String", "SCHEME", "\"${SCHEME_MOCK}\"")
             resValue "string", "scheme", "\"${SCHEME_MOCK}\""
 
-            resValue "string", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_MOCK}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_MOCK}\"")
 
             buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
@@ -157,7 +156,6 @@ android {
             buildConfigField("String", "SCHEME", "\"${SCHEME_LOCAL}\"")
             resValue "string", "scheme", "\"${SCHEME_LOCAL}\""
 
-            resValue "string", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_LOCAL}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_LOCAL}\"")
 
             buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
@@ -181,7 +179,6 @@ android {
             buildConfigField("String", "SCHEME", "\"${SCHEME_STAGING}\"")
             resValue "string", "scheme", "\"${SCHEME_STAGING}\""
 
-            resValue "string", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_STAGING}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_STAGING}\"")
 
             buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
@@ -202,7 +199,6 @@ android {
             buildConfigField("String", "SCHEME", "\"${SCHEME_TESTNET}\"")
             resValue "string", "scheme", "\"${SCHEME_TESTNET}\""
 
-            resValue "string", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_TESTNET}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_TESTNET}\"")
 
             buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")
@@ -222,7 +218,6 @@ android {
             buildConfigField("String", "SCHEME", "\"${SCHEME_PROD}\"")
             resValue "string", "scheme", "\"${SCHEME_PROD}\""
 
-            resValue "string", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_PROD}\""
             buildConfigField("String", "PROVIDER_AUTHORITY", "\"${PROVIDER_AUTHORITY_PROD}\"")
 
             buildConfigField("Long", "ACCOUNT_UPDATE_FREQUENCY_SEC", "60l")

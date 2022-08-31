@@ -152,9 +152,9 @@ class TransactionDetailsActivity : BaseActivity() {
             )
         }
 
-        binding.transaction.titleTextview.setElegantTextHeight(true)
-        binding.transaction.titleTextview.setInputType(InputType.TYPE_TEXT_FLAG_MULTI_LINE)
-        binding.transaction.titleTextview.setSingleLine(false)
+        binding.transaction.titleTextview.isElegantTextHeight = true
+        binding.transaction.titleTextview.inputType = InputType.TYPE_TEXT_FLAG_MULTI_LINE
+        binding.transaction.titleTextview.isSingleLine = false
 
         binding.messageTextview.isElegantTextHeight = true
         binding.messageTextview.inputType = InputType.TYPE_TEXT_FLAG_MULTI_LINE

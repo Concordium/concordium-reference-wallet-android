@@ -94,7 +94,7 @@ class AuthLoginActivity : BaseActivity() {
             binding.confirmButton.visibility = View.INVISIBLE
             binding.passcodeView.passcodeListener = object : PasscodeView.PasscodeListener {
                 override fun onInputChanged() {
-                    binding.errorTextview.setText("")
+                    binding.errorTextview.text = ""
                 }
 
                 override fun onDone() {
@@ -114,7 +114,7 @@ class AuthLoginActivity : BaseActivity() {
                 }
             }
             binding.passwordEdittext.afterTextChanged {
-                binding.errorTextview.setText("")
+                binding.errorTextview.text = ""
             }
             binding.passwordEdittext.requestFocus()
         }

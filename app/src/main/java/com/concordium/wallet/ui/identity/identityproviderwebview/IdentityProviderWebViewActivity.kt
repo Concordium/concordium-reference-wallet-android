@@ -68,7 +68,7 @@ class IdentityProviderWebViewActivity : BaseActivity() {
 
     private val preferences: IdentityDataPreferences
         get() {
-            return IdentityDataPreferences(getApplication(),
+            return IdentityDataPreferences(application,
                 KEY_IDENTITY_CREATION_DATA, Context.MODE_PRIVATE)
         }
 

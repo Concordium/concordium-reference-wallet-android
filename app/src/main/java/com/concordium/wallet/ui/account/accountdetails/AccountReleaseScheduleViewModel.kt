@@ -47,10 +47,6 @@ class AccountReleaseScheduleViewModel(application: Application) : AndroidViewMod
         this.isShielded = isShielded
     }
 
-    override fun onCleared() {
-        super.onCleared()
-    }
-
     fun populateScheduledReleaseList() {
         _waitingLiveData.value = true
         viewModelScope.launch {

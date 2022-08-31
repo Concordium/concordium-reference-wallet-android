@@ -11,13 +11,11 @@
     <dimen name="list_item_height">60dp</dimen>
     <dimen name="list_item_height_lower">60dp</dimen>
     <dimen name="list_item_horizontal_margin">16dp</dimen>
-    <dimen name="list_item_vertical_margin">16dp</dimen>
     <!-- List items - an related values in other layouts-->
     <dimen name="screen_horizontal_margin">25dp</dimen>
     <dimen name="screen_horizontal_margin_checkbox">20dp</dimen>
 
     <!-- Icon margin in identity list-->
-    <dimen name="list_item_icon_margin">6dp</dimen>
 
     <!-- Bottom navigation override to have more space between icon and text -->
     <dimen name="design_bottom_navigation_height" override="true">62dp</dimen>
@@ -26,11 +24,11 @@
     <!-- Specific screens ********************-->
 
     <!--Account overview -->
-    <dimen name="account_overview_balance_height">100dp</dimen><!-- In multiple dimens file-->
+    <!-- In multiple dimens file-->
 
     <!--Account details -->
     <dimen name="section_gtu_drop">16dp</dimen>
-    <dimen name="account_details_balance_height">60dp</dimen><!-- In multiple dimens file-->
+    <!-- In multiple dimens file-->
     <dimen name="account_details_button_height">50dp</dimen><!-- In multiple dimens file-->
     <dimen name="account_card_vertical_margin_half">4dp</dimen>
 

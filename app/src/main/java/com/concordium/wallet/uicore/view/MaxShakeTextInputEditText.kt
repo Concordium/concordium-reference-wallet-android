@@ -66,7 +66,7 @@ class MaxShakeTextInputEditText: com.google.android.material.textfield.TextInput
                             return ""
                         }
                     }
-                    source?.subSequence(start, keep)
+                    source.subSequence(start, keep)
                 }
             }
         })

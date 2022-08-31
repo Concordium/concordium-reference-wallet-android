@@ -3,7 +3,6 @@
     <!-- App -->
     <string name="app_name">Concordium</string>
     <string name="app_menu_item_accounts">Accounts</string>
-    <string name="app_menu_item_identities">Identities</string>
     <string name="app_menu_item_more">More</string>
     <string name="app_menu_item_add_recipient">Add</string>
     <string name="app_menu_item_burger">Menu</string>
@@ -18,7 +17,6 @@
     <string name="app_error_backend_unknown_sockettimeout_exception">Connection to server timed out. Please check the internet connection.</string>
     <string name="app_error_backend_internal_server">Cannot establish communication with the server.</string>
     <string name="app_error_backend_unknown_error_code">Cannot establish communication with the server.</string>
-    <string name="app_error_backend_unknown">Unknown backend error.</string>
     <string name="app_error_backend_unknown2">Unknown backend error</string>
     <string name="app_version">Version %1$s</string>
     <string name="app_version_about">%1$s</string>
@@ -32,7 +30,6 @@
 
     <string name="dialog_support_subject_reference">Issuance reference: %1$s</string>
     <string name="dialog_support_text">Hi! My identity issuance failed.\n\nHere is my info:\n\nIssuance reference:\n%1$s\n\nMobile Wallet version:\nv%2$s\n\nPlatform:\nAndroid %3$s</string>
-    <string name="dialog_support_creation_data_reference">Identity issuance failed - please try again</string>
 
     <string name="dialog_support">Contact Support</string>
     <string name="dialog_copy">Copy reference</string>
@@ -184,7 +181,6 @@
 
 
     <!-- Intro start-->
-    <string name="intro_start_title">Intro start</string>
     <string name="intro_start_header">Before you begin</string>
     <string name="intro_start_info">Before you start using the Concordium Mobile Wallet, you have to set up a passcode and optionally biometrics.\n\nIt is very important to keep your passcode safe, because it is the only way to access your accounts. Concordium is not be able to change your passcode or help you unlock your wallet if you lose your passcode.\n\nSimilarly, if someone gets your passcode, they will be able to access your accounts.\n\nSo remember to keep your passcode safe!</string>
     <string name="intro_start_confirm">Continue</string>
@@ -230,7 +226,6 @@
     <string name="pass_phrase_recover_process_nothing_new">Nothing new was found.</string>
     <string name="pass_phrase_recover_process_finished_accounts">Accounts:</string>
     <string name="pass_phrase_recover_process_try_again">Try again</string>
-    <string name="pass_phrase_recover_process_enter_another">Enter another recovery phrase</string>
 
     <string name="earn_title">Earning rewards</string>
     <string name="earn_subtitle">There are two options for earning rewards on Concordium: Baking and delegation.</string>
@@ -314,11 +309,9 @@
 
     <string name="delegation_register_delegation_amount_current_amount">Current amounts on your account:</string>
     <string name="delegation_register_delegation_amount_balance">Balance:</string>
-    <string name="delegation_register_delegation_amount_at_disposal">At disposal:</string>
     <string name="delegation_register_delegation_amount_delegation">Delegation:</string>
     <string name="delegation_register_delegation_amount_enter_amount">Enter the amount you want to delegate</string>
     <string name="delegation_update_delegation_amount_enter_amount">Optional: Enter new delegation amount</string>
-    <string name="delegation_register_delegation_amount_hint">0.00</string>
     <string name="delegation_register_delegation_amount_locked">Amount locked</string>
     <string name="delegation_register_delegation_amount_insufficient_error">Insufficient funds</string>
     <string name="delegation_register_delegation_amount_current_pool">Current pool:</string>
@@ -432,7 +425,6 @@
     <string name="baker_status_baker_waiting_title">Waiting for baker transaction to finalize.</string>
     <string name="baker_status_baker_waiting">Waiting for transaction to finalize.</string>
     <string name="baker_status_baker_registered_title">Your baker is registered.</string>
-    <string name="baker_status_baker_remove">Remove baker</string>
     <string name="baker_status_baker_account">Baker account</string>
     <string name="baker_status_baker_stake">Baker stake</string>
     <string name="baker_status_baker_id">Baker ID</string>
@@ -444,10 +436,6 @@
     <string name="baker_status_baker_delegation_pool_status_closed">Closed for delegation</string>
     <string name="baker_status_baker_delegation_pool_status_closed_for_new">Closed for new delegation</string>
     <string name="baker_status_baker_metadata_url">Metadata URL</string>
-    <plurals name="baker_status_baker_take_effect_in">
-        <item quantity="one">The following changes will take effect in approximately %d day</item>
-        <item quantity="other">The following changes will take effect in approximately %d days</item>
-    </plurals>
     <string name="baker_status_baker_effective_remove">The baker will be deregistered, and the stake will be unlocked on the public balance of the account.</string>
     <string name="baker_status_baker_effective_time">%1$s at %2$s</string>
     <string name="baker_status_baker_take_effect_on">The following changes will take effect on</string>
@@ -622,14 +610,6 @@
 
     <!-- Identity create -->
     <string name="identity_create_title">Initial account creation</string>
-    <string name="identity_create_info_header">The initial account</string>
-    <string name="identity_create_info_info">On the following pages you will be guided through the three step process of requesting an initial account and an identity:\n\n1. Naming your initial account.\n2. Naming your identity.\n3. Requesting the initial account and identity from a provider of your choice.</string>
-    <string name="identity_create_info_info_first">The initial account, is an account created by an identity provider of your choice. This account is created at the same time as you request an identity from an identity provider. You will have to request both the identity and the initial account, before you can start using the Concordium block-chain.\n\nOn the following pages you will be guided through the three step process of requesting the initial account and an identity:\n\n1. Naming your initial account.\n2. Naming your identity.\n3. Requesting the initial account and identity from a provider of your choice.</string>
-    <string name="identity_create_info_confirm">Okay, got it!</string>
-    <string name="identity_create_account_name_header">Name your initial account</string>
-    <string name="identity_create_account_name_info">For easy identification of accounts in your wallet, all accounts have a name. This name is only visible to you and you can name it whatever you want. It does not have to be your actual name. The name is not the account address.\n\nType the name you want to give your initial account below.</string>
-    <string name="identity_create_account_name_account_name">Initial account name</string>
-    <string name="identity_create_account_name_confirm">Continue</string>
     <string name="identity_create_identity_name_header">Name your identity card</string>
     <string name="identity_create_identity_name_info">You should also give your identity card a name to easily keep track of it. Similar to the name you gave the initial account, this name is only visible to you, and you can name it whatever you want.\n\nType the name you want to give your identity card in your wallet below.</string>
     <string name="identity_create_identity_name_identity_name">Identity card name</string>
@@ -646,7 +626,6 @@
     <string name="identity_provider_webview_title">Identity Verification</string>
 
     <!-- Identity confirmed -->
-    <string name="identity">Identity</string>
     <string name="account">Account</string>
     <string name="identity_confirmed_title">Your first identity</string>
     <string name="identity_confirmed_header">Verification request submitted!</string>
@@ -712,8 +691,6 @@
     <string name="new_account_name_account_name_hint">Account name</string>
 
     <!-- Identity overview -->
-    <string name="identity_verification_failed">Verification failed</string>
-    <string name="identity_verification_pending">Verification in progress</string>
 
     <!-- New account identity -->
     <string name="new_account_identity_title">Add Identity Data</string>
@@ -729,10 +706,8 @@
     <!-- New account identity attributes -->
     <string name="new_account_identity_attributes_title">Reveal Identity Data</string>
     <string name="new_account_identity_attributes_confirm">Submit account</string>
-    <string name="new_account_identity_attributes_header">Select identity data</string>
     <string name="new_account_identity_attributes_error_max_accounts_title">Error</string>
     <string name="new_account_identity_attributes_error_max_accounts">Ooops! This identity already has too many accounts submitted to the chain. Please select another identity to continue.</string>
-    <string name="new_account_identity_attributes_error_max_accounts_alt">You already have the maximum number of accounts for this identity.</string>
 
     <!-- New account created -->
     <string name="new_account_confirmed_title">Account Creation</string>
@@ -815,10 +790,6 @@
     <string name="send_funds_more_than_95_continue">Continue anyway</string>
     <string name="send_funds_more_than_95_new_stake">Enter a new amount to shield</string>
 
-    <string name="send_funds_select_recipient_or_unshield_amount">Select recipient</string>
-    <string name="send_funds_select_recipient">Select recipient</string>
-    <string name="send_funds_recipient_shield">Amount will be shielded</string>
-    <string name="send_funds_recipient_unshield">Amount will be unshielded</string>
     <string name="send_funds_confirm">Send amount</string>
     <string name="send_funds_confirm_shield">Shield amount</string>
     <string name="send_funds_confirm_unshield">Unshield amount</string>
@@ -829,7 +800,6 @@
     <string name="send_funds_confirmation_send_shielded">Confirm to send shielded amount\n%1$s to %2$s\nEstimated transaction fee:\n%3$s\n%4$s</string>
     <string name="send_funds_confirmation_memo">Memo: %1$s</string>
     <string name="send_funds_confirmation_memo_with_linebreak">Memo:\n%1$s</string>
-    <string name="send_funds_error_same_account">Recipient account is not allowed to be the same as sending account.</string>
 
     <!-- Add Memo -->
     <string name="add_memo_title">Add memo</string>
@@ -879,7 +849,6 @@
     <string name="about_contact">Website</string>
     <string name="about_contact_text">For more info about Concordium you can visit <a href="https://concordium.com">concordium.com</a></string>
     <string name="about_version">App Version</string>
-    <string name="about_version_text">%s</string>
 
     <!-- Change Password -->
     <string name="alterpassword_title"><![CDATA[Update Passcode & Biometrics]]></string>
@@ -893,8 +862,6 @@
     <string name="recipient_list_default_title">Address Book</string>
     <string name="recipient_list_select_title">Select Recipient</string>
     <string name="recipient_list_search_hint">Search recipients</string>
-    <string name="recipient_list_shield_amount">Shield amount</string>
-    <string name="recipient_list_unshield_amount">Unshield amount</string>
 
     <!-- New recipient -->
     <string name="recipient_edit_title">Edit Address</string>
@@ -924,7 +891,6 @@
     <string name="error_database_close">Close</string>
 
     <string name="accounts_overview_total_details_disposal">Total currently at disposal</string>
-    <string name="accounts_overview_total_details_staked">Stake with baker %1$d</string>
     <string name="accounts_overview_total_details_staked_no_id">Stake with baker</string>
     <string name="account_details_menu_release_schedule">Release schedule</string>
     <string name="account_details_menu_transfer_filter">Transfer filters</string>
@@ -949,7 +915,6 @@
     <string name="account_release_schedule_amount">Amount</string>
     <string name="account_release_schedule_copied">Transaction copied</string>
     <string name="account_release_schedule_copy_title">Account address</string>
-    <string name="account_details_baker_id">Baker ID:</string>
 
     <string name="account_total_details_disposal">Balance total</string>
     <string name="account_shielded_total_details_disposal">Shielded balance total of %1$s</string>
@@ -970,16 +935,12 @@
 
     <string name="contact_issuance_hash_value_copied">Reference text copied</string>
 
-    <string name="send_fund_optional_memo">You can enter an optional memo here.</string>
     <string name="transaction_memo_warning_title">Transaction memos</string>
     <string name="transaction_memo_warning_text">Transaction memos are public and visible to everyone on the blockchain. Any memo sent with a transaction are permament, and will be visible forever, so be careful what you write in the memo.\n\nAdding a memo will increase the transaction fee.</string>
     <string name="transaction_memo_warning_dont_show">Don’t show again</string>
     <string name="transaction_memo_warning_ok">Okay</string>
     <string name="send_funds_optional_add_memo">Optional: Add memo</string>
 
-    <string name="account_card_action_send">Send</string>
-    <string name="account_card_action_receive">Receive</string>
-    <string name="account_card_action_more">More</string>
     <string name="shielding_intro_skip">Skip</string>
     <string name="shielding_intro_back">Back</string>
     <string name="shielding_intro_next">Next</string>

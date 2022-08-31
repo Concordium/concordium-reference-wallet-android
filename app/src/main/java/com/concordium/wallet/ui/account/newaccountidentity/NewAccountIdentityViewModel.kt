@@ -9,7 +9,6 @@ import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
-import com.concordium.wallet.util.Log
 
 class NewAccountIdentityViewModel(application: Application) : AndroidViewModel(application) {
 

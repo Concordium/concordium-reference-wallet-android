@@ -82,7 +82,7 @@ class AuthSetupPasswordActivity : BaseActivity() {
         }
         binding.confirmButton.isEnabled = false
         binding.passwordEdittext.afterTextChanged {
-            binding.errorTextview.setText("")
+            binding.errorTextview.text = ""
             binding.confirmButton.isEnabled =
                 viewModel.checkPasswordRequirements(binding.passwordEdittext.text.toString())
         }

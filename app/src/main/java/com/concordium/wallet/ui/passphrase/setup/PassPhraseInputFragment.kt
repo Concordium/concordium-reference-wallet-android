@@ -64,7 +64,7 @@ class PassPhraseInputFragment : PassPhraseBaseFragment() {
         }
 
         arrayAdapter = WordsPickedListAdapter(requireContext(), viewModel.wordsPicked)
-        arrayAdapter.setWordPickedClickListener() { position ->
+        arrayAdapter.setWordPickedClickListener { position ->
             val before = arrayAdapter.currentPosition
             var durationFactor = 1
             if (position < before) durationFactor = if (before - position == 1) 2 else 3

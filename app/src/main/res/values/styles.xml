@@ -104,9 +104,6 @@
         <item name="android:layout_marginTop">15dp</item>
     </style>
 
-    <style name="Layout.CardView.Warning.Yellow">
-        <item name="android:foreground">@drawable/bg_cardview_border_yellow</item>
-    </style>
     <!--............................................................................-->
 
     <style name="ScrollView">
@@ -354,9 +351,6 @@
         <item name="android:textColor">@color/text_black</item>
         <item name="android:backgroundTint">@color/text_grey</item>
         <item name="android:textColorHint">@color/text_blue</item>
-    </style>
-
-    <style name="EditText.Memo" parent="EditText.Name">
     </style>
 
     <style name="EditText.AuthOnDark">

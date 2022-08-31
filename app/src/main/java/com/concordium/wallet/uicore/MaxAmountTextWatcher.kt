@@ -4,7 +4,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import com.concordium.wallet.data.util.CurrencyUtil
 
-class MaxAmountTextWatcher() : TextWatcher {
+class MaxAmountTextWatcher : TextWatcher {
 
     private var previousText: String = ""
 

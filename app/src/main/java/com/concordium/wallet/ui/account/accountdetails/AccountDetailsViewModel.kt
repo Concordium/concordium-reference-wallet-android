@@ -552,10 +552,10 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                                     newSelfAmount = output.toLong()
                                 }
                             }
-                            if (it.details?.inputEncryptedAmount != null) {
+                            if (it.details.inputEncryptedAmount != null) {
                                 val output = App.appCore.cryptoLibrary.decryptEncryptedAmount(
                                     DecryptAmountInput(
-                                        it.details?.inputEncryptedAmount,
+                                        it.details.inputEncryptedAmount,
                                         secretKey
                                     )
                                 )
@@ -563,7 +563,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                                     inputAmount = output.toLong()
                                 }
                             }
-                            it.encrypted.encryptedAmount?.let {
+                            it.encrypted.encryptedAmount.let {
                                 accountUpdater.saveDecryptedAmount(it, (-(newSelfAmount - inputAmount)).toString())
                                 GlobalScope.launch(Dispatchers.Main) {
                                     _transferListLiveData.forceRefresh()
@@ -571,7 +571,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                             }
                         }
                         else
-                        if (it.encrypted?.encryptedAmount != null) {
+                        if (it.encrypted.encryptedAmount != null) {
                             val output =
                                 App.appCore.cryptoLibrary.decryptEncryptedAmount(DecryptAmountInput(it.encrypted.encryptedAmount, secretKey))
                             if (output != null) {

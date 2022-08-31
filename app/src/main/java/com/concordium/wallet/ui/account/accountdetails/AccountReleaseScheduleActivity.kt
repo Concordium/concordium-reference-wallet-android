@@ -112,7 +112,7 @@ class AccountReleaseScheduleActivity : BaseActivity() {
                     }
                 }
 
-                view.amount.setText(CurrencyUtil.formatGTU(release.amount.toLong(), true))
+                view.amount.text = CurrencyUtil.formatGTU(release.amount.toLong(), true)
                 binding.accountReleaseScheduleList.addView(view.root)
             }
         })

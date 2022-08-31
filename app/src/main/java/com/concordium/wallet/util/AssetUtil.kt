@@ -9,7 +9,7 @@ object AssetUtil {
     fun loadFromAsset(context: Context, asset: String): String {
         var content: String?
         try {
-            val inputStream = context.getAssets().open(asset)
+            val inputStream = context.assets.open(asset)
             val size = inputStream.available()
             val buffer = ByteArray(size)
 
