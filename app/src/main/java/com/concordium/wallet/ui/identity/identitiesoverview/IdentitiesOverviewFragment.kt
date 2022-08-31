@@ -88,6 +88,9 @@ class IdentitiesOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ide
 
     private fun initializeViews() {
         initializeList()
+        binding.newIdentityButton.setOnClickListener {
+            gotoCreateIdentity()
+        }
     }
 
     private fun initializeList() {
