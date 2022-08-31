@@ -11,5 +11,5 @@ data class IdentityWithAccounts(
         parentColumn = "id",
         entityColumn = "identity_id"
     )
-    val accounts: List<Account>
+    val accounts: MutableList<Account> = mutableListOf()
 ) : Serializable

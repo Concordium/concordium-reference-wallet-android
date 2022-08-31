@@ -227,6 +227,7 @@
     <string name="pass_phrase_recover_process_partial">Recovery may be partial</string>
     <string name="pass_phrase_recover_process_partial_description">There was a problem contacting some identity providers. This means that some identities and accounts may not have been recovered. If you can see that something is missing, you can try to restart the recovery process, or you can try again later by starting the recovery process from the settings menu. The affected identity providers:</string>
     <string name="pass_phrase_recover_process_recovered">You have successfully recovered:</string>
+    <string name="pass_phrase_recover_process_nothing_new">Nothing new was found.</string>
     <string name="pass_phrase_recover_process_finished_accounts">Accounts:</string>
     <string name="pass_phrase_recover_process_try_again">Try again</string>
     <string name="pass_phrase_recover_process_enter_another">Enter another recovery phrase</string>

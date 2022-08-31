@@ -49,6 +49,10 @@ class RecoverProcessFinishedFragment : RecoverProcessBaseFragment() {
             binding.partialTextview.visibility = View.GONE
             binding.providerNames.visibility = View.GONE
             binding.headerTextview.text = getString(R.string.pass_phrase_recover_process_finished)
+            if (recoverProcessData.identitiesWithAccounts.isNotEmpty())
+                binding.subtitleTextview.text = getString(R.string.pass_phrase_recover_process_recovered)
+            else
+                binding.subtitleTextview.text = getString(R.string.pass_phrase_recover_process_nothing_new)
         }
 
         recoverProcessData.identitiesWithAccounts.forEach { identityWithAccounts ->
