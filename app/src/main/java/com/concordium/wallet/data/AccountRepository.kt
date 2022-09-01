@@ -22,6 +22,14 @@ class AccountRepository(private val accountDao: AccountDao) {
         return accountDao.getAll()
     }
 
+    suspend fun getAllDone(): List<Account> {
+        return accountDao.getAllDone()
+    }
+
+    suspend fun getAllDoneWithIdentity(): List<AccountWithIdentity> {
+        return accountDao.getAllDoneWithIdentity()
+    }
+
     suspend fun getAllByIdentityId(id: Int): List<Account> {
         return accountDao.getAllByIdentityId(id)
     }

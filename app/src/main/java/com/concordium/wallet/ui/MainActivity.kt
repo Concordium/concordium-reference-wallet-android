@@ -1,14 +1,14 @@
 package com.concordium.wallet.ui
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
-import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.databinding.ActivityMainBinding
 import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewFragment
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
@@ -44,7 +44,7 @@ class MainActivity : BaseActivity(), AccountsOverviewFragment.AccountsOverviewFr
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.main_title)
+        setupToolbar()
 
         initializeViewModel()
         viewModel.initialize()
@@ -60,6 +60,46 @@ class MainActivity : BaseActivity(), AccountsOverviewFragment.AccountsOverviewFr
 
         EventBus.getDefault().register(this)
     }
+
+    private fun setupToolbar() {
+        setSupportActionBar(binding.toolbarLayout.toolbar)
+        supportActionBar?.setTitle(R.string.main_title)
+        supportActionBar?.setCustomView(R.layout.app_toolbar_main)
+
+        binding.toolbarLayout.addAccount.setOnClickListener {
+            gotoCreateAccount()
+        }
+        binding.toolbarLayout.scan.setOnClickListener {
+            scan()
+        }
+        binding.toolbarLayout.settings.setOnClickListener {
+            startActivity(Intent(this, MoreActivity::class.java))
+        }
+    }
+
+    private fun gotoCreateAccount() {
+        val intent = Intent(this, IdentitiesOverviewActivity::class.java)
+        intent.putExtra(IdentitiesOverviewActivity.SHOW_FOR_CREATE_ACCOUNT, true)
+        startActivity(intent)
+    }
+
+    private fun scan() {
+        val intent = Intent(this, ScanQRActivity::class.java)
+        intent.putExtra(ScanQRActivity.QR_MODE, ScanQRActivity.QR_MODE_WALLET_CONNECT)
+        getResultScanQr.launch(intent)
+    }
+
+    private val getResultScanQr =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                it.data?.getStringExtra(ScanQRActivity.EXTRA_BARCODE)?.let { wcUri ->
+                    val intent = Intent(this, WalletConnectActivity::class.java)
+                    intent.putExtra(WalletConnectActivity.FROM_DEEP_LINK, false)
+                    intent.putExtra(WalletConnectActivity.WC_URI, wcUri)
+                    startActivity(intent)
+                }
+            }
+        }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -91,28 +131,6 @@ class MainActivity : BaseActivity(), AccountsOverviewFragment.AccountsOverviewFr
     override fun onPause() {
         super.onPause()
         stopCheckForPendingIdentity()
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        intent?.getBooleanExtra(EXTRA_SHOW_IDENTITIES, false)?.let { showIdentities ->
-            if (showIdentities) {
-                switchToIdentities()
-            }
-        }
-        // MainActivity has launchMode singleTask to not start a new instance (if already running),
-        // when selecting an import file to launch the app. In this case onNewIntent will be called.
-        intent?.data?.let { _ ->
-            // Save this new intent to handle it in onResume (in case of an import file)
-            this.intent = intent
-        }
-    }
-
-    override fun onBackPressed() {
-        if (viewModel.stateLiveData.value == MainViewModel.State.IdentitiesOverview)
-            viewModel.setState(MainViewModel.State.AccountOverview)
-        else
-            super.onBackPressed()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -152,10 +170,6 @@ class MainActivity : BaseActivity(), AccountsOverviewFragment.AccountsOverviewFr
     }
 
     private fun initializeViews() {
-        forceMenuSelection(R.id.menuitem_accounts)
-        binding.bottomNavigationView.setOnItemSelectedListener {
-            onNavigationItemSelected(it)
-        }
         hideActionBarBack()
     }
 
@@ -164,46 +178,12 @@ class MainActivity : BaseActivity(), AccountsOverviewFragment.AccountsOverviewFr
     //region Menu Navigation
     //************************************************************
 
-    private fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
-        menuItem.isChecked = true
-        val state = getState(menuItem)
-        if (state != null) {
-            viewModel.setState(state)
-            return true
-        }
-        return false
-    }
-
-    private fun forceMenuSelection(resId: Int) {
-        GlobalScope.launch(Dispatchers.Main){
-            delay(1)
-            binding.bottomNavigationView.menu.findItem(resId).isChecked = true
-        }
-    }
-
-    private fun getState(menuItem: MenuItem): MainViewModel.State? {
-        return when (menuItem.itemId) {
-            R.id.menuitem_accounts -> MainViewModel.State.AccountOverview
-            R.id.menuitem_more -> MainViewModel.State.More
-            else -> null
-        }
-    }
-
     private fun replaceFragment(state: MainViewModel.State) {
         hideActionBarBack()
         val fragment: BaseFragment
         when (state) {
             MainViewModel.State.AccountOverview -> {
                 fragment = AccountsOverviewFragment()
-                forceMenuSelection(R.id.menuitem_accounts)
-            }
-            MainViewModel.State.More -> {
-                fragment = MoreOverviewFragment()
-            }
-            MainViewModel.State.IdentitiesOverview -> {
-                fragment = IdentitiesOverviewFragment()
-                setActionBarTitle(R.string.identities_overview_title)
-                showActionBarBack()
             }
         }
         replaceFragment(fragment)

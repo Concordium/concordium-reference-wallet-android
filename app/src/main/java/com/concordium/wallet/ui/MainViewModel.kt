@@ -14,7 +14,7 @@ import com.concordium.wallet.ui.common.identity.IdentityUpdater
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     enum class State {
-        AccountOverview, More, IdentitiesOverview
+        AccountOverview
     }
 
     private val identityRepository: IdentityRepository

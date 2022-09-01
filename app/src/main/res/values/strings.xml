@@ -2,8 +2,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- App -->
     <string name="app_name">Concordium</string>
-    <string name="app_menu_item_accounts">Accounts</string>
-    <string name="app_menu_item_more">More</string>
     <string name="app_menu_item_add_recipient">Add</string>
     <string name="app_menu_item_burger">Menu</string>
     <string name="app_error_general">Unexpected error</string>
@@ -794,7 +792,6 @@
     <string name="add_memo_confirm">Add memo to transfer</string>
     <string name="add_memo_hint">You can enter an optional memo here.</string>
 
-
     <!--  Send funds confirmed  -->
     <string name="send_funds_confirmed_title">Send funds</string>
     <string name="send_funds_confirmed_header">Transaction submitted!</string>
@@ -812,6 +809,18 @@
     <string name="transaction_details_origin">Origin: %1$s</string>
     <string name="transaction_details_details">Details</string>
     <string name="transaction_details_value_copied">Copied full value of %1$s</string>
+
+    <!-- Wallet Connect -->
+    <string name="wallet_connect_accounts_title">Choose an account to open session</string>
+    <string name="scan_qr_title_wc">Scan to Open Session</string>
+    <string name="wallet_connect_choose_account_title">Choose which account you want to open the session with.</string>
+
+    <string name="wallet_connect_connect_session_text_1">You are about to open a session between your account</string>
+    <string name="wallet_connect_connect_session_text_2">and the external service</string>
+    <string name="wallet_connect_connect_session_text_3">The service will be able to see:</string>
+    <string name="wallet_connect_connect_session_text_4">Do you want to proceed and open this session? You should only connect to services you trust.</string>
+    <string name="wallet_connect_connect_session_connect">Connect</string>
+    <string name="wallet_connect_connect_session_decline">Decline</string>
 
 
     <!-- ***** More ***** -->

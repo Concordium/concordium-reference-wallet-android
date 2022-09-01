@@ -128,8 +128,7 @@ class IdentityProviderListActivity : BaseActivity() {
         viewModel.getIdentityCreationData()?.let { identityCreationData ->
             val intent = Intent(this, IdentityProviderWebViewActivity::class.java)
             intent.putExtra(IdentityProviderWebViewActivity.EXTRA_IDENTITY_CREATION_DATA, identityCreationData)
-            if (showForFirstIdentity)
-                intent.putExtra(IdentityProviderWebViewActivity.SHOW_FOR_FIRST_IDENTITY, true)
+            intent.putExtra(IdentityProviderWebViewActivity.SHOW_FOR_FIRST_IDENTITY, showForFirstIdentity)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
         }
