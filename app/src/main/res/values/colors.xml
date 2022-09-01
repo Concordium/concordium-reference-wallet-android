@@ -19,6 +19,7 @@
     <color name="theme_component_selected">@color/theme_dark_blue</color>
     <color name="theme_component_pressed">#68a7ca</color>
     <color name="theme_component_disabled">#66325D76</color>
+    <color name="theme_component_disabled_alpha_one">#30444F</color>
     <color name="theme_component_grey">#969696</color>
     <color name="theme_component_grey_pressed">#B8B8B8</color>
     <color name="theme_divider">#EAEAEA</color>

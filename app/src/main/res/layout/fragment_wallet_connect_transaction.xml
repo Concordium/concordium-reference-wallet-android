@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/TextView.XSmall.Light"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/activity_vertical_margin_half"
+        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+        android:text="@string/wallet_connect_transaction_currently_available_amounts" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/at_disposal_title"
+            style="@style/TextView.Standard.Light"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_weight="0"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:text="@string/wallet_connect_transaction_balance_at_disposal" />
+        <TextView
+            android:id="@+id/at_disposal"
+            style="@style/TextView.Standard.Light"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_gravity="end"
+            android:textAlignment="textEnd"
+            android:maxLines="1"
+            tools:text="Ͼ123.45" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin_half">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/header_1"
+                style="@style/TextView.Medium.Bold"
+                android:text="@string/wallet_connect_transaction_approve"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/activity_vertical_margin_half" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:paddingHorizontal="@dimen/activity_horizontal_margin_double"
+                android:background="@drawable/receipt_background_new"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
+                    android:text="@string/wallet_connect_transaction_receipt_title" />
+
+                <View style="@style/Divider" />
+
+                <TextView
+                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
+                    android:text="@string/wallet_connect_transaction_sender_account" />
+
+                <TextView
+                    android:id="@+id/account_to_send_from"
+                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
+                    android:layout_width="match_parent"
+                    tools:text="Main\n\n14f3632ac857400d417a7277f726c43a8ddf07184f10a429cf0759e985247c33" />
+
+                <TextView
+                    android:id="@+id/amount_title"
+                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
+                    android:text="@string/wallet_connect_transaction_amount" />
+
+                <TextView
+                    android:id="@+id/amount"
+                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
+                    android:layout_width="match_parent"
+                    tools:text="Ͼ123.45" />
+
+                <TextView
+                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
+                    android:text="@string/wallet_connect_transaction_contract_address" />
+
+                <TextView
+                    android:id="@+id/contract_address"
+                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
+                    android:layout_width="match_parent"
+                    tools:text="14f3632ac857400d417a7277f726c43a 8ddf07184f10a429cf0759e985247c33" />
+
+                <TextView
+                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
+                    android:text="@string/wallet_connect_transaction_parameters" />
+
+                <TextView
+                    android:id="@+id/parameters"
+                    style="@style/TextView.Mono.XSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
+                    android:background="@drawable/bg_border_gray_white"
+                    android:textColor="#000000"
+                    android:padding="@dimen/activity_horizontal_margin"
+                    tools:text="[\n  {\n    &quot;type&quot;:&quot;uint256&quot;\n  },\n  {\n    &quot;type&quot;:&quot;bytes[]&quot;\n  }\n]" />
+
+                <TextView
+                    android:id="@+id/estimated_transaction_fee"
+                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Gray"
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
+                    tools:text="Estimated transaction fee:\nϾ 0.0059" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <TextView
+                android:id="@+id/insufficient"
+                style="@style/TextView.Standard.Error"
+                android:layout_marginTop="@dimen/activity_vertical_margin_half"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:text="@string/wallet_connect_insufficient_funds"
+                android:visibility="invisible"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin_half"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/reject"
+                    style="@style/Button.Standard.Danger"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin_half"
+                    android:text="@string/wallet_connect_transaction_reject" />
+                <Button
+                    android:id="@+id/submit"
+                    style="@style/Button.Standard"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin_half"
+                    android:enabled="false"
+                    android:text="@string/wallet_connect_transaction_submit" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </ScrollView>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
+
+

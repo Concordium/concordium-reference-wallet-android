@@ -1,12 +1,13 @@
 package com.concordium.wallet.ui.account.accountsoverview
 
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Process
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
@@ -17,7 +18,6 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
-import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentAccountsOverviewBinding
 import com.concordium.wallet.ui.MainViewModel
@@ -40,12 +40,7 @@ class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ident
         private const val REQUESTCODE_ACCOUNT_DETAILS = 2000
     }
 
-    interface AccountsOverviewFragmentListener {
-        fun identityClicked(identity: Identity)
-    }
-
     private var encryptedWarningDialog: AlertDialog? = null
-    private var fragmentListener: AccountsOverviewFragmentListener? = null
     private var forceUpdateDialog: AlertDialog? = null
     private var eventListener: Preferences.Listener? = null
 
@@ -108,30 +103,6 @@ class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ident
             if (resultCode == AccountDetailsActivity.RESULT_RETRY_ACCOUNT_CREATION) {
                 gotoCreateAccount()
             }
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        viewModel.identityLiveData.value?.let { state ->
-            if (state == AccountsOverviewViewModel.State.VALID_IDENTITIES) {
-                inflater.inflate(R.menu.add_item_menu, menu)
-            }
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.add_item_menu -> gotoCreateAccount()
-        }
-        return true
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        try {
-            fragmentListener = context as AccountsOverviewFragmentListener
-        } catch (e: ClassCastException) {
-            throw ClassCastException(context.toString() + "must implement AccountsOverviewFragmentListener")
         }
     }
 
@@ -377,7 +348,7 @@ class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ident
                 updateWarnings()
             }
             binding.identityPending.setOnClickListener {
-                fragmentListener?.identityClicked(identity)
+                startActivity(Intent(activity, IdentitiesOverviewActivity::class.java))
             }
         }
         else {

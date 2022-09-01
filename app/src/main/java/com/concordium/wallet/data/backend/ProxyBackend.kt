@@ -40,14 +40,20 @@ interface ProxyBackend {
 
     @GET("v0/transactionCost")
     fun transferCost(
-        @Query("type") type: String,
+        @Query("type") type: String? = null,
         @Query("memoSize") memoSize: Int? = null,
         @Query("amount") amount: Long? = null,
         @Query("restake") restake: Boolean? = null,
         @Query("lPool") lPool: String? = null,
         @Query("target") target: String? = null,
         @Query("metadataSize") metadataSize: Int? = null,
-        @Query("openStatus") openStatus: String? = null
+        @Query("openStatus") openStatus: String? = null,
+        @Query("sender") sender: String? = null,
+        @Query("contractIndex") contractIndex: Int? = null,
+        @Query("contractSubindex") contractSubindex: Int? = null,
+        @Query("receiveName") receiveName: String? = null,
+        @Query("parameter") parameter: String? = null,
+        @Query("executionNRGBuffer") executionNRGBuffer: Int? = null
     ): Call<TransferCost>
 
     @GET("v0/chainParameters")

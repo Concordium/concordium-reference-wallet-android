@@ -2,10 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- App -->
     <string name="app_name">Concordium</string>
-    <string name="app_menu_item_accounts">Accounts</string>
-    <string name="app_menu_item_more">More</string>
     <string name="app_menu_item_add_recipient">Add</string>
-    <string name="app_menu_item_burger">Menu</string>
     <string name="app_error_general">Unexpected error</string>
     <string name="app_error_lib">An unexpected error occurred, please try again</string>
     <string name="app_error_encryption">Unexpected encryption/decryption error</string>
@@ -168,7 +165,7 @@
 
     <!-- Intro start-->
     <string name="intro_start_header">Before you begin</string>
-    <string name="intro_start_info">Before you start using the Concordium Wallet for Mobile, you have to set up a passcode and optionally biometrics.\n\nIt is very important to keep your passcode safe, because it is the only way to access your accounts. Concordium is not be able to change your passcode or help you unlock your wallet if you lose your passcode.\n\nSimilarly, if someone gets your passcode, they will be able to access your accounts.\n\nSo remember to keep your passcode safe!</string>
+    <string name="intro_start_info">Before you start using the Concordium Wallet for Mobile, you have to set up a passcode and optionally biometrics.\n\nIt is very important to keep your passcode safe, because it is the only way to access your accounts. Concordium is not able to change your passcode or help you unlock your wallet if you lose your passcode.\n\nSimilarly, if someone gets your passcode, they will be able to access your accounts.\n\nSo remember to keep your passcode safe!</string>
     <string name="intro_start_confirm">Continue</string>
 
     <!-- Intro setup-->
@@ -523,13 +520,11 @@
     <string name="baker_update_keys_settings_title">Update baker keys</string>
     <string name="baker_keys_saved_local">Your backup has been saved to local storage.</string>
 
-
     <!-- ***** Auth ***** -->
 
     <!-- Auth -->
     <string name="auth_password">Password</string>
     <string name="auth_confirm">Continue</string>
-    <string name="auth_password_warning">Note: you will not be able to recover your account keys if this password is lost!</string>
     <string name="auth_error_password_setup">Failed to setup password</string>
     <string name="auth_error_password_not_valid">Password is not valid - minimum length is 6.</string>
     <string name="auth_error_passcode_not_valid">Passcode is not valid</string>
@@ -671,35 +666,21 @@
 
 
     <!-- New account name -->
-    <string name="new_account_name_title">New Account</string>
-    <string name="new_account_name_info">What would you like to name your account?</string>
-    <string name="new_account_name_next">Next</string>
-    <string name="new_account_name_account_name_hint">Account name</string>
 
     <!-- Identity overview -->
 
     <!-- New account identity -->
-    <string name="new_account_identity_title">Add Identity Data</string>
 
 
     <!-- New account setup -->
-    <string name="new_account_setup_title">Reveal Identity Data?</string>
-    <string name="new_account_setup_info">You can choose to reveal a range of attributes on your account, e.g. your country of residence. Revealing attributes means that the information will be public on the Concordium blockchain, and that it cannot be hidden or deleted again.\n\nIf you have no good reason for revealing attributes, we strongly recommend not revealing any.</string>
-    <string name="new_account_setup_confirm_reveal">Reveal account attributes</string>
     <string name="new_account_setup_confirm_submit">Submit account</string>
 
     <!-- New account identity attributes -->
-    <string name="new_account_identity_attributes_title">Reveal Identity Data</string>
-    <string name="new_account_identity_attributes_confirm">Submit account</string>
-    <string name="new_account_identity_attributes_error_max_accounts_title">Error</string>
-    <string name="new_account_identity_attributes_error_max_accounts">Ooops! This identity already has too many accounts submitted to the chain. Please select another identity to continue.</string>
 
     <!-- New account created -->
     <string name="new_account_confirmed_title">Account Creation</string>
     <string name="new_account_confirmed_confirm">OK, thanks</string>
-    <string name="new_account_confirmed_header">Account submitted</string>
     <string name="new_account_confirmed_failed">Account creation failed!</string>
-    <string name="new_account_confirmed_info">This may take a few minutes to\nprocess on-chain.</string>
     <string name="new_account_confirmed_failed_recover_error_text">Your wallet seems to not be synchronized with the blockchain. You must first make a recovery of existing accounts, before you can make a new one.</string>
     <string name="new_account_confirmed_failed_recover_info_text">Start the recovery flow by pressing the button below.</string>
     <string name="new_account_confirmed_failed_recover_button">Start recovery</string>
@@ -711,11 +692,6 @@
     <string name="account_details_title">Account details</string>
     <string name="account_details_transfers_title">Transfers</string>
     <string name="account_details_identity_data_title">Identity Data</string>
-    <string name="account_details_send">Send</string>
-    <string name="account_details_earn">Earn</string>
-    <string name="account_details_unshield">Unshield</string>
-    <string name="account_details_shield">Shield</string>
-    <string name="account_details_address">Receive</string>
     <string name="account_details_retry_button">Retry account creation</string>
     <string name="account_details_remove_button">Remove account from wallet</string>
     <string name="account_details_fee">fee</string>
@@ -727,12 +703,12 @@
     <string name="account_details_shielded_transaction_fee">Shielded transaction fee</string>
     <string name="account_delegation_pending">Configure delegation</string>
     <string name="account_baking_pending">Configure baker</string>
-
     <string name="account_details_empty_identity_data">This account has no identity data revealed.</string>
-
-
     <string name="account_details_title_shielded_balance">%1$s shielded balance</string>
     <string name="account_details_title_regular_balance">%1$s balance</string>
+
+    <!--  Account settings  -->
+    <string name="account_settings_title">Account settings</string>
 
 
     <string name="shielding_intro_title">Shielded balance</string>
@@ -794,7 +770,6 @@
     <string name="add_memo_confirm">Add memo to transfer</string>
     <string name="add_memo_hint">You can enter an optional memo here.</string>
 
-
     <!--  Send funds confirmed  -->
     <string name="send_funds_confirmed_title">Send funds</string>
     <string name="send_funds_confirmed_header">Transaction submitted!</string>
@@ -813,6 +788,59 @@
     <string name="transaction_details_details">Details</string>
     <string name="transaction_details_value_copied">Copied full value of %1$s</string>
 
+    <!-- Wallet Connect -->
+    <string name="wallet_connect_accounts_title">Choose an account</string>
+    <string name="scan_qr_title_wc">Scan to Open Session</string>
+    <string name="wallet_connect_choose_account_title">Choose which account you want to open the session with.</string>
+    <string name="wallet_connect_connect_session_text_1">You are about to open a session between your account</string>
+    <string name="wallet_connect_connect_session_text_2">and the external service</string>
+    <string name="wallet_connect_connect_session_text_3">The service will be able to see:</string>
+    <string name="wallet_connect_connect_session_text_4">Do you want to proceed and open this session? You should only connect to services you trust.</string>
+    <string name="wallet_connect_connect_session_connect">Connect</string>
+    <string name="wallet_connect_connect_session_decline">Decline</string>
+    <string name="wallet_connect_connect_session_disconnect">Disconnect</string>
+    <string name="wallet_connect_connecting_account">Connecting account</string>
+    <string name="wallet_connect_connecting_account_to">to</string>
+    <string name="wallet_connect_connecting_is_connected_to">is connected to</string>
+    <string name="wallet_connect_connecting_waiting_for_actions">Waiting for actions</string>
+    <string name="wallet_connect_disconnect_warning_title">Disconnect</string>
+    <string name="wallet_connect_disconnect_warning_message">This will end your session and disconnect your wallet from\n\n%1$s\n\nDo you want to disconnect?</string>
+    <string name="wallet_connect_disconnect_warning_button_stay">Stay</string>
+    <string name="wallet_connect_disconnect_warning_button_disconnect">Disconnect</string>
+    <string name="wallet_connect_transaction_approve">Approve Transaction?</string>
+    <string name="wallet_connect_transaction_receipt_title">Transaction: Update Contract</string>
+    <string name="wallet_connect_transaction_sender_account">Sender account</string>
+    <string name="wallet_connect_transaction_amount">Amount</string>
+    <string name="wallet_connect_transaction_contract_address">Contract index</string>
+    <string name="wallet_connect_transaction_parameters">Parameters</string>
+    <string name="wallet_connect_transaction_reject">Reject</string>
+    <string name="wallet_connect_transaction_submit">Submit</string>
+    <string name="wallet_connect_transaction_estimated_transaction_fee">Estimated transaction fee:\nϾ%1$s</string>
+    <string name="wallet_connect_transaction_submitted_title">Transaction submitted</string>
+    <string name="wallet_connect_transaction_submitted_ok">Okay</string>
+    <string name="wallet_connect_transaction_currently_available_amounts">Currently available amounts:</string>
+    <string name="wallet_connect_transaction_balance_at_disposal">Balance (at disposal):</string>
+    <string name="wallet_connect_session">Wallet Connect session</string>
+    <string name="wallet_connect_session_with">Session with %1$s</string>
+    <string name="wallet_connect_allow_session">Allow session?</string>
+    <string name="wallet_connect_connection_lost_title">Connection lost</string>
+    <string name="wallet_connect_connection_lost_message">The session connection with the service was lost.</string>
+    <string name="wallet_connect_connection_lost_okay">Okay</string>
+    <string name="wallet_connect_approve_try_again_title">Could not connect</string>
+    <string name="wallet_connect_approve_try_again_message">The session connection to the service could not be established. You can try again now or later.</string>
+    <string name="wallet_connect_approve_try_again_later">Later</string>
+    <string name="wallet_connect_approve_try_again_try_again">Try again</string>
+    <string name="wallet_connect_wallet_setup_title">Wallet setup not finished</string>
+    <string name="wallet_connect_wallet_setup_message">Your wallet is not completely setup yet. Before you can open a connection to an external service, you must first complete setting up your wallet.</string>
+    <string name="wallet_connect_wallet_setup_button">Complete setup</string>
+    <string name="wallet_connect_sign_message">Sign message?</string>
+    <string name="wallet_connect_message_vote">Message: Vote</string>
+    <string name="wallet_connect_message_content">Message content</string>
+    <string name="wallet_connect_message_reject">Reject</string>
+    <string name="wallet_connect_message_sign_and_return">Sign &amp; Return</string>
+    <string name="wallet_connect_message_signed">The message has been signed and returned.</string>
+    <string name="wallet_connect_insufficient_funds">Insufficient funds</string>
+    <string name="wallet_connect_preparing_connection">Preparing connection…</string>
 
     <!-- ***** More ***** -->
 
@@ -868,7 +896,6 @@
     <string name="scan_qr_error_invalid_qr_code">Invalid QR code</string>
 
 
-    <string name="valid_special_chars_error_text"><![CDATA[The name can only contain letters, numbers, and these special characters: \"-\", \"_\", \",\", \".\", \"!\", \"?\". The name cannot be empty, or start or end with a space.]]></string>
     <string name="valid_special_chars_for_names"><![CDATA[-_, .!?]]></string>
 
     <string name="error_adding_account_duplicate">This account was not added to the address book, as it was already there.</string>
@@ -881,10 +908,11 @@
     <string name="accounts_overview_total_details_staked_no_id">Stake with baker</string>
     <string name="account_details_menu_release_schedule">Release schedule</string>
     <string name="account_details_menu_transfer_filter">Transfer filters</string>
-    <string name="account_details_menu_show_shielded">Show shielded balance on %1$s</string>
-    <string name="account_details_menu_hide_shielded">Hide shielded balance on %1$s</string>
+    <string name="account_details_menu_show_shielded">Show shielded balance</string>
+    <string name="account_details_menu_hide_shielded">Hide shielded balance</string>
     <string name="account_details_menu_decrypt">Decrypt</string>
     <string name="account_details_menu_change_name">Change account name</string>
+    <string name="account_details_menu_export_key">Export private key</string>
     <string name="account_details_delegation_with_baker_pool">Delegation with baker pool %1$s</string>
     <string name="account_details_delegation_with_passive_pool">Passive delegation</string>
     <string name="account_details_stake_with_baker">Stake with baker %1$s</string>
@@ -945,5 +973,14 @@
     <string name="force_update_intro_warning_message">There is a new update for the Concordium Wallet for Mobile.</string>
     <string name="force_update_intro_warning_update_now">Update now</string>
     <string name="force_update_intro_warning_remind_me">Remind me next time I open the wallet</string>
+
+    <string name="export_account_keys_title">Export Account Keys</string>
+    <string name="export_account_keys_subtitle">Here you can export your private account keys.</string>
+    <string name="export_account_keys_reveal_explain">Make sure to keep the keys safe, because they can be used to access your accounts.</string>
+    <string name="export_account_keys_tap">Tap to reveal your the private keys for %1$s.</string>
+    <string name="export_account_keys_done">Done</string>
+    <string name="export_account_keys_copied">Copied</string>
+    <string name="export_account_keys_to_file">Export to file</string>
+    <string name="export_account_keys_file_exported">File exported</string>
 
 </resources>

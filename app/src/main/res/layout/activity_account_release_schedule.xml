@@ -53,9 +53,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/background_release"
-                    android:paddingLeft="@dimen/account_release_schedule_inner_list_padding_sides"
-                    android:paddingRight="@dimen/account_release_schedule_inner_list_padding_sides"
+                    android:background="@drawable/rounded_bottom_semi_transparent"
+                    android:paddingHorizontal="@dimen/account_release_schedule_inner_list_padding_sides"
+                    android:paddingVertical="2dp"
                     android:orientation="horizontal">
                     <TextView
                         android:layout_width="wrap_content"

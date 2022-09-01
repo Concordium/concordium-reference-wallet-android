@@ -190,15 +190,14 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
                 }
             }
 
-        proxyRepository.getTransferCost(type,
-            if (tempData.memo == null) null else tempData.memo!!.length / 2, //div by 2 because hex takes up twice the length
-            null,null,null, null, null, null,
-            {
+        proxyRepository.getTransferCost(type = type,
+            memoSize = if (tempData.memo == null) null else tempData.memo!!.length / 2, //div by 2 because hex takes up twice the length
+            success = {
                 tempData.energy = it.energy
                 _transactionFeeLiveData.value = it.cost.toLong()
                 updateSendAllAmount()
             },
-            {
+            failure = {
                 handleBackendError(it)
             }
         )
@@ -282,21 +281,17 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         )
     }
 
-    fun shouldUseBiometrics(): Boolean {
-        return App.appCore.getCurrentAuthenticationManager().useBiometrics()
-    }
-
     fun getCipherForBiometrics(): Cipher? {
-        try {
+        return try {
             val cipher =
                 App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
             if (cipher == null) {
                 _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
             }
-            return cipher
+            cipher
         } catch (e: KeystoreEncryptionException) {
             _errorLiveData.value = Event(R.string.app_error_keystore)
-            return null
+            null
         }
     }
 
@@ -353,7 +348,6 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             return
         }
 
-        //Expiry should me now + 10 minutes (in seconds)
         val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
         tempData.expiry = expiry
         val transferInput = CreateTransferInput(

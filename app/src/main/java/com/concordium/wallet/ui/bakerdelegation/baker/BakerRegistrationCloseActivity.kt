@@ -4,7 +4,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.lifecycle.Observer
+import androidx.activity.result.contract.ActivityResultContracts
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
@@ -45,11 +45,14 @@ class BakerRegistrationCloseActivity : BaseDelegationBakerActivity() {
             }
         })
 
-        viewModel.bakerKeysLiveData.observe(this, Observer { bakerKeys ->
-            binding.bakerRegistrationExportElectionVerifyKey.text = bakerKeys?.electionVerifyKey ?: ""
-            binding.bakerRegistrationExportSignatureVerifyKey.text = bakerKeys?.signatureVerifyKey ?: ""
-            binding.bakerRegistrationExportAggregationVerifyKey.text = bakerKeys?.aggregationVerifyKey ?: ""
-        })
+        viewModel.bakerKeysLiveData.observe(this) { bakerKeys ->
+            binding.bakerRegistrationExportElectionVerifyKey.text =
+                bakerKeys?.electionVerifyKey ?: ""
+            binding.bakerRegistrationExportSignatureVerifyKey.text =
+                bakerKeys?.signatureVerifyKey ?: ""
+            binding.bakerRegistrationExportAggregationVerifyKey.text =
+                bakerKeys?.aggregationVerifyKey ?: ""
+        }
 
         viewModel.fileSavedLiveData.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
@@ -84,22 +87,10 @@ class BakerRegistrationCloseActivity : BaseDelegationBakerActivity() {
                 shareBakerFile()
             }
             override fun onLocalStorage() {
-                openFolderPicker()
+                openFolderPicker(getResultFolderPicker)
             }
         })
         dialogFragment.show(supportFragmentManager, AuthenticationDialogFragment.AUTH_DIALOG_TAG)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == RESULT_SHARE_FILE) {
-            continueToBakerConfirmation()
-        } else if (resultCode == RESULT_OK && requestCode == RESULT_FOLDER_PICKER) {
-            data?.data?.let { uri ->
-                viewModel.saveFileToLocalFolder(uri)
-                continueToBakerConfirmation()
-            }
-        }
     }
 
     fun shareBakerFile() {
@@ -107,10 +98,25 @@ class BakerRegistrationCloseActivity : BaseDelegationBakerActivity() {
             val bakerKeysJson = viewModel.bakerKeysJson()
             if (!bakerKeysJson.isNullOrEmpty()) {
                 FileUtil.saveFile(App.appContext, DelegationBakerViewModel.FILE_NAME_BAKER_KEYS, bakerKeysJson)
-                shareFile(viewModel.getTempFileWithPath())
+                shareFile(getResultShare, viewModel.getTempFileWithPath())
             }
         }
     }
+
+    private val getResultShare =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            continueToBakerConfirmation()
+        }
+
+    private val getResultFolderPicker =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK) {
+                it.data?.data?.let { uri ->
+                    viewModel.saveFileToLocalFolder(uri)
+                    continueToBakerConfirmation()
+                }
+            }
+        }
 
     private fun continueToBakerConfirmation() {
         val intent = Intent(this, BakerRegistrationConfirmationActivity::class.java)

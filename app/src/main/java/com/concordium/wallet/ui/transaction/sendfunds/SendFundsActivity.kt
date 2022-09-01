@@ -137,7 +137,7 @@ class SendFundsActivity : BaseActivity() {
         viewModel.showAuthenticationLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
-                    showAuthentication(createConfirmString(), viewModel.shouldUseBiometrics(), viewModel.usePasscode(), object : AuthenticationCallback{
+                    showAuthentication(createConfirmString(), object : AuthenticationCallback {
                         override fun getCipherForBiometrics() : Cipher?{
                             return viewModel.getCipherForBiometrics()
                         }
@@ -356,6 +356,7 @@ class SendFundsActivity : BaseActivity() {
 
     private fun gotoScanBarCode() {
         val intent = Intent(this, ScanQRActivity::class.java)
+        intent.putExtra(ScanQRActivity.QR_MODE, ScanQRActivity.QR_MODE_CONCORDIUM_ACCOUNT)
         getResultScanQr.launch(intent)
     }
 

@@ -43,17 +43,31 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Common -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="wc" />
+            </intent-filter>
+        </activity>
+        <service
+            android:name=".ui.walletconnect.WalletConnectService"
+            android:enabled="true"
+            android:exported="false" />
         <activity
             android:name=".ui.common.failed.FailedActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" /> <!-- Intro -->
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.intro.introstart.IntroTermsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.intro.introstart.IntroStartActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.intro.introstart.WalletNotSetupActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
@@ -153,6 +167,14 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.more.SettingsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.walletconnect.WalletConnectActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.auth.login.AuthLoginActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -184,7 +206,7 @@
             android:name=".ui.auth.setupbiometrics.AuthSetupBiometricsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar.WithBackground" /> <!-- Identity -->
+            android:theme="@style/AppTheme.NoActionBar.WithBackground" />
         <activity
             android:name=".ui.identity.identityproviderlist.IdentityProviderListActivity"
             android:launchMode="singleTop"
@@ -202,7 +224,6 @@
             android:exported="true">
             <intent-filter android:label="schemefilter">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- Accepts URIs that begin with "concordiumwallet://identity-issuer” -->
@@ -230,6 +251,11 @@
             android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.account.accountdetails.AccountSettingsActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.account.accountdetails.AccountDetailsActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.account.accountdetails.AccountReleaseScheduleActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
@@ -238,7 +264,7 @@
             android:name=".ui.account.accountqrcode.AccountQRCodeActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.account.accountdetails.AccountDetailsActivity"
-            android:screenOrientation="portrait" /> <!-- Transaction / Send funds -->
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.transaction.sendfunds.AddMemoActivity"
             android:launchMode="singleTop"
@@ -271,7 +297,7 @@
             android:name=".ui.account.accountdetails.AccountTransactionsFiltersActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.account.accountdetails.AccountDetailsActivity"
-            android:screenOrientation="portrait" /> <!-- More -->
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.more.dev.DevActivity"
             android:launchMode="singleTop"
@@ -286,7 +312,7 @@
             android:name=".ui.more.alterpassword.AlterPasswordActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait" /> <!-- Recipient -->
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.recipient.recipientlist.RecipientListActivity"
             android:launchMode="singleTop"
@@ -300,7 +326,11 @@
         <activity
             android:name=".ui.recipient.scanqr.ScanQRActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".ui.recipient.recipient.RecipientActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.more.export.ExportAccountKeysActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.more.SettingsActivity"
             android:screenOrientation="portrait" />
     </application>
 

@@ -111,10 +111,6 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         _showAuthenticationLiveData.value = Event(true)
     }
 
-    fun shouldUseBiometrics(): Boolean {
-        return App.appCore.getCurrentAuthenticationManager().useBiometrics()
-    }
-
     fun getCipherForBiometrics(): Cipher? {
         return try {
             val cipher = App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()

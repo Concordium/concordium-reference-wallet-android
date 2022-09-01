@@ -41,8 +41,11 @@ class ScanQRViewModel(application: Application) : AndroidViewModel(application) 
         _stateLiveData.value = State.NOT_VALID_QR
     }
 
-    fun checkQrCode(qrInfo: String): Boolean {
+    fun checkQrAccountAddress(qrInfo: String): Boolean {
         return App.appCore.cryptoLibrary.checkAccountAddress(qrInfo)
     }
 
+    fun checkQrWalletConnect(qrInfo: String): Boolean {
+        return qrInfo.isNotBlank() && qrInfo.lowercase().startsWith("wc:")
+    }
 }
