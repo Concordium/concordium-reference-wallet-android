@@ -11,16 +11,14 @@ import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.ui.passphrase.common.WordsPickedBaseListAdapter
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toHex
-import java.io.Serializable
 import java.util.*
 
-class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(application), Serializable {
+class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(application) {
     var wordsPicked = arrayOfNulls<String>(WORD_COUNT + (WordsPickedBaseListAdapter.OFFSET * 2) + 1)
     var allWords = listOf<String>()
 
     companion object {
         val WORD_COUNT: Int = Mnemonics.WordCount.COUNT_24.count
-        const val PASS_PHRASE_RECOVER_DATA = "PASS_PHRASE_RECOVER_DATA"
     }
 
     private val _validateLiveData = MutableLiveData<Boolean>()
