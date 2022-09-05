@@ -143,8 +143,9 @@ class MoreOverviewFragment : BaseFragment() {
     }
 
     private fun recover() {
-        activity?.finish()
-        startActivity(Intent(activity, RecoverProcessActivity::class.java))
+        val intent = Intent(activity, RecoverProcessActivity::class.java)
+        intent.putExtra(RecoverProcessActivity.SHOW_FOR_FIRST_RECOVERY, false)
+        startActivity(intent)
     }
 
     private fun about() {

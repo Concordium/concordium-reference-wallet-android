@@ -15,20 +15,35 @@ class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl(
     private lateinit var binding: ActivityRecoverProcessBinding
     private lateinit var viewModel: RecoverProcessViewModel
     private var passwordSet = false
+    private var showForFirstRecovery = true
+
+    companion object {
+        const val SHOW_FOR_FIRST_RECOVERY = "SHOW_FOR_FIRST_RECOVERY"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRecoverProcessBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        showForFirstRecovery = intent.extras?.getBoolean(SHOW_FOR_FIRST_RECOVERY, true) ?: true
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.pass_phrase_recover_process_title)
-        hideActionBarBack()
-        initializeViewModel()
+        if (showForFirstRecovery)
+            hideActionBarBack()
+            initializeViewModel()
         initViews()
         initObservers()
     }
 
     override fun onBackPressed() {
         // Ignore back press
+        if (!showForFirstRecovery)
+            super.onBackPressed()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        println("LC -> stop recover")
+        viewModel.stop()
     }
 
     private fun initializeViewModel() {

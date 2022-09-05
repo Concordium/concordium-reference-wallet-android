@@ -48,6 +48,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
     private var progressValue = 0
     private var step = 0
     private val identityWithAccountsFound = mutableListOf<IdentityWithAccounts>()
+    private var stop = false
 
     fun recoverIdentitiesAndAccounts(password: String) {
         val net = AppConfig.net
@@ -65,7 +66,8 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             identityProviders.forEach { identityProvider ->
                 identityGap = 0
                 val identityIndex = 0
-                getIdentityFromProvider(identityProvider, globalInfo, seed, net, identityIndex)
+                if (!stop)
+                    getIdentityFromProvider(identityProvider, globalInfo, seed, net, identityIndex)
             }
 
             setProgress(1000, 500)
@@ -76,7 +78,8 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
 
             allIdentitiesFound.forEach { identityFound ->
                 accountGap = 0
-                recoverAccount(password, seed, net, identityFound.id, globalInfo)
+                if (!stop)
+                    recoverAccount(password, seed, net, identityFound.id, globalInfo)
             }
 
             recoverProcessData.identitiesWithAccounts = identityWithAccountsFound
@@ -86,6 +89,10 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
 
             statusChanged.value = STATUS_DONE
         }
+    }
+
+    fun stop() {
+        stop = true
     }
 
     private suspend fun getRecoverRequestUrl(identityProvider: IdentityProvider, globalInfo: GlobalParamsWrapper, seed: String, net: String, identityIndex: Int): String? {
@@ -142,7 +149,9 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         }
 
         setProgress(step, 500)
-        getIdentityFromProvider(identityProvider, globalInfo, seed, net, identityIndex + 1)
+
+        if (!stop)
+            getIdentityFromProvider(identityProvider, globalInfo, seed, net, identityIndex + 1)
     }
 
     private suspend fun saveIdentity(identityTokenContainer: IdentityTokenContainer, identityProvider: IdentityProvider, identityIndex: Int) {
@@ -254,7 +263,9 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         }
 
         setProgress(step, 1000)
-        recoverAccount(password, seed, net, identityId, globalInfo)
+
+        if (!stop)
+            recoverAccount(password, seed, net, identityId, globalInfo)
     }
 
     private fun setProgress(step: Int, maxValue: Int) {
