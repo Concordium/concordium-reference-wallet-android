@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.AppConfig
+import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
@@ -19,6 +20,7 @@ import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.room.*
+import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.passphrase.recoverprocess.retrofit.IdentityProviderApiInstance
 import com.concordium.wallet.util.DateTimeUtil
 import com.google.gson.JsonArray
@@ -41,58 +43,103 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
 
     private var identityGap = 0
     private var accountGap = 0
-    val statusChanged: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
-    val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val recoverProcessData = RecoverProcessData()
-    val progress: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     private var progressValue = 0
     private var step = 0
     private val identityWithAccountsFound = mutableListOf<IdentityWithAccounts>()
     private var stop = false
 
+    private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
+    private var identityProvidersRequest: BackendRequest<ArrayList<IdentityProvider>>? = null
+
+    val statusChanged: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val progress: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    val errorLiveData: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+
+    val recoverProcessData = RecoverProcessData()
+    var globalInfo: GlobalParamsWrapper? = null
+    var identityProviders: ArrayList<IdentityProvider>? = null
+
     fun recoverIdentitiesAndAccounts(password: String) {
-        val net = AppConfig.net
-        val seed = AuthPreferences(getApplication()).getSeedPhrase()
-        val repository = IdentityProviderRepository()
+        waiting.value = true
+        progress.value = 0
+        getGlobalInfo(password)
+    }
 
-        viewModelScope.launch {
-            waiting.value = true
-            progress.value = 0
+    private fun getGlobalInfo(password: String) {
+        globalParamsRequest = ProxyRepository().getIGlobalInfo(
+            { globalInfo ->
+                this.globalInfo = globalInfo
+                getIdentityProviderInfo(password)
+            },
+            {
+                handleBackendError(it)
+            }
+        )
+    }
 
-            val globalInfo = repository.getGlobalInfoSuspended()
-            val identityProviders = repository.getIdentityProviderInfoSuspended()
-            step = 500 / (max(identityProviders.size, 1) * IDENTITY_GAP_MAX)
+    private fun getIdentityProviderInfo(password: String) {
+        identityProvidersRequest = IdentityProviderRepository().getIdentityProviderInfo(
+            { identityProviders ->
+                this.identityProviders = identityProviders
+                step = 500 / (max(identityProviders.size, 1) * IDENTITY_GAP_MAX)
+                getIdentities(password)
+            },
+            {
+                handleBackendError(it)
+            }
+        )
+    }
 
-            identityProviders.forEach { identityProvider ->
+    private fun getIdentities(password: String) {
+        globalInfo?.let { globalInfo ->
+            val net = AppConfig.net
+            val seed = AuthPreferences(getApplication()).getSeedPhrase()
+            identityProviders?.forEach { identityProvider ->
                 identityGap = 0
                 val identityIndex = 0
-                if (!stop)
-                    getIdentityFromProvider(identityProvider, globalInfo, seed, net, identityIndex)
+                if (!stop) {
+                    viewModelScope.launch {
+                        getIdentityFromProvider(identityProvider, globalInfo, seed, net, identityIndex)
+                        setProgress(1000, 500)
+                        getAccounts(password)
+
+                        recoverProcessData.identitiesWithAccounts = identityWithAccountsFound
+
+                        setProgress(1000, 1000)
+                        waiting.value = false
+
+                        statusChanged.value = STATUS_DONE
+                    }
+                }
             }
+        }
+    }
 
-            setProgress(1000, 500)
+    private suspend fun getAccounts(password: String) {
+        val identityRepository = IdentityRepository(WalletDatabase.getDatabase(getApplication()).identityDao())
+        val allIdentitiesFound = identityRepository.getAllDone()
+        val net = AppConfig.net
+        val seed = AuthPreferences(getApplication()).getSeedPhrase()
+        step = 500 / (max(allIdentitiesFound.size, 1) * ACCOUNT_GAP_MAX)
 
-            val identityRepository = IdentityRepository(WalletDatabase.getDatabase(getApplication()).identityDao())
-            val allIdentitiesFound = identityRepository.getAllDone()
-            step = 500 / (max(allIdentitiesFound.size, 1) * ACCOUNT_GAP_MAX)
-
+        globalInfo?.let { globalInfo ->
             allIdentitiesFound.forEach { identityFound ->
                 accountGap = 0
                 if (!stop)
                     recoverAccount(password, seed, net, identityFound.id, globalInfo)
             }
-
-            recoverProcessData.identitiesWithAccounts = identityWithAccountsFound
-
-            setProgress(1000, 1000)
-            waiting.value = false
-
-            statusChanged.value = STATUS_DONE
         }
+    }
+
+    private fun handleBackendError(throwable: Throwable) {
+        errorLiveData.value = BackendErrorHandler.getExceptionStringRes(throwable)
     }
 
     fun stop() {
         stop = true
+        globalParamsRequest?.dispose()
+        identityProvidersRequest?.dispose()
     }
 
     private suspend fun getRecoverRequestUrl(identityProvider: IdentityProvider, globalInfo: GlobalParamsWrapper, seed: String, net: String, identityIndex: Int): String? {
@@ -214,52 +261,56 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         val encryptedAccountData = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, jsonToBeEncrypted)
             ?: return
 
-        val accountBalance = ProxyRepository().getAccountBalanceSuspended(createCredentialOutput.accountAddress)
+        try {
+            val accountBalance = ProxyRepository().getAccountBalanceSuspended(createCredentialOutput.accountAddress)
+            if (accountBalance.finalizedBalance != null) {
+                val account = Account(
+                    id = 0,
+                    identityId = identity.id,
+                    name = "Account ${identity.nextAccountNumber}",
+                    address = createCredentialOutput.accountAddress,
+                    submissionId = "",
+                    transactionStatus = TransactionStatus.FINALIZED,
+                    encryptedAccountData = encryptedAccountData,
+                    revealedAttributes = listOf(),
+                    credential = createCredentialOutput.credential,
+                    finalizedBalance = accountBalance.finalizedBalance.accountAmount.toLong(),
+                    currentBalance = accountBalance.currentBalance?.accountAmount?.toLong() ?: 0,
+                    totalBalance = 0,
+                    totalUnshieldedBalance = accountBalance.finalizedBalance.accountAmount.toLong(),
+                    totalShieldedBalance = 0,
+                    finalizedEncryptedBalance = accountBalance.finalizedBalance.accountEncryptedAmount,
+                    currentEncryptedBalance = accountBalance.currentBalance?.accountEncryptedAmount,
+                    encryptedBalanceStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
+                    totalStaked = if (accountBalance.finalizedBalance.accountBaker != null) accountBalance.finalizedBalance.accountBaker.stakedAmount.toLong() else 0,
+                    totalAtDisposal = 0,
+                    readOnly = false,
+                    finalizedAccountReleaseSchedule = accountBalance.finalizedBalance.accountReleaseSchedule,
+                    bakerId = accountBalance.finalizedBalance.accountBaker?.bakerId?.toLong(),
+                    accountDelegation = accountBalance.finalizedBalance.accountDelegation,
+                    accountBaker = accountBalance.finalizedBalance.accountBaker,
+                    accountIndex = accountBalance.finalizedBalance.accountIndex
+                )
 
-        if (accountBalance.finalizedBalance != null) {
-            val account = Account(
-                id = 0,
-                identityId = identity.id,
-                name = "Account ${identity.nextAccountNumber}",
-                address = createCredentialOutput.accountAddress,
-                submissionId = "",
-                transactionStatus = TransactionStatus.FINALIZED,
-                encryptedAccountData = encryptedAccountData,
-                revealedAttributes = listOf(),
-                credential = createCredentialOutput.credential,
-                finalizedBalance = accountBalance.finalizedBalance.accountAmount.toLong(),
-                currentBalance = accountBalance.currentBalance?.accountAmount?.toLong() ?: 0,
-                totalBalance = 0,
-                totalUnshieldedBalance = accountBalance.finalizedBalance.accountAmount.toLong(),
-                totalShieldedBalance = 0,
-                finalizedEncryptedBalance = accountBalance.finalizedBalance.accountEncryptedAmount,
-                currentEncryptedBalance = accountBalance.currentBalance?.accountEncryptedAmount,
-                encryptedBalanceStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
-                totalStaked = if (accountBalance.finalizedBalance.accountBaker != null) accountBalance.finalizedBalance.accountBaker.stakedAmount.toLong() else 0,
-                totalAtDisposal = 0,
-                readOnly = false,
-                finalizedAccountReleaseSchedule = accountBalance.finalizedBalance.accountReleaseSchedule,
-                bakerId = accountBalance.finalizedBalance.accountBaker?.bakerId?.toLong(),
-                accountDelegation = accountBalance.finalizedBalance.accountDelegation,
-                accountBaker = accountBalance.finalizedBalance.accountBaker,
-                accountIndex = accountBalance.finalizedBalance.accountIndex
-            )
-
-            val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
-            if (accountRepository.findByAddress(account.address) == null) {
-                accountRepository.insertAccountAndCountUpNextAccountNumber(account)
-                val recipientRepository = RecipientRepository(WalletDatabase.getDatabase(getApplication()).recipientDao())
-                if (recipientRepository.getRecipientByAddress(account.address) == null) {
-                    recipientRepository.insert(Recipient(0, account.name, account.address))
+                val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+                if (accountRepository.findByAddress(account.address) == null) {
+                    accountRepository.insertAccountAndCountUpNextAccountNumber(account)
+                    val recipientRepository = RecipientRepository(WalletDatabase.getDatabase(getApplication()).recipientDao())
+                    if (recipientRepository.getRecipientByAddress(account.address) == null) {
+                        recipientRepository.insert(Recipient(0, account.name, account.address))
+                    }
+                    val iWithAFound = identityWithAccountsFound.firstOrNull { it.identity.identityProviderId == identity.identityProviderId && it.identity.identityIndex == identity.identityIndex }
+                    if (iWithAFound != null)
+                        iWithAFound.accounts.add(account)
+                    else
+                        identityWithAccountsFound.add(IdentityWithAccounts(identity, mutableListOf(account)))
                 }
-                val iWithAFound = identityWithAccountsFound.firstOrNull { it.identity.identityProviderId == identity.identityProviderId && it.identity.identityIndex == identity.identityIndex }
-                if (iWithAFound != null)
-                    iWithAFound.accounts.add(account)
-                else
-                    identityWithAccountsFound.add(IdentityWithAccounts(identity, mutableListOf(account)))
+            } else {
+                accountGap++
             }
-        } else {
-            accountGap++
+        } catch (ex: Exception) {
+            stop = true
+            handleBackendError(ex)
         }
 
         setProgress(step, 1000)

@@ -18,10 +18,7 @@ interface ProxyBackend {
     suspend fun bakerPoolSuspended(@Path("poolId") poolId: String): Response<BakerPoolStatus>
 
     @GET("v1/appSettings")
-    suspend fun appSettingsSuspended(
-        @Query("platform") platform: String,
-        @Query("appVersion") version: Int
-    ): Response<AppSettings>
+    fun appSettings(@Query("platform") platform: String, @Query("appVersion") version: Int): Call<AppSettings>
 
     @GET("v0/submissionStatus/{submissionId}")
     fun accountSubmissionStatus(@Path("submissionId") submissionId: String): Call<AccountSubmissionStatus>
@@ -84,14 +81,8 @@ interface ProxyBackend {
     @GET("v1/ip_info")
     fun getIdentityProviderInfo(): Call<ArrayList<IdentityProvider>>
 
-    @GET("v1/ip_info")
-    suspend fun getIdentityProviderInfoSuspended(): ArrayList<IdentityProvider>
-
     @GET("v0/global")
     fun getGlobalInfo(): Call<GlobalParamsWrapper>
-
-    @GET("v0/global")
-    suspend fun getGlobalInfoSuspended(): GlobalParamsWrapper
 
     @GET("v0/request_id")
     fun requestIdentity(@Query("id_request") idRequest: String): Call<IdentityContainer>

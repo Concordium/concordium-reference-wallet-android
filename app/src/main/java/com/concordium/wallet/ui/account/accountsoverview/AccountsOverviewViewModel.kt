@@ -106,14 +106,14 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
 
     fun loadAppSettings() {
         viewModelScope.launch {
-            val response = proxyRepository.getAppSettings(App.appCore.getAppVersion())
-            if (response.isSuccessful) {
-                response.body()?.let {
-                    _appSettingsLiveData.value = it
+            proxyRepository.getAppSettings(App.appCore.getAppVersion(),
+                {
+                _appSettingsLiveData.value = it
+                },
+                {
+                    Log.d("appSettings failed")
                 }
-            } else {
-                Log.d("appSettings failed")
-            }
+            )
         }
     }
 

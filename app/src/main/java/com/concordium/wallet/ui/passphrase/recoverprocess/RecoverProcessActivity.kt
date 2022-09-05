@@ -42,7 +42,6 @@ class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl(
 
     override fun onDestroy() {
         super.onDestroy()
-        println("LC -> stop recover")
         viewModel.stop()
     }
 
@@ -79,6 +78,15 @@ class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl(
             runOnUiThread {
                 finishScanningView()
             }
+        }
+        viewModel.errorLiveData.observe(this) {
+            showError(it)
+        }
+    }
+
+    private fun showError(stringRes: Int) {
+        runOnUiThread {
+            popup.showSnackbar(binding.root, stringRes)
         }
     }
 

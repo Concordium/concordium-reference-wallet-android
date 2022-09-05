@@ -7,7 +7,6 @@ import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.model.*
 
 class ProxyRepository {
-
     private val backend = App.appCore.getProxyBackend()
 
     companion object {
@@ -33,17 +32,14 @@ class ProxyRepository {
     ): BackendRequest<SubmissionData> {
         val call = backend.submitCredential(credentialWrapper)
         call.enqueue(object : BackendCallback<SubmissionData>() {
-
             override fun onResponseData(response: SubmissionData) {
                 success(response)
             }
-
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
         })
-
-        return BackendRequest<SubmissionData>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
@@ -52,7 +48,28 @@ class ProxyRepository {
 
     suspend fun getAccountSubmissionStatusSuspended(submissionId: String) = backend.accountSubmissionStatusSuspended(submissionId)
 
-    suspend fun getAppSettings(version: Int) = backend.appSettingsSuspended("android", version)
+    fun getAppSettings(
+        version: Int,
+        success: (AppSettings) -> Unit,
+        failure: ((Throwable) -> Unit)?
+    ): BackendRequest<AppSettings> {
+        val call = backend.appSettings("android", version)
+        call.enqueue(object : BackendCallback<AppSettings>() {
+
+            override fun onResponseData(response: AppSettings) {
+                success(response)
+            }
+
+            override fun onFailure(t: Throwable) {
+                failure?.invoke(t)
+            }
+        })
+        return BackendRequest(
+            call = call,
+            success = success,
+            failure = failure
+        )
+    }
 
     fun getBakerPool(
         bakerId: String,
@@ -61,17 +78,14 @@ class ProxyRepository {
     ): BackendRequest<BakerPoolStatus> {
         val call = backend.bakerPool(bakerId)
         call.enqueue(object : BackendCallback<BakerPoolStatus>() {
-
             override fun onResponseData(response: BakerPoolStatus) {
                 success(response)
             }
-
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
         })
-
-        return BackendRequest<BakerPoolStatus>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
@@ -85,17 +99,14 @@ class ProxyRepository {
     ): BackendRequest<AccountSubmissionStatus> {
         val call = backend.accountSubmissionStatus(submissionId)
         call.enqueue(object : BackendCallback<AccountSubmissionStatus>() {
-
             override fun onResponseData(response: AccountSubmissionStatus) {
                 success(response)
             }
-
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
         })
-
-        return BackendRequest<AccountSubmissionStatus>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
@@ -109,17 +120,14 @@ class ProxyRepository {
     ): BackendRequest<AccountNonce> {
         val call = backend.accountNonce(accountAddress)
         call.enqueue(object : BackendCallback<AccountNonce>() {
-
             override fun onResponseData(response: AccountNonce) {
                 success(response)
             }
-
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
         })
-
-        return BackendRequest<AccountNonce>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
@@ -133,17 +141,14 @@ class ProxyRepository {
     ): BackendRequest<SubmissionData> {
         val call = backend.submitTransfer(transfer)
         call.enqueue(object : BackendCallback<SubmissionData>() {
-
             override fun onResponseData(response: SubmissionData) {
                 success(response)
             }
-
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
         })
-
-        return BackendRequest<SubmissionData>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
@@ -159,43 +164,33 @@ class ProxyRepository {
     ): BackendRequest<TransferSubmissionStatus> {
         val call = backend.transferSubmissionStatus(submissionId)
         call.enqueue(object : BackendCallback<TransferSubmissionStatus>() {
-
             override fun onResponseData(response: TransferSubmissionStatus) {
                 success(response)
             }
-
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
         })
-
-        return BackendRequest<TransferSubmissionStatus>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
         )
     }
 
-
     fun getTransferCost(type: String, memoSize: Int?, amount: Long? = null, restake: Boolean? = null, lPool: Boolean? = null, targetChange: Boolean? = null, metadataSize: Int? = null, openStatus: String? = null, success: (TransferCost) -> Unit, failure: ((Throwable) -> Unit)?): BackendRequest<TransferCost> {
-
         val lPoolArg = if (lPool == true) "lPool" else null
         val targetArg = if (targetChange == true) "target" else null
-
         val call = backend.transferCost(type, memoSize, amount, restake, lPoolArg, targetArg, metadataSize, openStatus)
-
         call.enqueue(object : BackendCallback<TransferCost>() {
-
             override fun onResponseData(response: TransferCost) {
                 success(response)
             }
-
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
         })
-
-        return BackendRequest<TransferCost>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
@@ -204,19 +199,15 @@ class ProxyRepository {
 
     fun getChainParameters(success: (ChainParameters) -> Unit, failure: ((Throwable) -> Unit)?): BackendRequest<ChainParameters> {
         val call = backend.chainParameters()
-
         call.enqueue(object : BackendCallback<ChainParameters>() {
-
             override fun onResponseData(response: ChainParameters) {
                 success(response)
             }
-
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
         })
-
-        return BackendRequest<ChainParameters>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
@@ -238,17 +229,14 @@ class ProxyRepository {
     ): BackendRequest<AccountBalance> {
         val call = backend.accountBalance(accountAddress)
         call.enqueue(object : BackendCallback<AccountBalance>() {
-
             override fun onResponseData(response: AccountBalance) {
                 success(response)
             }
-
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
         })
-
-        return BackendRequest<AccountBalance>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
@@ -266,17 +254,14 @@ class ProxyRepository {
     ): BackendRequest<AccountTransactions> {
         val call = backend.accountTransactions(accountAddress, order, from, limit, includeRewards)
         call.enqueue(object : BackendCallback<AccountTransactions>() {
-
             override fun onResponseData(response: AccountTransactions) {
                 success(response)
             }
-
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
         })
-
-        return BackendRequest<AccountTransactions>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
@@ -290,17 +275,14 @@ class ProxyRepository {
     ): BackendRequest<SubmissionData> {
         val call = backend.requestGTUDrop(accountAddress)
         call.enqueue(object : BackendCallback<SubmissionData>() {
-
             override fun onResponseData(response: SubmissionData) {
                 success(response)
             }
-
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
         })
-
-        return BackendRequest<SubmissionData>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
@@ -313,17 +295,14 @@ class ProxyRepository {
     ): BackendRequest<GlobalParamsWrapper> {
         val call = App.appCore.getProxyBackend().getGlobalInfo()
         call.enqueue(object : BackendCallback<GlobalParamsWrapper>() {
-
             override fun onResponseData(response: GlobalParamsWrapper) {
                 success(response)
             }
-
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
         })
-
-        return BackendRequest<GlobalParamsWrapper>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
@@ -337,17 +316,14 @@ class ProxyRepository {
     ): BackendRequest<AccountKeyData> {
         val call = App.appCore.getProxyBackend().getAccountEncryptedKey(accountAddress)
         call.enqueue(object : BackendCallback<AccountKeyData>() {
-
             override fun onResponseData(response: AccountKeyData) {
                 success(response)
             }
-
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
         })
-
-        return BackendRequest<AccountKeyData>(
+        return BackendRequest(
             call = call,
             success = success,
             failure = failure
