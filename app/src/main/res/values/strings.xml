@@ -724,7 +724,9 @@
     <string name="new_account_confirmed_header">Account submitted</string>
     <string name="new_account_confirmed_failed">Account creation failed!</string>
     <string name="new_account_confirmed_info">This may take a few minutes to\nprocess on-chain.</string>
-
+    <string name="new_account_confirmed_failed_recover_error_text">Your wallet seems to not be synchronized with the blockchain. You must first make a recovery of existing accounts, before you can make a new one.</string>
+    <string name="new_account_confirmed_failed_recover_info_text">Start the recovery flow by pressing the button below.</string>
+    <string name="new_account_confirmed_failed_recover_button">Start recovery</string>
 
     <!--  Account details  -->
     <string name="account_details_error_msg">Account creation failed in the process of creation.</string>

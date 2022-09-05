@@ -10,6 +10,7 @@ import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.BackendErrorHandler
+import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessActivity
 
 class FailedActivity : BaseActivity() {
     companion object {
@@ -71,8 +72,14 @@ class FailedActivity : BaseActivity() {
         }
 
         viewModel.error?.let { backendError ->
-            if(backendError.errorMessage != null){
-                binding.errorTextview.setText(backendError.errorMessage)
+            if (backendError.errorMessage != null) {
+                if (viewModel.source == FailedViewModel.Source.Account && backendError.error == 1) {
+                    binding.errorTextview.setText(R.string.new_account_confirmed_failed_recover_error_text)
+                    binding.infoTextview.setText(R.string.new_account_confirmed_failed_recover_info_text)
+                    binding.confirmButton.text = getString(R.string.new_account_confirmed_failed_recover_button)
+                } else {
+                    binding.errorTextview.setText(backendError.errorMessage)
+                }
             }
             else
             BackendErrorHandler.getExceptionStringResOrNull(backendError)?.let { stringRes ->
@@ -99,9 +106,16 @@ class FailedActivity : BaseActivity() {
                 startActivity(intent)
             }
             FailedViewModel.Source.Account -> {
-                val intent = Intent(this, MainActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                startActivity(intent)
+                val errorCode: Int = viewModel.error?.error ?: -9999
+                if (errorCode == 1) {
+                    val intent = Intent(this, RecoverProcessActivity::class.java)
+                    intent.putExtra(RecoverProcessActivity.SHOW_FOR_FIRST_RECOVERY, false)
+                    startActivity(intent)
+                } else {
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(intent)
+                }
             }
             FailedViewModel.Source.Transfer -> {
                 val intent = Intent(this, AccountDetailsActivity::class.java)
