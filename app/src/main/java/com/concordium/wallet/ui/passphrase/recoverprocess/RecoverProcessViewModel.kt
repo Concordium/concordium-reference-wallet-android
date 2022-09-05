@@ -107,7 +107,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
 
         val output = App.appCore.cryptoLibrary.generateRecoveryRequest(recoveryRequestInput)
 
-        if (output != null && identityProvider.metadata.recoveryStart != null) {
+        if (output != null && identityProvider.metadata.recoveryStart != null && identityProvider.metadata.recoveryStart.isNotBlank()) {
             val encoded = Uri.encode(output)
             val urlFromIpInfo = "${identityProvider.metadata.recoveryStart}?state="
             return "$urlFromIpInfo$encoded"
