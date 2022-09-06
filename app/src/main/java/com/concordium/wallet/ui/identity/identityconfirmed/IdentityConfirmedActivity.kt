@@ -28,6 +28,7 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
     private var showForFirstIdentity = false
     private var showForCreateAccount = false
     private var identity: Identity? = null
+    private var accountCreated = false
 
     companion object {
         const val EXTRA_IDENTITY = "EXTRA_IDENTITY"
@@ -77,7 +78,7 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
     }
 
     override fun onBackPressed() {
-        if (!showForFirstIdentity && showForCreateAccount)
+        if (!showForFirstIdentity && showForCreateAccount && !accountCreated)
             super.onBackPressed()
     }
 
@@ -213,6 +214,8 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intent)
         } else {
+            accountCreated = true
+            hideActionBarBack()
             binding.confirmButton.visibility = View.VISIBLE
             binding.accountView.setAccount(account)
         }
