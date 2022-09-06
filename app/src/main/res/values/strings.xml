@@ -618,11 +618,6 @@
     <string name="identity_details_attribute_header">Identity data</string>
 
     <!-- Identity create -->
-    <string name="identity_create_title">Initial account creation</string>
-    <string name="identity_create_identity_name_header">Name your identity card</string>
-    <string name="identity_create_identity_name_info">You should also give your identity card a name to easily keep track of it. Similar to the name you gave the initial account, this name is only visible to you, and you can name it whatever you want.\n\nType the name you want to give your identity card in your wallet below.</string>
-    <string name="identity_create_identity_name_identity_name">Identity card name</string>
-    <string name="identity_create_identity_name_confirm">Continue</string>
     <string name="identity_create_identity_provider_header">Choosing an identity provider</string>
     <string name="identity_create_identity_provider_info"><![CDATA[As mentioned, the identity provider will verify your identity using a government issued identity document, some identity attributes you provide, and a selfie.<br><br>You can pick one from the list below. To read more about them before deciding, click the links below.<br><br>%1$s]]></string>
     <string name="identity_create_identity_provider_privacy_policy">Privacy Policy</string>

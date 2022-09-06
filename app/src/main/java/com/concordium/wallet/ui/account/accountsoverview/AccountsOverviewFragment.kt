@@ -29,7 +29,7 @@ import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
-import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
+import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 
 class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by IdentityStatusDelegateImpl(), EarnDelegate by EarnDelegateImpl() {
@@ -421,8 +421,7 @@ class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ident
     //************************************************************
 
     private fun gotoCreateIdentity() {
-        val intent = Intent(activity, IdentityCreateActivity::class.java)
-        startActivity(intent)
+        startActivity(Intent(activity, IdentityProviderListActivity::class.java))
     }
 
     private fun gotoCreateAccount() {

@@ -186,14 +186,8 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.WithBackground" /> <!-- Identity -->
         <activity
-            android:name=".ui.identity.identitycreate.IdentityCreateActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.identity.identityproviderlist.IdentityProviderListActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".ui.identity.identitycreate.IdentityCreateActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.identity.identityproviderpolicywebview.IdentityProviderPolicyWebviewActivity"

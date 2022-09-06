@@ -41,6 +41,7 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
             //AuthPreferences(getApplication()).setSeedPhrase("upset much whisper feature orient elder depth soap filter festival remove moon firm victory crew run dose wrist harsh height little grow split onion") // Testnet (created from Android)
             //AuthPreferences(getApplication()).setSeedPhrase("recall leader garden happy drift recycle raw swear cheap chimney sausage sugar bleak detail vapor fortune skill melody skin pledge physical gadget miss daring") // From Martin (left)
             //AuthPreferences(getApplication()).setSeedPhrase("ghost island ordinary student apart minimum enable diesel height twelve enemy exhaust obtain february code mix miss bounce true endless injury ankle scout tree") // From Martin (right)
+            //AuthPreferences(getApplication()).setSeedPhrase("spider weird system jeans express patrol tooth answer solve gift defense carry sunset language ankle ability life popular swap donate toward obtain degree van") // From Martin (says not working)
             _validateLiveData.value = true
         }
     }

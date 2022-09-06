@@ -13,7 +13,7 @@ import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
-import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
+import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 
 class CustomDialogFragment : DialogFragment() {
     companion object {
@@ -266,8 +266,7 @@ class CustomDialogFragment : DialogFragment() {
                 dismiss()
             }
             builder.setPositiveButton(resPositive) { _, _ ->
-                val intent = Intent(activity, IdentityCreateActivity::class.java)
-                startActivity(intent)
+                startActivity(Intent(activity, IdentityProviderListActivity::class.java))
             }
         }
 
