@@ -211,19 +211,16 @@ class SendFundsActivity : BaseActivity() {
         }
         binding.sendFundsPasteRecipient.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(editable: Editable) {
-                var address = editable.toString()
-                if(viewModel.selectedRecipient == null){
-                    handleRecipient(Recipient(0,"",address))
+                val address = editable.toString().trim()
+                if (viewModel.selectedRecipient == null) {
+                    handleRecipient(Recipient(0,"", address))
                 }
-                if(!address.equals(viewModel.selectedRecipient?.address)){
-                    handleRecipient(Recipient(0,"",address))
+                if (address != viewModel.selectedRecipient?.address) {
+                    handleRecipient(Recipient(0,"", address))
                 }
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
             }
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
         })

@@ -518,7 +518,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
     private fun getAccountEncryptedKey(accountAddress: String) {
         _waitingReceiverAccountPublicKeyLiveData.value = true
         proxyRepository.getAccountEncryptedKey(
-            accountAddress,
+            accountAddress.trim(),
             {
                 tempData.receiverPublicKey = it.accountEncryptionKey
                 _waitingReceiverAccountPublicKeyLiveData.value = false
