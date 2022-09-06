@@ -933,11 +933,8 @@
     <string name="change_password_final_error">Passcode could not successfully be changed</string>
     <string name="accounts_overview_currently_available_amounts">Currently available amounts:</string>
 
-    <string name="contact_account_removed">The related initial account has been automatically removed.</string>
     <string name="contact_issuance_reference">Issuance reference:</string>
-
     <string name="contact_issuance_no_email_client_reference">You can copy the reference below, and then contact %1$s at %2$s\n\nOptional: Add Concordium as CC via\nidiss@concordium.software</string>
-
     <string name="contact_issuance_hash_value_copied">Reference text copied</string>
 
     <string name="transaction_memo_warning_title">Transaction memos</string>
