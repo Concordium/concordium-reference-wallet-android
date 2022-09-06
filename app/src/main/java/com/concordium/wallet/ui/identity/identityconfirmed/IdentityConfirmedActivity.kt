@@ -133,7 +133,7 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
             else {
                 if (!showForCreateAccount)
                     App.appCore.newIdentityPending = identity
-                finish()
+                gotoAccountsOverview()
             }
         }
 
@@ -165,6 +165,12 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
                 }
             }
         }
+    }
+
+    private fun gotoAccountsOverview() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
     }
 
     private fun updateIdentityView() {

@@ -35,13 +35,8 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
 
     fun hack() {
         if (BuildConfig.DEBUG) {
-            //AuthPreferences(getApplication()).setSeedPhrase("rifle vehicle onion typical base book trick child entry trick wedding festival zone sport coil verify mirror flame arena sustain coin state north blame") // This should not work
-            //AuthPreferences(getApplication()).setSeedPhrase("trust deal squeeze drastic sport squeeze evoke note fatigue peanut tissue crazy rough knock denial brick swift bus amateur just merit bind enforce peace") // Testnet ( created from iOS)
-            AuthPreferences(getApplication()).setSeedPhrase("close orchard gesture rib income script attract wash surge badge catch page model option hire host tuition invite milk favorite foil kitchen glove brave")  // Testnet (created from Android)
-            //AuthPreferences(getApplication()).setSeedPhrase("upset much whisper feature orient elder depth soap filter festival remove moon firm victory crew run dose wrist harsh height little grow split onion") // Testnet (created from Android)
-            //AuthPreferences(getApplication()).setSeedPhrase("recall leader garden happy drift recycle raw swear cheap chimney sausage sugar bleak detail vapor fortune skill melody skin pledge physical gadget miss daring") // From Martin (left)
-            //AuthPreferences(getApplication()).setSeedPhrase("ghost island ordinary student apart minimum enable diesel height twelve enemy exhaust obtain february code mix miss bounce true endless injury ankle scout tree") // From Martin (right)
-            //AuthPreferences(getApplication()).setSeedPhrase("spider weird system jeans express patrol tooth answer solve gift defense carry sunset language ankle ability life popular swap donate toward obtain degree van") // From Martin (says not working)
+            //AuthPreferences(getApplication()).setSeedPhrase("example history volume upset help vendor talk drama print sorry feel october popular feed amateur enough ladder pluck suit museum solve finger satisfy tell") // Notabene - should have one identity and no accounts
+            AuthPreferences(getApplication()).setSeedPhrase("dream absent motor aisle salmon vessel there language window powder jelly reopen size must step return flock nut cheap rent gasp faint bundle jungle")
             _validateLiveData.value = true
         }
     }
