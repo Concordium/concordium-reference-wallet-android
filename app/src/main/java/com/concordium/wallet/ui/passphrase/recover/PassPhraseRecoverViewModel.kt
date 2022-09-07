@@ -35,8 +35,8 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
 
     fun hack() {
         if (BuildConfig.DEBUG) {
-            //AuthPreferences(getApplication()).setSeedPhrase("example history volume upset help vendor talk drama print sorry feel october popular feed amateur enough ladder pluck suit museum solve finger satisfy tell") // Notabene - should have one identity and no accounts
-            AuthPreferences(getApplication()).setSeedPhrase("dream absent motor aisle salmon vessel there language window powder jelly reopen size must step return flock nut cheap rent gasp faint bundle jungle")
+            AuthPreferences(getApplication()).setSeedPhrase("session together nothing figure exclude rely merry flee hover mouse produce divert spider police manage science palace report naive autumn cigar alien oil multiply") // Notabene 1 ID, 2 ACC (testnet)
+            //AuthPreferences(getApplication()).setSeedPhrase("armed flag eye famous sight glare use property glide fix follow army fortune latin lady job move case country region brand learn electric segment") // staging
             _validateLiveData.value = true
         }
     }

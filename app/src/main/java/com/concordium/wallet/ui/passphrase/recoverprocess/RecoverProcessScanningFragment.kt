@@ -46,14 +46,22 @@ class RecoverProcessScanningFragment : RecoverProcessBaseFragment() {
                 showWaiting(waiting)
             }
         }
-        _viewModel.progress.observe(viewLifecycleOwner) { progress ->
+        _viewModel.progressIdentities.observe(viewLifecycleOwner) { progress ->
             progress?.let {
-                binding.progressBar.progress = progress
+                binding.progressIdentities.progress = progress
+            }
+        }
+        _viewModel.progressAccounts.observe(viewLifecycleOwner) { progress ->
+            progress?.let {
+                binding.progressAccounts.progress = progress
             }
         }
     }
 
     private fun showWaiting(waiting: Boolean) {
-        binding.progressBar.visibility = if (waiting) View.VISIBLE else View.GONE
+        binding.progressIdentitiesText.visibility = if (waiting) View.VISIBLE else View.GONE
+        binding.progressIdentities.visibility = if (waiting) View.VISIBLE else View.GONE
+        binding.progressAccountsText.visibility = if (waiting) View.VISIBLE else View.GONE
+        binding.progressAccounts.visibility = if (waiting) View.VISIBLE else View.GONE
     }
 }

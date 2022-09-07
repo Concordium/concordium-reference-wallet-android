@@ -29,7 +29,7 @@ class PassPhraseViewModel(application: Application) : AndroidViewModel(applicati
     fun generateMnemonicCode() {
         val mnemonicCode: Mnemonics.MnemonicCode = Mnemonics.MnemonicCode(Mnemonics.WordCount.COUNT_24)
         if (BuildConfig.DEBUG)
-            println(mnemonicCode.words.joinToString(" ") { String(it) })
+            println("LC -> ${mnemonicCode.words.joinToString(" ") { String(it) }}")
         mnemonicCodeToConfirm = mnemonicCode.words.toList()
     }
 

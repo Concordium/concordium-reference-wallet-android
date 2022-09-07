@@ -235,6 +235,8 @@
     <string name="pass_phrase_recover_process_nothing_new">Nothing new was found.</string>
     <string name="pass_phrase_recover_process_finished_accounts">Accounts:</string>
     <string name="pass_phrase_recover_process_try_again">Try again</string>
+    <string name="pass_phrase_recover_process_identities">Identities</string>
+    <string name="pass_phrase_recover_process_accounts">Accounts</string>
 
     <string name="earn_title">Earning rewards</string>
     <string name="earn_subtitle">There are two options for earning rewards on Concordium: Baking and delegation.</string>

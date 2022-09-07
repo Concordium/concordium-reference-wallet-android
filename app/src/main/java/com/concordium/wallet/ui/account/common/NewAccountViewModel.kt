@@ -210,7 +210,6 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
         }
 
         val net = AppConfig.net
-        val identityIndex = identity.id - 1
         val seed = AuthPreferences(getApplication()).getSeedPhrase()
 
         val credentialInput = CreateCredentialInputV1(
@@ -221,7 +220,7 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
             revealedAttributes,
             seed,
             net,
-            identityIndex,
+            identity.identityIndex,
             nextAccountNumber,
             (DateTimeUtil.nowPlusMinutes(5).time) / 1000
         )

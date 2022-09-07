@@ -66,7 +66,7 @@ class IdentityDaoUnitTest {
             RawJson("{}")
         )
         val identity =
-            Identity(0, "identity name", "", "", "", 0, identityProvider, identityObject)
+            Identity(0, "identity name", "", "", "", 0, identityProvider, identityObject, 0, 0)
 
         runBlocking { identityDao.insert(identity) }
         val listLiveData = identityDao.getAllAsLiveData()
