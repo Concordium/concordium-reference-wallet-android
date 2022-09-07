@@ -111,6 +111,7 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
             data?.let {
                 runOnUiThread {
                     showCreateIdentityError(it.identity.status)
+                    binding.progressLine.setFilledDots(4)
                 }
             }
         }
@@ -118,6 +119,7 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
             if (showForFirstIdentity) {
                 updateIdentityView()
                 showSubmitAccount()
+                binding.progressLine.setFilledDots(4)
             } else {
                 updateIdentityView()
             }
@@ -242,8 +244,6 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
                     binding.btnSubmitAccount.isEnabled = it.status == IdentityStatus.DONE
                     binding.confirmButton.visibility = View.GONE
                     binding.rlAccount.visibility = View.VISIBLE
-                    binding.progressLine.setFilledDots(4)
-                    binding.progressLine.invalidate()
                     if (showForCreateAccount) {
                         setActionBarTitle(R.string.identity_confirmed_create_new_account)
                         binding.infoTextview.text = getString(R.string.identity_confirmed_submit_new_account_for_identity, it.name)

@@ -36,6 +36,11 @@ class SetupWalletActivity : BaseActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        if (binding.pager.currentItem != 3)
+            super.onBackPressed()
+    }
+
     private fun initializeViewModel() {
         viewModel = ViewModelProvider(
             this,
@@ -101,7 +106,10 @@ class SetupWalletActivity : BaseActivity() {
 
     private fun moveNext() {
         binding.pager.currentItem++
-        if (binding.pager.currentItem == 1)
-            binding.continueButton.isEnabled = false
+        when (binding.pager.currentItem) {
+            1 -> binding.continueButton.isEnabled = false
+            2 -> binding.progressLine.setFilledDots(2)
+            3 -> hideActionBarBack()
+        }
     }
 }
