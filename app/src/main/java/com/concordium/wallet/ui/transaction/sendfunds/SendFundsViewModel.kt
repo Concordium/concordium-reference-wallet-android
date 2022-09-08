@@ -525,7 +525,6 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             },
             {
                 _waitingReceiverAccountPublicKeyLiveData.value = false
-                handleBackendError(it)
             }
         )
     }
