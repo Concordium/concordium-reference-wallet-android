@@ -81,9 +81,16 @@ data class Account(
     var accountBaker: AccountBaker? = null,
 
     @ColumnInfo(name = "accountIndex")
-    var accountIndex: Int? = null
+    var accountIndex: Int? = null) : Serializable {
 
-    ) : Serializable {
+    companion object {
+        fun getDefaultName(address: String): String {
+            if (address.length >= 8) {
+                return "${address.subSequence(0, 4)}...${address.substring(address.length - 4)}"
+            }
+            return ""
+        }
+    }
 
     fun isInitial(): Boolean {
         if (readOnly || isBaking() || isDelegating()) {
@@ -119,7 +126,7 @@ data class Account(
     fun getAtDisposalWithoutStakedOrScheduled(totalBalance: Long): Long {
         val stakedAmount: Long = accountDelegation?.stakedAmount?.toLong() ?: accountBaker?.stakedAmount?.toLong() ?: 0
         val scheduledTotal: Long = finalizedAccountReleaseSchedule?.total?.toLong() ?: 0
-        val subtract = if (stakedAmount > 0 && stakedAmount <= scheduledTotal)
+        val subtract = if (stakedAmount in 1..scheduledTotal)
             scheduledTotal
         else if (stakedAmount > 0 && stakedAmount > scheduledTotal)
             stakedAmount

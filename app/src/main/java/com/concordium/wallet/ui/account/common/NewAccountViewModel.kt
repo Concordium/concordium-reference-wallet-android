@@ -79,7 +79,7 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
         this.identity = identity
     }
 
-    private class TempData {
+    class TempData {
         var revealedAttributeList: List<SelectableIdentityAttribute> = ArrayList()
         var globalParams: GlobalParams? = null
         var submissionStatus: TransactionStatus? = null
@@ -112,10 +112,6 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
         } else {
             _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(throwable))
         }
-    }
-
-    suspend fun nextAccountNumber(identityId: Int): Int {
-        return identityRepository.nextAccountNumber(identityId)
     }
 
     fun confirmWithoutAttributes() {
@@ -319,6 +315,7 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
     }
 
     private fun saveNewAccount(account: Account) = viewModelScope.launch {
+        account.name = Account.getDefaultName(account.address)
         val accountId = accountRepository.insert(account)
         identity.nextAccountNumber++
         identityRepository.update(identity)

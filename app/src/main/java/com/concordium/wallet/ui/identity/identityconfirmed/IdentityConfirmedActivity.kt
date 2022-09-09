@@ -159,9 +159,8 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
             binding.btnSubmitAccount.visibility = View.GONE
             CoroutineScope(Dispatchers.IO).launch {
                 identity?.let { indent ->
-                    val nextAccountNumber = viewModelNewAccount.nextAccountNumber(indent.id)
                     runOnUiThread {
-                        viewModelNewAccount.initialize("${getString(R.string.account)} $nextAccountNumber", indent)
+                        viewModelNewAccount.initialize(Account.getDefaultName(""), indent)
                         viewModelNewAccount.confirmWithoutAttributes()
                     }
                 }
@@ -231,15 +230,14 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
 
     private fun showSubmitAccount() {
         CoroutineScope(Dispatchers.IO).launch {
-            val identityDao = WalletDatabase.getDatabase(application).identityDao()
-            val identityRepository = IdentityRepository(identityDao)
+            val identityRepository = IdentityRepository(WalletDatabase.getDatabase(application).identityDao())
             identity?.let {
                 identity = identityRepository.findById(it.id)
             }
             runOnUiThread {
                 identity?.let {
                     binding.identityView.setIdentityData(it)
-                    binding.accountView.setDefault("${it.name}", "${getString(R.string.account)} ${it.nextAccountNumber}")
+                    binding.accountView.setDefault(it.name, "4WHF...eNu8")
                     binding.accountView.visibility = View.VISIBLE
                     binding.btnSubmitAccount.isEnabled = it.status == IdentityStatus.DONE
                     binding.confirmButton.visibility = View.GONE

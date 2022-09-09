@@ -60,6 +60,7 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         var identityProvider: IdentityProvider? = null
         var idObjectRequest: RawJson? = null
         var identityIndex = 0
+        var identityName = ""
     }
 
     init {
@@ -165,6 +166,7 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
 
         val net = AppConfig.net
         tempData.identityIndex = identityRepository.nextIdentityIndex(identityProvider.ipInfo.ipIdentity)
+        tempData.identityName = "${getApplication<Application?>().getString(R.string.view_identity_identity)} ${identityRepository.getCount() + 1}"
         val seed = AuthPreferences(getApplication()).getSeedPhrase()
 
         val output = App.appCore.cryptoLibrary.createIdRequestAndPrivateDataV1(identityProvider.ipInfo, identityProvider.arsInfos, global, seed, net, tempData.identityIndex)
@@ -187,7 +189,7 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         return IdentityCreationData(
             identityProvider,
             idObjectRequest,
-            "Identity ${tempData.identityIndex}",
+            tempData.identityName,
             tempData.identityIndex
         )
     }

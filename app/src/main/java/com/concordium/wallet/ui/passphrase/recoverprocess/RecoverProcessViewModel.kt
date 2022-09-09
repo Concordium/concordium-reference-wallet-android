@@ -177,9 +177,11 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
     }
 
     private suspend fun saveIdentity(identityObject: IdentityObject, identityProvider: IdentityProvider, identityIndex: Int): Identity {
+        val identityRepository = IdentityRepository(WalletDatabase.getDatabase(getApplication()).identityDao())
+        val identityCount = identityRepository.getCount()
         val identity = Identity(
             0,
-            "Identity $identityIndex",
+            "Identity ${identityCount + 1}",
             IdentityStatus.DONE,
             "",
             "",
@@ -189,7 +191,6 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             identityProvider.ipInfo.ipIdentity,
             identityIndex
         )
-        val identityRepository = IdentityRepository(WalletDatabase.getDatabase(getApplication()).identityDao())
         val existingIdentity = identityRepository.findByProviderIdAndIndex(identityProvider.ipInfo.ipIdentity, identityIndex)
         if (existingIdentity == null) {
             val newIdentityId = identityRepository.insert(identity)
@@ -243,7 +244,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                 val account = Account(
                     id = 0,
                     identityId = identity.id,
-                    name = "Account ${identity.nextAccountNumber}",
+                    name = Account.getDefaultName(createCredentialOutput.accountAddress),
                     address = createCredentialOutput.accountAddress,
                     submissionId = "",
                     transactionStatus = TransactionStatus.FINALIZED,
