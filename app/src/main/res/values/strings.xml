@@ -645,6 +645,7 @@
     <string name="identity_confirmed_finish_button">Finish</string>
     <string name="identity_confirmed_submit_new_account_for_identity">Submit a new account for Identity %1$s?</string>
     <string name="identity_confirmed_create_new_account">Create new account</string>
+    <string name="identity_confirmed_info_next_identity">Your request has been submitted with the identity provider. Now you just have to wait for a moment for them to process your submission. Once your identity is verified, you can use it to create accounts.</string>
 
     <!-- Identity attributes -->
     <string name="identity_attribute_first_name">First name</string>

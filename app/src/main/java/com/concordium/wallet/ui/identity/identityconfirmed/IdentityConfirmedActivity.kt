@@ -153,6 +153,7 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
             }
             binding.progressLine.visibility = View.GONE
             binding.confirmButton.text = getString(R.string.identity_confirmed_finish_button)
+            binding.infoTextview.text = getString(R.string.identity_confirmed_info_next_identity)
         }
 
         binding.btnSubmitAccount.setOnClickListener {
@@ -260,7 +261,7 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
         if (isFirstIdentity) {
             binding.infoTextview.setText(R.string.identity_confirmed_info_first)
         } else {
-            binding.infoTextview.setText(R.string.identity_confirmed_info)
+            binding.infoTextview.setText(R.string.identity_confirmed_info_next_identity)
         }
     }
 }
