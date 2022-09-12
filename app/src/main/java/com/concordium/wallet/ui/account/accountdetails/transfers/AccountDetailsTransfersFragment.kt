@@ -27,9 +27,6 @@ class AccountDetailsTransfersFragment : Fragment() {
     private lateinit var accountDetailsViewModel: AccountDetailsViewModel
     private lateinit var transactionAdapter: TransactionAdapter
 
-    //region Lifecycle
-    //************************************************************
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initializeViewModel()
@@ -54,11 +51,6 @@ class AccountDetailsTransfersFragment : Fragment() {
         accountDetailsViewModel.populateTransferList()
     }
 
-    //endregion
-
-    //region Initialize
-    //************************************************************
-
     private fun initializeViewModel() {
         accountDetailsViewModel = ViewModelProvider(requireActivity(),
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
@@ -71,63 +63,12 @@ class AccountDetailsTransfersFragment : Fragment() {
         accountDetailsViewModel.transferListLiveData.observe(this, Observer { transferList ->
             transferList?.let {
                 transactionAdapter.setIsShielded(accountDetailsViewModel.isShielded)
-                val filteredList = transferList.filter {
-                        var result: Boolean = true
-                        if(it.getItemType() == AdapterItem.ItemType.Item){
-                            val item = it as TransactionItem
-                            item.transaction?.let {
-
-                                val transaction: Transaction = it
-
-                                if (accountDetailsViewModel.isShielded) { // shielded balance
-                                    /*
-                                        local (unfinalized outgoing) transactions:
-                                            simpleTransfer - NOT shown
-                                            transferToSecret - NOT shown
-                                    */
-                                    if (!transaction.isRemoteTransaction()) {
-                                        if (transaction.details != null) {
-                                            if (transaction.details.type == TransactionType.TRANSFER || transaction.details.type == TransactionType.TRANSFERTOENCRYPTED) {
-                                                result = false
-                                            }
-                                            else{}
-                                        }
-                                        else{}
-                                    }
-                                    /*
-                                        remote transactions
-                                            simpleTransfer - NOT shown
-                                    */
-                                    else {
-                                        if (transaction.details != null) {
-                                            if (transaction.details.type != TransactionType.TRANSFERTOENCRYPTED &&
-                                                transaction.details.type != TransactionType.TRANSFERTOPUBLIC &&
-                                                transaction.details.type != TransactionType.ENCRYPTEDAMOUNTTRANSFER &&
-                                                transaction.details.type != TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO) {
-                                                result = false
-                                            }
-                                            else{}
-                                        }
-                                        else{}
-                                    }
-                                } else {  // unshielded balance
-                                    if (transaction.isRemoteTransaction()) {
-                                        if (transaction.origin != null && transaction.details != null) {
-                                            if (transaction.origin.type != TransactionOriginType.Self && (transaction.details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFER || transaction.details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO)) {
-                                                result = false
-                                            }
-                                            else{
-                                            }
-                                        }
-                                        else{}
-                                    }
-                                    else{
-                                        result = true
-                                    }
-                                }
-
-                            }
-                        }
+                val filteredList = transferList.filterIndexed { index, currentItem ->
+                        var result = true
+                        if (currentItem.getItemType() == AdapterItem.ItemType.Header)
+                            result = showHeader(transferList, index)
+                        else if (currentItem.getItemType() == AdapterItem.ItemType.Item)
+                            result = showItem(currentItem)
                         result
                 }
 
@@ -159,6 +100,56 @@ class AccountDetailsTransfersFragment : Fragment() {
         })
     }
 
+    private fun showHeader(transferList: List<AdapterItem>, currentIndex: Int): Boolean {
+        var show = false
+        var index = currentIndex
+        do {
+            index++
+            var nextItem: AdapterItem? = null
+            if (transferList.size > index)
+                nextItem = transferList[index]
+            if (nextItem != null && nextItem.getItemType() == AdapterItem.ItemType.Item)
+                show = showItem(nextItem)
+        } while (nextItem != null && nextItem.getItemType() == AdapterItem.ItemType.Item && !show)
+        return show
+    }
+
+    private fun showItem(currentItem: AdapterItem): Boolean {
+        var result = true
+        val item = currentItem as TransactionItem
+        item.transaction?.let {
+            val transaction: Transaction = it
+            if (accountDetailsViewModel.isShielded) {
+                if (!transaction.isRemoteTransaction()) {
+                    if (transaction.details != null) {
+                        if (transaction.details.type == TransactionType.TRANSFER || transaction.details.type == TransactionType.TRANSFERTOENCRYPTED) {
+                            result = false
+                        }
+                    }
+                }
+                else {
+                    if (transaction.details != null) {
+                        if (transaction.details.type != TransactionType.TRANSFERTOENCRYPTED &&
+                            transaction.details.type != TransactionType.TRANSFERTOPUBLIC &&
+                            transaction.details.type != TransactionType.ENCRYPTEDAMOUNTTRANSFER &&
+                            transaction.details.type != TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO) {
+                            result = false
+                        }
+                    }
+                }
+            } else {
+                if (transaction.isRemoteTransaction()) {
+                    if (transaction.origin != null && transaction.details != null) {
+                        if (transaction.origin.type != TransactionOriginType.Self && (transaction.details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFER || transaction.details.type == TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO)) {
+                            result = false
+                        }
+                    }
+                }
+            }
+        }
+        return result
+    }
+
     private fun initializeViews() {
         binding.noTransfersTextview.visibility = View.GONE
         binding.gtuDropLayout.visibility = View.GONE
@@ -175,6 +166,7 @@ class AccountDetailsTransfersFragment : Fragment() {
 
             }
         })
+
         val linearLayoutManager = LinearLayoutManager(context)
         binding.recyclerview.setHasFixedSize(true)
         binding.recyclerview.adapter = transactionAdapter
@@ -183,22 +175,6 @@ class AccountDetailsTransfersFragment : Fragment() {
         // Pinned Header
         val headerItemDecoration = PinnedHeaderItemDecoration(transactionAdapter)
         binding.recyclerview.addItemDecoration(headerItemDecoration)
-
-        /* Because of pinned headers, we will not use divider item decorations - reasons:
-            1) The pinned header will not have a divider at the bottom
-            2) The extra pixels between items is not handled in the pinned headers, so there will be a gap between pinned header and actual header
-        */
-
-        // Divider
-        /*
-        val dividerItemDecoration =
-            DividerItemDecoration(view.recyclerview.context, linearLayoutManager.orientation)
-        val listDividerDrawable = ContextCompat.getDrawable(context!!, R.drawable.list_divider)
-        listDividerDrawable?.let {
-            dividerItemDecoration.setDrawable(listDividerDrawable)
-        }
-        view.recyclerview.addItemDecoration(dividerItemDecoration)
-        */
 
         // Click
         transactionAdapter.setOnItemClickListener(object :
@@ -212,9 +188,7 @@ class AccountDetailsTransfersFragment : Fragment() {
             }
         })
 
-        // Scroll
         binding.recyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
@@ -223,20 +197,11 @@ class AccountDetailsTransfersFragment : Fragment() {
                     val visibleItemCount = layoutManager.childCount
                     val totalItemCount = layoutManager.itemCount
                     val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-                    if (visibleItemCount + firstVisibleItemPosition >= totalItemCount
-                        && firstVisibleItemPosition >= 0
-                    ) {
+                    if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0) {
                         accountDetailsViewModel.loadMoreRemoteTransactions()
                     }
                 }
             }
         })
     }
-
-    //endregion
-
-    //region Control/UI
-    //************************************************************
-
-    //endregion
 }
