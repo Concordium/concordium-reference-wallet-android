@@ -34,7 +34,7 @@ class IdentitiesOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ide
     override fun onResume() {
         super.onResume()
         startCheckForPendingIdentity(activity)
-        viewModel.loadIdentities()
+        viewModel.loadIdentities(false)
     }
 
     override fun onPause() {

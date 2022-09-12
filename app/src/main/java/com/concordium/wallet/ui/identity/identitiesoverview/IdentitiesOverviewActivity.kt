@@ -44,7 +44,7 @@ class IdentitiesOverviewActivity : BaseActivity() {
 
         initializeViewModel()
         initializeViews()
-        viewModel.loadIdentities()
+        viewModel.loadIdentities(showForCreateAccount)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
