@@ -28,6 +28,7 @@ class IdentityProviderWebViewActivity : BaseActivity() {
     private lateinit var binding: ActivityIdentityProviderWebviewBinding
     private lateinit var viewModel: IdentityProviderWebViewViewModel
     private var showForFirstIdentity = false
+    private var chromeLaunched = false
 
     companion object {
         const val EXTRA_IDENTITY_CREATION_DATA = "EXTRA_IDENTITY_CREATION_DATA"
@@ -114,6 +115,12 @@ class IdentityProviderWebViewActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (chromeLaunched)
+            finish()
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -243,12 +250,14 @@ class IdentityProviderWebViewActivity : BaseActivity() {
         // Try to use Chrome browser to show url, if Chrome is not installed an ActivityNotFoundException will be thrown
         try {
             launchChromeCustomTab(url, true)
+            chromeLaunched = true
             return
         } catch (e: ActivityNotFoundException) {
         }
         // If not Chrome let the default browser with Custom Tabs handle this
         try {
             launchChromeCustomTab(url)
+            chromeLaunched = true
             return
         } catch (e: ActivityNotFoundException) {
             showError(R.string.app_error_general)

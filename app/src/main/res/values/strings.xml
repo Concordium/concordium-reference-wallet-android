@@ -679,7 +679,6 @@
 
     <!-- New account identity -->
     <string name="new_account_identity_title">Add Identity Data</string>
-    <string name="new_account_please_wait">This process may take a while on some phones. Please hang on.</string>
 
 
     <!-- New account setup -->
