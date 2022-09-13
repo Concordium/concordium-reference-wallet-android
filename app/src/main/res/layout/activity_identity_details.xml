@@ -5,11 +5,9 @@
     android:id="@+id/root_layout"
     style="@style/Layout.Root"
     tools:context=".ui.identity.identitydetails.IdentityDetailsActivity">
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <include
             android:id="@+id/toolbar_layout"
             layout="@layout/app_toolbar"
@@ -18,19 +16,16 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:fillViewport="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar_layout">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-
                 <!-- Header card -->
                 <com.concordium.wallet.uicore.view.IdentityView
                     android:id="@+id/identity_view"
@@ -45,7 +40,6 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-
                 <!-- Content card  -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/content_cardview"
@@ -58,17 +52,14 @@
                     android:layout_marginBottom="@dimen/activity_vertical_margin"
                     android:paddingBottom="20dp"
                     tools:visibility="gone">
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
-
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/list_item_height_lower"
                             android:orientation="horizontal">
-
                             <ImageView
                                 style="@style/Image"
                                 android:layout_width="20dp"
@@ -76,18 +67,14 @@
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginStart="@dimen/screen_horizontal_margin"
                                 android:src="@drawable/ic_menu_identities" />
-
                             <TextView
                                 style="@style/TextView.Standard.Light"
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginStart="20dp"
                                 android:layout_marginEnd="@dimen/screen_horizontal_margin"
                                 android:text="@string/identity_details_attribute_header" />
-
                         </LinearLayout>
-
                         <View style="@style/Divider" />
-
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/recyclerview"
                             android:layout_width="match_parent"
@@ -100,7 +87,6 @@
                             tools:listitem="@layout/item_identity_attribute"
                             tools:visibility="visible" />
                     </LinearLayout>
-
                 </androidx.cardview.widget.CardView>
 
                 <LinearLayout
@@ -114,7 +100,6 @@
                     android:gravity="center_horizontal"
                     android:layout_gravity="center"
                     android:orientation="vertical">
-
                     <TextView
                         android:id="@+id/error_textview"
                         style="@style/TextView.ErrorMedium"
@@ -123,64 +108,6 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         tools:text="Error message from API is shown here" />
-
-
-                    <TextView
-                        android:id="@+id/error_issuance_no_email_client_headline"
-                        style="@style/TextView.Small"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="2"
-                        android:gravity="center"
-                        android:layout_above="@+id/error_issuance_reference"
-                        android:text="@string/contact_issuance_no_email_client_reference" />
-
-                    <TextView
-                        android:id="@+id/error_issuance_reference"
-                        style="@style/TextView.Small"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="0.4"
-                        android:gravity="center"
-                        android:layout_above="@+id/error_issuance_reference_hash_container"
-                        android:text="@string/contact_issuance_reference" />
-
-                    <LinearLayout
-                        android:id="@+id/error_issuance_reference_hash_container"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="0.8"
-                        android:layout_above="@+id/support_button"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:id="@+id/error_issuance_reference_hash"
-                            style="@style/TextView.Small"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_marginStart="14dp"
-                            android:gravity="center"
-                            android:layout_gravity="center"
-                            tools:text="1f049d1a36d5774dc3f5d4e7425265d3ce6ee678ce1e7a56de55eebd60b4ff97" />
-                        <ImageView
-                            android:id="@+id/error_issuance_reference_hash_copy"
-                            android:layout_width="14dp"
-                            android:layout_height="18dp"
-                            android:layout_gravity="center"
-                            android:layout_margin="6dp"
-                            android:src="@drawable/ic_icon_copy"/>
-                    </LinearLayout>
-
-                    <Button
-                        android:id="@+id/support_button"
-                        style="@style/Button.Standard"
-                        android:layout_width="match_parent"
-                        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                        android:layout_marginRight="@dimen/activity_horizontal_margin"
-                        android:layout_marginBottom="@dimen/activity_vertical_margin"
-                        android:layout_marginTop="@dimen/activity_vertical_margin"
-                        android:text="@string/contact_support"
-                        android:layout_above="@+id/remove_button" />
-
                     <Button
                         android:id="@+id/remove_button"
                         style="@style/Button.Standard"
@@ -191,12 +118,7 @@
                         android:text="@string/failed_remove"
                         android:layout_alignParentBottom="true"/>
                 </LinearLayout>
-
-
             </LinearLayout>
-
         </androidx.core.widget.NestedScrollView>
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

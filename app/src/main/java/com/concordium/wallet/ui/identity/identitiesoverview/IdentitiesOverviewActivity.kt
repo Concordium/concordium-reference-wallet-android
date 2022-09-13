@@ -44,6 +44,10 @@ class IdentitiesOverviewActivity : BaseActivity() {
 
         initializeViewModel()
         initializeViews()
+    }
+
+    override fun onResume() {
+        super.onResume()
         viewModel.loadIdentities(showForCreateAccount)
     }
 

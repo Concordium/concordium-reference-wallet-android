@@ -24,8 +24,10 @@ class IdentityDetailsViewModel(application: Application) : AndroidViewModel(appl
         this.identity = identity
     }
 
-    suspend fun removeIdentity(identity: Identity) {
-        identityRepository.delete(identity)
+    fun removeIdentity(identity: Identity) {
+        viewModelScope.launch {
+            identityRepository.delete(identity)
+        }
     }
 
     fun changeIdentityName(name: String) {

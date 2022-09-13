@@ -28,12 +28,15 @@ class IdentitiesOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ide
         initializeViewModel()
         initializeViews()
         registerObservers()
+        viewModel.loadIdentities(false)
         return binding.root
     }
 
     override fun onResume() {
         super.onResume()
-        startCheckForPendingIdentity(activity)
+        startCheckForPendingIdentity(activity, null, false) {
+            viewModel.loadIdentities(false)
+        }
         viewModel.loadIdentities(false)
     }
 

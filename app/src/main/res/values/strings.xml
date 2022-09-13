@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- App -->
     <string name="app_name">Concordium</string>
     <string name="app_menu_item_accounts">Accounts</string>
@@ -26,29 +26,8 @@
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
 
-    <string name="dialog_send_email">Send email</string>
-
-    <string name="dialog_support_subject_reference">Issuance reference: %1$s</string>
-    <string name="dialog_support_text">Hi! My identity issuance failed.\n\nHere is my info:\n\nIssuance reference:\n%1$s\n\nMobile Wallet version:\nv%2$s\n\nPlatform:\nAndroid %3$s</string>
-
-    <string name="dialog_support">Contact Support</string>
-    <string name="dialog_copy">Copy reference</string>
-    <string name="dialog_popup_support_with_email_client_text">The identity issuance failed. You can either try again, or contact %1$s’s support.\n\nClicking Contact Support will open your e-mail app, with a reference to your submission as subject.\n\nConcordium will be CC’ed in the correspondence.</string>
-    <string name="dialog_popup_support_without_email_client_text">The identity issuance failed. You can either try again, or contact %1$s’s support.\n\nYou can copy the reference below, and then contact %1$s at %2$s\n\nOptional: Add Concordium as CC via <a href="mailto:idiss@concordium.software">idiss@concordium.software</a></string>
-
-    <string name="dialog_popup_support_creation_flow_with_email_client_text">The identity issuance failed. You can either try again, or contact Concordium support.\n\nClicking Contact Support will open your e-mail app, with a reference to your submission as subject.\n\n</string>
-    <string name="dialog_popup_support_creation_flow_without_email_client_text">The identity issuance failed. You can either try again, or contact Concordium support.\n\nYou can copy the reference below, and then contact Concordium at <a href="mailto:support@concordium.software">support@concordium.software</a></string>
-
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
-    <string name="dialog_initial_account_error_title">Initial account creation failed</string>
-    <string name="dialog_initial_account_error_text">Something went wrong with the initial account creation.\n\nPlease go back and try again, or try at another time.</string>
-    <string name="dialog_initial_account_error_text_first">Something went wrong with the initial account creation.\n\nPlease go back and try again.</string>
-    <string name="dialog_initial_account_error_positive">Try again</string>
-
-    <string name="dialog_identity_create_error_title">Identity rejected</string>
-    <string name="dialog_identity_create_error_text">Your identity request was unfortunately rejected with the following reason:\n\n%1$s\n\nFor security reasons rejected identity requests cannot be resolved, which means you have to submit a new request.</string>
-    <string name="dialog_identity_create_error_retry">Make new identity request</string>
 
     <!-- Main -->
     <string name="main_title">Accounts</string>
@@ -69,10 +48,8 @@
     <!-- Failed -->
     <string name="failed_title">Failed</string>
     <string name="failed_try_again">Please try again.</string>
-    <string name="failed_confirm">Ok</string>
+    <string name="failed_confirm">OK</string>
     <string name="failed_remove">Remove from list</string>
-    <string name="contact_support">Contact support</string>
-
 
     <!-- ***** Intro ***** -->
 
@@ -502,7 +479,7 @@
     <string name="baker_update_intro_flow_title">Baking</string>
     <string name="baker_update_intro_subtitle1">Updating baker settings</string>
     <string name="baker_update_intro_subtitle2">Update baker stake</string>
-    <string name="baker_update_intro_subtitle3">Update pool settings (1/2)</string>
+    <string name="baker_update_intro_subtitle3" tools:ignore="TypographyFractions">Update pool settings (1/2)</string>
     <string name="baker_update_intro_subtitle4">Update pool settings (2/2)</string>
     <string name="baker_update_intro_subtitle5">Update baker keys</string>
 
@@ -613,7 +590,9 @@
     <string name="identities_overview_identity_later">Later</string>
     <string name="identities_overview_identity_rejected_title">Identity rejected</string>
     <string name="identities_overview_identity_rejected_text">Your identity request was unfortunately rejected with the following reason:\n\n%1$s\n\nRejected identity requests cannot be resolved, so the rejected identity will be discarded, after dismissing this notification.\n\nDo you want to make another request now?</string>
+    <string name="identities_overview_identity_rejected_first_text">Your identity request was unfortunately rejected with the following reason:\n\n%1$s\n\nFor security reasons rejected identity requests cannot be resolved, which means you have to submit a new request.</string>
     <string name="identities_overview_identity_request_another">Request another identity</string>
+    <string name="identities_overview_identity_make_new">Make new identity request</string>
 
     <!-- Identity details -->
     <string name="identity_details_title">Identity</string>
@@ -632,11 +611,10 @@
     <string name="identity_provider_webview_title">Identity Verification</string>
 
     <!-- Identity confirmed -->
-    <string name="account">Account</string>
     <string name="identity_confirmed_title">Your first identity</string>
     <string name="identity_confirmed_header">Verification request submitted!</string>
     <string name="identity_confirmed_info">Your request has been submitted with the identity provider. Now you just have to wait for a moment for them to process your submission.\n\nYou can press continue to have a look at the app, while you wait.</string>
-    <string name="identity_confirmed_info_first">Your request has been submitted with the identity provider. Now you just have to wait for a moment for them to process your submission. Once your identity is verified, you can create your first account.\n\nYou can press continue to have a look at the app, while you wait.</string>
+    <string name="identity_confirmed_info_first">Your request has been submitted with the identity provider. Now you just have to wait for a moment for them to process your submission. Once your identity is verified, you can create your first account.</string>
     <string name="identity_confirmed_confirm">Continue</string>
     <string name="identity_confirmed_failed">Identity issuance failed!</string>
     <string name="identity_confirmed_confirm_account_submission_toolbar">Your first account</string>
@@ -718,7 +696,7 @@
 
     <!-- New account created -->
     <string name="new_account_confirmed_title">Account Creation</string>
-    <string name="new_account_confirmed_confirm">Ok, thanks</string>
+    <string name="new_account_confirmed_confirm">OK, thanks</string>
     <string name="new_account_confirmed_header">Account submitted</string>
     <string name="new_account_confirmed_failed">Account creation failed!</string>
     <string name="new_account_confirmed_info">This may take a few minutes to\nprocess on-chain.</string>
@@ -935,10 +913,6 @@
     <string name="change_password_successfully_changed">Passcode was successfully changed</string>
     <string name="change_password_final_error">Passcode could not successfully be changed</string>
     <string name="accounts_overview_currently_available_amounts">Currently available amounts:</string>
-
-    <string name="contact_issuance_reference">Issuance reference:</string>
-    <string name="contact_issuance_no_email_client_reference">You can copy the reference below, and then contact %1$s at %2$s\n\nOptional: Add Concordium as CC via\nidiss@concordium.software</string>
-    <string name="contact_issuance_hash_value_copied">Reference text copied</string>
 
     <string name="transaction_memo_warning_title">Transaction memos</string>
     <string name="transaction_memo_warning_text">Transaction memos are public and visible to everyone on the blockchain. Any memo sent with a transaction are permament, and will be visible forever, so be careful what you write in the memo.\n\nAdding a memo will increase the transaction fee.</string>

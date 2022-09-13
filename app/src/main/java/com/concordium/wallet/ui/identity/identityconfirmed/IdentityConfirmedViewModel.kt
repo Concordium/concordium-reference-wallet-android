@@ -11,11 +11,6 @@ import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.identity.IdentityUpdater
 import kotlinx.coroutines.launch
 
-data class IdentityErrorData(
-    val identity: Identity,
-    val isFirstIdentity: Boolean
-)
-
 class IdentityConfirmedViewModel(application: Application) : AndroidViewModel(application) {
     private val identityRepository: IdentityRepository
     private val identityUpdater = IdentityUpdater(application, viewModelScope)
@@ -27,14 +22,6 @@ class IdentityConfirmedViewModel(application: Application) : AndroidViewModel(ap
     private val _isFirstIdentityLiveData = MutableLiveData<Boolean>()
     val isFirstIdentityLiveData: LiveData<Boolean>
         get() = _isFirstIdentityLiveData
-
-    private val _identityErrorLiveData = MutableLiveData<IdentityErrorData>()
-    val identityErrorLiveData: LiveData<IdentityErrorData>
-        get() = _identityErrorLiveData
-
-    private val _identityDoneLiveData = MutableLiveData<Boolean>()
-    val identityDoneLiveData: LiveData<Boolean>
-        get() = _identityDoneLiveData
 
     lateinit var identity: Identity
 
@@ -49,19 +36,11 @@ class IdentityConfirmedViewModel(application: Application) : AndroidViewModel(ap
     }
 
     fun startIdentityUpdate() {
-        val updateListener = object: IdentityUpdater.UpdateListener {
-            override fun onError(identity: Identity) {
-                val isFirstIdentity = isFirstIdentityLiveData.value
-                viewModelScope.launch {
-                    val isFirst = isFirstIdentity ?: isFirst(identityRepository.getCount())
-                    _identityErrorLiveData.value = IdentityErrorData(identity, isFirst)
-                }
-            }
-            override fun onDone() {
-                _identityDoneLiveData.value = true
-            }
-        }
-        identityUpdater.checkPendingIdentities(updateListener)
+        identityUpdater.checkPendingIdentities()
+    }
+
+    fun stopIdentityUpdate() {
+        identityUpdater.stop()
     }
 
     fun updateState() {

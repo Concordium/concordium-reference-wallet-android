@@ -34,6 +34,7 @@ abstract class BaseActivity : AppCompatActivity() {
     private var titleView: TextView? = null
     protected lateinit var popup: Popup
     protected lateinit var dialogs: Dialogs
+    public var isActive = false
 
     companion object {
         const val POP_UNTIL_ACTIVITY = "POP_UNTIL_ACTIVITY"
@@ -60,6 +61,16 @@ abstract class BaseActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isActive = true
+    }
+
+    override fun onPause() {
+        super.onPause()
+        isActive = false
     }
 
     protected fun shareFile(fileName: Uri) {

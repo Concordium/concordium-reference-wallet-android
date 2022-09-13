@@ -88,7 +88,7 @@ class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ident
         if (!App.appCore.appSettingsForceUpdateChecked)
             viewModel.loadAppSettings()
 
-        startCheckForPendingIdentity(activity)
+        startCheckForPendingIdentity(activity, null, false) {}
     }
 
     override fun onDestroyView() {

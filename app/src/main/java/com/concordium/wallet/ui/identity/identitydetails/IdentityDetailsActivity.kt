@@ -1,24 +1,19 @@
 package com.concordium.wallet.ui.identity.identitydetails
 
 import android.app.AlertDialog
-import android.os.Build
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.lifecycle.ViewModelProvider
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.databinding.ActivityIdentityDetailsBinding
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
 import com.concordium.wallet.uicore.setEditText
 import com.concordium.wallet.uicore.view.IdentityView
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class IdentityDetailsActivity : BaseActivity() {
     companion object {
@@ -74,40 +69,13 @@ class IdentityDetailsActivity : BaseActivity() {
     }
 
     private fun initializeErrorViews() {
-        if (viewModel.identity.status == IdentityStatus.ERROR){
+        if (viewModel.identity.status == IdentityStatus.ERROR) {
             binding.errorWrapperLayout.visibility = View.VISIBLE
-            binding.errorTextview.text = viewModel.identity.detail
+            binding.errorTextview.text = viewModel.identity.detail ?: ""
             binding.identityView.foreground = AppCompatResources.getDrawable(this, R.drawable.bg_cardview_error_border)
             binding.removeButton.setOnClickListener {
-                GlobalScope.launch {
-                    viewModel.removeIdentity(viewModel.identity)
-                    finish()
-                }
-            }
-
-            if(IdentityErrorDialogHelper.canOpenSupportEmail(this)){
-                binding.errorIssuanceNoEmailClientHeadline.visibility = View.GONE
-            }
-            else{
-                binding.errorIssuanceNoEmailClientHeadline.visibility =  View.VISIBLE
-                binding.errorIssuanceNoEmailClientHeadline.text = getString(R.string.contact_issuance_no_email_client_reference, viewModel.identity.identityProvider.ipInfo.ipDescription.name, viewModel.identity.identityProvider.metadata.getSupportWithDefault())
-            }
-
-            val hash = IdentityErrorDialogHelper.hash(viewModel.identity.codeUri)
-            binding.errorIssuanceReferenceHash.text = hash
-            binding.errorIssuanceReferenceHashCopy.setOnClickListener {
-                IdentityErrorDialogHelper.copyToClipboard(this, title.toString(), resources.getString(R.string.dialog_support_text, hash, BuildConfig.VERSION_NAME, Build.VERSION.RELEASE))
-            }
-
-            binding.supportButton.visibility = if(IdentityErrorDialogHelper.canOpenSupportEmail(this)) View.VISIBLE else View.GONE
-
-            binding.supportButton.setOnClickListener {
-                GlobalScope.launch {
-                    IdentityErrorDialogHelper.openSupportEmail(this@IdentityDetailsActivity,
-                        resources,
-                        viewModel.identity.identityProvider.metadata.getSupportWithDefault(),
-                        hash)
-                }
+                viewModel.removeIdentity(viewModel.identity)
+                finish()
             }
         }
         else {

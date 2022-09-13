@@ -9,11 +9,8 @@ import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.data.IdentityRepository
-import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.identity.IdentityUpdater
-import com.concordium.wallet.ui.identity.identityconfirmed.IdentityErrorData
-import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     enum class State {
@@ -38,13 +35,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val stateLiveData: LiveData<State>
         get() = _stateLiveData
 
-    private val _identityErrorLiveData = MutableLiveData<IdentityErrorData>()
-    val identityErrorLiveData: LiveData<IdentityErrorData>
-        get() = _identityErrorLiveData
-
     init {
-        val identityDao = WalletDatabase.getDatabase(application).identityDao()
-        identityRepository = IdentityRepository(identityDao)
+        identityRepository = IdentityRepository(WalletDatabase.getDatabase(application).identityDao())
     }
 
     fun initialize() {
@@ -54,11 +46,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         catch(e: Exception){
             databaseVersionAllowed = false
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        identityUpdater.stop()
     }
 
     fun setTitle(title: String) {
@@ -89,25 +76,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun startIdentityUpdate() {
-        val updateListener = object: IdentityUpdater.UpdateListener {
-            override fun onError(identity: Identity) {
-                viewModelScope.launch {
-                    val isFirst = isFirst(identityRepository.getCount())
-                    _identityErrorLiveData.value = IdentityErrorData(identity, isFirst)
-                }
-            }
-            override fun onDone() {
-            }
-        }
-        identityUpdater.checkPendingIdentities(updateListener)
+        identityUpdater.checkPendingIdentities()
     }
 
     fun stopIdentityUpdate() {
         identityUpdater.stop()
-    }
-
-    private fun isFirst(identityCount: Int): Boolean {
-        // If we are in the process of creating the first identity, there will be one identity saved at this point
-        return (identityCount <= 1)
     }
 }

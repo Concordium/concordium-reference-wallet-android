@@ -7,10 +7,12 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.model.IdentityTokenContainer
-import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.util.Log
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.FileNotFoundException
 import java.net.URL
 
@@ -18,53 +20,31 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
     private val gson = App.appCore.gson
     private val identityRepository: IdentityRepository
     private val recipientRepository: RecipientRepository
-    private val database: WalletDatabase = WalletDatabase.getDatabase(application)
-
-    private var updateListener: UpdateListener? = null
-    private var run = true
+    private var run = false
 
     init {
-        val identityDao = database.identityDao()
-        identityRepository = IdentityRepository(identityDao)
-        val recipientDao = database.recipientDao()
-        recipientRepository = RecipientRepository(recipientDao)
-    }
-
-    interface UpdateListener {
-        fun onError(identity: Identity)
-        fun onDone()
-    }
-
-    fun dispose() {
-        // Coroutines is disposed/cancelled when in viewModelScope
+        val database = WalletDatabase.getDatabase(application)
+        identityRepository = IdentityRepository(database.identityDao())
+        recipientRepository = RecipientRepository(database.recipientDao())
     }
 
     fun stop() {
         run = false
-        updateListener = null
-        Log.d("Poll for identity status stopped")
     }
 
-    fun checkPendingIdentities(updateListener: UpdateListener) {
-        Log.d("Poll for identity status started")
-        this.updateListener = updateListener
+    fun checkPendingIdentities() {
+        if (run)
+            return
         run = true
         viewModelScope.launch(Dispatchers.Default) {
-            var hasMorePending = true
-            while (isActive && hasMorePending && run) {
-                hasMorePending = pollForIdentityStatus()
+            while (run) {
+                pollForIdentityStatus()
                 delay(5000)
             }
-            withContext(Dispatchers.Main) {
-                updateListener.onDone()
-            }
-            Log.d("Poll for identity status done")
         }
     }
 
-    private suspend fun pollForIdentityStatus(): Boolean {
-        var hasMorePending = false
-        Log.d("Poll for identity status")
+    private suspend fun pollForIdentityStatus() {
         for (identity in identityRepository.getAll()) {
             if (identity.status == IdentityStatus.PENDING) {
                 try {
@@ -82,21 +62,14 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
                             identityRepository.update(identity)
                         } else if (newStatus == IdentityStatus.ERROR) {
                             identityRepository.update(identity)
-                            updateListener?.onError(identity)
                         }
-                    } else {
-                        hasMorePending = true
+                        App.appCore.newIdentityPending = identity
                     }
                 } catch (e: FileNotFoundException) {
-                    Log.e("Identity backend request failed", e)
-                    hasMorePending = true
                 } catch (e: Exception) {
-                    Log.e("Identity backend failure", e)
                     e.printStackTrace()
-                    hasMorePending = true
                 }
             }
         }
-        return hasMorePending
     }
 }

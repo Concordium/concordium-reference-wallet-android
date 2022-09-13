@@ -10,41 +10,53 @@ import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.MainViewModel
+import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.identity.identityconfirmed.IdentityConfirmedActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
+import java.util.*
+import kotlin.concurrent.schedule
 
 interface IdentityStatusDelegate {
-    fun startCheckForPendingIdentity(activity: ComponentActivity?)
-    fun identityDone(activity: ComponentActivity, identity: Identity)
-    fun identityError(activity: ComponentActivity, identity: Identity)
+    fun startCheckForPendingIdentity(activity: ComponentActivity?, specificIdentityId: Int?, showForFirstIdentity: Boolean, statusChanged: (Identity) -> Unit)
+    fun identityDone(activity: ComponentActivity, identity: Identity, statusChanged: (Identity) -> Unit)
+    fun identityError(activity: ComponentActivity, identity: Identity, statusChanged: (Identity) -> Unit)
     fun stopCheckForPendingIdentity()
 }
 
 class IdentityStatusDelegateImpl : IdentityStatusDelegate {
     private var job: Job? = null
+    private var showForFirstIdentity = false
 
-    override fun startCheckForPendingIdentity(activity: ComponentActivity?) {
+    override fun startCheckForPendingIdentity(activity: ComponentActivity?, specificIdentityId: Int?, showForFirstIdentity: Boolean, statusChanged: (Identity) -> Unit) {
+        this.showForFirstIdentity = showForFirstIdentity
+        if (activity == null || activity.isFinishing || activity.isDestroyed)
+            return
         App.appCore.newIdentityPending?.let { pendingIdentity ->
-            CoroutineScope(Dispatchers.IO).launch {
-                job = launch {
-                    activity?.let {
-                        val identityDao = WalletDatabase.getDatabase(activity).identityDao()
-                        val identityRepository = IdentityRepository(identityDao)
+            if (specificIdentityId == null || specificIdentityId == pendingIdentity.id) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    job = launch {
+                        val identityRepository = IdentityRepository(WalletDatabase.getDatabase(activity).identityDao())
                         val identity = identityRepository.findById(pendingIdentity.id)
                         identity?.let {
                             activity.runOnUiThread {
-                                when (identity.status) {
-                                    IdentityStatus.PENDING -> startCheckForPendingIdentity(activity)
-                                    IdentityStatus.DONE -> identityDone(activity, identity)
-                                    IdentityStatus.ERROR -> identityError(activity, identity)
+                                if ((activity as BaseActivity).isActive) {
+                                    when (identity.status) {
+                                        IdentityStatus.DONE -> identityDone(activity, identity, statusChanged)
+                                        IdentityStatus.ERROR -> identityError(activity, identity, statusChanged)
+                                    }
                                 }
+                                startCheckForPendingIdentity(activity, specificIdentityId, showForFirstIdentity, statusChanged)
                             }
                         }
                         delay(1000)
                     }
                 }
+            }
+        } ?: run {
+            Timer().schedule(1000) {
+                startCheckForPendingIdentity(activity, specificIdentityId, showForFirstIdentity, statusChanged)
             }
         }
     }
@@ -53,12 +65,21 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
         job?.cancel()
     }
 
-    override fun identityDone(activity: ComponentActivity, identity: Identity) {
+    override fun identityDone(activity: ComponentActivity, identity: Identity, statusChanged: (Identity) -> Unit) {
+        if (App.appCore.newIdentityPending == null)
+            return
         App.appCore.newIdentityPending = null
+
+        if (showForFirstIdentity) {
+            statusChanged(identity)
+            return
+        }
+
         val builder = AlertDialog.Builder(activity)
         builder.setTitle(R.string.identities_overview_identity_verified_title)
-        builder.setMessage(activity.getString(R.string.identities_overview_identity_verified_message, identity.id.toString()))
+        builder.setMessage(activity.getString(R.string.identities_overview_identity_verified_message, identity.name))
         builder.setPositiveButton(activity.getString(R.string.identities_overview_identity_create_account_now)) { dialog, _ ->
+            activity.finish()
             dialog.dismiss()
             val intent = Intent(activity, IdentityConfirmedActivity::class.java)
             intent.putExtra(IdentityConfirmedActivity.EXTRA_IDENTITY, identity)
@@ -71,23 +92,49 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
         }
         val dialog = builder.create()
         dialog.setCanceledOnTouchOutside(false)
+        statusChanged(identity)
         dialog.show()
     }
 
-    override fun identityError(activity: ComponentActivity, identity: Identity) {
+    override fun identityError(activity: ComponentActivity, identity: Identity, statusChanged: (Identity) -> Unit) {
+        if (App.appCore.newIdentityPending == null)
+            return
         App.appCore.newIdentityPending = null
+
         val builder = AlertDialog.Builder(activity)
         builder.setTitle(R.string.identities_overview_identity_rejected_title)
-        builder.setMessage(activity.getString(R.string.identities_overview_identity_rejected_text, identity.id.toString()))
+
+        if (showForFirstIdentity)
+            identityErrorFirstIdentity(activity, identity, builder)
+        else
+            identityErrorNextIdentity(activity, identity, builder, statusChanged)
+
+        val dialog = builder.create()
+        dialog.setCanceledOnTouchOutside(false)
+        statusChanged(identity)
+        dialog.show()
+    }
+
+    private fun identityErrorNextIdentity(activity: ComponentActivity, identity: Identity, builder: AlertDialog.Builder, statusChanged: (Identity) -> Unit) {
+        builder.setMessage(activity.getString(R.string.identities_overview_identity_rejected_text, "${identity.name}\n${identity.detail ?: ""}"))
         builder.setPositiveButton(activity.getString(R.string.identities_overview_identity_request_another)) { dialog, _ ->
             dialog.dismiss()
             activity.startActivity(Intent(activity, IdentityProviderListActivity::class.java))
         }
         builder.setNegativeButton(activity.getString(R.string.identities_overview_identity_later)) { dialog, _ ->
             dialog.dismiss()
+            statusChanged(identity)
         }
-        val dialog = builder.create()
-        dialog.setCanceledOnTouchOutside(false)
-        dialog.show()
+    }
+
+    private fun identityErrorFirstIdentity(activity: ComponentActivity, identity: Identity, builder: AlertDialog.Builder) {
+        builder.setMessage(activity.getString(R.string.identities_overview_identity_rejected_first_text, "${identity.name}\n${identity.detail ?: ""}"))
+        builder.setPositiveButton(activity.getString(R.string.identities_overview_identity_make_new)) { dialog, _ ->
+            dialog.dismiss()
+            activity.finish()
+            val intent = Intent(activity, IdentityProviderListActivity::class.java)
+            intent.putExtra(IdentityProviderListActivity.SHOW_FOR_FIRST_IDENTITY, true)
+            activity.startActivity(intent)
+        }
     }
 }

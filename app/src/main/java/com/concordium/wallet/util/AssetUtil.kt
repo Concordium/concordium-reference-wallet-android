@@ -5,9 +5,8 @@ import java.io.IOException
 import java.nio.charset.Charset
 
 object AssetUtil {
-
     fun loadFromAsset(context: Context, asset: String): String {
-        var content: String?
+        val content: String?
         try {
             val inputStream = context.assets.open(asset)
             val size = inputStream.available()

@@ -119,11 +119,6 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
         getGlobalInfo()
     }
 
-    fun confirmSelectedAttributes(revealedAttributeList: List<SelectableIdentityAttribute>) {
-        tempData.revealedAttributeList = revealedAttributeList
-        getGlobalInfo()
-    }
-
     private fun getGlobalInfo() {
         // Show waiting state for the full flow, but remove it of any errors occur
         _waitingLiveData.value = true

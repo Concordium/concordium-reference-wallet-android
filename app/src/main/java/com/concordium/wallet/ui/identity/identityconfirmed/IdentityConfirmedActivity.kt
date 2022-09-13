@@ -1,11 +1,9 @@
 package com.concordium.wallet.ui.identity.identityconfirmed
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
-import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.model.IdentityStatus
@@ -14,15 +12,14 @@ import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.databinding.ActivityIdentityConfirmedBinding
 import com.concordium.wallet.ui.MainActivity
-import com.concordium.wallet.ui.RequestCodes
 import com.concordium.wallet.ui.common.account.BaseAccountActivity
-import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
-import com.concordium.wallet.uicore.dialog.Dialogs
+import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
+import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentListener {
+class IdentityConfirmedActivity : BaseAccountActivity(), IdentityStatusDelegate by IdentityStatusDelegateImpl() {
     private lateinit var binding: ActivityIdentityConfirmedBinding
     private lateinit var viewModel: IdentityConfirmedViewModel
     private var showForFirstIdentity = false
@@ -69,7 +66,8 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
             return
         }
 
-        viewModel.startIdentityUpdate()
+        if (showForFirstIdentity)
+            viewModel.startIdentityUpdate()
     }
 
     override fun onResume() {
@@ -77,18 +75,16 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
         viewModel.updateState()
     }
 
+    override fun onPause() {
+        super.onPause()
+        stopCheckForPendingIdentity()
+        if (showForFirstIdentity)
+            viewModel.stopIdentityUpdate()
+    }
+
     override fun onBackPressed() {
         if (!showForFirstIdentity && showForCreateAccount && !accountCreated)
             super.onBackPressed()
-    }
-
-    override fun onDialogResult(requestCode: Int, resultCode: Int, data: Intent) {
-        if (requestCode == RequestCodes.REQUEST_IDENTITY_ERROR_DIALOG) {
-            if (resultCode == Dialogs.POSITIVE) {
-                // Just go back to the identityProvider list to try again
-                finish()
-            }
-        }
     }
 
     private fun initializeViewModel() {
@@ -107,40 +103,26 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
                 updateInfoText(isFirst)
             }
         }
-        viewModel.identityErrorLiveData.observe(this) { data ->
-            data?.let {
-                runOnUiThread {
-                    showCreateIdentityError(it.identity.status)
-                    binding.progressLine.setFilledDots(4)
-                }
-            }
-        }
-        viewModel.identityDoneLiveData.observe(this) {
-            if (showForFirstIdentity) {
-                updateIdentityView()
-                showSubmitAccount()
-                binding.progressLine.setFilledDots(4)
-            } else {
-                updateIdentityView()
-            }
-        }
     }
 
     private fun initializeViews() {
         showWaiting(true)
 
         binding.confirmButton.setOnClickListener {
-            if (showForFirstIdentity)
+            if (showForFirstIdentity) {
+                binding.progressLine.setFilledDots(4)
                 showSubmitAccount()
+            }
             else {
-                if (!showForCreateAccount)
-                    App.appCore.newIdentityPending = identity
                 gotoAccountsOverview()
             }
         }
 
         identity?.let {
             binding.identityView.setIdentityData(it)
+            startCheckForPendingIdentity(this, it.id, showForFirstIdentity) { newIdentity ->
+                binding.identityView.setIdentityData(newIdentity)
+            }
         }
 
         binding.rlAccount.visibility = View.GONE
@@ -153,7 +135,6 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
             }
             binding.progressLine.visibility = View.GONE
             binding.confirmButton.text = getString(R.string.identity_confirmed_finish_button)
-            binding.infoTextview.text = getString(R.string.identity_confirmed_info_next_identity)
         }
 
         binding.btnSubmitAccount.setOnClickListener {
@@ -186,22 +167,6 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
                 }
             }
         }
-    }
-
-    private fun showCreateIdentityError(errorFromIdentityProvider: String) {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(R.string.dialog_identity_create_error_title)
-        builder.setMessage(getString(R.string.dialog_identity_create_error_text, errorFromIdentityProvider))
-        builder.setPositiveButton(getString(R.string.dialog_identity_create_error_retry)) { _, _ ->
-            finish()
-            val intent = Intent(this, IdentityProviderListActivity::class.java)
-            if (showForFirstIdentity)
-                intent.putExtra(IdentityProviderListActivity.SHOW_FOR_FIRST_IDENTITY, true)
-            startActivity(intent)
-        }
-        val dialog = builder.create()
-        dialog.setCanceledOnTouchOutside(false)
-        dialog.show()
     }
 
      override fun showWaiting(waiting: Boolean) {
@@ -261,7 +226,8 @@ class IdentityConfirmedActivity : BaseAccountActivity(), Dialogs.DialogFragmentL
         if (isFirstIdentity) {
             binding.infoTextview.setText(R.string.identity_confirmed_info_first)
         } else {
-            binding.infoTextview.setText(R.string.identity_confirmed_info_next_identity)
+            if (!showForCreateAccount)
+                binding.infoTextview.setText(R.string.identity_confirmed_info_next_identity)
         }
     }
 }
