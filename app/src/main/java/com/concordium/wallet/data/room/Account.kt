@@ -81,7 +81,10 @@ data class Account(
     var accountBaker: AccountBaker? = null,
 
     @ColumnInfo(name = "accountIndex")
-    var accountIndex: Int? = null) : Serializable {
+    var accountIndex: Int? = null,
+
+    @ColumnInfo(name = "cred_number")
+    var credNumber: Int) : Serializable {
 
     companion object {
         fun getDefaultName(address: String): String {

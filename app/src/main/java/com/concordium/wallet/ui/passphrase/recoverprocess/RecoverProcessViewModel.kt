@@ -185,7 +185,6 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             IdentityStatus.DONE,
             "",
             "",
-            0, // Next account number is set to 0, because we don't have any account yet
             identityProvider,
             identityObject,
             identityProvider.ipInfo.ipIdentity,
@@ -201,7 +200,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         return existingIdentity
     }
 
-    private suspend fun recoverAccount(identity: Identity, globalInfo: GlobalParamsWrapper, accountIndex: Int) {
+    private suspend fun recoverAccount(identity: Identity, globalInfo: GlobalParamsWrapper, credNumber: Int) {
         if ((accountGaps[identity.id] ?: ACCOUNT_GAP_MAX) >= ACCOUNT_GAP_MAX) {
             checkAllDone()
             return
@@ -218,7 +217,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                 seed,
                 net,
                 identity.identityIndex,
-                accountIndex,
+                credNumber,
                 (DateTimeUtil.nowPlusMinutes(5).time) / 1000
             )
             createCredentialOutput = App.appCore.cryptoLibrary.createCredentialV1(credentialInput)
@@ -266,12 +265,13 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                     bakerId = accountBalance.finalizedBalance.accountBaker?.bakerId?.toLong(),
                     accountDelegation = accountBalance.finalizedBalance.accountDelegation,
                     accountBaker = accountBalance.finalizedBalance.accountBaker,
-                    accountIndex = accountBalance.finalizedBalance.accountIndex
+                    accountIndex = accountBalance.finalizedBalance.accountIndex,
+                    credNumber = credNumber
                 )
 
                 val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
                 if (accountRepository.findByAddress(account.address) == null) {
-                    accountRepository.insertAccountAndCountUpNextAccountNumber(account)
+                    accountRepository.insert(account)
                     val recipientRepository = RecipientRepository(WalletDatabase.getDatabase(getApplication()).recipientDao())
                     if (recipientRepository.getRecipientByAddress(account.address) == null) {
                         recipientRepository.insert(Recipient(0, account.name, account.address))
@@ -293,7 +293,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         checkAllDone()
 
         if (!stop)
-            recoverAccount(identity, globalInfo, accountIndex + 1)
+            recoverAccount(identity, globalInfo, credNumber + 1)
     }
 
     private fun identitiesPercent(): Int {

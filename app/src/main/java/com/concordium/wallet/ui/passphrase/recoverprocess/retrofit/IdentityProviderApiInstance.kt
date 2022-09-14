@@ -37,12 +37,10 @@ class IdentityProviderApiInstance {
                             return Pair(true, null)
                     }
                 } else {
-                    println("LC -> ${response.code()}   $url")
                     return Pair(true, null)
                 }
             } catch (t: Throwable) {
                 Log.d(Log.toString(t))
-                println("LC -> ${t.message}   $url")
             }
             return Pair(false, null)
         }
