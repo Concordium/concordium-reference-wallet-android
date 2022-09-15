@@ -11,16 +11,14 @@ import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.ui.passphrase.common.WordsPickedBaseListAdapter
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toHex
-import java.io.Serializable
 import java.util.*
 
-class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(application), Serializable {
+class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(application) {
     var wordsPicked = arrayOfNulls<String>(WORD_COUNT + (WordsPickedBaseListAdapter.OFFSET * 2) + 1)
     var allWords = listOf<String>()
 
     companion object {
         val WORD_COUNT: Int = Mnemonics.WordCount.COUNT_24.count
-        const val PASS_PHRASE_RECOVER_DATA = "PASS_PHRASE_RECOVER_DATA"
     }
 
     private val _validateLiveData = MutableLiveData<Boolean>()
@@ -37,9 +35,7 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
 
     fun hack() {
         if (BuildConfig.DEBUG) {
-            //AuthPreferences(getApplication()).setSeedPhrase("rifle vehicle onion typical base book trick child entry trick wedding festival zone sport coil verify mirror flame arena sustain coin state north blame") // This should not work
-            //AuthPreferences(getApplication()).setSeedPhrase("trust deal squeeze drastic sport squeeze evoke note fatigue peanut tissue crazy rough knock denial brick swift bus amateur just merit bind enforce peace") // Testnet ( created from iOS)
-            AuthPreferences(getApplication()).setSeedPhrase("close orchard gesture rib income script attract wash surge badge catch page model option hire host tuition invite milk favorite foil kitchen glove brave")  // Testnet (created from Android)
+            AuthPreferences(getApplication()).setSeedPhrase("health smoke abandon middle outer method meadow sorry whale random cupboard thank album exclude idle month exit quarter shell portion eternal legal rent tonight") // testnet CBW-320
             _validateLiveData.value = true
         }
     }

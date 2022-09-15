@@ -14,6 +14,7 @@ import com.concordium.wallet.databinding.ActivityBakerRegistrationAmountBinding
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
+import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.common.GenericFlowActivity
 
 class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity() {
@@ -87,8 +88,21 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity() 
         })
 
         showWaiting(binding.includeProgress.progressLayout, true)
+
         loadTransactionFee()
-        viewModel.loadChainParametersPassiveDelegationAndPossibleBakerPool()
+
+        try {
+            viewModel.loadChainParametersPassiveDelegationAndPossibleBakerPool()
+        } catch (ex: Exception) {
+            handleBackendError(ex)
+        }
+    }
+
+    private fun handleBackendError(throwable: Throwable) {
+        val stringRes = BackendErrorHandler.getExceptionStringRes(throwable)
+        runOnUiThread {
+            popup.showSnackbar(binding.root, stringRes)
+        }
     }
 
     private fun updateViews() {

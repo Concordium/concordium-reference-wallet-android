@@ -197,7 +197,6 @@
                     android:orientation="vertical"
                     android:paddingBottom="10dp">
 
-
                     <EditText
                         android:id="@+id/send_funds_paste_recipient"
                         style="@style/EditText"
@@ -205,6 +204,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="20dp"
                         android:layout_marginRight="20dp"
+                        android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
+                        android:inputType="textFilter"
                         android:hint="@string/send_funds_paste_recipient"
                         android:textAlignment="center" />
 

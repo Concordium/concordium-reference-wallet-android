@@ -29,18 +29,50 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_textview" />
+    <TextView
+        android:id="@+id/progress_identities_text"
+        style="@style/TextView.Standard.Light"
+        android:text="@string/pass_phrase_recover_process_identities"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:textAlignment="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/description_textview" />
     <ProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/progress_identities"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:min="0"
-        android:max="1000"
-        tools:progress="33"
-        android:layout_margin="@dimen/activity_vertical_margin_extended"
+        android:max="100"
+        tools:progress="65"
+        android:layout_marginHorizontal="@dimen/activity_vertical_margin_extended"
         android:visibility="gone"
         tools:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/description_textview" />
+        app:layout_constraintTop_toBottomOf="@+id/progress_identities_text" />
+    <TextView
+        android:id="@+id/progress_accounts_text"
+        style="@style/TextView.Standard.Light"
+        android:text="@string/pass_phrase_recover_process_accounts"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:textAlignment="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progress_identities" />
+    <ProgressBar
+        android:id="@+id/progress_accounts"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:min="0"
+        android:max="100"
+        tools:progress="30"
+        android:layout_marginHorizontal="@dimen/activity_vertical_margin_extended"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progress_accounts_text" />
 </androidx.constraintlayout.widget.ConstraintLayout>

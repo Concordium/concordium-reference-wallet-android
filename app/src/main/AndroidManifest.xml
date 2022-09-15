@@ -186,14 +186,8 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.WithBackground" /> <!-- Identity -->
         <activity
-            android:name=".ui.identity.identitycreate.IdentityCreateActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.identity.identityproviderlist.IdentityProviderListActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".ui.identity.identitycreate.IdentityCreateActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.identity.identityproviderpolicywebview.IdentityProviderPolicyWebviewActivity"
@@ -231,31 +225,6 @@
             android:name=".ui.identity.identitydetails.IdentityDetailsActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait" /> <!-- Account -->
-        <activity
-            android:name=".ui.account.newaccountname.NewAccountNameActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.MainActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.account.newaccountidentity.NewAccountIdentityActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.account.newaccountname.NewAccountNameActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.account.newaccountsetup.NewAccountSetupActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.account.newaccountidentity.NewAccountIdentityActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.account.newaccountidentityattributes.NewAccountIdentityAttributesActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.account.newaccountsetup.NewAccountSetupActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.account.newaccountconfirmed.NewAccountConfirmedActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.account.newaccountsetup.NewAccountSetupActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.account.accountdetails.AccountDetailsActivity"

@@ -2,7 +2,6 @@ package com.concordium.wallet.ui.transaction.sendfunds
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -11,7 +10,6 @@ import android.view.Gravity
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.CBORUtil
 import com.concordium.wallet.R
@@ -67,7 +65,7 @@ class SendFundsActivity : BaseActivity() {
         handleMemo(intent)
     }
 
-    fun handleRecipientIntent(intent: Intent?){
+    private fun handleRecipientIntent(intent: Intent?){
         val recipient = intent?.getSerializableExtra(EXTRA_RECIPIENT) as? Recipient
         handleRecipient(recipient)
     }
@@ -121,16 +119,16 @@ class SendFundsActivity : BaseActivity() {
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[SendFundsViewModel::class.java]
-        viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
+        viewModel.waitingLiveData.observe(this) { waiting ->
             waiting?.let {
                 showWaiting(isWaiting())
             }
-        })
-        viewModel.waitingReceiverAccountPublicKeyLiveData.observe(this, Observer<Boolean> { waiting ->
+        }
+        viewModel.waitingReceiverAccountPublicKeyLiveData.observe(this) { waiting ->
             waiting?.let {
                 showWaiting(isWaiting())
             }
-        })
+        }
         viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
                 showError(value)
@@ -171,17 +169,15 @@ class SendFundsActivity : BaseActivity() {
                     }
                 }
             })
-        viewModel.transactionFeeLiveData.observe(this, object : Observer<Long> {
-            override fun onChanged(value: Long?) {
-                value?.let {
-                    binding.feeInfoTextview.visibility = View.VISIBLE
-                    binding.feeInfoTextview.text = getString(
-                        R.string.send_funds_fee_info, CurrencyUtil.formatGTU(value)
-                    )
-                    updateConfirmButton()
-                }
+        viewModel.transactionFeeLiveData.observe(this) { value ->
+            value?.let {
+                binding.feeInfoTextview.visibility = View.VISIBLE
+                binding.feeInfoTextview.text = getString(
+                    R.string.send_funds_fee_info, CurrencyUtil.formatGTU(value)
+                )
+                updateConfirmButton()
             }
-        })
+        }
         viewModel.recipientLiveData.observe(this
         ) { value -> showRecipient(value) }
     }
@@ -189,7 +185,7 @@ class SendFundsActivity : BaseActivity() {
     private fun initViews() {
         binding.includeProgress.progressLayout.visibility = View.GONE
         binding.errorTextview.visibility = View.INVISIBLE
-        binding.amountEdittext.afterTextChanged { _ ->
+        binding.amountEdittext.afterTextChanged {
             if (binding.amountEdittext.hasFocus()) { //If it does not have focus, it means we are injecting text programatically
                 viewModel.disableSendAllValue()
             }
@@ -200,10 +196,14 @@ class SendFundsActivity : BaseActivity() {
         binding.amountEdittext.setOnEditorActionListener { _, actionId, _ ->
             return@setOnEditorActionListener when (actionId) {
                 EditorInfo.IME_ACTION_DONE -> {
-                    if (enableConfirm())
-                        viewModel.sendFunds(binding.amountEdittext.text.toString())
-                    else
-                        KeyboardUtil.hideKeyboard(this)
+                    viewModel.selectedRecipient?.let {
+                        if (viewModel.validateAndSaveRecipient(it.address)) {
+                            if (enableConfirm())
+                                viewModel.sendFunds(binding.amountEdittext.text.toString())
+                            else
+                                KeyboardUtil.hideKeyboard(this)
+                        }
+                    }
                     true
                 }
                 else -> false
@@ -211,19 +211,16 @@ class SendFundsActivity : BaseActivity() {
         }
         binding.sendFundsPasteRecipient.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(editable: Editable) {
-                var address = editable.toString()
-                if(viewModel.selectedRecipient == null){
-                    handleRecipient(Recipient(0,"",address))
+                val address = editable.toString().trim()
+                if (viewModel.selectedRecipient == null) {
+                    handleRecipient(Recipient(0,"", address))
                 }
-                if(!address.equals(viewModel.selectedRecipient?.address)){
-                    handleRecipient(Recipient(0,"",address))
+                if (address != viewModel.selectedRecipient?.address) {
+                    handleRecipient(Recipient(0,"", address))
                 }
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
             }
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
         })
@@ -239,17 +236,13 @@ class SendFundsActivity : BaseActivity() {
                     val builder = AlertDialog.Builder(this)
                     builder.setTitle(getString(R.string.transaction_memo_warning_title))
                     builder.setMessage(getString(R.string.transaction_memo_warning_text))
-                    builder.setNegativeButton(getString(R.string.transaction_memo_warning_dont_show), object: DialogInterface.OnClickListener {
-                        override fun onClick(dialog: DialogInterface, which:Int) {
-                            viewModel.dontShowMemoWarning()
-                            gotoEnterMemo()
-                        }
-                    })
-                    builder.setPositiveButton(getString(R.string.transaction_memo_warning_ok), object: DialogInterface.OnClickListener {
-                        override fun onClick(dialog: DialogInterface, which:Int) {
-                            gotoEnterMemo()
-                        }
-                    })
+                    builder.setNegativeButton(getString(R.string.transaction_memo_warning_dont_show)) { _, _ ->
+                        viewModel.dontShowMemoWarning()
+                        gotoEnterMemo()
+                    }
+                    builder.setPositiveButton(getString(R.string.transaction_memo_warning_ok)) { _, _ ->
+                        gotoEnterMemo()
+                    }
                     builder.setCancelable(true)
                     builder.create().show()
                 }
@@ -270,13 +263,11 @@ class SendFundsActivity : BaseActivity() {
             viewModel.updateSendAllValue()
         }
 
-        viewModel.sendAllAmountLiveData.observe(this, object : Observer<Long> {
-            override fun onChanged(value: Long?) {
-                value?.let {
-                    binding.amountEdittext.setText(CurrencyUtil.formatGTU(value))
-                }
+        viewModel.sendAllAmountLiveData.observe(this) { value ->
+            value?.let {
+                binding.amountEdittext.setText(CurrencyUtil.formatGTU(value))
             }
-        })
+        }
 
         binding.searchRecipientLayout.setOnClickListener {
             gotoSelectRecipient()
@@ -403,7 +394,7 @@ class SendFundsActivity : BaseActivity() {
 
     private fun updateRecipientEditText(text: String){
         //Only update if they are not identical - else it triggers a refocus and moves cursor
-        if(!binding.sendFundsPasteRecipient.text.toString().equals(text)){
+        if (binding.sendFundsPasteRecipient.text.toString() != text) {
             binding.sendFundsPasteRecipient.setText(text)
         }
     }
@@ -433,7 +424,7 @@ class SendFundsActivity : BaseActivity() {
         }
     }
 
-    fun isWaiting(): Boolean {
+    private fun isWaiting(): Boolean {
         var waiting = false
         viewModel.waitingLiveData.value?.let {
             if(it){

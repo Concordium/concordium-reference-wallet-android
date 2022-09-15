@@ -62,7 +62,11 @@ class AccountRepository(private val accountDao: AccountDao) {
         accountDao.deleteAll()
     }
 
-    suspend fun insertAccountAndCountUpNextAccountNumber(account: Account) {
-        accountDao.insertAccountAndCountUpNextAccountNumber(account)
+    suspend fun nextCredNumber(identityId: Int): Int {
+        val accounts = accountDao.getAllByIdentityId(identityId)
+        var nextCredNumber = 0
+        while (accounts.filter { it.credNumber == nextCredNumber }.size == 1)
+            nextCredNumber++
+        return nextCredNumber
     }
 }

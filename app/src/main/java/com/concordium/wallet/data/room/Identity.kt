@@ -16,8 +16,6 @@ data class Identity(
     var detail: String?,
     @ColumnInfo(name = "code_uri")
     val codeUri: String,
-    @ColumnInfo(name = "next_account_number")
-    var nextAccountNumber: Int,
     @ColumnInfo(name = "identity_provider")
     var identityProvider: IdentityProvider,
     @ColumnInfo(name = "identity_object")

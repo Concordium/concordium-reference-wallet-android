@@ -39,22 +39,15 @@ class IntroTermsViewModel(application: Application) : AndroidViewModel(applicati
 
     fun loadAppSettings() {
         viewModelScope.launch {
-            try {
-                val response = proxyRepository.getAppSettings(App.appCore.getAppVersion())
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        _appSettingsLiveData.value = it
-                    } ?: run {
-                        _appSettingsLiveData.value = null
-                    }
-                } else {
+            proxyRepository.getAppSettings(App.appCore.getAppVersion(),
+                {
+                    _appSettingsLiveData.value = it
+                },
+                {
                     Log.d("appSettings failed")
                     _appSettingsLiveData.value = null
                 }
-            } catch (ex: Exception) {
-                Log.d("appSettings failed -> " + ex.message)
-                _appSettingsLiveData.value = null
-            }
+            )
         }
     }
 }

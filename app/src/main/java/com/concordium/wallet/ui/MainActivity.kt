@@ -15,12 +15,11 @@ import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.auth.setup.AuthSetupActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
-import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
+import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
+import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewFragment
-import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.intro.introstart.IntroTermsActivity
 import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
-import com.concordium.wallet.uicore.dialog.Dialogs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -29,7 +28,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOverviewFragment.AccountsOverviewFragmentListener {
+class MainActivity : BaseActivity(), AccountsOverviewFragment.AccountsOverviewFragmentListener, IdentityStatusDelegate by IdentityStatusDelegateImpl() {
     companion object {
         const val EXTRA_SHOW_IDENTITIES = "EXTRA_SHOW_IDENTITIES"
     }
@@ -65,6 +64,7 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
     override fun onDestroy() {
         super.onDestroy()
         EventBus.getDefault().unregister(this)
+        viewModel.stopIdentityUpdate()
     }
 
     override fun onResume() {
@@ -83,13 +83,14 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
             } else {
                 viewModel.setInitialStateIfNotSet()
                 viewModel.startIdentityUpdate()
+                startCheckForPendingIdentity(this, null, false) {}
             }
         }
     }
 
     override fun onPause() {
         super.onPause()
-        viewModel.stopIdentityUpdate()
+        stopCheckForPendingIdentity()
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -123,14 +124,6 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
         viewModel.setState(MainViewModel.State.IdentitiesOverview)
     }
 
-    override fun onDialogResult(requestCode: Int, resultCode: Int, data: Intent) {
-        if (requestCode == RequestCodes.REQUEST_IDENTITY_ERROR_DIALOG) {
-            if (resultCode == Dialogs.POSITIVE) {
-                gotoIdentityProviderList()
-            }
-        }
-    }
-
     //endregion
 
     //region Initialize
@@ -150,11 +143,6 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
         viewModel.stateLiveData.observe(this) { state ->
             state?.let {
                 replaceFragment(state)
-            }
-        }
-        viewModel.identityErrorLiveData.observe(this) { data ->
-            data?.let {
-                IdentityErrorDialogHelper.showIdentityError(this, dialogs, data)
             }
         }
         viewModel.newFinalizedAccountLiveData.observe(this) { newAccount ->
@@ -242,12 +230,6 @@ class MainActivity : BaseActivity(), Dialogs.DialogFragmentListener, AccountsOve
     }
 
     override fun loggedOut() {
-    }
-
-    private fun gotoIdentityProviderList() {
-        viewModel.identityErrorLiveData.value?.let { _ ->
-            startActivity(Intent(this, IdentityProviderListActivity::class.java))
-        }
     }
 
     /* invoked eg when clicking pending warning */

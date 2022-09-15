@@ -96,9 +96,10 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
         val idObjectRequest = gson.toJson(IdentityRequest(identityCreationData.idObjectRequest))
         val baseUrl = identityCreationData.identityProvider.metadata.issuanceStart
         val delimiter = if (baseUrl.contains('?')) "&" else "?"
-        return "${baseUrl}${delimiter}response_type=code&redirect_uri=$CALLBACK_URL&scope=identity&state=$idObjectRequest"
-        //Used to test production:
-        //return "https://idiss.notabene.id/idiss/authorize?response_type=token&redirect_uri=concordiumwallet://identity-issuer/callback&scope=identity&state=idObjectRequest"
+        return if (BuildConfig.DEBUG && BuildConfig.ENV_NAME == "prod_testnet" && baseUrl.lowercase().contains("notabene"))
+            "${baseUrl}${delimiter}response_type=code&redirect_uri=$CALLBACK_URL&scope=identity&state=$idObjectRequest&test_flow=1"
+        else
+            "${baseUrl}${delimiter}response_type=code&redirect_uri=$CALLBACK_URL&scope=identity&state=$idObjectRequest"
     }
 
     private fun saveNewIdentity(identityObject: IdentityObject) {
@@ -108,7 +109,6 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
             IdentityStatus.DONE,
             "",
             "",
-            0, // Next account number is set to 0, because we don't create an initial account
             identityCreationData.identityProvider,
             identityObject,
             identityCreationData.identityProvider.ipInfo.ipIdentity,
@@ -143,7 +143,6 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
             IdentityStatus.PENDING,
             "",
             callbackUri,
-            0, // Next account number is set to 0, because we don't create an initial account
             identityCreationData.identityProvider,
             IdentityObject(
                 AttributeList(HashMap(), "", 0, "0"),

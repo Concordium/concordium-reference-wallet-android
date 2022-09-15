@@ -2,7 +2,6 @@ package com.concordium.wallet.ui.identity.identityproviderlist
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.view.View
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
@@ -34,18 +33,6 @@ class IdentityProviderListActivity : BaseActivity() {
         const val SHOW_FOR_FIRST_IDENTITY = "SHOW_FOR_FIRST_IDENTITY"
     }
 
-    private var longTimeWaitingCountDownTimer =
-        object : CountDownTimer(2 * 1000.toLong(), 1000) {
-            override fun onTick(millisUntilFinished: Long) {}
-
-            override fun onFinish() {
-                popup.showSnackbar(binding.rootLayout, R.string.new_account_please_wait)
-            }
-        }
-
-    //region Lifecycle
-    //************************************************************
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityIdentityProviderListBinding.inflate(layoutInflater)
@@ -64,16 +51,6 @@ class IdentityProviderListActivity : BaseActivity() {
         viewModel.getIdentityProviders()
         viewModel.getGlobalInfo()
     }
-
-    override fun onResume() {
-        super.onResume()
-        longTimeWaitingCountDownTimer.cancel()
-    }
-
-    //endregion
-
-    //region Initialize
-    //************************************************************
 
     private fun initializeViewModel() {
         viewModel = ViewModelProvider(
@@ -147,14 +124,8 @@ class IdentityProviderListActivity : BaseActivity() {
         })
     }
 
-    //endregion
-
-    //region Control/UI
-    //************************************************************
-
     private fun gotoIdentityProviderWebView() {
         viewModel.getIdentityCreationData()?.let { identityCreationData ->
-            finish()
             val intent = Intent(this, IdentityProviderWebViewActivity::class.java)
             intent.putExtra(IdentityProviderWebViewActivity.EXTRA_IDENTITY_CREATION_DATA, identityCreationData)
             if (showForFirstIdentity)
@@ -195,7 +166,6 @@ class IdentityProviderListActivity : BaseActivity() {
         val dialogFragment = AuthenticationDialogFragment()
         dialogFragment.setCallback(object : AuthenticationDialogFragment.Callback {
             override fun onCorrectPassword(password: String) {
-                longTimeWaitingCountDownTimer.start()
                 viewModel.continueWithPassword()
             }
 
@@ -207,11 +177,6 @@ class IdentityProviderListActivity : BaseActivity() {
             AuthenticationDialogFragment.AUTH_DIALOG_TAG
         )
     }
-
-    //endregion
-
-    //region Biometrics
-    //************************************************************
 
     private fun showBiometrics() {
         biometricPrompt = createBiometricPrompt()
@@ -233,7 +198,6 @@ class IdentityProviderListActivity : BaseActivity() {
             }
 
             override fun onAuthenticationSucceeded(cipher: Cipher) {
-                longTimeWaitingCountDownTimer.start()
                 viewModel.checkLogin(cipher)
             }
         }
@@ -248,6 +212,4 @@ class IdentityProviderListActivity : BaseActivity() {
             .setNegativeButtonText(getString(if (viewModel.usePasscode()) R.string.auth_login_biometrics_dialog_cancel_passcode else R.string.auth_login_biometrics_dialog_cancel_password))
             .build()
     }
-
-    //endregion
 }

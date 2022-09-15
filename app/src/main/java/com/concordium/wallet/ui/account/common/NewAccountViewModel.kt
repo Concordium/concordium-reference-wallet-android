@@ -44,10 +44,11 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
     private var submitCredentialRequest: BackendRequest<SubmissionData>? = null
     private var accountSubmissionStatusRequest: BackendRequest<AccountSubmissionStatus>? = null
-
     private var tempData = TempData()
-    lateinit var accountName: String
+
     lateinit var identity: Identity
+
+    private lateinit var accountName: String
 
     private val _waitingLiveData = MutableLiveData<Boolean>()
     val waitingLiveData: LiveData<Boolean>
@@ -79,7 +80,7 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
         this.identity = identity
     }
 
-    private class TempData {
+    class TempData {
         var revealedAttributeList: List<SelectableIdentityAttribute> = ArrayList()
         var globalParams: GlobalParams? = null
         var submissionStatus: TransactionStatus? = null
@@ -87,6 +88,7 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
         var accountAddress: String? = null
         var encryptedAccountData: String? = null
         var credential: CredentialWrapper? = null
+        var nextCredNumber: Int? = null
     }
 
     init {
@@ -114,17 +116,8 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    suspend fun nextAccountNumber(identityId: Int): Int {
-        return identityRepository.nextAccountNumber(identityId)
-    }
-
     fun confirmWithoutAttributes() {
         tempData.revealedAttributeList = emptyList()
-        getGlobalInfo()
-    }
-
-    fun confirmSelectedAttributes(revealedAttributeList: List<SelectableIdentityAttribute>) {
-        tempData.revealedAttributeList = revealedAttributeList
         getGlobalInfo()
     }
 
@@ -203,14 +196,14 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
             return
         }
 
-        val nextAccountNumber = identityRepository.nextAccountNumber(identity.id)
+        tempData.nextCredNumber = accountRepository.nextCredNumber(identity.id)
+
         val revealedAttributes = JsonArray()
         for (identityAttribute in tempData.revealedAttributeList) {
             revealedAttributes.add(identityAttribute.name)
         }
 
         val net = AppConfig.net
-        val identityIndex = identity.id - 1
         val seed = AuthPreferences(getApplication()).getSeedPhrase()
 
         val credentialInput = CreateCredentialInputV1(
@@ -221,10 +214,11 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
             revealedAttributes,
             seed,
             net,
-            identityIndex,
-            nextAccountNumber,
+            identity.identityIndex,
+            tempData.nextCredNumber ?: 0,
             (DateTimeUtil.nowPlusMinutes(5).time) / 1000
         )
+
         val output = App.appCore.cryptoLibrary.createCredentialV1(credentialInput)
         if (output == null) {
             _errorLiveData.value = Event(R.string.app_error_lib)
@@ -313,15 +307,20 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
             0,
             0,
             false,
-            null
+            null,
+            null,
+            null,
+            null,
+            null,
+            tempData.nextCredNumber ?: 0
         )
 
         saveNewAccount(newAccount)
     }
 
     private fun saveNewAccount(account: Account) = viewModelScope.launch {
+        account.name = Account.getDefaultName(account.address)
         val accountId = accountRepository.insert(account)
-        identity.nextAccountNumber++
         identityRepository.update(identity)
         account.id = accountId.toInt()
         _gotoAccountCreatedLiveData.value = Event(account)

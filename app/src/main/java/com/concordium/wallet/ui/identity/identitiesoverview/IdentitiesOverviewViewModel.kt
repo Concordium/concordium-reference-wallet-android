@@ -26,9 +26,12 @@ class IdentitiesOverviewViewModel(application: Application) : AndroidViewModel(a
         identityRepository = IdentityRepository(identityDao)
     }
 
-    fun loadIdentities() {
+    fun loadIdentities(filterFailed: Boolean) {
         viewModelScope.launch {
-            _identityListLiveData.value = identityRepository.getAll()
+            if (filterFailed)
+                _identityListLiveData.value = identityRepository.getAllDone()
+            else
+                _identityListLiveData.value = identityRepository.getAll()
         }
     }
 }

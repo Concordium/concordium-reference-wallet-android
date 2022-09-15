@@ -43,15 +43,6 @@ interface AccountDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg account: Account): List<Long>
 
-    @Transaction
-    suspend fun insertAccountAndCountUpNextAccountNumber(account: Account) {
-        insert(account)
-        findIdentityById(account.identityId)?.let { identity ->
-            identity.nextAccountNumber = identity.nextAccountNumber + 1
-            updateIdentity(identity)
-        }
-    }
-
     @Update
     suspend fun updateIdentity(vararg identity: Identity)
 

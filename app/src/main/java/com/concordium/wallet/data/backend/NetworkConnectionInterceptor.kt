@@ -3,11 +3,11 @@ package com.concordium.wallet.data.backend
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import com.concordium.wallet.R
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
+import java.net.ConnectException
 
 class NetworkConnectionInterceptor(context: Context) : Interceptor {
     private val context: Context
@@ -19,7 +19,7 @@ class NetworkConnectionInterceptor(context: Context) : Interceptor {
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         if (!isInternetAvailable(context)) {
-            throw IOException(context.getString(R.string.app_error_backend_connect_exception))
+            throw ConnectException()
         }
         val builder: Request.Builder = chain.request().newBuilder()
         return chain.proceed(builder.build())

@@ -1,7 +1,7 @@
 package com.concordium.wallet.ui.passphrase.recoverprocess.retrofit
 
-import com.concordium.wallet.data.model.IdentityTokenContainer
 import com.concordium.wallet.data.model.RecoverResponse
+import com.concordium.wallet.util.Log
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -26,30 +26,23 @@ class IdentityProviderApiInstance {
             retrofit.create(IdentityProviderApi::class.java)
         }
 
-        suspend fun safeRecoverCall(url: String?): RecoverResponse? {
+        suspend fun safeRecoverCall(url: String?): Pair<Boolean, RecoverResponse?> {
             try {
                 val response = api.recover(url)
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        return it
+                        if (it.value != null)
+                            return Pair(true, it)
+                        else
+                            return Pair(true, null)
                     }
+                } else {
+                    return Pair(true, null)
                 }
             } catch (t: Throwable) {
+                Log.d(Log.toString(t))
             }
-            return null
-        }
-
-        suspend fun safeIdentityCall(url: String?): IdentityTokenContainer? {
-            try {
-                val response = api.identity(url)
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        return it
-                    }
-                }
-            } catch (t: Throwable) {
-            }
-            return null
+            return Pair(false, null)
         }
     }
 }

@@ -71,7 +71,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 preIdentityObject,
                 RawJson("{}")
             )
-        val identity = Identity(0, "identity name", "", "","", 0, identityProvider, identityObject, 0, 0)
+        val identity = Identity(0, "identity name", "", "","", identityProvider, identityObject, 0, 0)
         identityRepository.insert(identity)
     }
 
@@ -108,7 +108,12 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 0,
                 0,
                 false,
-                null
+                null,
+                null,
+                null,
+                null,
+                null,
+                0
             )
         )
         accountList.add(
@@ -133,7 +138,12 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 0,
                 0,
                 false,
-                null
+                null,
+                null,
+                null,
+                null,
+                null,
+                0
             )
         )
         accountList.add(
@@ -158,9 +168,12 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 0,
                 0,
                 false,
-                null
-
-
+                null,
+                null,
+                null,
+                null,
+                null,
+                0
             )
         )
         accountList.add(
@@ -185,8 +198,12 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 0,
                 0,
                 false,
-                null
-
+                null,
+                null,
+                null,
+                null,
+                null,
+                0
             )
         )
         accountRepository.insertAll(accountList)

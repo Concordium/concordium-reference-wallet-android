@@ -73,5 +73,6 @@ class ProgressLine : View {
 
     fun setFilledDots(filledDots: Int) {
         filled = filledDots
+        invalidate()
     }
 }

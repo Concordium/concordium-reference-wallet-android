@@ -4,16 +4,12 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import com.concordium.wallet.App
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
-import com.concordium.wallet.ui.common.identity.IdentityErrorDialogHelper
-import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
 
 class CustomDialogFragment : DialogFragment() {
     companion object {
@@ -28,9 +24,6 @@ class CustomDialogFragment : DialogFragment() {
         const val KEY_SUPPORT = "key_support"
         const val KEY_SUPPORT_EMAIL = "key_support_email"
 
-        //region Create/cancel dialogs
-        //************************************************************
-
         private fun dismissCustomDialog(activity: AppCompatActivity) {
             val dialogFragment = activity.supportFragmentManager.findFragmentByTag(TAG)
             if (dialogFragment is DialogFragment) {
@@ -41,35 +34,18 @@ class CustomDialogFragment : DialogFragment() {
         private fun createCustomDialog(
             activity: AppCompatActivity,
             requestCode: Int,
-            dialogType: EDialogType,
             title: String,
             message: String,
-            positiveButton: String?,
-            neutralButton: String?,
-            negativeButton: String?,
-            uriSession: String?,
-            supportEmail: String?
+            positiveButton: String?
         ): CustomDialogFragment {
             dismissCustomDialog(activity)
-
             val fragment = CustomDialogFragment()
             val args = Bundle()
             args.putInt(KEY_REQUEST_CODE, requestCode)
-            args.putInt(KEY_TYPE, dialogType.ordinal)
+            args.putInt(KEY_TYPE, EDialogType.OK.ordinal)
             args.putString(KEY_TITLE, title)
             args.putString(KEY_MESSAGE, message)
-            if (dialogType == EDialogType.PositiveSupport) {
-                args.putString(KEY_POSITIVE, positiveButton)
-                args.putString(KEY_NEUTRAL, neutralButton)
-                args.putString(KEY_NEGATIVE, negativeButton)
-                args.putString(KEY_SUPPORT, uriSession)
-                args.putString(KEY_SUPPORT_EMAIL, supportEmail)
-            }
-            if (dialogType == EDialogType.PositiveNegative) {
-                args.putString(KEY_POSITIVE, positiveButton)
-                args.putString(KEY_NEGATIVE, negativeButton)
-            }
-            if (dialogType == EDialogType.OK && positiveButton != null) {
+            if (positiveButton != null) {
                 args.putString(KEY_POSITIVE, positiveButton)
             }
             fragment.arguments = args
@@ -86,110 +62,11 @@ class CustomDialogFragment : DialogFragment() {
             return createCustomDialog(
                 activity,
                 requestCode,
-                EDialogType.OK,
                 title,
                 message,
-                positive,
-                null,
-                null,
-                    null,
-                null
-
+                positive
             )
         }
-
-        fun createOkCancelDialog(
-            activity: AppCompatActivity,
-            requestCode: Int,
-            title: String,
-            message: String
-        ): CustomDialogFragment {
-            return createCustomDialog(
-                activity,
-                requestCode,
-                EDialogType.OKCancel,
-                title,
-                message,
-                null,
-                null,
-                null,
-                null,
-                null
-
-            )
-        }
-
-        fun createYesNoDialog(
-            activity: AppCompatActivity,
-            requestCode: Int,
-            title: String,
-            message: String
-        ): CustomDialogFragment {
-            return createCustomDialog(
-                activity,
-                requestCode,
-                EDialogType.YesNo,
-                title,
-                message,
-                null,
-                null,
-                null,
-                null,
-                null
-
-            )
-        }
-
-        fun createPositiveNegativeDialog(
-            activity: AppCompatActivity,
-            requestCode: Int,
-            title: String,
-            message: String,
-            positiveButton: String,
-            negativeButton: String,
-            uriSession: String?,
-            supportEmail: String?
-        ): CustomDialogFragment {
-            return createCustomDialog(
-                activity,
-                requestCode,
-                EDialogType.PositiveNegative,
-                title,
-                message,
-                positiveButton,
-                null,
-                negativeButton,
-                    uriSession,
-                supportEmail
-            )
-        }
-
-        fun createPositiveSupportDialog(
-                activity: AppCompatActivity,
-                requestCode: Int,
-                title: String,
-                message: String,
-                positiveButton: String,
-                neutralButton: String,
-                negativeButton: String,
-                uriSession: String?,
-                supportEmail: String?
-        ): CustomDialogFragment {
-            return createCustomDialog(
-                    activity,
-                    requestCode,
-                    EDialogType.PositiveSupport,
-                    title,
-                    message,
-                    positiveButton,
-                    neutralButton,
-                    negativeButton,
-                uriSession,
-                supportEmail
-            )
-        }
-
-        //endregion
     }
 
     private var dialogFragmentListener: Dialogs.DialogFragmentListener? = null
@@ -198,9 +75,6 @@ class CustomDialogFragment : DialogFragment() {
     enum class EDialogType {
         OK, OKCancel, YesNo, PositiveNegative, PositiveSupport
     }
-
-    //region Lifecycle
-    //************************************************************
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -219,10 +93,10 @@ class CustomDialogFragment : DialogFragment() {
         val title = args.getString(KEY_TITLE, "")
         val message = args.getString(KEY_MESSAGE, "")
         var resPositive = args.getString(KEY_POSITIVE, resources.getString(R.string.dialog_ok))
-        val resNeutral = args.getString(KEY_NEUTRAL, null)
+        args.getString(KEY_NEUTRAL, null)
         var resNegative = args.getString(KEY_NEGATIVE, resources.getString(R.string.dialog_cancel))
-        val uriSession = args.getString(KEY_SUPPORT, null)
-        val supportEmail = args.getString(KEY_SUPPORT_EMAIL, null)
+        args.getString(KEY_SUPPORT, null)
+        args.getString(KEY_SUPPORT_EMAIL, null)
         if (type == EDialogType.YesNo) {
             resPositive = resources.getString(R.string.dialog_yes)
             resNegative = resources.getString(R.string.dialog_no)
@@ -244,32 +118,6 @@ class CustomDialogFragment : DialogFragment() {
                 )
             }
         }
-        if (type == EDialogType.PositiveSupport) {
-            builder.setNeutralButton(resNeutral) { _, _ ->
-                context?.let {
-                    if (IdentityErrorDialogHelper.canOpenSupportEmail(it)) {
-                        IdentityErrorDialogHelper.openSupportEmail(it,
-                            resources,
-                            supportEmail,
-                            uriSession)
-                    } else {
-                        IdentityErrorDialogHelper.copyToClipboard(it,
-                            title.toString(),
-                            resources.getString(R.string.dialog_support_text,
-                                uriSession,
-                                BuildConfig.VERSION_NAME,
-                                Build.VERSION.RELEASE))
-                    }
-                }
-            }
-            builder.setNegativeButton(resNegative) { _, _ ->
-                dismiss()
-            }
-            builder.setPositiveButton(resPositive) { _, _ ->
-                val intent = Intent(activity, IdentityCreateActivity::class.java)
-                startActivity(intent)
-            }
-        }
 
         val dialog = builder.create()
         dialog.setCanceledOnTouchOutside(false)
@@ -280,6 +128,4 @@ class CustomDialogFragment : DialogFragment() {
         super.onCancel(dialog)
         dialogFragmentListener?.onDialogResult(requestCode!!, Dialogs.DISMISSED, Intent())
     }
-
-    //endregion
 }

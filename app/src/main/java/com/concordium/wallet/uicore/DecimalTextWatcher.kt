@@ -5,7 +5,6 @@ import android.text.TextWatcher
 import java.text.DecimalFormatSymbols
 
 class DecimalTextWatcher(private val maxNumberOfDecimals: Int = 1) : TextWatcher {
-
     private val separator: Char = DecimalFormatSymbols.getInstance().decimalSeparator
 
     override fun beforeTextChanged(
@@ -61,22 +60,9 @@ class DecimalTextWatcher(private val maxNumberOfDecimals: Int = 1) : TextWatcher
                 str = str.substring(0, str.length - 1)
                 change = true
             }
-            /*
-            else if (decimalSeparatorIndex + maxNumberOfDecimals < str.length) {
-                val rest = str.substring(decimalSeparatorIndex + 1)
-                if (rest.indexOf(separator) >= 0) {
-                    // Replace the last char with the empty string
-                    str = str.substring(0, str.length - 1)
-                    change = true
-                }
-            }
-
-             */
         }
         if (change) {
             editable.replace(0, editable.length, str)
         }
     }
-
-
 }
