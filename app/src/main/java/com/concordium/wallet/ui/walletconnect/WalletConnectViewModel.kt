@@ -1,6 +1,8 @@
 package com.concordium.wallet.ui.walletconnect
 
 import android.app.Application
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -12,6 +14,8 @@ import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
 import kotlinx.coroutines.launch
 import java.io.Serializable
+import java.net.URI
+import java.net.URISyntaxException
 
 data class WalletConnectData(
     var account: Account? = null,
@@ -30,13 +34,13 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     private val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
 
     fun connect() {
-        if (walletConnectData.wcUri.isNullOrBlank()) {
-            //val uriString = walletConnectData.wcUri.replace("wc:", "wc://")
-            //val sessionId = Uri.parse(uriString).userInfo
-            //println("LC -> $sessionId")
 
-            wcInit("Concordium Wallet", "Q", walletConnectData.wcUri!!)
+        // Example: "wc:bdebc8b0ff3e0b78310e3dc382af729ab3f1d984497c572b4a800ec1e54737d8@2?relay-protocol=waku&symKey=ea043e7e58271714b8a029aacc87679cbee0170f7616229d0f70cb066d9aee32"
 
+        walletConnectData.wcUri?.let { wc ->
+            if (wc.isNotBlank()) {
+                wcInit(wc)
+            }
         }
     }
 
@@ -50,26 +54,35 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         return accountRepository.getCount() > 0
     }
 
-    fun wcInit(appName: String, appDescription: String, wcUri: String) {
-        val appMetaData = Sign.Model.AppMetaData(
-            name = appName,
-            description = appDescription,
-            url = "https://concordium.com",
-            icons = listOf(),
-            null
+    private fun wcInit(wc: String) {
+
+        val projectId = "76324905a70fe5c388bab46d3e0564dc"
+        val relayServerUrl = "wss://relay.walletconnect.com?projectId=$projectId"
+
+        val initString = Sign.Params.Init(
+            application = getApplication(),
+            relayServerUrl = relayServerUrl,
+            metadata = Sign.Model.AppMetaData(
+                name = "Concordium Wallet",
+                description = "Concordium Wallet description",
+                url = "https://concordium.com",
+                icons = listOf("https://gblobscdn.gitbook.com/spaces%2F-LJJeCjcLrr53DcT1Ml7%2Favatar.png?alt=media"),
+                redirect = "kotlin-wallet-wc:/request"
+            )
         )
-        val connectionType = Sign.ConnectionType.AUTOMATIC
-        val initParams = Sign.Params.Init(getApplication(), "", appMetaData, null, connectionType)
-        SignClient.initialize(initParams) {
-            println("LC -> $it")
-            wcPair()
+
+        SignClient.initialize(initString) { signModelError ->
+            println("LC -> INIT ${signModelError.throwable.stackTraceToString()}")
         }
+
+        wcPair(wc)
     }
 
-    private fun wcPair() {
+    private fun wcPair(wc: String) {
         val walletDelegate = object : SignClient.WalletDelegate {
             override fun onConnectionStateChange(state: Sign.Model.ConnectionState) {
                 println("LC -> onConnectionStateChange")
+                // har set denne, når jeg går tilbage til MainActivity
             }
 
             override fun onError(error: Sign.Model.Error) {
@@ -99,9 +112,19 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
         SignClient.setWalletDelegate(walletDelegate)
 
-        val pair = Sign.Params.Pair(walletConnectData.wcUri!!)
-        SignClient.pair(pair) {
-            println("LC -> $it")
+        val pair = Sign.Params.Pair(wc)
+        SignClient.pair(pair) { signModelError ->
+            println("LC -> PAIR ${signModelError.throwable.stackTraceToString()}")
+
+            // Første gang får jeg NoRelayConnectionException
+            // Bagefter får jeg PairWithExistingPairingIsNotAllowed - noget er gemt i database og filer - så sker dette!
+
+            //val disconnect = Sign.Params.Disconnect(sessionTopic = "")
+            //SignClient.disconnect(disconnect) { error ->
+            //    println("LC -> DISCONNECT ${error.throwable.stackTraceToString()}")
+            //}
         }
+
+        //SignClient.disconnect()
     }
 }
