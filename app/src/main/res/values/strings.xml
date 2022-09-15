@@ -197,7 +197,7 @@
     <string name="pass_phrase_recover_input_clear_all">Clear all</string>
     <string name="pass_phrase_recover_input_clear_below">Clear below</string>
     <string name="pass_phrase_recover_incorrect">Invalid secret recovery phrase. Please verify that all words are entered correctly.</string>
-    <string name="pass_phrase_recover_success">Your secret recovery phrase has been successfully entered! Tab continue to recover your accounts and identities.</string>
+    <string name="pass_phrase_recover_success">Your secret recovery phrase has been successfully entered! Tap continue to recover your accounts and identities.</string>
     <string name="pass_phrase_recover_input_title">Your secret recovery phrase</string>
 
     <string name="pass_phrase_recover_process_title">Recovering your accounts and identities</string>
