@@ -5,6 +5,9 @@ import androidx.room.*
 
 @Dao
 interface IdentityDao {
+    companion object {
+        const val DEFAULT_NAME = "default"
+    }
 
     @Query("SELECT COUNT(id) FROM identity_table")
     suspend fun getCount(): Int
@@ -17,6 +20,9 @@ interface IdentityDao {
 
     @Query("SELECT * FROM identity_table where status='done' ORDER BY id ASC")
     suspend fun getAllDone(): List<Identity>
+
+    @Query("SELECT * FROM identity_table where name = '$DEFAULT_NAME' ORDER BY id ASC")
+    suspend fun getAllNew(): List<Identity>
 
     @Query("SELECT count(*) FROM identity_table where status != 'done'")
     suspend fun getNonDoneCount(): Int

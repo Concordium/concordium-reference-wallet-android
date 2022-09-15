@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentRecoverProcessScanningBinding
 import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessViewModel.Companion.RECOVER_PROCESS_DATA
 
@@ -32,7 +33,7 @@ class RecoverProcessScanningFragment : RecoverProcessBaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        _viewModel.recoverIdentitiesAndAccounts(_password)
+        _viewModel.recoverIdentitiesAndAccounts(_password, getString(R.string.pass_phrase_recover_process_identity_name_prefix))
     }
 
     override fun onDestroyView() {

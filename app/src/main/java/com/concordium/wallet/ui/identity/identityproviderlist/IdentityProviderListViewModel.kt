@@ -166,7 +166,7 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
 
         val net = AppConfig.net
         tempData.identityIndex = identityRepository.nextIdentityIndex(identityProvider.ipInfo.ipIdentity)
-        tempData.identityName = "${getApplication<Application?>().getString(R.string.view_identity_identity)} ${identityRepository.nextIdentityNamePostfix()}"
+        tempData.identityName = identityRepository.nextIdentityName(getApplication<Application?>().getString(R.string.view_identity_identity))
         val seed = AuthPreferences(getApplication()).getSeedPhrase()
 
         val output = App.appCore.cryptoLibrary.createIdRequestAndPrivateDataV1(identityProvider.ipInfo, identityProvider.arsInfos, global, seed, net, tempData.identityIndex)

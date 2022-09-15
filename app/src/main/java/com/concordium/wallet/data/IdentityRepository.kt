@@ -23,6 +23,10 @@ class IdentityRepository(private val identityDao: IdentityDao) {
         return identityDao.getAllPending()
     }
 
+    suspend fun getAllNew(): List<Identity> {
+        return identityDao.getAllNew()
+    }
+
     suspend fun getNonDoneCount(): Int {
         return identityDao.getNonDoneCount()
     }
@@ -60,8 +64,11 @@ class IdentityRepository(private val identityDao: IdentityDao) {
         return identities.maxOfOrNull { it.identityIndex + 1 } ?: 0
     }
 
-    suspend fun nextIdentityNamePostfix(): Int {
+    suspend fun nextIdentityName(identityNamePrefix: String): String {
+        var counter = 1
         val identities = getAll()
-        return identities.maxOfOrNull { it.id + 1 } ?: 1
+        while (identities.any { it.name == "$identityNamePrefix $counter" })
+            counter++
+        return "$identityNamePrefix $counter"
     }
 }

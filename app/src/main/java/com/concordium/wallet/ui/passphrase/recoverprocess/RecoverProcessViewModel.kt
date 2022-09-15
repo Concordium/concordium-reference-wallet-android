@@ -43,11 +43,12 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         private const val ACCOUNT_GAP_MAX = 20
     }
 
-    private val identityWithAccountsFound = mutableListOf<IdentityWithAccounts>()
+    private val identitiesWithAccountsFound = mutableListOf<IdentityWithAccounts>()
     private var stop = false
     private var identityGaps: HashMap<String, Int> = HashMap()
     private var accountGaps: HashMap<Int, Int> = HashMap()
     private var password = ""
+    private var identityNamePrefix = ""
     private val net = AppConfig.net
     private val seed = AuthPreferences(getApplication()).getSeedPhrase()
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
@@ -62,8 +63,9 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
     val errorLiveData: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val recoverProcessData = RecoverProcessData()
 
-    fun recoverIdentitiesAndAccounts(password: String) {
+    fun recoverIdentitiesAndAccounts(password: String, identityNamePrefix: String) {
         this.password = password
+        this.identityNamePrefix = identityNamePrefix
         waiting.postValue(true)
         identityGaps = HashMap()
         getGlobalInfo()
@@ -178,10 +180,9 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
 
     private suspend fun saveIdentity(identityObject: IdentityObject, identityProvider: IdentityProvider, identityIndex: Int): Identity {
         val identityRepository = IdentityRepository(WalletDatabase.getDatabase(getApplication()).identityDao())
-        val identityCount = identityRepository.getCount()
         val identity = Identity(
             0,
-            "Identity ${identityCount + 1}",
+            IdentityDao.DEFAULT_NAME,
             IdentityStatus.DONE,
             "",
             "",
@@ -194,7 +195,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         if (existingIdentity == null) {
             val newIdentityId = identityRepository.insert(identity)
             identity.id = newIdentityId.toInt()
-            identityWithAccountsFound.add(IdentityWithAccounts(identity, mutableListOf()))
+            identitiesWithAccountsFound.add(IdentityWithAccounts(identity, mutableListOf()))
             return identity
         }
         return existingIdentity
@@ -276,11 +277,11 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                     if (recipientRepository.getRecipientByAddress(account.address) == null) {
                         recipientRepository.insert(Recipient(0, account.name, account.address))
                     }
-                    val iWithAFound = identityWithAccountsFound.firstOrNull { it.identity.identityProviderId == identity.identityProviderId && it.identity.identityIndex == identity.identityIndex }
+                    val iWithAFound = identitiesWithAccountsFound.firstOrNull { it.identity.identityProviderId == identity.identityProviderId && it.identity.identityIndex == identity.identityIndex }
                     if (iWithAFound != null)
                         iWithAFound.accounts.add(account)
                     else
-                        identityWithAccountsFound.add(IdentityWithAccounts(identity, mutableListOf(account)))
+                        identitiesWithAccountsFound.add(IdentityWithAccounts(identity, mutableListOf(account)))
                 }
             } else {
                 accountGaps.increase(identity.id)
@@ -324,15 +325,27 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         val total = accountGaps.size * ACCOUNT_GAP_MAX
         accounts = total - accounts
         val percent = (accounts * 100) / total
-        progressAccounts.postValue(percent)
+        if ((progressAccounts.value ?: 0) < percent)
+            progressAccounts.postValue(percent)
         return percent
     }
 
-    private fun checkAllDone() {
+    private suspend fun checkAllDone() {
         val identitiesPercent = identitiesPercent()
         val accountsPercent = accountsPercent()
         if ((identitiesPercent >= 100 && accountsPercent >= 100) || (identitiesPercent >= 100 && accountGaps.size == 0))  {
-            recoverProcessData.identitiesWithAccounts = identityWithAccountsFound
+            val identityRepository = IdentityRepository(WalletDatabase.getDatabase(getApplication()).identityDao())
+            val allIdentities = identityRepository.getAllNew()
+            for (identity in allIdentities) {
+                if (identity.name == IdentityDao.DEFAULT_NAME) {
+                    identity.name = identityRepository.nextIdentityName(identityNamePrefix)
+                    identityRepository.update(identity)
+                    val found = identitiesWithAccountsFound.filter { it.identity.id == identity.id }
+                    if (found.isNotEmpty())
+                        found.first().identity.name = identity.name
+                }
+            }
+            recoverProcessData.identitiesWithAccounts = identitiesWithAccountsFound
             waiting.postValue(false)
             statusChanged.postValue(STATUS_DONE)
         }
