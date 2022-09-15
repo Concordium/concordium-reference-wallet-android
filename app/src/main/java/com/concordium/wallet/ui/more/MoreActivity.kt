@@ -75,7 +75,6 @@ class MoreActivity : BaseActivity() {
     }
 
     private fun recover() {
-        finish()
         val intent = Intent(this, RecoverProcessActivity::class.java)
         intent.putExtra(RecoverProcessActivity.SHOW_FOR_FIRST_RECOVERY, false)
         startActivity(intent)

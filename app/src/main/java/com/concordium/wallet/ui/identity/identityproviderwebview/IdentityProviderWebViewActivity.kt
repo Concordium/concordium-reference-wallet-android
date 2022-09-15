@@ -201,7 +201,8 @@ class IdentityProviderWebViewActivity : BaseActivity() {
         val intent = Intent(this, IdentityConfirmedActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         intent.putExtra(IdentityConfirmedActivity.EXTRA_IDENTITY, identity)
-        intent.putExtra(IdentityConfirmedActivity.SHOW_FOR_FIRST_IDENTITY, showForFirstIdentity)
+        if (showForFirstIdentity)
+            intent.putExtra(IdentityConfirmedActivity.SHOW_FOR_FIRST_IDENTITY, true)
         startActivity(intent)
     }
 

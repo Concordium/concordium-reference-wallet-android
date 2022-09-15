@@ -17,18 +17,16 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.base.BaseFragment
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
-import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewFragment
+import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
 import com.concordium.wallet.ui.intro.introstart.IntroTermsActivity
-import com.concordium.wallet.ui.more.moreoverview.MoreOverviewFragment
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.concordium.wallet.ui.more.MoreActivity
+import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
+import com.concordium.wallet.ui.walletconnect.WalletConnectActivity
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class MainActivity : BaseActivity(), AccountsOverviewFragment.AccountsOverviewFragmentListener, IdentityStatusDelegate by IdentityStatusDelegateImpl() {
+class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDelegateImpl() {
     companion object {
         const val EXTRA_SHOW_IDENTITIES = "EXTRA_SHOW_IDENTITIES"
     }
@@ -138,10 +136,6 @@ class MainActivity : BaseActivity(), AccountsOverviewFragment.AccountsOverviewFr
         viewModel.setState(state)
     }
 
-    private fun switchToIdentities() {
-        viewModel.setState(MainViewModel.State.IdentitiesOverview)
-    }
-
     //endregion
 
     //region Initialize
@@ -210,11 +204,6 @@ class MainActivity : BaseActivity(), AccountsOverviewFragment.AccountsOverviewFr
     }
 
     override fun loggedOut() {
-    }
-
-    /* invoked eg when clicking pending warning */
-    override fun identityClicked(identity: Identity) {
-        switchToIdentities()
     }
 
     //endregion
