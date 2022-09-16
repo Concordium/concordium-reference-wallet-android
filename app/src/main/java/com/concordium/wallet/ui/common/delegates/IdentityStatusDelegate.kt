@@ -33,28 +33,30 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
         this.showForFirstIdentity = showForFirstIdentity
         if (activity == null || activity.isFinishing || activity.isDestroyed)
             return
-        App.appCore.newIdentityPending?.let { pendingIdentity ->
-            if (specificIdentityId == null || specificIdentityId == pendingIdentity.id) {
-                CoroutineScope(Dispatchers.IO).launch {
-                    job = launch {
-                        val identityRepository = IdentityRepository(WalletDatabase.getDatabase(activity).identityDao())
-                        val identity = identityRepository.findById(pendingIdentity.id)
-                        identity?.let {
-                            activity.runOnUiThread {
-                                if ((activity as BaseActivity).isActive) {
-                                    when (identity.status) {
-                                        IdentityStatus.DONE -> identityDone(activity, identity, statusChanged)
-                                        IdentityStatus.ERROR -> identityError(activity, identity, statusChanged)
+        if (App.appCore.newIdentities.isNotEmpty()) {
+            for (newIdentity in App.appCore.newIdentities) {
+                if (specificIdentityId == null || specificIdentityId == newIdentity.key) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        job = launch {
+                            val identityRepository = IdentityRepository(WalletDatabase.getDatabase(activity).identityDao())
+                            val identity = identityRepository.findById(newIdentity.key)
+                            identity?.let {
+                                activity.runOnUiThread {
+                                    if ((activity as BaseActivity).isActive) {
+                                        when (identity.status) {
+                                            IdentityStatus.DONE -> identityDone(activity, identity, statusChanged)
+                                            IdentityStatus.ERROR -> identityError(activity, identity, statusChanged)
+                                        }
                                     }
+                                    startCheckForPendingIdentity(activity, specificIdentityId, showForFirstIdentity, statusChanged)
                                 }
-                                startCheckForPendingIdentity(activity, specificIdentityId, showForFirstIdentity, statusChanged)
                             }
+                            delay(1000)
                         }
-                        delay(1000)
                     }
                 }
             }
-        } ?: run {
+        } else {
             Timer().schedule(1000) {
                 startCheckForPendingIdentity(activity, specificIdentityId, showForFirstIdentity, statusChanged)
             }
@@ -66,9 +68,9 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
     }
 
     override fun identityDone(activity: ComponentActivity, identity: Identity, statusChanged: (Identity) -> Unit) {
-        if (App.appCore.newIdentityPending == null)
+        if (App.appCore.newIdentities[identity.id] == null)
             return
-        App.appCore.newIdentityPending = null
+        App.appCore.newIdentities.remove(identity.id)
 
         if (showForFirstIdentity) {
             statusChanged(identity)
@@ -79,7 +81,6 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
         builder.setTitle(R.string.identities_overview_identity_verified_title)
         builder.setMessage(activity.getString(R.string.identities_overview_identity_verified_message, identity.name))
         builder.setPositiveButton(activity.getString(R.string.identities_overview_identity_create_account_now)) { dialog, _ ->
-            activity.finish()
             dialog.dismiss()
             val intent = Intent(activity, IdentityConfirmedActivity::class.java)
             intent.putExtra(IdentityConfirmedActivity.EXTRA_IDENTITY, identity)
@@ -97,9 +98,9 @@ class IdentityStatusDelegateImpl : IdentityStatusDelegate {
     }
 
     override fun identityError(activity: ComponentActivity, identity: Identity, statusChanged: (Identity) -> Unit) {
-        if (App.appCore.newIdentityPending == null)
+        if (App.appCore.newIdentities[identity.id] == null)
             return
-        App.appCore.newIdentityPending = null
+        App.appCore.newIdentities.remove(identity.id)
 
         val builder = AlertDialog.Builder(activity)
         builder.setTitle(R.string.identities_overview_identity_rejected_title)
