@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- App -->
-    <string name="app_name">Concordium</string>
+    <string name="app_name">Concordium Legacy</string>
     <string name="app_menu_item_backup">Backup</string>
     <string name="app_menu_item_accounts">Accounts</string>
     <string name="app_menu_item_identities">Identities</string>
