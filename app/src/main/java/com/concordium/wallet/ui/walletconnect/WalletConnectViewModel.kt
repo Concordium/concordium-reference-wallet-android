@@ -1,8 +1,6 @@
 package com.concordium.wallet.ui.walletconnect
 
 import android.app.Application
-import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -14,8 +12,6 @@ import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
 import kotlinx.coroutines.launch
 import java.io.Serializable
-import java.net.URI
-import java.net.URISyntaxException
 
 data class WalletConnectData(
     var account: Account? = null,
@@ -33,13 +29,10 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val walletConnectData = WalletConnectData()
     private val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
 
-    fun connect() {
-
-        // Example: "wc:bdebc8b0ff3e0b78310e3dc382af729ab3f1d984497c572b4a800ec1e54737d8@2?relay-protocol=waku&symKey=ea043e7e58271714b8a029aacc87679cbee0170f7616229d0f70cb066d9aee32"
-
+    fun pairWalletConnect() {
         walletConnectData.wcUri?.let { wc ->
             if (wc.isNotBlank()) {
-                wcInit(wc)
+                pairWalletConnect(wc)
             }
         }
     }
@@ -54,12 +47,12 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         return accountRepository.getCount() > 0
     }
 
-    private fun wcInit(wc: String) {
-
+    /*
+    fun initWalletConnect() {
         val projectId = "76324905a70fe5c388bab46d3e0564dc"
         val relayServerUrl = "wss://relay.walletconnect.com?projectId=$projectId"
 
-        val initString = Sign.Params.Init(
+        val initParams = Sign.Params.Init(
             application = getApplication(),
             relayServerUrl = relayServerUrl,
             metadata = Sign.Model.AppMetaData(
@@ -71,18 +64,16 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             )
         )
 
-        SignClient.initialize(initString) { signModelError ->
+        SignClient.initialize(initParams) { signModelError ->
             println("LC -> INIT ${signModelError.throwable.stackTraceToString()}")
         }
-
-        wcPair(wc)
     }
+    */
 
-    private fun wcPair(wc: String) {
+    private fun pairWalletConnect(wc: String) {
         val walletDelegate = object : SignClient.WalletDelegate {
             override fun onConnectionStateChange(state: Sign.Model.ConnectionState) {
                 println("LC -> onConnectionStateChange")
-                // har set denne, når jeg går tilbage til MainActivity
             }
 
             override fun onError(error: Sign.Model.Error) {
@@ -95,6 +86,22 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
             override fun onSessionProposal(sessionProposal: Sign.Model.SessionProposal) {
                 println("LC -> onSessionProposal")
+
+                val accounts = listOf( "eip155:1:${walletConnectData.account!!.address}" )
+                val methods = sessionProposal.requiredNamespaces.values.flatMap { it.methods }
+                val events = sessionProposal.requiredNamespaces.values.flatMap { it.events }
+                val namespaceValue = Sign.Model.Namespace.Session(accounts = accounts, methods = methods, events = events, extensions = null)
+
+                val sessionNamespaces = mapOf(Pair("eip155", namespaceValue))
+
+                val approveParams = Sign.Params.Approve(
+                    proposerPublicKey = sessionProposal.proposerPublicKey,
+                    namespaces = sessionNamespaces
+                )
+                println("LC -> CALL APPROVE")
+                SignClient.approveSession(approveParams) { modelError ->
+                    println("LC -> APPROVE ${modelError.throwable.stackTraceToString()}")
+                }
             }
 
             override fun onSessionRequest(sessionRequest: Sign.Model.SessionRequest) {
@@ -102,7 +109,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             }
 
             override fun onSessionSettleResponse(settleSessionResponse: Sign.Model.SettledSessionResponse) {
-                println("LC -> onSessionSettleResponse")
+                println("LC -> onSessionSettleResponse") // er nu kommet her til
             }
 
             override fun onSessionUpdateResponse(sessionUpdateResponse: Sign.Model.SessionUpdateResponse) {
@@ -112,19 +119,19 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
         SignClient.setWalletDelegate(walletDelegate)
 
-        val pair = Sign.Params.Pair(wc)
-        SignClient.pair(pair) { signModelError ->
-            println("LC -> PAIR ${signModelError.throwable.stackTraceToString()}")
-
-            // Første gang får jeg NoRelayConnectionException
-            // Bagefter får jeg PairWithExistingPairingIsNotAllowed - noget er gemt i database og filer - så sker dette!
-
-            //val disconnect = Sign.Params.Disconnect(sessionTopic = "")
-            //SignClient.disconnect(disconnect) { error ->
-            //    println("LC -> DISCONNECT ${error.throwable.stackTraceToString()}")
-            //}
+        val pairParams = Sign.Params.Pair(wc)
+        println("LC -> CALL PAIR")
+        SignClient.pair(pairParams) { modelError ->
+            println("LC -> PAIR ${modelError.throwable.stackTraceToString()}")
         }
+    }
 
-        //SignClient.disconnect()
+    fun disconnectWalletConnect() {
+        val sessionTopic = ""
+        val disconnectParams = Sign.Params.Disconnect(sessionTopic)
+        println("LC -> CALL DISCONNECT")
+        SignClient.disconnect(disconnectParams) { modelError ->
+            println("LC -> DISCONNECT ${modelError.throwable.stackTraceToString()}")
+        }
     }
 }

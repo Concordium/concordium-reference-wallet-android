@@ -42,7 +42,10 @@ class WalletConnectConnectFragment : WalletConnectBaseFragment() {
     private fun initViews() {
         binding.accountName.text = _viewModel.walletConnectData.account?.name ?: ""
         binding.connect.setOnClickListener {
-            _viewModel.connect()
+            _viewModel.pairWalletConnect()
+        }
+        binding.decline.setOnClickListener {
+            _viewModel.disconnectWalletConnect()
         }
     }
 
