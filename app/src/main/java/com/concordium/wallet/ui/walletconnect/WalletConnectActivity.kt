@@ -16,6 +16,7 @@ class WalletConnectActivity : BaseActivity() {
     private lateinit var binding: ActivityWalletConnectBinding
     private lateinit var viewModel: WalletConnectViewModel
     private var fromDeepLink = true
+    private var currentPage = 0
 
     companion object {
         const val FROM_DEEP_LINK = "FROM_DEEP_LINK"
@@ -47,18 +48,21 @@ class WalletConnectActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        if (!fromDeepLink) {
-            super.onBackPressed()
-        }
-        else {
-            CoroutineScope(Dispatchers.IO).launch {
-                if (viewModel.hasAccounts()) {
-                    finish()
-                    startActivity(Intent(applicationContext, MainActivity::class.java))
-                } else {
-                    finish()
+        if (currentPage != 2) {
+            if (!fromDeepLink) {
+                super.onBackPressed()
+            }
+            else {
+                CoroutineScope(Dispatchers.IO).launch {
+                    if (viewModel.hasAccounts()) {
+                        finish()
+                        startActivity(Intent(applicationContext, MainActivity::class.java))
+                    } else {
+                        finish()
+                    }
                 }
             }
+
         }
     }
 
@@ -95,14 +99,18 @@ class WalletConnectActivity : BaseActivity() {
     }
 
     private fun accountsView() {
+        currentPage = 0
         supportFragmentManager.beginTransaction().add(R.id.fragment_container, WalletConnectChooseAccountFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
     }
 
     private fun pairView() {
+        currentPage = 1
         supportFragmentManager.beginTransaction().add(R.id.fragment_container, WalletConnectPairFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
     }
 
     private fun approveView() {
+        currentPage = 2
+        hideActionBarBack()
         supportFragmentManager.beginTransaction().add(R.id.fragment_container, WalletConnectApproveFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
     }
 }

@@ -830,6 +830,7 @@
     <string name="wallet_connect_disconnect_warning_message">This will end your session and disconnect your wallet from\n\n%1$s\n\nDo you want to disconnect?</string>
     <string name="wallet_connect_disconnect_warning_button_stay">Stay</string>
     <string name="wallet_connect_disconnect_warning_button_disconnect">Disconnect</string>
+    <string name="wallet_connect_transaction_approve">Approve Transaction?</string>
 
     <!-- ***** More ***** -->
 
