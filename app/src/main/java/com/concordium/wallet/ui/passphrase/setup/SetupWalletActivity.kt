@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.passphrase.setup
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
@@ -23,6 +24,7 @@ class SetupWalletActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySetupWalletBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.pass_phrase_title)
         initializeViewModel()
         initViews()
