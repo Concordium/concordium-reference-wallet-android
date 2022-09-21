@@ -6,11 +6,11 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def versionBuildNumberSequential = 102
+def versionBuildNumberSequential = 104
 
 def versionBuildNumberMajor = 3
 def versionBuildNumberMinor = 0
-def versionBuildNumberPatch = 2
+def versionBuildNumberPatch = 1
 
 //def LOCAL_IP = getLocalIPv4()
 def LOCAL_IP = "10.0.2.2"
