@@ -54,6 +54,28 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/header_2" />
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/wait_for_actions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:orientation="horizontal"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/service_name">
+            <TextView
+                style="@style/TextView.Standard"
+                android:gravity="center_vertical"
+                android:text="@string/wallet_connect_connecting_waiting_for_actions" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="17dp"
+                android:layout_height="17dp"
+                android:layout_marginStart="4dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_pending" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <Button
         android:id="@+id/disconnect"

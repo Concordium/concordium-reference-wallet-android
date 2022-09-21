@@ -825,6 +825,11 @@
     <string name="wallet_connect_connecting_account">Connecting account</string>
     <string name="wallet_connect_connecting_account_to">to</string>
     <string name="wallet_connect_connecting_is_connected_to">is connected to</string>
+    <string name="wallet_connect_connecting_waiting_for_actions">Waiting for actions</string>
+    <string name="wallet_connect_disconnect_warning_title">Disconnect</string>
+    <string name="wallet_connect_disconnect_warning_message">This will end your session and disconnect your wallet from\n\n%1$s\n\nDo you want to disconnect?</string>
+    <string name="wallet_connect_disconnect_warning_button_stay">Stay</string>
+    <string name="wallet_connect_disconnect_warning_button_disconnect">Disconnect</string>
 
     <!-- ***** More ***** -->
 

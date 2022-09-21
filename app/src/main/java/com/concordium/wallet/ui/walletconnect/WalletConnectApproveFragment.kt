@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.walletconnect
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -44,7 +45,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         binding.accountName.text = _viewModel.walletConnectData.account?.name ?: ""
         binding.serviceName.text = _viewModel.walletConnectData.sessionProposal?.name ?: ""
         binding.disconnect.setOnClickListener {
-            _viewModel.disconnectWalletConnect()
+            showDisconnectWarning()
         }
     }
 
@@ -55,13 +56,27 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
                 binding.disconnect.isEnabled = true
                 binding.header1.visibility = View.GONE
                 binding.header2.text = getString(R.string.wallet_connect_connecting_is_connected_to)
+                binding.waitForActions.visibility = View.VISIBLE
             }
             else {
                 binding.statusImageview.setImageResource(R.drawable.ic_logo_icon_pending)
                 binding.disconnect.isEnabled = false
                 binding.header1.visibility = View.VISIBLE
                 binding.header2.text = getString(R.string.wallet_connect_connecting_account_to)
+                binding.waitForActions.visibility = View.GONE
             }
         }
+    }
+
+    private fun showDisconnectWarning() {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(R.string.wallet_connect_disconnect_warning_title)
+        builder.setMessage(getString(R.string.wallet_connect_disconnect_warning_message, _viewModel.walletConnectData.sessionProposal?.name ?: ""))
+        builder.setPositiveButton(getString(R.string.wallet_connect_disconnect_warning_button_disconnect)) { _, _ ->
+            _viewModel.disconnectWalletConnect()
+            activity?.finish()
+        }
+        builder.setNegativeButton(getString(R.string.wallet_connect_disconnect_warning_button_stay)) { dialog, _ -> dialog.dismiss() }
+        builder.create().show()
     }
 }
