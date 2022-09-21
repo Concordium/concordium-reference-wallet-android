@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.concordium.wallet.databinding.FragmentWalletConnectConnectBinding
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.WALLET_CONNECT_DATA
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class WalletConnectConnectFragment : WalletConnectBaseFragment() {
     private var _binding: FragmentWalletConnectConnectBinding? = null
@@ -32,6 +31,7 @@ class WalletConnectConnectFragment : WalletConnectBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initObservers()
+        _viewModel.pairWalletConnect()
     }
 
     override fun onDestroyView() {
@@ -42,7 +42,7 @@ class WalletConnectConnectFragment : WalletConnectBaseFragment() {
     private fun initViews() {
         binding.accountName.text = _viewModel.walletConnectData.account?.name ?: ""
         binding.connect.setOnClickListener {
-            _viewModel.pairWalletConnect()
+            _viewModel.approve()
         }
         binding.decline.setOnClickListener {
             _viewModel.disconnectWalletConnect()
@@ -50,5 +50,15 @@ class WalletConnectConnectFragment : WalletConnectBaseFragment() {
     }
 
     private fun initObservers() {
+        _viewModel.serviceName.observe(viewLifecycleOwner) { serviceName ->
+            serviceName?.let {
+                binding.serviceName.text = serviceName
+            }
+        }
+        _viewModel.permissions.observe(viewLifecycleOwner) { permissions ->
+            permissions?.let {
+                binding.servicePermissions.text = permissions.joinToString("\n") { it }
+            }
+        }
     }
 }

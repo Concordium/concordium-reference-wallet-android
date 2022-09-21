@@ -18,7 +18,7 @@ data class WalletConnectData(
     var wcUri: String? = null
 ): Serializable
 
-class WalletConnectViewModel(application: Application) : AndroidViewModel(application) {
+class WalletConnectViewModel(application: Application) : AndroidViewModel(application), SignClient.WalletDelegate {
     companion object {
         const val WALLET_CONNECT_DATA = "WALLET_CONNECT_DATA"
     }
@@ -26,8 +26,14 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val accounts: MutableLiveData<List<AccountWithIdentity>> by lazy { MutableLiveData<List<AccountWithIdentity>>() }
     val chooseAccount: MutableLiveData<AccountWithIdentity> by lazy { MutableLiveData<AccountWithIdentity>() }
+    val serviceName: MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val permissions: MutableLiveData<List<String>> by lazy { MutableLiveData<List<String>>() }
     val walletConnectData = WalletConnectData()
     private val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+    private var sessionProposal: Sign.Model.SessionProposal? = null
+    private var settleSessionResponseResult: Sign.Model.SettledSessionResponse.Result? = null
+    private var settleSessionResponseError: Sign.Model.SettledSessionResponse.Error? = null
+    private var sessionTopic: String? = null
 
     fun pairWalletConnect() {
         walletConnectData.wcUri?.let { wc ->
@@ -47,52 +53,27 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         return accountRepository.getCount() > 0
     }
 
-    /*
-    fun initWalletConnect() {
-        val projectId = "76324905a70fe5c388bab46d3e0564dc"
-        val relayServerUrl = "wss://relay.walletconnect.com?projectId=$projectId"
-
-        val initParams = Sign.Params.Init(
-            application = getApplication(),
-            relayServerUrl = relayServerUrl,
-            metadata = Sign.Model.AppMetaData(
-                name = "Concordium Wallet",
-                description = "Concordium Wallet description",
-                url = "https://concordium.com",
-                icons = listOf("https://gblobscdn.gitbook.com/spaces%2F-LJJeCjcLrr53DcT1Ml7%2Favatar.png?alt=media"),
-                redirect = "kotlin-wallet-wc:/request"
-            )
-        )
-
-        SignClient.initialize(initParams) { signModelError ->
-            println("LC -> INIT ${signModelError.throwable.stackTraceToString()}")
+    private fun pairWalletConnect(wc: String) {
+        SignClient.setWalletDelegate(this)
+        val pairParams = Sign.Params.Pair(wc)
+        println("LC -> CALL PAIR")
+        SignClient.pair(pairParams) { modelError ->
+            println("LC -> PAIR ${modelError.throwable.stackTraceToString()}")
         }
     }
-    */
 
-    private fun pairWalletConnect(wc: String) {
-        val walletDelegate = object : SignClient.WalletDelegate {
-            override fun onConnectionStateChange(state: Sign.Model.ConnectionState) {
-                println("LC -> onConnectionStateChange")
-            }
+    fun approve() {
+        sessionProposal?.let { sessionProposal ->
+            val firstNameSpace = sessionProposal.requiredNamespaces.entries.firstOrNull()
+            if (firstNameSpace != null) {
+                val firstNameSpaceKey = firstNameSpace.key
+                val firstChain = firstNameSpace.value.chains.firstOrNull()
+                val methods = firstNameSpace.value.methods
+                val events = firstNameSpace.value.events
 
-            override fun onError(error: Sign.Model.Error) {
-                println("LC -> onError")
-            }
-
-            override fun onSessionDelete(deletedSession: Sign.Model.DeletedSession) {
-                println("LC -> onSessionDelete")
-            }
-
-            override fun onSessionProposal(sessionProposal: Sign.Model.SessionProposal) {
-                println("LC -> onSessionProposal")
-
-                val accounts = listOf( "eip155:1:${walletConnectData.account!!.address}" )
-                val methods = sessionProposal.requiredNamespaces.values.flatMap { it.methods }
-                val events = sessionProposal.requiredNamespaces.values.flatMap { it.events }
+                val accounts = listOf( "$firstChain:${walletConnectData.account!!.address}" )
                 val namespaceValue = Sign.Model.Namespace.Session(accounts = accounts, methods = methods, events = events, extensions = null)
-
-                val sessionNamespaces = mapOf(Pair("eip155", namespaceValue))
+                val sessionNamespaces = mapOf(Pair(firstNameSpaceKey, namespaceValue))
 
                 val approveParams = Sign.Params.Approve(
                     proposerPublicKey = sessionProposal.proposerPublicKey,
@@ -103,35 +84,74 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                     println("LC -> APPROVE ${modelError.throwable.stackTraceToString()}")
                 }
             }
-
-            override fun onSessionRequest(sessionRequest: Sign.Model.SessionRequest) {
-                println("LC -> onSessionRequest")
-            }
-
-            override fun onSessionSettleResponse(settleSessionResponse: Sign.Model.SettledSessionResponse) {
-                println("LC -> onSessionSettleResponse") // er nu kommet her til
-            }
-
-            override fun onSessionUpdateResponse(sessionUpdateResponse: Sign.Model.SessionUpdateResponse) {
-                println("LC -> onSessionUpdateResponse")
-            }
         }
+    }
 
-        SignClient.setWalletDelegate(walletDelegate)
-
-        val pairParams = Sign.Params.Pair(wc)
-        println("LC -> CALL PAIR")
-        SignClient.pair(pairParams) { modelError ->
-            println("LC -> PAIR ${modelError.throwable.stackTraceToString()}")
+    private fun ping() {
+        settleSessionResponseResult?.let { settleSessionResponse ->
+            val pingParams = Sign.Params.Ping(settleSessionResponse.session.topic)
+            println("LC -> CALL PING")
+            SignClient.ping(pingParams, object : Sign.Listeners.SessionPing {
+                override fun onSuccess(pingSuccess: Sign.Model.Ping.Success) {
+                    println("LC -> PING SUCCESS   ${pingSuccess.topic}")
+                    sessionTopic = pingSuccess.topic
+                    // maybe navigate to next screen here
+                }
+                override fun onError(pingError: Sign.Model.Ping.Error) {
+                    println("LC -> PING ERROR ${pingError.error.stackTraceToString()}")
+                }
+            })
         }
     }
 
     fun disconnectWalletConnect() {
-        val sessionTopic = ""
-        val disconnectParams = Sign.Params.Disconnect(sessionTopic)
-        println("LC -> CALL DISCONNECT")
-        SignClient.disconnect(disconnectParams) { modelError ->
-            println("LC -> DISCONNECT ${modelError.throwable.stackTraceToString()}")
+        sessionTopic?.let { topic ->
+            val disconnectParams = Sign.Params.Disconnect(topic)
+            println("LC -> CALL DISCONNECT with $topic")
+            SignClient.disconnect(disconnectParams) { modelError ->
+                println("LC -> DISCONNECT ${modelError.throwable.stackTraceToString()}")
+            }
         }
+    }
+
+    override fun onConnectionStateChange(state: Sign.Model.ConnectionState) {
+        println("LC -> onConnectionStateChange")
+    }
+
+    override fun onError(error: Sign.Model.Error) {
+        println("LC -> onError")
+    }
+
+    override fun onSessionDelete(deletedSession: Sign.Model.DeletedSession) {
+        println("LC -> onSessionDelete")
+    }
+
+    override fun onSessionProposal(sessionProposal: Sign.Model.SessionProposal) {
+        println("LC -> onSessionProposal")
+        this.sessionProposal = sessionProposal
+        val firstNameSpace = sessionProposal.requiredNamespaces.entries.firstOrNull()
+        if (firstNameSpace != null) {
+            serviceName.postValue(sessionProposal.name)
+            permissions.postValue(firstNameSpace.value.methods)
+        }
+    }
+
+    override fun onSessionRequest(sessionRequest: Sign.Model.SessionRequest) {
+        println("LC -> onSessionRequest")
+    }
+
+    override fun onSessionSettleResponse(settleSessionResponse: Sign.Model.SettledSessionResponse) {
+        println("LC -> onSessionSettleResponse")
+        if (settleSessionResponse is Sign.Model.SettledSessionResponse.Result) {
+            this.settleSessionResponseResult = settleSessionResponse
+            ping()
+        }
+        else if (settleSessionResponse is Sign.Model.SettledSessionResponse.Error) {
+            this.settleSessionResponseError = settleSessionResponse
+        }
+    }
+
+    override fun onSessionUpdateResponse(sessionUpdateResponse: Sign.Model.SessionUpdateResponse) {
+        println("LC -> onSessionUpdateResponse")
     }
 }
