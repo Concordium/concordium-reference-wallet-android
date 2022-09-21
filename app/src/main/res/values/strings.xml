@@ -821,7 +821,10 @@
     <string name="wallet_connect_connect_session_text_4">Do you want to proceed and open this session? You should only connect to services you trust.</string>
     <string name="wallet_connect_connect_session_connect">Connect</string>
     <string name="wallet_connect_connect_session_decline">Decline</string>
-
+    <string name="wallet_connect_connect_session_disconnect">Disconnect</string>
+    <string name="wallet_connect_connecting_account">Connecting account</string>
+    <string name="wallet_connect_connecting_account_to">to</string>
+    <string name="wallet_connect_connecting_is_connected_to">is connected to</string>
 
     <!-- ***** More ***** -->
 

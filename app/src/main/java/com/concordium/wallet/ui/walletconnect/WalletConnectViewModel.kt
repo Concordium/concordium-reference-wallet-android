@@ -15,7 +15,8 @@ import java.io.Serializable
 
 data class WalletConnectData(
     var account: Account? = null,
-    var wcUri: String? = null
+    var wcUri: String? = null,
+    var sessionProposal: Sign.Model.SessionProposal? = null
 ): Serializable
 
 class WalletConnectViewModel(application: Application) : AndroidViewModel(application), SignClient.WalletDelegate {
@@ -26,11 +27,12 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val accounts: MutableLiveData<List<AccountWithIdentity>> by lazy { MutableLiveData<List<AccountWithIdentity>>() }
     val chooseAccount: MutableLiveData<AccountWithIdentity> by lazy { MutableLiveData<AccountWithIdentity>() }
+    val connect: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val connectStatus: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val serviceName: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val permissions: MutableLiveData<List<String>> by lazy { MutableLiveData<List<String>>() }
     val walletConnectData = WalletConnectData()
     private val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
-    private var sessionProposal: Sign.Model.SessionProposal? = null
     private var settleSessionResponseResult: Sign.Model.SettledSessionResponse.Result? = null
     private var settleSessionResponseError: Sign.Model.SettledSessionResponse.Error? = null
     private var sessionTopic: String? = null
@@ -63,7 +65,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     }
 
     fun approve() {
-        sessionProposal?.let { sessionProposal ->
+        walletConnectData.sessionProposal?.let { sessionProposal ->
             val firstNameSpace = sessionProposal.requiredNamespaces.entries.firstOrNull()
             if (firstNameSpace != null) {
                 val firstNameSpaceKey = firstNameSpace.key
@@ -95,10 +97,11 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                 override fun onSuccess(pingSuccess: Sign.Model.Ping.Success) {
                     println("LC -> PING SUCCESS   ${pingSuccess.topic}")
                     sessionTopic = pingSuccess.topic
-                    // maybe navigate to next screen here
+                    connectStatus.postValue(true)
                 }
                 override fun onError(pingError: Sign.Model.Ping.Error) {
                     println("LC -> PING ERROR ${pingError.error.stackTraceToString()}")
+                    connectStatus.postValue(false)
                 }
             })
         }
@@ -111,6 +114,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             SignClient.disconnect(disconnectParams) { modelError ->
                 println("LC -> DISCONNECT ${modelError.throwable.stackTraceToString()}")
             }
+            ping()
         }
     }
 
@@ -128,7 +132,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     override fun onSessionProposal(sessionProposal: Sign.Model.SessionProposal) {
         println("LC -> onSessionProposal")
-        this.sessionProposal = sessionProposal
+        walletConnectData.sessionProposal = sessionProposal
         val firstNameSpace = sessionProposal.requiredNamespaces.entries.firstOrNull()
         if (firstNameSpace != null) {
             serviceName.postValue(sessionProposal.name)

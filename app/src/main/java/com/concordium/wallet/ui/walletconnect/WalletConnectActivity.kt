@@ -83,7 +83,10 @@ class WalletConnectActivity : BaseActivity() {
         }
         viewModel.chooseAccount.observe(this) { accountWithIdentity ->
             viewModel.walletConnectData.account = accountWithIdentity.account
-            connectView()
+            pairView()
+        }
+        viewModel.connect.observe(this) {
+            approveView()
         }
     }
 
@@ -95,7 +98,11 @@ class WalletConnectActivity : BaseActivity() {
         supportFragmentManager.beginTransaction().add(R.id.fragment_container, WalletConnectChooseAccountFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
     }
 
-    private fun connectView() {
-        supportFragmentManager.beginTransaction().add(R.id.fragment_container, WalletConnectConnectFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
+    private fun pairView() {
+        supportFragmentManager.beginTransaction().add(R.id.fragment_container, WalletConnectPairFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
+    }
+
+    private fun approveView() {
+        supportFragmentManager.beginTransaction().add(R.id.fragment_container, WalletConnectApproveFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
     }
 }
