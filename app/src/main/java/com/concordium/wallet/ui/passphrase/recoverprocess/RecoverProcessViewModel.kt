@@ -23,11 +23,12 @@ import com.concordium.wallet.data.room.*
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.passphrase.recoverprocess.retrofit.IdentityProviderApiInstance
 import com.concordium.wallet.util.DateTimeUtil
-import com.concordium.wallet.util.increase
 import com.google.gson.JsonArray
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.io.Serializable
 
 data class RecoverProcessData(
@@ -55,6 +56,8 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
     private var identityProvidersRequest: BackendRequest<ArrayList<IdentityProvider>>? = null
     private var globalInfo: GlobalParamsWrapper? = null
     private var identityProviders: ArrayList<IdentityProvider>? = null
+    private val identityGapMutex = Mutex()
+    private val accountGapMutex = Mutex()
 
     val statusChanged: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
@@ -126,10 +129,10 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             else {
                 if (!recoverResponsePair.first)
                     recoverProcessData.noResponseFrom.add(identityProvider.ipInfo.ipDescription.name)
-                identityGaps.increase(identityProvider.ipInfo.ipDescription.url)
+                increaseIdentityGap(identityProvider.ipInfo.ipDescription.url)
             }
         } else {
-            identityGaps.increase(identityProvider.ipInfo.ipDescription.url)
+            increaseIdentityGap(identityProvider.ipInfo.ipDescription.url)
         }
 
         checkAllDone()
@@ -284,7 +287,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                         identitiesWithAccountsFound.add(IdentityWithAccounts(identity, mutableListOf(account)))
                 }
             } else {
-                accountGaps.increase(identity.id)
+                increaseAccountGap(identity.id)
             }
         } catch (ex: Exception) {
             stop = true
@@ -303,7 +306,9 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             return 0
         }
         var identities = 0
-        for (gap in identityGaps.values) {
+        val gapsIterator = identityGaps.values.iterator()
+        while (gapsIterator.hasNext()) {
+            val gap = gapsIterator.next()
             identities += IDENTITY_GAP_MAX - gap
         }
         val total = identityGaps.size * IDENTITY_GAP_MAX
@@ -319,7 +324,9 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             return 0
         }
         var accounts = 0
-        for (gap in accountGaps.values) {
+        val gapsIterator = accountGaps.values.iterator()
+        while (gapsIterator.hasNext()) {
+            val gap = gapsIterator.next()
             accounts += ACCOUNT_GAP_MAX - gap
         }
         val total = accountGaps.size * ACCOUNT_GAP_MAX
@@ -348,6 +355,24 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             recoverProcessData.identitiesWithAccounts = identitiesWithAccountsFound
             waiting.postValue(false)
             statusChanged.postValue(STATUS_DONE)
+        }
+    }
+
+    private suspend fun increaseIdentityGap(url: String) {
+        identityGapMutex.withLock {
+            var plus = identityGaps[url]
+            if (plus != null) {
+                identityGaps[url] = ++plus
+            }
+        }
+    }
+
+    private suspend fun increaseAccountGap(identityId: Int) {
+        accountGapMutex.withLock {
+            var plus = accountGaps[identityId]
+            if (plus != null) {
+                accountGaps[identityId] = ++plus
+            }
         }
     }
 }

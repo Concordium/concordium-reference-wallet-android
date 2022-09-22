@@ -29,7 +29,7 @@ class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl(
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.pass_phrase_recover_process_title)
         if (showForFirstRecovery)
             hideActionBarBack()
-            initializeViewModel()
+        initializeViewModel()
         initViews()
         initObservers()
     }

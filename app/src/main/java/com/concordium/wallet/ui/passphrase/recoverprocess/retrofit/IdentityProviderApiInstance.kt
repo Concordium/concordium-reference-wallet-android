@@ -1,7 +1,9 @@
 package com.concordium.wallet.ui.passphrase.recoverprocess.retrofit
 
+import com.concordium.wallet.data.model.RecoverErrorResponse
 import com.concordium.wallet.data.model.RecoverResponse
 import com.concordium.wallet.util.Log
+import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -37,7 +39,13 @@ class IdentityProviderApiInstance {
                             return Pair(true, null)
                     }
                 } else {
-                    return Pair(true, null)
+                    return if (response.errorBody() != null && response.code() == 404) {
+                        val errorResponse: RecoverErrorResponse = Gson().fromJson(response.errorBody()!!.charStream(), RecoverErrorResponse::class.java)
+                        Log.d("${errorResponse.code} ${errorResponse.message} on $url")
+                        Pair(true, null)
+                    } else {
+                        Pair(false, null)
+                    }
                 }
             } catch (t: Throwable) {
                 Log.d(Log.toString(t))

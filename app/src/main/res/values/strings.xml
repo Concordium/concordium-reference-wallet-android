@@ -54,7 +54,7 @@
     <!-- ***** Intro ***** -->
 
     <!-- Terms -->
-    <string name="terms_title">Terms and conditions for Concordium Mobile Wallet</string>
+    <string name="terms_title">Terms and conditions for Concordium Wallet for Mobile</string>
     <string name="terms_text"><![CDATA[
 
 <style>
@@ -74,79 +74,79 @@
 <h2>Effective from 1 September 2022</h2>
 
 <h1>Introduction</h1>
-<p>Concordium Mobile Wallet is a digital wallet that is offered by Concordium Software ApS (‘Concordium Software’). At developer.concordium.software you can read about how the app works. Concordium Software may continually change and/or adjust the functions of Concordium Mobile Wallet. Concordium Software’s terms and conditions apply to Concordium Mobile Wallet users.</p>
+<p>Concordium Wallet for Mobile is a digital wallet that is offered by Concordium Software ApS (‘Concordium Software’). At developer.concordium.software you can read about how the app works. Concordium Software may continually change and/or adjust the functions of Concordium Wallet for Mobile. Concordium Software’s terms and conditions apply to Concordium Wallet for Mobile users.</p>
 <p>The wallet itself will register and use data about you. Concordium Software will not register or use data about you.</p>
 
 <h1>Terms and conditions for all services and functions</h1>
 <h2>Parties to the agreement</h2>
-<p>When you register with Concordium Mobile Wallet, you enter into an agreement with:</p>
+<p>When you register with Concordium Wallet for Mobile, you enter into an agreement with:</p>
 <p>Concordium Software ApS, Amaliegade 4, 1256 København K, Denmark. CVR no.: 42334758. Our email address is <a href="mailto:contact@concordium.software">contact@concordium.software</a></p>
 
-<h1>What you need in order to register with Concordium Mobile Wallet</h1>
-<p>The following is required to register with Concordium Mobile Wallet:</p>
+<h1>What you need in order to register with Concordium Wallet for Mobile</h1>
+<p>The following is required to register with Concordium Wallet for Mobile:</p>
 <ul>
 <li>Have a mobile device (e.g., smartphone or tablet). You can see which operating systems can be used at developer.concordium.software</li>
 <li>Verify your identity with an identity provider. The identity provider will know your identity.</li>
 </ul>
 <p>You must be at least 18 years old to register.</p>
 
-<h1>Registering as a Concordium Mobile Wallet user</h1>
-<p>When you register in Concordium Mobile Wallet, you will generate private keys and you will receive a unique 24-word recovery phrase that must be stored in a safe place. The recovery phrase is the “master key” for all of your accounts – it is your private keys in mnemonic form. These words, when entered into another Concordium Wallet (not including the Cordordium Desktop Wallet) in the correct order, will recover all of the private keys of accounts in your original wallet. The recovery phrase is used as your personal backup of your private keys. If you lose the private keys and the recovery phrase, you will lose access to any funds in the account(s) permanently.</p>
-<p>Before you can use Concordium Mobile Wallet, you will need to create a digital identity certificate with an identity provider by following the instructions in the app. An identity provider is a third-party supplier and independent of Concordium Software. The Concordium Mobile Wallet stores data in encrypted form from the identity provider, which Concordium Software does not have access to.</p>
-<p>After you have created your digital identity certificate and your first account, you can create additional accounts. Concordium Software may impose a limit to how many accounts you can create in a single Concordium Mobile Wallet.</p>
+<h1>Registering as a Concordium Wallet for Mobile user</h1>
+<p>When you register in Concordium Wallet for Mobile, you will generate private keys and you will receive a unique 24-word recovery phrase that must be stored in a safe place. The recovery phrase is the “master key” for all of your accounts – it is your private keys in mnemonic form. These words, when entered into another Concordium Wallet (not including the Cordordium Desktop Wallet) in the correct order, will recover all of the private keys of accounts in your original wallet. The recovery phrase is used as your personal backup of your private keys. If you lose the private keys and the recovery phrase, you will lose access to any funds in the account(s) permanently.</p>
+<p>Before you can use Concordium Wallet for Mobile, you will need to create a digital identity certificate with an identity provider by following the instructions in the app. An identity provider is a third-party supplier and independent of Concordium Software. The Concordium Wallet for Mobile stores data in encrypted form from the identity provider, which Concordium Software does not have access to.</p>
+<p>After you have created your digital identity certificate and your first account, you can create additional accounts. Concordium Software may impose a limit to how many accounts you can create in a single Concordium Wallet for Mobile.</p>
 
 <h1>Activation code and personal password</h1>
-<p>When you register in Concordium Mobile Wallet, you will need to create a personal passcode. If your mobile device supports it, you can subsequently activate your fingerprint or use facial recognition instead of the 6-digit password. You should be aware that all fingerprints/facial recognitions linked to your mobile device can be used to log on to Concordium Mobile Wallet and use the functions. You are therefore obliged to ensure that you have only activated your own fingerprints and your own facial recognition if you want to use them instead of the 6-digit password for access to Concordium Mobile Wallet. Concordium Mobile Wallet does not store your fingerprints or facial recognition.</p>
+<p>When you register in Concordium Wallet for Mobile, you will need to create a personal passcode. If your mobile device supports it, you can subsequently activate your fingerprint or use facial recognition instead of the 6-digit password. You should be aware that all fingerprints/facial recognitions linked to your mobile device can be used to log on to Concordium Wallet for Mobile and use the functions. You are therefore obliged to ensure that you have only activated your own fingerprints and your own facial recognition if you want to use them instead of the 6-digit password for access to Concordium Wallet for Mobile. Concordium Wallet for Mobile does not store your fingerprints or facial recognition.</p>
 
 <h1>Other obligations etc.</h1>
-<p>You have a duty to ensure that the details you provide are correct and updated at any given time. Your Concordium Mobile Wallet is personal and may be used only by you. You must not disclose your passwords to others, write them down, or save them on your mobile device. You must not disclose your 24-word recovery phrase to others or store them digitally on your computer or mobile device.</p>
-<p>Concordium Mobile Wallet must not be used for illegal activities or purposes.</p>
-<p>You must not use Concordium Mobile Wallet in a way that harasses other Concordium blockchain users.</p>
-<p>All transaction requests are irreversible. You are yourself responsible for ensuring that the recipient of a transaction via Concordium Mobile Wallet is the intended recipient, and you must verify that the transaction amount is correct. You are responsible for providing the correct account to persons and users who want to transfer funds to you.</p>
-<p>To prevent unauthorized use of Concordium Mobile Wallet, you must store your mobile device so that others cannot gain unauthorized access to it. If possible, you should lock your device with a password or keypad lock. Do not disclose the password to third parties.</p>
+<p>You have a duty to ensure that the details you provide are correct and updated at any given time. Your Concordium Wallet for Mobile is personal and may be used only by you. You must not disclose your passwords to others, write them down, or save them on your mobile device. You must not disclose your 24-word recovery phrase to others or store them digitally on your computer or mobile device.</p>
+<p>Concordium Wallet for Mobile must not be used for illegal activities or purposes.</p>
+<p>You must not use Concordium Wallet for Mobile in a way that harasses other Concordium blockchain users.</p>
+<p>All transaction requests are irreversible. You are yourself responsible for ensuring that the recipient of a transaction via Concordium Wallet for Mobile is the intended recipient, and you must verify that the transaction amount is correct. You are responsible for providing the correct account to persons and users who want to transfer funds to you.</p>
+<p>To prevent unauthorized use of Concordium Wallet for Mobile, you must store your mobile device so that others cannot gain unauthorized access to it. If possible, you should lock your device with a password or keypad lock. Do not disclose the password to third parties.</p>
 <p>You are obliged to verify your identity with an identity provider. Your identity can be revealed via the process of anonymity revocation, which can happen under stringent regulations, such as a court order.</p>
-<p>You are solely responsible for safekeeping your passwords, PINs, account keys, encryption keys, identity, and any other codes you use to access the Concordium Mobile Wallet or any information, CCD, or voucher. If you lose access to the Concordium Mobile Wallet, private keys, or identity, and you have not separately stored a backup of your accounts and the corresponding password(s), or your personal recovery phrase, you acknowledge and agree that any coins or tokens you have associated with that account will become inaccessible.</p>
-<p>Please note: If you have chosen to use assistants based on speech recognition (e.g., Siri) or patterns of use, this means that information about your use of Concordium Mobile Wallet, including recipients, amounts, and messages, is sent to the provider of the assistant. Your own use of any assistant determines what information is sent. Concordium Mobile Wallet does not send any information.</p>
+<p>You are solely responsible for safekeeping your passwords, PINs, account keys, encryption keys, identity, and any other codes you use to access the Concordium Wallet for Mobile or any information, CCD, or voucher. If you lose access to the Concordium Wallet for Mobile, private keys, or identity, and you have not separately stored a backup of your accounts and the corresponding password(s), or your personal recovery phrase, you acknowledge and agree that any coins or tokens you have associated with that account will become inaccessible.</p>
+<p>Please note: If you have chosen to use assistants based on speech recognition (e.g., Siri) or patterns of use, this means that information about your use of Concordium Wallet for Mobile, including recipients, amounts, and messages, is sent to the provider of the assistant. Your own use of any assistant determines what information is sent. Concordium Wallet for Mobile does not send any information.</p>
 
 <h1>Baking and Delegation</h1>
-<p>Node runners are awarded CCD for running nodes on the Concordium blockchain through a process called baking. Other CCD holders can be rewarded for supporting this process through delegation. The Concordium Mobile Wallet supports management of baking and delegation. Each account can only have one baking or delegation process active at any given time.</p>
+<p>Node runners are awarded CCD for running nodes on the Concordium blockchain through a process called baking. Other CCD holders can be rewarded for supporting this process through delegation. The Concordium Wallet for Mobile supports management of baking and delegation. Each account can only have one baking or delegation process active at any given time.</p>
 <p>While engaged in baking or delegation, the allocated CCD will remain in the account in a locked form. Termination of baking and delegation activates a cool-down period, where baking and delegation is still active, however, the CCDs will not be available in the wallet until the cool-down period is over. Read more about baking and delegation on developer.concordium.software</p>
 <p>When activating, managing and terminating baking and delegation blockchain transaction fees apply. You should always ensure you have sufficient CCD in your available balance to cover these fees.</p>
-<p>When activating baking and delegation from the Concordium Mobile Wallet you acknowledge and understand how these features work and that historic performance is not a guarantee for future performance.</p>
+<p>When activating baking and delegation from the Concordium Wallet for Mobile you acknowledge and understand how these features work and that historic performance is not a guarantee for future performance.</p>
 <p>Concordium Software does not assume any responsibility for the amount of rewards generated from baking and delegation.   </p>
 
 <h1>Term</h1>
-<p>This agreement will apply between you and Concordium Software from your download of the Concordium Mobile Wallet, and until you have completely removed the Concordium Mobile Wallet in its entirety from your device.</p>
+<p>This agreement will apply between you and Concordium Software from your download of the Concordium Wallet for Mobile, and until you have completely removed the Concordium Wallet for Mobile in its entirety from your device.</p>
 <p>The section <i>Concordium Software’s liability for damages</i> shall apply indefinitely.</p>
 
 <h1>Fees and charges</h1>
-<p>Concordium Software currently does not charge any fee for registration with Concordium Mobile Wallet. Concordium Mobile Wallet does not charge a transaction fee; however, you have to pay a transaction fee for transactions on the blockchain.</p>
-<p>Any other costs and charges related to your use of the Concordium Mobile Wallet shall be paid by you, including but not limited to costs to the identity provider, if any.</p>
+<p>Concordium Software currently does not charge any fee for registration with Concordium Wallet for Mobile. Concordium Wallet for Mobile does not charge a transaction fee; however, you have to pay a transaction fee for transactions on the blockchain.</p>
+<p>Any other costs and charges related to your use of the Concordium Wallet for Mobile shall be paid by you, including but not limited to costs to the identity provider, if any.</p>
 <p>If we introduce new functions, features, products, or services, these may be subject to fees from the start without you receiving any notice of changed terms and conditions. You will always be informed about the fee before you register for the function, feature, product, or service.</p>
 
 <h1>Changes</h1>
 <p>You will be notified on developer.concordium.software if we change the terms and conditions. We may change the terms and conditions without notice. You can read the terms and conditions at developer.concordium.software, from which you can also print, download, or email them.</p>
-<p>If you do not wish to be covered by the new terms and conditions, you must notify us before the new terms and conditions enter into force. If you notify us that you do not wish to be covered by the new terms and conditions, we will consider the Concordium Mobile Wallet agreement to be terminated from the date on which the new terms and conditions enter into force. If we do not hear from you, we will regard it as your acceptance of the changes.</p>
+<p>If you do not wish to be covered by the new terms and conditions, you must notify us before the new terms and conditions enter into force. If you notify us that you do not wish to be covered by the new terms and conditions, we will consider the Concordium Wallet for Mobile agreement to be terminated from the date on which the new terms and conditions enter into force. If we do not hear from you, we will regard it as your acceptance of the changes.</p>
 
 <h1>Intellectual property rights and license</h1>
-<p>Concordium Software retains all right, title, and interest in and to all of Concordium Software’s brands, logos, and trademarks, including, but not limited to, Concordium Mobile Wallet, Concordium Desktop Wallet, Concordium Browser Wallet, Concordium Client, and variations of the wording of the said brands, logos, and trademarks.</p>
+<p>Concordium Software retains all right, title, and interest in and to all of Concordium Software’s brands, logos, and trademarks, including, but not limited to, Concordium Wallet for Mobile, Concordium Desktop Wallet, Concordium Browser Wallet, Concordium Client, and variations of the wording of the said brands, logos, and trademarks.</p>
 
 <h2>Our notification of unauthorized use and security threats</h2>
 <p>We may issue information about general security threats through developer.concordium.software and social media.</p>
 
 <h1>Concordium Software’s liability for damages</h1>
-<p>Concordium Software is not liable for damages for late or defective performance of the Concordium Mobile Wallet and/or our contractual obligations resulting from error or negligence.</p>
+<p>Concordium Software is not liable for damages for late or defective performance of the Concordium Wallet for Mobile and/or our contractual obligations resulting from error or negligence.</p>
 <p>Even in areas in which stricter liability applies, Concordium Software is not liable for losses arising from</p>
 <ul>
 <li>Breakdown of or lack of access to IT systems or damage to data in these systems attributable to any of the events listed below regardless of whether Concordium Software or a third-party supplier is responsible for the operation of these systems, power failure, or breakdown of Concordium Software’s power supply system or telecommunications, statutory intervention or administrative acts, acts of God, war, revolution, riot, civil unrest, sabotage, terrorism, or vandalism (including computer virus attacks or hacking).</li>
 <li>Strikes, lockouts, boycotts, or picketing, regardless of whether Concordium Software, its organization or closely related companies, is itself a party to or has started such an industrial dispute and regardless of its cause. This also applies if the dispute affects only parts of Concordium Software.</li>
 <li>Other circumstances beyond or within the control of Concordium Software.</li>
 </ul>
-<p>Please be advised that Concordium Software is not liable for any defects or deficiencies in the goods or services for which you pay using Concordium Mobile Wallet. Concordium Software accepts no liability for the fundraising campaigns to which you make contributions using Concordium Mobile Wallet. If you have any complaints regarding the delivered goods, services, or fundraising campaigns, you must contact the seller and/or the fundraiser.</p>
+<p>Please be advised that Concordium Software is not liable for any defects or deficiencies in the goods or services for which you pay using Concordium Wallet for Mobile. Concordium Software accepts no liability for the fundraising campaigns to which you make contributions using Concordium Wallet for Mobile. If you have any complaints regarding the delivered goods, services, or fundraising campaigns, you must contact the seller and/or the fundraiser.</p>
 <p>Concordium Software does not undertake any liability for the conduct of the seller/fundraiser in general.</p>
 
 <h1>Privacy</h1>
-<p>Concordium Software respects your privacy to the effect that Concordium Software will not monitor, edit, or disclose any personal information about you or your account, including its contents or your use of the Concordium Mobile Wallet, without your prior consent unless Concordium Software in good faith beliefs that such action is necessary to: (i) comply with legal process or other legal requirements of any governmental authority; (ii) protect and defend the rights or property of Concordium Software; (iii) enforce this Agreement; (iv) protect the interests of users of the Concordium Mobile Wallet other than you or any other person; (v) operate or conduct maintenance and repair of Concordium’s services or equipment, including the Concordium Mobile Wallet as authorized by law; or (vi) if your identity is revoked in accordance with the identity revocation process as required to comply with (i). You are assumed to have no expectation of privacy with respect to the Internet generally. Your IP address is transmitted and recorded with each message or other information you send from the Concordium Mobile Wallet. When you create an identity with a third party supplier, you have entered an agreement directly with such a third party supplier and such a third party supplier will store data about you and in this case, the third party supplier’s privacy policy and terms and conditions apply.</p>
+<p>Concordium Software respects your privacy to the effect that Concordium Software will not monitor, edit, or disclose any personal information about you or your account, including its contents or your use of the Concordium Wallet for Mobile, without your prior consent unless Concordium Software in good faith beliefs that such action is necessary to: (i) comply with legal process or other legal requirements of any governmental authority; (ii) protect and defend the rights or property of Concordium Software; (iii) enforce this Agreement; (iv) protect the interests of users of the Concordium Wallet for Mobile other than you or any other person; (v) operate or conduct maintenance and repair of Concordium’s services or equipment, including the Concordium Wallet for Mobile as authorized by law; or (vi) if your identity is revoked in accordance with the identity revocation process as required to comply with (i). You are assumed to have no expectation of privacy with respect to the Internet generally. Your IP address is transmitted and recorded with each message or other information you send from the Concordium Wallet for Mobile. When you create an identity with a third party supplier, you have entered an agreement directly with such a third party supplier and such a third party supplier will store data about you and in this case, the third party supplier’s privacy policy and terms and conditions apply.</p>
 
 <h1>Data retention and deletion</h1>
 <p>Concordium as a company does not retain and therefore cannot delete any user identifiable information. However, to get an account you must obtain an identity object issued by an identity provider. The identity object contains some user identifiable information such as your name. By default the identity object is only stored encrypted in the wallet and is not visible on the chain. Some data derived from the identity object is sent to the chain, but by default it is not possible to obtain user identifiable information from the information stored in the account on the chain. However, if you choose to reveal any attributes associated with your account, these attributes will be visible on-chain, and can never be deleted.</p>
@@ -159,16 +159,16 @@
 
 <h1>New copy of these terms and conditions</h1>
 <p>You can always find the latest version on developer.concordium.software</p>
-<p>You can contact Concordium Mobile Wallet support via <a href="mailto:support@concordium.software">support@concordium.software</a></p>
+<p>You can contact Concordium Wallet for Mobile support via <a href="mailto:support@concordium.software">support@concordium.software</a></p>
 
 <h1>Acceptance</h1>
-<p>The first time you open the Concordium Mobile Wallet, you’ll be asked to click “Yes, I Accept” to confirm that you agree to these terms and conditions.</p>
+<p>The first time you open the Concordium Wallet for Mobile, you’ll be asked to click “Yes, I Accept” to confirm that you agree to these terms and conditions.</p>
     ]]></string>
     <string name="terms_continue">Yes, I accept</string>
 
     <!-- Intro start-->
     <string name="intro_start_header">Before you begin</string>
-    <string name="intro_start_info">Before you start using the Concordium Mobile Wallet, you have to set up a passcode and optionally biometrics.\n\nIt is very important to keep your passcode safe, because it is the only way to access your accounts. Concordium is not be able to change your passcode or help you unlock your wallet if you lose your passcode.\n\nSimilarly, if someone gets your passcode, they will be able to access your accounts.\n\nSo remember to keep your passcode safe!</string>
+    <string name="intro_start_info">Before you start using the Concordium Wallet for Mobile, you have to set up a passcode and optionally biometrics.\n\nIt is very important to keep your passcode safe, because it is the only way to access your accounts. Concordium is not be able to change your passcode or help you unlock your wallet if you lose your passcode.\n\nSimilarly, if someone gets your passcode, they will be able to access your accounts.\n\nSo remember to keep your passcode safe!</string>
     <string name="intro_start_confirm">Continue</string>
 
     <!-- Intro setup-->
@@ -197,7 +197,7 @@
     <string name="pass_phrase_recover_input_clear_all">Clear all</string>
     <string name="pass_phrase_recover_input_clear_below">Clear below</string>
     <string name="pass_phrase_recover_incorrect">Invalid secret recovery phrase. Please verify that all words are entered correctly.</string>
-    <string name="pass_phrase_recover_success">Your secret recovery phrase has been successfully entered! Tab continue to recover your accounts and identities.</string>
+    <string name="pass_phrase_recover_success">Your secret recovery phrase has been successfully entered! Tap continue to recover your accounts and identities.</string>
     <string name="pass_phrase_recover_input_title">Your secret recovery phrase</string>
 
     <string name="pass_phrase_recover_process_title">Recovering your accounts and identities</string>
@@ -586,7 +586,7 @@
     <string name="identities_overview_create_account_title">Create new account</string>
     <string name="identities_overview_create_account_select_identity">Select identity to submit account with</string>
     <string name="identities_overview_identity_verified_title">Identity verified</string>
-    <string name="identities_overview_identity_verified_message">Identity %1$s has been verified by the identity provider. You can now start using the identity to create accounts in the Concordium Mobile Wallet.</string>
+    <string name="identities_overview_identity_verified_message">Identity %1$s has been verified by the identity provider. You can now start using the identity to create accounts in the Concordium Wallet for Mobile.</string>
     <string name="identities_overview_identity_create_account_now">Create account now</string>
     <string name="identities_overview_identity_later">Later</string>
     <string name="identities_overview_identity_rejected_title">Identity rejected</string>
@@ -931,18 +931,18 @@
     <string name="account_details_shielded_warning_dismiss">Don’t show again</string>
 
     <string name="force_update_needed_title">Update required</string>
-    <string name="force_update_needed_message">You must update your Concordium Mobile Wallet to continue.</string>
+    <string name="force_update_needed_message">You must update your Concordium Wallet for Mobile to continue.</string>
     <string name="force_update_needed_update_now">Update now</string>
     <string name="force_update_warning_title">Update ready</string>
-    <string name="force_update_warning_message">There is a new update for the Concordium Mobile Wallet.</string>
+    <string name="force_update_warning_message">There is a new update for the Concordium Wallet for Mobile.</string>
     <string name="force_update_warning_update_now">Update now</string>
     <string name="force_update_warning_remind_me">Remind me next time I open the wallet</string>
 
     <string name="force_update_intro_needed_title">Update required</string>
-    <string name="force_update_intro_needed_message">You must update your Concordium Mobile Wallet to continue.</string>
+    <string name="force_update_intro_needed_message">You must update your Concordium Wallet for Mobile to continue.</string>
     <string name="force_update_intro_needed_update_now">Update now</string>
     <string name="force_update_intro_warning_title">Update ready</string>
-    <string name="force_update_intro_warning_message">There is a new update for the Concordium Mobile Wallet.</string>
+    <string name="force_update_intro_warning_message">There is a new update for the Concordium Wallet for Mobile.</string>
     <string name="force_update_intro_warning_update_now">Update now</string>
     <string name="force_update_intro_warning_remind_me">Remind me next time I open the wallet</string>
 

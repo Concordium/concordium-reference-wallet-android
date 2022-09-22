@@ -213,8 +213,6 @@
         </activity>
         <activity
             android:name=".ui.identity.identityconfirmed.IdentityConfirmedActivity"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.identity.identityproviderwebview.IdentityProviderWebViewActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.identity.identitiesoverview.IdentitiesOverviewActivity"

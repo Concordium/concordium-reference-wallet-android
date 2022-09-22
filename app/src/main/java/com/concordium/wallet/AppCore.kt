@@ -24,7 +24,7 @@ class AppCore(val context: Context) {
     var closingPoolsChecked = false
     var sessionCookie: String? = null
     var appSettingsForceUpdateChecked = false
-    var newIdentityPending: Identity? = null
+    var newIdentities = mutableMapOf<Int, Identity>()
 
     private val authenticationManagerGeneric: AuthenticationManager = AuthenticationManager(session.getBiometricAuthKeyName())
     private var authenticationManagerReset: AuthenticationManager = authenticationManagerGeneric

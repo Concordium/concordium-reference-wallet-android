@@ -63,6 +63,7 @@ class AccountDetailsTransfersFragment : Fragment() {
         accountDetailsViewModel.transferListLiveData.observe(this, Observer { transferList ->
             transferList?.let {
                 transactionAdapter.setIsShielded(accountDetailsViewModel.isShielded)
+                
                 val filteredList = transferList.filterIndexed { index, currentItem ->
                         var result = true
                         if (currentItem.getItemType() == AdapterItem.ItemType.Header)
@@ -72,18 +73,21 @@ class AccountDetailsTransfersFragment : Fragment() {
                         result
                 }
 
-                transactionAdapter.setData(filteredList)
-
-                transactionAdapter.removeFooter()
-                if (accountDetailsViewModel.hasMoreRemoteTransactionsToLoad) {
-                    transactionAdapter.addFooter()
+                if (filteredList.isNotEmpty()) {
+                    transactionAdapter.setData(filteredList)
+                    transactionAdapter.removeFooter()
+                    if (accountDetailsViewModel.hasMoreRemoteTransactionsToLoad) {
+                        transactionAdapter.addFooter()
+                    }
+                    transactionAdapter.notifyDataSetChanged()
                 }
-                transactionAdapter.notifyDataSetChanged()
-                if (transferList.isEmpty()) {
+
+                if (filteredList.isEmpty()) {
                     binding.noTransfersTextview.visibility = View.VISIBLE
                 } else {
                     binding.noTransfersTextview.visibility = View.GONE
                 }
+
                 accountDetailsViewModel.allowScrollToLoadMore = true
             }
         })

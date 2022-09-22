@@ -63,7 +63,8 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
                         } else if (newStatus == IdentityStatus.ERROR) {
                             identityRepository.update(identity)
                         }
-                        App.appCore.newIdentityPending = identity
+                        if (App.appCore.newIdentities[identity.id] == null)
+                            App.appCore.newIdentities[identity.id] = identity
                     }
                 } catch (e: FileNotFoundException) {
                 } catch (e: Exception) {

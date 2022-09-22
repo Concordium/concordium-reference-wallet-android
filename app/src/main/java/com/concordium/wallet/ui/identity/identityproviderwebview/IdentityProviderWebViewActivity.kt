@@ -6,8 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import androidx.browser.customtabs.CustomTabColorSchemeParams
-import androidx.browser.customtabs.CustomTabsIntent
+import androidx.browser.customtabs.*
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
@@ -50,7 +49,7 @@ class IdentityProviderWebViewActivity : BaseActivity() {
         Preferences(context, preferenceName, preferenceMode) {
         fun getIdentityCreationData(): IdentityCreationData? {
             val json = getString(KEY_IDENTITY_CREATION_DATA)
-            return if(json == null) {
+            return if (json == null) {
                 null
             } else {
                 Gson().fromJson(json, IdentityCreationData::class.java)
@@ -58,6 +57,12 @@ class IdentityProviderWebViewActivity : BaseActivity() {
         }
         fun setIdentityCreationData(data: IdentityCreationData?) {
             setString(KEY_IDENTITY_CREATION_DATA, if(data == null){ null } else { Gson().toJson(data) })
+        }
+        fun getShowForFirstIdentityFromCallback(): Boolean {
+            return getBoolean(SHOW_FOR_FIRST_IDENTITY, false)
+        }
+        fun setShowForFirstIdentityFromCallback(isFirst: Boolean) {
+            setBoolean(SHOW_FOR_FIRST_IDENTITY, isFirst)
         }
     }
 
@@ -71,7 +76,11 @@ class IdentityProviderWebViewActivity : BaseActivity() {
         binding = ActivityIdentityProviderWebviewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        showForFirstIdentity = intent.extras?.getBoolean(SHOW_FOR_FIRST_IDENTITY, false) ?: false
+        showForFirstIdentity = preferences.getShowForFirstIdentityFromCallback()
+        preferences.setShowForFirstIdentityFromCallback(false)
+
+        if (!showForFirstIdentity)
+            showForFirstIdentity = intent.extras?.getBoolean(SHOW_FOR_FIRST_IDENTITY, false) ?: false
 
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_webview_title)
 
@@ -80,14 +89,12 @@ class IdentityProviderWebViewActivity : BaseActivity() {
         val supportCode = BitSet(10) // room for 10 flags
         val identityCreationData = preferences.getIdentityCreationData()
 
-        // In the case where the activity has been force closed, onCreate needs
-        // to handle to receive the callbacl uri
+        // In the case where the activity has been force closed, onCreate needs to handle to receive the callback uri
         intent.data?.let { uri ->
             supportCode.set(IDENTITY_CALLBACK_ERROR_BIT_INDEX_DATAWEREAVAILABLE) // data were available
-
-            if (hasValidCallbackUri(uri)){
+            if (hasValidCallbackUri(uri)) {
                 supportCode.set(IDENTITY_CALLBACK_ERROR_BIT_INDEX_VALIDCALLBACKURI) // valid callback
-                if(identityCreationData != null) {
+                if (identityCreationData != null) {
                     supportCode.set(IDENTITY_CALLBACK_ERROR_BIT_INDEX_NOIDENTITYDATA) // identityCreationData was not null
                     handled = true
                     initializeViewModel()
@@ -102,8 +109,7 @@ class IdentityProviderWebViewActivity : BaseActivity() {
         }
         if (!handled) {
             // Initial case, where we come from the previous page
-            val tempData =
-                intent.extras!!.getSerializable(EXTRA_IDENTITY_CREATION_DATA) as IdentityCreationData?
+            val tempData = intent.extras!!.getSerializable(EXTRA_IDENTITY_CREATION_DATA) as IdentityCreationData?
             if (tempData != null) {
                 preferences.setIdentityCreationData(tempData)
                 handled = true
@@ -119,6 +125,12 @@ class IdentityProviderWebViewActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
+        if (chromeLaunched)
+            finish()
+    }
+
+    override fun onPause() {
+        super.onPause()
         if (chromeLaunched)
             finish()
     }
@@ -250,6 +262,7 @@ class IdentityProviderWebViewActivity : BaseActivity() {
         // Try to use Chrome browser to show url, if Chrome is not installed an ActivityNotFoundException will be thrown
         try {
             launchChromeCustomTab(url, true)
+            preferences.setShowForFirstIdentityFromCallback(showForFirstIdentity)
             chromeLaunched = true
             return
         } catch (e: ActivityNotFoundException) {
@@ -257,6 +270,7 @@ class IdentityProviderWebViewActivity : BaseActivity() {
         // If not Chrome let the default browser with Custom Tabs handle this
         try {
             launchChromeCustomTab(url)
+            preferences.setShowForFirstIdentityFromCallback(showForFirstIdentity)
             chromeLaunched = true
             return
         } catch (e: ActivityNotFoundException) {
@@ -274,6 +288,7 @@ class IdentityProviderWebViewActivity : BaseActivity() {
         if (forceChromeBrowser) {
             customTabsIntent.intent.setPackage("com.android.chrome")
         }
+
         customTabsIntent.launchUrl(this, Uri.parse(url))
     }
 }
