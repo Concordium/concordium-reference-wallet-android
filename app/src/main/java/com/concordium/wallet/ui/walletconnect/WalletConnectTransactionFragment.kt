@@ -1,12 +1,11 @@
 package com.concordium.wallet.ui.walletconnect
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.concordium.wallet.R
-import com.concordium.wallet.databinding.FragmentWalletConnectApproveBinding
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentWalletConnectTransactionBinding
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.WALLET_CONNECT_DATA
 
@@ -43,31 +42,24 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
     }
 
     private fun initViews() {
-        /*
-        binding.accountName.text = _viewModel.walletConnectData.account?.name ?: ""
-        binding.serviceName.text = _viewModel.walletConnectData.sessionProposal?.name ?: ""
-        binding.disconnect.setOnClickListener {
-            showDisconnectWarning()
-        }*/
+        binding.accountToSendFrom.text = "test 1"
+        binding.amount.text = "test 2"
+        binding.contractAddress.text = "test 3"
+        binding.parameters.text = "test 4"
+        binding.estimatedTransactionFee.text = getString(R.string.wallet_connect_transaction_estimated_transaction_fee, CurrencyUtil.formatGTU(12345))
+        binding.reject.setOnClickListener {
+
+        }
+        binding.submit.setOnClickListener {
+
+        }
     }
 
     private fun initObservers() {
         /*
         _viewModel.connectStatus.observe(viewLifecycleOwner) { isConnected ->
-            if (isConnected) {
-                binding.statusImageview.setImageResource(R.drawable.ic_big_logo_ok)
-                binding.disconnect.isEnabled = true
-                binding.header1.visibility = View.GONE
-                binding.header2.text = getString(R.string.wallet_connect_connecting_is_connected_to)
-                binding.waitForActions.visibility = View.VISIBLE
-            }
-            else {
-                binding.statusImageview.setImageResource(R.drawable.ic_logo_icon_pending)
-                binding.disconnect.isEnabled = false
-                binding.header1.visibility = View.VISIBLE
-                binding.header2.text = getString(R.string.wallet_connect_connecting_account_to)
-                binding.waitForActions.visibility = View.GONE
-            }
+            binding.waitForActions.visibility = View.GONE
+        }
         }*/
     }
 }

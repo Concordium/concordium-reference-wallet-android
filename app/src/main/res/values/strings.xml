@@ -814,7 +814,6 @@
     <string name="wallet_connect_accounts_title">Choose an account to open session</string>
     <string name="scan_qr_title_wc">Scan to Open Session</string>
     <string name="wallet_connect_choose_account_title">Choose which account you want to open the session with.</string>
-
     <string name="wallet_connect_connect_session_text_1">You are about to open a session between your account</string>
     <string name="wallet_connect_connect_session_text_2">and the external service</string>
     <string name="wallet_connect_connect_session_text_3">The service will be able to see:</string>
@@ -831,6 +830,14 @@
     <string name="wallet_connect_disconnect_warning_button_stay">Stay</string>
     <string name="wallet_connect_disconnect_warning_button_disconnect">Disconnect</string>
     <string name="wallet_connect_transaction_approve">Approve Transaction?</string>
+    <string name="wallet_connect_transaction_receipt_title">Transaction: Update Contract</string>
+    <string name="wallet_connect_transaction_sender_account">Sender account</string>
+    <string name="wallet_connect_transaction_amount">Amount</string>
+    <string name="wallet_connect_transaction_contract_address">Contract address</string>
+    <string name="wallet_connect_transaction_parameters">Parameters</string>
+    <string name="wallet_connect_transaction_reject">Reject</string>
+    <string name="wallet_connect_transaction_submit">Submit</string>
+    <string name="wallet_connect_transaction_estimated_transaction_fee">Estimated transaction fee:\nϾ%1$s</string>
 
     <!-- ***** More ***** -->
 

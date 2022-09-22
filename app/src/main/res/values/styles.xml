@@ -129,7 +129,7 @@
 
     <style name="TextView.Standard.Error">
         <item name="android:textColor">@color/text_pink</item>
-        <item name="android:textSize">12dp</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="TextView.Standard.Bold">
@@ -202,6 +202,10 @@
         <item name="android:fontFamily">monospace</item>
     </style>
 
+    <style name="TextView.Mono.XSmall">
+        <item name="android:textSize">8sp</item>
+        <item name="android:fontFamily">monospace</item>
+    </style>
 
     <style name="TextView.SendFundBalance">
         <item name="android:textSize">15sp</item>
