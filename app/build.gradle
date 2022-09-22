@@ -259,6 +259,10 @@ android {
     packagingOptions {
         resources {
             excludes += ['META-INF/atomicfu.kotlin_module']
+            excludes += ['META-INF/INDEX.LIST']
+            excludes += ['META-INF/DEPENDENCIES']
+            excludes += ['META-INF/LICENSE.md']
+            excludes += ['META-INF/NOTICE.md']
         }
     }
 
@@ -338,5 +342,6 @@ dependencies {
     implementation "cash.z.ecc.android:kotlin-bip39:1.0.4"
 
     // Wallet Connect (https://github.com/WalletConnect/WalletConnectKotlinV2/releases/)
-    implementation("com.github.WalletConnect:WalletConnectKotlinV2:2.0.0-rc.4")
+    implementation("com.walletconnect:android-core:1.0.0")
+    implementation("com.walletconnect:sign:2.0.0-rc.5")
 }

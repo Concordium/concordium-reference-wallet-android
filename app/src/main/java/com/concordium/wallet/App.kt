@@ -3,6 +3,8 @@ package com.concordium.wallet
 import android.app.Application
 import android.content.Context
 import com.concordium.wallet.util.Log
+import com.walletconnect.android.RelayClient
+import com.walletconnect.android.connection.ConnectionType
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
 
@@ -33,16 +35,17 @@ class App : Application(){
         val projectId = "76324905a70fe5c388bab46d3e0564dc"
         val relayServerUrl = "wss://relay.walletconnect.com?projectId=$projectId"
 
+        RelayClient.initialize(relayServerUrl = relayServerUrl, connectionType = ConnectionType.AUTOMATIC, application = this)
+
         val initString = Sign.Params.Init(
-            application = this,
-            relayServerUrl = relayServerUrl,
             metadata = Sign.Model.AppMetaData(
                 name = "Concordium Wallet",
                 description = "Concordium Wallet description",
                 url = "https://concordium.com",
                 icons = listOf("https://gblobscdn.gitbook.com/spaces%2F-LJJeCjcLrr53DcT1Ml7%2Favatar.png?alt=media"),
                 redirect = "kotlin-wallet-wc:/request"
-            )
+            ),
+            relay = RelayClient
         )
 
         println("LC -> CALL INIT")
