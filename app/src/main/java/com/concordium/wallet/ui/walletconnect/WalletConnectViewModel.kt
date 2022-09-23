@@ -28,9 +28,11 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val accounts: MutableLiveData<List<AccountWithIdentity>> by lazy { MutableLiveData<List<AccountWithIdentity>>() }
     val chooseAccount: MutableLiveData<AccountWithIdentity> by lazy { MutableLiveData<AccountWithIdentity>() }
     val connect: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val decline: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val connectStatus: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val serviceName: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val permissions: MutableLiveData<List<String>> by lazy { MutableLiveData<List<String>>() }
+    val transactionSubmittedOkay: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val walletConnectData = WalletConnectData()
     private val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
     private var settleSessionResponseResult: Sign.Model.SettledSessionResponse.Result? = null
@@ -116,6 +118,10 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             }
             ping()
         }
+    }
+
+    fun sessionName() : String {
+        return walletConnectData.sessionProposal?.name ?: ""
     }
 
     override fun onConnectionStateChange(state: Sign.Model.ConnectionState) {

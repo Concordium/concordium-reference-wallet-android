@@ -838,6 +838,11 @@
     <string name="wallet_connect_transaction_reject">Reject</string>
     <string name="wallet_connect_transaction_submit">Submit</string>
     <string name="wallet_connect_transaction_estimated_transaction_fee">Estimated transaction fee:\nϾ%1$s</string>
+    <string name="wallet_connect_transaction_submitted_title">Transaction submitted</string>
+    <string name="wallet_connect_transaction_submitted_ok">Okay</string>
+    <string name="wallet_connect_session">Wallet Connect session</string>
+    <string name="wallet_connect_session_with">Session with %1$s</string>
+    <string name="wallet_connect_decline_connect">Decline or connect</string>
 
     <!-- ***** More ***** -->
 

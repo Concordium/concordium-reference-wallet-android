@@ -60,10 +60,8 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
     }
 
     private fun setupToolbar() {
-        setSupportActionBar(binding.toolbarLayout.toolbar)
-        supportActionBar?.setTitle(R.string.main_title)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.main_title)
         supportActionBar?.setCustomView(R.layout.app_toolbar_main)
-
         binding.toolbarLayout.addAccount.setOnClickListener {
             gotoCreateAccount()
         }
@@ -177,6 +175,7 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
         val fragment: BaseFragment
         when (state) {
             MainViewModel.State.AccountOverview -> {
+                setActionBarTitle(R.string.main_title)
                 fragment = AccountsOverviewFragment()
             }
         }

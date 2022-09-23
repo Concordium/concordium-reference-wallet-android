@@ -45,7 +45,7 @@ class WalletConnectPairFragment : WalletConnectBaseFragment() {
             _viewModel.connect.postValue(true)
         }
         binding.decline.setOnClickListener {
-            _viewModel.disconnectWalletConnect()
+            _viewModel.decline.postValue(true)
         }
     }
 

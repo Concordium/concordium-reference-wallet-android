@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentWalletConnectApproveBinding
 import com.concordium.wallet.ui.MainActivity
+import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.WALLET_CONNECT_DATA
 
 class WalletConnectApproveFragment : WalletConnectBaseFragment() {
@@ -45,7 +46,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
 
     private fun initViews() {
         binding.accountName.text = _viewModel.walletConnectData.account?.name ?: ""
-        binding.serviceName.text = _viewModel.walletConnectData.sessionProposal?.name ?: ""
+        binding.serviceName.text = _viewModel.sessionName()
         binding.disconnect.setOnClickListener {
             showDisconnectWarning()
         }
@@ -59,6 +60,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
                 binding.header1.visibility = View.GONE
                 binding.header2.text = getString(R.string.wallet_connect_connecting_is_connected_to)
                 binding.waitForActions.visibility = View.VISIBLE
+                (activity as BaseActivity).setActionBarTitle(getString(R.string.wallet_connect_session_with, _viewModel.sessionName()))
             }
             else {
                 binding.statusImageview.setImageResource(R.drawable.ic_logo_icon_pending)
@@ -66,6 +68,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
                 binding.header1.visibility = View.VISIBLE
                 binding.header2.text = getString(R.string.wallet_connect_connecting_account_to)
                 binding.waitForActions.visibility = View.GONE
+                (activity as BaseActivity).setActionBarTitle(getString(R.string.wallet_connect_session))
             }
         }
     }
@@ -73,7 +76,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
     private fun showDisconnectWarning() {
         val builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.wallet_connect_disconnect_warning_title)
-        builder.setMessage(getString(R.string.wallet_connect_disconnect_warning_message, _viewModel.walletConnectData.sessionProposal?.name ?: ""))
+        builder.setMessage(getString(R.string.wallet_connect_disconnect_warning_message, _viewModel.sessionName()))
         builder.setPositiveButton(getString(R.string.wallet_connect_disconnect_warning_button_disconnect)) { _, _ ->
             _viewModel.disconnectWalletConnect()
             val intent = Intent(activity, MainActivity::class.java)

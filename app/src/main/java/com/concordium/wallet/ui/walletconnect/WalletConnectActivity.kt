@@ -21,6 +21,11 @@ class WalletConnectActivity : BaseActivity() {
     companion object {
         const val FROM_DEEP_LINK = "FROM_DEEP_LINK"
         const val WC_URI = "WC_URI"
+        const val PAGE_CHOOSE_ACCOUNT = 0
+        const val PAGE_PAIR = 1
+        const val PAGE_APPROVE = 2
+        const val PAGE_TRANSACTION = 3
+        const val PAGE_TRANSACTION_SUBMITTED = 4
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,7 +53,7 @@ class WalletConnectActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        if (currentPage != 2) {
+        if (currentPage < PAGE_APPROVE) {
             if (!fromDeepLink) {
                 super.onBackPressed()
             }
@@ -62,7 +67,6 @@ class WalletConnectActivity : BaseActivity() {
                     }
                 }
             }
-
         }
     }
 
@@ -92,6 +96,12 @@ class WalletConnectActivity : BaseActivity() {
         viewModel.connect.observe(this) {
             approveView()
         }
+        viewModel.decline.observe(this) {
+            accountsView()
+        }
+        viewModel.transactionSubmittedOkay.observe(this) {
+            approveView()
+        }
     }
 
     private fun showWaiting(waiting: Boolean) {
@@ -99,18 +109,37 @@ class WalletConnectActivity : BaseActivity() {
     }
 
     private fun accountsView() {
-        currentPage = 0
+        currentPage = PAGE_CHOOSE_ACCOUNT
+        showActionBarBack()
+        setActionBarTitle(getString(R.string.wallet_connect_accounts_title))
         supportFragmentManager.beginTransaction().add(R.id.fragment_container, WalletConnectChooseAccountFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
     }
 
     private fun pairView() {
-        currentPage = 1
+        currentPage = PAGE_PAIR
+        showActionBarBack()
+        setActionBarTitle(getString(R.string.wallet_connect_decline_connect))
         supportFragmentManager.beginTransaction().add(R.id.fragment_container, WalletConnectPairFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
     }
 
     private fun approveView() {
-        currentPage = 2
+        currentPage = PAGE_APPROVE
         hideActionBarBack()
+        setActionBarTitle(getString(R.string.wallet_connect_session))
         supportFragmentManager.beginTransaction().add(R.id.fragment_container, WalletConnectApproveFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
+    }
+
+    private fun transactionView() {
+        currentPage = PAGE_TRANSACTION
+        hideActionBarBack()
+        setActionBarTitle(getString(R.string.wallet_connect_session_with, viewModel.sessionName()))
+        supportFragmentManager.beginTransaction().add(R.id.fragment_container, WalletConnectTransactionFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
+    }
+
+    private fun transactionSubmittedView() {
+        currentPage = PAGE_TRANSACTION_SUBMITTED
+        hideActionBarBack()
+        setActionBarTitle(getString(R.string.wallet_connect_session_with, viewModel.sessionName()))
+        supportFragmentManager.beginTransaction().add(R.id.fragment_container, WalletConnectTransactionSubmittedFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
     }
 }
