@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
@@ -31,11 +30,11 @@ abstract class BaseDelegationBakerActivity : BaseActivity() {
     }
 
     protected fun initializeWaitingLiveData(progressLayout: View) {
-        viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
+        viewModel.waitingLiveData.observe(this) { waiting ->
             waiting?.let {
                 showWaiting(progressLayout, waiting)
             }
-        })
+        }
         viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
                 errorLiveData(value)
@@ -44,23 +43,22 @@ abstract class BaseDelegationBakerActivity : BaseActivity() {
     }
 
     protected fun initializeTransactionFeeLiveData(progressLayout: View, estimatedTransactionFee: TextView) {
-        viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<Long?, Int?>> {
-            override fun onChanged(response: Pair<Long?, Int?>?) {
-                response?.first?.let {
-                    estimatedTransactionFee.text = getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(it))
-                    showWaiting(progressLayout, false)
-                }
+        viewModel.transactionFeeLiveData.observe(this) { response ->
+            response?.first?.let {
+                estimatedTransactionFee.text =
+                    getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee,
+                        CurrencyUtil.formatGTU(it))
+                showWaiting(progressLayout, false)
             }
-        })
+        }
         viewModel.loadTransactionFee(false)
     }
 
     protected fun initializeShowAuthenticationLiveData() {
-        val authenticationText = authenticateText(viewModel.shouldUseBiometrics(), viewModel.usePasscode())
         viewModel.showAuthenticationLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
-                    showAuthentication(authenticationText, viewModel.shouldUseBiometrics(), viewModel.usePasscode(), object : AuthenticationCallback{
+                    showAuthentication(authenticateText(), object : AuthenticationCallback{
                         override fun getCipherForBiometrics() : Cipher?{
                             return viewModel.getCipherForBiometrics()
                         }

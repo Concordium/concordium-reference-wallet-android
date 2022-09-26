@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.backend.BackendError
@@ -63,7 +64,7 @@ abstract class BaseAccountActivity : BaseActivity() {
     protected abstract fun accountCreated(account: Account)
 
     protected fun showAuthentication() {
-        if (viewModelNewAccount.shouldUseBiometrics()) {
+        if (App.appCore.getCurrentAuthenticationManager().useBiometrics()) {
             showBiometrics()
         } else {
             showPasswordDialog()

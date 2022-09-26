@@ -82,10 +82,6 @@ class AlterPasswordViewModel(application: Application) :
 
     }
 
-    fun shouldUseBiometrics(): Boolean {
-        return App.appCore.getCurrentAuthenticationManager().useBiometrics()
-    }
-
     fun getCipherForBiometrics(): Cipher? {
         return try {
             val cipher = App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()

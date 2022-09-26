@@ -61,11 +61,12 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
             _viewModel.reject.postValue(true)
         }
         binding.submit.setOnClickListener {
-            _viewModel.submit()
+            _viewModel.prepareTransaction()
         }
     }
 
     private fun initObservers() {
+
     }
 
     private fun prettyPrintJson(): String {

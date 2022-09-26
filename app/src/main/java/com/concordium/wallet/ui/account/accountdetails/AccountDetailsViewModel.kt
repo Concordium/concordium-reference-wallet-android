@@ -412,20 +412,16 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    fun shouldUseBiometrics(): Boolean {
-        return App.appCore.getCurrentAuthenticationManager().useBiometrics()
-    }
-
     fun getCipherForBiometrics(): Cipher? {
-        try {
+        return try {
             val cipher = App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
             if (cipher == null) {
                 _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
             }
-            return cipher
+            cipher
         } catch (e: KeystoreEncryptionException) {
             _errorLiveData.value = Event(R.string.app_error_keystore)
-            return null
+            null
         }
     }
 

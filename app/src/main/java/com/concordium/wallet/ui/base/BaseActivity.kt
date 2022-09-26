@@ -209,15 +209,19 @@ abstract class BaseActivity : AppCompatActivity() {
         fun onCancelled()
     }
 
-    protected fun showAuthentication(text: String?, shouldUseBiometrics: Boolean, usePasscode: Boolean, callback: AuthenticationCallback) {
-        if (shouldUseBiometrics) {
+    protected fun showAuthentication(text: String?, callback: AuthenticationCallback) {
+        val useBiometrics = App.appCore.getCurrentAuthenticationManager().useBiometrics()
+        val usePasscode = App.appCore.getCurrentAuthenticationManager().usePasscode()
+        if (useBiometrics) {
             showBiometrics(text, usePasscode, callback)
         } else {
             showPasswordDialog(text, callback)
         }
     }
 
-    fun authenticateText(useBiometrics: Boolean, usePasscode: Boolean): String {
+    fun authenticateText(): String {
+        val useBiometrics = App.appCore.getCurrentAuthenticationManager().useBiometrics()
+        val usePasscode = App.appCore.getCurrentAuthenticationManager().usePasscode()
         return when {
             useBiometrics -> getString(R.string.auth_login_biometrics_dialog_subtitle)
             usePasscode -> getString(R.string.auth_login_biometrics_dialog_cancel_passcode)

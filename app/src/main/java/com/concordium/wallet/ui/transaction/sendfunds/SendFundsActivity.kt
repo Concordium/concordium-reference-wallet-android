@@ -137,7 +137,7 @@ class SendFundsActivity : BaseActivity() {
         viewModel.showAuthenticationLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
-                    showAuthentication(createConfirmString(), viewModel.shouldUseBiometrics(), viewModel.usePasscode(), object : AuthenticationCallback{
+                    showAuthentication(createConfirmString(), object : AuthenticationCallback {
                         override fun getCipherForBiometrics() : Cipher?{
                             return viewModel.getCipherForBiometrics()
                         }

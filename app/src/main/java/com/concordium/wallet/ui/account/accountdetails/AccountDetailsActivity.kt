@@ -110,8 +110,6 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         viewModel.totalBalanceLiveData.observe(this) { totalBalance ->
             if (viewModel.isShielded && totalBalance.second) {
                 showAuthentication(null,
-                    viewModel.shouldUseBiometrics(),
-                    viewModel.usePasscode(),
                     object : AuthenticationCallback {
                         override fun getCipherForBiometrics(): Cipher? {
                             return viewModel.getCipherForBiometrics()
@@ -136,8 +134,6 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
 
         viewModel.selectedTransactionForDecrytionLiveData.observe(this) { transaction ->
             showAuthentication(null,
-                viewModel.shouldUseBiometrics(),
-                viewModel.usePasscode(),
                 object : AuthenticationCallback {
                     override fun getCipherForBiometrics(): Cipher? {
                         return viewModel.getCipherForBiometrics()
@@ -361,7 +357,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
                 menuView.menuDecryptContainer.visibility = if(viewModel.isShielded && viewModel.hasTransactionsToDecrypt) View.VISIBLE else View.GONE
                 menuView.menuDecryptContainer.setOnClickListener {
                     mMenuDialog?.dismiss()
-                    showAuthentication(null, viewModel.shouldUseBiometrics(), viewModel.usePasscode(), object : AuthenticationCallback{
+                    showAuthentication(null, object : AuthenticationCallback {
                         override fun getCipherForBiometrics() : Cipher?{
                             return viewModel.getCipherForBiometrics()
                         }

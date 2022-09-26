@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.WALLET_CONNECT_DATA
 
 abstract class WalletConnectBaseFragment : Fragment() {
-    protected lateinit var walletConnectData: WalletConnectData
+    private lateinit var walletConnectData: WalletConnectData
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

@@ -1,25 +1,35 @@
 package com.concordium.wallet.ui.walletconnect
 
 import android.app.Application
+import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.App
 import com.concordium.wallet.R
-import com.concordium.wallet.core.arch.Event
+import com.concordium.wallet.core.backend.BackendRequest
+import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.cryptolib.StorageAccountData
+import com.concordium.wallet.data.model.AccountData
+import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
 import kotlinx.coroutines.launch
 import java.io.Serializable
+import javax.crypto.Cipher
 
 data class WalletConnectData(
     var account: Account? = null,
     var wcUri: String? = null,
-    var sessionProposal: Sign.Model.SessionProposal? = null
+    var sessionProposal: Sign.Model.SessionProposal? = null,
+    var energy: Long? = null,
+    var accountNonce: AccountNonce? = null
 ): Serializable
 
 class WalletConnectViewModel(application: Application) : AndroidViewModel(application), SignClient.WalletDelegate {
@@ -37,11 +47,19 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val serviceName: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val permissions: MutableLiveData<List<String>> by lazy { MutableLiveData<List<String>>() }
     val transactionSubmittedOkay: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val errorWalletProxy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    val errorWalletConnect: MutableLiveData<String> by lazy { MutableLiveData<String>() }
+
     val walletConnectData = WalletConnectData()
+
     private val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
     private var settleSessionResponseResult: Sign.Model.SettledSessionResponse.Result? = null
+
     private var settleSessionResponseError: Sign.Model.SettledSessionResponse.Error? = null
     private var sessionTopic: String? = null
+    private val proxyRepository = ProxyRepository()
+    private var accountNonceRequest: BackendRequest<AccountNonce>? = null
 
     fun pairWalletConnect() {
         walletConnectData.wcUri?.let { wc ->
@@ -67,6 +85,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         println("LC -> CALL PAIR")
         SignClient.pair(pairParams) { modelError ->
             println("LC -> PAIR ${modelError.throwable.stackTraceToString()}")
+            errorWalletConnect.postValue(modelError.throwable.message)
         }
     }
 
@@ -90,12 +109,92 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                 println("LC -> CALL APPROVE")
                 SignClient.approveSession(approveParams) { modelError ->
                     println("LC -> APPROVE ${modelError.throwable.stackTraceToString()}")
+                    errorWalletConnect.postValue(modelError.throwable.message)
                 }
             }
         }
     }
 
-    fun submit() {
+    fun prepareTransaction() {
+        //if (bakerDelegationData.amount == null && bakerDelegationData.type != ProxyRepository.UPDATE_BAKER_KEYS && bakerDelegationData.type != ProxyRepository.UPDATE_BAKER_POOL) {
+        //    _errorLiveData.value = Event(R.string.app_error_general)
+        //    return
+        //}
+        getAccountNonce()
+    }
+
+    fun loadTransactionFee() {
+        walletConnectData.energy = 1
+    }
+
+    private fun getAccountNonce() {
+        waiting.postValue(true)
+        accountNonceRequest?.dispose()
+        accountNonceRequest = walletConnectData.account?.let { account ->
+            proxyRepository.getAccountNonce(account.address,
+                { accountNonce ->
+                    walletConnectData.accountNonce = accountNonce
+                    showAuthentication.postValue(true)
+                    waiting.postValue(false)
+                },
+                {
+                    waiting.postValue(false)
+                    errorWalletProxy.postValue(BackendErrorHandler.getExceptionStringRes(it))
+                }
+           )
+        }
+    }
+
+    fun getCipherForBiometrics(): Cipher? {
+        return try {
+            val cipher =
+                App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
+            if (cipher == null) {
+                errorWalletProxy.postValue(R.string.app_error_keystore_key_invalidated)
+            }
+            cipher
+        } catch (e: KeystoreEncryptionException) {
+            errorWalletProxy.postValue(R.string.app_error_keystore)
+            null
+        }
+    }
+
+    fun continueWithPassword(password: String) = viewModelScope.launch {
+        waiting.postValue(true)
+        decryptAndContinue(password)
+    }
+
+    fun checkLogin(cipher: Cipher) = viewModelScope.launch {
+        waiting.postValue(true)
+        val password = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
+        if (password != null) {
+            decryptAndContinue(password)
+        } else {
+            errorWalletProxy.postValue(R.string.app_error_encryption)
+            waiting.postValue(false)
+        }
+    }
+
+    private suspend fun decryptAndContinue(password: String) {
+        walletConnectData.account?.let { account ->
+            val storageAccountDataEncrypted = account.encryptedAccountData
+            if (TextUtils.isEmpty(storageAccountDataEncrypted)) {
+                errorWalletProxy.postValue(R.string.app_error_general)
+                waiting.postValue(false)
+                return
+            }
+            val decryptedJson = App.appCore.getCurrentAuthenticationManager().decryptInBackground(password, storageAccountDataEncrypted)
+            if (decryptedJson != null) {
+                val credentialsOutput = App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
+                createTransaction(credentialsOutput.accountKeys, credentialsOutput.encryptionSecretKey)
+            } else {
+                errorWalletProxy.postValue(R.string.app_error_encryption)
+                waiting.postValue(false)
+            }
+        }
+    }
+
+    private suspend fun createTransaction(keys: AccountData, encryptionSecretKey: String?) {
 
     }
 

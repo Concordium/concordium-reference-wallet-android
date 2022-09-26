@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.walletconnect
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityWalletConnectBinding
@@ -11,6 +12,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.crypto.Cipher
 
 class WalletConnectActivity : BaseActivity() {
     private lateinit var binding: ActivityWalletConnectBinding
@@ -89,6 +91,12 @@ class WalletConnectActivity : BaseActivity() {
                 showWaiting(waiting)
             }
         }
+        viewModel.errorWalletProxy.observe(this) {
+            Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
+        }
+        viewModel.errorWalletConnect.observe(this) {
+            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+        }
         viewModel.chooseAccount.observe(this) { accountWithIdentity ->
             viewModel.walletConnectData.account = accountWithIdentity.account
             pairView()
@@ -104,6 +112,21 @@ class WalletConnectActivity : BaseActivity() {
         }
         viewModel.reject.observe(this) {
             approveView()
+        }
+        viewModel.showAuthentication.observe(this) {
+            showAuthentication(authenticateText(), object : AuthenticationCallback {
+                override fun getCipherForBiometrics() : Cipher? {
+                    return viewModel.getCipherForBiometrics()
+                }
+                override fun onCorrectPassword(password: String) {
+                    viewModel.continueWithPassword(password)
+                }
+                override fun onCipher(cipher: Cipher) {
+                    viewModel.checkLogin(cipher)
+                }
+                override fun onCancelled() {
+                }
+            })
         }
     }
 

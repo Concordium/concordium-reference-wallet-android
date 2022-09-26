@@ -7,7 +7,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.lifecycle.Observer
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
@@ -18,8 +17,6 @@ import com.concordium.wallet.util.KeyboardUtil
 import javax.crypto.Cipher
 
 class AlterPasswordActivity : BaseActivity() {
-    //region Lifecycle
-    //************************************************************
     private lateinit var binding: ActivityAlterpasswordBinding
     private val viewModel: AlterPasswordViewModel by viewModels()
 
@@ -37,32 +34,36 @@ class AlterPasswordActivity : BaseActivity() {
             viewModel.checkAndStartPasscodeChange()
         }
 
-        viewModel.checkAccountsIdentitiesDoneLiveData.observe(this, Observer<Boolean> { success ->
-            if(success){
-                showAuthentication(null, viewModel.shouldUseBiometrics(), viewModel.usePasscode, object : AuthenticationCallback{
-                    override fun getCipherForBiometrics() : Cipher?{
+        viewModel.checkAccountsIdentitiesDoneLiveData.observe(this) { success ->
+            if (success) {
+                showAuthentication(null, object : AuthenticationCallback {
+                    override fun getCipherForBiometrics(): Cipher? {
                         return viewModel.getCipherForBiometrics()
                     }
+
                     override fun onCorrectPassword(password: String) {
                         viewModel.checkLogin(password)
                     }
+
                     override fun onCipher(cipher: Cipher) {
                         viewModel.checkLogin(cipher)
                     }
+
                     override fun onCancelled() {
                     }
                 })
+            } else {
+                Toast.makeText(this,
+                    getString(R.string.alterpassword_non_finalised_items),
+                    Toast.LENGTH_LONG).show()
             }
-            else{
-                Toast.makeText(this,getString(R.string.alterpassword_non_finalised_items), Toast.LENGTH_LONG).show()
-            }
-        })
+        }
 
-        viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
+        viewModel.waitingLiveData.observe(this) { waiting ->
             waiting?.let {
                 showWaiting(waiting)
             }
-        })
+        }
 
         viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
@@ -119,6 +120,4 @@ class AlterPasswordActivity : BaseActivity() {
         KeyboardUtil.hideKeyboard(this)
         popup.showSnackbar(binding.rootLayout, stringRes)
     }
-
-    //endregion
 }
