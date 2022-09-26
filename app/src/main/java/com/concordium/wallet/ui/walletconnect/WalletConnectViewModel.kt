@@ -4,7 +4,10 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.R
+import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.data.AccountRepository
+import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.WalletDatabase
@@ -29,6 +32,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val chooseAccount: MutableLiveData<AccountWithIdentity> by lazy { MutableLiveData<AccountWithIdentity>() }
     val connect: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val decline: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val reject: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val connectStatus: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val serviceName: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val permissions: MutableLiveData<List<String>> by lazy { MutableLiveData<List<String>>() }
@@ -89,6 +93,10 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                 }
             }
         }
+    }
+
+    fun submit() {
+
     }
 
     private fun ping() {

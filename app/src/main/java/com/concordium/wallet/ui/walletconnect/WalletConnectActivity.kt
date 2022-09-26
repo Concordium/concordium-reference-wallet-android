@@ -102,6 +102,9 @@ class WalletConnectActivity : BaseActivity() {
         viewModel.transactionSubmittedOkay.observe(this) {
             approveView()
         }
+        viewModel.reject.observe(this) {
+            approveView()
+        }
     }
 
     private fun showWaiting(waiting: Boolean) {

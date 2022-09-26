@@ -840,6 +840,8 @@
     <string name="wallet_connect_transaction_estimated_transaction_fee">Estimated transaction fee:\nϾ%1$s</string>
     <string name="wallet_connect_transaction_submitted_title">Transaction submitted</string>
     <string name="wallet_connect_transaction_submitted_ok">Okay</string>
+    <string name="wallet_connect_transaction_currently_available_amounts">Currently available amounts:</string>
+    <string name="wallet_connect_transaction_balance_at_disposal">Balance (at disposal):</string>
     <string name="wallet_connect_session">Wallet Connect session</string>
     <string name="wallet_connect_session_with">Session with %1$s</string>
     <string name="wallet_connect_decline_connect">Decline or connect</string>
