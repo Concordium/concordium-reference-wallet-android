@@ -11,11 +11,15 @@ import com.concordium.wallet.databinding.FragmentWalletConnectApproveBinding
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.WALLET_CONNECT_DATA
+import java.util.*
+import kotlin.concurrent.schedule
 
 class WalletConnectApproveFragment : WalletConnectBaseFragment() {
     private var _binding: FragmentWalletConnectApproveBinding? = null
     private val binding get() = _binding!!
     private lateinit var _viewModel: WalletConnectViewModel
+    private var didConnectBefore = false
+    private var pingTimer: Timer? = null
 
     companion object {
         @JvmStatic
@@ -41,6 +45,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        stopPingTimer()
         _binding = null
     }
 
@@ -55,20 +60,27 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
     private fun initObservers() {
         _viewModel.connectStatus.observe(viewLifecycleOwner) { isConnected ->
             if (isConnected) {
+                didConnectBefore = true
                 binding.statusImageview.setImageResource(R.drawable.ic_big_logo_ok)
                 binding.disconnect.isEnabled = true
                 binding.header1.visibility = View.GONE
                 binding.header2.text = getString(R.string.wallet_connect_connecting_is_connected_to)
                 binding.waitForActions.visibility = View.VISIBLE
                 (activity as BaseActivity).setActionBarTitle(getString(R.string.wallet_connect_session_with, _viewModel.sessionName()))
+                startPingTimer()
             }
             else {
-                binding.statusImageview.setImageResource(R.drawable.ic_logo_icon_pending)
-                binding.disconnect.isEnabled = false
-                binding.header1.visibility = View.VISIBLE
-                binding.header2.text = getString(R.string.wallet_connect_connecting_account_to)
-                binding.waitForActions.visibility = View.GONE
-                (activity as BaseActivity).setActionBarTitle(getString(R.string.wallet_connect_session))
+                if (didConnectBefore) {
+                    stopPingTimer()
+                    showConnectionLost()
+                } else {
+                    binding.statusImageview.setImageResource(R.drawable.ic_logo_icon_pending)
+                    binding.disconnect.isEnabled = false
+                    binding.header1.visibility = View.VISIBLE
+                    binding.header2.text = getString(R.string.wallet_connect_connecting_account_to)
+                    binding.waitForActions.visibility = View.GONE
+                    (activity as BaseActivity).setActionBarTitle(getString(R.string.wallet_connect_session))
+                }
             }
         }
     }
@@ -79,11 +91,39 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         builder.setMessage(getString(R.string.wallet_connect_disconnect_warning_message, _viewModel.sessionName()))
         builder.setPositiveButton(getString(R.string.wallet_connect_disconnect_warning_button_disconnect)) { _, _ ->
             _viewModel.disconnectWalletConnect()
-            val intent = Intent(activity, MainActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            startActivity(intent)
+            gotoMain()
         }
         builder.setNegativeButton(getString(R.string.wallet_connect_disconnect_warning_button_stay)) { dialog, _ -> dialog.dismiss() }
         builder.create().show()
+    }
+
+    private fun showConnectionLost() {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(R.string.wallet_connect_connection_lost_title)
+        builder.setMessage(getString(R.string.wallet_connect_connection_lost_message))
+        builder.setPositiveButton(getString(R.string.wallet_connect_connection_lost_okay)) { _, _ ->
+            gotoMain()
+        }
+        builder.create().show()
+    }
+
+    private fun gotoMain() {
+        val intent = Intent(activity, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
+    }
+
+    private fun stopPingTimer() {
+        pingTimer?.cancel()
+        pingTimer?.purge()
+        pingTimer = null
+    }
+
+    private fun startPingTimer() {
+        stopPingTimer()
+        pingTimer = Timer()
+        pingTimer?.schedule(5000) {
+            _viewModel.ping()
+        }
     }
 }

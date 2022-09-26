@@ -845,6 +845,9 @@
     <string name="wallet_connect_session">Wallet Connect session</string>
     <string name="wallet_connect_session_with">Session with %1$s</string>
     <string name="wallet_connect_decline_connect">Decline or connect</string>
+    <string name="wallet_connect_connection_lost_title">Connection lost</string>
+    <string name="wallet_connect_connection_lost_message">The session connection with the service was lost.</string>
+    <string name="wallet_connect_connection_lost_okay">Okay</string>
 
     <!-- ***** More ***** -->
 

@@ -198,7 +198,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     }
 
-    private fun ping() {
+    fun ping() {
         settleSessionResponseResult?.let { settleSessionResponse ->
             val pingParams = Sign.Params.Ping(settleSessionResponse.session.topic)
             println("LC -> CALL PING")
@@ -233,6 +233,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     override fun onConnectionStateChange(state: Sign.Model.ConnectionState) {
         println("LC -> onConnectionStateChange")
+        connectStatus.postValue(state.isAvailable)
     }
 
     override fun onError(error: Sign.Model.Error) {
