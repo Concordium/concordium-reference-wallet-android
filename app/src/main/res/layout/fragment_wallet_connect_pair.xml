@@ -86,6 +86,7 @@
             style="@style/Button.Standard.Intro"
             android:layout_width="0dp"
             android:layout_weight="0.5"
+            android:enabled="false"
             android:text="@string/wallet_connect_connect_session_connect" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>

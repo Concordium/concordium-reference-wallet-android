@@ -31,7 +31,7 @@ class WalletConnectPairFragment : WalletConnectBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initObservers()
-        _viewModel.pairWalletConnect()
+        _viewModel.pair()
     }
 
     override fun onDestroyView() {
@@ -58,6 +58,7 @@ class WalletConnectPairFragment : WalletConnectBaseFragment() {
         _viewModel.permissions.observe(viewLifecycleOwner) { permissions ->
             permissions?.let {
                 binding.servicePermissions.text = permissions.joinToString("\n") { it }
+                binding.connect.isEnabled = true
             }
         }
     }

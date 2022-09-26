@@ -62,10 +62,10 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     private val proxyRepository = ProxyRepository()
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
 
-    fun pairWalletConnect() {
+    fun pair() {
         walletConnectData.wcUri?.let { wc ->
             if (wc.isNotBlank()) {
-                pairWalletConnect(wc)
+                pair(wc)
             }
         }
     }
@@ -80,7 +80,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         return accountRepository.getCount() > 0
     }
 
-    private fun pairWalletConnect(wc: String) {
+    private fun pair(wc: String) {
         SignClient.setWalletDelegate(this)
         val pairParams = Sign.Params.Pair(wc)
         println("LC -> CALL PAIR")
