@@ -105,7 +105,7 @@ class WalletConnectActivity : BaseActivity() {
             approveView()
         }
         viewModel.decline.observe(this) {
-            accountsView()
+            gotoMain()
         }
         viewModel.transactionSubmittedOkay.observe(this) {
             approveView()
@@ -144,7 +144,7 @@ class WalletConnectActivity : BaseActivity() {
     private fun pairView() {
         currentPage = PAGE_PAIR
         showActionBarBack()
-        setActionBarTitle(getString(R.string.wallet_connect_decline_connect))
+        setActionBarTitle(getString(R.string.wallet_connect_allow_session))
         supportFragmentManager.beginTransaction().add(R.id.fragment_container, WalletConnectPairFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
     }
 
@@ -167,5 +167,11 @@ class WalletConnectActivity : BaseActivity() {
         hideActionBarBack()
         setActionBarTitle(getString(R.string.wallet_connect_session_with, viewModel.sessionName()))
         supportFragmentManager.beginTransaction().add(R.id.fragment_container, WalletConnectTransactionSubmittedFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
+    }
+
+    private fun gotoMain() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
     }
 }

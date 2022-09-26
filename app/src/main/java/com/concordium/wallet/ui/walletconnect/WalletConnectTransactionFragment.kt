@@ -39,7 +39,6 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initObservers()
-        _viewModel.approve()
     }
 
     override fun onDestroyView() {

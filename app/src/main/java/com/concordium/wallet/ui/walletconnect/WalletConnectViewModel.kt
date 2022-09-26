@@ -50,6 +50,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val errorWalletProxy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val errorWalletConnect: MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val errorWalletConnectApprove: MutableLiveData<String> by lazy { MutableLiveData<String>() }
 
     val walletConnectData = WalletConnectData()
 
@@ -109,7 +110,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                 println("LC -> CALL APPROVE")
                 SignClient.approveSession(approveParams) { modelError ->
                     println("LC -> APPROVE ${modelError.throwable.stackTraceToString()}")
-                    errorWalletConnect.postValue(modelError.throwable.message)
+                    errorWalletConnectApprove.postValue(modelError.throwable.message)
                 }
             }
         }

@@ -83,6 +83,23 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
                 }
             }
         }
+        _viewModel.errorWalletConnectApprove.observe(viewLifecycleOwner) {
+            showTryApproveAgain()
+        }
+    }
+
+    private fun showTryApproveAgain() {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(R.string.wallet_connect_approve_try_again_title)
+        builder.setMessage(getString(R.string.wallet_connect_approve_try_again_message))
+        builder.setPositiveButton(getString(R.string.wallet_connect_approve_try_again_try_again)) { _, _ ->
+            _viewModel.approve()
+        }
+        builder.setNegativeButton(getString(R.string.wallet_connect_approve_try_again_later)) {dialog, _ ->
+            dialog.dismiss()
+            gotoMain()
+        }
+        builder.create().show()
     }
 
     private fun showDisconnectWarning() {

@@ -844,10 +844,14 @@
     <string name="wallet_connect_transaction_balance_at_disposal">Balance (at disposal):</string>
     <string name="wallet_connect_session">Wallet Connect session</string>
     <string name="wallet_connect_session_with">Session with %1$s</string>
-    <string name="wallet_connect_decline_connect">Decline or connect</string>
+    <string name="wallet_connect_allow_session">Allow session?</string>
     <string name="wallet_connect_connection_lost_title">Connection lost</string>
     <string name="wallet_connect_connection_lost_message">The session connection with the service was lost.</string>
     <string name="wallet_connect_connection_lost_okay">Okay</string>
+    <string name="wallet_connect_approve_try_again_title">Could not connect</string>
+    <string name="wallet_connect_approve_try_again_message">The session connection to the service could not be established. You can try again now or later.</string>
+    <string name="wallet_connect_approve_try_again_later">Later</string>
+    <string name="wallet_connect_approve_try_again_try_again">Try again</string>
 
     <!-- ***** More ***** -->
 
