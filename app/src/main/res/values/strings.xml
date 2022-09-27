@@ -166,7 +166,7 @@
 
     <!-- Intro start-->
     <string name="intro_start_header">Before you begin</string>
-    <string name="intro_start_info">Before you start using the Concordium Wallet for Mobile, you have to set up a passcode and optionally biometrics.\n\nIt is very important to keep your passcode safe, because it is the only way to access your accounts. Concordium is not be able to change your passcode or help you unlock your wallet if you lose your passcode.\n\nSimilarly, if someone gets your passcode, they will be able to access your accounts.\n\nSo remember to keep your passcode safe!</string>
+    <string name="intro_start_info">Before you start using the Concordium Wallet for Mobile, you have to set up a passcode and optionally biometrics.\n\nIt is very important to keep your passcode safe, because it is the only way to access your accounts. Concordium is not able to change your passcode or help you unlock your wallet if you lose your passcode.\n\nSimilarly, if someone gets your passcode, they will be able to access your accounts.\n\nSo remember to keep your passcode safe!</string>
     <string name="intro_start_confirm">Continue</string>
 
     <!-- Intro setup-->
@@ -521,13 +521,11 @@
     <string name="baker_update_keys_settings_title">Update baker keys</string>
     <string name="baker_keys_saved_local">Your backup has been saved to local storage.</string>
 
-
     <!-- ***** Auth ***** -->
 
     <!-- Auth -->
     <string name="auth_password">Password</string>
     <string name="auth_confirm">Continue</string>
-    <string name="auth_password_warning">Note: you will not be able to recover your account keys if this password is lost!</string>
     <string name="auth_error_password_setup">Failed to setup password</string>
     <string name="auth_error_password_not_valid">Password is not valid - minimum length is 6.</string>
     <string name="auth_error_passcode_not_valid">Passcode is not valid</string>
