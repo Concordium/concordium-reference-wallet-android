@@ -2,9 +2,12 @@ package com.concordium.wallet.ui
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.TypedValue
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
@@ -62,15 +65,32 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
     private fun setupToolbar() {
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.main_title)
         supportActionBar?.setCustomView(R.layout.app_toolbar_main)
-        binding.toolbarLayout.addAccount.setOnClickListener {
-            gotoCreateAccount()
-        }
-        binding.toolbarLayout.scan.setOnClickListener {
-            scan()
-        }
-        binding.toolbarLayout.settings.setOnClickListener {
+        binding.toolbarLayout.settingsContainer.setOnClickListener {
             startActivity(Intent(this, MoreActivity::class.java))
         }
+        binding.toolbarLayout.scanContainer.setOnClickListener {
+            scan()
+        }
+        binding.toolbarLayout.addAccountContainer.setOnClickListener {
+            gotoCreateAccount()
+        }
+
+        sizeToolbarButton(binding.toolbarLayout.settings)
+        sizeToolbarButton(binding.toolbarLayout.scan)
+        sizeToolbarButton(binding.toolbarLayout.addAccount)
+    }
+
+    private fun sizeToolbarButton(button: AppCompatImageView) {
+        val actionBarSize = getDimenFromAttr(this, android.R.attr.actionBarSize) * 0.45
+        val layoutParamsAccount = button.layoutParams
+        layoutParamsAccount.width = actionBarSize.toInt()
+        layoutParamsAccount.height = actionBarSize.toInt()
+    }
+
+    private fun getDimenFromAttr(context: Context, attrValue: Int): Float {
+        val typedValue = TypedValue()
+        context.theme.resolveAttribute(attrValue, typedValue, true)
+        return context.resources.getDimension(typedValue.resourceId)
     }
 
     private fun gotoCreateAccount() {
