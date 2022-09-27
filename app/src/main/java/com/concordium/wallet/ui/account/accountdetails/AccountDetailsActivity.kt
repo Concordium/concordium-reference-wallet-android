@@ -28,7 +28,9 @@ import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
+import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
+import com.concordium.wallet.ui.walletconnect.WalletConnectActivity
 import com.concordium.wallet.uicore.setEditText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -49,9 +51,6 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         const val RESULT_RETRY_ACCOUNT_CREATION = 2
     }
 
-    //region Lifecycle
-    //************************************************************
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAccountDetailsBinding.inflate(layoutInflater)
@@ -65,7 +64,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         viewModel.initialize(account, isShielded)
         initViews()
 
-        if(continueToShieldIntro){
+        if (continueToShieldIntro) {
             startShieldedIntroFlow()
         }
     }
@@ -80,11 +79,6 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         super.onDestroy()
         viewModel.stopFrequentUpdater()
     }
-
-    // endregion
-
-    //region Initialize
-    //************************************************************
 
     private fun initializeViewModel() {
         viewModel = ViewModelProvider(
@@ -202,15 +196,6 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         binding.accountRemoveButton.setOnClickListener {
             viewModel.deleteAccountAndFinish()
         }
-        binding.sendFundsLayout.setOnClickListener {
-            onSendFundsClicked()
-        }
-        binding.addressLayout.setOnClickListener {
-            onAddressClicked()
-        }
-        binding.shieldFundsLayout.setOnClickListener {
-            onShieldFundsClicked()
-        }
         binding.toggleBalance.setOnClickListener {
             viewModel.isShielded = false
             initViews()
@@ -219,44 +204,28 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
             viewModel.isShielded = true
             initViews()
         }
-        binding.earnLayout.setOnClickListener {
-            gotoEarn(this, viewModel.account, viewModel.hasPendingDelegationTransactions, viewModel.hasPendingBakingTransactions)
-        }
-
-        binding.shieldTextview.text = if(viewModel.isShielded) resources.getText(R.string.account_details_unshield) else resources.getText(R.string.account_details_shield)
-
         binding.accountTotalDetailsDisposalText.text = if(viewModel.isShielded) resources.getString(R.string.account_shielded_total_details_disposal, viewModel.account.name) else resources.getString(R.string.account_total_details_disposal)
     }
 
     private fun updateShieldEnabledUI() {
-        binding.shieldFundsLayout.visibility = if(viewModel.shieldingEnabledLiveData.value == true) View.VISIBLE else View.GONE
         binding.toggleContainer.visibility = if(viewModel.shieldingEnabledLiveData.value == true) View.VISIBLE else View.GONE
         binding.toggleBalance.isSelected = !viewModel.isShielded
         binding.toggleShielded.isSelected = viewModel.isShielded
         binding.shieldedIcon.visibility = if(viewModel.shieldingEnabledLiveData.value == true && viewModel.isShielded) View.VISIBLE else View.GONE
-        binding.earnLayout.visibility = if ((viewModel.shieldingEnabledLiveData.value == true && !viewModel.isShielded) || viewModel.shieldingEnabledLiveData.value == false) View.VISIBLE else View.GONE
+        updateButtonsSlider()
     }
 
     private fun setFinalizedMode() {
-        binding.sendFundsLayout.isEnabled = true && !viewModel.account.readOnly
-        binding.shieldFundsLayout.isEnabled = true && !viewModel.account.readOnly
-        binding.earnLayout.isEnabled = true && !viewModel.account.readOnly
-        binding.addressLayout.isEnabled = true
+        binding.buttonsSlider.setEnableButtons(!viewModel.account.readOnly)
         binding.accountDetailsLayout.visibility = View.VISIBLE
         binding.readonlyDesc.visibility = if(viewModel.account.readOnly) View.VISIBLE else View.GONE
-
         binding.accountsOverviewTotalDetailsBakerContainer.visibility = View.GONE
         binding.accountsOverviewTotalDetailsStakedContainer.visibility = View.GONE
-
         if (viewModel.isShielded) {
             binding.accountsOverviewTotalDetailsDisposalContainer.visibility = View.GONE
-            binding.sendImageview.setImageResource(R.drawable.ic_icon_send_shielded)
-            binding.shieldImageview.setImageResource(R.drawable.ic_unshield)
         }
         else {
             binding.accountsOverviewTotalDetailsDisposalContainer.visibility = View.VISIBLE
-            binding.sendImageview.setImageResource(R.drawable.ic_send)
-            binding.shieldImageview.setImageResource(R.drawable.ic_shielded_icon)
             if (viewModel.account.isBaking()) {
                 binding.accountsOverviewTotalDetailsBakerContainer.visibility = View.VISIBLE
                 binding.accountsOverviewTotalTitleBaker.text = getString(R.string.account_details_stake_with_baker, viewModel.account.accountBaker?.bakerId?.toString() ?: "")
@@ -279,10 +248,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun setPendingMode() {
-        binding.sendFundsLayout.isEnabled = false
-        binding.shieldFundsLayout.isEnabled = false
-        binding.addressLayout.isEnabled = false
-        binding.earnLayout.isEnabled = false
+        binding.buttonsSlider.setEnableButtons(false)
     }
 
     private fun initTabs() {
@@ -290,11 +256,6 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         binding.accountDetailsPager.adapter = adapter
         binding.accountDetailsTablayout.setupWithViewPager(binding.accountDetailsPager)
     }
-
-    //endregion
-
-    //region Control/UI
-    //************************************************************
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
@@ -471,5 +432,58 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         intent.putExtra(AccountQRCodeActivity.EXTRA_ACCOUNT, viewModel.account)
         startActivity(intent)
     }
-    //endregion
+
+    private fun scan() {
+        val intent = Intent(this, ScanQRActivity::class.java)
+        intent.putExtra(ScanQRActivity.QR_MODE, ScanQRActivity.QR_MODE_WALLET_CONNECT)
+        getResultScanQr.launch(intent)
+    }
+
+    private val getResultScanQr =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                it.data?.getStringExtra(ScanQRActivity.EXTRA_BARCODE)?.let { wcUri ->
+                    val intent = Intent(this, WalletConnectActivity::class.java)
+                    intent.putExtra(WalletConnectActivity.FROM_DEEP_LINK, false)
+                    intent.putExtra(WalletConnectActivity.WC_URI, wcUri)
+                    startActivity(intent)
+                }
+            }
+        }
+
+    private fun updateButtonsSlider() {
+        binding.buttonsSlider.removeAllButtons()
+        if (viewModel.isShielded) {
+            binding.buttonsSlider.addButton(R.drawable.ic_icon_send_shielded) {
+                onSendFundsClicked()
+            }
+        } else {
+            binding.buttonsSlider.addButton(R.drawable.ic_send) {
+                onSendFundsClicked()
+            }
+        }
+        binding.buttonsSlider.addButton(R.drawable.ic_recipient_address_qr) {
+            onAddressClicked()
+        }
+        if ((viewModel.shieldingEnabledLiveData.value == true && !viewModel.isShielded) || viewModel.shieldingEnabledLiveData.value == false) {
+            binding.buttonsSlider.addButton(R.drawable.ic_earn) {
+                gotoEarn(this, viewModel.account, viewModel.hasPendingDelegationTransactions, viewModel.hasPendingBakingTransactions)
+            }
+        }
+        binding.buttonsSlider.addButton(R.drawable.ic_scan) {
+            scan()
+        }
+        if (viewModel.shieldingEnabledLiveData.value == true) {
+            if (viewModel.isShielded) {
+                binding.buttonsSlider.addButton(R.drawable.ic_unshield) {
+                    onShieldFundsClicked()
+                }
+            } else {
+                binding.buttonsSlider.addButton(R.drawable.ic_shielded_icon) {
+                    onShieldFundsClicked()
+                }
+            }
+        }
+        binding.buttonsSlider.commitButtons()
+    }
 }

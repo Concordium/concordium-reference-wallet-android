@@ -8,18 +8,20 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import android.widget.RelativeLayout.ALIGN_PARENT_END
+import android.widget.RelativeLayout.TRUE
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.cardview.widget.CardView
 import androidx.core.view.setPadding
 import com.concordium.wallet.R
 import com.concordium.wallet.util.UnitConvertUtil.convertDpToPixel
 import com.concordium.wallet.util.roundUpToInt
 import kotlin.properties.Delegates
 
-class ButtonsSlider : RelativeLayout {
+class ButtonsSlider : CardView {
     private lateinit var cardContentContainer: RelativeLayout
     private lateinit var buttonsContainer: LinearLayout
     private lateinit var buttonLeft: AppCompatImageView
@@ -30,6 +32,7 @@ class ButtonsSlider : RelativeLayout {
     private val numberOfVisibleButtons: Float = 4f
     private var currentPosition = 0
     private var buttons: ArrayList<AppCompatImageView> = arrayListOf()
+    private var measured = false
 
     constructor (context: Context) : super(context) {
         init(null)
@@ -53,30 +56,55 @@ class ButtonsSlider : RelativeLayout {
             addButtonsContainer()
             addButtonLeft()
             addButtonRight()
-            for ((i, button) in buttons.withIndex()) {
-                button.layoutParams = LayoutParams(widthEachActionButton.roundUpToInt(), widthEachActionButton.roundUpToInt())
-                buttonsContainer.addView(button)
-                if (i < buttons.size - 1)
-                    addDivider(buttonsContainer)
-            }
+            measured = true
+            commitButtons()
         }
     }
 
-    fun addButton(imageResource: Int, onClick: () -> Unit) {
+    fun addButton(imageResource: Int, isEnabled: Boolean = true, onClick: () -> Unit) {
         val button = AppCompatImageView(ContextThemeWrapper(context, R.style.ButtonsSliderButton))
         button.setImageResource(imageResource)
+        button.isEnabled = isEnabled
+        button.setColorFilter(Color.WHITE)
         button.setOnClickListener {
             onClick()
         }
-        button.setPadding(convertDpToPixel(10f))
+        button.setPadding(convertDpToPixel(16f))
         buttons.add(button)
+    }
+
+    fun commitButtons() {
+        if (!measured)
+            return
+        currentPosition = 0
+        val width = (buttons.size * widthEachActionButton) + ((buttons.size - 1) * dividerWidth)
+        val layoutParams = RelativeLayout.LayoutParams(width.roundUpToInt(), widthEachActionButton.toInt())
+        layoutParams.marginStart = (widthLeftRightButton + dividerWidth).roundUpToInt()
+        layoutParams.marginEnd = (widthLeftRightButton + dividerWidth).roundUpToInt()
+        buttonsContainer.layoutParams = layoutParams
+        for ((i, button) in buttons.withIndex()) {
+            button.layoutParams = LayoutParams(widthEachActionButton.roundUpToInt(), widthEachActionButton.roundUpToInt())
+            buttonsContainer.addView(button)
+            if (i < buttons.size - 1)
+                addDivider(buttonsContainer)
+        }
+    }
+
+    fun removeAllButtons() {
+        buttons = arrayListOf()
+        if (this::buttonsContainer.isInitialized)
+            buttonsContainer.removeAllViews()
+    }
+
+    fun setEnableButtons(isEnabled: Boolean) {
+        for (button in buttons)
+            button.isEnabled = isEnabled
     }
 
     private fun addCardContentContainer() {
         cardContentContainer = RelativeLayout(context)
-        cardContentContainer.layoutParams =
-            FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT)
+        cardContentContainer.layoutParams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT)
         cardContentContainer.setBackgroundColor(Color.TRANSPARENT)
         addView(cardContentContainer)
     }
@@ -84,30 +112,22 @@ class ButtonsSlider : RelativeLayout {
     private fun addButtonsContainer() {
         buttonsContainer = LinearLayout(context)
         buttonsContainer.orientation = LinearLayout.HORIZONTAL
-        val width = (buttons.size * widthEachActionButton) + ((buttons.size - 1) * dividerWidth)
-        val layoutParams =
-            FrameLayout.LayoutParams(width.roundUpToInt(), widthEachActionButton.toInt())
-        layoutParams.marginStart = (widthLeftRightButton + dividerWidth).roundUpToInt()
-        layoutParams.marginEnd = (widthLeftRightButton + dividerWidth).roundUpToInt()
-        buttonsContainer.layoutParams = layoutParams
         buttonsContainer.setBackgroundColor(Color.TRANSPARENT)
         cardContentContainer.addView(buttonsContainer)
     }
 
     private fun addDivider(parentView: ViewGroup) {
         val divider = View(context)
-        divider.layoutParams =
-            FrameLayout.LayoutParams(dividerWidth.toInt(), widthEachActionButton.toInt())
+        divider.layoutParams = LayoutParams(dividerWidth.toInt(), widthEachActionButton.toInt())
         divider.setBackgroundColor(Color.WHITE)
         parentView.addView(divider)
     }
 
     private fun addButtonLeft() {
-        buttonLeft = AppCompatImageView(ContextThemeWrapper(context, R.style.ButtonsSliderButton))
+        buttonLeft = AppCompatImageView(ContextThemeWrapper(context, R.style.ButtonsSliderButtonArrow))
         val buttonContainerLayout = LinearLayout(context)
-        buttonContainerLayout.layoutParams =
-            FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT)
+        buttonContainerLayout.layoutParams = LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT)
         buttonContainerLayout.orientation = LinearLayout.HORIZONTAL
         buttonLeft.layoutParams = ViewGroup.LayoutParams(widthLeftRightButton.roundUpToInt(), widthEachActionButton.toInt())
         buttonLeft.setImageResource(R.drawable.ic_button_back)
@@ -145,14 +165,13 @@ class ButtonsSlider : RelativeLayout {
 
     private fun addButtonRight() {
         val buttonContainerLayout = LinearLayout(context)
-        val layoutParamsButtonContainer = LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+        val layoutParamsButtonContainer = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT)
         layoutParamsButtonContainer.addRule(ALIGN_PARENT_END, TRUE)
         buttonContainerLayout.layoutParams = layoutParamsButtonContainer
         buttonContainerLayout.orientation = LinearLayout.HORIZONTAL
-        buttonRight = AppCompatImageView(ContextThemeWrapper(context, R.style.ButtonsSliderButton))
-        val layoutParams = FrameLayout.LayoutParams(widthLeftRightButton.roundUpToInt(),
-            widthEachActionButton.toInt())
+        buttonRight = AppCompatImageView(ContextThemeWrapper(context, R.style.ButtonsSliderButtonArrow))
+        val layoutParams = LayoutParams(widthLeftRightButton.roundUpToInt(), widthEachActionButton.toInt())
         buttonRight.layoutParams = layoutParams
         buttonRight.setImageResource(R.drawable.ic_button_next)
         buttonRight.setPadding(convertDpToPixel(16f))

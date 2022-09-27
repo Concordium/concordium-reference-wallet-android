@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@color/theme_component_disabled_alpha_one" android:state_enabled="false" />
+    <item android:drawable="@color/theme_component_pressed" android:state_enabled="false" />
     <item android:drawable="@color/theme_component_pressed" android:state_pressed="true" />
     <item android:drawable="@color/theme_component_selected" android:state_selected="true" />
     <item android:drawable="@color/theme_component" />
