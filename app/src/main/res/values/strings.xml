@@ -669,35 +669,21 @@
 
 
     <!-- New account name -->
-    <string name="new_account_name_title">New Account</string>
-    <string name="new_account_name_info">What would you like to name your account?</string>
-    <string name="new_account_name_next">Next</string>
-    <string name="new_account_name_account_name_hint">Account name</string>
 
     <!-- Identity overview -->
 
     <!-- New account identity -->
-    <string name="new_account_identity_title">Add Identity Data</string>
 
 
     <!-- New account setup -->
-    <string name="new_account_setup_title">Reveal Identity Data?</string>
-    <string name="new_account_setup_info">You can choose to reveal a range of attributes on your account, e.g. your country of residence. Revealing attributes means that the information will be public on the Concordium blockchain, and that it cannot be hidden or deleted again.\n\nIf you have no good reason for revealing attributes, we strongly recommend not revealing any.</string>
-    <string name="new_account_setup_confirm_reveal">Reveal account attributes</string>
     <string name="new_account_setup_confirm_submit">Submit account</string>
 
     <!-- New account identity attributes -->
-    <string name="new_account_identity_attributes_title">Reveal Identity Data</string>
-    <string name="new_account_identity_attributes_confirm">Submit account</string>
-    <string name="new_account_identity_attributes_error_max_accounts_title">Error</string>
-    <string name="new_account_identity_attributes_error_max_accounts">Ooops! This identity already has too many accounts submitted to the chain. Please select another identity to continue.</string>
 
     <!-- New account created -->
     <string name="new_account_confirmed_title">Account Creation</string>
     <string name="new_account_confirmed_confirm">OK, thanks</string>
-    <string name="new_account_confirmed_header">Account submitted</string>
     <string name="new_account_confirmed_failed">Account creation failed!</string>
-    <string name="new_account_confirmed_info">This may take a few minutes to\nprocess on-chain.</string>
     <string name="new_account_confirmed_failed_recover_error_text">Your wallet seems to not be synchronized with the blockchain. You must first make a recovery of existing accounts, before you can make a new one.</string>
     <string name="new_account_confirmed_failed_recover_info_text">Start the recovery flow by pressing the button below.</string>
     <string name="new_account_confirmed_failed_recover_button">Start recovery</string>
@@ -709,11 +695,6 @@
     <string name="account_details_title">Account details</string>
     <string name="account_details_transfers_title">Transfers</string>
     <string name="account_details_identity_data_title">Identity Data</string>
-    <string name="account_details_send">Send</string>
-    <string name="account_details_earn">Earn</string>
-    <string name="account_details_unshield">Unshield</string>
-    <string name="account_details_shield">Shield</string>
-    <string name="account_details_address">Receive</string>
     <string name="account_details_retry_button">Retry account creation</string>
     <string name="account_details_remove_button">Remove account from wallet</string>
     <string name="account_details_fee">fee</string>
@@ -907,7 +888,6 @@
     <string name="scan_qr_error_invalid_qr_code">Invalid QR code</string>
 
 
-    <string name="valid_special_chars_error_text"><![CDATA[The name can only contain letters, numbers, and these special characters: \"-\", \"_\", \",\", \".\", \"!\", \"?\". The name cannot be empty, or start or end with a space.]]></string>
     <string name="valid_special_chars_for_names"><![CDATA[-_, .!?]]></string>
 
     <string name="error_adding_account_duplicate">This account was not added to the address book, as it was already there.</string>

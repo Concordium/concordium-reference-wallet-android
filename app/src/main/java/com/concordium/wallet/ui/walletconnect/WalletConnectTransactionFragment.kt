@@ -6,14 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.concordium.wallet.R
-import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentWalletConnectTransactionBinding
-import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.WALLET_CONNECT_DATA
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
-import javax.crypto.Cipher
 
 class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
     private var _binding: FragmentWalletConnectTransactionBinding? = null
