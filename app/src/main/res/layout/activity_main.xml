@@ -21,17 +21,4 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
-<!--
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation_view"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/theme_white"
-        app:itemIconTint="@color/app_menu_item"
-        app:itemTextColor="@color/app_menu_item"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:menu="@menu/menu_app_navigation" />
--->
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,7 +15,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="@dimen/activity_horizontal_margin">
+            android:layout_marginHorizontal="@dimen/activity_horizontal_margin_quarter">
             <RelativeLayout
                 android:id="@+id/settings_container"
                 android:layout_width="?attr/actionBarSize"
@@ -27,8 +27,7 @@
                     android:id="@+id/settings"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
+                    android:layout_centerInParent="true"
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_settings" />
             </RelativeLayout>
@@ -44,8 +43,7 @@
                     android:id="@+id/scan"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
+                    android:layout_centerInParent="true"
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_scan" />
             </RelativeLayout>
@@ -73,8 +71,7 @@
                     android:id="@+id/add_account"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
+                    android:layout_centerInParent="true"
                     android:scaleType="fitEnd"
                     android:src="@drawable/ic_add" />
             </RelativeLayout>

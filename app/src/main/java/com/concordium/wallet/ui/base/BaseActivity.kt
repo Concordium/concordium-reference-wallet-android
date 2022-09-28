@@ -34,7 +34,7 @@ abstract class BaseActivity : AppCompatActivity() {
     private var titleView: TextView? = null
     protected lateinit var popup: Popup
     protected lateinit var dialogs: Dialogs
-    public var isActive = false
+    var isActive = false
 
     companion object {
         const val POP_UNTIL_ACTIVITY = "POP_UNTIL_ACTIVITY"
@@ -200,7 +200,6 @@ abstract class BaseActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-    // authentication region
 
     interface AuthenticationCallback {
         fun getCipherForBiometrics() : Cipher?
@@ -303,6 +302,4 @@ abstract class BaseActivity : AppCompatActivity() {
         App.appCore.session.resetLogoutTimeout()
         return super.dispatchTouchEvent(event)
     }
-
-    // end authentication region
 }

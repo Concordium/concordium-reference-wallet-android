@@ -6,7 +6,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
-import com.concordium.wallet.R
 import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.room.WalletDatabase
@@ -67,12 +66,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             return session.isLoggedIn.value == false
         }
         return true
-    }
-
-    fun shouldShowTerms(): Boolean {
-        val hashNew = App.appContext.getString(R.string.terms_text).hashCode()
-        val hashOld = session.getTermsHashed()
-        return hashNew != hashOld
     }
 
     fun startIdentityUpdate() {
