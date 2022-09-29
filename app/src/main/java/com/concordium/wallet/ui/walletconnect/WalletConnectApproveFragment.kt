@@ -107,7 +107,6 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         builder.setTitle(R.string.wallet_connect_disconnect_warning_title)
         builder.setMessage(getString(R.string.wallet_connect_disconnect_warning_message, _viewModel.sessionName()))
         builder.setPositiveButton(getString(R.string.wallet_connect_disconnect_warning_button_disconnect)) { _, _ ->
-            _viewModel.disconnectWalletConnect()
             gotoMain()
         }
         builder.setNegativeButton(getString(R.string.wallet_connect_disconnect_warning_button_stay)) { dialog, _ -> dialog.dismiss() }
@@ -125,6 +124,8 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
     }
 
     private fun gotoMain() {
+        _viewModel.disconnect()
+        activity?.finish()
         val intent = Intent(activity, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)

@@ -18,6 +18,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
+import com.google.gson.Gson
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
 import kotlinx.coroutines.launch
@@ -27,7 +28,7 @@ import javax.crypto.Cipher
 data class WalletConnectData(
     var account: Account? = null,
     var wcUri: String? = null,
-    var sessionProposal: Sign.Model.SessionProposal? = null,
+    var sessionProposalJsonString: String? = null,
     var energy: Long? = null,
     var accountNonce: AccountNonce? = null
 ): Serializable
@@ -51,12 +52,11 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val errorWalletProxy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val errorWalletConnect: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val errorWalletConnectApprove: MutableLiveData<String> by lazy { MutableLiveData<String>() }
-
     val walletConnectData = WalletConnectData()
 
     private val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
-    private var settleSessionResponseResult: Sign.Model.SettledSessionResponse.Result? = null
 
+    private var settleSessionResponseResult: Sign.Model.SettledSessionResponse.Result? = null
     private var settleSessionResponseError: Sign.Model.SettledSessionResponse.Error? = null
     private var sessionTopic: String? = null
     private val proxyRepository = ProxyRepository()
@@ -91,7 +91,8 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     }
 
     fun approve() {
-        walletConnectData.sessionProposal?.let { sessionProposal ->
+        walletConnectData.sessionProposalJsonString?.let {
+            val sessionProposal = Gson().fromJson(it, Sign.Model.SessionProposal::class.java)
             val firstNameSpace = sessionProposal.requiredNamespaces.entries.firstOrNull()
             if (firstNameSpace != null) {
                 val firstNameSpaceKey = firstNameSpace.key
@@ -202,34 +203,38 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     fun ping() {
         settleSessionResponseResult?.let { settleSessionResponse ->
             val pingParams = Sign.Params.Ping(settleSessionResponse.session.topic)
-            println("LC -> CALL PING")
+            //println("LC -> CALL PING")
             SignClient.ping(pingParams, object : Sign.Listeners.SessionPing {
                 override fun onSuccess(pingSuccess: Sign.Model.Ping.Success) {
-                    println("LC -> PING SUCCESS   ${pingSuccess.topic}")
-                    sessionTopic = pingSuccess.topic
-                    connectStatus.postValue(true)
+                    //println("LC -> PING SUCCESS   ${pingSuccess.topic}")
+                    //sessionTopic = pingSuccess.topic
+                    //connectStatus.postValue(true)
                 }
                 override fun onError(pingError: Sign.Model.Ping.Error) {
                     println("LC -> PING ERROR ${pingError.error.stackTraceToString()}")
-                    connectStatus.postValue(false)
+                    //connectStatus.postValue(false)
                 }
             })
         }
     }
 
-    fun disconnectWalletConnect() {
+    fun disconnect() {
         sessionTopic?.let { topic ->
             val disconnectParams = Sign.Params.Disconnect(topic)
             println("LC -> CALL DISCONNECT with $topic")
             SignClient.disconnect(disconnectParams) { modelError ->
                 println("LC -> DISCONNECT ${modelError.throwable.stackTraceToString()}")
             }
-            ping()
+            //ping()
         }
     }
 
     fun sessionName() : String {
-        return walletConnectData.sessionProposal?.name ?: ""
+        walletConnectData.sessionProposalJsonString?.let {
+            val sessionProposal = Gson().fromJson(it, Sign.Model.SessionProposal::class.java)
+            return sessionProposal?.name ?: ""
+        }
+        return ""
     }
 
     override fun onConnectionStateChange(state: Sign.Model.ConnectionState) {
@@ -239,15 +244,17 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     override fun onError(error: Sign.Model.Error) {
         println("LC -> onError")
+        connectStatus.postValue(false)
     }
 
     override fun onSessionDelete(deletedSession: Sign.Model.DeletedSession) {
         println("LC -> onSessionDelete")
+        connectStatus.postValue(false)
     }
 
     override fun onSessionProposal(sessionProposal: Sign.Model.SessionProposal) {
         println("LC -> onSessionProposal")
-        walletConnectData.sessionProposal = sessionProposal
+        walletConnectData.sessionProposalJsonString = Gson().toJson(sessionProposal)
         val firstNameSpace = sessionProposal.requiredNamespaces.entries.firstOrNull()
         if (firstNameSpace != null) {
             serviceName.postValue(sessionProposal.name)
@@ -263,7 +270,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         println("LC -> onSessionSettleResponse")
         if (settleSessionResponse is Sign.Model.SettledSessionResponse.Result) {
             this.settleSessionResponseResult = settleSessionResponse
-            ping()
+            connectStatus.postValue(true)
         }
         else if (settleSessionResponse is Sign.Model.SettledSessionResponse.Error) {
             this.settleSessionResponseError = settleSessionResponse

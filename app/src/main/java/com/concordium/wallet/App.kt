@@ -39,16 +39,15 @@ class App : Application(){
 
         val initString = Sign.Params.Init(
             metadata = Sign.Model.AppMetaData(
-                name = "Concordium Wallet",
-                description = "Concordium Wallet description",
+                name = "Concordium",
+                description = "Concordium Wallet",
                 url = "https://concordium.com",
-                icons = listOf("https://gblobscdn.gitbook.com/spaces%2F-LJJeCjcLrr53DcT1Ml7%2Favatar.png?alt=media"),
+                icons = listOf(),
                 redirect = "kotlin-wallet-wc:/request"
             ),
             relay = RelayClient
         )
 
-        println("LC -> CALL INIT")
         SignClient.initialize(initString) { modelError ->
             println("LC -> INIT ${modelError.throwable.stackTraceToString()}")
         }
