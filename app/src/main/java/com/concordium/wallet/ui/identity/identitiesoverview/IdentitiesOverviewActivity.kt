@@ -12,12 +12,13 @@ import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.IdentityAdapter
-import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
+import com.concordium.wallet.ui.common.delegates.PreventIdentityCreationDelegate
+import com.concordium.wallet.ui.common.delegates.PreventIdentityCreationDelegateImpl
 import com.concordium.wallet.ui.identity.identitydetails.IdentityDetailsActivity
 import kotlinx.android.synthetic.main.activity_identities_overview.*
 import kotlinx.android.synthetic.main.progress.*
 
-class IdentitiesOverviewActivity : BaseActivity(R.layout.activity_identities_overview, R.string.identities_overview_title) {
+class IdentitiesOverviewActivity : BaseActivity(R.layout.activity_identities_overview, R.string.identities_overview_title), PreventIdentityCreationDelegate by PreventIdentityCreationDelegateImpl() {
 
     private lateinit var viewModel: IdentitiesOverviewViewModel
     private lateinit var mainViewModel: MainViewModel
@@ -41,7 +42,7 @@ class IdentitiesOverviewActivity : BaseActivity(R.layout.activity_identities_ove
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.add_item_menu -> gotoCreateIdentity()
+            R.id.add_item_menu -> preventNewId(this)
         }
         return super.onOptionsItemSelected(item)
     }
@@ -85,7 +86,7 @@ class IdentitiesOverviewActivity : BaseActivity(R.layout.activity_identities_ove
         no_identity_layout.visibility = View.GONE
 
         new_identity_button.setOnClickListener {
-            gotoCreateIdentity()
+            preventNewId(this)
         }
 
         initializeList()
@@ -107,11 +108,6 @@ class IdentitiesOverviewActivity : BaseActivity(R.layout.activity_identities_ove
 
     //region Control/UI
     //************************************************************
-
-    private fun gotoCreateIdentity() {
-        val intent = Intent(this, IdentityCreateActivity::class.java)
-        startActivity(intent)
-    }
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {

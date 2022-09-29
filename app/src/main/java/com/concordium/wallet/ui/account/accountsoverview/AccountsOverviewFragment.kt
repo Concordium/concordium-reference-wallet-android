@@ -27,6 +27,8 @@ import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.account.newaccountname.NewAccountNameActivity
 import com.concordium.wallet.ui.base.BaseFragment
+import com.concordium.wallet.ui.common.delegates.PreventIdentityCreationDelegate
+import com.concordium.wallet.ui.common.delegates.PreventIdentityCreationDelegateImpl
 import com.concordium.wallet.ui.identity.identitycreate.IdentityCreateActivity
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
@@ -36,7 +38,7 @@ import kotlinx.android.synthetic.main.fragment_accounts_overview.view.*
 import kotlinx.android.synthetic.main.progress.*
 import kotlinx.android.synthetic.main.progress.view.*
 
-class AccountsOverviewFragment : BaseFragment() {
+class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate by PreventIdentityCreationDelegateImpl() {
 
     companion object {
         private const val REQUESTCODE_ACCOUNT_DETAILS = 2000
@@ -385,7 +387,7 @@ class AccountsOverviewFragment : BaseFragment() {
         view.create_account_button.visibility = View.GONE
 
         view.create_identity_button.setOnClickListener {
-            gotoCreateIdentity()
+            activity?.let { preventNewId(it) }
         }
         view.create_account_button.setOnClickListener {
             gotoCreateAccount()
@@ -459,16 +461,8 @@ class AccountsOverviewFragment : BaseFragment() {
     //region Control/UI
     //************************************************************
 
-
-
-
     private fun gotoExport() {
         val intent = Intent(activity, ExportActivity::class.java)
-        startActivity(intent)
-    }
-
-    private fun gotoCreateIdentity() {
-        val intent = Intent(activity, IdentityCreateActivity::class.java)
         startActivity(intent)
     }
 

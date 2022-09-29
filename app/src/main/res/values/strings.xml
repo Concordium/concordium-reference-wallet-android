@@ -568,6 +568,10 @@
     <!-- Identities overview -->
     <string name="identities_overview_title">Identities</string>
     <string name="identities_overview_no_identities">You have no identities yet.</string>
+    <string name="identities_overview_not_supported_title">New identities no longer supported</string>
+    <string name="identities_overview_not_supported_message">Creation of new identities are no longer supported in the Concordium Legacy Wallet.\n\nIf you need a new identity you must down the new Concordium Wallet for Mobile.</string>
+    <string name="identities_overview_not_supported_download">Download the new wallet</string>
+    <string name="identities_overview_not_supported_okay">Okay</string>
 
     <!-- Identity details -->
     <string name="identity_details_title">Identity</string>
