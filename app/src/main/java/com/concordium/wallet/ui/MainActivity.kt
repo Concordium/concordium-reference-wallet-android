@@ -218,6 +218,7 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
     private fun showAuthenticationIfRequired() {
         if (shouldShowTerms()) {
             if (wcUri.isNotBlank()) {
+                wcUri = ""
                 getResultWalletNotSetupIntroTerms.launch(Intent(this, WalletNotSetupActivity::class.java))
             }
             else {
@@ -226,11 +227,12 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
         }
         else if (App.appCore.session.hasSetupPassword) {
             if (wcUri.isNotBlank()) {
-                wcUri = ""
                 if (AuthPreferences(this).hasSeedPhrase())
                     getResultAuthLogin.launch(Intent(this, AuthLoginActivity::class.java))
-                else
+                else {
+                    wcUri = ""
                     getResultWalletNotSetupPassPhrase.launch(Intent(this, WalletNotSetupActivity::class.java))
+                }
             }
             else
                 startActivity(Intent(this, AuthLoginActivity::class.java))
