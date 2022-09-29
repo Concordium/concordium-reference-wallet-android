@@ -19,7 +19,7 @@ class PreventIdentityCreationDelegateImpl : PreventIdentityCreationDelegate {
             dialog.dismiss()
             activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=software.concordium.mobilewallet.seedphrase.mainnet")))
         }
-        builder.setNegativeButton(activity.getString(R.string.dialog_cancel)) { dialog, _ ->
+        builder.setNegativeButton(activity.getString(R.string.identities_overview_not_supported_okay)) { dialog, _ ->
             dialog.dismiss()
         }
         builder.create().show()

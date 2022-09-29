@@ -659,6 +659,11 @@
     <string name="accounts_overview_closing_pools_notice_message">The target pools of the following accounts will close soon. If you don’t actively change the target pool, your account will keep earning rewards as a passive delegator after the cool-down.\n\nYou can however already change your target pool via the delegation status menu, if you would rather do that.\n\nAffected delegator accounts:</string>
     <string name="accounts_overview_closing_pools_notice_ok">Remind me next time I open the wallet</string>
 
+    <string name="accounts_overview_not_supported_title">New accounts no longer supported</string>
+    <string name="accounts_overview_not_supported_message">Creation of new accounts is no longer supported in the Concordium Legacy Wallet.\n\nIf you need a new account you must down the new Concordium Wallet for Mobile.</string>
+    <string name="accounts_overview_not_supported_download">Download the new wallet</string>
+    <string name="accounts_overview_not_supported_okay">Okay</string>
+
 
     <!-- New account name -->
     <string name="new_account_name_title">New Account</string>
