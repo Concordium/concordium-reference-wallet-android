@@ -111,7 +111,8 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
     private val getResultScanQr =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
-                it.data?.getStringExtra(ScanQRActivity.EXTRA_BARCODE)?.let { wcUri ->
+                it.data?.getStringExtra(ScanQRActivity.EXTRA_BARCODE)?.let { uri ->
+                    wcUri = uri
                     gotoWalletConnect()
                 }
             }
