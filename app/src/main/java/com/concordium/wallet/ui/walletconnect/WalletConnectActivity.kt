@@ -113,6 +113,9 @@ class WalletConnectActivity : BaseActivity() {
         viewModel.reject.observe(this) {
             approveView()
         }
+        viewModel.transaction.observe(this) {
+            transactionView()
+        }
         viewModel.showAuthentication.observe(this) {
             showAuthentication(authenticateText(), object : AuthenticationCallback {
                 override fun getCipherForBiometrics() : Cipher? {
