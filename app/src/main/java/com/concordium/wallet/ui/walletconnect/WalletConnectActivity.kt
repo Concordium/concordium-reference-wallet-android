@@ -1,7 +1,11 @@
 package com.concordium.wallet.ui.walletconnect
 
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
@@ -19,6 +23,14 @@ class WalletConnectActivity : BaseActivity() {
     private lateinit var viewModel: WalletConnectViewModel
     private var fromDeepLink = true
     private var currentPage = 0
+
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            viewModel.binder = service as WalletConnectService.LocalBinder
+        }
+        override fun onServiceDisconnected(componentName: ComponentName) {
+        }
+    }
 
     companion object {
         const val FROM_DEEP_LINK = "FROM_DEEP_LINK"
@@ -41,6 +53,8 @@ class WalletConnectActivity : BaseActivity() {
         initializeViewModel()
         initObservers()
 
+        viewModel.register()
+
         if (fromDeepLink) {
             intent?.data?.let {
                 viewModel.walletConnectData.wcUri = it.toString()
@@ -51,7 +65,17 @@ class WalletConnectActivity : BaseActivity() {
             println("LC -> From Camera = ${viewModel.walletConnectData.wcUri}")
         }
 
+        Intent(this, WalletConnectService::class.java).also { intent ->
+            bindService(intent, connection, Context.BIND_AUTO_CREATE)
+        }
+
         accountsView()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.unregister()
+        unbindService(connection)
     }
 
     override fun onBackPressed() {
@@ -95,6 +119,9 @@ class WalletConnectActivity : BaseActivity() {
             Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
         }
         viewModel.errorWalletConnect.observe(this) {
+            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+        }
+        viewModel.errorWalletRejectApprove.observe(this) {
             Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
         }
         viewModel.chooseAccount.observe(this) { accountWithIdentity ->
@@ -141,35 +168,35 @@ class WalletConnectActivity : BaseActivity() {
         currentPage = PAGE_CHOOSE_ACCOUNT
         showActionBarBack()
         setActionBarTitle(getString(R.string.wallet_connect_accounts_title))
-        supportFragmentManager.beginTransaction().add(R.id.fragment_container, WalletConnectChooseAccountFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectChooseAccountFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
     }
 
     private fun pairView() {
         currentPage = PAGE_PAIR
         showActionBarBack()
         setActionBarTitle(getString(R.string.wallet_connect_allow_session))
-        supportFragmentManager.beginTransaction().add(R.id.fragment_container, WalletConnectPairFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectPairFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
     }
 
     private fun approveView() {
         currentPage = PAGE_APPROVE
         hideActionBarBack()
         setActionBarTitle(getString(R.string.wallet_connect_session))
-        supportFragmentManager.beginTransaction().add(R.id.fragment_container, WalletConnectApproveFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectApproveFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
     }
 
     private fun transactionView() {
         currentPage = PAGE_TRANSACTION
         hideActionBarBack()
         setActionBarTitle(getString(R.string.wallet_connect_session_with, viewModel.sessionName()))
-        supportFragmentManager.beginTransaction().add(R.id.fragment_container, WalletConnectTransactionFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectTransactionFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
     }
 
     private fun transactionSubmittedView() {
         currentPage = PAGE_TRANSACTION_SUBMITTED
         hideActionBarBack()
         setActionBarTitle(getString(R.string.wallet_connect_session_with, viewModel.sessionName()))
-        supportFragmentManager.beginTransaction().add(R.id.fragment_container, WalletConnectTransactionSubmittedFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectTransactionSubmittedFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
     }
 
     private fun gotoMain() {

@@ -39,6 +39,7 @@ class WalletConnectTransactionSubmittedFragment : Fragment() {
 
     private fun initViews() {
         binding.okay.setOnClickListener {
+            binding.okay.isEnabled = false
             _viewModel.transactionSubmittedOkay.postValue(true)
         }
     }

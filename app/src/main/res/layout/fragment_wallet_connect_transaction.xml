@@ -83,7 +83,8 @@
                     android:id="@+id/account_to_send_from"
                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
                     android:layout_width="match_parent"
-                    tools:text="Main\n\n14f3632ac857400d417a7277f726c43a 8ddf07184f10a429cf0759e985247c33" />
+                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin_double"
+                    tools:text="Main\n\n14f3632ac857400d417a7277f726c43a8ddf07184f10a429cf0759e985247c33" />
 
                 <TextView
                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"

@@ -18,23 +18,20 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
-import com.google.gson.Gson
 import com.walletconnect.sign.client.Sign
-import com.walletconnect.sign.client.SignClient
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.io.Serializable
 import javax.crypto.Cipher
 
 data class WalletConnectData(
     var account: Account? = null,
-    var wcUri: String? = null,
-    var sessionProposalJsonString: String? = null,
-    var sessionTopic: String? = null,
-    var energy: Long? = null,
-    var accountNonce: AccountNonce? = null
+    var wcUri: String? = null
 ): Serializable
 
-class WalletConnectViewModel(application: Application) : AndroidViewModel(application), SignClient.WalletDelegate {
+class WalletConnectViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
         const val WALLET_CONNECT_DATA = "WALLET_CONNECT_DATA"
     }
@@ -42,6 +39,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val accounts: MutableLiveData<List<AccountWithIdentity>> by lazy { MutableLiveData<List<AccountWithIdentity>>() }
     val chooseAccount: MutableLiveData<AccountWithIdentity> by lazy { MutableLiveData<AccountWithIdentity>() }
+    val pair: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val connect: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val decline: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val reject: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
@@ -54,19 +52,43 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val errorWalletProxy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val errorWalletConnect: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val errorWalletConnectApprove: MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val errorWalletRejectApprove: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val walletConnectData = WalletConnectData()
+    var binder: WalletConnectService.LocalBinder? = null
 
     private val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
     private val proxyRepository = ProxyRepository()
 
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
+    private var energy: Long? = null
+    private var accountNonce: AccountNonce? = null
+
+    fun register() {
+        EventBus.getDefault().register(this)
+    }
+
+    fun unregister() {
+        EventBus.getDefault().unregister(this)
+    }
 
     fun pair() {
-        walletConnectData.wcUri?.let { wc ->
-            if (wc.isNotBlank()) {
-                pair(wc)
-            }
-        }
+        binder?.pair(walletConnectData.wcUri ?: "")
+    }
+
+    fun ping() {
+        binder?.ping()
+    }
+
+    fun approveSession() {
+        binder?.approveSession(walletConnectData.account!!.address)
+    }
+
+    fun rejectSession() {
+        binder?.rejectSession()
+    }
+
+    fun disconnect() {
+        binder?.disconnect()
     }
 
     fun loadAccounts() {
@@ -79,61 +101,13 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         return accountRepository.getCount() > 0
     }
 
-    private fun pair(wc: String) {
-        SignClient.setWalletDelegate(this)
-        val pairParams = Sign.Params.Pair(wc)
-        println("LC -> CALL PAIR")
-        SignClient.pair(pairParams) { modelError ->
-            println("LC -> PAIR ${modelError.throwable.stackTraceToString()}")
-            errorWalletConnect.postValue(modelError.throwable.message)
-        }
-    }
-
-    fun approve() {
-        sessionProposal()?.let { sessionProposal ->
-            val firstNameSpace = sessionProposal.requiredNamespaces.entries.firstOrNull()
-            if (firstNameSpace != null) {
-                val firstNameSpaceKey = firstNameSpace.key
-                val firstChain = firstNameSpace.value.chains.firstOrNull()
-                val methods = firstNameSpace.value.methods
-                val events = firstNameSpace.value.events
-
-                val accounts = listOf( "$firstChain:${walletConnectData.account!!.address}" )
-                val namespaceValue = Sign.Model.Namespace.Session(accounts = accounts, methods = methods, events = events, extensions = null)
-                val sessionNamespaces = mapOf(Pair(firstNameSpaceKey, namespaceValue))
-
-                val approveParams = Sign.Params.Approve(
-                    proposerPublicKey = sessionProposal.proposerPublicKey,
-                    namespaces = sessionNamespaces
-                )
-                println("LC -> CALL APPROVE")
-                SignClient.approveSession(approveParams) { modelError ->
-                    println("LC -> APPROVE ${modelError.throwable.stackTraceToString()}")
-                    errorWalletConnectApprove.postValue(modelError.throwable.message)
-                }
-            }
-        }
-    }
-
     fun prepareTransaction() {
-        //if (bakerDelegationData.amount == null && bakerDelegationData.type != ProxyRepository.UPDATE_BAKER_KEYS && bakerDelegationData.type != ProxyRepository.UPDATE_BAKER_POOL) {
-        //    _errorLiveData.value = Event(R.string.app_error_general)
-        //    return
-        //}
-        getAccountNonce()
-    }
-
-    fun loadTransactionFee() {
-        walletConnectData.energy = 1
-    }
-
-    private fun getAccountNonce() {
         waiting.postValue(true)
         accountNonceRequest?.dispose()
         accountNonceRequest = walletConnectData.account?.let { account ->
             proxyRepository.getAccountNonce(account.address,
                 { accountNonce ->
-                    walletConnectData.accountNonce = accountNonce
+                    this.accountNonce = accountNonce
                     showAuthentication.postValue(true)
                     waiting.postValue(false)
                 },
@@ -141,8 +115,12 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                     waiting.postValue(false)
                     errorWalletProxy.postValue(BackendErrorHandler.getExceptionStringRes(it))
                 }
-           )
+            )
         }
+    }
+
+    fun loadTransactionFee() {
+        energy = 1
     }
 
     fun getCipherForBiometrics(): Cipher? {
@@ -195,92 +173,45 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     }
 
     private suspend fun createTransaction(keys: AccountData, encryptionSecretKey: String?) {
-
-    }
-
-    fun ping() {
-        walletConnectData.sessionTopic?.let { topic ->
-            val pingParams = Sign.Params.Ping(topic)
-            println("LC -> CALL PING")
-            SignClient.ping(pingParams, object : Sign.Listeners.SessionPing {
-                override fun onSuccess(pingSuccess: Sign.Model.Ping.Success) {
-                    println("LC -> PING SUCCESS   ${pingSuccess.topic}")
-                    //connectStatus.postValue(true)
-                }
-                override fun onError(pingError: Sign.Model.Ping.Error) {
-                    println("LC -> PING ERROR ${pingError.error.stackTraceToString()}")
-                    //connectStatus.postValue(false)
-                }
-            })
-        }
-    }
-
-    fun disconnect() {
-        walletConnectData.sessionTopic?.let { topic ->
-            val disconnectParams = Sign.Params.Disconnect(topic)
-            println("LC -> CALL DISCONNECT with $topic")
-            SignClient.disconnect(disconnectParams) { modelError ->
-                println("LC -> DISCONNECT ${modelError.throwable.stackTraceToString()}")
-            }
-        }
+        val jsonSigned = ""
+        binder?.approveTransaction(jsonSigned)
     }
 
     fun sessionName() : String {
-        sessionProposal()?.let {
-            return it.name
-        }
-        return ""
+        return binder?.getSessionName() ?: ""
     }
 
-    private fun sessionProposal(): Sign.Model.SessionProposal? {
-        walletConnectData.sessionProposalJsonString?.let {
-            return Gson().fromJson(it, Sign.Model.SessionProposal::class.java)
-        }
-        return null
-    }
-
-    override fun onConnectionStateChange(state: Sign.Model.ConnectionState) {
-        println("LC -> onConnectionStateChange")
-        connectStatus.postValue(state.isAvailable)
-    }
-
-    override fun onError(error: Sign.Model.Error) {
-        println("LC -> onError")
-        connectStatus.postValue(false)
-    }
-
-    override fun onSessionDelete(deletedSession: Sign.Model.DeletedSession) {
-        println("LC -> onSessionDelete")
-        connectStatus.postValue(false)
-    }
-
-    override fun onSessionProposal(sessionProposal: Sign.Model.SessionProposal) {
-        println("LC -> onSessionProposal")
-        walletConnectData.sessionProposalJsonString = Gson().toJson(sessionProposal)
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(sessionProposal: Sign.Model.SessionProposal) {
+        serviceName.postValue(sessionProposal.name)
         val firstNameSpace = sessionProposal.requiredNamespaces.entries.firstOrNull()
         if (firstNameSpace != null) {
-            serviceName.postValue(sessionProposal.name)
             permissions.postValue(firstNameSpace.value.methods)
         }
     }
 
-    override fun onSessionRequest(sessionRequest: Sign.Model.SessionRequest) {
-        println("LC -> onSessionRequest")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(connectionState: ConnectionState) {
+        connectStatus.postValue(connectionState.isConnected)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(sessionRequest: Sign.Model.SessionRequest) {
         transaction.postValue(true)
     }
 
-    override fun onSessionSettleResponse(settleSessionResponse: Sign.Model.SettledSessionResponse) {
-        if (settleSessionResponse is Sign.Model.SettledSessionResponse.Result) {
-            println("LC -> onSessionSettleResponse SUCCESS -> ${settleSessionResponse.session.topic}")
-            walletConnectData.sessionTopic = settleSessionResponse.session.topic
-            connectStatus.postValue(true)
-        }
-        else if (settleSessionResponse is Sign.Model.SettledSessionResponse.Error) {
-            println("LC -> onSessionSettleResponse ERROR -> ${settleSessionResponse.errorMessage}")
-        }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(pairError: PairError) {
+        errorWalletConnect.postValue(pairError.message)
     }
 
-    override fun onSessionUpdateResponse(sessionUpdateResponse: Sign.Model.SessionUpdateResponse) {
-        println("LC -> onSessionUpdateResponse")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(approveError: ApproveError) {
+        errorWalletConnectApprove.postValue(approveError.message)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onMessageEvent(rejectError: RejectError) {
+        errorWalletRejectApprove.postValue(rejectError.message)
     }
 }

@@ -50,6 +50,10 @@
                 <data android:scheme="wc" />
             </intent-filter>
         </activity>
+        <service
+            android:name=".ui.walletconnect.WalletConnectService"
+            android:enabled="true"
+            android:exported="false" />
         <activity
             android:name=".ui.common.failed.FailedActivity"
             android:launchMode="singleTop"

@@ -42,9 +42,12 @@ class WalletConnectPairFragment : WalletConnectBaseFragment() {
     private fun initViews() {
         binding.accountName.text = _viewModel.walletConnectData.account?.name ?: ""
         binding.connect.setOnClickListener {
+            binding.connect.isEnabled = false
             _viewModel.connect.postValue(true)
         }
         binding.decline.setOnClickListener {
+            binding.decline.isEnabled = false
+            _viewModel.rejectSession()
             _viewModel.decline.postValue(true)
         }
     }

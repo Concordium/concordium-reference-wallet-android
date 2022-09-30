@@ -25,18 +25,17 @@ class App : Application(){
         initialize()
     }
 
-    private fun initialize(){
+    private fun initialize() {
         appContext = this
         appCore = AppCore(this.applicationContext)
         initWalletConnect()
     }
 
     private fun initWalletConnect() {
+        println("LC -> CALL INIT")
         val projectId = "76324905a70fe5c388bab46d3e0564dc"
         val relayServerUrl = "wss://relay.walletconnect.com?projectId=$projectId"
-
         RelayClient.initialize(relayServerUrl = relayServerUrl, connectionType = ConnectionType.AUTOMATIC, application = this)
-
         val initString = Sign.Params.Init(
             metadata = Sign.Model.AppMetaData(
                 name = "Concordium",
@@ -47,9 +46,8 @@ class App : Application(){
             ),
             relay = RelayClient
         )
-
         SignClient.initialize(initString) { modelError ->
-            println("LC -> INIT ${modelError.throwable.stackTraceToString()}")
+            println("LC -> INIT ERROR ${modelError.throwable.stackTraceToString()}")
         }
     }
 }

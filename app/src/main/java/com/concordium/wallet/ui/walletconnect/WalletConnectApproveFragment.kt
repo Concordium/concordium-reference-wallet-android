@@ -20,6 +20,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
     private lateinit var _viewModel: WalletConnectViewModel
     private var didConnectBefore = false
     private var pingTimer: Timer? = null
+    private var continuePinging = true
 
     companion object {
         @JvmStatic
@@ -40,7 +41,10 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initObservers()
-        _viewModel.approve()
+        if (_viewModel.binder?.getSessionTopic()?.isNotEmpty() == false) {
+            _viewModel.waiting.postValue(true)
+            _viewModel.approveSession()
+        }
     }
 
     override fun onDestroyView() {
@@ -53,12 +57,14 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         binding.accountName.text = _viewModel.walletConnectData.account?.name ?: ""
         binding.serviceName.text = _viewModel.sessionName()
         binding.disconnect.setOnClickListener {
+            binding.disconnect.isEnabled = false
             showDisconnectWarning()
         }
     }
 
     private fun initObservers() {
         _viewModel.connectStatus.observe(viewLifecycleOwner) { isConnected ->
+            _viewModel.waiting.postValue(false)
             if (isConnected) {
                 didConnectBefore = true
                 binding.statusImageview.setImageResource(R.drawable.ic_big_logo_ok)
@@ -71,6 +77,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
             }
             else {
                 if (didConnectBefore) {
+                    continuePinging = false
                     stopPingTimer()
                     showConnectionLost()
                 } else {
@@ -84,6 +91,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
             }
         }
         _viewModel.errorWalletConnectApprove.observe(viewLifecycleOwner) {
+            _viewModel.waiting.postValue(false)
             showTryApproveAgain()
         }
     }
@@ -93,7 +101,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         builder.setTitle(R.string.wallet_connect_approve_try_again_title)
         builder.setMessage(getString(R.string.wallet_connect_approve_try_again_message))
         builder.setPositiveButton(getString(R.string.wallet_connect_approve_try_again_try_again)) { _, _ ->
-            _viewModel.approve()
+            _viewModel.approveSession()
         }
         builder.setNegativeButton(getString(R.string.wallet_connect_approve_try_again_later)) {dialog, _ ->
             dialog.dismiss()
@@ -109,7 +117,10 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         builder.setPositiveButton(getString(R.string.wallet_connect_disconnect_warning_button_disconnect)) { _, _ ->
             gotoMain()
         }
-        builder.setNegativeButton(getString(R.string.wallet_connect_disconnect_warning_button_stay)) { dialog, _ -> dialog.dismiss() }
+        builder.setNegativeButton(getString(R.string.wallet_connect_disconnect_warning_button_stay)) { dialog, _ ->
+            binding.disconnect.isEnabled = true
+            dialog.dismiss()
+        }
         builder.create().show()
     }
 
@@ -142,6 +153,8 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         pingTimer = Timer()
         pingTimer?.schedule(5000) {
             _viewModel.ping()
+            if (continuePinging)
+                startPingTimer()
         }
     }
 }
