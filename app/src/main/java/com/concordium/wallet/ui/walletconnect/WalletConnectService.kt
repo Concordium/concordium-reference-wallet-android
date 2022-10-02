@@ -4,8 +4,6 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import com.walletconnect.android.RelayClient
-import com.walletconnect.android.connection.ConnectionType
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
 import org.greenrobot.eventbus.EventBus

@@ -704,12 +704,12 @@
     <string name="account_details_shielded_transaction_fee">Shielded transaction fee</string>
     <string name="account_delegation_pending">Configure delegation</string>
     <string name="account_baking_pending">Configure baker</string>
-
     <string name="account_details_empty_identity_data">This account has no identity data revealed.</string>
-
-
     <string name="account_details_title_shielded_balance">%1$s shielded balance</string>
     <string name="account_details_title_regular_balance">%1$s balance</string>
+
+    <!--  Account settings  -->
+    <string name="account_settings_title">Account settings</string>
 
 
     <string name="shielding_intro_title">Shielded balance</string>
@@ -901,8 +901,8 @@
     <string name="accounts_overview_total_details_staked_no_id">Stake with baker</string>
     <string name="account_details_menu_release_schedule">Release schedule</string>
     <string name="account_details_menu_transfer_filter">Transfer filters</string>
-    <string name="account_details_menu_show_shielded">Show shielded balance on %1$s</string>
-    <string name="account_details_menu_hide_shielded">Hide shielded balance on %1$s</string>
+    <string name="account_details_menu_show_shielded">Show shielded balance</string>
+    <string name="account_details_menu_hide_shielded">Hide shielded balance</string>
     <string name="account_details_menu_decrypt">Decrypt</string>
     <string name="account_details_menu_change_name">Change account name</string>
     <string name="account_details_delegation_with_baker_pool">Delegation with baker pool %1$s</string>

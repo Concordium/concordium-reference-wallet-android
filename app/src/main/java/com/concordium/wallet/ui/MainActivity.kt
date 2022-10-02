@@ -25,7 +25,7 @@ import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewAc
 import com.concordium.wallet.ui.intro.introsetup.IntroSetupActivity
 import com.concordium.wallet.ui.intro.introstart.IntroTermsActivity
 import com.concordium.wallet.ui.intro.introstart.WalletNotSetupActivity
-import com.concordium.wallet.ui.more.MoreActivity
+import com.concordium.wallet.ui.more.SettingsActivity
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.walletconnect.WalletConnectActivity
 import org.greenrobot.eventbus.EventBus
@@ -69,7 +69,7 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.main_title)
         supportActionBar?.setCustomView(R.layout.app_toolbar_main)
         binding.toolbarLayout.settingsContainer.setOnClickListener {
-            startActivity(Intent(this, MoreActivity::class.java))
+            startActivity(Intent(this, SettingsActivity::class.java))
         }
         binding.toolbarLayout.scanContainer.setOnClickListener {
             scan()

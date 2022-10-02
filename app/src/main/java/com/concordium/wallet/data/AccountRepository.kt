@@ -7,12 +7,7 @@ import com.concordium.wallet.data.room.AccountDao
 import com.concordium.wallet.data.room.AccountWithIdentity
 
 class AccountRepository(private val accountDao: AccountDao) {
-
     val allAccountsWithIdentity: LiveData<List<AccountWithIdentity>> = accountDao.getAllWithIdentityAsLiveData()
-
-    fun getByIdWithIdentityAsLiveData(id: Int): LiveData<AccountWithIdentity> {
-        return accountDao.getByIdWithIdentityAsLiveData(id)
-    }
 
     suspend fun getCount(): Int {
         return accountDao.getCount()
@@ -55,7 +50,7 @@ class AccountRepository(private val accountDao: AccountDao) {
     }
 
     suspend fun update(account: Account) {
-        accountDao.updateExceptFinalState(account)
+        accountDao.update(account)
     }
 
     suspend fun updateAll(accountList: List<Account>) {

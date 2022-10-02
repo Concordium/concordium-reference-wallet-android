@@ -16,7 +16,7 @@ import com.concordium.wallet.ui.more.dev.DevActivity
 import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessActivity
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 
-class MoreActivity : BaseActivity() {
+class SettingsActivity : BaseActivity() {
     private lateinit var binding: ActivitySettingsBinding
 
     private var versionNumberPressedCount = 0

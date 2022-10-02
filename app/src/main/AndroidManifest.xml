@@ -167,7 +167,7 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.more.MoreActivity"
+            android:name=".ui.more.SettingsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
@@ -249,6 +249,11 @@
             android:name=".ui.account.accountdetails.AccountDetailsActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.account.accountdetails.AccountSettingsActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.account.accountdetails.AccountDetailsActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.account.accountdetails.AccountReleaseScheduleActivity"
