@@ -11,18 +11,17 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.DelegationTarget
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
-import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersFragment
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
-import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewFragment
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.cis2.*
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
-import com.concordium.wallet.ui.more.SettingsActivity
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.ui.walletconnect.WalletConnectActivity
@@ -31,7 +30,8 @@ import javax.crypto.Cipher
 
 class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl() {
     private lateinit var binding: ActivityAccountDetailsBinding
-    private lateinit var viewModel: AccountDetailsViewModel
+    private lateinit var viewModelAccountDetails: AccountDetailsViewModel
+    private lateinit var viewModelTokens: TokensViewModel
     private var accountAddress = ""
 
     companion object {
@@ -50,61 +50,79 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         val isShielded = intent.extras!!.getBoolean(EXTRA_SHIELDED)
         val continueToShieldIntro = intent.extras!!.getBoolean(EXTRA_CONTINUE_TO_SHIELD_INTRO)
         accountAddress = account.address
-        initializeViewModel()
-        viewModel.initialize(account, isShielded)
+        initializeViewModelTokens()
+        initializeViewModelAccountDetails()
+        viewModelAccountDetails.initialize(account, isShielded)
         initViews()
         if (continueToShieldIntro) {
             gotoAccountSettings(true)
         }
+        supportFragmentManager.beginTransaction().replace(R.id.tokens_fragment, TokensFragment.newInstance(viewModelTokens, viewModelAccountDetails.account.address, true), null).commit()
     }
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadAccount(accountAddress)
-        viewModel.populateTransferList()
-        viewModel.initiateFrequentUpdater()
+        viewModelAccountDetails.loadAccount(accountAddress)
+        viewModelAccountDetails.initiateFrequentUpdater()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        viewModel.stopFrequentUpdater()
+        viewModelAccountDetails.stopFrequentUpdater()
     }
 
-    private fun initializeViewModel() {
-        viewModel = ViewModelProvider(
+    private fun initializeViewModelTokens() {
+        viewModelTokens = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        )[TokensViewModel::class.java]
+
+        viewModelTokens.waiting.observe(this) { waiting ->
+            waiting?.let {
+                showWaitingTokens(waiting)
+            }
+        }
+
+        viewModelTokens.chooseToken.observe(this) { token ->
+            showTokenDetailsDialog(token)
+        }
+    }
+
+    private fun initializeViewModelAccountDetails() {
+        viewModelAccountDetails = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[AccountDetailsViewModel::class.java]
 
-        viewModel.waitingLiveData.observe(this) { waiting ->
+        viewModelAccountDetails.waitingLiveData.observe(this) { waiting ->
             waiting?.let {
-                showWaiting(waiting)
+                showWaitingTransactions(waiting)
             }
         }
-        viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
+        viewModelAccountDetails.errorLiveData.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
                 showError(value)
             }
         })
-        viewModel.finishLiveData.observe(this, object : EventObserver<Boolean>() {
+        viewModelAccountDetails.finishLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 finish()
             }
         })
-        viewModel.totalBalanceLiveData.observe(this) { totalBalance ->
-            if (viewModel.isShielded && totalBalance.second) {
+        viewModelAccountDetails.totalBalanceLiveData.observe(this) { totalBalance ->
+            if (viewModelAccountDetails.isShielded && totalBalance.second) {
                 showAuthentication(null,
                     object : AuthenticationCallback {
                         override fun getCipherForBiometrics(): Cipher? {
-                            return viewModel.getCipherForBiometrics()
+                            return viewModelAccountDetails.getCipherForBiometrics()
                         }
 
                         override fun onCorrectPassword(password: String) {
-                            viewModel.continueWithPassword(password)
+                            viewModelAccountDetails.continueWithPassword(password)
                         }
 
                         override fun onCipher(cipher: Cipher) {
-                            viewModel.checkLogin(cipher)
+                            viewModelAccountDetails.checkLogin(cipher)
                         }
 
                         override fun onCancelled() {
@@ -116,19 +134,19 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
             }
         }
 
-        viewModel.selectedTransactionForDecrytionLiveData.observe(this) { transaction ->
+        viewModelAccountDetails.selectedTransactionForDecrytionLiveData.observe(this) { transaction ->
             showAuthentication(null,
                 object : AuthenticationCallback {
                     override fun getCipherForBiometrics(): Cipher? {
-                        return viewModel.getCipherForBiometrics()
+                        return viewModelAccountDetails.getCipherForBiometrics()
                     }
 
                     override fun onCorrectPassword(password: String) {
-                        viewModel.continueWithPassword(password, true, transaction)
+                        viewModelAccountDetails.continueWithPassword(password, true, transaction)
                     }
 
                     override fun onCipher(cipher: Cipher) {
-                        viewModel.checkLogin(cipher, true, transaction)
+                        viewModelAccountDetails.checkLogin(cipher, true, transaction)
                     }
 
                     override fun onCancelled() {
@@ -137,30 +155,30 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
                 })
         }
 
-        viewModel.transferListLiveData.observe(this) {
-            viewModel.checkForEncryptedAmounts()
+        viewModelAccountDetails.transferListLiveData.observe(this) {
+            viewModelAccountDetails.checkForEncryptedAmounts()
         }
 
-        viewModel.showPadLockLiveData.observe(this) {
+        viewModelAccountDetails.showPadLockLiveData.observe(this) {
             invalidateOptionsMenu()
         }
 
-        viewModel.shieldingEnabledLiveData.observe(this) {
+        viewModelAccountDetails.shieldingEnabledLiveData.observe(this) {
             //Show non-shielded options
-            viewModel.isShielded = false
+            viewModelAccountDetails.isShielded = false
             initViews()
             //...then hide shielding options
             updateShieldEnabledUI()
         }
 
-        viewModel.accountUpdatedLiveData.observe(this) {
+        viewModelAccountDetails.accountUpdatedLiveData.observe(this) {
             initTopContent()
             updateShieldEnabledUI()
         }
     }
 
     private fun initViews() {
-        showWaiting(false)
+        showWaitingTransactions(false)
         initTabs()
         initTabsTokens()
     }
@@ -170,24 +188,24 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
             binding.markerFungible.visibility = View.VISIBLE
             binding.markerCollectibles.visibility = View.GONE
             binding.tabFungibleText.setTypeface(binding.tabFungibleText.typeface, Typeface.BOLD)
-            binding.tabCollectiblesText.setTypeface(binding.tabFungibleText.typeface, Typeface.NORMAL)
-            supportFragmentManager.beginTransaction().replace(R.id.tokens_fragment, AccountDetailsTransfersFragment(), null).commit()
+            binding.tabCollectiblesText.setTypeface(binding.tabCollectiblesText.typeface, Typeface.NORMAL)
+            supportFragmentManager.beginTransaction().replace(R.id.tokens_fragment, TokensFragment.newInstance(viewModelTokens, viewModelAccountDetails.account.address, true), null).commit()
         }
         binding.tabCollectibles.setOnClickListener {
             binding.markerFungible.visibility = View.GONE
             binding.markerCollectibles.visibility = View.VISIBLE
             binding.tabFungibleText.setTypeface(binding.tabFungibleText.typeface, Typeface.NORMAL)
-            binding.tabCollectiblesText.setTypeface(binding.tabFungibleText.typeface, Typeface.BOLD)
-            supportFragmentManager.beginTransaction().replace(R.id.tokens_fragment, AccountsOverviewFragment(), null).commit()
+            binding.tabCollectiblesText.setTypeface(binding.tabCollectiblesText.typeface, Typeface.BOLD)
+            supportFragmentManager.beginTransaction().replace(R.id.tokens_fragment, TokensFragment.newInstance(viewModelTokens, viewModelAccountDetails.account.address, false), null).commit()
         }
         binding.tabAddNew.setOnClickListener {
-            startActivity(Intent(this, SettingsActivity::class.java))
+            showFindTokensDialog()
         }
     }
 
     private fun initTopContent() {
-        setActionBarTitle(getString(if(viewModel.isShielded) R.string.account_details_title_shielded_balance else R.string.account_details_title_regular_balance, viewModel.account.getAccountName()))
-        when (viewModel.account.transactionStatus) {
+        setActionBarTitle(getString(if(viewModelAccountDetails.isShielded) R.string.account_details_title_shielded_balance else R.string.account_details_title_regular_balance, viewModelAccountDetails.account.getAccountName()))
+        when (viewModelAccountDetails.account.transactionStatus) {
             TransactionStatus.ABSENT -> {
                 setErrorMode()
             }
@@ -204,49 +222,61 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
             finish()
         }
         binding.accountRemoveButton.setOnClickListener {
-            viewModel.deleteAccountAndFinish()
+            viewModelAccountDetails.deleteAccountAndFinish()
         }
         binding.toggleBalance.setOnClickListener {
-            viewModel.isShielded = false
+            viewModelAccountDetails.isShielded = false
             initViews()
         }
         binding.toggleShielded.setOnClickListener {
-            viewModel.isShielded = true
+            viewModelAccountDetails.isShielded = true
             initViews()
         }
-        binding.accountTotalDetailsDisposalText.text = if(viewModel.isShielded) resources.getString(R.string.account_shielded_total_details_disposal, viewModel.account.name) else resources.getString(R.string.account_total_details_disposal)
+        binding.accountTotalDetailsDisposalText.text = if(viewModelAccountDetails.isShielded) resources.getString(R.string.account_shielded_total_details_disposal, viewModelAccountDetails.account.name) else resources.getString(R.string.account_total_details_disposal)
+    }
+
+    private fun showFindTokensDialog() {
+        val findTokens = FindTokens(this)
+        findTokens.test()
+        findTokens.show()
+    }
+
+    private fun showTokenDetailsDialog(token: Token) {
+        val tokenDetails = TokenDetails(this)
+        tokenDetails.test(token.name, viewModelAccountDetails.account.name)
+        tokenDetails.show()
     }
 
     private fun updateShieldEnabledUI() {
-        binding.toggleContainer.visibility = if (viewModel.shieldingEnabledLiveData.value == true) View.VISIBLE else View.GONE
-        binding.toggleBalance.isSelected = !viewModel.isShielded
-        binding.toggleShielded.isSelected = viewModel.isShielded
-        binding.shieldedIcon.visibility = if (viewModel.shieldingEnabledLiveData.value == true && viewModel.isShielded) View.VISIBLE else View.GONE
+        binding.toggleContainer.visibility = if (viewModelAccountDetails.shieldingEnabledLiveData.value == true) View.VISIBLE else View.GONE
+        binding.toggleBalance.isSelected = !viewModelAccountDetails.isShielded
+        binding.toggleShielded.isSelected = viewModelAccountDetails.isShielded
+        binding.shieldedIcon.visibility = if (viewModelAccountDetails.shieldingEnabledLiveData.value == true && viewModelAccountDetails.isShielded) View.VISIBLE else View.GONE
         updateButtonsSlider()
     }
 
     private fun setFinalizedMode() {
-        binding.buttonsSlider.setEnableButtons(!viewModel.account.readOnly)
+        binding.buttonsSlider.setEnableButtons(!viewModelAccountDetails.account.readOnly)
         binding.accountDetailsLayout.visibility = View.VISIBLE
-        binding.readonlyDesc.visibility = if (viewModel.account.readOnly) View.VISIBLE else View.GONE
+        binding.readonlyDesc.visibility = if (viewModelAccountDetails.account.readOnly) View.VISIBLE else View.GONE
         binding.accountsOverviewTotalDetailsBakerContainer.visibility = View.GONE
         binding.accountsOverviewTotalDetailsStakedContainer.visibility = View.GONE
-        if (viewModel.isShielded) {
+        if (viewModelAccountDetails.isShielded) {
             binding.accountsOverviewTotalDetailsDisposalContainer.visibility = View.GONE
         }
         else {
             binding.accountsOverviewTotalDetailsDisposalContainer.visibility = View.VISIBLE
-            if (viewModel.account.isBaking()) {
+            if (viewModelAccountDetails.account.isBaking()) {
                 binding.accountsOverviewTotalDetailsBakerContainer.visibility = View.VISIBLE
-                binding.accountsOverviewTotalTitleBaker.text = getString(R.string.account_details_stake_with_baker, viewModel.account.accountBaker?.bakerId?.toString() ?: "")
-                binding.accountsOverviewTotalDetailsBaker.text = CurrencyUtil.formatGTU(viewModel.account.accountBaker?.stakedAmount ?: "0", true)
-            } else if (viewModel.account.isDelegating()) {
+                binding.accountsOverviewTotalTitleBaker.text = getString(R.string.account_details_stake_with_baker, viewModelAccountDetails.account.accountBaker?.bakerId?.toString() ?: "")
+                binding.accountsOverviewTotalDetailsBaker.text = CurrencyUtil.formatGTU(viewModelAccountDetails.account.accountBaker?.stakedAmount ?: "0", true)
+            } else if (viewModelAccountDetails.account.isDelegating()) {
                 binding.accountsOverviewTotalDetailsStakedContainer.visibility = View.VISIBLE
-                if (viewModel.account.accountDelegation?.delegationTarget?.delegateType == DelegationTarget.TYPE_DELEGATE_TO_L_POOL)
+                if (viewModelAccountDetails.account.accountDelegation?.delegationTarget?.delegateType == DelegationTarget.TYPE_DELEGATE_TO_L_POOL)
                     binding.accountsOverviewTotalTitleStaked.text = getString(R.string.account_details_delegation_with_passive_pool)
                 else
-                    binding.accountsOverviewTotalTitleStaked.text = getString(R.string.account_details_delegation_with_baker_pool, viewModel.account.accountDelegation?.delegationTarget?.bakerId ?: "")
-                binding.accountsOverviewTotalDetailsStaked.text = CurrencyUtil.formatGTU(viewModel.account.accountDelegation?.stakedAmount ?: "", true)
+                    binding.accountsOverviewTotalTitleStaked.text = getString(R.string.account_details_delegation_with_baker_pool, viewModelAccountDetails.account.accountDelegation?.delegationTarget?.bakerId ?: "")
+                binding.accountsOverviewTotalDetailsStaked.text = CurrencyUtil.formatGTU(viewModelAccountDetails.account.accountDelegation?.stakedAmount ?: "", true)
             }
         }
     }
@@ -262,16 +292,24 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun initTabs() {
-        val adapter = AccountDetailsPagerAdapter(supportFragmentManager, viewModel.account, this)
+        val adapter = AccountDetailsPagerAdapter(supportFragmentManager, viewModelAccountDetails.account, this)
         binding.accountDetailsPager.adapter = adapter
         binding.accountDetailsTabLayout.setupWithViewPager(binding.accountDetailsPager)
     }
 
-    private fun showWaiting(waiting: Boolean) {
+    private fun showWaitingTransactions(waiting: Boolean) {
         if (waiting) {
             binding.includeProgress.progressLayout.visibility = View.VISIBLE
         } else {
             binding.includeProgress.progressLayout.visibility = View.GONE
+        }
+    }
+
+    private fun showWaitingTokens(waiting: Boolean) {
+        if (waiting) {
+            binding.includeProgressTokens.progressLayout.visibility = View.VISIBLE
+        } else {
+            binding.includeProgressTokens.progressLayout.visibility = View.GONE
         }
     }
 
@@ -287,28 +325,28 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
 
     private fun showTotalBalance(totalBalance: Long) {
         binding.balanceTextview.text = CurrencyUtil.formatGTU(totalBalance)
-        binding.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(viewModel.account.getAtDisposalWithoutStakedOrScheduled(totalBalance), true)
+        binding.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(viewModelAccountDetails.account.getAtDisposalWithoutStakedOrScheduled(totalBalance), true)
     }
 
     private fun onSendFundsClicked() {
         val intent = Intent(this, SendFundsActivity::class.java)
-        intent.putExtra(SendFundsActivity.EXTRA_SHIELDED, viewModel.isShielded)
-        intent.putExtra(SendFundsActivity.EXTRA_ACCOUNT, viewModel.account)
+        intent.putExtra(SendFundsActivity.EXTRA_SHIELDED, viewModelAccountDetails.isShielded)
+        intent.putExtra(SendFundsActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
         startActivity(intent)
     }
 
     private fun onShieldFundsClicked() {
         val intent = Intent(this, SendFundsActivity::class.java)
-        intent.putExtra(SendFundsActivity.EXTRA_SHIELDED, viewModel.isShielded)
-        intent.putExtra(SendFundsActivity.EXTRA_ACCOUNT, viewModel.account)
-        intent.putExtra(SendFundsActivity.EXTRA_RECIPIENT, Recipient(viewModel.account.id, viewModel.account.name, viewModel.account.address))
+        intent.putExtra(SendFundsActivity.EXTRA_SHIELDED, viewModelAccountDetails.isShielded)
+        intent.putExtra(SendFundsActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
+        intent.putExtra(SendFundsActivity.EXTRA_RECIPIENT, Recipient(viewModelAccountDetails.account.id, viewModelAccountDetails.account.name, viewModelAccountDetails.account.address))
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
     }
 
     private fun onAddressClicked() {
         val intent = Intent(this, AccountQRCodeActivity::class.java)
-        intent.putExtra(AccountQRCodeActivity.EXTRA_ACCOUNT, viewModel.account)
+        intent.putExtra(AccountQRCodeActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
         startActivity(intent)
     }
 
@@ -333,7 +371,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
 
     private fun updateButtonsSlider() {
         binding.buttonsSlider.removeAllButtons()
-        if (viewModel.isShielded) {
+        if (viewModelAccountDetails.isShielded) {
             binding.buttonsSlider.addButton(R.drawable.ic_icon_send_shielded) {
                 onSendFundsClicked()
             }
@@ -351,16 +389,16 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         binding.buttonsSlider.addButton(R.drawable.ic_recipient_address_qr) {
             onAddressClicked()
         }
-        if ((viewModel.shieldingEnabledLiveData.value == true && !viewModel.isShielded) || viewModel.shieldingEnabledLiveData.value == false) {
+        if ((viewModelAccountDetails.shieldingEnabledLiveData.value == true && !viewModelAccountDetails.isShielded) || viewModelAccountDetails.shieldingEnabledLiveData.value == false) {
             binding.buttonsSlider.addButton(R.drawable.ic_earn) {
-                gotoEarn(this, viewModel.account, viewModel.hasPendingDelegationTransactions, viewModel.hasPendingBakingTransactions)
+                gotoEarn(this, viewModelAccountDetails.account, viewModelAccountDetails.hasPendingDelegationTransactions, viewModelAccountDetails.hasPendingBakingTransactions)
             }
         }
         binding.buttonsSlider.addButton(R.drawable.ic_scan) {
             scan()
         }
-        if (viewModel.shieldingEnabledLiveData.value == true) {
-            if (viewModel.isShielded) {
+        if (viewModelAccountDetails.shieldingEnabledLiveData.value == true) {
+            if (viewModelAccountDetails.isShielded) {
                 binding.buttonsSlider.addButton(R.drawable.ic_unshield) {
                     onShieldFundsClicked()
                 }
@@ -378,10 +416,10 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
 
     private fun gotoAccountSettings(continueToShieldIntro: Boolean) {
         val intent = Intent(this, AccountSettingsActivity::class.java)
-        intent.putExtra(AccountSettingsActivity.EXTRA_ACCOUNT, viewModel.account)
-        intent.putExtra(AccountSettingsActivity.EXTRA_SHIELDED, viewModel.isShielded)
+        intent.putExtra(AccountSettingsActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
+        intent.putExtra(AccountSettingsActivity.EXTRA_SHIELDED, viewModelAccountDetails.isShielded)
         if (continueToShieldIntro)
-            intent.putExtra(AccountSettingsActivity.EXTRA_CONTINUE_TO_SHIELD_INTRO, viewModel.isShielded)
+            intent.putExtra(AccountSettingsActivity.EXTRA_CONTINUE_TO_SHIELD_INTRO, viewModelAccountDetails.isShielded)
         startActivity(intent)
     }
 

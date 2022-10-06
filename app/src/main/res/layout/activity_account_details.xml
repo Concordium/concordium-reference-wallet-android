@@ -392,7 +392,7 @@
                                 android:id="@+id/add"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                style="@style/TextView.Large.Bold"
+                                style="@style/TextView.Medium.Bold"
                                 android:gravity="center_vertical"
                                 android:text="+"
                                 android:textColor="@color/theme_white"
@@ -442,6 +442,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <include layout="@layout/progress" android:id="@+id/include_progress" />
+        <include layout="@layout/progress" android:id="@+id/include_progress_tokens" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

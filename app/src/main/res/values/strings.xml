@@ -985,5 +985,7 @@
     <string name="cis_tab_fungible">Fungible</string>
     <string name="cis_tab_collectibles">Collectibles</string>
     <string name="cis_tab_add_new">Add new</string>
+    <string name="cis_find_tokens_title">Enter a contract address to look for tokens.</string>
+    <string name="cis_token_details_title">%1$s balance on %2$s</string>
 
 </resources>
