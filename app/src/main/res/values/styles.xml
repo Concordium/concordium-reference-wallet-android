@@ -168,6 +168,10 @@
         <item name="android:textSize">32sp</item>
     </style>
 
+    <style name="TextView.Large.Bold">
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="TextView.Standard.Small">
         <item name="android:textSize">12sp</item>
     </style>

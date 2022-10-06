@@ -982,4 +982,8 @@
     <string name="export_account_keys_to_file">Export to file</string>
     <string name="export_account_keys_file_exported">File exported</string>
 
+    <string name="cis_tab_fungible">Fungible</string>
+    <string name="cis_tab_collectibles">Collectibles</string>
+    <string name="cis_tab_add_new">Add new</string>
+
 </resources>

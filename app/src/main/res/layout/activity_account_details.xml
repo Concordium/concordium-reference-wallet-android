@@ -257,6 +257,7 @@
                 android:id="@+id/account_details_pager"
                 style="@style/Layout.Card"
                 android:layout_width="match_parent"
+                android:visibility="gone"
                 android:layout_height="0dp"
                 android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="@dimen/activity_horizontal_margin_half"
@@ -265,7 +266,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/buttons_slider">
                 <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/account_details_tablayout"
+                    android:id="@+id/account_details_tab_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:tabIndicatorColor="@android:color/transparent"
@@ -274,6 +275,147 @@
                     app:tabBackground="@drawable/tablayout_underline"
                     app:tabTextAppearance="@style/TabLayout" />
             </androidx.viewpager.widget.ViewPager>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/tokens"
+                style="@style/Layout.Card"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_horizontal_margin_half"
+                android:layout_marginBottom="@dimen/activity_horizontal_margin"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/buttons_slider"
+                app:layout_constraintBottom_toTopOf="@id/account_retry_button">
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/tab_fungible"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.34"
+                        android:paddingVertical="@dimen/activity_vertical_margin_half"
+                        android:gravity="center"
+                        android:background="@drawable/rounded_top_left_blue"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tab_fungible_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            style="@style/TextView.Small"
+                            android:gravity="center"
+                            android:text="@string/cis_tab_fungible"
+                            android:textColor="@color/theme_white" />
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:orientation="horizontal">
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="2dp"
+                                android:layout_weight="0.3" />
+                            <View
+                                android:id="@+id/marker_fungible"
+                                android:layout_width="0dp"
+                                android:layout_height="2dp"
+                                android:layout_weight="0.4"
+                                android:background="@color/theme_white" />
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="2dp"
+                                android:layout_weight="0.3" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/tab_collectibles"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.34"
+                        android:gravity="center"
+                        android:background="@color/theme_accent"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tab_collectibles_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            style="@style/TextView.Small"
+                            android:gravity="center"
+                            android:text="@string/cis_tab_collectibles"
+                            android:textColor="@color/theme_white" />
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:orientation="horizontal">
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="2dp"
+                                android:layout_weight="0.3" />
+                            <View
+                                android:id="@+id/marker_collectibles"
+                                android:layout_width="0dp"
+                                android:layout_height="2dp"
+                                android:layout_weight="0.4"
+                                android:visibility="gone"
+                                android:background="@color/theme_white" />
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="2dp"
+                                android:layout_weight="0.3" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/tab_add_new"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.33"
+                        android:gravity="center"
+                        android:background="@drawable/rounded_top_right_blue"
+                        android:orientation="vertical">
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                style="@style/TextView.Small"
+                                android:text="Add new"
+                                android:textColor="@color/theme_white" />
+                            <TextView
+                                android:id="@+id/add"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                style="@style/TextView.Large.Bold"
+                                android:gravity="center_vertical"
+                                android:text="+"
+                                android:textColor="@color/theme_white"
+                                android:layout_marginStart="8dp" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:orientation="horizontal">
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="2dp"
+                                android:layout_weight="1" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+                <FrameLayout
+                    android:id="@+id/tokens_fragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
             <Button
                 android:id="@+id/account_retry_button"
@@ -296,6 +438,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <include layout="@layout/progress" android:id="@+id/include_progress" />

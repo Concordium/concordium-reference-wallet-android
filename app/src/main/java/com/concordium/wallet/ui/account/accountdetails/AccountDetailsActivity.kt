@@ -2,6 +2,7 @@ package com.concordium.wallet.ui.account.accountdetails
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -15,10 +16,13 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
+import com.concordium.wallet.ui.account.accountdetails.transfers.AccountDetailsTransfersFragment
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
+import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewFragment
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
+import com.concordium.wallet.ui.more.SettingsActivity
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.ui.walletconnect.WalletConnectActivity
@@ -158,6 +162,27 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     private fun initViews() {
         showWaiting(false)
         initTabs()
+        initTabsTokens()
+    }
+
+    private fun initTabsTokens() {
+        binding.tabFungible.setOnClickListener {
+            binding.markerFungible.visibility = View.VISIBLE
+            binding.markerCollectibles.visibility = View.GONE
+            binding.tabFungibleText.setTypeface(binding.tabFungibleText.typeface, Typeface.BOLD)
+            binding.tabCollectiblesText.setTypeface(binding.tabFungibleText.typeface, Typeface.NORMAL)
+            supportFragmentManager.beginTransaction().replace(R.id.tokens_fragment, AccountDetailsTransfersFragment(), null).commit()
+        }
+        binding.tabCollectibles.setOnClickListener {
+            binding.markerFungible.visibility = View.GONE
+            binding.markerCollectibles.visibility = View.VISIBLE
+            binding.tabFungibleText.setTypeface(binding.tabFungibleText.typeface, Typeface.NORMAL)
+            binding.tabCollectiblesText.setTypeface(binding.tabFungibleText.typeface, Typeface.BOLD)
+            supportFragmentManager.beginTransaction().replace(R.id.tokens_fragment, AccountsOverviewFragment(), null).commit()
+        }
+        binding.tabAddNew.setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
+        }
     }
 
     private fun initTopContent() {
@@ -239,7 +264,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     private fun initTabs() {
         val adapter = AccountDetailsPagerAdapter(supportFragmentManager, viewModel.account, this)
         binding.accountDetailsPager.adapter = adapter
-        binding.accountDetailsTablayout.setupWithViewPager(binding.accountDetailsPager)
+        binding.accountDetailsTabLayout.setupWithViewPager(binding.accountDetailsPager)
     }
 
     private fun showWaiting(waiting: Boolean) {
@@ -313,8 +338,14 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
                 onSendFundsClicked()
             }
         } else {
+            binding.buttonsSlider.addButton(R.drawable.ic_tokens, setToWhite = false) {
+                showTokensView()
+            }
             binding.buttonsSlider.addButton(R.drawable.ic_send) {
                 onSendFundsClicked()
+            }
+            binding.buttonsSlider.addButton(R.drawable.ic_list) {
+                showTransactionsView()
             }
         }
         binding.buttonsSlider.addButton(R.drawable.ic_recipient_address_qr) {
@@ -352,5 +383,15 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         if (continueToShieldIntro)
             intent.putExtra(AccountSettingsActivity.EXTRA_CONTINUE_TO_SHIELD_INTRO, viewModel.isShielded)
         startActivity(intent)
+    }
+
+    private fun showTransactionsView() {
+        binding.accountDetailsPager.visibility = View.VISIBLE
+        binding.tokens.visibility = View.GONE
+    }
+
+    private fun showTokensView() {
+        binding.accountDetailsPager.visibility = View.GONE
+        binding.tokens.visibility = View.VISIBLE
     }
 }

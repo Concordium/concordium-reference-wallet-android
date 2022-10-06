@@ -61,11 +61,12 @@ class ButtonsSlider : CardView {
         }
     }
 
-    fun addButton(imageResource: Int, isEnabled: Boolean = true, onClick: () -> Unit) {
+    fun addButton(imageResource: Int, isEnabled: Boolean = true, setToWhite: Boolean = true, onClick: () -> Unit) {
         val button = AppCompatImageView(ContextThemeWrapper(context, R.style.ButtonsSliderButton))
         button.setImageResource(imageResource)
         button.isEnabled = isEnabled
-        button.setColorFilter(Color.WHITE)
+        if (setToWhite)
+            button.setColorFilter(Color.WHITE)
         button.setOnClickListener {
             onClick()
         }
