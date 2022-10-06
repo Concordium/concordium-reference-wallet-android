@@ -291,13 +291,13 @@
                 app:layout_constraintBottom_toTopOf="@id/account_retry_button">
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="44dp"
                     android:orientation="horizontal">
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:id="@+id/tab_fungible"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="0.34"
+                        android:layout_weight="0.33"
                         android:paddingVertical="@dimen/activity_vertical_margin_half"
                         android:gravity="center"
                         android:background="@drawable/rounded_top_left_blue"
@@ -331,11 +331,12 @@
                                 android:layout_weight="0.3" />
                         </androidx.appcompat.widget.LinearLayoutCompat>
                     </androidx.appcompat.widget.LinearLayoutCompat>
+                    <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/theme_white" />
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:id="@+id/tab_collectibles"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="0.34"
+                        android:layout_weight="0.33"
                         android:gravity="center"
                         android:background="@color/theme_accent"
                         android:orientation="vertical">
@@ -369,6 +370,7 @@
                                 android:layout_weight="0.3" />
                         </androidx.appcompat.widget.LinearLayoutCompat>
                     </androidx.appcompat.widget.LinearLayoutCompat>
+                    <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/theme_white" />
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:id="@+id/tab_add_new"
                         android:layout_width="0dp"

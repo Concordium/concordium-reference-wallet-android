@@ -987,5 +987,7 @@
     <string name="cis_tab_add_new">Add new</string>
     <string name="cis_find_tokens_title">Enter a contract address to look for tokens.</string>
     <string name="cis_token_details_title">%1$s balance on %2$s</string>
+    <string name="cis_find_tokens_hint">Contract address</string>
+    <string name="cis_look_for_tokens">Look for tokens</string>
 
 </resources>

@@ -63,6 +63,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     override fun onResume() {
         super.onResume()
         viewModelAccountDetails.loadAccount(accountAddress)
+        viewModelAccountDetails.populateTransferList()
         viewModelAccountDetails.initiateFrequentUpdater()
     }
 
@@ -236,15 +237,16 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun showFindTokensDialog() {
-        val findTokens = FindTokens(this)
-        findTokens.test()
+        val findTokens = FindTokensBottomSheet(this)
+        findTokens.initialize()
         findTokens.show()
     }
 
     private fun showTokenDetailsDialog(token: Token) {
-        val tokenDetails = TokenDetails(this)
-        tokenDetails.test(token.name, viewModelAccountDetails.account.name)
-        tokenDetails.show()
+        val intent = Intent(this, TokenDetailsActivity::class.java)
+        intent.putExtra(TokenDetailsActivity.TOKEN_NAME, token.name)
+        intent.putExtra(TokenDetailsActivity.ACCOUNT_NAME, viewModelAccountDetails.account.name)
+        startActivity(intent)
     }
 
     private fun updateShieldEnabledUI() {

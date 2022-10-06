@@ -1,37 +1,24 @@
 package com.concordium.wallet.ui.cis2
 
-import android.app.Activity
-import android.widget.TextView
+import android.os.Bundle
+import android.view.View
+import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
-import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.concordium.wallet.databinding.ActivityTokenDetailsBinding
+import com.concordium.wallet.ui.base.BaseActivity
 
-class FindTokens(private var activity: Activity) {
-    private val dialog = BottomSheetDialog(activity)
-
-    fun test() {
-        dialog.setContentView(R.layout.dialog_token_details)
-        val title = dialog.findViewById<TextView>(R.id.title)
-        title?.text = activity.getString(R.string.cis_find_tokens_title)
-    }
-
-    fun show() {
-        dialog.show()
-    }
-}
-
-
-/*
-class FindTokensActivity : BaseActivity() {
-    private lateinit var binding: ActivityFindTokensBinding
+class TokenDetailsActivity : BaseActivity() {
+    private lateinit var binding: ActivityTokenDetailsBinding
     private lateinit var viewModel: TokensViewModel
 
     companion object {
-        const val ACCOUNT_ADDRESS = "ACCOUNT_ADDRESS"
+        const val TOKEN_NAME = "TOKEN_NAME"
+        const val ACCOUNT_NAME = "ACCOUNT_NAME"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityFindTokensBinding.inflate(layoutInflater)
+        binding = ActivityTokenDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initViews()
         initializeViewModel()
@@ -40,7 +27,10 @@ class FindTokensActivity : BaseActivity() {
     }
 
     private fun initViews() {
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.cis_find_tokens_title)
+        val tokenName = intent.extras!!.getString(TOKEN_NAME)
+        val accountName = intent.extras!!.getString(ACCOUNT_NAME)
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.app_name)
+        setActionBarTitle(getString(R.string.cis_token_details_title, tokenName, accountName))
     }
 
     private fun initializeViewModel() {
@@ -61,4 +51,3 @@ class FindTokensActivity : BaseActivity() {
 
     }
 }
-*/
