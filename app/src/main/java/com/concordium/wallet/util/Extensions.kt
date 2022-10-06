@@ -2,6 +2,7 @@ package com.concordium.wallet.util
 
 import android.content.Intent
 import android.os.Build
+import android.os.Bundle
 import java.io.Serializable
 
 fun ByteArray.toHex() = joinToString("") {
@@ -22,5 +23,14 @@ fun <T : Serializable?> Intent.getSerializable(key: String, m_class: Class<T>): 
     else {
         @Suppress("DEPRECATION", "UNCHECKED_CAST")
         this.getSerializableExtra(key) as T
+    }
+}
+
+fun <T : Serializable?> Bundle.getSerializableFromBundle(key: String, m_class: Class<T>): T {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+        this.getSerializable(key, m_class)!!
+    else {
+        @Suppress("DEPRECATION", "UNCHECKED_CAST")
+        this.getSerializable(key) as T
     }
 }

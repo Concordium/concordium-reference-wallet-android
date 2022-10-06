@@ -46,50 +46,19 @@
                     style="@style/Layout.CardView.Dark"
                     android:orientation="vertical">
                     <RelativeLayout
+                        android:id="@+id/balances"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="@dimen/activity_vertical_margin_half">
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
                             android:orientation="vertical">
-
-                            <LinearLayout
-                                android:id="@+id/readonly_desc"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_marginTop="4dp"
-                                android:gravity="center"
-                                android:orientation="horizontal"
-                                android:visibility="gone"
-                                tools:visibility="visible">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/accounts_overview_readonly_desc"
-                                    android:textColor="@color/text_grey"
-                                    android:textSize="11sp" />
-
-                                <androidx.appcompat.widget.AppCompatImageView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:layout_gravity="center"
-                                    android:layout_marginStart="4dp"
-                                    android:layout_marginVertical="2dp"
-                                    android:scaleType="fitStart"
-                                    android:src="@drawable/ic_read_only"
-                                    android:tint="@color/text_grey" />
-                            </LinearLayout>
-
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="5dp"
-                                android:layout_marginBottom="7dp"
                                 android:orientation="vertical">
-
                                 <TextView
                                     android:id="@+id/account_total_details_disposal_text"
                                     style="@style/TextView.BalanceInfo"
@@ -97,26 +66,10 @@
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center"
                                     android:text="@string/account_total_details_disposal" />
-
-                                <LinearLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:orientation="horizontal">
-
-                                    <TextView
-                                        style="@style/TextView.BlueValueHuge"
-                                        android:layout_gravity="top"
-                                        android:gravity="top"
-                                        android:lines="1"
-                                        android:text="@string/app_gstroke"
-                                        android:textSize="24sp" />
-
                                     <TextView
                                         android:id="@+id/balance_textview"
                                         style="@style/TextView.BlueValueHuge"
-                                        android:layout_gravity="top"
-                                        android:gravity="top"
+                                        android:layout_gravity="center"
                                         android:lines="1"
                                         android:text=""
                                         app:autoSizeMaxTextSize="28sp"
@@ -125,50 +78,35 @@
                                         app:autoSizeTextType="uniform"
                                         app:layout_constraintStart_toStartOf="parent"
                                         app:layout_constraintTop_toTopOf="parent"
-                                        tools:text="100.00" />
-
-                                </LinearLayout>
-
+                                        tools:text="Ͼ100.00" />
                             </LinearLayout>
-
                             <LinearLayout
+                                android:id="@+id/accounts_overview_total_details_disposal_container"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="@dimen/accounts_overview_total_details_side_margins"
-                                android:layout_marginTop="3dp"
-                                android:layout_marginRight="@dimen/accounts_overview_total_details_side_margins"
-                                android:layout_marginBottom="7dp"
-                                android:orientation="horizontal">
-                                <LinearLayout
-                                    android:id="@+id/accounts_overview_total_details_disposal_container"
-                                    android:layout_width="match_parent"
+                                android:layout_marginTop="5dp"
+                                android:orientation="vertical">
+                                <TextView
+                                    style="@style/TextView.BalanceInfo"
+                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:orientation="vertical">
-                                    <TextView
-                                        style="@style/TextView.BalanceInfo"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="center"
-                                        android:text="@string/accounts_overview_total_details_disposal" />
-                                    <TextView
-                                        android:id="@+id/accounts_overview_total_details_disposal"
-                                        style="@style/TextView.TotalBalanceDetails"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_gravity="center"
-                                        tools:text="Ͼ599.9505" />
-                                </LinearLayout>
+                                    android:layout_gravity="center"
+                                    android:text="@string/accounts_overview_total_details_disposal" />
+                                <TextView
+                                    android:id="@+id/accounts_overview_total_details_disposal"
+                                    style="@style/TextView.TotalBalanceDetails"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    tools:text="Ͼ599.9505" />
                             </LinearLayout>
-
                             <LinearLayout
                                 android:id="@+id/accounts_overview_total_details_staked_container"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginLeft="@dimen/accounts_overview_total_details_side_margins"
-                                android:layout_marginRight="@dimen/accounts_overview_total_details_side_margins"
-                                android:layout_marginBottom="15dp"
+                                android:layout_marginTop="5dp"
                                 android:visibility="gone"
-                                tools:visibility="gone"
+                                tools:visibility="visible"
                                 android:orientation="vertical">
                                 <TextView
                                     android:id="@+id/accounts_overview_total_title_staked"
@@ -182,14 +120,13 @@
                                     android:layout_gravity="center"
                                     tools:text="Ͼ33.00" />
                             </LinearLayout>
-
                             <LinearLayout
                                 android:id="@+id/accounts_overview_total_details_baker_container"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="@dimen/accounts_overview_total_details_side_margins"
                                 android:layout_marginRight="@dimen/accounts_overview_total_details_side_margins"
-                                android:layout_marginBottom="15dp"
+                                android:layout_marginTop="5dp"
                                 android:visibility="gone"
                                 tools:visibility="visible"
                                 android:orientation="vertical">
@@ -205,75 +142,331 @@
                                     android:layout_gravity="center"
                                     tools:text="Ͼ33.00" />
                             </LinearLayout>
-
                         </LinearLayout>
-                        <ImageView
+                        <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/shielded_icon"
                             android:layout_width="wrap_content"
-                            android:layout_height="100dp"
+                            android:layout_height="wrap_content"
                             android:layout_centerInParent="true"
                             android:src="@drawable/ic_bg_shield" />
                     </RelativeLayout>
 
-                    <LinearLayout
+                    <androidx.appcompat.widget.LinearLayoutCompat
                         android:id="@+id/toggle_container"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:background="@drawable/rounded_bottom"
+                        android:layout_height="44dp"
                         android:orientation="horizontal">
-                        <RelativeLayout
+                        <androidx.appcompat.widget.LinearLayoutCompat
                             android:id="@+id/toggle_balance"
-                            style="@style/ActionCardButtonContainer">
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.33"
+                            android:background="@drawable/slider_button"
+                            android:paddingVertical="@dimen/activity_vertical_margin_half"
+                            android:gravity="center"
+                            android:orientation="vertical">
                             <TextView
-                                style="@style/ActionCardButton"
-                                android:textAllCaps="false"
-                                android:text="@string/account_details_toggle_balance" />
-                        </RelativeLayout>
-                        <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                style="@style/TextView.Small"
+                                android:gravity="center"
+                                android:text="@string/account_details_toggle_balance"
+                                android:textColor="@color/theme_white" />
+                            <androidx.appcompat.widget.LinearLayoutCompat
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:orientation="horizontal">
+                                <View
+                                    android:layout_width="0dp"
+                                    android:layout_height="2dp"
+                                    android:layout_weight="0.3" />
+                                <View
+                                    android:id="@+id/marker_balance"
+                                    android:layout_width="0dp"
+                                    android:layout_height="2dp"
+                                    android:layout_weight="0.4"
+                                    android:background="@color/theme_white" />
+                                <View
+                                    android:layout_width="0dp"
+                                    android:layout_height="2dp"
+                                    android:layout_weight="0.3" />
+                            </androidx.appcompat.widget.LinearLayoutCompat>
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+                        <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/theme_white" />
+                        <androidx.appcompat.widget.LinearLayoutCompat
                             android:id="@+id/toggle_shielded"
-                            style="@style/ActionCardButtonContainer">
-
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.33"
+                            android:background="@drawable/slider_button"
+                            android:gravity="center"
+                            android:orientation="vertical">
                             <TextView
-                                style="@style/ActionCardButton"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                style="@style/TextView.Small"
+                                android:gravity="center"
                                 android:text="@string/account_details_toggle_shielded"
-                                android:textAllCaps="false" />
-                        </RelativeLayout>
-                    </LinearLayout>
+                                android:textColor="@color/theme_white" />
+                            <androidx.appcompat.widget.LinearLayoutCompat
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:orientation="horizontal">
+                                <View
+                                    android:layout_width="0dp"
+                                    android:layout_height="2dp"
+                                    android:layout_weight="0.3" />
+                                <View
+                                    android:id="@+id/marker_shielded"
+                                    android:layout_width="0dp"
+                                    android:layout_height="2dp"
+                                    android:layout_weight="0.4"
+                                    android:visibility="gone"
+                                    tools:visibility="visible"
+                                    android:background="@color/theme_white" />
+                                <View
+                                    android:layout_width="0dp"
+                                    android:layout_height="2dp"
+                                    android:layout_weight="0.3" />
+                            </androidx.appcompat.widget.LinearLayoutCompat>
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+                    </androidx.appcompat.widget.LinearLayoutCompat>
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <com.concordium.wallet.uicore.ButtonsSlider
-                android:id="@+id/buttons_slider"
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/container_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:layout_marginTop="@dimen/activity_vertical_margin_half"
                 android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-                tools:layout_height="100dp"
-                app:cardCornerRadius="@dimen/card_corner_radius"
-                app:cardElevation="0dp"
-                app:layout_constraintTop_toBottomOf="@+id/balance_layout" />
+                android:layout_marginBottom="@dimen/activity_horizontal_margin"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/balance_layout">
 
-            <androidx.viewpager.widget.ViewPager
+                <com.concordium.wallet.uicore.ButtonsSlider
+                    android:id="@+id/buttons_slider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="@dimen/card_corner_radius"
+                    app:cardElevation="0dp" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/buttons_shielded"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="@dimen/card_corner_radius"
+                    app:cardElevation="0dp">
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <RelativeLayout
+                            android:id="@+id/send_shielded"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/slider_button"
+                            android:clickable="true"
+                            android:layout_weight="0.33">
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:layout_margin="15dp"
+                                android:scaleType="fitCenter"
+                                android:layout_centerInParent="true"
+                                android:tint="@color/theme_white"
+                                android:src="@drawable/ic_icon_send_shielded"
+                                android:gravity="center" />
+                        </RelativeLayout>
+                        <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/theme_white" />
+                        <RelativeLayout
+                            android:id="@+id/unshield"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/slider_button"
+                            android:clickable="true"
+                            android:layout_weight="0.33">
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:layout_margin="15dp"
+                                android:scaleType="fitCenter"
+                                android:layout_centerInParent="true"
+                                android:tint="@color/theme_white"
+                                android:src="@drawable/ic_unshield"
+                                android:gravity="center" />
+                        </RelativeLayout>
+                        <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/theme_white" />
+                        <RelativeLayout
+                            android:id="@+id/receive"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/slider_button"
+                            android:clickable="true"
+                            android:layout_weight="0.33">
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
+                                android:layout_margin="15dp"
+                                android:scaleType="fitCenter"
+                                android:layout_centerInParent="true"
+                                android:tint="@color/theme_white"
+                                android:src="@drawable/ic_icon_qr"
+                                android:gravity="center" />
+                        </RelativeLayout>
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                </androidx.cardview.widget.CardView>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/account_details_pager"
                 style="@style/Layout.Card"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="@dimen/activity_horizontal_margin_half"
                 android:layout_marginBottom="@dimen/activity_horizontal_margin"
-                app:layout_constraintBottom_toTopOf="@id/account_retry_button"
+                android:layout_marginTop="@dimen/activity_vertical_margin_half"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/buttons_slider">
-                <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/account_details_tablayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/container_layout"
+                app:layout_constraintBottom_toTopOf="@id/account_retry_button">
+            </androidx.viewpager2.widget.ViewPager2>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/tokens"
+                style="@style/Layout.Card"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:layout_marginBottom="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin_half"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/container_layout"
+                app:layout_constraintBottom_toTopOf="@id/account_retry_button">
+                <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:tabIndicatorColor="@android:color/transparent"
-                    app:tabSelectedTextColor="@color/text_blue"
-                    app:tabTextColor="@color/text_black"
-                    app:tabBackground="@drawable/tablayout_underline"
-                    app:tabTextAppearance="@style/TabLayout" />
-            </androidx.viewpager.widget.ViewPager>
+                    android:layout_height="44dp"
+                    android:orientation="horizontal">
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/tab_fungible"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.33"
+                        android:paddingVertical="@dimen/activity_vertical_margin_half"
+                        android:gravity="center"
+                        android:background="@drawable/rounded_top_left_blue"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tab_fungible_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            style="@style/TextView.Small"
+                            android:textStyle="bold"
+                            android:gravity="center"
+                            android:text="@string/cis_tab_fungible"
+                            android:textColor="@color/theme_white" />
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:orientation="horizontal">
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="2dp"
+                                android:layout_weight="0.3" />
+                            <View
+                                android:id="@+id/marker_fungible"
+                                android:layout_width="0dp"
+                                android:layout_height="2dp"
+                                android:layout_weight="0.4"
+                                android:background="@color/theme_white" />
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="2dp"
+                                android:layout_weight="0.3" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                    <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/theme_white" />
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/tab_collectibles"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.33"
+                        android:gravity="center"
+                        android:background="@color/theme_accent"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tab_collectibles_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            style="@style/TextView.Small"
+                            android:gravity="center"
+                            android:text="@string/cis_tab_collectibles"
+                            android:textColor="@color/theme_white" />
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:orientation="horizontal">
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="2dp"
+                                android:layout_weight="0.3" />
+                            <View
+                                android:id="@+id/marker_collectibles"
+                                android:layout_width="0dp"
+                                android:layout_height="2dp"
+                                android:layout_weight="0.4"
+                                android:visibility="gone"
+                                android:background="@color/theme_white" />
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="2dp"
+                                android:layout_weight="0.3" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                    <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/theme_white" />
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/tab_add_new"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.33"
+                        android:gravity="center"
+                        android:background="@drawable/rounded_top_right_blue"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/TextView.Small"
+                            android:text="@string/cis_tab_manage"
+                            android:textColor="@color/theme_white" />
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:orientation="horizontal">
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="2dp"
+                                android:layout_weight="1" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+                <FrameLayout
+                    android:id="@+id/tokens_fragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
             <Button
                 android:id="@+id/account_retry_button"
@@ -282,6 +475,7 @@
                 android:layout_margin="@dimen/activity_horizontal_margin"
                 android:text="@string/account_details_retry_button"
                 android:visibility="gone"
+                tools:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@+id/account_remove_button"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent" />
@@ -293,12 +487,15 @@
                 android:layout_margin="@dimen/activity_horizontal_margin"
                 android:text="@string/account_details_remove_button"
                 android:visibility="gone"
+                tools:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <include layout="@layout/progress" android:id="@+id/include_progress" />
+        <include layout="@layout/progress" android:id="@+id/include_progress_tokens" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

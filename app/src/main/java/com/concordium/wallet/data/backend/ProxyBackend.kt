@@ -95,4 +95,19 @@ interface ProxyBackend {
 
     @GET("v0/accEncryptionKey/{accountAddress}")
     fun getAccountEncryptedKey(@Path("accountAddress") accountAddress: String): Call<AccountKeyData>
+
+    @GET("v0/CIS2Tokens/{index}/{subIndex}")
+    fun cis2Tokens(
+        @Path("index") index: String,
+        @Path("subIndex") subIndex: String,
+        @Query("from") from: String? = null,
+        @Query("limit") limit: Int? = null
+    ): Call<CIS2Tokens>
+
+    @GET("v0/CIS2TokenMetadata/{index}/{subIndex}")
+    fun cis2TokenMetadata(
+        @Path("index") index: String,
+        @Path("subIndex") subIndex: String,
+        @Query("tokenId") from: String
+    ): Call<CIS2TokensMetadata>
 }

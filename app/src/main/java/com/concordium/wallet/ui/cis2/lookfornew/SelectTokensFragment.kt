@@ -1,0 +1,139 @@
+package com.concordium.wallet.ui.cis2.lookfornew
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.concordium.wallet.R
+import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.databinding.FragmentDialogSelectTokensBinding
+import com.concordium.wallet.ui.cis2.TokensAdapter
+import com.concordium.wallet.ui.cis2.TokensBaseFragment
+import com.concordium.wallet.ui.cis2.TokensViewModel
+import com.concordium.wallet.ui.cis2.TokensViewModel.Companion.TOKEN_DATA
+
+class SelectTokensFragment : TokensBaseFragment() {
+    private var _binding: FragmentDialogSelectTokensBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var _viewModel: TokensViewModel
+    private lateinit var tokensAdapter: TokensAdapter
+    private var firstTime = true
+    private var currentFilter = ""
+
+    companion object {
+        @JvmStatic
+        fun newInstance(viewModel: TokensViewModel) = SelectTokensFragment().apply {
+            arguments = Bundle().apply {
+                putSerializable(TOKEN_DATA, viewModel.tokenData)
+            }
+            _viewModel = viewModel
+        }
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentDialogSelectTokensBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initViews()
+        initObservers()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!firstTime)
+            tokensAdapter.notifyDataSetChanged()
+        firstTime = false
+        _viewModel.hasExistingTokens()
+        binding.nonSelected.visibility = View.INVISIBLE
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun initViews() {
+        binding.tokensFound.layoutManager = LinearLayoutManager(activity)
+        tokensAdapter = TokensAdapter(requireActivity(), showCheckBox = true, showLastRow = false, dataSet = arrayOf())
+        tokensAdapter.also { binding.tokensFound.adapter = it }
+        tokensAdapter.dataSet = _viewModel.tokens.toTypedArray()
+
+        binding.tokensFound.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val visibleItemCount = layoutManager.childCount
+                val totalItemCount = layoutManager.itemCount
+                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+                if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount > 3) {
+                    _viewModel.lookForTokens(from = _viewModel.tokens[_viewModel.tokens.size - 1].id)
+                }
+            }
+        })
+
+        binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                currentFilter = query?.uppercase() ?: ""
+                _viewModel.waitingTokens.postValue(false)
+                return false
+            }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                currentFilter = newText?.uppercase() ?: ""
+                _viewModel.waitingTokens.postValue(false)
+                return false
+            }
+        })
+
+        tokensAdapter.setTokenClickListener(object : TokensAdapter.TokenClickListener {
+            override fun onRowClick(token: Token) {
+                _viewModel.stepPage(1)
+            }
+            override fun onCheckBoxClick(token: Token) {
+                _viewModel.toggleNewToken(token)
+            }
+        })
+
+        binding.back.setOnClickListener {
+            _viewModel.stepPage(-1)
+        }
+
+        binding.updateWithTokens.setOnClickListener {
+            _viewModel.updateWithSelectedTokens()
+        }
+    }
+
+    private fun initObservers() {
+        _viewModel.lookForTokens.observe(viewLifecycleOwner) { waiting ->
+            if (!waiting) {
+                tokensAdapter.dataSet = _viewModel.tokens.filter {
+                    it.token.uppercase().contains(currentFilter) ||
+                        (it.tokenMetadata?.name != null && it.tokenMetadata!!.name.uppercase().contains(currentFilter)) ||
+                        (it.tokenMetadata?.description != null && it.tokenMetadata!!.description.uppercase().contains(currentFilter))
+                }.toTypedArray()
+                tokensAdapter.notifyDataSetChanged()
+            }
+        }
+        _viewModel.tokenDetails.observe(viewLifecycleOwner) {
+            tokensAdapter.notifyDataSetChanged()
+        }
+        _viewModel.hasExistingAccountContract.observe(viewLifecycleOwner) { hasExistingAccountContract ->
+            if (hasExistingAccountContract)
+                binding.updateWithTokens.text = getString(R.string.cis_update_tokens)
+            else
+                binding.updateWithTokens.text = getString(R.string.cis_add_tokens)
+            binding.updateWithTokens.isEnabled = true
+        }
+        _viewModel.nonSelected.observe(viewLifecycleOwner) { nonSelected ->
+            if (nonSelected)
+                binding.nonSelected.visibility = View.VISIBLE
+            else
+                binding.nonSelected.visibility = View.INVISIBLE
+        }
+    }
+}

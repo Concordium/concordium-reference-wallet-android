@@ -934,7 +934,6 @@
     <string name="account_total_details_disposal">Balance total</string>
     <string name="account_shielded_total_details_disposal">Shielded balance total of %1$s</string>
 
-    <string name="accounts_overview_readonly_desc">This account is imported without keys, and is read only</string>
     <string name="transactions_filters_show_rewards">Show rewards</string>
     <string name="transactions_filters_show_finalizations_rewards">Show finalizations rewards</string>
     <string name="change_password_initial_error">Data could not be decrypted</string>
@@ -983,4 +982,47 @@
     <string name="export_account_keys_to_file">Export to file</string>
     <string name="export_account_keys_file_exported">File exported</string>
 
+    <string name="cis_tab_fungible">Fungible</string>
+    <string name="cis_tab_collectibles">Collectibles</string>
+    <string name="cis_tab_manage">Manage</string>
+    <string name="cis_find_tokens_title">Enter a contract index to look for tokens.</string>
+    <string name="cis_token_details_title">%1$s balance on %2$s</string>
+    <string name="cis_find_tokens_hint">Contract index</string>
+    <string name="cis_look_for_tokens">Look for tokens</string>
+    <string name="cis_select_tokens_title">Please select the tokens you want to add from the contract.</string>
+    <string name="cis_add_tokens">Add tokens</string>
+    <string name="cis_update_tokens">Update tokens</string>
+    <string name="cis_find_tokens_error">Invalid contract index</string>
+    <string name="cis_search">Search</string>
+    <string name="cis_send_funds">Send funds</string>
+    <string name="cis_currently_available_amounts">Currently available amounts:</string>
+    <string name="cis_token_balance">%1$s Balance:</string>
+    <string name="cis_at_disposal">At disposal:</string>
+    <string name="cis_max">Max</string>
+    <string name="cis_paste_receiver_address">Paste receiver address here, or use one of the options below</string>
+    <string name="cis_paste">Paste</string>
+    <string name="cis_address_book">Address book</string>
+    <string name="cis_scan_qr">Scan QR</string>
+    <string name="cis_optional_add_memo">Optional: Add memo</string>
+    <string name="cis_receipt_confirm">Are you sure you want to make the following transaction?</string>
+    <string name="cis_transaction_send_funds">Transaction: Send funds</string>
+    <string name="cis_sender">Sender</string>
+    <string name="cis_amount">Amount</string>
+    <string name="cis_token">Token</string>
+    <string name="cis_receiver">Receiver</string>
+    <string name="cis_finish">Finish</string>
+    <string name="cis_back">Back</string>
+    <string name="cis_estimated_fee">Estimated transaction fee:\nϾ%1$s</string>
+    <string name="cis_back_to_list">Back to list</string>
+    <string name="cis_invalid_account_address">Invalid account address</string>
+    <string name="cis_enter_receiver_address">Please enter a receiver address</string>
+    <string name="cis_about_token">About token</string>
+    <string name="cis_name_and_icon">Name and icon</string>
+    <string name="cis_mint_address">Mint address</string>
+    <string name="cis_decimals">Decimals</string>
+    <string name="cis_no_tokens_selected">You haven\'t selected any tokens.</string>
+    <string name="cis_tokens_updated">Token list updated</string>
+    <string name="cis_tokens_not_updated">No updates made to token list</string>
+    <string name="cis_no_collectibles_added">No collectibles have been added to this account yet.</string>
+    <string name="cis_add_more">You can add more tokens from the Manage menu.</string>
 </resources>

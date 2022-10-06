@@ -1,12 +1,12 @@
 package com.concordium.wallet.ui.recipient.recipientlist
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.SearchView
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
@@ -14,23 +14,21 @@ import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.databinding.ActivityRecipientListBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.recipient.recipient.RecipientActivity
-import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.uicore.recyclerview.touchlistener.RecyclerTouchListener
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.getSerializable
 
 class RecipientListActivity : BaseActivity() {
     companion object {
         const val EXTRA_SELECT_RECIPIENT_MODE = "EXTRA_SELECT_RECIPIENT_MODE"
         const val EXTRA_SHIELDED = "EXTRA_SHIELDED"
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
+        const val EXTRA_RECIPIENT = "EXTRA_RECIPIENT"
     }
 
     private lateinit var binding: ActivityRecipientListBinding
     private lateinit var viewModel: RecipientListViewModel
     private lateinit var recipientAdapter: RecipientAdapter
-
-    //region Lifecycle
-    //************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +38,8 @@ class RecipientListActivity : BaseActivity() {
 
         val selectRecipientMode = intent.getBooleanExtra(EXTRA_SELECT_RECIPIENT_MODE, false)
         val isShielded = intent.getBooleanExtra(EXTRA_SHIELDED, false)
-        val account = intent.getSerializableExtra(EXTRA_ACCOUNT) as? Account
+
+        val account = if (intent.hasExtra(EXTRA_ACCOUNT)) intent.getSerializable(EXTRA_ACCOUNT, Account::class.java) else null
 
         initializeViewModel()
         viewModel.initialize(selectRecipientMode, isShielded, account)
@@ -65,27 +64,22 @@ class RecipientListActivity : BaseActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    //endregion
-
-    //region Initialize
-    //************************************************************
-
     private fun initializeViewModel() {
         viewModel = ViewModelProvider(
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[RecipientListViewModel::class.java]
-        viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
+        viewModel.waitingLiveData.observe(this) { waiting ->
             waiting?.let {
                 showWaiting(waiting)
             }
-        })
-        viewModel.recipientListLiveData.observe(this, Observer {
+        }
+        viewModel.recipientListLiveData.observe(this) {
             it.let {
                 recipientAdapter.setData(it)
                 showWaiting(false)
             }
-        })
+        }
     }
 
     private fun initializeViews() {
@@ -124,17 +118,13 @@ class RecipientListActivity : BaseActivity() {
             RecipientAdapter.OnItemClickListener {
             override fun onItemClicked(item: Recipient) {
                 if (viewModel.selectRecipientMode) {
-                    goBackToSendFunds(item)
+                    goBackWithRecipient(item)
                 } else {
                     gotoEditRecipient(item)
                 }
 
             }
         })
-
-        //val swipeController = SwipeController()
-        //val itemTouchhelper = ItemTouchHelper(swipeController)
-        //itemTouchhelper.attachToRecyclerView(recyclerview)
     }
 
     private fun initializeListSwipe() {
@@ -144,24 +134,16 @@ class RecipientListActivity : BaseActivity() {
             .setSwipeable(
                 R.id.foreground_root,
                 R.id.background_root,
-                resources.getDimension(R.dimen.item_recipient_delete_width).toInt(),
-                object : RecyclerTouchListener.OnSwipeOptionsClickListener {
-                    override fun onSwipeOptionClicked(viewID: Int, position: Int) {
-                        when (viewID) {
-                            R.id.delete_item_layout -> {
-                                Log.d("Delete")
-                                viewModel.deleteRecipient(recipientAdapter.get(position))
-                            }
-                        }
+                resources.getDimension(R.dimen.item_recipient_delete_width).toInt()) { viewID, position ->
+                when (viewID) {
+                    R.id.delete_item_layout -> {
+                        Log.d("Delete")
+                        viewModel.deleteRecipient(recipientAdapter.get(position))
                     }
-                })
+                }
+            }
         binding.recyclerview.addOnItemTouchListener(touchListener)
     }
-
-    //endregion
-
-    //region Control/UI
-    //************************************************************
 
     private fun showWaiting(waiting: Boolean) {
         if (waiting) {
@@ -192,12 +174,10 @@ class RecipientListActivity : BaseActivity() {
         startActivity(intent)
     }
 
-    private fun goBackToSendFunds(recipient: Recipient) {
-        val intent = Intent(this, SendFundsActivity::class.java)
-        intent.putExtra(SendFundsActivity.EXTRA_RECIPIENT, recipient)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        startActivity(intent)
+    private fun goBackWithRecipient(recipient: Recipient) {
+        val intent = Intent()
+        intent.putExtra(EXTRA_RECIPIENT, recipient)
+        setResult(Activity.RESULT_OK, intent)
+        finish()
     }
-
-    //endregion
 }
