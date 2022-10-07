@@ -230,8 +230,10 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
             initViews()
         }
         binding.toggleShielded.setOnClickListener {
-            viewModelAccountDetails.isShielded = true
-            initViews()
+            if (binding.accountDetailsPager.visibility == View.VISIBLE) {
+                viewModelAccountDetails.isShielded = true
+                initViews()
+            }
         }
         binding.accountTotalDetailsDisposalText.text = if(viewModelAccountDetails.isShielded) resources.getString(R.string.account_shielded_total_details_disposal, viewModelAccountDetails.account.name) else resources.getString(R.string.account_total_details_disposal)
     }
@@ -374,46 +376,52 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     private fun updateButtonsSlider() {
         binding.buttonsSlider.removeAllButtons()
         if (viewModelAccountDetails.isShielded) {
-            binding.buttonsSlider.addButton(R.drawable.ic_icon_send_shielded) {
+            binding.buttonsSlider.addButton(R.drawable.ic_icon_send_shielded, "1") {
                 onSendFundsClicked()
             }
         } else {
-            binding.buttonsSlider.addButton(R.drawable.ic_tokens, setToWhite = false) {
+            binding.buttonsSlider.addButton(R.drawable.ic_tokens, "2", setToWhite = false) {
+                binding.buttonsSlider.setMarkerOn("2")
                 showTokensView()
             }
-            binding.buttonsSlider.addButton(R.drawable.ic_send) {
+            binding.buttonsSlider.addButton(R.drawable.ic_send, "3") {
                 onSendFundsClicked()
             }
-            binding.buttonsSlider.addButton(R.drawable.ic_list) {
+            binding.buttonsSlider.addButton(R.drawable.ic_list, "4") {
+                binding.buttonsSlider.setMarkerOn("4")
                 showTransactionsView()
             }
         }
-        binding.buttonsSlider.addButton(R.drawable.ic_recipient_address_qr) {
+        binding.buttonsSlider.addButton(R.drawable.ic_recipient_address_qr, "5") {
             onAddressClicked()
         }
         if ((viewModelAccountDetails.shieldingEnabledLiveData.value == true && !viewModelAccountDetails.isShielded) || viewModelAccountDetails.shieldingEnabledLiveData.value == false) {
-            binding.buttonsSlider.addButton(R.drawable.ic_earn) {
+            binding.buttonsSlider.addButton(R.drawable.ic_earn, "6") {
                 gotoEarn(this, viewModelAccountDetails.account, viewModelAccountDetails.hasPendingDelegationTransactions, viewModelAccountDetails.hasPendingBakingTransactions)
             }
         }
-        binding.buttonsSlider.addButton(R.drawable.ic_scan) {
+        binding.buttonsSlider.addButton(R.drawable.ic_scan, "7") {
             scan()
         }
         if (viewModelAccountDetails.shieldingEnabledLiveData.value == true) {
             if (viewModelAccountDetails.isShielded) {
-                binding.buttonsSlider.addButton(R.drawable.ic_unshield) {
+                binding.buttonsSlider.addButton(R.drawable.ic_unshield, "8") {
                     onShieldFundsClicked()
                 }
             } else {
-                binding.buttonsSlider.addButton(R.drawable.ic_shielded_icon) {
+                binding.buttonsSlider.addButton(R.drawable.ic_shielded_icon, "9") {
                     onShieldFundsClicked()
                 }
             }
         }
-        binding.buttonsSlider.addButton(R.drawable.ic_settings) {
+        binding.buttonsSlider.addButton(R.drawable.ic_settings, "10") {
             gotoAccountSettings(false)
         }
         binding.buttonsSlider.commitButtons()
+        if (binding.accountDetailsPager.visibility == View.VISIBLE)
+            binding.buttonsSlider.setMarkerOn("4")
+        if (binding.tokens.visibility == View.VISIBLE)
+            binding.buttonsSlider.setMarkerOn("2")
     }
 
     private fun gotoAccountSettings(continueToShieldIntro: Boolean) {

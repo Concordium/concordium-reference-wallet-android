@@ -15,6 +15,7 @@ import android.widget.RelativeLayout.TRUE
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.cardview.widget.CardView
+import androidx.core.view.forEach
 import androidx.core.view.setPadding
 import com.concordium.wallet.R
 import com.concordium.wallet.util.UnitConvertUtil.convertDpToPixel
@@ -61,7 +62,7 @@ class ButtonsSlider : CardView {
         }
     }
 
-    fun addButton(imageResource: Int, isEnabled: Boolean = true, setToWhite: Boolean = true, onClick: () -> Unit) {
+    fun addButton(imageResource: Int, id: String, isEnabled: Boolean = true, setToWhite: Boolean = true, onClick: () -> Unit) {
         val button = AppCompatImageView(ContextThemeWrapper(context, R.style.ButtonsSliderButton))
         button.setImageResource(imageResource)
         button.isEnabled = isEnabled
@@ -71,6 +72,7 @@ class ButtonsSlider : CardView {
             onClick()
         }
         button.setPadding(convertDpToPixel(16f))
+        button.tag = id
         buttons.add(button)
     }
 
@@ -78,14 +80,32 @@ class ButtonsSlider : CardView {
         if (!measured)
             return
         currentPosition = 0
-        val width = (buttons.size * widthEachActionButton) + ((buttons.size - 1) * dividerWidth)
+        val width = (buttons.size * widthEachActionButton.roundUpToInt()) + ((buttons.size - 1) * dividerWidth)
         val layoutParams = RelativeLayout.LayoutParams(width.roundUpToInt(), widthEachActionButton.toInt())
         layoutParams.marginStart = (widthLeftRightButton + dividerWidth).roundUpToInt()
         layoutParams.marginEnd = (widthLeftRightButton + dividerWidth).roundUpToInt()
         buttonsContainer.layoutParams = layoutParams
         for ((i, button) in buttons.withIndex()) {
-            button.layoutParams = LayoutParams(widthEachActionButton.roundUpToInt(), widthEachActionButton.roundUpToInt())
-            buttonsContainer.addView(button)
+            button.layoutParams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+
+            val buttonContainer = RelativeLayout(ContextThemeWrapper(context, R.style.ButtonsSliderButton))
+            buttonContainer.tag = button.tag
+            buttonContainer.layoutParams = LayoutParams(widthEachActionButton.roundUpToInt(), widthEachActionButton.roundUpToInt())
+            buttonContainer.addView(button)
+
+            val marker = View(context)
+            marker.tag = "MARKER"
+            val layoutParamsMarker = RelativeLayout.LayoutParams((widthEachActionButton * 0.5).toInt(), 4)
+            layoutParamsMarker.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, TRUE)
+            layoutParamsMarker.addRule(RelativeLayout.CENTER_HORIZONTAL, TRUE)
+            layoutParamsMarker.bottomMargin = (widthEachActionButton / 10).toInt()
+            marker.layoutParams = layoutParamsMarker
+            marker.setBackgroundColor(Color.WHITE)
+            marker.visibility = View.GONE
+            buttonContainer.addView(marker)
+
+            buttonsContainer.addView(buttonContainer)
+
             if (i < buttons.size - 1)
                 addDivider(buttonsContainer)
         }
@@ -100,6 +120,25 @@ class ButtonsSlider : CardView {
     fun setEnableButtons(isEnabled: Boolean) {
         for (button in buttons)
             button.isEnabled = isEnabled
+    }
+
+    fun setMarkerOn(id: String) {
+        if (!this::buttonsContainer.isInitialized)
+            return
+
+        buttonsContainer.forEach { buttonsContainerView ->
+            if (buttonsContainerView is RelativeLayout) {
+                val buttonContainer = buttonsContainerView as RelativeLayout
+                buttonContainer.forEach { view ->
+                    if (view.tag == "MARKER") {
+                        if (buttonsContainerView.tag == id)
+                            view.visibility = View.VISIBLE
+                        else
+                            view.visibility = View.GONE
+                    }
+                }
+            }
+        }
     }
 
     private fun addCardContentContainer() {
