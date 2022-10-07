@@ -989,5 +989,9 @@
     <string name="cis_token_details_title">%1$s balance on %2$s</string>
     <string name="cis_find_tokens_hint">Contract address</string>
     <string name="cis_look_for_tokens">Look for tokens</string>
+    <string name="cis_select_tokens_title">Please select the tokens you want to add from the contract.</string>
+    <string name="cis_add_tokens">Add tokens</string>
+    <string name="cis_find_tokens_error">Invalid contract address</string>
+    <string name="cis_search">Search</string>
 
 </resources>
