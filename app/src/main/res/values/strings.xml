@@ -993,5 +993,7 @@
     <string name="cis_add_tokens">Add tokens</string>
     <string name="cis_find_tokens_error">Invalid contract address</string>
     <string name="cis_search">Search</string>
+    <string name="cis_about_token">About token</string>
+    <string name="cis_mint_address">Mint address</string>
 
 </resources>

@@ -74,6 +74,37 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:layout_marginTop="@dimen/activity_vertical_margin">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:paddingVertical="@dimen/activity_vertical_margin_half"
+                android:textColor="@color/text_blue"
+                android:text="@string/cis_about_token" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/activity_vertical_margin_half"
+                android:background="@color/theme_light_blue" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin_half"
+                style="@style/TextView.XSmall.Light"
+                android:text="@string/cis_mint_address" />
+            <TextView
+                android:id="@+id/mint_address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:layout_marginBottom="@dimen/activity_vertical_margin_half"
+                style="@style/TextView.Standard"
+                tools:text="8796...67gH" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/theme_grey" />
+
         </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.appcompat.widget.LinearLayoutCompat>

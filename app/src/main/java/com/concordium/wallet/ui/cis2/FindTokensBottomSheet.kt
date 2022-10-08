@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.cis2
 import android.app.Activity
 import android.content.res.Resources
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
@@ -64,11 +65,15 @@ class FindTokensBottomSheet(private var activity: Activity) {
         title.text = activity.getString(R.string.cis_find_tokens_title)
 
         button.setOnClickListener {
-            button.isEnabled = false
-            contractAddress.isEnabled = false
-            pending.visibility = View.VISIBLE
-            error.visibility = View.GONE
             look()
+        }
+        contractAddress.setOnEditorActionListener { _, actionId, _ ->
+            if(actionId == EditorInfo.IME_ACTION_DONE){
+                look()
+                true
+            } else {
+                false
+            }
         }
     }
 
@@ -77,8 +82,15 @@ class FindTokensBottomSheet(private var activity: Activity) {
     }
 
     private fun look() {
+        if (contractAddress.text.isBlank())
+            return
+
+        button.isEnabled = false
+        contractAddress.isEnabled = false
+        pending.visibility = View.VISIBLE
+        error.visibility = View.GONE
         CoroutineScope(Dispatchers.IO).launch {
-            delay(3000)
+            delay(2000)
             activity.runOnUiThread {
                 handleLookup()
             }
@@ -99,9 +111,14 @@ class FindTokensBottomSheet(private var activity: Activity) {
                 addTokens()
             }
         } else {
+            contractAddress.isEnabled = true
             contractAddress.setTextColor(activity.getColor(R.color.text_pink))
             contractAddress.setBackgroundResource(R.drawable.rounded_pink)
-            //contractAddress.onEdit
+            contractAddress.setOnFocusChangeListener { _, _ ->
+                contractAddress.setTextColor(activity.getColor(R.color.text_blue))
+                contractAddress.setBackgroundResource(R.drawable.rounded_light_grey)
+                error.visibility = View.GONE
+            }
             error.visibility = View.VISIBLE
         }
     }
