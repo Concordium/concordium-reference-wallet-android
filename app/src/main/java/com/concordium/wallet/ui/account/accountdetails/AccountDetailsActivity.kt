@@ -333,10 +333,15 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun onSendFundsClicked() {
-        val intent = Intent(this, SendFundsActivity::class.java)
-        intent.putExtra(SendFundsActivity.EXTRA_SHIELDED, viewModelAccountDetails.isShielded)
-        intent.putExtra(SendFundsActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
-        startActivity(intent)
+        if (binding.tokens.visibility == View.VISIBLE) {
+            val intent = Intent(this, SendTokenActivity::class.java)
+            startActivity(intent)
+        } else {
+            val intent = Intent(this, SendFundsActivity::class.java)
+            intent.putExtra(SendFundsActivity.EXTRA_SHIELDED, viewModelAccountDetails.isShielded)
+            intent.putExtra(SendFundsActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
+            startActivity(intent)
+        }
     }
 
     private fun onShieldFundsClicked() {

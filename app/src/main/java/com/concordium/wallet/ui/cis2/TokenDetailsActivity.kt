@@ -1,9 +1,11 @@
 package com.concordium.wallet.ui.cis2
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.ActivityTokenDetailsBinding
 import com.concordium.wallet.ui.base.BaseActivity
 
@@ -31,6 +33,14 @@ class TokenDetailsActivity : BaseActivity() {
         val accountName = intent.extras!!.getString(ACCOUNT_NAME)
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.app_name)
         setActionBarTitle(getString(R.string.cis_token_details_title, tokenName, accountName))
+        binding.send.setOnClickListener {
+            val intent = Intent(this, SendTokenActivity::class.java)
+            intent.putExtra(SendTokenActivity.TOKEN, Token("default", "default", "DEF", 123))
+            startActivity(intent)
+        }
+        binding.receive.setOnClickListener {
+
+        }
     }
 
     private fun initializeViewModel() {
@@ -41,6 +51,9 @@ class TokenDetailsActivity : BaseActivity() {
     }
 
     private fun initObservers() {
+        viewModel.waiting.observe(this) { waiting ->
+            showWaiting(waiting)
+        }
     }
 
     private fun showWaiting(waiting: Boolean) {

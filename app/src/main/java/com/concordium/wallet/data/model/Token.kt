@@ -4,5 +4,7 @@ import java.io.Serializable
 
 data class Token (
     val imageUrl: String,
-    val name: String
+    val name: String,
+    val shortName: String,
+    val balance: Long?
 ): Serializable

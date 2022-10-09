@@ -18,7 +18,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         waiting.postValue(true)
         viewModelScope.launch {
             val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
-            val tokensList = accountRepository.getAll().map { Token("", it.address) }.filter {
+            val tokensList = accountRepository.getAll().map { Token("", it.address, "DEF", 0) }.filter {
                 if (isFungible) it.name.startsWith("3q") else it.name.startsWith("3t")
             }
             waiting.postValue(false)
