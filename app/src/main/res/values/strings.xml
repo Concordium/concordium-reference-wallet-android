@@ -1000,5 +1000,7 @@
     <string name="cis_token_balance">%1$s Balance:</string>
     <string name="cis_at_disposal">At disposal:</string>
     <string name="cis_max">Max</string>
+    <string name="cis_paste_receiver_address">Paste receiver address here, or use one of the options below</string>
+    <string name="cis_paste">Paste</string>
 
 </resources>

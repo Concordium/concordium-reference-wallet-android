@@ -1,7 +1,13 @@
 package com.concordium.wallet.ui.cis2
 
+import android.content.ClipDescription
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
@@ -36,6 +42,37 @@ class SendTokenActivity : BaseActivity() {
         } else {
             viewModel.token = Token("default", "default", "DEF", 123)
         }
+        initializeReceiver()
+    }
+
+    private fun initializeReceiver() {
+        binding.receiver.setOnClickListener {
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            if (clipboard.hasPrimaryClip()) {
+                clipboard.primaryClipDescription?.let { clipDescription ->
+                    if (clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) || clipDescription.hasMimeType(
+                            ClipDescription.MIMETYPE_TEXT_HTML)) {
+                        clipboard.primaryClip?.getItemAt(0)?.text?.let { text ->
+                            showPopupPaste(text.toString())
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showPopupPaste(clipText: String) {
+        val popupMenu = PopupMenu(this, binding.receiver)
+        popupMenu.menuInflater.inflate(R.menu.paste_menu, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener { item: MenuItem? ->
+            when (item!!.itemId) {
+                R.id.paste -> {
+                    binding.receiver.text = clipText
+                }
+            }
+            true
+        }
+        popupMenu.show()
     }
 
     private fun initializeViewModel() {

@@ -110,21 +110,17 @@
                 android:layout_marginEnd="@dimen/activity_horizontal_margin_half"
                 android:text="@string/cis_max" />
         </androidx.appcompat.widget.LinearLayoutCompat>
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/receiver"
+            style="@style/TextView.Standard"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:orientation="vertical"
-            android:background="@drawable/rounded_transparent">
-            <EditText
-                android:id="@+id/receiver"
-                android:inputType="none"
-                android:textIsSelectable="true"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
+            android:textColor="@color/text_blue"
+            android:textColorHint="@color/text_blue"
+            android:padding="@dimen/activity_horizontal_margin"
+            android:background="@drawable/rounded_transparent"
+            android:hint="@string/cis_paste_receiver_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <include layout="@layout/progress" android:id="@+id/include_progress" android:visibility="gone" tools:visibility="visible" />
