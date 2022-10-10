@@ -83,7 +83,9 @@
                     tools:text="Ͼ123.45" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <include layout="@layout/search_token_result" />
+            <include
+                android:id="@+id/search_token"
+                layout="@layout/search_token_result" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"

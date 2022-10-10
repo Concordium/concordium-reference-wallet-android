@@ -520,21 +520,21 @@
     </style>
 
     <style name="Animations" />
-
     <style name="Animations.BottomSheet">
         <item name="android:windowEnterAnimation">@anim/bottom_sheet_enter</item>
         <item name="android:windowExitAnimation">@anim/bottom_sheet_exit</item>
     </style>
 
-    <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
+    <style name="BottomSheet" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/rounded_top_white</item>
     </style>
-
-    <style name="BaseBottomSheetDialog" parent="@style/Theme.Design.Light.BottomSheetDialog">
+    <style name="BaseBottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
         <item name="bottomSheetStyle">@style/BottomSheet</item>
     </style>
-
-    <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />
+    <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/white</item>
+    </style>
 
 </resources>

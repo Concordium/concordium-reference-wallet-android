@@ -56,11 +56,20 @@ class SendTokenActivity : BaseActivity() {
         }
         binding.atDisposal.text = CurrencyUtil.formatGTU(viewModel.account.getAtDisposal(),true)
         binding.amount.text = CurrencyUtil.formatGTU(0, false)
+        initializeSearchToken()
         initializeMax()
         initializeMemo()
         initializeReceiver()
         initializeAddressBook()
         initializeScanQrCode()
+    }
+
+    private fun initializeSearchToken() {
+        binding.searchToken.searchToken.setOnClickListener {
+            SearchTokenBottomSheet().apply {
+                show(supportFragmentManager, "TEST")
+            }
+        }
     }
 
     private fun initializeMax() {
