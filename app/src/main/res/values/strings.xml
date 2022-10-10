@@ -1002,5 +1002,7 @@
     <string name="cis_max">Max</string>
     <string name="cis_paste_receiver_address">Paste receiver address here, or use one of the options below</string>
     <string name="cis_paste">Paste</string>
+    <string name="cis_address_book">Address book</string>
+    <string name="cis_scan_qr">Scan QR</string>
 
 </resources>

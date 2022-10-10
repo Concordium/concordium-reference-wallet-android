@@ -110,17 +110,83 @@
                 android:layout_marginEnd="@dimen/activity_horizontal_margin_half"
                 android:text="@string/cis_max" />
         </androidx.appcompat.widget.LinearLayoutCompat>
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/receiver"
-            style="@style/TextView.Standard"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:textColor="@color/text_blue"
-            android:textColorHint="@color/text_blue"
-            android:padding="@dimen/activity_horizontal_margin"
-            android:background="@drawable/rounded_transparent"
-            android:hint="@string/cis_paste_receiver_address"
+
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:cardCornerRadius="@dimen/card_corner_radius"
+            app:cardElevation="0dp">
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_transparent"
+                android:orientation="vertical">
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/receiver"
+                    style="@style/TextView.Standard"
+                    android:textColor="@color/text_blue"
+                    android:textColorHint="@color/text_blue"
+                    android:padding="@dimen/activity_horizontal_margin"
+                    android:hint="@string/cis_paste_receiver_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/address_book"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0.5"
+                        android:orientation="horizontal">
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="50dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/button_action_card"
+                            android:paddingVertical="@dimen/activity_vertical_margin"
+                            android:src="@drawable/ic_lup"
+                            android:scaleType="fitCenter"
+                            android:tint="@color/theme_white" />
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            style="@style/TextView.Standard.White"
+                            android:background="@drawable/button_action_card"
+                            android:text="@string/cis_address_book" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                    <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/theme_white" />
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/scan_qr"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0.5"
+                        android:orientation="horizontal">
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="50dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/button_action_card"
+                            android:paddingVertical="@dimen/activity_vertical_margin"
+                            android:src="@drawable/ic_recipient_address_qr"
+                            android:scaleType="fitCenter"
+                            android:tint="@color/theme_white" />
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            style="@style/TextView.Standard.White"
+                            android:background="@drawable/button_action_card"
+                            android:text="@string/cis_scan_qr" />
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.cardview.widget.CardView>
+
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <include layout="@layout/progress" android:id="@+id/include_progress" android:visibility="gone" tools:visibility="visible" />

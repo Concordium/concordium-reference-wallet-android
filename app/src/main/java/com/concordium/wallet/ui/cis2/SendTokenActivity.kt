@@ -1,19 +1,25 @@
 package com.concordium.wallet.ui.cis2
 
+import android.app.Activity
 import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivitySendTokenBinding
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
+import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.util.getSerializable
 
 class SendTokenActivity : BaseActivity() {
@@ -29,7 +35,8 @@ class SendTokenActivity : BaseActivity() {
         binding = ActivitySendTokenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initializeViewModel()
-        viewModel.token = intent.getSerializable(TOKEN, Token::class.java)
+        if (intent.hasExtra(TOKEN))
+            viewModel.token = intent.getSerializable(TOKEN, Token::class.java)
         initViews()
         initObservers()
     }
@@ -43,6 +50,8 @@ class SendTokenActivity : BaseActivity() {
             viewModel.token = Token("default", "default", "DEF", 123)
         }
         initializeReceiver()
+        initializeAddressBook()
+        initializeScanQrCode()
     }
 
     private fun initializeReceiver() {
@@ -60,6 +69,43 @@ class SendTokenActivity : BaseActivity() {
             }
         }
     }
+
+    private fun initializeAddressBook() {
+        binding.addressBook.setOnClickListener {
+            val intent = Intent(this, RecipientListActivity::class.java)
+            intent.putExtra(RecipientListActivity.EXTRA_SELECT_RECIPIENT_MODE, true)
+            //intent.putExtra(RecipientListActivity.EXTRA_SHIELDED, viewModel.isShielded)
+            //intent.putExtra(RecipientListActivity.EXTRA_ACCOUNT, viewModel.account)
+            getResultRecipient.launch(intent)
+        }
+    }
+
+    private val getResultRecipient =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                it.data?.getSerializable(RecipientListActivity.EXTRA_RECIPIENT, Recipient::class.java)?.let { recipient ->
+                    binding.receiver.text = recipient.address
+                }
+            }
+        }
+
+    private fun initializeScanQrCode() {
+        binding.scanQr.setOnClickListener {
+            val intent = Intent(this, ScanQRActivity::class.java)
+            intent.putExtra(ScanQRActivity.QR_MODE, ScanQRActivity.QR_MODE_CONCORDIUM_ACCOUNT)
+            getResultScanQr.launch(intent)
+        }
+    }
+
+    private val getResultScanQr =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                it.data?.getStringExtra(ScanQRActivity.EXTRA_BARCODE)?.let { barcode ->
+                    //if (viewModel.account.address != barcode)
+                    binding.receiver.text = barcode
+                }
+            }
+        }
 
     private fun showPopupPaste(clipText: String) {
         val popupMenu = PopupMenu(this, binding.receiver)
