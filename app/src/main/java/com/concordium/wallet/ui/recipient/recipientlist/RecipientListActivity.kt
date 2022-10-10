@@ -118,7 +118,7 @@ class RecipientListActivity : BaseActivity() {
             RecipientAdapter.OnItemClickListener {
             override fun onItemClicked(item: Recipient) {
                 if (viewModel.selectRecipientMode) {
-                    goBackToSendFunds(item)
+                    goBackWithRecipient(item)
                 } else {
                     gotoEditRecipient(item)
                 }
@@ -174,7 +174,7 @@ class RecipientListActivity : BaseActivity() {
         startActivity(intent)
     }
 
-    private fun goBackToSendFunds(recipient: Recipient) {
+    private fun goBackWithRecipient(recipient: Recipient) {
         val intent = Intent()
         intent.putExtra(EXTRA_RECIPIENT, recipient)
         setResult(Activity.RESULT_OK, intent)

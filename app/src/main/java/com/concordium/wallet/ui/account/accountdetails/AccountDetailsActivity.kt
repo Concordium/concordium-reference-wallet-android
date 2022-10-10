@@ -46,13 +46,13 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         binding = ActivityAccountDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.account_details_title)
-        val account = intent.getSerializable(EXTRA_ACCOUNT, Account::class.java)
-        val isShielded = intent.extras!!.getBoolean(EXTRA_SHIELDED)
-        val continueToShieldIntro = intent.extras!!.getBoolean(EXTRA_CONTINUE_TO_SHIELD_INTRO)
-        accountAddress = account.address
         initializeViewModelTokens()
         initializeViewModelAccountDetails()
-        viewModelAccountDetails.initialize(account, isShielded)
+        viewModelAccountDetails.account = intent.getSerializable(EXTRA_ACCOUNT, Account::class.java)
+        val isShielded = intent.extras!!.getBoolean(EXTRA_SHIELDED)
+        val continueToShieldIntro = intent.extras!!.getBoolean(EXTRA_CONTINUE_TO_SHIELD_INTRO)
+        accountAddress = viewModelAccountDetails.account.address
+        viewModelAccountDetails.initialize(viewModelAccountDetails.account, isShielded)
         initViews()
         if (continueToShieldIntro) {
             gotoAccountSettings(true)
@@ -246,8 +246,8 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
 
     private fun showTokenDetailsDialog(token: Token) {
         val intent = Intent(this, TokenDetailsActivity::class.java)
+        intent.putExtra(TokenDetailsActivity.ACCOUNT, viewModelAccountDetails.account)
         intent.putExtra(TokenDetailsActivity.TOKEN_NAME, token.name)
-        intent.putExtra(TokenDetailsActivity.ACCOUNT_NAME, viewModelAccountDetails.account.name)
         startActivity(intent)
     }
 
@@ -335,6 +335,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     private fun onSendFundsClicked() {
         if (binding.tokens.visibility == View.VISIBLE) {
             val intent = Intent(this, SendTokenActivity::class.java)
+            intent.putExtra(SendTokenActivity.ACCOUNT, viewModelAccountDetails.account)
             startActivity(intent)
         } else {
             val intent = Intent(this, SendFundsActivity::class.java)

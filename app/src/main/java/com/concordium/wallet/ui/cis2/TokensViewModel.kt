@@ -6,10 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.WalletDatabase
 import kotlinx.coroutines.launch
 
 class TokensViewModel(application: Application) : AndroidViewModel(application) {
+    lateinit var account: Account
+
     val tokens: MutableLiveData<List<Token>> by lazy { MutableLiveData<List<Token>>() }
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }

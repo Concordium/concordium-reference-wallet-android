@@ -1004,5 +1004,6 @@
     <string name="cis_paste">Paste</string>
     <string name="cis_address_book">Address book</string>
     <string name="cis_scan_qr">Scan QR</string>
+    <string name="cis_optional_add_memo">Optional: Add memo</string>
 
 </resources>

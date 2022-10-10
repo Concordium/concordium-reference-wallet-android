@@ -14,180 +14,246 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_margin="@dimen/activity_horizontal_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_layout"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/send"
         android:orientation="vertical">
-        <TextView
-            style="@style/TextView.XSmall.Light"
-            android:layout_width="match_parent"
-            android:text="@string/cis_currently_available_amounts" />
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:orientation="horizontal">
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:orientation="vertical">
             <TextView
-                android:id="@+id/balance_title"
-                style="@style/TextView.Mono"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_weight="0"
-                android:maxLines="1"
-                android:ellipsize="end"
-                tools:text="CCD Balance:" />
-            <TextView
-                android:id="@+id/balance"
-                style="@style/TextView.Mono"
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_gravity="end"
-                android:textAlignment="textEnd"
-                android:maxLines="1"
-                tools:text="Ͼ123.45" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin_half"
-            android:orientation="horizontal">
-            <TextView
-                style="@style/TextView.Mono"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_weight="0"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:text="@string/cis_at_disposal" />
-            <TextView
-                android:id="@+id/at_disposal"
-                style="@style/TextView.Mono"
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_gravity="end"
-                android:textAlignment="textEnd"
-                android:maxLines="1"
-                tools:text="Ͼ123.45" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-        <include layout="@layout/search_token_result" />
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:orientation="horizontal"
-            android:background="@drawable/rounded_transparent"
-            tools:showIn="@layout/activity_send_token">
-            <TextView
-                android:id="@+id/amount"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginHorizontal="@dimen/activity_horizontal_margin_half"
-                android:layout_height="match_parent"
-                style="@style/TextView.BlueRegular"
-                android:gravity="center_vertical"
-                tools:text="123.45" />
-            <TextView
-                android:id="@+id/max"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rounded_blue"
-                android:paddingVertical="6dp"
-                android:paddingHorizontal="14dp"
-                android:layout_gravity="center_vertical"
-                style="@style/TextView.Small"
-                android:textColor="@color/text_white"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin_half"
-                android:text="@string/cis_max" />
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="0dp">
+                style="@style/TextView.XSmall.Light"
+                android:layout_width="match_parent"
+                android:text="@string/cis_currently_available_amounts" />
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/balance_title"
+                    style="@style/TextView.Mono"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="0"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    tools:text="CCD Balance:" />
+                <TextView
+                    android:id="@+id/balance"
+                    style="@style/TextView.Mono"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_gravity="end"
+                    android:textAlignment="textEnd"
+                    android:maxLines="1"
+                    tools:text="Ͼ123.45" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin_half"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/TextView.Mono"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="0"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:text="@string/cis_at_disposal" />
+                <TextView
+                    android:id="@+id/at_disposal"
+                    style="@style/TextView.Mono"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_gravity="end"
+                    android:textAlignment="textEnd"
+                    android:maxLines="1"
+                    tools:text="Ͼ123.45" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <include layout="@layout/search_token_result" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:orientation="horizontal"
                 android:background="@drawable/rounded_transparent"
-                android:orientation="vertical">
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/receiver"
-                    style="@style/TextView.Standard"
-                    android:textColor="@color/text_blue"
-                    android:textColorHint="@color/text_blue"
-                    android:padding="@dimen/activity_horizontal_margin"
-                    android:hint="@string/cis_paste_receiver_address"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                tools:showIn="@layout/activity_send_token">
+                <TextView
+                    android:id="@+id/amount"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                    android:layout_height="match_parent"
+                    style="@style/TextView.BlueRegular.Mono"
+                    android:gravity="center_vertical"
+                    tools:text="123.45" />
+                <TextView
+                    android:id="@+id/max"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_blue"
+                    android:paddingVertical="6dp"
+                    android:paddingHorizontal="14dp"
+                    android:layout_gravity="center_vertical"
+                    style="@style/TextView.Small"
+                    android:textColor="@color/text_white"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                    android:text="@string/cis_max" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                app:cardCornerRadius="@dimen/card_corner_radius"
+                app:cardElevation="0dp">
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:background="@drawable/rounded_transparent"
+                    android:orientation="vertical">
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/receiver"
+                        style="@style/TextView.Standard"
+                        android:textColor="@color/text_blue"
+                        android:textColorHint="@color/text_blue"
+                        android:padding="@dimen/activity_horizontal_margin"
+                        android:hint="@string/cis_paste_receiver_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:id="@+id/address_book"
-                        android:layout_width="0dp"
-                        android:layout_height="50dp"
-                        android:layout_weight="0.5"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:orientation="horizontal">
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="50dp"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/button_action_card"
-                            android:paddingVertical="@dimen/activity_vertical_margin"
-                            android:src="@drawable/ic_lup"
-                            android:scaleType="fitCenter"
-                            android:tint="@color/theme_white" />
-                        <androidx.appcompat.widget.AppCompatTextView
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/address_book"
                             android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center_vertical"
-                            style="@style/TextView.Standard.White"
-                            android:background="@drawable/button_action_card"
-                            android:text="@string/cis_address_book" />
-                    </androidx.appcompat.widget.LinearLayoutCompat>
-                    <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/theme_white" />
-                    <androidx.appcompat.widget.LinearLayoutCompat
-                        android:id="@+id/scan_qr"
-                        android:layout_width="0dp"
-                        android:layout_height="50dp"
-                        android:layout_weight="0.5"
-                        android:orientation="horizontal">
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="50dp"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/button_action_card"
-                            android:paddingVertical="@dimen/activity_vertical_margin"
-                            android:src="@drawable/ic_recipient_address_qr"
-                            android:scaleType="fitCenter"
-                            android:tint="@color/theme_white" />
-                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_height="50dp"
+                            android:layout_weight="0.5"
+                            android:orientation="horizontal">
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="50dp"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/button_action_card"
+                                android:paddingVertical="@dimen/activity_vertical_margin"
+                                android:src="@drawable/ic_lup"
+                                android:scaleType="fitCenter"
+                                android:tint="@color/theme_white" />
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center_vertical"
+                                style="@style/TextView.Standard.White"
+                                android:background="@drawable/button_action_card"
+                                android:text="@string/cis_address_book" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+                        <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/theme_white" />
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/scan_qr"
                             android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center_vertical"
-                            style="@style/TextView.Standard.White"
-                            android:background="@drawable/button_action_card"
-                            android:text="@string/cis_scan_qr" />
+                            android:layout_height="50dp"
+                            android:layout_weight="0.5"
+                            android:orientation="horizontal">
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="50dp"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/button_action_card"
+                                android:paddingVertical="@dimen/activity_vertical_margin"
+                                android:src="@drawable/ic_recipient_address_qr"
+                                android:scaleType="fitCenter"
+                                android:tint="@color/theme_white" />
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center_vertical"
+                                style="@style/TextView.Standard.White"
+                                android:background="@drawable/button_action_card"
+                                android:text="@string/cis_scan_qr" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
                     </androidx.appcompat.widget.LinearLayoutCompat>
                 </androidx.appcompat.widget.LinearLayoutCompat>
-            </androidx.appcompat.widget.LinearLayoutCompat>
-        </androidx.cardview.widget.CardView>
+            </androidx.cardview.widget.CardView>
 
+            <LinearLayout
+                android:id="@+id/memo_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:minHeight="50dp"
+                android:background="@drawable/rounded_transparent"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/memo"
+                    style="@style/TextView.Standard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:gravity="center"
+                    android:textColor="@color/text_blue"
+                    android:text="@string/cis_optional_add_memo" />
+                <ImageView
+                    android:id="@+id/memo_clear"
+                    style="@style/Image"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                    android:src="@drawable/ic_close_cross" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/fee_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/fee"
+                    style="@style/TextView.InfoSmall"
+                    android:layout_width="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    tools:text="@string/send_funds_fee_info"
+                    tools:visibility="visible" />
+                <TextView
+                    android:id="@+id/fee_error"
+                    style="@style/TextView.ErrorTiny"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/activity_vertical_margin_half"
+                    android:gravity="center"
+                    android:text="@string/send_funds_error_insufficient_funds" />
+            </LinearLayout>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </ScrollView>
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+    <Button
+        android:id="@+id/send"
+        style="@style/Button.Standard.Intro"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:text="@string/cis_look_for_tokens" />
 
     <include layout="@layout/progress" android:id="@+id/include_progress" android:visibility="gone" tools:visibility="visible" />
 

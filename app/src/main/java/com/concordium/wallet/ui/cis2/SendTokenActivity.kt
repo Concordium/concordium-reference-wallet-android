@@ -14,19 +14,23 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivitySendTokenBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
+import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
 import com.concordium.wallet.util.getSerializable
+import org.koin.core.component.getScopeName
 
 class SendTokenActivity : BaseActivity() {
     private lateinit var binding: ActivitySendTokenBinding
     private lateinit var viewModel: SendTokenViewModel
 
     companion object {
+        const val ACCOUNT = "ACCOUNT"
         const val TOKEN = "TOKEN"
     }
 
@@ -35,6 +39,7 @@ class SendTokenActivity : BaseActivity() {
         binding = ActivitySendTokenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initializeViewModel()
+        viewModel.account = intent.getSerializable(ACCOUNT, Account::class.java)
         if (intent.hasExtra(TOKEN))
             viewModel.token = intent.getSerializable(TOKEN, Token::class.java)
         initViews()
@@ -49,9 +54,35 @@ class SendTokenActivity : BaseActivity() {
         } else {
             viewModel.token = Token("default", "default", "DEF", 123)
         }
+        binding.atDisposal.text = CurrencyUtil.formatGTU(viewModel.account.getAtDisposal(),true)
+        binding.amount.text = CurrencyUtil.formatGTU(0, false)
+        initializeMax()
+        initializeMemo()
         initializeReceiver()
         initializeAddressBook()
         initializeScanQrCode()
+    }
+
+    private fun initializeMax() {
+        binding.max.setOnClickListener {
+            CurrencyUtil.formatGTU(viewModel.token?.balance ?: 0, false)
+        }
+    }
+
+    private fun initializeMemo() {
+        viewModel.token?.let {
+            if (!it.isCCDToken()) {
+                binding.memoContainer.visibility = View.GONE
+            } else {
+                binding.memo.setOnClickListener {
+                    addMemo()
+                }
+                binding.memoClear.setOnClickListener {
+                    binding.memo.text = getString(R.string.cis_optional_add_memo)
+                    binding.memoClear.visibility = View.GONE
+                }
+            }
+        }
     }
 
     private fun initializeReceiver() {
@@ -85,6 +116,20 @@ class SendTokenActivity : BaseActivity() {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.getSerializable(RecipientListActivity.EXTRA_RECIPIENT, Recipient::class.java)?.let { recipient ->
                     binding.receiver.text = recipient.address
+                }
+            }
+        }
+
+    private fun addMemo() {
+        getResultMemo.launch(Intent(this, AddMemoActivity::class.java))
+    }
+
+    private val getResultMemo =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                it.data?.getStringExtra(AddMemoActivity.EXTRA_MEMO)?.let { memo ->
+                    binding.memo.text = memo
+                    binding.memoClear.visibility = View.VISIBLE
                 }
             }
         }

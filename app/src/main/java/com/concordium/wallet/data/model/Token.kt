@@ -7,4 +7,8 @@ data class Token (
     val name: String,
     val shortName: String,
     val balance: Long?
-): Serializable
+): Serializable {
+    fun isCCDToken() : Boolean {
+        return true
+    }
+}
