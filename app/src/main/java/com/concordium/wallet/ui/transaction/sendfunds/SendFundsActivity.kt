@@ -36,7 +36,6 @@ class SendFundsActivity : BaseActivity() {
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
         const val EXTRA_SHIELDED = "EXTRA_SHIELDED"
         const val EXTRA_RECIPIENT = "EXTRA_RECIPIENT"
-        const val EXTRA_MEMO = "EXTRA_MEMO"
     }
 
     private lateinit var binding: ActivitySendFundsBinding
@@ -53,14 +52,12 @@ class SendFundsActivity : BaseActivity() {
         initializeViewModel()
         viewModel.initialize(account, isShielded)
         handleRecipientIntent(intent)
-        handleMemo(intent)
         initViews()
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         handleRecipientIntent(intent)
-        handleMemo(intent)
     }
 
     private fun handleRecipientIntent(intent: Intent?) {
@@ -82,28 +79,22 @@ class SendFundsActivity : BaseActivity() {
         }
     }
 
-    private fun handleMemo(intent: Intent?){
-        intent?.let {
-            if(it.hasExtra(EXTRA_MEMO)){
-                val memo = it.getStringExtra(EXTRA_MEMO)
-                if(memo != null && memo.isNotEmpty()){
-                    viewModel.setMemo(CBORUtil.encodeCBOR(memo))
-                    setMemoText(memo)
-                }
-                else{
-                    viewModel.setMemo(null)
-                    setMemoText("")
-                }
-            }
+    private fun handleMemo(memo: String?) {
+        if (memo != null && memo.isNotEmpty()) {
+            viewModel.setMemo(CBORUtil.encodeCBOR(memo))
+            setMemoText(memo)
+        } else {
+            viewModel.setMemo(null)
+            setMemoText("")
         }
     }
 
-    private fun setMemoText(txt: String){
-        if(txt.isNotEmpty()){
+    private fun setMemoText(txt: String) {
+        if (txt.isNotEmpty()) {
             binding.memoTextview.text = txt
             binding.memoClear.visibility = View.VISIBLE
         }
-        else{
+        else {
             binding.memoTextview.text = getString(R.string.send_funds_optional_add_memo)
             binding.memoClear.visibility = View.INVISIBLE
         }
@@ -241,7 +232,7 @@ class SendFundsActivity : BaseActivity() {
                     builder.setCancelable(true)
                     builder.create().show()
                 }
-                else{
+                else {
                     gotoEnterMemo()
                 }
             }
@@ -360,10 +351,16 @@ class SendFundsActivity : BaseActivity() {
         }
 
     private fun gotoEnterMemo() {
-        val intent = Intent(this, AddMemoActivity::class.java)
-        intent.putExtra(AddMemoActivity.EXTRA_MEMO, viewModel.getClearTextMemo())
-        startActivity(intent)
+        getResultMemo.launch(Intent(this, AddMemoActivity::class.java))
     }
+
+    private val getResultMemo =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                val memo = it.data?.getStringExtra(AddMemoActivity.EXTRA_MEMO)
+                handleMemo(memo)
+            }
+        }
 
     private val getResultSendAmount =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
