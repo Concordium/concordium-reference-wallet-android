@@ -6,7 +6,8 @@ data class Token (
     val imageUrl: String,
     val name: String,
     val shortName: String,
-    val balance: Long?
+    val balance: Long?,
+    var isSelected: Boolean? = false
 ): Serializable {
     fun isCCDToken() : Boolean {
         return true

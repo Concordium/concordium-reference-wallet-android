@@ -6,13 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.room.AccountWithIdentity
-import com.concordium.wallet.data.util.CurrencyUtil
-import com.concordium.wallet.databinding.ItemChooseAccountBinding
 import com.concordium.wallet.databinding.ItemTokenBinding
-import java.net.URI
 
-class TokensListAdapter(private val context: Context, var arrayList: Array<Token>) : BaseAdapter() {
+class TokensListAdapter(private val context: Context, var arrayList: Array<Token>, private val selectable: Boolean) : BaseAdapter() {
     private var tokenClickListener: TokenClickListener? = null
 
     fun interface TokenClickListener {
@@ -29,6 +25,7 @@ class TokensListAdapter(private val context: Context, var arrayList: Array<Token
 
         if (convertView == null) {
             binding = ItemTokenBinding.inflate(LayoutInflater.from(context), parent, false)
+            if (selectable) binding.selection.visibility = View.VISIBLE else binding.selection.visibility = View.GONE
             holder = ViewHolder(binding)
             holder.binding.root.tag = holder
         } else {
@@ -38,8 +35,12 @@ class TokensListAdapter(private val context: Context, var arrayList: Array<Token
         val token = arrayList[position]
         //holder.binding.tokenIcon.setImageURI()
         holder.binding.tokenName.text = token.name
+        holder.binding.selection.isChecked = token.isSelected ?: false
 
         holder.binding.root.setOnClickListener {
+            tokenClickListener?.onClick(token)
+        }
+        holder.binding.selection.setOnClickListener {
             tokenClickListener?.onClick(token)
         }
 

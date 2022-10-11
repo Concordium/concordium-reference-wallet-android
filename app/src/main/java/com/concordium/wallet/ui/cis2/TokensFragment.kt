@@ -37,7 +37,7 @@ class TokensFragment : Fragment() {
     }
 
     private fun initViews() {
-        tokensListAdapter = TokensListAdapter(requireContext(), arrayOf())
+        tokensListAdapter = TokensListAdapter(requireContext(), arrayOf(), false)
         tokensListAdapter.setTokenClickListener { token ->
             _viewModel.chooseToken.postValue(token)
         }

@@ -35,7 +35,7 @@ class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
     }
 
     private fun initViews() {
-        tokensListAdapter = TokensListAdapter(requireContext(), arrayOf())
+        tokensListAdapter = TokensListAdapter(requireContext(), arrayOf(), false)
         tokensListAdapter.setTokenClickListener { token ->
             viewModel.chooseToken.postValue(token)
         }
@@ -65,7 +65,6 @@ class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
     }
 
     private fun showWaiting(waiting: Boolean) {
-        binding.includeProgress.progressBar.visibility = if (waiting) View.VISIBLE else View.GONE
         binding.tokensFound.visibility = if (waiting) View.GONE else View.VISIBLE
     }
 }

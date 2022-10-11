@@ -6,17 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.activityViewModels
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.DialogLookForNewTokensBinding
 import com.concordium.wallet.ui.base.BaseBottomSheetDialogFragment
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.concordium.wallet.util.KeyboardUtil
+import org.bouncycastle.jcajce.provider.asymmetric.GOST
 
 class LookForNewTokensBottomSheet : BaseBottomSheetDialogFragment() {
     private var _binding: DialogLookForNewTokensBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: TokensViewModel by activityViewModels()
+    private lateinit var tokensListAdapter: TokensListAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = DialogLookForNewTokensBinding.inflate(inflater, container, false)
@@ -35,54 +38,75 @@ class LookForNewTokensBottomSheet : BaseBottomSheetDialogFragment() {
     }
 
     private fun initViews() {
+        tokensListAdapter = TokensListAdapter(requireContext(), arrayOf(), true)
+        tokensListAdapter.also { binding.tokensFound.adapter = it }
+
         binding.title.text = getString(R.string.cis_find_tokens_title)
+
         binding.look.setOnClickListener {
             look()
         }
+
         binding.contractAddress.setOnEditorActionListener { _, actionId, _ ->
-            if(actionId == EditorInfo.IME_ACTION_DONE){
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
                 look()
+                KeyboardUtil.hideKeyboard(requireActivity())
                 true
             } else {
                 false
             }
         }
-    }
 
-    private fun initObservers() {
-
-    }
-
-    private fun look() {
-        if (binding.contractAddress.text.isBlank())
-            return
-
-        binding.look.isEnabled = false
-        binding.contractAddress.isEnabled = false
-        binding.pending.visibility = View.VISIBLE
-        binding.error.visibility = View.GONE
-        CoroutineScope(Dispatchers.IO).launch {
-            delay(2000)
-            activity?.runOnUiThread {
-                handleLookup()
+        binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                tokensListAdapter.arrayList = viewModel.newTokens.value!!.filter { it.name.uppercase().contains(query?.uppercase() ?: "") }.toTypedArray()
+                tokensListAdapter.notifyDataSetChanged()
+                return false
             }
+            override fun onQueryTextChange(newText: String?): Boolean {
+                tokensListAdapter.arrayList = viewModel.newTokens.value!!.filter { it.name.uppercase().contains(newText?.uppercase() ?: "") }.toTypedArray()
+                tokensListAdapter.notifyDataSetChanged()
+                return false
+            }
+        })
+
+        tokensListAdapter.setTokenClickListener { token ->
+            viewModel.toggleNewToken(token)
         }
     }
 
-    private fun handleLookup() {
-        val ok = true
+    private fun initObservers() {
+        viewModel.waitingNewTokens.observe(this) { waiting ->
+            showWaiting(waiting)
+        }
+        viewModel.newTokens.observe(this) { tokens ->
+            handleLookup(tokens)
+        }
+    }
+
+    private fun look() {
+        if (binding.contractAddress.text.isNotBlank())
+            viewModel.lookForNewTokens(binding.contractAddress.text.toString())
+    }
+
+    private fun handleLookup(tokens: List<Token>) {
+        tokensListAdapter.arrayList = tokens.toTypedArray()
+        tokensListAdapter.notifyDataSetChanged()
         binding.look.isEnabled = true
-        binding.pending.visibility = View.GONE
-        if (ok) {
+        if (tokens.isNotEmpty()) {
+            binding.error.visibility = View.GONE
             binding.title.text = getString(R.string.cis_select_tokens_title)
             binding.contractAddress.visibility = View.GONE
             binding.search.visibility = View.VISIBLE
             binding.tokensFound.visibility = View.VISIBLE
             binding.look.text = getString(R.string.cis_add_tokens)
             binding.look.setOnClickListener {
-                addTokens()
+                viewModel.addSelectedTokens()
             }
+            binding.contractAddress.onFocusChangeListener = null
         } else {
+            binding.error.visibility = View.VISIBLE
+            binding.title.text = getString(R.string.cis_find_tokens_title)
             binding.contractAddress.isEnabled = true
             binding.contractAddress.setTextColor(activity?.getColor(R.color.text_pink) ?: Color.RED)
             binding.contractAddress.setBackgroundResource(R.drawable.rounded_pink)
@@ -91,11 +115,19 @@ class LookForNewTokensBottomSheet : BaseBottomSheetDialogFragment() {
                 binding.contractAddress.setBackgroundResource(R.drawable.rounded_light_grey)
                 binding.error.visibility = View.GONE
             }
-            binding.error.visibility = View.VISIBLE
         }
     }
-    // https://www.digitalocean.com/community/tutorials/android-searchview-example-tutorial
-    private fun addTokens() {
 
+    private fun showWaiting(waiting: Boolean) {
+        if (waiting) {
+            binding.look.isEnabled = false
+            binding.contractAddress.isEnabled = false
+            binding.pending.visibility = View.VISIBLE
+            binding.search.visibility = View.GONE
+            binding.tokensFound.visibility = View.GONE
+        } else {
+            binding.pending.visibility = View.GONE
+            binding.tokensFound.visibility = View.VISIBLE
+        }
     }
 }

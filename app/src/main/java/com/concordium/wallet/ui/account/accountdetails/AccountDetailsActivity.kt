@@ -33,6 +33,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     private lateinit var viewModelAccountDetails: AccountDetailsViewModel
     private lateinit var viewModelTokens: TokensViewModel
     private var accountAddress = ""
+    private var lookForNewTokensBottomSheet: LookForNewTokensBottomSheet? = null
 
     companion object {
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
@@ -86,6 +87,12 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
 
         viewModelTokens.chooseToken.observe(this) { token ->
             showTokenDetailsDialog(token)
+        }
+
+        viewModelTokens.addingSelectedDone.observe(this) {
+            lookForNewTokensBottomSheet?.dismiss()
+            lookForNewTokensBottomSheet = null
+            supportFragmentManager.beginTransaction().replace(R.id.tokens_fragment, TokensFragment.newInstance(viewModelTokens, viewModelAccountDetails.account.address, true), null).commit()
         }
     }
 
@@ -239,9 +246,9 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun showFindTokensDialog() {
-        LookForNewTokensBottomSheet().apply {
-            show(supportFragmentManager, "")
-        }
+        viewModelTokens.cleanNewTokens()
+        lookForNewTokensBottomSheet = LookForNewTokensBottomSheet()
+        lookForNewTokensBottomSheet?.show(supportFragmentManager, "")
     }
 
     private fun showTokenDetailsDialog(token: Token) {
