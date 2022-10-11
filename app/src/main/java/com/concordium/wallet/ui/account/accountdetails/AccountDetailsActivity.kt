@@ -239,9 +239,9 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun showFindTokensDialog() {
-        val findTokens = FindTokensBottomSheet(this)
-        findTokens.initialize()
-        findTokens.show()
+        LookForNewTokensBottomSheet().apply {
+            show(supportFragmentManager, "")
+        }
     }
 
     private fun showTokenDetailsDialog(token: Token) {

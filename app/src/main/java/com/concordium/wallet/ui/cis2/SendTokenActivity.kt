@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
@@ -23,7 +22,6 @@ import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
 import com.concordium.wallet.util.getSerializable
-import org.koin.core.component.getScopeName
 
 class SendTokenActivity : BaseActivity() {
     private lateinit var binding: ActivitySendTokenBinding
@@ -67,7 +65,7 @@ class SendTokenActivity : BaseActivity() {
     private fun initializeSearchToken() {
         binding.searchToken.searchToken.setOnClickListener {
             SearchTokenBottomSheet().apply {
-                show(supportFragmentManager, "TEST")
+                show(supportFragmentManager, "")
             }
         }
     }
