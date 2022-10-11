@@ -3,7 +3,7 @@ package com.concordium.wallet.ui.cis2
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.lifecycle.ViewModelProvider
+import androidx.activity.viewModels
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
@@ -13,7 +13,7 @@ import com.concordium.wallet.util.getSerializable
 
 class TokenDetailsActivity : BaseActivity() {
     private lateinit var binding: ActivityTokenDetailsBinding
-    private lateinit var viewModel: TokensViewModel
+    private val viewModel: TokensViewModel by viewModels()
 
     companion object {
         const val ACCOUNT = "ACCOUNT"
@@ -24,7 +24,6 @@ class TokenDetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTokenDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        initializeViewModel()
         initViews()
         initObservers()
         lookForTokensView()
@@ -46,13 +45,6 @@ class TokenDetailsActivity : BaseActivity() {
         }
     }
 
-    private fun initializeViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[TokensViewModel::class.java]
-    }
-
     private fun initObservers() {
         viewModel.waiting.observe(this) { waiting ->
             showWaiting(waiting)
@@ -64,6 +56,5 @@ class TokenDetailsActivity : BaseActivity() {
     }
 
     private fun lookForTokensView() {
-
     }
 }

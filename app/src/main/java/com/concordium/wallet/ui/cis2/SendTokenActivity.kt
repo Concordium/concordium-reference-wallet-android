@@ -9,8 +9,8 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
-import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
@@ -25,7 +25,8 @@ import com.concordium.wallet.util.getSerializable
 
 class SendTokenActivity : BaseActivity() {
     private lateinit var binding: ActivitySendTokenBinding
-    private lateinit var viewModel: SendTokenViewModel
+    private val viewModel: SendTokenViewModel by viewModels()
+    private var searchTokenBottomSheet: SearchTokenBottomSheet? = null
 
     companion object {
         const val ACCOUNT = "ACCOUNT"
@@ -36,12 +37,16 @@ class SendTokenActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySendTokenBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        initializeViewModel()
         viewModel.account = intent.getSerializable(ACCOUNT, Account::class.java)
         if (intent.hasExtra(TOKEN))
             viewModel.token = intent.getSerializable(TOKEN, Token::class.java)
         initViews()
         initObservers()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.send.isEnabled = true
     }
 
     private fun initViews() {
@@ -60,19 +65,26 @@ class SendTokenActivity : BaseActivity() {
         initializeReceiver()
         initializeAddressBook()
         initializeScanQrCode()
+        initializeSend()
+    }
+
+    private fun initializeSend() {
+        binding.send.setOnClickListener {
+            binding.send.isEnabled = false
+            viewModel.send()
+        }
     }
 
     private fun initializeSearchToken() {
         binding.searchToken.searchToken.setOnClickListener {
-            SearchTokenBottomSheet().apply {
-                show(supportFragmentManager, "")
-            }
+            searchTokenBottomSheet = SearchTokenBottomSheet()
+            searchTokenBottomSheet?.show(supportFragmentManager, "")
         }
     }
 
     private fun initializeMax() {
         binding.max.setOnClickListener {
-            CurrencyUtil.formatGTU(viewModel.token?.balance ?: 0, false)
+            binding.amount.text = CurrencyUtil.formatGTU(viewModel.token?.balance ?: 0, false)
         }
     }
 
@@ -112,20 +124,19 @@ class SendTokenActivity : BaseActivity() {
         binding.addressBook.setOnClickListener {
             val intent = Intent(this, RecipientListActivity::class.java)
             intent.putExtra(RecipientListActivity.EXTRA_SELECT_RECIPIENT_MODE, true)
-            //intent.putExtra(RecipientListActivity.EXTRA_SHIELDED, viewModel.isShielded)
-            //intent.putExtra(RecipientListActivity.EXTRA_ACCOUNT, viewModel.account)
+            intent.putExtra(RecipientListActivity.EXTRA_SHIELDED, viewModel.account)
+            intent.putExtra(RecipientListActivity.EXTRA_ACCOUNT, viewModel.account)
             getResultRecipient.launch(intent)
         }
     }
 
-    private val getResultRecipient =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == Activity.RESULT_OK) {
-                it.data?.getSerializable(RecipientListActivity.EXTRA_RECIPIENT, Recipient::class.java)?.let { recipient ->
-                    binding.receiver.text = recipient.address
-                }
-            }
+    private fun initializeScanQrCode() {
+        binding.scanQr.setOnClickListener {
+            val intent = Intent(this, ScanQRActivity::class.java)
+            intent.putExtra(ScanQRActivity.QR_MODE, ScanQRActivity.QR_MODE_CONCORDIUM_ACCOUNT)
+            getResultScanQr.launch(intent)
         }
+    }
 
     private fun addMemo() {
         getResultMemo.launch(Intent(this, AddMemoActivity::class.java))
@@ -141,13 +152,14 @@ class SendTokenActivity : BaseActivity() {
             }
         }
 
-    private fun initializeScanQrCode() {
-        binding.scanQr.setOnClickListener {
-            val intent = Intent(this, ScanQRActivity::class.java)
-            intent.putExtra(ScanQRActivity.QR_MODE, ScanQRActivity.QR_MODE_CONCORDIUM_ACCOUNT)
-            getResultScanQr.launch(intent)
+    private val getResultRecipient =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                it.data?.getSerializable(RecipientListActivity.EXTRA_RECIPIENT, Recipient::class.java)?.let { recipient ->
+                    binding.receiver.text = recipient.address
+                }
+            }
         }
-    }
 
     private val getResultScanQr =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -173,20 +185,26 @@ class SendTokenActivity : BaseActivity() {
         popupMenu.show()
     }
 
-    private fun initializeViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[SendTokenViewModel::class.java]
-    }
-
     private fun initObservers() {
         viewModel.waiting.observe(this) { waiting ->
             showWaiting(waiting)
+        }
+        viewModel.chooseToken.observe(this) { token ->
+            searchTokenBottomSheet?.dismiss()
+            searchTokenBottomSheet = null
+            binding.searchToken.tokenShortName.text = token.shortName
+        }
+        viewModel.transactionReady.observe(this) {
+            gotoReceipt()
         }
     }
 
     private fun showWaiting(waiting: Boolean) {
         binding.includeProgress.progressBar.visibility = if (waiting) View.VISIBLE else View.GONE
+    }
+
+    private fun gotoReceipt() {
+        val intent = Intent(this, SendTokenReceiptActivity::class.java)
+        startActivity(intent)
     }
 }

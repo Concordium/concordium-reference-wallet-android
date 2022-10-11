@@ -113,7 +113,7 @@
                     android:layout_gravity="center_vertical"
                     style="@style/TextView.Small"
                     android:textColor="@color/text_white"
-                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin_half"
                     android:text="@string/cis_max" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -212,7 +212,7 @@
                     android:gravity="center"
                     android:textColor="@color/text_blue"
                     android:text="@string/cis_optional_add_memo" />
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/memo_clear"
                     style="@style/Image"
                     android:visibility="gone"
@@ -221,6 +221,7 @@
                     android:layout_marginEnd="@dimen/activity_horizontal_margin"
                     android:src="@drawable/ic_close_cross" />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/fee_container"
                 android:layout_width="match_parent"
@@ -233,7 +234,6 @@
                     android:layout_width="match_parent"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:visibility="gone"
                     tools:text="@string/send_funds_fee_info"
                     tools:visibility="visible" />
                 <TextView
@@ -244,6 +244,7 @@
                     android:gravity="center"
                     android:text="@string/send_funds_error_insufficient_funds" />
             </LinearLayout>
+
         </androidx.appcompat.widget.LinearLayoutCompat>
     </ScrollView>
 
@@ -255,7 +256,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="@dimen/activity_horizontal_margin"
         android:layout_width="match_parent"
-        android:text="@string/cis_look_for_tokens" />
+        android:text="@string/cis_send_funds" />
 
     <include layout="@layout/progress" android:id="@+id/include_progress" android:visibility="gone" tools:visibility="visible" />
 
