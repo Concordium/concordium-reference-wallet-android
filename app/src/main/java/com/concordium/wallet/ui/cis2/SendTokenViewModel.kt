@@ -6,17 +6,29 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.ui.walletconnect.WalletConnectData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.Serializable
 
-class SendTokenViewModel(application: Application) : AndroidViewModel(application) {
-    var token: Token? = null
-    lateinit var account: Account
+data class SendTokenData(
+    var token: Token? = null,
+    var account: Account? = null,
+    var amount: Long = 0,
+    var receiver: String = ""
+): Serializable
 
+class SendTokenViewModel(application: Application) : AndroidViewModel(application), Serializable {
+    companion object {
+        const val SEND_TOKEN_DATA = "SEND_TOKEN_DATA"
+    }
+
+    var sendTokenData = SendTokenData()
     val tokens: MutableLiveData<List<Token>> by lazy { MutableLiveData<List<Token>>() }
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val transactionReady: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val feeReady: MutableLiveData<Long> by lazy { MutableLiveData<Long>() }
 
     fun loadTokens() {
         waiting.postValue(true)
@@ -33,6 +45,15 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             delay(2000)
             waiting.postValue(false)
             transactionReady.postValue(true)
+        }
+    }
+
+    fun loadTransactionFee() {
+        waiting.postValue(true)
+        viewModelScope.launch {
+            delay(1000)
+            waiting.postValue(false)
+            feeReady.postValue(12300)
         }
     }
 

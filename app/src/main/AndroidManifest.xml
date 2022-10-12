@@ -340,5 +340,9 @@
             android:name=".ui.cis2.SendTokenActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.cis2.SendTokenReceiptActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
     </application>
 </manifest>

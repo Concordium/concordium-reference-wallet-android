@@ -1005,5 +1005,13 @@
     <string name="cis_address_book">Address book</string>
     <string name="cis_scan_qr">Scan QR</string>
     <string name="cis_optional_add_memo">Optional: Add memo</string>
+    <string name="cis_receipt_confirm">Are you sure you want to make the following transaction?</string>
+    <string name="cis_transaction_send_funds">Transaction: Send funds</string>
+    <string name="cis_sender">Sender</string>
+    <string name="cis_amount">Amount</string>
+    <string name="cis_token">Token</string>
+    <string name="cis_receiver">Receiver</string>
+    <string name="cis_finish">Finish</string>
+    <string name="cis_estimated_fee">Estimated transaction fee:\nϾ%1$s</string>
 
 </resources>
