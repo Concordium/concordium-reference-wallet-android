@@ -11,8 +11,9 @@ import com.concordium.wallet.databinding.ItemTokenBinding
 class TokensListAdapter(private val context: Context, var arrayList: Array<Token>, private val selectable: Boolean) : BaseAdapter() {
     private var tokenClickListener: TokenClickListener? = null
 
-    fun interface TokenClickListener {
-        fun onClick(token: Token)
+    interface TokenClickListener {
+        fun onRowClick(token: Token)
+        fun onCheckBoxClick(token: Token)
     }
 
     fun setTokenClickListener(tokenClickListener: TokenClickListener) {
@@ -38,10 +39,10 @@ class TokensListAdapter(private val context: Context, var arrayList: Array<Token
         holder.binding.selection.isChecked = token.isSelected ?: false
 
         holder.binding.root.setOnClickListener {
-            tokenClickListener?.onClick(token)
+            tokenClickListener?.onRowClick(token)
         }
         holder.binding.selection.setOnClickListener {
-            tokenClickListener?.onClick(token)
+            tokenClickListener?.onCheckBoxClick(token)
         }
 
         return holder.binding.root

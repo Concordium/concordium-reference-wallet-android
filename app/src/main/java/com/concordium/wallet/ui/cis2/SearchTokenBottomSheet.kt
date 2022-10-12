@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.activityViewModels
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.DialogSearchTokenBinding
 import com.concordium.wallet.ui.base.BaseBottomSheetDialogFragment
 import com.concordium.wallet.util.KeyboardUtil
@@ -36,9 +37,13 @@ class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
 
     private fun initViews() {
         tokensListAdapter = TokensListAdapter(requireContext(), arrayOf(), false)
-        tokensListAdapter.setTokenClickListener { token ->
-            viewModel.chooseToken.postValue(token)
-        }
+        tokensListAdapter.setTokenClickListener(object : TokensListAdapter.TokenClickListener {
+            override fun onRowClick(token: Token) {
+                viewModel.chooseToken.postValue(token)
+            }
+            override fun onCheckBoxClick(token: Token) {
+            }
+        })
         tokensListAdapter.also { binding.tokensFound.adapter = it }
         binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {

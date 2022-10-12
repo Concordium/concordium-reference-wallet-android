@@ -17,11 +17,10 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val tokens: MutableLiveData<List<Token>> by lazy { MutableLiveData<List<Token>>() }
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-
     val newTokens: MutableLiveData<List<Token>> by lazy { MutableLiveData<List<Token>>() }
     val waitingNewTokens: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-
     val addingSelectedDone: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val stepPageBy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
 
     fun loadTokens(isFungible: Boolean) {
         waiting.postValue(true)
@@ -63,6 +62,10 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
     fun cleanNewTokens() {
         newTokens.value = listOf()
+    }
+
+    fun stepPage(by: Int) {
+        stepPageBy.postValue(by)
     }
 
     private fun getMockTokens() : List<Token> {

@@ -1012,6 +1012,8 @@
     <string name="cis_token">Token</string>
     <string name="cis_receiver">Receiver</string>
     <string name="cis_finish">Finish</string>
+    <string name="cis_back">Back</string>
     <string name="cis_estimated_fee">Estimated transaction fee:\nϾ%1$s</string>
+    <string name="cis_back_to_list">Back to list</string>
 
 </resources>

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.FragmentTokensBinding
 
 class TokensFragment : Fragment() {
@@ -38,9 +39,13 @@ class TokensFragment : Fragment() {
 
     private fun initViews() {
         tokensListAdapter = TokensListAdapter(requireContext(), arrayOf(), false)
-        tokensListAdapter.setTokenClickListener { token ->
-            _viewModel.chooseToken.postValue(token)
-        }
+        tokensListAdapter.setTokenClickListener(object : TokensListAdapter.TokenClickListener {
+            override fun onRowClick(token: Token) {
+                _viewModel.chooseToken.postValue(token)
+            }
+            override fun onCheckBoxClick(token: Token) {
+            }
+        })
         tokensListAdapter.also { binding.listTokens.adapter = it }
     }
 

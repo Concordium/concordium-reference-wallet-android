@@ -20,6 +20,7 @@ import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.*
+import com.concordium.wallet.ui.cis2.lookfornew.LookForNewTokensFragment
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
@@ -33,7 +34,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     private lateinit var viewModelAccountDetails: AccountDetailsViewModel
     private lateinit var viewModelTokens: TokensViewModel
     private var accountAddress = ""
-    private var lookForNewTokensBottomSheet: LookForNewTokensBottomSheet? = null
+    private var lookForNewTokensFragment: LookForNewTokensFragment? = null
 
     companion object {
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
@@ -90,8 +91,8 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         }
 
         viewModelTokens.addingSelectedDone.observe(this) {
-            lookForNewTokensBottomSheet?.dismiss()
-            lookForNewTokensBottomSheet = null
+            lookForNewTokensFragment?.dismiss()
+            lookForNewTokensFragment = null
             supportFragmentManager.beginTransaction().replace(R.id.tokens_fragment, TokensFragment.newInstance(viewModelTokens, viewModelAccountDetails.account.address, true), null).commit()
         }
     }
@@ -246,9 +247,9 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun showFindTokensDialog() {
-        viewModelTokens.cleanNewTokens()
-        lookForNewTokensBottomSheet = LookForNewTokensBottomSheet()
-        lookForNewTokensBottomSheet?.show(supportFragmentManager, "")
+//        viewModelTokens.cleanNewTokens()
+        lookForNewTokensFragment = LookForNewTokensFragment()
+        lookForNewTokensFragment?.show(supportFragmentManager, "")
     }
 
     private fun showTokenDetailsDialog(token: Token) {
