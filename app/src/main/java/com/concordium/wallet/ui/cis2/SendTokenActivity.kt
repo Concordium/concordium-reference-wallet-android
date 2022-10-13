@@ -5,12 +5,14 @@ import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
@@ -74,10 +76,16 @@ class SendTokenActivity : BaseActivity() {
 
     private fun initializeSend() {
         binding.send.setOnClickListener {
-            binding.send.isEnabled = false
-            viewModel.sendTokenData.amount = binding.amount.text.toString().replace(",", "").replace(".", "").toLong()
-            viewModel.sendTokenData.receiver = binding.receiver.text.toString()
-            viewModel.send()
+            if (binding.receiver.text.toString().isNullOrEmpty()) {
+                binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.text_pink))
+                binding.contractAddressError.text = getString(R.string.cis_enter_receiver_address)
+                binding.contractAddressError.visibility = View.VISIBLE
+            } else {
+                binding.send.isEnabled = false
+                viewModel.sendTokenData.amount = binding.amount.text.toString().replace(",", "").replace(".", "").toLong()
+                viewModel.sendTokenData.receiver = binding.receiver.text.toString()
+                viewModel.send()
+            }
         }
     }
 
@@ -169,6 +177,8 @@ class SendTokenActivity : BaseActivity() {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.getSerializable(RecipientListActivity.EXTRA_RECIPIENT, Recipient::class.java)?.let { recipient ->
                     binding.receiver.text = recipient.address
+                    binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.text_blue))
+                    binding.contractAddressError.visibility = View.GONE
                 }
             }
         }
@@ -177,8 +187,9 @@ class SendTokenActivity : BaseActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.getStringExtra(ScanQRActivity.EXTRA_BARCODE)?.let { barcode ->
-                    //if (viewModel.account.address != barcode)
                     binding.receiver.text = barcode
+                    binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.text_blue))
+                    binding.contractAddressError.visibility = View.GONE
                 }
             }
         }
@@ -190,6 +201,8 @@ class SendTokenActivity : BaseActivity() {
             when (item!!.itemId) {
                 R.id.paste -> {
                     binding.receiver.text = clipText
+                    binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.text_blue))
+                    binding.contractAddressError.visibility = View.GONE
                 }
             }
             true

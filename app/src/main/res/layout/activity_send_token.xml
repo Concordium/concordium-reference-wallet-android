@@ -195,6 +195,16 @@
                 </androidx.appcompat.widget.LinearLayoutCompat>
             </androidx.cardview.widget.CardView>
 
+            <TextView
+                android:id="@+id/contract_address_error"
+                style="@style/TextView.ErrorTiny"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/activity_vertical_margin_half"
+                android:gravity="center"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:text="@string/send_funds_error_insufficient_funds" />
+
             <LinearLayout
                 android:id="@+id/memo_container"
                 android:layout_width="match_parent"

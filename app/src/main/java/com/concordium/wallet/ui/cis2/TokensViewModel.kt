@@ -17,7 +17,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val tokens: MutableLiveData<List<Token>> by lazy { MutableLiveData<List<Token>>() }
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val newTokens: MutableLiveData<List<Token>> by lazy { MutableLiveData<List<Token>>() }
+    var newTokens: List<Token> = listOf() //MutableLiveData<List<Token>> by lazy { MutableLiveData<List<Token>>() }
     val waitingNewTokens: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val addingSelectedDone: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val stepPageBy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
@@ -35,33 +35,28 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun lookForNewTokens(contractAddress: String) {
+        newTokens = listOf()
         waitingNewTokens.postValue(true)
         viewModelScope.launch {
             delay(1000)
+            newTokens = getMockTokens()
             waitingNewTokens.postValue(false)
-            newTokens.postValue(getMockTokens())
         }
     }
 
     fun toggleNewToken(token: Token) {
-        newTokens.value?.firstOrNull { it.name == token.name }?.let {
+        newTokens.firstOrNull { it.name == token.name }?.let {
             it.isSelected = it.isSelected == false
         }
     }
 
     fun addSelectedTokens() {
-        newTokens.value?.let { tokens ->
-            val selectedTokens = tokens.filter { it.isSelected == true }
-            println("LC -> selectedTokens = $selectedTokens")
-            viewModelScope.launch {
-                delay(1000)
-                addingSelectedDone.postValue(true)
-            }
+        val selectedTokens = newTokens.filter { it.isSelected == true }
+        println("LC -> selectedTokens = $selectedTokens")
+        viewModelScope.launch {
+            delay(1000)
+            addingSelectedDone.postValue(true)
         }
-    }
-
-    fun cleanNewTokens() {
-        newTokens.value = listOf()
     }
 
     fun stepPage(by: Int) {
@@ -70,34 +65,34 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun getMockTokens() : List<Token> {
         val list = arrayListOf<Token>()
-        list.add(Token("", "CCD", "CCD", 11000000000))
-        list.add(Token("", "wCCD", "wCCD", 2000000000))
-        list.add(Token("", "USDC", "USDC", 3100000000))
-        list.add(Token("", "EC2", "EC2", 4004000000))
-        list.add(Token("", "CCD", "CCD", 11000000000))
-        list.add(Token("", "wCCD", "wCCD", 2000000000))
-        list.add(Token("", "USDC", "USDC", 3100000000))
-        list.add(Token("", "EC2", "EC2", 4004000000))
-        list.add(Token("", "CCD", "CCD", 11000000000))
-        list.add(Token("", "wCCD", "wCCD", 2000000000))
-        list.add(Token("", "USDC", "USDC", 3100000000))
-        list.add(Token("", "EC2", "EC2", 4004000000))
-        list.add(Token("", "CCD", "CCD", 11000000000))
-        list.add(Token("", "wCCD", "wCCD", 2000000000))
-        list.add(Token("", "USDC", "USDC", 3100000000))
-        list.add(Token("", "EC2", "EC2", 4004000000))
-        list.add(Token("", "CCD", "CCD", 11000000000))
-        list.add(Token("", "wCCD", "wCCD", 2000000000))
-        list.add(Token("", "USDC", "USDC", 3100000000))
-        list.add(Token("", "EC2", "EC2", 4004000000))
-        list.add(Token("", "CCD", "CCD", 11000000000))
-        list.add(Token("", "wCCD", "wCCD", 2000000000))
-        list.add(Token("", "USDC", "USDC", 3100000000))
-        list.add(Token("", "EC2", "EC2", 4004000000))
-        list.add(Token("", "CCD", "CCD", 11000000000))
-        list.add(Token("", "wCCD", "wCCD", 2000000000))
-        list.add(Token("", "USDC", "USDC", 3100000000))
-        list.add(Token("", "EC2", "EC2", 4004000000))
+        list.add(Token("", "01 CCD", "CCD", 11000000000))
+        list.add(Token("", "02 wCCD", "wCCD", 2000000000))
+        list.add(Token("", "03 USDC", "USDC", 3100000000))
+        list.add(Token("", "04 EC2", "EC2", 4004000000))
+        list.add(Token("", "05 CCD", "CCD", 11000000000))
+        list.add(Token("", "06 wCCD", "wCCD", 2000000000))
+        list.add(Token("", "07 USDC", "USDC", 3100000000))
+        list.add(Token("", "08 EC2", "EC2", 4004000000))
+        list.add(Token("", "09 CCD", "CCD", 11000000000))
+        list.add(Token("", "10 wCCD", "wCCD", 2000000000))
+        list.add(Token("", "11 USDC", "USDC", 3100000000))
+        list.add(Token("", "12 EC2", "EC2", 4004000000))
+        list.add(Token("", "13 CCD", "CCD", 11000000000))
+        list.add(Token("", "14 wCCD", "wCCD", 2000000000))
+        list.add(Token("", "15 USDC", "USDC", 3100000000))
+        list.add(Token("", "16 EC2", "EC2", 4004000000))
+        list.add(Token("", "17 CCD", "CCD", 11000000000))
+        list.add(Token("", "18 wCCD", "wCCD", 2000000000))
+        list.add(Token("", "19 USDC", "USDC", 3100000000))
+        list.add(Token("", "20 EC2", "EC2", 4004000000))
+        list.add(Token("", "21 CCD", "CCD", 11000000000))
+        list.add(Token("", "22 wCCD", "wCCD", 2000000000))
+        list.add(Token("", "23 USDC", "USDC", 3100000000))
+        list.add(Token("", "24 EC2", "EC2", 4004000000))
+        list.add(Token("", "25 CCD", "CCD", 11000000000))
+        list.add(Token("", "26 wCCD", "wCCD", 2000000000))
+        list.add(Token("", "27 USDC", "USDC", 3100000000))
+        list.add(Token("", "28 EC2", "EC2", 4004000000))
         return list
     }
 }

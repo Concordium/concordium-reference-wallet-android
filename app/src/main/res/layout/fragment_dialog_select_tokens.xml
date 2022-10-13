@@ -48,7 +48,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -58,12 +57,14 @@
             style="@style/Button.Standard.Intro"
             android:layout_width="0dp"
             android:layout_weight="0.5"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:text="@string/cis_back" />
         <Button
             android:id="@+id/add_tokens"
             style="@style/Button.Standard.Intro"
             android:layout_width="0dp"
             android:layout_weight="0.5"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:text="@string/cis_add_tokens" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.constraintlayout.widget.ConstraintLayout>

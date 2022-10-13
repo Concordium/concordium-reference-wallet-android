@@ -27,12 +27,6 @@ class ContractAddressFragment : Fragment() {
         initObservers()
     }
 
-    override fun onResume() {
-        super.onResume()
-        binding.look.isEnabled = true
-        binding.contractAddress.isEnabled = true
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -72,6 +66,8 @@ class ContractAddressFragment : Fragment() {
             binding.contractAddress.isEnabled = false
             binding.pending.visibility = View.VISIBLE
         } else {
+            binding.look.isEnabled = true
+            binding.contractAddress.isEnabled = true
             binding.pending.visibility = View.GONE
         }
     }

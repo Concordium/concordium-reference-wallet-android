@@ -17,6 +17,7 @@ class SelectTokensFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: TokensViewModel by activityViewModels()
     private lateinit var tokensListAdapter: TokensListAdapter
+    private var firstTime = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentDialogSelectTokensBinding.inflate(inflater, container, false)
@@ -27,6 +28,13 @@ class SelectTokensFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initObservers()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!firstTime)
+            tokensListAdapter.notifyDataSetChanged()
+        firstTime = false
     }
 
     override fun onDestroyView() {
@@ -40,15 +48,14 @@ class SelectTokensFragment : Fragment() {
 
         binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                tokensListAdapter.arrayList = viewModel.newTokens.value!!.filter {
+                tokensListAdapter.arrayList = viewModel.newTokens.filter {
                     it.name.uppercase().contains(query?.uppercase() ?: "")
                 }.toTypedArray()
                 tokensListAdapter.notifyDataSetChanged()
                 return false
             }
-
             override fun onQueryTextChange(newText: String?): Boolean {
-                tokensListAdapter.arrayList = viewModel.newTokens.value!!.filter {
+                tokensListAdapter.arrayList = viewModel.newTokens.filter {
                     it.name.uppercase().contains(newText?.uppercase() ?: "")
                 }.toTypedArray()
                 tokensListAdapter.notifyDataSetChanged()
@@ -75,9 +82,11 @@ class SelectTokensFragment : Fragment() {
     }
 
     private fun initObservers() {
-        viewModel.newTokens.observe(viewLifecycleOwner) { tokens ->
-            tokensListAdapter.arrayList = tokens.toTypedArray()
-            tokensListAdapter.notifyDataSetChanged()
+        viewModel.waitingNewTokens.observe(viewLifecycleOwner) { waiting ->
+            if (!waiting) {
+                tokensListAdapter.arrayList = viewModel.newTokens.toTypedArray()
+                tokensListAdapter.notifyDataSetChanged()
+            }
         }
     }
 }
