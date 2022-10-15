@@ -26,6 +26,7 @@ import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.ui.walletconnect.WalletConnectActivity
+import com.concordium.wallet.uicore.afterMeasured
 import com.concordium.wallet.util.getSerializable
 import javax.crypto.Cipher
 
@@ -60,6 +61,9 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
             gotoAccountSettings(true)
         }
         supportFragmentManager.beginTransaction().replace(R.id.tokens_fragment, TokensFragment.newInstance(viewModelTokens, viewModelAccountDetails.account.address, true), null).commit()
+        binding.balances.afterMeasured {
+            binding.balances.minimumHeight = binding.balances.height
+        }
     }
 
     override fun onResume() {
@@ -189,7 +193,8 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     private fun initViews() {
         showWaitingTransactions(false)
         initTabs()
-        initTabsTokens()
+        if (!viewModelAccountDetails.isShielded)
+            initTabsTokens()
     }
 
     private fun initTabsTokens() {
@@ -238,16 +243,14 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
             initViews()
         }
         binding.toggleShielded.setOnClickListener {
-            if (binding.accountDetailsPager.visibility == View.VISIBLE) {
-                viewModelAccountDetails.isShielded = true
-                initViews()
-            }
+            viewModelAccountDetails.isShielded = true
+            initViews()
+            showTransactionsView()
         }
         binding.accountTotalDetailsDisposalText.text = if(viewModelAccountDetails.isShielded) resources.getString(R.string.account_shielded_total_details_disposal, viewModelAccountDetails.account.name) else resources.getString(R.string.account_total_details_disposal)
     }
 
     private fun showFindTokensDialog() {
-//        viewModelTokens.cleanNewTokens()
         lookForNewTokensFragment = LookForNewTokensFragment()
         lookForNewTokensFragment?.show(supportFragmentManager, "")
     }
@@ -261,16 +264,15 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
 
     private fun updateShieldEnabledUI() {
         binding.toggleContainer.visibility = if (viewModelAccountDetails.shieldingEnabledLiveData.value == true) View.VISIBLE else View.GONE
-        binding.toggleBalance.isSelected = !viewModelAccountDetails.isShielded
-        binding.toggleShielded.isSelected = viewModelAccountDetails.isShielded
         binding.shieldedIcon.visibility = if (viewModelAccountDetails.shieldingEnabledLiveData.value == true && viewModelAccountDetails.isShielded) View.VISIBLE else View.GONE
+        binding.markerBalance.visibility = if (viewModelAccountDetails.isShielded) View.GONE else View.VISIBLE
+        binding.markerShielded.visibility = if (viewModelAccountDetails.isShielded) View.VISIBLE else View.GONE
         updateButtonsSlider()
     }
 
     private fun setFinalizedMode() {
         binding.buttonsSlider.setEnableButtons(!viewModelAccountDetails.account.readOnly)
         binding.accountDetailsLayout.visibility = View.VISIBLE
-        binding.readonlyDesc.visibility = if (viewModelAccountDetails.account.readOnly) View.VISIBLE else View.GONE
         binding.accountsOverviewTotalDetailsBakerContainer.visibility = View.GONE
         binding.accountsOverviewTotalDetailsStakedContainer.visibility = View.GONE
         if (viewModelAccountDetails.isShielded) {
@@ -304,25 +306,16 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun initTabs() {
-        val adapter = AccountDetailsPagerAdapter(supportFragmentManager, viewModelAccountDetails.account, this)
+        val adapter = AccountDetailsPagerAdapter(this, viewModelAccountDetails.account, this)
         binding.accountDetailsPager.adapter = adapter
-        binding.accountDetailsTabLayout.setupWithViewPager(binding.accountDetailsPager)
     }
 
     private fun showWaitingTransactions(waiting: Boolean) {
-        if (waiting) {
-            binding.includeProgress.progressLayout.visibility = View.VISIBLE
-        } else {
-            binding.includeProgress.progressLayout.visibility = View.GONE
-        }
+        binding.includeProgress.progressLayout.visibility = if (waiting) View.VISIBLE else View.GONE
     }
 
     private fun showWaitingTokens(waiting: Boolean) {
-        if (waiting) {
-            binding.includeProgressTokens.progressLayout.visibility = View.VISIBLE
-        } else {
-            binding.includeProgressTokens.progressLayout.visibility = View.GONE
-        }
+        binding.includeProgressTokens.progressLayout.visibility = if (waiting) View.VISIBLE else View.GONE
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -336,7 +329,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun showTotalBalance(totalBalance: Long) {
-        binding.balanceTextview.text = CurrencyUtil.formatGTU(totalBalance)
+        binding.balanceTextview.text = CurrencyUtil.formatGTU(totalBalance, true)
         binding.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(viewModelAccountDetails.account.getAtDisposalWithoutStakedOrScheduled(totalBalance), true)
     }
 
@@ -388,23 +381,33 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         }
 
     private fun updateButtonsSlider() {
-        binding.buttonsSlider.removeAllButtons()
         if (viewModelAccountDetails.isShielded) {
-            binding.buttonsSlider.addButton(R.drawable.ic_icon_send_shielded, "1") {
+            binding.buttonsSlider.visibility = View.GONE
+            binding.buttonsShielded.visibility = View.VISIBLE
+            binding.sendShielded.setOnClickListener {
                 onSendFundsClicked()
             }
-        } else {
-            binding.buttonsSlider.addButton(R.drawable.ic_tokens, "2", setToWhite = false) {
-                binding.buttonsSlider.setMarkerOn("2")
-                showTokensView()
+            binding.unshield.setOnClickListener {
+                onShieldFundsClicked()
             }
-            binding.buttonsSlider.addButton(R.drawable.ic_send, "3") {
-                onSendFundsClicked()
+            binding.receive.setOnClickListener {
+                onAddressClicked()
             }
-            binding.buttonsSlider.addButton(R.drawable.ic_list, "4") {
-                binding.buttonsSlider.setMarkerOn("4")
-                showTransactionsView()
-            }
+            return
+        }
+        binding.buttonsSlider.visibility = View.VISIBLE
+        binding.buttonsShielded.visibility = View.GONE
+        binding.buttonsSlider.removeAllButtons()
+        binding.buttonsSlider.addButton(R.drawable.ic_tokens, "2", setToWhite = false) {
+            binding.buttonsSlider.setMarkerOn("2")
+            showTokensView()
+        }
+        binding.buttonsSlider.addButton(R.drawable.ic_send, "3") {
+            onSendFundsClicked()
+        }
+        binding.buttonsSlider.addButton(R.drawable.ic_list, "4") {
+            binding.buttonsSlider.setMarkerOn("4")
+            showTransactionsView()
         }
         binding.buttonsSlider.addButton(R.drawable.ic_recipient_address_qr, "5") {
             onAddressClicked()
@@ -418,14 +421,8 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
             scan()
         }
         if (viewModelAccountDetails.shieldingEnabledLiveData.value == true) {
-            if (viewModelAccountDetails.isShielded) {
-                binding.buttonsSlider.addButton(R.drawable.ic_unshield, "8") {
-                    onShieldFundsClicked()
-                }
-            } else {
-                binding.buttonsSlider.addButton(R.drawable.ic_shielded_icon, "9") {
-                    onShieldFundsClicked()
-                }
+            binding.buttonsSlider.addButton(R.drawable.ic_shielded_icon, "9") {
+                onShieldFundsClicked()
             }
         }
         binding.buttonsSlider.addButton(R.drawable.ic_settings, "10") {

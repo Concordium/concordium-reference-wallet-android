@@ -128,8 +128,7 @@ class ButtonsSlider : CardView {
 
         buttonsContainer.forEach { buttonsContainerView ->
             if (buttonsContainerView is RelativeLayout) {
-                val buttonContainer = buttonsContainerView as RelativeLayout
-                buttonContainer.forEach { view ->
+                buttonsContainerView.forEach { view ->
                     if (view.tag == "MARKER") {
                         if (buttonsContainerView.tag == id)
                             view.visibility = View.VISIBLE

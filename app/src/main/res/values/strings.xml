@@ -933,7 +933,6 @@
     <string name="account_total_details_disposal">Balance total</string>
     <string name="account_shielded_total_details_disposal">Shielded balance total of %1$s</string>
 
-    <string name="accounts_overview_readonly_desc">This account is imported without keys, and is read only</string>
     <string name="transactions_filters_show_rewards">Show rewards</string>
     <string name="transactions_filters_show_finalizations_rewards">Show finalizations rewards</string>
     <string name="change_password_initial_error">Data could not be decrypted</string>
