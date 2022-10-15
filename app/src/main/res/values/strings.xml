@@ -992,8 +992,6 @@
     <string name="cis_add_tokens">Add tokens</string>
     <string name="cis_find_tokens_error">Invalid contract address</string>
     <string name="cis_search">Search</string>
-    <string name="cis_about_token">About token</string>
-    <string name="cis_mint_address">Mint address</string>
     <string name="cis_send_funds">Send funds</string>
     <string name="cis_currently_available_amounts">Currently available amounts:</string>
     <string name="cis_token_balance">%1$s Balance:</string>
@@ -1016,5 +1014,9 @@
     <string name="cis_back_to_list">Back to list</string>
     <string name="cis_invalid_account_address">Invalid account address</string>
     <string name="cis_enter_receiver_address">Please enter a receiver address</string>
+    <string name="cis_about_token">About token</string>
+    <string name="cis_name_and_icon">Name and icon</string>
+    <string name="cis_mint_address">Mint address</string>
+    <string name="cis_decimals">Decimals</string>
 
 </resources>

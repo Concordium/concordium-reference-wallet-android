@@ -22,7 +22,7 @@
     <color name="theme_component_disabled_alpha_one">#30444F</color>
     <color name="theme_component_grey">#979797</color>
     <color name="theme_component_grey_pressed">#B8B8B8</color>
-    <color name="theme_divider">#EAEAEA</color>
+    <color name="theme_divider">#CCCCCC</color>
     <color name="theme_component_background_disabled">#F5F5F5</color>
 
     <!-- Text -->

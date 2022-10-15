@@ -23,91 +23,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="@dimen/activity_vertical_margin"
         android:orientation="vertical">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/Layout.CardView.Dark">
-            <TextView
-                android:id="@+id/token_amount"
-                style="@style/TextView.BlueValueHuge"
-                android:layout_marginVertical="@dimen/activity_vertical_margin_extended"
-                android:lines="1"
-                android:layout_centerInParent="true"
-                tools:text="100.00" />
-        </RelativeLayout>
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            app:cardCornerRadius="@dimen/card_corner_radius"
-            app:cardElevation="0dp">
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <androidx.appcompat.widget.AppCompatImageButton
-                    android:id="@+id/send"
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_weight="0.5"
-                    android:background="@drawable/button_action_card"
-                    android:paddingVertical="@dimen/activity_vertical_margin"
-                    android:src="@drawable/ic_send"
-                    android:scaleType="fitCenter"
-                    android:tint="@color/theme_white" />
-                <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/theme_white" />
-                <androidx.appcompat.widget.AppCompatImageButton
-                    android:id="@+id/receive"
-                    android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_weight="0.5"
-                    android:background="@drawable/button_action_card"
-                    android:paddingVertical="@dimen/activity_vertical_margin"
-                    android:src="@drawable/ic_recipient_address_qr"
-                    android:scaleType="fitCenter"
-                    android:tint="@color/theme_white" />
-            </androidx.appcompat.widget.LinearLayoutCompat>
-        </androidx.cardview.widget.CardView>
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/about_token"
-            style="@style/Layout.Card"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginTop="@dimen/activity_vertical_margin">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:paddingVertical="@dimen/activity_vertical_margin_half"
-                android:textColor="@color/text_blue"
-                android:text="@string/cis_about_token" />
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/activity_vertical_margin_half"
-                android:background="@color/theme_light_blue" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="@dimen/activity_vertical_margin_half"
-                style="@style/TextView.XSmall.Light"
-                android:text="@string/cis_mint_address" />
-            <TextView
-                android:id="@+id/mint_address"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-                android:layout_marginBottom="@dimen/activity_vertical_margin_half"
-                style="@style/TextView.Standard"
-                tools:text="8796...67gH" />
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/theme_grey" />
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+        <include layout="@layout/activity_token_details_balance" android:id="@+id/include_balance" />
+
+        <include layout="@layout/activity_token_details_buttons" android:id="@+id/include_buttons" />
+
+        <include layout="@layout/activity_token_details_about" android:id="@+id/include_about" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

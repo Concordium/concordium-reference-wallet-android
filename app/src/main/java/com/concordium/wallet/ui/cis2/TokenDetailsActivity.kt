@@ -34,13 +34,13 @@ class TokenDetailsActivity : BaseActivity() {
         val tokenName = intent.extras!!.getString(TOKEN_NAME)
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.app_name)
         setActionBarTitle(getString(R.string.cis_token_details_title, tokenName, viewModel.account.name))
-        binding.send.setOnClickListener {
+        binding.includeButtons.send.setOnClickListener {
             val intent = Intent(this, SendTokenActivity::class.java)
             intent.putExtra(SendTokenActivity.ACCOUNT, viewModel.account)
             intent.putExtra(SendTokenActivity.TOKEN, Token("default", "default", "DEF", 123))
             startActivity(intent)
         }
-        binding.receive.setOnClickListener {
+        binding.includeButtons.receive.setOnClickListener {
 
         }
     }

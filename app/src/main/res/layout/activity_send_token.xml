@@ -95,7 +95,7 @@
                 android:orientation="horizontal"
                 android:background="@drawable/rounded_transparent"
                 tools:showIn="@layout/activity_send_token">
-                <EditText
+                <com.concordium.wallet.uicore.view.AmountEditText
                     android:id="@+id/amount"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -103,8 +103,6 @@
                     android:layout_height="match_parent"
                     style="@style/TextView.BlueRegular.Mono"
                     android:gravity="center_vertical"
-                    android:digits="0123456789,."
-                    android:inputType="numberDecimal"
                     tools:text="123.45" />
                 <TextView
                     android:id="@+id/max"
