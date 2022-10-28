@@ -4,6 +4,8 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import com.concordium.wallet.data.walletconnect.Params
+import com.google.gson.Gson
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
 import org.greenrobot.eventbus.EventBus
@@ -43,8 +45,16 @@ class WalletConnectService : Service(), SignClient.WalletDelegate {
         fun getSessionTopic(): String {
             return settledSessionResponseResult?.session?.topic ?: ""
         }
-        fun getSessionRequestParams(): String? {
+        fun getSessionRequestParamsAsString(): String? {
             return sessionRequest?.request?.params
+        }
+        fun getSessionRequestParams(): Params? {
+            return try {
+                Gson().fromJson(sessionRequest?.request?.params, Params::class.java)
+            } catch (ex: Exception) {
+                println("LC -> getSessionRequestParams ERROR ${ex.stackTraceToString()}")
+                null
+            }
         }
     }
 

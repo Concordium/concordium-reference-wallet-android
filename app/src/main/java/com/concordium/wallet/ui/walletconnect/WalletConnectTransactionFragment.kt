@@ -36,6 +36,7 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initObservers()
+        _viewModel.loadTransactionFee()
     }
 
     override fun onDestroyView() {
@@ -52,7 +53,6 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
         binding.amount.text = "test 2"
         binding.contractAddress.text = "test 3"
         binding.parameters.text = prettyPrintJson()
-        binding.estimatedTransactionFee.text = getString(R.string.wallet_connect_transaction_estimated_transaction_fee, CurrencyUtil.formatGTU(1234567890))
         binding.reject.setOnClickListener {
             binding.reject.isEnabled = false
             _viewModel.binder?.rejectTransaction()
@@ -65,11 +65,13 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
     }
 
     private fun initObservers() {
-
+        _viewModel.transactionFee.observe(viewLifecycleOwner) { fee ->
+            binding.estimatedTransactionFee.text = getString(R.string.wallet_connect_transaction_estimated_transaction_fee, CurrencyUtil.formatGTU(fee))
+        }
     }
 
     private fun prettyPrintJson(): String {
-        _viewModel.binder?.getSessionRequestParams()?.let { jsonString ->
+        _viewModel.binder?.getSessionRequestParamsAsString()?.let { jsonString ->
             val json = JsonParser.parseString(jsonString).asJsonObject
             val gson = GsonBuilder().setPrettyPrinting().create()
             return gson.toJson(json)

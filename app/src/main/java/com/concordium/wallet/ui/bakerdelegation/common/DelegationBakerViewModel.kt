@@ -274,7 +274,6 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun loadTransactionFee(notifyObservers: Boolean, requestId: Int? = null, metadataSizeForced: Int? = null) {
-
         val amount = when (bakerDelegationData.type) {
             UPDATE_DELEGATION, UPDATE_BAKER_STAKE, CONFIGURE_BAKER -> bakerDelegationData.amount
             else -> null
@@ -302,21 +301,20 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             bakerDelegationData.bakerPoolInfo?.openStatus
         } else null
 
-        proxyRepository.getTransferCost(bakerDelegationData.type,
-            null,
-            amount,
-            restake,
-            bakerDelegationData.isLPool,
-            targetChange,
-            metadataSize,
-            openStatus,
-            {
+        proxyRepository.getTransferCost(type = bakerDelegationData.type,
+            amount = amount,
+            restake = restake,
+            lPool = bakerDelegationData.isLPool,
+            targetChange = targetChange,
+            metadataSize = metadataSize,
+            openStatus = openStatus,
+            success = {
                 bakerDelegationData.energy = it.energy
                 bakerDelegationData.cost = it.cost.toLong()
                 if (notifyObservers)
                     _transactionFeeLiveData.value = Pair(bakerDelegationData.cost, requestId)
             },
-            {
+            failure = {
                 handleBackendError(it)
             }
         )
@@ -618,7 +616,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         submitCredentialRequest?.dispose()
         submitCredentialRequest = proxyRepository.submitTransfer(transfer,
             {
-                Log.d("Success:"+it)
+                Log.d("Success:$it")
                 bakerDelegationData.submissionId = it.submissionId
                 submissionStatus(localTransactionType)
                 // Do not disable waiting state yet

@@ -18,6 +18,8 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
+import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.toHex
 import com.walletconnect.sign.client.Sign
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
@@ -28,7 +30,9 @@ import javax.crypto.Cipher
 
 data class WalletConnectData(
     var account: Account? = null,
-    var wcUri: String? = null
+    var wcUri: String? = null,
+    var energy: Long? = null,
+    var cost: Long? = null
 ): Serializable
 
 class WalletConnectViewModel(application: Application) : AndroidViewModel(application) {
@@ -47,6 +51,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val connectStatus: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val serviceName: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val permissions: MutableLiveData<List<String>> by lazy { MutableLiveData<List<String>>() }
+    val transactionFee: MutableLiveData<Long> by lazy { MutableLiveData<Long>() }
     val transactionSubmittedOkay: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val errorWalletProxy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
@@ -60,7 +65,6 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     private val proxyRepository = ProxyRepository()
 
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
-    private var energy: Long? = null
     private var accountNonce: AccountNonce? = null
 
     fun register() {
@@ -113,14 +117,36 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                 },
                 {
                     waiting.postValue(false)
-                    errorWalletProxy.postValue(BackendErrorHandler.getExceptionStringRes(it))
+                    handleBackendError(it)
                 }
             )
         }
     }
 
     fun loadTransactionFee() {
-        energy = 1
+        binder?.getSessionRequestParams()?.parsePayload()?.let { payload ->
+            proxyRepository.getTransferCost(type = "update",
+                amount = payload.amount.microGtuAmount.toLong(),
+                sender = walletConnectData.account!!.address,
+                contractIndex = payload.contractAddress.index.toInt(),
+                contractSubindex = payload.contractAddress.subindex.toInt(),
+                receiveName = payload.receiveName,
+                parameter = (binder?.getSessionRequestParamsAsString() ?: "").toByteArray().toHex(),
+                success = {
+                    walletConnectData.energy = it.energy
+                    walletConnectData.cost = it.cost.toLong()
+                    transactionFee.postValue(walletConnectData.cost)
+                },
+                failure = {
+                    handleBackendError(it)
+                }
+            )
+        }
+    }
+
+    private fun handleBackendError(throwable: Throwable) {
+        Log.e("Backend request failed", throwable)
+        errorWalletProxy.postValue(BackendErrorHandler.getExceptionStringRes(throwable))
     }
 
     fun getCipherForBiometrics(): Cipher? {

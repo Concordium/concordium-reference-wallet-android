@@ -141,7 +141,9 @@ class WalletConnectActivity : BaseActivity() {
             approveView()
         }
         viewModel.transaction.observe(this) {
-            transactionView()
+            runOnUiThread {
+                transactionView()
+            }
         }
         viewModel.showAuthentication.observe(this) {
             showAuthentication(authenticateText(), object : AuthenticationCallback {
