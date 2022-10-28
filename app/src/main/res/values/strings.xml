@@ -3,7 +3,6 @@
     <!-- App -->
     <string name="app_name">Concordium</string>
     <string name="app_menu_item_add_recipient">Add</string>
-    <string name="app_menu_item_burger">Menu</string>
     <string name="app_error_general">Unexpected error</string>
     <string name="app_error_lib">An unexpected error occurred, please try again</string>
     <string name="app_error_encryption">Unexpected encryption/decryption error</string>
@@ -905,6 +904,7 @@
     <string name="account_details_menu_hide_shielded">Hide shielded balance</string>
     <string name="account_details_menu_decrypt">Decrypt</string>
     <string name="account_details_menu_change_name">Change account name</string>
+    <string name="account_details_menu_export_key">Export private key</string>
     <string name="account_details_delegation_with_baker_pool">Delegation with baker pool %1$s</string>
     <string name="account_details_delegation_with_passive_pool">Passive delegation</string>
     <string name="account_details_stake_with_baker">Stake with baker %1$s</string>

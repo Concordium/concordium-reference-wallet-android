@@ -75,6 +75,9 @@ class AccountSettingsActivity : BaseActivity() {
         binding.changeName.setOnClickListener {
             showChangeNameDialog()
         }
+        binding.exportKey.setOnClickListener {
+            exportKey()
+        }
 
         binding.showShielded.visibility = if (viewModel.shieldingEnabledLiveData.value == true || viewModel.account.readOnly) View.GONE else View.VISIBLE
         binding.dividerShowShielded.visibility = if (viewModel.shieldingEnabledLiveData.value == true || viewModel.account.readOnly) View.GONE else View.VISIBLE
@@ -114,6 +117,10 @@ class AccountSettingsActivity : BaseActivity() {
             dialog.cancel()
         }
         builder.show()
+    }
+
+    private fun exportKey() {
+
     }
 
     private fun startShieldedIntroFlow() {
