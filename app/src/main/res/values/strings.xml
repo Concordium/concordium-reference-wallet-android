@@ -966,4 +966,13 @@
     <string name="force_update_intro_warning_update_now">Update now</string>
     <string name="force_update_intro_warning_remind_me">Remind me next time I open the wallet</string>
 
+    <string name="export_account_keys_title">Export Account Keys</string>
+    <string name="export_account_keys_subtitle">Here you can export your private account keys.</string>
+    <string name="export_account_keys_reveal_explain">Make sure to keep the keys safe, because they can be used to access your accounts.</string>
+    <string name="export_account_keys_tap">Tap to reveal your the private keys for %1$s.</string>
+    <string name="export_account_keys_done">Done</string>
+    <string name="export_account_keys_copied">Copied</string>
+    <string name="export_account_keys_to_file">Export to file</string>
+    <string name="export_account_keys_file_exported">File exported</string>
+
 </resources>

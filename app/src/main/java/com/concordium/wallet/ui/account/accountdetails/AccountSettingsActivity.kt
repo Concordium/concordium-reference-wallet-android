@@ -13,6 +13,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityAccountSettingsBinding
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.more.export.ExportAccountKeysActivity
 import com.concordium.wallet.uicore.setEditText
 import com.concordium.wallet.util.getSerializable
 
@@ -120,7 +121,9 @@ class AccountSettingsActivity : BaseActivity() {
     }
 
     private fun exportKey() {
-
+        val intent = Intent(this, ExportAccountKeysActivity::class.java)
+        intent.putExtra(ExportAccountKeysActivity.EXTRA_ACCOUNT, viewModel.account)
+        startActivity(intent)
     }
 
     private fun startShieldedIntroFlow() {

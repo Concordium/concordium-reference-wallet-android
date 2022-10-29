@@ -13,6 +13,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -126,6 +127,25 @@ abstract class BaseActivity : AppCompatActivity() {
         }
         intent.apply { flags = Intent.FLAG_GRANT_READ_URI_PERMISSION }
         startActivityForResult(intent, RESULT_FOLDER_PICKER)
+    }
+
+    protected fun openFolderPicker2(activityResult: ActivityResultLauncher<Intent>) {
+        val intent: Intent?
+        if (SDK_INT >= Build.VERSION_CODES.Q) {
+            val storageManager = getSystemService(STORAGE_SERVICE) as StorageManager
+            intent = storageManager.primaryStorageVolume.createOpenDocumentTreeIntent()
+            val startDir = "Documents"
+            var uriRoot = intent.getParcelableExtra<Uri>("android.provider.extra.INITIAL_URI")
+            var scheme = uriRoot.toString()
+            scheme = scheme.replace("/root/", "/document/")
+            scheme += "%3A$startDir"
+            uriRoot = Uri.parse(scheme)
+            intent.putExtra("android.provider.extra.INITIAL_URI", uriRoot)
+        } else {
+            intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
+        }
+        intent.apply { flags = Intent.FLAG_GRANT_READ_URI_PERMISSION }
+        activityResult.launch(intent)
     }
 
     fun finishUntilClass(canonicalClassName: String?, thenStart: String? = null, withKey: String? = null, withData: Serializable? = null) {
