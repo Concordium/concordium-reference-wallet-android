@@ -116,13 +116,10 @@ class WalletConnectActivity : BaseActivity() {
                 showWaiting(waiting)
             }
         }
-        viewModel.errorWalletProxy.observe(this) {
+        viewModel.errorInt.observe(this) {
             Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
         }
-        viewModel.errorWalletConnect.observe(this) {
-            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
-        }
-        viewModel.errorWalletRejectApprove.observe(this) {
+        viewModel.errorString.observe(this) {
             Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
         }
         viewModel.chooseAccount.observe(this) { accountWithIdentity ->

@@ -146,4 +146,30 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             Log.e("CryptoLib failed")
             return@withContext null
         }
+
+    override suspend fun signTransaction(signTransactionInput: SignTransactionInput): SignTransactionOutput? =
+        withContext(Dispatchers.Default) {
+            val input = gson.toJson(signTransactionInput)
+            loadWalletLib()
+            val result = sign_transaction(input)
+            Log.d("Output (Code ${result.result}): ${result.output}")
+            if (result.result == CryptoLibrary.SUCCESS) {
+                return@withContext gson.fromJson(result.output, SignTransactionOutput::class.java)
+            }
+            Log.e("CryptoLib failed")
+            return@withContext null
+        }
+
+    override suspend fun signMessage(signMessageInput: SignMessageInput): SignMessageOutput? =
+        withContext(Dispatchers.Default) {
+            val input = gson.toJson(signMessageInput)
+            loadWalletLib()
+            val result = sign_message(input)
+            Log.d("Output (Code ${result.result}): ${result.output}")
+            if (result.result == CryptoLibrary.SUCCESS) {
+                return@withContext gson.fromJson(result.output, SignMessageOutput::class.java)
+            }
+            Log.e("CryptoLib failed")
+            return@withContext null
+        }
 }

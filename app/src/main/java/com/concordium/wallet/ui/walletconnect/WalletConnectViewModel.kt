@@ -11,6 +11,7 @@ import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.cryptolib.SignTransactionInput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.AccountNonce
@@ -20,6 +21,7 @@ import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toHex
+import com.google.gson.Gson
 import com.walletconnect.sign.client.Sign
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
@@ -54,10 +56,9 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val transactionFee: MutableLiveData<Long> by lazy { MutableLiveData<Long>() }
     val transactionSubmittedOkay: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val errorWalletProxy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
-    val errorWalletConnect: MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    val errorString: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val errorWalletConnectApprove: MutableLiveData<String> by lazy { MutableLiveData<String>() }
-    val errorWalletRejectApprove: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val walletConnectData = WalletConnectData()
     var binder: WalletConnectService.LocalBinder? = null
 
@@ -131,7 +132,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                 contractIndex = payload.contractAddress.index.toInt(),
                 contractSubindex = payload.contractAddress.subindex.toInt(),
                 receiveName = payload.receiveName,
-                parameter = (binder?.getSessionRequestParamsAsString() ?: "").toByteArray().toHex(),
+                parameter = (binder?.getSessionRequestParamsAsString() ?: "").toHex(),
                 success = {
                     walletConnectData.energy = it.energy
                     walletConnectData.cost = it.cost.toLong()
@@ -146,7 +147,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     private fun handleBackendError(throwable: Throwable) {
         Log.e("Backend request failed", throwable)
-        errorWalletProxy.postValue(BackendErrorHandler.getExceptionStringRes(throwable))
+        errorInt.postValue(BackendErrorHandler.getExceptionStringRes(throwable))
     }
 
     fun getCipherForBiometrics(): Cipher? {
@@ -154,11 +155,11 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             val cipher =
                 App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
             if (cipher == null) {
-                errorWalletProxy.postValue(R.string.app_error_keystore_key_invalidated)
+                errorInt.postValue(R.string.app_error_keystore_key_invalidated)
             }
             cipher
         } catch (e: KeystoreEncryptionException) {
-            errorWalletProxy.postValue(R.string.app_error_keystore)
+            errorInt.postValue(R.string.app_error_keystore)
             null
         }
     }
@@ -174,7 +175,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         if (password != null) {
             decryptAndContinue(password)
         } else {
-            errorWalletProxy.postValue(R.string.app_error_encryption)
+            errorInt.postValue(R.string.app_error_encryption)
             waiting.postValue(false)
         }
     }
@@ -183,24 +184,36 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         walletConnectData.account?.let { account ->
             val storageAccountDataEncrypted = account.encryptedAccountData
             if (TextUtils.isEmpty(storageAccountDataEncrypted)) {
-                errorWalletProxy.postValue(R.string.app_error_general)
+                errorInt.postValue(R.string.app_error_general)
                 waiting.postValue(false)
                 return
             }
             val decryptedJson = App.appCore.getCurrentAuthenticationManager().decryptInBackground(password, storageAccountDataEncrypted)
             if (decryptedJson != null) {
                 val credentialsOutput = App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
-                createTransaction(credentialsOutput.accountKeys, credentialsOutput.encryptionSecretKey)
+                createTransaction(credentialsOutput.accountKeys)
             } else {
-                errorWalletProxy.postValue(R.string.app_error_encryption)
+                errorInt.postValue(R.string.app_error_encryption)
                 waiting.postValue(false)
             }
         }
     }
 
-    private suspend fun createTransaction(keys: AccountData, encryptionSecretKey: String?) {
-        val jsonSigned = ""
-        binder?.approveTransaction(jsonSigned)
+    private suspend fun createTransaction(keys: AccountData) {
+        val transaction = (binder?.getSessionRequestParamsAsString() ?: "").toHex()
+        val signTransactionInput = SignTransactionInput(transaction, keys)
+
+        println("LC -> ${binder?.getSessionRequestParamsAsString()}")
+        println("LC -> $transaction")
+        println("LC -> $keys")
+
+        val signTransactionOutput = App.appCore.cryptoLibrary.signTransaction(signTransactionInput)
+        if (signTransactionOutput == null) {
+            errorInt.postValue(R.string.app_error_lib)
+        } else {
+            val signTransactionOutputString = Gson().toJson(signTransactionOutput)
+            binder?.approveTransaction(signTransactionOutputString)
+        }
     }
 
     fun sessionName() : String {
@@ -228,7 +241,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(pairError: PairError) {
-        errorWalletConnect.postValue(pairError.message)
+        errorString.postValue(pairError.message)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -238,6 +251,6 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(rejectError: RejectError) {
-        errorWalletRejectApprove.postValue(rejectError.message)
+        errorString.postValue(rejectError.message)
     }
 }
