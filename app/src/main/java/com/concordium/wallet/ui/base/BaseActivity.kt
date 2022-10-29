@@ -39,8 +39,6 @@ abstract class BaseActivity : AppCompatActivity() {
 
     companion object {
         const val POP_UNTIL_ACTIVITY = "POP_UNTIL_ACTIVITY"
-        const val RESULT_FOLDER_PICKER = 101
-        const val RESULT_SHARE_FILE = 102
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,7 +72,7 @@ abstract class BaseActivity : AppCompatActivity() {
         isActive = false
     }
 
-    protected fun shareFile(fileName: Uri) {
+    protected fun shareFile(activityResult: ActivityResultLauncher<Intent>, fileName: Uri) {
         val share = Intent(Intent.ACTION_SEND)
         share.type = "message/rfc822"
         share.putExtra(Intent.EXTRA_STREAM, fileName)
@@ -83,7 +81,7 @@ abstract class BaseActivity : AppCompatActivity() {
             val packageName = resolveInfo.activityInfo.packageName
             grantUriPermission(packageName, fileName, Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        startActivityForResult(Intent.createChooser(share, null), RESULT_SHARE_FILE)
+        activityResult.launch(Intent.createChooser(share, null))
     }
 
     // Upon returning, we check the result and pop if needed
@@ -110,26 +108,7 @@ abstract class BaseActivity : AppCompatActivity() {
         getResultGeneric.launch(intent)
     }
 
-    protected fun openFolderPicker() {
-        val intent: Intent?
-        if (SDK_INT >= Build.VERSION_CODES.Q) {
-            val storageManager = getSystemService(STORAGE_SERVICE) as StorageManager
-            intent = storageManager.primaryStorageVolume.createOpenDocumentTreeIntent()
-            val startDir = "Documents"
-            var uriRoot = intent.getParcelableExtra<Uri>("android.provider.extra.INITIAL_URI")
-            var scheme = uriRoot.toString()
-            scheme = scheme.replace("/root/", "/document/")
-            scheme += "%3A$startDir"
-            uriRoot = Uri.parse(scheme)
-            intent.putExtra("android.provider.extra.INITIAL_URI", uriRoot)
-        } else {
-            intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-        }
-        intent.apply { flags = Intent.FLAG_GRANT_READ_URI_PERMISSION }
-        startActivityForResult(intent, RESULT_FOLDER_PICKER)
-    }
-
-    protected fun openFolderPicker2(activityResult: ActivityResultLauncher<Intent>) {
+    protected fun openFolderPicker(activityResult: ActivityResultLauncher<Intent>) {
         val intent: Intent?
         if (SDK_INT >= Build.VERSION_CODES.Q) {
             val storageManager = getSystemService(STORAGE_SERVICE) as StorageManager

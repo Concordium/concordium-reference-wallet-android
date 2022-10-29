@@ -1,11 +1,9 @@
 package com.concordium.wallet.ui.more.export
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -16,7 +14,6 @@ import com.concordium.wallet.data.model.AccountDataKeys
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityExportAccountKeysBinding
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.util.getSerializable
 import com.google.gson.Gson
 import javax.crypto.Cipher
@@ -48,7 +45,7 @@ class ExportAccountKeysActivity : BaseActivity() {
             copyToClipboard()
         }
         binding.exportToFile.setOnClickListener {
-            exportToFile()
+            openFolderPicker(getResultFolderPicker)
         }
         binding.done.setOnClickListener {
             finish()
@@ -92,10 +89,6 @@ class ExportAccountKeysActivity : BaseActivity() {
         val clipData = ClipData.newPlainText("key", viewModel.accountDataKeys.level0.keys.keys.signKey)
         clipboardManager.setPrimaryClip(clipData)
         Toast.makeText(this, R.string.export_account_keys_copied, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun exportToFile() {
-        openFolderPicker2(getResultFolderPicker)
     }
 
     private val getResultFolderPicker =
