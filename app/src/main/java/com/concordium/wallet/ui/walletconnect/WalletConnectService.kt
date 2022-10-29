@@ -6,6 +6,8 @@ import android.os.Binder
 import android.os.IBinder
 import com.concordium.wallet.data.walletconnect.Params
 import com.google.gson.Gson
+import com.walletconnect.android.Core
+import com.walletconnect.android.CoreClient
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
 import org.greenrobot.eventbus.EventBus
@@ -69,9 +71,9 @@ class WalletConnectService : Service(), SignClient.WalletDelegate {
 
     private fun pairWC(wcUri: String) {
         SignClient.setWalletDelegate(this)
-        val pairParams = Sign.Params.Pair(wcUri)
         println("LC -> CALL PAIR $wcUri")
-        SignClient.pair(pairParams) { modelError ->
+        val pairingParams = Core.Params.Pair(wcUri)
+        CoreClient.Pairing.pair(pairingParams) { modelError ->
             println("LC -> PAIR ERROR ${modelError.throwable.stackTraceToString()}")
             EventBus.getDefault().post(PairError(modelError.throwable.message ?: ""))
         }
@@ -152,11 +154,18 @@ class WalletConnectService : Service(), SignClient.WalletDelegate {
     }
 
     private fun disconnectWC() {
-        println("LC -> CALL DISCONNECT ${binder.getSessionTopic()}")
-        val disconnectParams = Sign.Params.Disconnect(binder.getSessionTopic())
-        SignClient.disconnect(disconnectParams) { modelError ->
-            println("LC -> DISCONNECT ERROR ${modelError.throwable.stackTraceToString()}")
+        val sessionTopic = binder.getSessionTopic()
+        if (sessionTopic.isNotBlank()) {
+            println("LC -> CALL DISCONNECT $sessionTopic")
+            val disconnectParams = Sign.Params.Disconnect(sessionTopic)
+            SignClient.disconnect(disconnectParams) { modelError ->
+                println("LC -> DISCONNECT ERROR ${modelError.throwable.stackTraceToString()}")
+            }
         }
+        sessionProposal = null
+        settledSessionResponseResult = null
+        settledSessionResponseError = null
+        sessionRequest = null
     }
 
     override fun onConnectionStateChange(state: Sign.Model.ConnectionState) {

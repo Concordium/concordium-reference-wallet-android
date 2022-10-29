@@ -3,8 +3,9 @@ package com.concordium.wallet
 import android.app.Application
 import android.content.Context
 import com.concordium.wallet.util.Log
-import com.walletconnect.android.RelayClient
-import com.walletconnect.android.connection.ConnectionType
+import com.walletconnect.android.Core
+import com.walletconnect.android.CoreClient
+import com.walletconnect.android.relay.ConnectionType
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
 
@@ -33,20 +34,21 @@ class App : Application(){
 
     private fun initWalletConnect() {
         println("LC -> CALL INIT")
+
         val projectId = "76324905a70fe5c388bab46d3e0564dc"
         val relayServerUrl = "wss://relay.walletconnect.com?projectId=$projectId"
-        RelayClient.initialize(relayServerUrl = relayServerUrl, connectionType = ConnectionType.AUTOMATIC, application = this)
-        val initString = Sign.Params.Init(
-            metadata = Sign.Model.AppMetaData(
-                name = "Concordium",
-                description = "Concordium Wallet",
-                url = "https://concordium.com",
-                icons = listOf(),
-                redirect = "kotlin-wallet-wc:/request"
-            ),
-            relay = RelayClient
+        val appMetaData = Core.Model.AppMetaData(
+            name = getString(R.string.app_name),
+            description = "Concordium - Blockchain Wallet",
+            url = "https://concordium.com",
+            icons = listOf(),
+            redirect = "kotlin-wallet-wc:/request"
         )
-        SignClient.initialize(initString) { modelError ->
+
+        CoreClient.initialize(relayServerUrl = relayServerUrl, connectionType = ConnectionType.AUTOMATIC, application = this, metaData = appMetaData)
+        val initParams = Sign.Params.Init(core = CoreClient)
+
+        SignClient.initialize(initParams) { modelError ->
             println("LC -> INIT ERROR ${modelError.throwable.stackTraceToString()}")
         }
     }
