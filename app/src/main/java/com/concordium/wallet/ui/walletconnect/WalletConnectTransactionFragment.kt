@@ -50,8 +50,8 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
             binding.atDisposal.text = CurrencyUtil.formatGTU(account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance), true)
             binding.accountToSendFrom.text = "${account.name}\n\n${account.address}"
         }
-        binding.amount.text = "test 2"
-        binding.contractAddress.text = "test 3"
+        binding.amount.text = _viewModel.binder?.getSessionRequestParams()?.parsePayload()?.amount?.microGtuAmount
+        binding.contractAddress.text = "${_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.contractAddress?.index} ${_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.contractAddress?.subindex}"
         binding.parameters.text = prettyPrintJson()
         binding.reject.setOnClickListener {
             binding.reject.isEnabled = false
@@ -67,6 +67,7 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
     private fun initObservers() {
         _viewModel.transactionFee.observe(viewLifecycleOwner) { fee ->
             binding.estimatedTransactionFee.text = getString(R.string.wallet_connect_transaction_estimated_transaction_fee, CurrencyUtil.formatGTU(fee))
+            binding.submit.isEnabled = true
         }
     }
 

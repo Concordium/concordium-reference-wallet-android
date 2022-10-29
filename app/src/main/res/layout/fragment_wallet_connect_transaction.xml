@@ -156,6 +156,7 @@
                     android:layout_width="0dp"
                     android:layout_weight="0.5"
                     android:layout_marginStart="@dimen/activity_horizontal_margin_half"
+                    android:enabled="false"
                     android:text="@string/wallet_connect_transaction_submit" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
