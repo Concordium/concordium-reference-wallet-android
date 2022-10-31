@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:layout_marginVertical="@dimen/activity_vertical_margin_half">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/TextView.Medium.Bold"
+                android:text="@string/wallet_connect_sign_message"
+                android:layout_gravity="center" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:paddingHorizontal="@dimen/activity_horizontal_margin_double"
+                android:background="@drawable/receipt_background_new"
+                android:orientation="vertical">
+                <TextView
+                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
+                    android:text="@string/wallet_connect_message_vote" />
+                <View style="@style/Divider" />
+                <TextView
+                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
+                    android:text="@string/wallet_connect_message_content" />
+                <TextView
+                    android:id="@+id/message_text"
+                    style="@style/TextView.Standard.Small"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
+                    android:gravity="center"
+                    tools:text="I’m not really sure what such a message might contain, but it would be presented here in a similar way to the transactions we can see above." />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/reject"
+                    style="@style/Button.Standard.Danger"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin_half"
+                    android:text="@string/wallet_connect_message_reject" />
+                <Button
+                    android:id="@+id/sign"
+                    style="@style/Button.Standard"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin_half"
+                    android:text="@string/wallet_connect_message_sign_and_return" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </ScrollView>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
+
+

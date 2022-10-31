@@ -5,16 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.concordium.wallet.databinding.FragmentWalletConnectTransactionSubmittedBinding
+import com.concordium.wallet.databinding.FragmentWalletConnectMessageSignedBinding
 
-class WalletConnectTransactionSubmittedFragment : Fragment() {
-    private var _binding: FragmentWalletConnectTransactionSubmittedBinding? = null
+class WalletConnectMessageSignedFragment : Fragment() {
+    private var _binding: FragmentWalletConnectMessageSignedBinding? = null
     private val binding get() = _binding!!
     private lateinit var _viewModel: WalletConnectViewModel
 
     companion object {
         @JvmStatic
-        fun newInstance(viewModel: WalletConnectViewModel) = WalletConnectTransactionSubmittedFragment().apply {
+        fun newInstance(viewModel: WalletConnectViewModel) = WalletConnectMessageSignedFragment().apply {
             arguments = Bundle().apply {
                 putSerializable(WalletConnectViewModel.WALLET_CONNECT_DATA, viewModel.walletConnectData)
             }
@@ -23,7 +23,7 @@ class WalletConnectTransactionSubmittedFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentWalletConnectTransactionSubmittedBinding.inflate(inflater, container, false)
+        _binding = FragmentWalletConnectMessageSignedBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -40,7 +40,7 @@ class WalletConnectTransactionSubmittedFragment : Fragment() {
     private fun initViews() {
         binding.okay.setOnClickListener {
             binding.okay.isEnabled = false
-            _viewModel.transactionSubmittedOkay.postValue(true)
+            _viewModel.messagedSignedOkay.postValue(true)
         }
     }
 }

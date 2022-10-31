@@ -833,6 +833,12 @@
     <string name="wallet_connect_wallet_setup_title">Wallet setup not finished</string>
     <string name="wallet_connect_wallet_setup_message">Your wallet is not completely setup yet. Before you can open a connection to an external service, you must first complete setting up your wallet.</string>
     <string name="wallet_connect_wallet_setup_button">Complete setup</string>
+    <string name="wallet_connect_sign_message">Sign message?</string>
+    <string name="wallet_connect_message_vote">Message: Vote</string>
+    <string name="wallet_connect_message_content">Message content</string>
+    <string name="wallet_connect_message_reject">Reject</string>
+    <string name="wallet_connect_message_sign_and_return">Sign &amp; Return</string>
+    <string name="wallet_connect_message_signed">The message has been signed and returned.</string>
 
     <!-- ***** More ***** -->
 

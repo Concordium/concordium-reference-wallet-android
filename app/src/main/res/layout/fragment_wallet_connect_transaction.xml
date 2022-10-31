@@ -8,7 +8,7 @@
     <TextView
         style="@style/TextView.XSmall.Light"
         android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin_half"
         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
         android:text="@string/wallet_connect_transaction_currently_available_amounts" />
 
@@ -42,7 +42,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/activity_vertical_margin">
+        android:fillViewport="true"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin_half">
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
@@ -62,6 +64,7 @@
                 android:layout_weight="1"
                 android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:paddingHorizontal="@dimen/activity_horizontal_margin_double"
                 android:background="@drawable/receipt_background_new"
                 android:orientation="vertical">
 
@@ -83,7 +86,6 @@
                     android:id="@+id/account_to_send_from"
                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
                     android:layout_width="match_parent"
-                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin_double"
                     tools:text="Main\n\n14f3632ac857400d417a7277f726c43a8ddf07184f10a429cf0759e985247c33" />
 
                 <TextView
@@ -121,7 +123,6 @@
                     style="@style/TextView.Mono.XSmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                     android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
                     android:background="@drawable/bg_border_gray_white"
                     android:textColor="#000000"

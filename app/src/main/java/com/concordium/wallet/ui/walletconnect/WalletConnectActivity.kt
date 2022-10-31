@@ -43,6 +43,8 @@ class WalletConnectActivity : BaseActivity() {
         const val PAGE_APPROVE = 2
         const val PAGE_TRANSACTION = 3
         const val PAGE_TRANSACTION_SUBMITTED = 4
+        const val PAGE_MESSAGE = 5
+        const val PAGE_MESSAGE_SIGNED = 6
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -140,9 +142,6 @@ class WalletConnectActivity : BaseActivity() {
         viewModel.decline.observe(this) {
             gotoMain()
         }
-        viewModel.transactionSubmittedOkay.observe(this) {
-            approveView()
-        }
         viewModel.reject.observe(this) {
             approveView()
         }
@@ -150,6 +149,25 @@ class WalletConnectActivity : BaseActivity() {
             runOnUiThread {
                 transactionView()
             }
+        }
+        viewModel.transactionSubmitted.observe(this) {
+            transactionSubmittedView()
+        }
+        viewModel.transactionSubmittedOkay.observe(this) {
+            approveView()
+        }
+        viewModel.message.observe(this) {
+            runOnUiThread {
+                messageView()
+            }
+        }
+        viewModel.messageSigned.observe(this) {
+            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            // TODO send back it to dApp
+            messageSignedView()
+        }
+        viewModel.messagedSignedOkay.observe(this) {
+            approveView()
         }
         viewModel.showAuthentication.observe(this) {
             showAuthentication(authenticateText(), object : AuthenticationCallback {
@@ -176,35 +194,47 @@ class WalletConnectActivity : BaseActivity() {
         currentPage = PAGE_CHOOSE_ACCOUNT
         showActionBarBack()
         setActionBarTitle(getString(R.string.wallet_connect_accounts_title))
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectChooseAccountFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectChooseAccountFragment.newInstance(viewModel), null).commit()
     }
 
     private fun pairView() {
         currentPage = PAGE_PAIR
         showActionBarBack()
         setActionBarTitle(getString(R.string.wallet_connect_allow_session))
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectPairFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectPairFragment.newInstance(viewModel), null).commit()
     }
 
     private fun approveView() {
         currentPage = PAGE_APPROVE
         hideActionBarBack()
         setActionBarTitle(getString(R.string.wallet_connect_session))
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectApproveFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectApproveFragment.newInstance(viewModel), null).commit()
     }
 
     private fun transactionView() {
         currentPage = PAGE_TRANSACTION
         hideActionBarBack()
         setActionBarTitle(getString(R.string.wallet_connect_session_with, viewModel.sessionName()))
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectTransactionFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
+        viewModel.walletConnectData.isTransaction = true
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectTransactionFragment.newInstance(viewModel), null).commit()
     }
 
     private fun transactionSubmittedView() {
         currentPage = PAGE_TRANSACTION_SUBMITTED
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectTransactionSubmittedFragment.newInstance(viewModel), null).commit()
+    }
+
+    private fun messageView() {
+        currentPage = PAGE_MESSAGE
         hideActionBarBack()
         setActionBarTitle(getString(R.string.wallet_connect_session_with, viewModel.sessionName()))
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectTransactionSubmittedFragment.newInstance(viewModel, viewModel.walletConnectData), null).commit()
+        viewModel.walletConnectData.isTransaction = false
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectMessageFragment.newInstance(viewModel), null).commit()
+    }
+
+    private fun messageSignedView() {
+        currentPage = PAGE_MESSAGE_SIGNED
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectMessageSignedFragment.newInstance(viewModel), null).commit()
     }
 
     private fun gotoMain() {

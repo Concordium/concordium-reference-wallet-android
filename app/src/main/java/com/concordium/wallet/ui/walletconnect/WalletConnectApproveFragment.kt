@@ -24,9 +24,9 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(viewModel: WalletConnectViewModel, walletConnectData: WalletConnectData) = WalletConnectApproveFragment().apply {
+        fun newInstance(viewModel: WalletConnectViewModel) = WalletConnectApproveFragment().apply {
             arguments = Bundle().apply {
-                putSerializable(WALLET_CONNECT_DATA, walletConnectData)
+                putSerializable(WALLET_CONNECT_DATA, viewModel.walletConnectData)
             }
             _viewModel = viewModel
         }

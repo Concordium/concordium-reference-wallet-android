@@ -11,6 +11,7 @@ import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.cryptolib.SignMessageInput
 import com.concordium.wallet.data.cryptolib.SignTransactionInput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.AccountData
@@ -34,7 +35,8 @@ data class WalletConnectData(
     var account: Account? = null,
     var wcUri: String? = null,
     var energy: Long? = null,
-    var cost: Long? = null
+    var cost: Long? = null,
+    var isTransaction: Boolean = true
 ): Serializable
 
 class WalletConnectViewModel(application: Application) : AndroidViewModel(application) {
@@ -50,12 +52,16 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val decline: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val reject: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val transaction: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val transactionSubmitted: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val transactionSubmittedOkay: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val message: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val connectStatus: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val serviceName: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val permissions: MutableLiveData<List<String>> by lazy { MutableLiveData<List<String>>() }
     val transactionFee: MutableLiveData<Long> by lazy { MutableLiveData<Long>() }
-    val transactionSubmittedOkay: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val messagedSignedOkay: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val messageSigned: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val errorString: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val errorWalletConnectApprove: MutableLiveData<String> by lazy { MutableLiveData<String>() }
@@ -191,7 +197,10 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             val decryptedJson = App.appCore.getCurrentAuthenticationManager().decryptInBackground(password, storageAccountDataEncrypted)
             if (decryptedJson != null) {
                 val credentialsOutput = App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
-                createTransaction(credentialsOutput.accountKeys)
+                if (walletConnectData.isTransaction)
+                    createTransaction(credentialsOutput.accountKeys)
+                else
+                    signMessage(credentialsOutput.accountKeys)
             } else {
                 errorInt.postValue(R.string.app_error_encryption)
                 waiting.postValue(false)
@@ -213,11 +222,29 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         } else {
             val signTransactionOutputString = Gson().toJson(signTransactionOutput)
             binder?.approveTransaction(signTransactionOutputString)
+            // transactionSubmitted
         }
     }
 
     fun sessionName() : String {
         return binder?.getSessionName() ?: ""
+    }
+
+    fun prepareMessage() {
+        showAuthentication.postValue(true)
+    }
+
+    private fun signMessage(keys: AccountData) {
+        viewModelScope.launch {
+            val message = (binder?.getSessionRequestParamsAsString() ?: "").toHex()
+            val signMessageInput = SignMessageInput(walletConnectData.account?.address ?: "", message, keys)
+            val signMessageOutput = App.appCore.cryptoLibrary.signMessage(signMessageInput)
+            if (signMessageOutput == null) {
+                errorInt.postValue(R.string.app_error_lib)
+            } else {
+                messageSigned.postValue(Gson().toJson(signMessageOutput))
+            }
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -236,7 +263,10 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(sessionRequest: Sign.Model.SessionRequest) {
-        transaction.postValue(true)
+        if (sessionRequest.request.method == "signTransaction")
+            transaction.postValue(true)
+        else
+            message.postValue(true)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
