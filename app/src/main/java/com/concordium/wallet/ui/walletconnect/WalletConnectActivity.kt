@@ -150,7 +150,8 @@ class WalletConnectActivity : BaseActivity() {
                 transactionView()
             }
         }
-        viewModel.transactionSubmitted.observe(this) {
+        viewModel.transactionSubmitted.observe(this) { submissionId ->
+            viewModel.respond(submissionId)
             transactionSubmittedView()
         }
         viewModel.transactionSubmittedOkay.observe(this) {

@@ -11,11 +11,10 @@ import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.cryptolib.SignMessageInput
-import com.concordium.wallet.data.cryptolib.SignTransactionInput
-import com.concordium.wallet.data.cryptolib.StorageAccountData
+import com.concordium.wallet.data.cryptolib.*
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.AccountNonce
+import com.concordium.wallet.data.model.SubmissionData
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.WalletDatabase
@@ -52,7 +51,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val decline: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val reject: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val transaction: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val transactionSubmitted: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val transactionSubmitted: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val transactionSubmittedOkay: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val message: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val connectStatus: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
@@ -70,6 +69,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     private val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
     private val proxyRepository = ProxyRepository()
+    private var submitTransaction: BackendRequest<SubmissionData>? = null
 
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
     private var accountNonce: AccountNonce? = null
@@ -224,9 +224,8 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         if (signTransactionOutput == null) {
             errorInt.postValue(R.string.app_error_lib)
         } else {
-            val signTransactionOutputString = Gson().toJson(signTransactionOutput)
-            // send trans
-            // transactionSubmitted
+            val createTransferOutput = CreateTransferOutput(signTransactionOutput.signatures, "", "", transaction)
+            submitTransaction(createTransferOutput)
         }
     }
 
@@ -236,6 +235,22 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     fun prepareMessage() {
         showAuthentication.postValue(true)
+    }
+
+    private fun submitTransaction(createTransferOutput: CreateTransferOutput) {
+        waiting.postValue(true)
+        submitTransaction = proxyRepository.submitTransfer(createTransferOutput,
+            {
+                println("LC -> submitTransaction SUCCESS = ${it.submissionId}")
+                transactionSubmitted.postValue(it.submissionId)
+                waiting.postValue(false)
+            },
+            {
+                println("LC -> submitTransaction ERROR ${it.stackTraceToString()}")
+                handleBackendError(it)
+                waiting.postValue(false)
+            }
+        )
     }
 
     private fun signMessage(keys: AccountData) {

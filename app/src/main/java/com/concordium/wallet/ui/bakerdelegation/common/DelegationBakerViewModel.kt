@@ -50,7 +50,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     private var bakerPoolRequest: BackendRequest<BakerPoolStatus>? = null
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
-    private var submitCredentialRequest: BackendRequest<SubmissionData>? = null
+    private var submitTransaction: BackendRequest<SubmissionData>? = null
     private var transferSubmissionStatusRequest: BackendRequest<TransferSubmissionStatus>? = null
 
     companion object {
@@ -613,8 +613,8 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     private fun submitTransfer(transfer: CreateTransferOutput, localTransactionType: TransactionType) {
         _waitingLiveData.value = true
-        submitCredentialRequest?.dispose()
-        submitCredentialRequest = proxyRepository.submitTransfer(transfer,
+        submitTransaction?.dispose()
+        submitTransaction = proxyRepository.submitTransfer(transfer,
             {
                 Log.d("Success:$it")
                 bakerDelegationData.submissionId = it.submissionId
