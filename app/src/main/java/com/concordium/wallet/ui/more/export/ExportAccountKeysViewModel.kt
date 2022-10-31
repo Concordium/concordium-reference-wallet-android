@@ -7,12 +7,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.cryptolib.StorageAccountData
-import com.concordium.wallet.data.model.AccountData
-import com.concordium.wallet.data.model.AccountDataKeys
+import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.util.FileUtil
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import javax.crypto.Cipher
 
@@ -25,8 +27,12 @@ class ExportAccountKeysViewModel(application: Application) : AndroidViewModel(ap
 
     fun saveFileToLocalFolder(destinationUri: Uri) {
         viewModelScope.launch {
-            //FileUtil.writeFile(destinationUri, DelegationBakerViewModel.FILE_NAME_BAKER_KEYS, bakerKeysJson)
-            //textResourceInt.postValue(R.string.export_account_keys_file_exported)
+            val accountKeys = AccountKeys(accountDataKeys, account.credential?.getThreshold() ?: 1)
+            val credentials = Credentials(account.credential?.getCredId() ?: "")
+            val value = Value(accountKeys, credentials, account.address)
+            val fileContent = Gson().toJson(ExportAccountKeys("concordium-mobile-wallet-account", account.credential?.v ?: 0, BuildConfig.ENV_NAME, value))
+            FileUtil.writeFile(destinationUri, "${account.address}.export", fileContent)
+            textResourceInt.postValue(R.string.export_account_keys_file_exported)
         }
     }
 

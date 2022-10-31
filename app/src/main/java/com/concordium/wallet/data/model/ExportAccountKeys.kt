@@ -1,24 +1,27 @@
 package com.concordium.wallet.data.model
 
+import com.google.gson.annotations.SerializedName
+
 data class ExportAccountKeys(
-    val environment: String,
     val type: String,
     val v: Int,
-    val value: AccountDataKeys
+    val environment: String,
+    val value: Value
 )
-/*
+
 data class Value(
     val accountKeys: AccountKeys,
-    val address: String,
-    val credentials: Credentials
+    val credentials: Credentials,
+    val address: String
 )
 
 data class AccountKeys(
-    val keys: Keys,
+    @SerializedName("keys")
+    val accountDataKeys: AccountDataKeys,
     val threshold: Int
 )
 
 data class Credentials(
-    val `0`: String
+    @SerializedName("0")
+    val credId: String
 )
-*/
