@@ -326,12 +326,11 @@
         <activity
             android:name=".ui.recipient.scanqr.ScanQRActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".ui.recipient.recipient.RecipientActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.more.export.ExportAccountKeysActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".ui.recipient.recipient.RecipientActivity"
+            android:parentActivityName=".ui.more.SettingsActivity"
             android:screenOrientation="portrait" />
     </application>
 

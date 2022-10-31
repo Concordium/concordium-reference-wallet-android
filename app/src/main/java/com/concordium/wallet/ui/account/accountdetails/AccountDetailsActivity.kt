@@ -300,6 +300,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
                     val intent = Intent(this, WalletConnectActivity::class.java)
                     intent.putExtra(WalletConnectActivity.FROM_DEEP_LINK, false)
                     intent.putExtra(WalletConnectActivity.WC_URI, wcUri)
+                    intent.putExtra(WalletConnectActivity.ACCOUNT, viewModel.account)
                     startActivity(intent)
                 }
             }

@@ -10,9 +10,11 @@ import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityWalletConnectBinding
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.util.getSerializable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,6 +37,7 @@ class WalletConnectActivity : BaseActivity() {
     companion object {
         const val FROM_DEEP_LINK = "FROM_DEEP_LINK"
         const val WC_URI = "WC_URI"
+        const val ACCOUNT = "ACCOUNT"
         const val PAGE_CHOOSE_ACCOUNT = 0
         const val PAGE_PAIR = 1
         const val PAGE_APPROVE = 2
@@ -61,6 +64,8 @@ class WalletConnectActivity : BaseActivity() {
                 println("LC -> From DeepLink = $it")
             }
         } else {
+            if (intent?.hasExtra(ACCOUNT) == true)
+                viewModel.walletConnectData.account = intent?.getSerializable(ACCOUNT, Account::class.java)
             viewModel.walletConnectData.wcUri = intent?.getStringExtra(WC_URI) ?: ""
             println("LC -> From Camera = ${viewModel.walletConnectData.wcUri}")
         }
@@ -69,7 +74,10 @@ class WalletConnectActivity : BaseActivity() {
             bindService(intent, connection, Context.BIND_AUTO_CREATE)
         }
 
-        accountsView()
+        if (viewModel.walletConnectData.account != null)
+            pairView()
+        else
+            accountsView()
     }
 
     override fun onDestroy() {

@@ -69,6 +69,9 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
             binding.estimatedTransactionFee.text = getString(R.string.wallet_connect_transaction_estimated_transaction_fee, CurrencyUtil.formatGTU(fee))
             binding.submit.isEnabled = true
         }
+        _viewModel.errorInt.observe(viewLifecycleOwner) {
+            binding.submit.isEnabled = true
+        }
     }
 
     private fun prettyPrintJson(): String {
