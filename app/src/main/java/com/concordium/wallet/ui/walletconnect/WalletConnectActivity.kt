@@ -161,9 +161,9 @@ class WalletConnectActivity : BaseActivity() {
                 messageView()
             }
         }
-        viewModel.messageSigned.observe(this) {
-            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
-            // TODO send back it to dApp
+        viewModel.messageSigned.observe(this) { message ->
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            viewModel.respond(message)
             messageSignedView()
         }
         viewModel.messagedSignedOkay.observe(this) {

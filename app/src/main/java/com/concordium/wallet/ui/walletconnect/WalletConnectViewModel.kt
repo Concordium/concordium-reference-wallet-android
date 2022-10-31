@@ -98,6 +98,10 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         binder?.rejectSession()
     }
 
+    fun respond(message: String) {
+        binder?.respond(message)
+    }
+
     fun disconnect() {
         binder?.disconnect()
     }
@@ -221,7 +225,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             errorInt.postValue(R.string.app_error_lib)
         } else {
             val signTransactionOutputString = Gson().toJson(signTransactionOutput)
-            binder?.approveTransaction(signTransactionOutputString)
+            // send trans
             // transactionSubmitted
         }
     }

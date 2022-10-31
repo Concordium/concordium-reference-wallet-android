@@ -32,11 +32,11 @@ class WalletConnectService : Service(), SignClient.WalletDelegate {
         fun approveSession(accountAddress: String) {
             approveSessionWC(accountAddress)
         }
-        fun approveTransaction(jsonSigned: String) {
-            approveTransactionWC(jsonSigned)
+        fun respond(message: String) {
+            respondWC(message)
         }
         fun rejectTransaction() {
-            rejectTransactionWC()
+            rejectWC()
         }
         fun disconnect() {
             disconnectWC()
@@ -124,8 +124,8 @@ class WalletConnectService : Service(), SignClient.WalletDelegate {
         }
     }
 
-    private fun approveTransactionWC(jsonSigned: String) {
-        println("LC -> CALL APPROVE TRANSACTION")
+    private fun respondWC(jsonSigned: String) {
+        println("LC -> CALL RESPOND")
         val response = Sign.Params.Response(
             sessionTopic = sessionRequest?.topic ?: "",
             jsonRpcResponse = Sign.Model.JsonRpcResponse.JsonRpcResult(
@@ -134,12 +134,12 @@ class WalletConnectService : Service(), SignClient.WalletDelegate {
             )
         )
         SignClient.respond(response) { modelError ->
-            println("LC -> APPROVE TRANSACTION ERROR ${modelError.throwable.stackTraceToString()}")
+            println("LC -> RESPOND ERROR ${modelError.throwable.stackTraceToString()}")
         }
     }
 
-    private fun rejectTransactionWC() {
-        println("LC -> REJECT TRANSACTION")
+    private fun rejectWC() {
+        println("LC -> REJECT")
         val responseParams = Sign.Params.Response(
             sessionTopic = sessionRequest?.topic ?: "",
             jsonRpcResponse = Sign.Model.JsonRpcResponse.JsonRpcError(
@@ -149,7 +149,7 @@ class WalletConnectService : Service(), SignClient.WalletDelegate {
             )
         )
         SignClient.respond(responseParams) { modelError ->
-            println("LC -> REJECT TRANSACTION ERROR ${modelError.throwable.stackTraceToString()}")
+            println("LC -> REJECT ERROR ${modelError.throwable.stackTraceToString()}")
         }
     }
 
