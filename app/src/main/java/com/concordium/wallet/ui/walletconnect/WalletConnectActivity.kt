@@ -29,6 +29,10 @@ class WalletConnectActivity : BaseActivity() {
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             viewModel.binder = service as WalletConnectService.LocalBinder
+            if (viewModel.walletConnectData.account != null)
+                pairView()
+            else
+                accountsView()
         }
         override fun onServiceDisconnected(componentName: ComponentName) {
         }
@@ -75,11 +79,6 @@ class WalletConnectActivity : BaseActivity() {
         Intent(this, WalletConnectService::class.java).also { intent ->
             bindService(intent, connection, Context.BIND_AUTO_CREATE)
         }
-
-        if (viewModel.walletConnectData.account != null)
-            pairView()
-        else
-            accountsView()
     }
 
     override fun onDestroy() {
