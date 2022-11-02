@@ -45,8 +45,8 @@ class LookForNewTokensFragment : BaseBottomSheetDialogFragment() {
     }
 
     private fun initObservers() {
-        viewModel.waitingNewTokens.observe(this) { waiting ->
-            if (!waiting && viewModel.tokens.isNotEmpty())
+        viewModel.waitingTokens.observe(this) { waiting ->
+            if (!waiting && viewModel.tokens.isNotEmpty() && binding.viewPager.currentItem == 0)
                 binding.viewPager.currentItem++
         }
         viewModel.stepPageBy.observe(this) {
@@ -61,9 +61,9 @@ class LookForNewTokensFragment : BaseBottomSheetDialogFragment() {
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
-                0 -> ContractAddressFragment()
-                1 -> SelectTokensFragment()
-                2 -> TokenDetailsFragment()
+                0 -> ContractAddressFragment.newInstance(viewModel)
+                1 -> SelectTokensFragment.newInstance(viewModel)
+                2 -> TokenDetailsFragment.newInstance(viewModel)
                 else -> Fragment()
             }
         }

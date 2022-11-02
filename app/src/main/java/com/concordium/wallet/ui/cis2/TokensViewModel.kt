@@ -10,16 +10,28 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.launch
+import java.io.Serializable
+
+data class TokenData(
+    var account: Account? = null,
+    var contractIndex: String = ""
+): Serializable
 
 class TokensViewModel(application: Application) : AndroidViewModel(application) {
-    lateinit var account: Account
-    var tokens: List<Token> = listOf()
+    companion object {
+        const val TOKEN_DATA = "TOKEN_DATA"
+    }
+
+    private var allowToLoadMore = true
+
+    var tokenData = TokenData()
+    var tokens: MutableList<Token> = mutableListOf()
 
     //val tokens: MutableLiveData<List<Token>> by lazy { MutableLiveData<List<Token>>() }
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
-    val waitingNewTokens: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val waitingTokens: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val addingSelectedDone: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val stepPageBy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
 
@@ -37,14 +49,25 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun lookForNewTokens(index: String, subIndex: String = "0") {
-        waitingNewTokens.postValue(true)
-        proxyRepository.getCIS2Tokens(index, subIndex, { cis2Tokens ->
-            tokens = cis2Tokens.tokens
-            waitingNewTokens.postValue(false)
-        }, {
-            waitingNewTokens.postValue(false)
+    fun lookForTokens(from: Int? = null) {
+        if (!allowToLoadMore)
+            return
+
+        allowToLoadMore = false
+
+        from?.let {
+            println("LC -> LoadFrom $it")
+        }
+
+        waitingTokens.postValue(true)
+        proxyRepository.getCIS2Tokens(tokenData.contractIndex, "0", from, success = { cis2Tokens ->
+            tokens.addAll(cis2Tokens.tokens)
+            waitingTokens.postValue(false)
+            allowToLoadMore = true
+        }, failure = {
+            waitingTokens.postValue(false)
             handleBackendError(it)
+            allowToLoadMore = true
         })
     }
 

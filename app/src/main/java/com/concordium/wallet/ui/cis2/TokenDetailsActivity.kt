@@ -30,13 +30,13 @@ class TokenDetailsActivity : BaseActivity() {
     }
 
     private fun initViews() {
-        viewModel.account = intent.getSerializable(ACCOUNT, Account::class.java)
+        viewModel.tokenData.account = intent.getSerializable(ACCOUNT, Account::class.java)
         val tokenName = intent.extras!!.getString(TOKEN_NAME)
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.app_name)
-        setActionBarTitle(getString(R.string.cis_token_details_title, tokenName, viewModel.account.name))
+        setActionBarTitle(getString(R.string.cis_token_details_title, tokenName, viewModel.tokenData.account?.name))
         binding.includeButtons.send.setOnClickListener {
             val intent = Intent(this, SendTokenActivity::class.java)
-            intent.putExtra(SendTokenActivity.ACCOUNT, viewModel.account)
+            intent.putExtra(SendTokenActivity.ACCOUNT, viewModel.tokenData.account)
             intent.putExtra(SendTokenActivity.TOKEN, Token(0, "default","0"))
             startActivity(intent)
         }

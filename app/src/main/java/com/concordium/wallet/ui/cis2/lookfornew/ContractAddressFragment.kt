@@ -6,17 +6,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentDialogContractAddressBinding
+import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.util.KeyboardUtil
 
-class ContractAddressFragment : Fragment() {
+class ContractAddressFragment : TokensBaseFragment() {
     private var _binding: FragmentDialogContractAddressBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: TokensViewModel by activityViewModels()
+    private lateinit var _viewModel: TokensViewModel
+
+    companion object {
+        @JvmStatic
+        fun newInstance(viewModel: TokensViewModel) = ContractAddressFragment().apply {
+            arguments = Bundle().apply {
+                putSerializable(TokensViewModel.TOKEN_DATA, viewModel.tokenData)
+            }
+            _viewModel = viewModel
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentDialogContractAddressBinding.inflate(inflater, container, false)
@@ -36,7 +45,7 @@ class ContractAddressFragment : Fragment() {
 
     private fun initViews() {
         binding.look.setOnClickListener {
-            lookForNewTokens()
+            lookForTokens()
         }
 
         binding.contractAddress.setOnFocusChangeListener { _, hasFocus ->
@@ -46,7 +55,7 @@ class ContractAddressFragment : Fragment() {
 
         binding.contractAddress.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                lookForNewTokens()
+                lookForTokens()
                 KeyboardUtil.hideKeyboard(requireActivity())
                 true
             } else {
@@ -56,9 +65,9 @@ class ContractAddressFragment : Fragment() {
     }
 
     private fun initObservers() {
-        viewModel.waitingNewTokens.observe(viewLifecycleOwner) { waiting ->
+        _viewModel.waitingTokens.observe(viewLifecycleOwner) { waiting ->
             showWaiting(waiting)
-            if (!waiting && viewModel.tokens.isEmpty()) {
+            if (!waiting && _viewModel.tokens.isEmpty()) {
                 error(true)
             } else {
                 error(false)
@@ -66,9 +75,10 @@ class ContractAddressFragment : Fragment() {
         }
     }
 
-    private fun lookForNewTokens() {
+    private fun lookForTokens() {
         if (binding.contractAddress.text.isNotBlank()) {
-            viewModel.lookForNewTokens(binding.contractAddress.text.toString())
+            _viewModel.tokenData.contractIndex = binding.contractAddress.text.toString()
+            _viewModel.lookForTokens()
         }
     }
 

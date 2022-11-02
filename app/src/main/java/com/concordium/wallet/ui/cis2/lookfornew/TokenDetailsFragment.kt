@@ -7,12 +7,23 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.concordium.wallet.databinding.FragmentDialogTokenDetailsBinding
+import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
 
-class TokenDetailsFragment : Fragment() {
+class TokenDetailsFragment : TokensBaseFragment() {
     private var _binding: FragmentDialogTokenDetailsBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: TokensViewModel by activityViewModels()
+    private lateinit var _viewModel: TokensViewModel
+
+    companion object {
+        @JvmStatic
+        fun newInstance(viewModel: TokensViewModel) = TokenDetailsFragment().apply {
+            arguments = Bundle().apply {
+                putSerializable(TokensViewModel.TOKEN_DATA, viewModel.tokenData)
+            }
+            _viewModel = viewModel
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentDialogTokenDetailsBinding.inflate(inflater, container, false)
@@ -31,7 +42,7 @@ class TokenDetailsFragment : Fragment() {
 
     private fun initViews() {
         binding.backToList.setOnClickListener {
-            viewModel.stepPage(-1)
+            _viewModel.stepPage(-1)
         }
     }
 }

@@ -31,18 +31,17 @@
         android:layout_marginTop="@dimen/activity_horizontal_margin_double"
         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
         app:queryHint="@string/cis_search" />
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tokens_found"
         style="@style/Layout.Card"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:src="@drawable/ic_logo_icon_pending"
         android:layout_margin="@dimen/activity_vertical_margin"
-        android:nestedScrollingEnabled="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search"
-        app:layout_constraintBottom_toTopOf="@+id/button_container" />
+        app:layout_constraintBottom_toTopOf="@+id/button_container"
+        android:scrollbars="vertical" />
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/button_container"
         android:layout_width="match_parent"
