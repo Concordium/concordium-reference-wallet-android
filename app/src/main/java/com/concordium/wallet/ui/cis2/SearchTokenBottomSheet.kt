@@ -47,12 +47,12 @@ class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
         tokensListAdapter.also { binding.tokensFound.adapter = it }
         binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                tokensListAdapter.arrayList = viewModel.tokens.value!!.filter { it.name.uppercase().contains(query?.uppercase() ?: "") }.toTypedArray()
+                tokensListAdapter.arrayList = viewModel.tokens.value!!.filter { it.token.uppercase().contains(query?.uppercase() ?: "") }.toTypedArray()
                 tokensListAdapter.notifyDataSetChanged()
                 return false
             }
             override fun onQueryTextChange(newText: String?): Boolean {
-                tokensListAdapter.arrayList = viewModel.tokens.value!!.filter { it.name.uppercase().contains(newText?.uppercase() ?: "") }.toTypedArray()
+                tokensListAdapter.arrayList = viewModel.tokens.value!!.filter { it.token.uppercase().contains(newText?.uppercase() ?: "") }.toTypedArray()
                 tokensListAdapter.notifyDataSetChanged()
                 return false
             }

@@ -57,10 +57,10 @@ class SendTokenActivity : BaseActivity() {
     private fun initViews() {
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.cis_send_funds)
         if (viewModel.sendTokenData.token != null) {
-            binding.balanceTitle.text = getString(R.string.cis_token_balance, viewModel.sendTokenData.token?.shortName ?: "")
-            binding.balance.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.token?.balance ?: 0, true)
+            binding.balanceTitle.text = getString(R.string.cis_token_balance, viewModel.sendTokenData.token?.token ?: "")
+            binding.balance.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.token?.id?.toLong() ?: 0, true)
         } else {
-            viewModel.sendTokenData.token = Token("default", "default", "DEF", 123)
+            viewModel.sendTokenData.token = Token(0, "default", "0")
         }
         binding.atDisposal.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.account?.getAtDisposal() ?: 0,true)
         binding.amount.setText(CurrencyUtil.formatGTU(0, false))
@@ -104,7 +104,7 @@ class SendTokenActivity : BaseActivity() {
 
     private fun initializeMax() {
         binding.max.setOnClickListener {
-            binding.amount.setText(CurrencyUtil.formatGTU(viewModel.sendTokenData.token?.balance ?: 0, false))
+            //binding.amount.setText(CurrencyUtil.formatGTU(viewModel.sendTokenData.token?.balance ?: 0, false))
         }
     }
 
@@ -217,7 +217,7 @@ class SendTokenActivity : BaseActivity() {
         viewModel.chooseToken.observe(this) { token ->
             searchTokenBottomSheet?.dismiss()
             searchTokenBottomSheet = null
-            binding.searchToken.tokenShortName.text = token.shortName
+            binding.searchToken.tokenShortName.text = token.token
         }
         viewModel.transactionReady.observe(this) {
             gotoReceipt()

@@ -4,65 +4,74 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.concordium.wallet.data.AccountRepository
+import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.WalletDatabase
-import kotlinx.coroutines.delay
+import com.concordium.wallet.ui.common.BackendErrorHandler
+import com.concordium.wallet.util.Log
 import kotlinx.coroutines.launch
 
 class TokensViewModel(application: Application) : AndroidViewModel(application) {
     lateinit var account: Account
+    var tokens: List<Token> = listOf()
 
-    val tokens: MutableLiveData<List<Token>> by lazy { MutableLiveData<List<Token>>() }
+    //val tokens: MutableLiveData<List<Token>> by lazy { MutableLiveData<List<Token>>() }
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    var newTokens: List<Token> = listOf() //MutableLiveData<List<Token>> by lazy { MutableLiveData<List<Token>>() }
+    val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val waitingNewTokens: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val addingSelectedDone: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val stepPageBy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
 
+    private val proxyRepository = ProxyRepository()
+
     fun loadTokens(isFungible: Boolean) {
         waiting.postValue(true)
         viewModelScope.launch {
-            val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
-            val tokensList = accountRepository.getAll().map { Token("", it.address, "DEF", 0) }.filter {
-                if (isFungible) it.name.startsWith("3q") else it.name.startsWith("3t")
-            }
+            //val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+            //val tokensList = accountRepository.getAll().map { Token("", it.address, "DEF", 0) }.filter {
+            //    if (isFungible) it.tokens name.startsWith("3q") else it.name.startsWith("3t")
+            //}
             waiting.postValue(false)
-            tokens.postValue(tokensList)
+            //tokens.postValue(tokensList)
         }
     }
 
-    fun lookForNewTokens(contractAddress: String) {
-        newTokens = listOf()
+    fun lookForNewTokens(index: String, subIndex: String = "0") {
         waitingNewTokens.postValue(true)
-        viewModelScope.launch {
-            delay(1000)
-            newTokens = getMockTokens()
+        proxyRepository.getCIS2Tokens(index, subIndex, { cis2Tokens ->
+            tokens = cis2Tokens.tokens
             waitingNewTokens.postValue(false)
-        }
+        }, {
+            waitingNewTokens.postValue(false)
+            handleBackendError(it)
+        })
     }
 
     fun toggleNewToken(token: Token) {
-        newTokens.firstOrNull { it.name == token.name }?.let {
-            it.isSelected = it.isSelected == false
-        }
+        //newTokens.firstOrNull { it.name == token.name }?.let {
+        //    it.isSelected = it.isSelected == false
+        //}
     }
 
     fun addSelectedTokens() {
-        val selectedTokens = newTokens.filter { it.isSelected == true }
-        println("LC -> selectedTokens = $selectedTokens")
-        viewModelScope.launch {
-            delay(1000)
-            addingSelectedDone.postValue(true)
-        }
+        //val selectedTokens = newTokens.filter { it.isSelected == true }
+        //println("LC -> selectedTokens = $selectedTokens")
+        //viewModelScope.launch {
+        //    delay(1000)
+        //    addingSelectedDone.postValue(true)
+        //}
     }
 
     fun stepPage(by: Int) {
         stepPageBy.postValue(by)
     }
 
+    private fun handleBackendError(throwable: Throwable) {
+        Log.e("Backend request failed", throwable)
+        errorInt.postValue(BackendErrorHandler.getExceptionStringRes(throwable))
+    }
+/*
     private fun getMockTokens() : List<Token> {
         val list = arrayListOf<Token>()
         list.add(Token("", "01 CCD", "CCD", 11000000000))
@@ -94,5 +103,5 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         list.add(Token("", "27 USDC", "USDC", 3100000000))
         list.add(Token("", "28 EC2", "EC2", 4004000000))
         return list
-    }
+    }*/
 }

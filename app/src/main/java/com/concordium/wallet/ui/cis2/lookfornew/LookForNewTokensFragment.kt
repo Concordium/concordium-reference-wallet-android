@@ -46,7 +46,7 @@ class LookForNewTokensFragment : BaseBottomSheetDialogFragment() {
 
     private fun initObservers() {
         viewModel.waitingNewTokens.observe(this) { waiting ->
-            if (!waiting)
+            if (!waiting && viewModel.tokens.isNotEmpty())
                 binding.viewPager.currentItem++
         }
         viewModel.stepPageBy.observe(this) {

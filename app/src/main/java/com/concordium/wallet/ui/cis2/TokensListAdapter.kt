@@ -35,7 +35,7 @@ class TokensListAdapter(private val context: Context, var arrayList: Array<Token
 
         val token = arrayList[position]
         //holder.binding.tokenIcon.setImageURI()
-        holder.binding.tokenName.text = token.name
+        holder.binding.tokenName.text = token.token
         holder.binding.selection.isChecked = token.isSelected ?: false
 
         holder.binding.root.setOnClickListener {

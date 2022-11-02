@@ -5,8 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentDialogContractAddressBinding
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.util.KeyboardUtil
@@ -34,12 +36,17 @@ class ContractAddressFragment : Fragment() {
 
     private fun initViews() {
         binding.look.setOnClickListener {
-            look()
+            lookForNewTokens()
+        }
+
+        binding.contractAddress.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus)
+                error(false)
         }
 
         binding.contractAddress.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                look()
+                lookForNewTokens()
                 KeyboardUtil.hideKeyboard(requireActivity())
                 true
             } else {
@@ -51,10 +58,15 @@ class ContractAddressFragment : Fragment() {
     private fun initObservers() {
         viewModel.waitingNewTokens.observe(viewLifecycleOwner) { waiting ->
             showWaiting(waiting)
+            if (!waiting && viewModel.tokens.isEmpty()) {
+                error(true)
+            } else {
+                error(false)
+            }
         }
     }
 
-    private fun look() {
+    private fun lookForNewTokens() {
         if (binding.contractAddress.text.isNotBlank()) {
             viewModel.lookForNewTokens(binding.contractAddress.text.toString())
         }
@@ -69,6 +81,20 @@ class ContractAddressFragment : Fragment() {
             binding.look.isEnabled = true
             binding.contractAddress.isEnabled = true
             binding.pending.visibility = View.GONE
+        }
+    }
+
+    private fun error(showError: Boolean) {
+        if (showError) {
+            binding.error.visibility = View.VISIBLE
+            binding.contractAddress.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_pink))
+            binding.contractAddress.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.text_pink))
+            binding.contractAddress.background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_cardview_border_pink)
+        } else {
+            binding.error.visibility = View.GONE
+            binding.contractAddress.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_blue))
+            binding.contractAddress.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.text_blue))
+            binding.contractAddress.background = ContextCompat.getDrawable(requireContext(), R.drawable.rounded_light_grey)
         }
     }
 }

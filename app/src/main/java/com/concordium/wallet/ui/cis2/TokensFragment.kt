@@ -50,9 +50,10 @@ class TokensFragment : Fragment() {
     }
 
     private fun initObservers() {
+        /*
         _viewModel.tokens.observe(viewLifecycleOwner) { tokens ->
             tokensListAdapter.arrayList = tokens.toTypedArray()
             tokensListAdapter.notifyDataSetChanged()
-        }
+        }*/
     }
 }

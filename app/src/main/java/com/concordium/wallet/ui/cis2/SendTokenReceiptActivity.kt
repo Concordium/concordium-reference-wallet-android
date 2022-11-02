@@ -40,7 +40,7 @@ class SendTokenReceiptActivity : BaseActivity() {
     private fun initViews() {
         binding.sender.text = viewModel.sendTokenData.account?.name.plus("\n\n").plus(viewModel.sendTokenData.account?.address)
         binding.amount.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.amount, false)
-        binding.token.text = viewModel.sendTokenData.token?.name ?: ""
+        binding.token.text = viewModel.sendTokenData.token?.token ?: ""
         binding.receiver.text = viewModel.sendTokenData.receiver
         CoroutineScope(Dispatchers.Default).launch {
             delay(3000)

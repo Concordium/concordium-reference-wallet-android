@@ -37,7 +37,7 @@ class TokenDetailsActivity : BaseActivity() {
         binding.includeButtons.send.setOnClickListener {
             val intent = Intent(this, SendTokenActivity::class.java)
             intent.putExtra(SendTokenActivity.ACCOUNT, viewModel.account)
-            intent.putExtra(SendTokenActivity.TOKEN, Token("default", "default", "DEF", 123))
+            intent.putExtra(SendTokenActivity.TOKEN, Token(0, "default","0"))
             startActivity(intent)
         }
         binding.includeButtons.receive.setOnClickListener {

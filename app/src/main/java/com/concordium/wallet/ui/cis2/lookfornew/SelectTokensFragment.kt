@@ -48,15 +48,15 @@ class SelectTokensFragment : Fragment() {
 
         binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                tokensListAdapter.arrayList = viewModel.newTokens.filter {
-                    it.name.uppercase().contains(query?.uppercase() ?: "")
+                tokensListAdapter.arrayList = viewModel.tokens.filter {
+                    it.token.uppercase().contains(query?.uppercase() ?: "")
                 }.toTypedArray()
                 tokensListAdapter.notifyDataSetChanged()
                 return false
             }
             override fun onQueryTextChange(newText: String?): Boolean {
-                tokensListAdapter.arrayList = viewModel.newTokens.filter {
-                    it.name.uppercase().contains(newText?.uppercase() ?: "")
+                tokensListAdapter.arrayList = viewModel.tokens.filter {
+                    it.token.uppercase().contains(newText?.uppercase() ?: "")
                 }.toTypedArray()
                 tokensListAdapter.notifyDataSetChanged()
                 return false
@@ -84,7 +84,7 @@ class SelectTokensFragment : Fragment() {
     private fun initObservers() {
         viewModel.waitingNewTokens.observe(viewLifecycleOwner) { waiting ->
             if (!waiting) {
-                tokensListAdapter.arrayList = viewModel.newTokens.toTypedArray()
+                tokensListAdapter.arrayList = viewModel.tokens.toTypedArray()
                 tokensListAdapter.notifyDataSetChanged()
             }
         }
