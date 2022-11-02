@@ -811,7 +811,7 @@
     <string name="wallet_connect_transaction_receipt_title">Transaction: Update Contract</string>
     <string name="wallet_connect_transaction_sender_account">Sender account</string>
     <string name="wallet_connect_transaction_amount">Amount</string>
-    <string name="wallet_connect_transaction_contract_address">Contract address</string>
+    <string name="wallet_connect_transaction_contract_address">Contract index</string>
     <string name="wallet_connect_transaction_parameters">Parameters</string>
     <string name="wallet_connect_transaction_reject">Reject</string>
     <string name="wallet_connect_transaction_submit">Submit</string>
