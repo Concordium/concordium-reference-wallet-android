@@ -11,7 +11,7 @@ import com.concordium.wallet.data.room.WalletDatabase.Companion.VERSION_NUMBER
 import com.concordium.wallet.data.room.typeconverter.GlobalTypeConverters
 
 @Database(
-    entities = arrayOf(Identity::class, Account::class, Transfer::class, Recipient::class, EncryptedAmount::class),
+    entities = arrayOf(Identity::class, Account::class, Transfer::class, Recipient::class, EncryptedAmount::class, AccountContract::class, ContractToken::class),
     version = VERSION_NUMBER,
     exportSchema = true
 )
@@ -23,36 +23,41 @@ abstract class WalletDatabase : RoomDatabase() {
     abstract fun transferDao(): TransferDao
     abstract fun recipientDao(): RecipientDao
     abstract fun encryptedAmountDao(): EncryptedAmountDao
+    abstract fun accountContractDao(): AccountContractDao
+    abstract fun contractTokenDao(): ContractTokenDao
 
     companion object {
 
-        const val VERSION_NUMBER = 7
+        const val VERSION_NUMBER = 8
 
         val MIGRATION_3_4: Migration = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE transfer_table "
-                        + " ADD COLUMN memo TEXT")
+                database.execSQL("ALTER TABLE transfer_table ADD COLUMN memo TEXT")
             }
         }
 
         val MIGRATION_4_5: Migration = object : Migration(4, 5) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE account_table "
-                        + " ADD COLUMN account_delegation TEXT")
+                database.execSQL("ALTER TABLE account_table ADD COLUMN account_delegation TEXT")
             }
         }
 
         val MIGRATION_5_6: Migration = object : Migration(5, 6) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE account_table "
-                        + " ADD COLUMN account_baker TEXT")
+                database.execSQL("ALTER TABLE account_table ADD COLUMN account_baker TEXT")
             }
         }
 
         val MIGRATION_6_7: Migration = object : Migration(6, 7) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE account_table "
-                        + " ADD COLUMN accountIndex INTEGER")
+                database.execSQL("ALTER TABLE account_table ADD COLUMN accountIndex INTEGER")
+            }
+        }
+
+        val MIGRATION_7_8: Migration = object : Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS 'account_contract_table' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'account_address' STRING, 'contract_index' STRING)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS 'contract_token_table' ('id' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 'contract_index' STRING, 'token_id' INTEGER)")
             }
         }
 
@@ -75,6 +80,7 @@ abstract class WalletDatabase : RoomDatabase() {
                     .addMigrations(MIGRATION_4_5)
                     .addMigrations(MIGRATION_5_6)
                     .addMigrations(MIGRATION_6_7)
+                    .addMigrations(MIGRATION_7_8)
                     .build()
                 INSTANCE = instance
                 return instance

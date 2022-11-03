@@ -4,9 +4,14 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.data.AccountContractRepository
+import com.concordium.wallet.data.ContractTokensRepository
+import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.AccountContract
+import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.delay
@@ -86,8 +91,25 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         println("LC -> selectedTokens = ${selectedTokens.map { it.id }}")
         viewModelScope.launch {
             delay(1000)
+
             addingSelectedDone.postValue(true)
         }
+    }
+
+    private suspend fun ff(selectedTokenIds: List<Int>) {
+        tokenData.account?.let { account ->
+            val accountContractRepository = AccountContractRepository(WalletDatabase.getDatabase(getApplication()).accountContractDao())
+            val contractTokensRepository = ContractTokensRepository(WalletDatabase.getDatabase(getApplication()).contractTokenDao())
+            accountContractRepository.upsert(AccountContract(0, account.address, tokenData.contractIndex))
+            val existingTokens = contractTokensRepository.getTokensByContractIndex(tokenData.contractIndex)
+
+            // dem som er med i existing, men ikke er med i selected - de skal slettes
+
+            // dem som er med i selected skal bare kaldes med upsert
+
+
+        }
+
     }
 
     fun stepPage(by: Int) {
