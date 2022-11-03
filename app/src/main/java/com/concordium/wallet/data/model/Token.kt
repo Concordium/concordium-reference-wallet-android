@@ -4,8 +4,9 @@ import java.io.Serializable
 
 data class Token (
     val id: Int,
-    val token: String,
+    var token: String,
     val totalSupply: String,
+    var imageUrl: String?,
     var isSelected: Boolean? = false
 
 /*

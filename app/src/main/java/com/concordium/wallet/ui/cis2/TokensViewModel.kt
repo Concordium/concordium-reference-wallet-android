@@ -9,8 +9,10 @@ import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.Serializable
+import kotlin.random.Random
 
 data class TokenData(
     var account: Account? = null,
@@ -34,6 +36,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val waitingTokens: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val addingSelectedDone: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val stepPageBy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    val tokenDetails: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
 
     private val proxyRepository = ProxyRepository()
 
@@ -55,13 +58,10 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
         allowToLoadMore = false
 
-        from?.let {
-            println("LC -> LoadFrom $it")
-        }
-
         waitingTokens.postValue(true)
         proxyRepository.getCIS2Tokens(tokenData.contractIndex, "0", from, success = { cis2Tokens ->
             tokens.addAll(cis2Tokens.tokens)
+            loadTokenDetails(cis2Tokens.tokens)
             waitingTokens.postValue(false)
             allowToLoadMore = true
         }, failure = {
@@ -69,6 +69,10 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             handleBackendError(it)
             allowToLoadMore = true
         })
+    }
+
+    fun findTokenPositionById(tokenId: Int): Int {
+        return tokens.indexOfFirst { it.id == tokenId }
     }
 
     fun toggleNewToken(token: Token) {
@@ -90,41 +94,19 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         stepPageBy.postValue(by)
     }
 
+    private fun loadTokenDetails(tokens: List<Token>) {
+        viewModelScope.launch {
+            tokens.forEach { token ->
+                delay(Random.nextLong(200, 500))
+                token.token = "UPDATED" + token.token
+                token.imageUrl = "https://picsum.photos/200"
+                tokenDetails.postValue(token.id)
+            }
+        }
+    }
+
     private fun handleBackendError(throwable: Throwable) {
         Log.e("Backend request failed", throwable)
         errorInt.postValue(BackendErrorHandler.getExceptionStringRes(throwable))
     }
-/*
-    private fun getMockTokens() : List<Token> {
-        val list = arrayListOf<Token>()
-        list.add(Token("", "01 CCD", "CCD", 11000000000))
-        list.add(Token("", "02 wCCD", "wCCD", 2000000000))
-        list.add(Token("", "03 USDC", "USDC", 3100000000))
-        list.add(Token("", "04 EC2", "EC2", 4004000000))
-        list.add(Token("", "05 CCD", "CCD", 11000000000))
-        list.add(Token("", "06 wCCD", "wCCD", 2000000000))
-        list.add(Token("", "07 USDC", "USDC", 3100000000))
-        list.add(Token("", "08 EC2", "EC2", 4004000000))
-        list.add(Token("", "09 CCD", "CCD", 11000000000))
-        list.add(Token("", "10 wCCD", "wCCD", 2000000000))
-        list.add(Token("", "11 USDC", "USDC", 3100000000))
-        list.add(Token("", "12 EC2", "EC2", 4004000000))
-        list.add(Token("", "13 CCD", "CCD", 11000000000))
-        list.add(Token("", "14 wCCD", "wCCD", 2000000000))
-        list.add(Token("", "15 USDC", "USDC", 3100000000))
-        list.add(Token("", "16 EC2", "EC2", 4004000000))
-        list.add(Token("", "17 CCD", "CCD", 11000000000))
-        list.add(Token("", "18 wCCD", "wCCD", 2000000000))
-        list.add(Token("", "19 USDC", "USDC", 3100000000))
-        list.add(Token("", "20 EC2", "EC2", 4004000000))
-        list.add(Token("", "21 CCD", "CCD", 11000000000))
-        list.add(Token("", "22 wCCD", "wCCD", 2000000000))
-        list.add(Token("", "23 USDC", "USDC", 3100000000))
-        list.add(Token("", "24 EC2", "EC2", 4004000000))
-        list.add(Token("", "25 CCD", "CCD", 11000000000))
-        list.add(Token("", "26 wCCD", "wCCD", 2000000000))
-        list.add(Token("", "27 USDC", "USDC", 3100000000))
-        list.add(Token("", "28 EC2", "EC2", 4004000000))
-        return list
-    }*/
 }

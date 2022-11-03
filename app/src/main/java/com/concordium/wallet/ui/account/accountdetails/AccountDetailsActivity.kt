@@ -251,7 +251,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun showFindTokensDialog() {
-        lookForNewTokensFragment = LookForNewTokensFragment()
+        lookForNewTokensFragment = LookForNewTokensFragment.newInstance(viewModelTokens)
         lookForNewTokensFragment?.show(supportFragmentManager, "")
     }
 

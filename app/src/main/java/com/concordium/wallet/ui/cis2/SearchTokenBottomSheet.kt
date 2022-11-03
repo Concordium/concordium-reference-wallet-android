@@ -4,13 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.activityViewModels
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.DialogSearchTokenBinding
 import com.concordium.wallet.ui.base.BaseBottomSheetDialogFragment
-import com.concordium.wallet.util.KeyboardUtil
 
 class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
     private var _binding: DialogSearchTokenBinding? = null

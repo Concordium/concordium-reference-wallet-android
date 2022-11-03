@@ -7,17 +7,18 @@
     android:orientation="horizontal">
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/token_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:tint="@color/theme_accent"
+        android:layout_width="@dimen/list_item_height"
+        android:layout_height="@dimen/list_item_height"
+        android:paddingVertical="@dimen/activity_vertical_margin"
         android:scaleType="fitCenter"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:src="@drawable/ic_path" />
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="@dimen/activity_horizontal_margin_half"
+        tools:src="@drawable/ic_delegating" />
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+        android:layout_marginHorizontal="@dimen/activity_horizontal_margin_half"
         android:layout_gravity="center_vertical"
         android:orientation="vertical">
         <TextView

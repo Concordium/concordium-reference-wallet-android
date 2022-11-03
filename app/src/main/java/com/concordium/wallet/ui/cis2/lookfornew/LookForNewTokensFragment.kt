@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.concordium.wallet.databinding.FragmentDialogLookForNewTokensBinding
 import com.concordium.wallet.ui.base.BaseBottomSheetDialogFragment
@@ -15,7 +14,17 @@ import com.concordium.wallet.ui.cis2.TokensViewModel
 class LookForNewTokensFragment : BaseBottomSheetDialogFragment() {
     private var _binding: FragmentDialogLookForNewTokensBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: TokensViewModel by activityViewModels()
+    private lateinit var _viewModel: TokensViewModel
+
+    companion object {
+        @JvmStatic
+        fun newInstance(viewModel: TokensViewModel) = LookForNewTokensFragment().apply {
+            arguments = Bundle().apply {
+                putSerializable(TokensViewModel.TOKEN_DATA, viewModel.tokenData)
+            }
+            _viewModel = viewModel
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentDialogLookForNewTokensBinding.inflate(inflater, container, false)
@@ -45,11 +54,11 @@ class LookForNewTokensFragment : BaseBottomSheetDialogFragment() {
     }
 
     private fun initObservers() {
-        viewModel.waitingTokens.observe(this) { waiting ->
-            if (!waiting && viewModel.tokens.isNotEmpty() && binding.viewPager.currentItem == 0)
+        _viewModel.waitingTokens.observe(this) { waiting ->
+            if (!waiting && _viewModel.tokens.isNotEmpty() && binding.viewPager.currentItem == 0)
                 binding.viewPager.currentItem++
         }
-        viewModel.stepPageBy.observe(this) {
+        _viewModel.stepPageBy.observe(this) {
             if (binding.viewPager.currentItem + it >= 0 && binding.viewPager.currentItem + it < (binding.viewPager.adapter?.itemCount ?: 0)) {
                 binding.viewPager.currentItem = binding.viewPager.currentItem + it
             }
@@ -61,9 +70,9 @@ class LookForNewTokensFragment : BaseBottomSheetDialogFragment() {
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
-                0 -> ContractAddressFragment.newInstance(viewModel)
-                1 -> SelectTokensFragment.newInstance(viewModel)
-                2 -> TokenDetailsFragment.newInstance(viewModel)
+                0 -> ContractAddressFragment.newInstance(_viewModel)
+                1 -> SelectTokensFragment.newInstance(_viewModel)
+                2 -> TokenDetailsFragment.newInstance(_viewModel)
                 else -> Fragment()
             }
         }

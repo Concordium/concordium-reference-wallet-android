@@ -69,7 +69,7 @@ class SelectTokensFragment : TokensBaseFragment() {
             }
         })
 
-        tokensListAdapter = SelectTokensAdapter(arrayOf())
+        tokensListAdapter = SelectTokensAdapter(requireActivity(), arrayOf())
         tokensListAdapter.also { binding.tokensFound.adapter = it }
 
         binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -114,6 +114,9 @@ class SelectTokensFragment : TokensBaseFragment() {
                 tokensListAdapter.dataSet = _viewModel.tokens.toTypedArray()
                 tokensListAdapter.notifyDataSetChanged()
             }
+        }
+        _viewModel.tokenDetails.observe(viewLifecycleOwner) { tokenId ->
+            tokensListAdapter.notifyItemChanged(_viewModel.findTokenPositionById(tokenId))
         }
     }
 }

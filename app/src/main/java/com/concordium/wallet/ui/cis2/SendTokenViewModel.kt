@@ -59,7 +59,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
 
     private fun getMockTokens() : List<Token> {
         val list = arrayListOf<Token>()
-        list.add(Token(0, "asdgsdfgdsfg", "sdfgdsfgsdfg"))
+        list.add(Token(0, "asdgsdfgdsfg", "sdfgdsfgsdfg", ""))
         /*
         list.add(Token("", "CCD", "CCD", 11000000000))
         list.add(Token("", "wCCD", "wCCD", 2000000000))

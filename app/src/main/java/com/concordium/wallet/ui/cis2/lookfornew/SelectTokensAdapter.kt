@@ -1,12 +1,14 @@
 package com.concordium.wallet.ui.cis2.lookfornew
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.ItemTokenBinding
 
-class SelectTokensAdapter(var dataSet: Array<Token>) : RecyclerView.Adapter<SelectTokensAdapter.ViewHolder>() {
+class SelectTokensAdapter(private val context: Context, var dataSet: Array<Token>) : RecyclerView.Adapter<SelectTokensAdapter.ViewHolder>() {
     private var tokenClickListener: TokenClickListener? = null
 
     inner class ViewHolder(val binding: ItemTokenBinding): RecyclerView.ViewHolder(binding.root)
@@ -29,6 +31,9 @@ class SelectTokensAdapter(var dataSet: Array<Token>) : RecyclerView.Adapter<Sele
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val token = dataSet[position]
+
+        if (!token.imageUrl.isNullOrBlank())
+            Glide.with(context).load(token.imageUrl).into(holder.binding.tokenIcon)
 
         holder.binding.title.text = token.id.toString()
         holder.binding.subTitle.text = token.token

@@ -77,6 +77,7 @@ class ContractAddressFragment : TokensBaseFragment() {
 
     private fun lookForTokens() {
         if (binding.contractAddress.text.isNotBlank()) {
+            _viewModel.tokens.clear()
             _viewModel.tokenData.contractIndex = binding.contractAddress.text.toString()
             _viewModel.lookForTokens()
         }
