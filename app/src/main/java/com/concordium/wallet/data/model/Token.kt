@@ -7,7 +7,7 @@ data class Token (
     var token: String,
     val totalSupply: String,
     var imageUrl: String?,
-    var isSelected: Boolean? = false
+    var isSelected: Boolean = false
 
 /*
     val imageUrl: String,

@@ -76,18 +76,18 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun toggleNewToken(token: Token) {
-        //newTokens.firstOrNull { it.name == token.name }?.let {
-        //    it.isSelected = it.isSelected == false
-        //}
+        tokens.firstOrNull { it.id == token.id }?.let {
+            it.isSelected = it.isSelected == false
+        }
     }
 
     fun addSelectedTokens() {
-        //val selectedTokens = newTokens.filter { it.isSelected == true }
-        //println("LC -> selectedTokens = $selectedTokens")
-        //viewModelScope.launch {
-        //    delay(1000)
-        //    addingSelectedDone.postValue(true)
-        //}
+        val selectedTokens = tokens.filter { it.isSelected }
+        println("LC -> selectedTokens = ${selectedTokens.map { it.id }}")
+        viewModelScope.launch {
+            delay(1000)
+            addingSelectedDone.postValue(true)
+        }
     }
 
     fun stepPage(by: Int) {

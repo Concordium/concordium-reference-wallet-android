@@ -37,9 +37,13 @@ class SelectTokensAdapter(private val context: Context, var dataSet: Array<Token
 
         holder.binding.title.text = token.id.toString()
         holder.binding.subTitle.text = token.token
+        holder.binding.selection.isChecked = token.isSelected
 
         holder.binding.root.setOnClickListener {
             tokenClickListener?.onRowClick(token)
+        }
+        holder.binding.selection.setOnClickListener {
+            tokenClickListener?.onCheckBoxClick(token)
         }
     }
 }
