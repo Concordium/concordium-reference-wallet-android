@@ -62,7 +62,7 @@ class CryptoLibraryMock(val gson: Gson) : CryptoLibrary {
         TODO("Not yet implemented")
     }
 
-    override suspend fun signTransaction(signTransactionInput: SignTransactionInput): SignTransactionOutput? {
+    override suspend fun createAccountTransaction(createAccountTransactionInput: CreateAccountTransactionInput): CreateAccountTransactionOutput? {
         TODO("Not yet implemented")
     }
 

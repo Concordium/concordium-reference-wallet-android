@@ -348,7 +348,6 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             return
         }
 
-        //Expiry should me now + 10 minutes (in seconds)
         val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
         tempData.expiry = expiry
         val transferInput = CreateTransferInput(

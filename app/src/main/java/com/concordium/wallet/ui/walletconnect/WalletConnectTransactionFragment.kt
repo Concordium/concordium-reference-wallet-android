@@ -50,8 +50,8 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
             binding.atDisposal.text = CurrencyUtil.formatGTU(account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance), true)
             binding.accountToSendFrom.text = "${account.name}\n\n${account.address}"
         }
-        binding.amount.text = CurrencyUtil.formatGTU(_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.amount?.microGtuAmount ?: "", true)
-        binding.contractAddress.text = "${_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.contractAddress?.index} ${_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.contractAddress?.subindex}"
+        binding.amount.text = CurrencyUtil.formatGTU(_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.amount ?: "", true)
+        binding.contractAddress.text = "${_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.address?.index} ${_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.address?.subIndex}"
         binding.parameters.text = prettyPrintJson()
         binding.reject.setOnClickListener {
             binding.reject.isEnabled = false

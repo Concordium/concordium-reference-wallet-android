@@ -471,7 +471,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     private suspend fun createBakingTransaction(keys: AccountData, encryptionSecretKey: String?) {
 
         val from = bakerDelegationData.account?.address
-        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000 // Expiry should me now + 10 minutes (in seconds)
+        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
         val energy = bakerDelegationData.energy
         val nonce = bakerDelegationData.accountNonce
 
@@ -545,7 +545,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     private suspend fun createDelegationTransaction(keys: AccountData, encryptionSecretKey: String?) {
         val from = bakerDelegationData.account?.address
-        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000 // Expiry should me now + 10 minutes (in seconds)
+        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
         val energy = bakerDelegationData.energy
         val nonce = bakerDelegationData.accountNonce
 

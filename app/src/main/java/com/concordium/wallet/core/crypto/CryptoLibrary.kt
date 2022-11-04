@@ -37,7 +37,7 @@ interface CryptoLibrary {
 
     suspend fun getAccountKeysAndRandomness(accountKeysAndRandomnessInput: AccountKeysAndRandomnessInput): AccountKeysAndRandomnessOutput?
 
-    suspend fun signTransaction(signTransactionInput: SignTransactionInput): SignTransactionOutput?
+    suspend fun createAccountTransaction(createAccountTransactionInput: CreateAccountTransactionInput): CreateAccountTransactionOutput?
 
     suspend fun signMessage(signMessageInput: SignMessageInput): SignMessageOutput?
 }

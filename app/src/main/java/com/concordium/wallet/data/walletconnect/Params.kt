@@ -10,7 +10,7 @@ data class Params(
 ) : Serializable {
     fun parsePayload(): Payload? {
         return try {
-            Gson().fromJson(payload.replace("\"", ""), Payload::class.java)
+            Gson().fromJson(payload, Payload::class.java)
         } catch (ex: java.lang.Exception) {
             null
         }

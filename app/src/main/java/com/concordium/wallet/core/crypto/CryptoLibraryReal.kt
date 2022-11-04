@@ -147,14 +147,14 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             return@withContext null
         }
 
-    override suspend fun signTransaction(signTransactionInput: SignTransactionInput): SignTransactionOutput? =
+    override suspend fun createAccountTransaction(createAccountTransactionInput: CreateAccountTransactionInput): CreateAccountTransactionOutput? =
         withContext(Dispatchers.Default) {
-            val input = gson.toJson(signTransactionInput)
+            val input = gson.toJson(createAccountTransactionInput)
             loadWalletLib()
-            val result = sign_transaction(input)
+            val result = create_account_transaction(input)
             Log.d("Output (Code ${result.result}): ${result.output}")
             if (result.result == CryptoLibrary.SUCCESS) {
-                return@withContext gson.fromJson(result.output, SignTransactionOutput::class.java)
+                return@withContext gson.fromJson(result.output, CreateAccountTransactionOutput::class.java)
             }
             Log.e("CryptoLib failed")
             return@withContext null

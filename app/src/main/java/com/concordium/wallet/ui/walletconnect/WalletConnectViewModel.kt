@@ -18,7 +18,10 @@ import com.concordium.wallet.data.model.SubmissionData
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.data.walletconnect.TransactionError
+import com.concordium.wallet.data.walletconnect.TransactionSuccess
 import com.concordium.wallet.ui.common.BackendErrorHandler
+import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toHex
 import com.google.gson.Gson
@@ -137,10 +140,10 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     fun loadTransactionFee() {
         binder?.getSessionRequestParams()?.parsePayload()?.let { payload ->
             proxyRepository.getTransferCost(type = "update",
-                amount = payload.amount.microGtuAmount.toLong(),
+                amount = payload.amount.toLong(),
                 sender = walletConnectData.account!!.address,
-                contractIndex = payload.contractAddress.index.toInt(),
-                contractSubindex = payload.contractAddress.subindex.toInt(),
+                contractIndex = payload.address.index,
+                contractSubindex = payload.address.subIndex,
                 receiveName = payload.receiveName,
                 parameter = (binder?.getSessionRequestParamsAsString() ?: "").toHex(),
                 success = {
@@ -213,18 +216,24 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     }
 
     private suspend fun createTransaction(keys: AccountData) {
-        val transaction = (binder?.getSessionRequestParamsAsString() ?: "").toHex()
-        val signTransactionInput = SignTransactionInput(transaction, keys)
+        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
+        val from = walletConnectData.account?.address ?: ""
+        val nonce = this.accountNonce?.nonce
+        val payload = binder?.getSessionRequestParams()?.parsePayload()
+        val type = binder?.getSessionRequestParams()?.type
 
-        println("LC -> ${binder?.getSessionRequestParamsAsString()}")
-        println("LC -> $transaction")
-        println("LC -> $keys")
+        if (from.isBlank() || nonce == null || payload == null || type == null) {
+            errorInt.postValue(R.string.app_error_lib)
+            return
+        }
 
-        val signTransactionOutput = App.appCore.cryptoLibrary.signTransaction(signTransactionInput)
-        if (signTransactionOutput == null) {
+        val accountTransactionInput = CreateAccountTransactionInput(expiry.toInt(), from, keys, this.accountNonce?.nonce ?: -1, payload, type)
+
+        val accountTransactionOutput = App.appCore.cryptoLibrary.createAccountTransaction(accountTransactionInput)
+        if (accountTransactionOutput == null) {
             errorInt.postValue(R.string.app_error_lib)
         } else {
-            val createTransferOutput = CreateTransferOutput(signTransactionOutput.signatures, "", "", transaction)
+            val createTransferOutput = CreateTransferOutput(accountTransactionOutput.signatures, "", "", accountTransactionOutput.transaction)
             submitTransaction(createTransferOutput)
         }
     }
@@ -242,11 +251,14 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         submitTransaction = proxyRepository.submitTransfer(createTransferOutput,
             {
                 println("LC -> submitTransaction SUCCESS = ${it.submissionId}")
-                transactionSubmitted.postValue(it.submissionId)
+                val transactionSuccess = TransactionSuccess(it.submissionId)
+                transactionSubmitted.postValue(Gson().toJson(transactionSuccess))
                 waiting.postValue(false)
             },
             {
                 println("LC -> submitTransaction ERROR ${it.stackTraceToString()}")
+                val transactionError = TransactionError(5000)
+                transactionSubmitted.postValue(Gson().toJson(transactionError))
                 handleBackendError(it)
                 waiting.postValue(false)
             }
@@ -282,7 +294,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(sessionRequest: Sign.Model.SessionRequest) {
-        if (sessionRequest.request.method == "signTransaction")
+        if (sessionRequest.request.method == "sign_and_send_transaction")
             transaction.postValue(true)
         else
             message.postValue(true)
