@@ -341,7 +341,6 @@ dependencies {
     // BIP39
     implementation "cash.z.ecc.android:kotlin-bip39:1.0.4"
 
-    // Wallet Connect (https://github.com/WalletConnect/WalletConnectKotlinV2/releases/)
     implementation("com.walletconnect:android-core:1.1.0")
     implementation("com.walletconnect:sign:2.0.0")
 }

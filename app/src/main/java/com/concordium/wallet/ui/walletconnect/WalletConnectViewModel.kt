@@ -285,8 +285,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     private fun signMessage(keys: AccountData) {
         viewModelScope.launch {
-            val message = (binder?.getSessionRequestParamsAsString() ?: "").toHex()
-            val signMessageInput = SignMessageInput(walletConnectData.account?.address ?: "", message, keys)
+            val signMessageInput = SignMessageInput(walletConnectData.account?.address ?: "", binder?.getSessionRequestParams()?.message ?: "", keys)
             val signMessageOutput = App.appCore.cryptoLibrary.signMessage(signMessageInput)
             if (signMessageOutput == null) {
                 errorInt.postValue(R.string.app_error_lib)
@@ -315,7 +314,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     fun onMessageEvent(sessionRequest: Sign.Model.SessionRequest) {
         if (sessionRequest.request.method == "sign_and_send_transaction")
             transaction.postValue(true)
-        else
+        else if (sessionRequest.request.method == "sign_message")
             message.postValue(true)
     }
 

@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.walletconnect
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -39,9 +38,10 @@ class WalletConnectMessageFragment : WalletConnectBaseFragment() {
         _binding = null
     }
 
-    @SuppressLint("SetTextI18n")
     private fun initViews() {
-        binding.messageText.text = "TEST"
+        _viewModel.binder?.getSessionRequestParams()?.message?.let { message ->
+            binding.messageText.text = message
+        }
         binding.reject.setOnClickListener {
             binding.reject.isEnabled = false
             _viewModel.binder?.respondError("User reject")

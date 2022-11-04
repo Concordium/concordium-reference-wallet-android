@@ -4,9 +4,10 @@ import com.google.gson.Gson
 import java.io.Serializable
 
 data class Params(
-    val header: Header,
-    val payload: String,
-    val type: String
+    val header: Header?,
+    val payload: String?,
+    val type: String?,
+    val message: String?
 ) : Serializable {
     fun parsePayload(): Payload? {
         return try {
