@@ -158,6 +158,20 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         }
     }
 
+    fun hasEnoughFunds(): Boolean {
+        val amount = binder?.getSessionRequestParams()?.parsePayload()?.amount
+        val fee = walletConnectData.cost
+        if (amount != null && fee != null) {
+            walletConnectData.account?.totalUnshieldedBalance?.let { totalUnshieldedBalance ->
+                walletConnectData.account?.getAtDisposalWithoutStakedOrScheduled(totalUnshieldedBalance)?.let { atDisposal ->
+                    if (atDisposal >= amount.toLong() + fee.toLong())
+                        return true
+                }
+            }
+        }
+        return false
+    }
+
     private fun handleBackendError(throwable: Throwable) {
         Log.e("Backend request failed", throwable)
         errorInt.postValue(BackendErrorHandler.getExceptionStringRes(throwable))

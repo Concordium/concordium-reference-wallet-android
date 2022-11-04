@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentWalletConnectTransactionBinding
@@ -48,7 +49,9 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
     private fun initViews() {
         _viewModel.walletConnectData.account?.let { account ->
             binding.atDisposal.text = CurrencyUtil.formatGTU(account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance), true)
-            binding.accountToSendFrom.text = "${account.name}\n\n${account.address}"
+            val line1 = account.address.substring(0, account.address.length / 2)
+            val line2 = account.address.substring(account.address.length / 2)
+            binding.accountToSendFrom.text = "${account.name}\n\n$line1\n$line2"
         }
         binding.amount.text = CurrencyUtil.formatGTU(_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.amount ?: "", true)
         binding.contractAddress.text = "${_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.address?.index} ${_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.address?.subIndex}"
@@ -67,7 +70,16 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
     private fun initObservers() {
         _viewModel.transactionFee.observe(viewLifecycleOwner) { fee ->
             binding.estimatedTransactionFee.text = getString(R.string.wallet_connect_transaction_estimated_transaction_fee, CurrencyUtil.formatGTU(fee))
-            binding.submit.isEnabled = true
+            if (_viewModel.hasEnoughFunds())
+                binding.submit.isEnabled = true
+            else {
+                binding.insufficient.visibility = View.VISIBLE
+                binding.atDisposalTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_pink))
+                binding.atDisposal.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_pink))
+                binding.amountTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_pink))
+                binding.amount.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_pink))
+                binding.estimatedTransactionFee.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_pink))
+            }
         }
         _viewModel.errorInt.observe(viewLifecycleOwner) {
             binding.submit.isEnabled = true

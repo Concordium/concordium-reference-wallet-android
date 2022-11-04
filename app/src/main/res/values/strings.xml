@@ -839,6 +839,7 @@
     <string name="wallet_connect_message_reject">Reject</string>
     <string name="wallet_connect_message_sign_and_return">Sign &amp; Return</string>
     <string name="wallet_connect_message_signed">The message has been signed and returned.</string>
+    <string name="wallet_connect_insufficient_funds">Insufficient funds</string>
 
     <!-- ***** More ***** -->
 
