@@ -58,7 +58,7 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
         binding.parameters.text = prettyPrintJson()
         binding.reject.setOnClickListener {
             binding.reject.isEnabled = false
-            _viewModel.binder?.rejectTransaction()
+            _viewModel.binder?.respondError("User reject")
             _viewModel.reject.postValue(true)
         }
         binding.submit.setOnClickListener {

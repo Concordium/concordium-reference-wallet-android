@@ -5,13 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.concordium.wallet.R
-import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentWalletConnectMessageBinding
-import com.concordium.wallet.databinding.FragmentWalletConnectTransactionBinding
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.WALLET_CONNECT_DATA
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
 
 class WalletConnectMessageFragment : WalletConnectBaseFragment() {
     private var _binding: FragmentWalletConnectMessageBinding? = null
@@ -49,7 +44,7 @@ class WalletConnectMessageFragment : WalletConnectBaseFragment() {
         binding.messageText.text = "TEST"
         binding.reject.setOnClickListener {
             binding.reject.isEnabled = false
-            _viewModel.binder?.rejectTransaction()
+            _viewModel.binder?.respondError("User reject")
             _viewModel.reject.postValue(true)
         }
         binding.sign.setOnClickListener {

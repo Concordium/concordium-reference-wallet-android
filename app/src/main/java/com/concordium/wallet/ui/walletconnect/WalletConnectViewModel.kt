@@ -54,7 +54,8 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val decline: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val reject: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val transaction: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val transactionSubmitted: MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val transactionSubmittedSuccess: MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val transactionSubmittedError: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val transactionSubmittedOkay: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val message: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val connectStatus: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
@@ -63,7 +64,8 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val transactionFee: MutableLiveData<Long> by lazy { MutableLiveData<Long>() }
     val messagedSignedOkay: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val messageSigned: MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val messageSignedSuccess: MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val messageSignedError: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val errorString: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val errorWalletConnectApprove: MutableLiveData<String> by lazy { MutableLiveData<String>() }
@@ -101,8 +103,12 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         binder?.rejectSession()
     }
 
-    fun respond(message: String) {
-        binder?.respond(message)
+    fun respondSuccess(message: String) {
+        binder?.respondSuccess(message)
+    }
+
+    fun respondError(message: String) {
+        binder?.respondError(message)
     }
 
     fun disconnect() {
@@ -265,14 +271,12 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         submitTransaction = proxyRepository.submitTransfer(createTransferOutput,
             {
                 println("LC -> submitTransaction SUCCESS = ${it.submissionId}")
-                val transactionSuccess = TransactionSuccess(it.submissionId)
-                transactionSubmitted.postValue(Gson().toJson(transactionSuccess))
+                transactionSubmittedSuccess.postValue(Gson().toJson(TransactionSuccess(it.submissionId)))
                 waiting.postValue(false)
             },
             {
                 println("LC -> submitTransaction ERROR ${it.stackTraceToString()}")
-                val transactionError = TransactionError(5000)
-                transactionSubmitted.postValue(Gson().toJson(transactionError))
+                transactionSubmittedError.postValue(Gson().toJson(TransactionError(500, it.message ?: "")))
                 handleBackendError(it)
                 waiting.postValue(false)
             }
@@ -286,8 +290,9 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             val signMessageOutput = App.appCore.cryptoLibrary.signMessage(signMessageInput)
             if (signMessageOutput == null) {
                 errorInt.postValue(R.string.app_error_lib)
+                messageSignedError.postValue(Gson().toJson(TransactionError(500, "")))
             } else {
-                messageSigned.postValue(Gson().toJson(signMessageOutput))
+                messageSignedSuccess.postValue(Gson().toJson(signMessageOutput))
             }
         }
     }

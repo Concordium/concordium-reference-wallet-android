@@ -149,9 +149,12 @@ class WalletConnectActivity : BaseActivity() {
                 transactionView()
             }
         }
-        viewModel.transactionSubmitted.observe(this) { submissionId ->
-            viewModel.respond(submissionId)
+        viewModel.transactionSubmittedSuccess.observe(this) { submissionId ->
+            viewModel.respondSuccess(submissionId)
             transactionSubmittedView()
+        }
+        viewModel.transactionSubmittedError.observe(this) { submissionId ->
+            viewModel.respondError(submissionId)
         }
         viewModel.transactionSubmittedOkay.observe(this) {
             approveView()
@@ -161,10 +164,12 @@ class WalletConnectActivity : BaseActivity() {
                 messageView()
             }
         }
-        viewModel.messageSigned.observe(this) { message ->
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-            viewModel.respond(message)
+        viewModel.messageSignedSuccess.observe(this) { message ->
+            viewModel.respondSuccess(message)
             messageSignedView()
+        }
+        viewModel.messageSignedError.observe(this) { message ->
+            viewModel.respondError(message)
         }
         viewModel.messagedSignedOkay.observe(this) {
             approveView()

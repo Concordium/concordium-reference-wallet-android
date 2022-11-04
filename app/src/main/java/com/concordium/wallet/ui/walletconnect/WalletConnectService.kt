@@ -32,11 +32,11 @@ class WalletConnectService : Service(), SignClient.WalletDelegate {
         fun approveSession(accountAddress: String) {
             approveSessionWC(accountAddress)
         }
-        fun respond(message: String) {
-            respondWC(message)
+        fun respondSuccess(message: String) {
+            respondSuccessWC(message)
         }
-        fun rejectTransaction() {
-            rejectWC()
+        fun respondError(message: String) {
+            respondErrorWC(message)
         }
         fun disconnect() {
             disconnectWC()
@@ -124,13 +124,13 @@ class WalletConnectService : Service(), SignClient.WalletDelegate {
         }
     }
 
-    private fun respondWC(jsonSigned: String) {
-        println("LC -> CALL RESPOND")
+    private fun respondSuccessWC(result: String) {
+        println("LC -> CALL RESPOND SUCCESS   $result")
         val response = Sign.Params.Response(
             sessionTopic = sessionRequest?.topic ?: "",
             jsonRpcResponse = Sign.Model.JsonRpcResponse.JsonRpcResult(
                 sessionRequest?.request?.id ?: -1,
-                jsonSigned
+                result
             )
         )
         SignClient.respond(response) { modelError ->
@@ -138,14 +138,14 @@ class WalletConnectService : Service(), SignClient.WalletDelegate {
         }
     }
 
-    private fun rejectWC() {
-        println("LC -> REJECT")
+    private fun respondErrorWC(message: String) {
+        println("LC -> CALL RESPOND ERROR   $message")
         val responseParams = Sign.Params.Response(
             sessionTopic = sessionRequest?.topic ?: "",
             jsonRpcResponse = Sign.Model.JsonRpcResponse.JsonRpcError(
                 id = sessionRequest?.request?.id ?: -1,
                 code = 500,
-                message = "User reject"
+                message = message
             )
         )
         SignClient.respond(responseParams) { modelError ->
