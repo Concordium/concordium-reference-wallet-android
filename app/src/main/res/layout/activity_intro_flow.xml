@@ -80,7 +80,7 @@
                 android:orientation="horizontal">
                 <Button
                     android:id="@+id/create_ident_intro_skip"
-                    style="@style/Button.Standard.Intro.White"
+                    style="@style/WhiteButton"
                     android:text="@string/shielding_intro_skip"
                     tools:visibility="gone" />
                 <Button
