@@ -61,10 +61,7 @@ class ExportAccountKeysActivity : BaseActivity() {
             binding.hidden.visibility = View.GONE
             binding.revealed.visibility = View.VISIBLE
             viewModel.accountDataKeys = Gson().fromJson(it.keys.json, AccountDataKeys::class.java)
-            val signKey = viewModel.accountDataKeys.level0.keys.keys.signKey
-            if (signKey.isNotBlank() && signKey.length == 64) {
-                binding.key.text = "${signKey.substring(0, 32)}\n${signKey.substring(32, 64)}"
-            }
+            binding.key.text = viewModel.accountDataKeys.level0.keys.keys.signKey
         }
     }
 

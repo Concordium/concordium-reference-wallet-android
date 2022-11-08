@@ -91,11 +91,14 @@
                 <TextView
                     android:id="@+id/key"
                     style="@style/TextView.Mono"
-                    tools:text="38de26cd4f5dc52d66e88f32db1183e4\n13fcf84e96ad28c300329dc686480b9b" />
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    tools:text="38de26cd4f5dc52d66e88f32db1183e413fcf84e96ad28c300329dc686480b9b" />
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                     android:src="@drawable/ic_icon_copy"
                     android:layout_gravity="center_vertical" />
             </androidx.appcompat.widget.LinearLayoutCompat>
