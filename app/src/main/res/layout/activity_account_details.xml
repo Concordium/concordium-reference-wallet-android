@@ -443,27 +443,12 @@
                         android:gravity="center"
                         android:background="@drawable/rounded_top_right_blue"
                         android:orientation="vertical">
-                        <androidx.appcompat.widget.LinearLayoutCompat
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:orientation="horizontal">
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                style="@style/TextView.Small"
-                                android:text="Add new"
-                                android:textColor="@color/theme_white" />
-                            <TextView
-                                android:id="@+id/add"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                style="@style/TextView.Medium.Bold"
-                                android:gravity="center_vertical"
-                                android:text="+"
-                                android:textColor="@color/theme_white"
-                                android:layout_marginStart="8dp" />
-                        </androidx.appcompat.widget.LinearLayoutCompat>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            style="@style/TextView.Small"
+                            android:text="@string/cis_tab_manage"
+                            android:textColor="@color/theme_white" />
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

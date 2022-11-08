@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.FragmentDialogSelectTokensBinding
 import com.concordium.wallet.ui.cis2.TokensBaseFragment
@@ -39,6 +40,7 @@ class SelectTokensFragment : TokensBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initObservers()
+        _viewModel.hasExistingTokens()
     }
 
     override fun onResume() {
@@ -102,8 +104,8 @@ class SelectTokensFragment : TokensBaseFragment() {
             _viewModel.stepPage(-1)
         }
 
-        binding.addTokens.setOnClickListener {
-            _viewModel.addSelectedTokens()
+        binding.updateWithTokens.setOnClickListener {
+            _viewModel.updateWithSelectedTokens()
         }
     }
 
@@ -117,6 +119,19 @@ class SelectTokensFragment : TokensBaseFragment() {
         }
         _viewModel.tokenDetails.observe(viewLifecycleOwner) { tokenId ->
             tokensListAdapter.notifyItemChanged(_viewModel.findTokenPositionById(tokenId))
+        }
+        _viewModel.hasExistingAccountContract.observe(viewLifecycleOwner) { hasExistingAccountContract ->
+            if (hasExistingAccountContract)
+                binding.updateWithTokens.text = getString(R.string.cis_update_tokens)
+            else
+                binding.updateWithTokens.text = getString(R.string.cis_add_tokens)
+            binding.updateWithTokens.isEnabled = true
+        }
+        _viewModel.nonSelected.observe(viewLifecycleOwner) { nonSelected ->
+            if (nonSelected)
+                binding.nonSelected.visibility = View.VISIBLE
+            else
+                binding.nonSelected.visibility = View.INVISIBLE
         }
     }
 }

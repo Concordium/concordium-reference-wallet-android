@@ -43,7 +43,6 @@ class SendTokenReceiptActivity : BaseActivity() {
         binding.token.text = viewModel.sendTokenData.token?.token ?: ""
         binding.receiver.text = viewModel.sendTokenData.receiver
         CoroutineScope(Dispatchers.Default).launch {
-            delay(3000)
             runOnUiThread {
                 showPageAsReceipt()
             }

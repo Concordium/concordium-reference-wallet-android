@@ -4,8 +4,16 @@ import com.concordium.wallet.data.room.AccountContract
 import com.concordium.wallet.data.room.AccountContractDao
 
 class AccountContractRepository(private val accountContractDao: AccountContractDao) {
-    suspend fun upsert(accountContract: AccountContract) {
-        accountContractDao.upsert(accountContract)
+    suspend fun find(accountAddress: String): List<AccountContract> {
+        return accountContractDao.find(accountAddress)
+    }
+
+    suspend fun find(accountAddress: String, contractIndex: String): AccountContract? {
+        return accountContractDao.find(accountAddress, contractIndex)
+    }
+
+    suspend fun insert(accountContract: AccountContract) {
+        accountContractDao.insert(accountContract)
     }
 
     suspend fun update(accountContract: AccountContract) {
@@ -14,9 +22,5 @@ class AccountContractRepository(private val accountContractDao: AccountContractD
 
     suspend fun delete(accountContract: AccountContract) {
         accountContractDao.delete(accountContract)
-    }
-
-    suspend fun getContractsByAccountAddress(accountAddress: String): List<AccountContract> {
-        return accountContractDao.getContractsByAccountAddress(accountAddress)
     }
 }

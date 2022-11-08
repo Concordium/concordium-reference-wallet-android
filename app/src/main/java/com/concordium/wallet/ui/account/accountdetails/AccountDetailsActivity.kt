@@ -49,9 +49,9 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         binding = ActivityAccountDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.account_details_title)
-        initializeViewModelTokens()
         initializeViewModelAccountDetails()
         viewModelAccountDetails.account = intent.getSerializable(EXTRA_ACCOUNT, Account::class.java)
+        initializeViewModelTokens()
         val isShielded = intent.extras!!.getBoolean(EXTRA_SHIELDED)
         val continueToShieldIntro = intent.extras!!.getBoolean(EXTRA_CONTINUE_TO_SHIELD_INTRO)
         accountAddress = viewModelAccountDetails.account.address
@@ -84,6 +84,8 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[TokensViewModel::class.java]
 
+        viewModelTokens.tokenData.account = viewModelAccountDetails.account
+
         viewModelTokens.waiting.observe(this) { waiting ->
             waiting?.let {
                 showWaitingTokens(waiting)
@@ -95,9 +97,11 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         }
 
         viewModelTokens.addingSelectedDone.observe(this) {
-            lookForNewTokensFragment?.dismiss()
-            lookForNewTokensFragment = null
-            supportFragmentManager.beginTransaction().replace(R.id.tokens_fragment, TokensFragment.newInstance(viewModelTokens, viewModelAccountDetails.account.address, true), null).commit()
+            runOnUiThread {
+                lookForNewTokensFragment?.dismiss()
+                lookForNewTokensFragment = null
+                supportFragmentManager.beginTransaction().replace(R.id.tokens_fragment, TokensFragment.newInstance(viewModelTokens, viewModelAccountDetails.account.address, true), null).commit()
+            }
         }
     }
 

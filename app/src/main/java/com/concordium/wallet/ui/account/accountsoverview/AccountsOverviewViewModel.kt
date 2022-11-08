@@ -93,7 +93,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             override fun onNewAccountFinalized(accountName: String) {
                 viewModelScope.launch {
                     _newFinalizedAccountLiveData.value = accountName
-                    App.appCore.session.setAccountsBackedUp(false)
                 }
             }
 

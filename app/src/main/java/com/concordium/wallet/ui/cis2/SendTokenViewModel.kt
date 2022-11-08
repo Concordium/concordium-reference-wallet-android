@@ -33,7 +33,6 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     fun loadTokens() {
         waiting.postValue(true)
         viewModelScope.launch {
-            delay(2000)
             waiting.postValue(false)
             tokens.postValue(getMockTokens())
         }
@@ -42,7 +41,6 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     fun send() {
         waiting.postValue(true)
         viewModelScope.launch {
-            delay(2000)
             waiting.postValue(false)
             transactionReady.postValue(true)
         }
@@ -51,7 +49,6 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     fun loadTransactionFee() {
         waiting.postValue(true)
         viewModelScope.launch {
-            delay(1000)
             waiting.postValue(false)
             feeReady.postValue(12300)
         }

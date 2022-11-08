@@ -4,11 +4,14 @@ import androidx.room.*
 
 @Dao
 interface AccountContractDao {
+    @Query("SELECT * FROM account_contract_table WHERE account_address = :accountAddress AND contract_index = :contractIndex")
+    suspend fun find(accountAddress: String, contractIndex: String): AccountContract?
+
     @Query("SELECT * FROM account_contract_table WHERE account_address = :accountAddress")
-    fun getContractsByAccountAddress(accountAddress: String): List<AccountContract>
+    suspend fun find(accountAddress: String): List<AccountContract>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsert(vararg accountContract: AccountContract)
+    suspend fun insert(vararg accountContract: AccountContract)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(vararg accountContract: AccountContract)

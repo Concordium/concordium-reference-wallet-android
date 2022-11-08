@@ -34,7 +34,7 @@ class TokensFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initObservers()
-        _viewModel.loadTokens(_isFungible)
+        _viewModel.loadTokens(_accountAddress, _isFungible)
     }
 
     private fun initViews() {
@@ -50,10 +50,9 @@ class TokensFragment : Fragment() {
     }
 
     private fun initObservers() {
-        /*
-        _viewModel.tokens.observe(viewLifecycleOwner) { tokens ->
-            tokensListAdapter.arrayList = tokens.toTypedArray()
+        _viewModel.contractTokens.observe(viewLifecycleOwner) { contractTokens ->
+            tokensListAdapter.arrayList = contractTokens.map { Token(it.tokenId, it.tokenId.toString(), it.contractIndex, "", true) }.toTypedArray()
             tokensListAdapter.notifyDataSetChanged()
-        }*/
+        }
     }
 }

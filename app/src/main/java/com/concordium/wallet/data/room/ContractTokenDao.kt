@@ -8,11 +8,14 @@ interface ContractTokenDao {
     fun getTokensByContractIndex(contractIndex: String): List<ContractToken>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsert(vararg contractToken: ContractToken)
+    suspend fun insert(vararg contractToken: ContractToken)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(vararg contractToken: ContractToken)
 
     @Delete
     suspend fun delete(contractToken: ContractToken)
+
+    @Query("SELECT * FROM contract_token_table WHERE contract_index = :contractIndex AND token_id = :tokenId")
+    fun find(contractIndex: String, tokenId: Int): ContractToken?
 }

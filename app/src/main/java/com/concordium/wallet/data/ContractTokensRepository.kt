@@ -4,19 +4,19 @@ import com.concordium.wallet.data.room.ContractToken
 import com.concordium.wallet.data.room.ContractTokenDao
 
 class ContractTokensRepository(private val contractTokenDao: ContractTokenDao) {
-    suspend fun upsert(contractToken: ContractToken) {
-        contractTokenDao.upsert(contractToken)
-    }
-
-    suspend fun update(contractToken: ContractToken) {
-        contractTokenDao.update(contractToken)
+    suspend fun insert(contractToken: ContractToken) {
+        contractTokenDao.insert(contractToken)
     }
 
     suspend fun delete(contractToken: ContractToken) {
         contractTokenDao.delete(contractToken)
     }
 
-    suspend fun getTokensByContractIndex(contractIndex: String): List<ContractToken> {
+    fun find(contractIndex: String, tokenId: Int): ContractToken? {
+        return contractTokenDao.find(contractIndex, tokenId)
+    }
+
+    fun getTokensByContractIndex(contractIndex: String): List<ContractToken> {
         return contractTokenDao.getTokensByContractIndex(contractIndex)
     }
 }

@@ -983,13 +983,14 @@
 
     <string name="cis_tab_fungible">Fungible</string>
     <string name="cis_tab_collectibles">Collectibles</string>
-    <string name="cis_tab_add_new">Add new</string>
+    <string name="cis_tab_manage">Manage</string>
     <string name="cis_find_tokens_title">Enter a contract index to look for tokens.</string>
     <string name="cis_token_details_title">%1$s balance on %2$s</string>
     <string name="cis_find_tokens_hint">Contract index</string>
     <string name="cis_look_for_tokens">Look for tokens</string>
     <string name="cis_select_tokens_title">Please select the tokens you want to add from the contract.</string>
     <string name="cis_add_tokens">Add tokens</string>
+    <string name="cis_update_tokens">Update tokens</string>
     <string name="cis_find_tokens_error">Invalid contract index</string>
     <string name="cis_search">Search</string>
     <string name="cis_send_funds">Send funds</string>
@@ -1018,5 +1019,6 @@
     <string name="cis_name_and_icon">Name and icon</string>
     <string name="cis_mint_address">Mint address</string>
     <string name="cis_decimals">Decimals</string>
+    <string name="cis_no_tokens_selected">You haven\'t selected any tokens.</string>
 
 </resources>

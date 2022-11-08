@@ -94,9 +94,6 @@ class Session(context: Context) {
         return authPreferences.setTermsHashed(key)
     }
 
-    fun setAccountsBackedUp(value: Boolean) {
-    }
-
     fun isIdentityPendingWarningAcknowledged(id: Int): Boolean {
         return authPreferences.isIdentityPendingWarningAcknowledged(id)
     }

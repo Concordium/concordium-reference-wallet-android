@@ -6,14 +6,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.data.AccountContractRepository
 import com.concordium.wallet.data.ContractTokensRepository
-import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountContract
+import com.concordium.wallet.data.room.ContractToken
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.Serializable
@@ -34,7 +36,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     var tokenData = TokenData()
     var tokens: MutableList<Token> = mutableListOf()
 
-    //val tokens: MutableLiveData<List<Token>> by lazy { MutableLiveData<List<Token>>() }
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
@@ -42,18 +43,24 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val addingSelectedDone: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val stepPageBy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val tokenDetails: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    val hasExistingAccountContract: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val nonSelected: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val contractTokens: MutableLiveData<List<ContractToken>> by lazy { MutableLiveData<List<ContractToken>>() }
 
     private val proxyRepository = ProxyRepository()
 
-    fun loadTokens(isFungible: Boolean) {
+    fun loadTokens(accountAddress: String, isFungible: Boolean) {
         waiting.postValue(true)
-        viewModelScope.launch {
-            //val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
-            //val tokensList = accountRepository.getAll().map { Token("", it.address, "DEF", 0) }.filter {
-            //    if (isFungible) it.tokens name.startsWith("3q") else it.name.startsWith("3t")
-            //}
+        CoroutineScope(Dispatchers.IO).launch {
+            val accountContractRepository = AccountContractRepository(WalletDatabase.getDatabase(getApplication()).accountContractDao())
+            val contractTokensRepository = ContractTokensRepository(WalletDatabase.getDatabase(getApplication()).contractTokenDao())
+            val accountContracts = accountContractRepository.find(accountAddress)
+            val contractTokens = mutableListOf<ContractToken>()
+            accountContracts.forEach { accountContract ->
+                contractTokens.addAll(contractTokensRepository.getTokensByContractIndex(accountContract.contractIndex))
+            }
             waiting.postValue(false)
-            //tokens.postValue(tokensList)
+            this@TokensViewModel.contractTokens.postValue(contractTokens)
         }
     }
 
@@ -64,16 +71,26 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         allowToLoadMore = false
 
         waitingTokens.postValue(true)
-        proxyRepository.getCIS2Tokens(tokenData.contractIndex, "0", from, success = { cis2Tokens ->
-            tokens.addAll(cis2Tokens.tokens)
-            loadTokenDetails(cis2Tokens.tokens)
-            waitingTokens.postValue(false)
-            allowToLoadMore = true
-        }, failure = {
-            waitingTokens.postValue(false)
-            handleBackendError(it)
-            allowToLoadMore = true
-        })
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val contractTokensRepository = ContractTokensRepository(WalletDatabase.getDatabase(getApplication()).contractTokenDao())
+            val existingContractTokens = contractTokensRepository.getTokensByContractIndex(tokenData.contractIndex)
+            val existingTokens = existingContractTokens.map { it.tokenId }.toSet()
+            proxyRepository.getCIS2Tokens(tokenData.contractIndex, "0", from, success = { cis2Tokens ->
+                cis2Tokens.tokens.forEach { token ->
+                    if (existingTokens.contains(token.id))
+                        token.isSelected = true
+                }
+                tokens.addAll(cis2Tokens.tokens)
+                loadTokenDetails(cis2Tokens.tokens)
+                waitingTokens.postValue(false)
+                allowToLoadMore = true
+            }, failure = {
+                waitingTokens.postValue(false)
+                handleBackendError(it)
+                allowToLoadMore = true
+            })
+        }
     }
 
     fun findTokenPositionById(tokenId: Int): Int {
@@ -86,30 +103,60 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun addSelectedTokens() {
-        val selectedTokens = tokens.filter { it.isSelected }
-        println("LC -> selectedTokens = ${selectedTokens.map { it.id }}")
-        viewModelScope.launch {
-            delay(1000)
-
-            addingSelectedDone.postValue(true)
+    fun hasExistingTokens() {
+        val accountContractRepository = AccountContractRepository(WalletDatabase.getDatabase(getApplication()).accountContractDao())
+        tokenData.account?.let { account ->
+            viewModelScope.launch {
+                val existingAccountContract = accountContractRepository.find(account.address, tokenData.contractIndex)
+                hasExistingAccountContract.postValue(existingAccountContract != null)
+            }
+        } ?: run {
+            hasExistingAccountContract.postValue(false)
         }
     }
 
-    private suspend fun ff(selectedTokenIds: List<Int>) {
+    fun updateWithSelectedTokens() {
+        val selectedTokens = tokens.filter { it.isSelected }
         tokenData.account?.let { account ->
             val accountContractRepository = AccountContractRepository(WalletDatabase.getDatabase(getApplication()).accountContractDao())
             val contractTokensRepository = ContractTokensRepository(WalletDatabase.getDatabase(getApplication()).contractTokenDao())
-            accountContractRepository.upsert(AccountContract(0, account.address, tokenData.contractIndex))
-            val existingTokens = contractTokensRepository.getTokensByContractIndex(tokenData.contractIndex)
+            CoroutineScope(Dispatchers.IO).launch {
+                if (selectedTokens.isEmpty()) {
+                    val existingContractTokens = contractTokensRepository.getTokensByContractIndex(tokenData.contractIndex)
+                    existingContractTokens.forEach { existingContractToken ->
+                        contractTokensRepository.delete(existingContractToken)
+                    }
+                    val existingAccountContract = accountContractRepository.find(account.address, tokenData.contractIndex)
+                    if (existingAccountContract == null) {
+                        nonSelected.postValue(true)
+                    } else {
+                        accountContractRepository.delete(existingAccountContract)
+                        addingSelectedDone.postValue(true)
+                    }
+                } else {
+                    val accountContract = accountContractRepository.find(account.address, tokenData.contractIndex)
+                    if (accountContract == null) {
+                        accountContractRepository.insert(AccountContract(0, account.address, tokenData.contractIndex))
+                    }
 
-            // dem som er med i existing, men ikke er med i selected - de skal slettes
+                    val existingContractTokens = contractTokensRepository.getTokensByContractIndex(tokenData.contractIndex)
+                    val existingNotSelectedTokenIds = existingContractTokens.map { it.tokenId }.minus(selectedTokens.map { it.id }.toSet())
+                    existingNotSelectedTokenIds.forEach { existingNotSelectedTokenId ->
+                        contractTokensRepository.find(tokenData.contractIndex, existingNotSelectedTokenId)?.let { existingNotSelectedContractToken ->
+                            contractTokensRepository.delete(existingNotSelectedContractToken)
+                        }
+                    }
 
-            // dem som er med i selected skal bare kaldes med upsert
+                    selectedTokens.forEach { selectedToken ->
+                        val existingContractToken =  contractTokensRepository.find(tokenData.contractIndex, selectedToken.id)
+                        if (existingContractToken == null)
+                            contractTokensRepository.insert(ContractToken(0, tokenData.contractIndex, selectedToken.id))
+                    }
 
-
+                    addingSelectedDone.postValue(true)
+                }
+            }
         }
-
     }
 
     fun stepPage(by: Int) {
