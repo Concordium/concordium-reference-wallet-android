@@ -13,7 +13,7 @@
         android:scaleType="fitCenter"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="@dimen/activity_horizontal_margin_half"
-        tools:src="@drawable/ic_delegating" />
+        android:src="@drawable/ic_token_loading_image" />
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="0dp"
         android:layout_height="wrap_content"

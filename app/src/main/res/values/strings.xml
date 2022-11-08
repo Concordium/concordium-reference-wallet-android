@@ -1020,5 +1020,7 @@
     <string name="cis_mint_address">Mint address</string>
     <string name="cis_decimals">Decimals</string>
     <string name="cis_no_tokens_selected">You haven\'t selected any tokens.</string>
+    <string name="cis_tokens_updated">Token list updated</string>
+    <string name="cis_tokens_not_updated">No updates made to token list</string>
 
 </resources>

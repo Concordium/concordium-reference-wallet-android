@@ -20,6 +20,7 @@ class SelectTokensFragment : TokensBaseFragment() {
     private lateinit var _viewModel: TokensViewModel
     private lateinit var tokensListAdapter: SelectTokensAdapter
     private var firstTime = true
+    private var currentFilter = ""
 
     companion object {
         @JvmStatic
@@ -40,7 +41,6 @@ class SelectTokensFragment : TokensBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initObservers()
-        _viewModel.hasExistingTokens()
     }
 
     override fun onResume() {
@@ -48,6 +48,8 @@ class SelectTokensFragment : TokensBaseFragment() {
         if (!firstTime)
             tokensListAdapter.notifyDataSetChanged()
         firstTime = false
+        _viewModel.hasExistingTokens()
+        binding.nonSelected.visibility = View.INVISIBLE
     }
 
     override fun onDestroyView() {
@@ -76,17 +78,13 @@ class SelectTokensFragment : TokensBaseFragment() {
 
         binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                tokensListAdapter.dataSet = _viewModel.tokens.filter {
-                    it.token.uppercase().contains(query?.uppercase() ?: "")
-                }.toTypedArray()
-                tokensListAdapter.notifyDataSetChanged()
+                currentFilter = query?.uppercase() ?: ""
+                _viewModel.waitingTokens.postValue(false)
                 return false
             }
             override fun onQueryTextChange(newText: String?): Boolean {
-                tokensListAdapter.dataSet = _viewModel.tokens.filter {
-                    it.token.uppercase().contains(newText?.uppercase() ?: "")
-                }.toTypedArray()
-                tokensListAdapter.notifyDataSetChanged()
+                currentFilter = newText?.uppercase() ?: ""
+                _viewModel.waitingTokens.postValue(false)
                 return false
             }
         })
@@ -112,8 +110,9 @@ class SelectTokensFragment : TokensBaseFragment() {
     private fun initObservers() {
         _viewModel.waitingTokens.observe(viewLifecycleOwner) { waiting ->
             if (!waiting) {
-                println("LC -> ${_viewModel.tokens}")
-                tokensListAdapter.dataSet = _viewModel.tokens.toTypedArray()
+                tokensListAdapter.dataSet = _viewModel.tokens.filter {
+                    it.token.uppercase().contains(currentFilter)
+                }.toTypedArray()
                 tokensListAdapter.notifyDataSetChanged()
             }
         }

@@ -40,7 +40,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val waitingTokens: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val addingSelectedDone: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val updateWithSelectedTokensDone: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val stepPageBy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val tokenDetails: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val hasExistingAccountContract: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
@@ -107,6 +107,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         val accountContractRepository = AccountContractRepository(WalletDatabase.getDatabase(getApplication()).accountContractDao())
         tokenData.account?.let { account ->
             viewModelScope.launch {
+                println("LC -> Look for existing ${tokenData.contractIndex}")
                 val existingAccountContract = accountContractRepository.find(account.address, tokenData.contractIndex)
                 hasExistingAccountContract.postValue(existingAccountContract != null)
             }
@@ -121,39 +122,43 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             val accountContractRepository = AccountContractRepository(WalletDatabase.getDatabase(getApplication()).accountContractDao())
             val contractTokensRepository = ContractTokensRepository(WalletDatabase.getDatabase(getApplication()).contractTokenDao())
             CoroutineScope(Dispatchers.IO).launch {
+                var anyChanges = false
                 if (selectedTokens.isEmpty()) {
                     val existingContractTokens = contractTokensRepository.getTokensByContractIndex(tokenData.contractIndex)
                     existingContractTokens.forEach { existingContractToken ->
                         contractTokensRepository.delete(existingContractToken)
+                        anyChanges = true
                     }
                     val existingAccountContract = accountContractRepository.find(account.address, tokenData.contractIndex)
                     if (existingAccountContract == null) {
                         nonSelected.postValue(true)
                     } else {
+                        anyChanges = true
                         accountContractRepository.delete(existingAccountContract)
-                        addingSelectedDone.postValue(true)
+                        updateWithSelectedTokensDone.postValue(anyChanges)
                     }
                 } else {
                     val accountContract = accountContractRepository.find(account.address, tokenData.contractIndex)
                     if (accountContract == null) {
                         accountContractRepository.insert(AccountContract(0, account.address, tokenData.contractIndex))
+                        anyChanges = true
                     }
-
                     val existingContractTokens = contractTokensRepository.getTokensByContractIndex(tokenData.contractIndex)
                     val existingNotSelectedTokenIds = existingContractTokens.map { it.tokenId }.minus(selectedTokens.map { it.id }.toSet())
                     existingNotSelectedTokenIds.forEach { existingNotSelectedTokenId ->
                         contractTokensRepository.find(tokenData.contractIndex, existingNotSelectedTokenId)?.let { existingNotSelectedContractToken ->
                             contractTokensRepository.delete(existingNotSelectedContractToken)
+                            anyChanges = true
                         }
                     }
-
                     selectedTokens.forEach { selectedToken ->
                         val existingContractToken =  contractTokensRepository.find(tokenData.contractIndex, selectedToken.id)
-                        if (existingContractToken == null)
+                        if (existingContractToken == null) {
                             contractTokensRepository.insert(ContractToken(0, tokenData.contractIndex, selectedToken.id))
+                            anyChanges = true
+                        }
                     }
-
-                    addingSelectedDone.postValue(true)
+                    updateWithSelectedTokensDone.postValue(anyChanges)
                 }
             }
         }
@@ -168,7 +173,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             tokens.forEach { token ->
                 delay(Random.nextLong(200, 500))
                 token.token = "UPDATED" + token.token
-                token.imageUrl = "https://picsum.photos/200"
+                token.imageUrl = if (token.id.toString().endsWith("5")) "https://picsum.photos/200" else "https://picsdsdfsum.photos/200"
                 tokenDetails.postValue(token.id)
             }
         }

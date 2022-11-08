@@ -6,6 +6,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
@@ -96,11 +97,15 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
             showTokenDetailsDialog(token)
         }
 
-        viewModelTokens.addingSelectedDone.observe(this) {
+        viewModelTokens.updateWithSelectedTokensDone.observe(this) { anyChanges ->
             runOnUiThread {
                 lookForNewTokensFragment?.dismiss()
                 lookForNewTokensFragment = null
                 supportFragmentManager.beginTransaction().replace(R.id.tokens_fragment, TokensFragment.newInstance(viewModelTokens, viewModelAccountDetails.account.address, true), null).commit()
+                if (anyChanges)
+                    Toast.makeText(this, R.string.cis_tokens_updated, Toast.LENGTH_SHORT).show()
+                else
+                    Toast.makeText(this, R.string.cis_tokens_not_updated, Toast.LENGTH_SHORT).show()
             }
         }
     }
