@@ -5,17 +5,35 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
-import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.DialogSearchTokenBinding
 import com.concordium.wallet.ui.base.BaseBottomSheetDialogFragment
+import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DATA
 
 class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
     private var _binding: DialogSearchTokenBinding? = null
     private val binding get() = _binding!!
-    private lateinit var tokensListAdapter: TokensListAdapter
-    private val viewModel: SendTokenViewModel by activityViewModels()
+    private lateinit var tokensAdapter: TokensAdapter
+    private lateinit var _viewModel: SendTokenViewModel
 
+    companion object {
+        @JvmStatic
+        fun newInstance(viewModel: SendTokenViewModel) = SearchTokenBottomSheet().apply {
+            arguments = Bundle().apply {
+                putSerializable(SEND_TOKEN_DATA, viewModel.sendTokenData)
+            }
+            _viewModel = viewModel
+        }
+    }
+/*
+    private lateinit var tokenData: TokenData
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        tokenData = requireArguments().getSerializableFromBundle(TokensViewModel.TOKEN_DATA, TokenData::class.java)
+    }
+  */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = DialogSearchTokenBinding.inflate(inflater, container, false)
         return binding.root
@@ -25,7 +43,7 @@ class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initObservers()
-        viewModel.loadTokens()
+        _viewModel.loadTokens()
     }
 
     override fun onDestroyView() {
@@ -34,36 +52,39 @@ class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
     }
 
     private fun initViews() {
-        tokensListAdapter = TokensListAdapter(requireContext(), arrayOf(), false)
-        tokensListAdapter.setTokenClickListener(object : TokensListAdapter.TokenClickListener {
+        binding.tokensFound.layoutManager = LinearLayoutManager(activity)
+        tokensAdapter = TokensAdapter(requireActivity(), true, arrayOf())
+        tokensAdapter.also { binding.tokensFound.adapter = it }
+
+        tokensAdapter.setTokenClickListener(object : TokensAdapter.TokenClickListener {
             override fun onRowClick(token: Token) {
-                viewModel.chooseToken.postValue(token)
+                _viewModel.chooseToken.postValue(token)
             }
             override fun onCheckBoxClick(token: Token) {
             }
         })
-        tokensListAdapter.also { binding.tokensFound.adapter = it }
+
         binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                tokensListAdapter.arrayList = viewModel.tokens.value!!.filter { it.token.uppercase().contains(query?.uppercase() ?: "") }.toTypedArray()
-                tokensListAdapter.notifyDataSetChanged()
+                tokensAdapter.dataSet = _viewModel.tokens.value!!.filter { it.token.uppercase().contains(query?.uppercase() ?: "") }.toTypedArray()
+                tokensAdapter.notifyDataSetChanged()
                 return false
             }
             override fun onQueryTextChange(newText: String?): Boolean {
-                tokensListAdapter.arrayList = viewModel.tokens.value!!.filter { it.token.uppercase().contains(newText?.uppercase() ?: "") }.toTypedArray()
-                tokensListAdapter.notifyDataSetChanged()
+                tokensAdapter.dataSet = _viewModel.tokens.value!!.filter { it.token.uppercase().contains(newText?.uppercase() ?: "") }.toTypedArray()
+                tokensAdapter.notifyDataSetChanged()
                 return false
             }
         })
     }
 
     private fun initObservers() {
-        viewModel.waiting.observe(this) { waiting ->
+        _viewModel.waiting.observe(this) { waiting ->
             showWaiting(waiting)
         }
-        viewModel.tokens.observe(this) { tokens ->
-            tokensListAdapter.arrayList = tokens.toTypedArray()
-            tokensListAdapter.notifyDataSetChanged()
+        _viewModel.tokens.observe(this) { tokens ->
+            tokensAdapter.dataSet = tokens.toTypedArray()
+            tokensAdapter.notifyDataSetChanged()
         }
     }
 

@@ -26,7 +26,7 @@ fun <T : Serializable?> Intent.getSerializable(key: String, m_class: Class<T>): 
     }
 }
 
-fun <T : Serializable?> Bundle.getSerializable2(key: String, m_class: Class<T>): T {
+fun <T : Serializable?> Bundle.getSerializableFromBundle(key: String, m_class: Class<T>): T {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
         this.getSerializable(key, m_class)!!
     else {

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.FragmentTokensBinding
 
@@ -12,7 +13,7 @@ class TokensFragment : Fragment() {
     private var _binding: FragmentTokensBinding? = null
     private val binding get() = _binding!!
     private lateinit var _viewModel: TokensViewModel
-    private lateinit var tokensListAdapter: TokensListAdapter
+    private lateinit var tokensAdapter: TokensAdapter
     private var _accountAddress = ""
     private var _isFungible = true
 
@@ -38,21 +39,23 @@ class TokensFragment : Fragment() {
     }
 
     private fun initViews() {
-        tokensListAdapter = TokensListAdapter(requireContext(), arrayOf(), false)
-        tokensListAdapter.setTokenClickListener(object : TokensListAdapter.TokenClickListener {
+        binding.tokensFound.layoutManager = LinearLayoutManager(activity)
+        tokensAdapter = TokensAdapter(requireContext(), false, arrayOf())
+        tokensAdapter.also { binding.tokensFound.adapter = it }
+
+        tokensAdapter.setTokenClickListener(object : TokensAdapter.TokenClickListener {
             override fun onRowClick(token: Token) {
                 _viewModel.chooseToken.postValue(token)
             }
             override fun onCheckBoxClick(token: Token) {
             }
         })
-        tokensListAdapter.also { binding.listTokens.adapter = it }
     }
 
     private fun initObservers() {
         _viewModel.contractTokens.observe(viewLifecycleOwner) { contractTokens ->
-            tokensListAdapter.arrayList = contractTokens.map { Token(it.tokenId, it.tokenId.toString(), it.contractIndex, "", true) }.toTypedArray()
-            tokensListAdapter.notifyDataSetChanged()
+            tokensAdapter.dataSet = contractTokens.map { Token(it.tokenId, it.tokenId.toString(), it.contractIndex, "", true) }.toTypedArray()
+            tokensAdapter.notifyDataSetChanged()
         }
     }
 }

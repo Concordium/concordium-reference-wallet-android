@@ -1,7 +1,8 @@
-package com.concordium.wallet.ui.cis2.lookfornew
+package com.concordium.wallet.ui.cis2
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -10,7 +11,7 @@ import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.ItemTokenBinding
 import com.concordium.wallet.util.UnitConvertUtil
 
-class SelectTokensAdapter(private val context: Context, var dataSet: Array<Token>) : RecyclerView.Adapter<SelectTokensAdapter.ViewHolder>() {
+class TokensAdapter(private val context: Context, private val showCheckBox: Boolean, var dataSet: Array<Token>) : RecyclerView.Adapter<TokensAdapter.ViewHolder>() {
     private var tokenClickListener: TokenClickListener? = null
     private val iconSize: Int get() = UnitConvertUtil.convertDpToPixel(context.resources.getDimension(R.dimen.list_item_height))
 
@@ -46,7 +47,12 @@ class SelectTokensAdapter(private val context: Context, var dataSet: Array<Token
 
         holder.binding.title.text = token.id.toString()
         holder.binding.subTitle.text = token.token
-        holder.binding.selection.isChecked = token.isSelected
+
+        if (showCheckBox) {
+            holder.binding.selection.isChecked = token.isSelected
+        } else {
+            holder.binding.selection.visibility = View.GONE
+        }
 
         holder.binding.root.setOnClickListener {
             tokenClickListener?.onRowClick(token)

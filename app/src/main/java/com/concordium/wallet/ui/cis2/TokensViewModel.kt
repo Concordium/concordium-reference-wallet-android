@@ -107,7 +107,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         val accountContractRepository = AccountContractRepository(WalletDatabase.getDatabase(getApplication()).accountContractDao())
         tokenData.account?.let { account ->
             viewModelScope.launch {
-                println("LC -> Look for existing ${tokenData.contractIndex}")
                 val existingAccountContract = accountContractRepository.find(account.address, tokenData.contractIndex)
                 hasExistingAccountContract.postValue(existingAccountContract != null)
             }
@@ -133,10 +132,10 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     if (existingAccountContract == null) {
                         nonSelected.postValue(true)
                     } else {
-                        anyChanges = true
                         accountContractRepository.delete(existingAccountContract)
-                        updateWithSelectedTokensDone.postValue(anyChanges)
+                        anyChanges = true
                     }
+                    updateWithSelectedTokensDone.postValue(anyChanges)
                 } else {
                     val accountContract = accountContractRepository.find(account.address, tokenData.contractIndex)
                     if (accountContract == null) {

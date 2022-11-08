@@ -5,7 +5,6 @@ import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -20,7 +19,6 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivitySendTokenBinding
-import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DATA
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
@@ -91,7 +89,7 @@ class SendTokenActivity : BaseActivity() {
 
     private fun initializeSearchToken() {
         binding.searchToken.searchToken.setOnClickListener {
-            searchTokenBottomSheet = SearchTokenBottomSheet()
+            searchTokenBottomSheet = SearchTokenBottomSheet.newInstance(viewModel)
             searchTokenBottomSheet?.show(supportFragmentManager, "")
         }
     }

@@ -4,10 +4,13 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.data.AccountContractRepository
+import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.ui.walletconnect.WalletConnectData
-import kotlinx.coroutines.delay
+import com.concordium.wallet.data.room.WalletDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.Serializable
 
@@ -32,9 +35,19 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun loadTokens() {
         waiting.postValue(true)
-        viewModelScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
+            val accountContractRepository = AccountContractRepository(WalletDatabase.getDatabase(getApplication()).accountContractDao())
+            val contractTokensRepository = ContractTokensRepository(WalletDatabase.getDatabase(getApplication()).contractTokenDao())
+            val tokensFound = mutableListOf<Token>()
+            sendTokenData.account?.let { account ->
+                val accountContracts = accountContractRepository.find(account.address)
+                accountContracts.forEach { accountContract ->
+                    val tokens = contractTokensRepository.getTokensByContractIndex(accountContract.contractIndex)
+                    tokensFound.addAll(tokens.map { Token(it.tokenId, "", "", "", false) })
+                }
+            }
             waiting.postValue(false)
-            tokens.postValue(getMockTokens())
+            tokens.postValue(tokensFound)
         }
     }
 
@@ -52,41 +65,5 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             waiting.postValue(false)
             feeReady.postValue(12300)
         }
-    }
-
-    private fun getMockTokens() : List<Token> {
-        val list = arrayListOf<Token>()
-        list.add(Token(0, "asdgsdfgdsfg", "sdfgdsfgsdfg", ""))
-        /*
-        list.add(Token("", "CCD", "CCD", 11000000000))
-        list.add(Token("", "wCCD", "wCCD", 2000000000))
-        list.add(Token("", "USDC", "USDC", 3100000000))
-        list.add(Token("", "EC2", "EC2", 4004000000))
-        list.add(Token("", "CCD", "CCD", 11000000000))
-        list.add(Token("", "wCCD", "wCCD", 2000000000))
-        list.add(Token("", "USDC", "USDC", 3100000000))
-        list.add(Token("", "EC2", "EC2", 4004000000))
-        list.add(Token("", "CCD", "CCD", 11000000000))
-        list.add(Token("", "wCCD", "wCCD", 2000000000))
-        list.add(Token("", "USDC", "USDC", 3100000000))
-        list.add(Token("", "EC2", "EC2", 4004000000))
-        list.add(Token("", "CCD", "CCD", 11000000000))
-        list.add(Token("", "wCCD", "wCCD", 2000000000))
-        list.add(Token("", "USDC", "USDC", 3100000000))
-        list.add(Token("", "EC2", "EC2", 4004000000))
-        list.add(Token("", "CCD", "CCD", 11000000000))
-        list.add(Token("", "wCCD", "wCCD", 2000000000))
-        list.add(Token("", "USDC", "USDC", 3100000000))
-        list.add(Token("", "EC2", "EC2", 4004000000))
-        list.add(Token("", "CCD", "CCD", 11000000000))
-        list.add(Token("", "wCCD", "wCCD", 2000000000))
-        list.add(Token("", "USDC", "USDC", 3100000000))
-        list.add(Token("", "EC2", "EC2", 4004000000))
-        list.add(Token("", "CCD", "CCD", 11000000000))
-        list.add(Token("", "wCCD", "wCCD", 2000000000))
-        list.add(Token("", "USDC", "USDC", 3100000000))
-        list.add(Token("", "EC2", "EC2", 4004000000))
-        */
-        return list
     }
 }

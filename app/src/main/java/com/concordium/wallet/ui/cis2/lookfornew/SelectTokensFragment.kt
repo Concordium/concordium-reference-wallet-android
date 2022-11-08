@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.FragmentDialogSelectTokensBinding
+import com.concordium.wallet.ui.cis2.TokensAdapter
 import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.ui.cis2.TokensViewModel.Companion.TOKEN_DATA
@@ -18,7 +19,7 @@ class SelectTokensFragment : TokensBaseFragment() {
     private var _binding: FragmentDialogSelectTokensBinding? = null
     private val binding get() = _binding!!
     private lateinit var _viewModel: TokensViewModel
-    private lateinit var tokensListAdapter: SelectTokensAdapter
+    private lateinit var tokensAdapter: TokensAdapter
     private var firstTime = true
     private var currentFilter = ""
 
@@ -46,7 +47,7 @@ class SelectTokensFragment : TokensBaseFragment() {
     override fun onResume() {
         super.onResume()
         if (!firstTime)
-            tokensListAdapter.notifyDataSetChanged()
+            tokensAdapter.notifyDataSetChanged()
         firstTime = false
         _viewModel.hasExistingTokens()
         binding.nonSelected.visibility = View.INVISIBLE
@@ -59,6 +60,8 @@ class SelectTokensFragment : TokensBaseFragment() {
 
     private fun initViews() {
         binding.tokensFound.layoutManager = LinearLayoutManager(activity)
+        tokensAdapter = TokensAdapter(requireActivity(), true, arrayOf())
+        tokensAdapter.also { binding.tokensFound.adapter = it }
 
         binding.tokensFound.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -73,9 +76,6 @@ class SelectTokensFragment : TokensBaseFragment() {
             }
         })
 
-        tokensListAdapter = SelectTokensAdapter(requireActivity(), arrayOf())
-        tokensListAdapter.also { binding.tokensFound.adapter = it }
-
         binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 currentFilter = query?.uppercase() ?: ""
@@ -89,7 +89,7 @@ class SelectTokensFragment : TokensBaseFragment() {
             }
         })
 
-        tokensListAdapter.setTokenClickListener(object : SelectTokensAdapter.TokenClickListener {
+        tokensAdapter.setTokenClickListener(object : TokensAdapter.TokenClickListener {
             override fun onRowClick(token: Token) {
                 _viewModel.stepPage(1)
             }
@@ -110,14 +110,14 @@ class SelectTokensFragment : TokensBaseFragment() {
     private fun initObservers() {
         _viewModel.waitingTokens.observe(viewLifecycleOwner) { waiting ->
             if (!waiting) {
-                tokensListAdapter.dataSet = _viewModel.tokens.filter {
+                tokensAdapter.dataSet = _viewModel.tokens.filter {
                     it.token.uppercase().contains(currentFilter)
                 }.toTypedArray()
-                tokensListAdapter.notifyDataSetChanged()
+                tokensAdapter.notifyDataSetChanged()
             }
         }
         _viewModel.tokenDetails.observe(viewLifecycleOwner) { tokenId ->
-            tokensListAdapter.notifyItemChanged(_viewModel.findTokenPositionById(tokenId))
+            tokensAdapter.notifyItemChanged(_viewModel.findTokenPositionById(tokenId))
         }
         _viewModel.hasExistingAccountContract.observe(viewLifecycleOwner) { hasExistingAccountContract ->
             if (hasExistingAccountContract)
