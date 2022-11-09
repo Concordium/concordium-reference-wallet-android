@@ -60,7 +60,7 @@ class SelectTokensFragment : TokensBaseFragment() {
 
     private fun initViews() {
         binding.tokensFound.layoutManager = LinearLayoutManager(activity)
-        tokensAdapter = TokensAdapter(requireActivity(), true, arrayOf())
+        tokensAdapter = TokensAdapter(requireActivity(), showCheckBox = true, showLastRow = false, dataSet = arrayOf())
         tokensAdapter.also { binding.tokensFound.adapter = it }
 
         binding.tokensFound.addOnScrollListener(object : RecyclerView.OnScrollListener() {

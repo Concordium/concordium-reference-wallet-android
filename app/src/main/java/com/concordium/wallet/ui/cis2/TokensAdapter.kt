@@ -11,7 +11,7 @@ import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.ItemTokenBinding
 import com.concordium.wallet.util.UnitConvertUtil
 
-class TokensAdapter(private val context: Context, private val showCheckBox: Boolean, var dataSet: Array<Token>) : RecyclerView.Adapter<TokensAdapter.ViewHolder>() {
+class TokensAdapter(private val context: Context, private val showCheckBox: Boolean, private val showLastRow: Boolean, var dataSet: Array<Token>) : RecyclerView.Adapter<TokensAdapter.ViewHolder>() {
     private var tokenClickListener: TokenClickListener? = null
     private val iconSize: Int get() = UnitConvertUtil.convertDpToPixel(context.resources.getDimension(R.dimen.list_item_height))
 
@@ -26,7 +26,7 @@ class TokensAdapter(private val context: Context, private val showCheckBox: Bool
         this.tokenClickListener = tokenClickListener
     }
 
-    override fun getItemCount() = dataSet.size
+    override fun getItemCount() = if (showLastRow) dataSet.size + 1 else dataSet.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemTokenBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -34,6 +34,15 @@ class TokensAdapter(private val context: Context, private val showCheckBox: Bool
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        if (position == itemCount - 1 && showLastRow) {
+            holder.binding.addMore.visibility = View.VISIBLE
+            holder.binding.content.visibility = View.GONE
+            return
+        } else {
+            holder.binding.addMore.visibility = View.GONE
+            holder.binding.content.visibility = View.VISIBLE
+        }
+
         val token = dataSet[position]
 
         if (!token.imageUrl.isNullOrBlank())

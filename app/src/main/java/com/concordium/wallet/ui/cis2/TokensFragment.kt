@@ -40,7 +40,7 @@ class TokensFragment : Fragment() {
 
     private fun initViews() {
         binding.tokensFound.layoutManager = LinearLayoutManager(activity)
-        tokensAdapter = TokensAdapter(requireContext(), false, arrayOf())
+        tokensAdapter = TokensAdapter(requireContext(), false, _isFungible, arrayOf())
         tokensAdapter.also { binding.tokensFound.adapter = it }
 
         tokensAdapter.setTokenClickListener(object : TokensAdapter.TokenClickListener {
@@ -54,6 +54,12 @@ class TokensFragment : Fragment() {
 
     private fun initObservers() {
         _viewModel.contractTokens.observe(viewLifecycleOwner) { contractTokens ->
+            if (!_isFungible) {
+                if (contractTokens.isEmpty())
+                    binding.noItems.visibility = View.VISIBLE
+                else
+                    binding.noItems.visibility = View.GONE
+            }
             tokensAdapter.dataSet = contractTokens.map { Token(it.tokenId, it.tokenId.toString(), it.contractIndex, "", true) }.toTypedArray()
             tokensAdapter.notifyDataSetChanged()
         }

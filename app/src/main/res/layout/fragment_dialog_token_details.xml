@@ -4,24 +4,16 @@
     android:id="@+id/content"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <TextView
-        android:id="@+id/title"
-        style="@style/TextView.Standard"
-        android:layout_marginTop="@dimen/activity_horizontal_margin"
+    <include
+        android:id="@+id/details"
+        layout="@layout/activity_token_details_about"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:textAlignment="center"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/cis_select_tokens_title" />
-    <androidx.appcompat.widget.LinearLayoutCompat
-        style="@style/Layout.Card"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="@dimen/activity_vertical_margin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title"
         app:layout_constraintBottom_toTopOf="@+id/back_to_list" />
     <Button
         android:id="@+id/back_to_list"

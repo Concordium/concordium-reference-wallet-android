@@ -1022,5 +1022,6 @@
     <string name="cis_no_tokens_selected">You haven\'t selected any tokens.</string>
     <string name="cis_tokens_updated">Token list updated</string>
     <string name="cis_tokens_not_updated">No updates made to token list</string>
-
+    <string name="cis_no_collectibles_added">No collectibles have been added to this account yet.</string>
+    <string name="cis_add_more">You can add more tokens from the Manage menu.</string>
 </resources>
