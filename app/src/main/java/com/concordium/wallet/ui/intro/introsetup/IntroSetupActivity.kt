@@ -1,6 +1,7 @@
 package com.concordium.wallet.ui.intro.introsetup
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
@@ -43,9 +44,8 @@ class IntroSetupActivity :
 
     private fun initViews() {
         hideActionBarBack(this)
-
         confirm_create_initial_button.setOnClickListener {
-            gotoCreateInitial()
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=software.concordium.mobilewallet.seedphrase.mainnet")))
         }
         confirm_import_button.setOnClickListener {
             gotoImport()
@@ -66,7 +66,6 @@ class IntroSetupActivity :
     }
 
     private fun gotoImport() {
-        finish()
         val intent = Intent(this, ImportActivity::class.java)
         startActivity(intent)
     }

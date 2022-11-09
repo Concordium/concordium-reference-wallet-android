@@ -207,9 +207,9 @@
     <!-- Intro setup-->
     <string name="intro_setup_title">Getting started</string>
     <string name="intro_setup_header">Are you new to Concordium?</string>
-    <string name="intro_setup_info">If this is your first time using the Concordium blockchain, you must go through a verification process to obtain your Concordium identity and your initial account. You will be guided through this process in the next pages.\n\nIf you have previously used Concordium Legacy Wallet, you can also import already existing accounts if you have a backup from a previous installation of the Concordium Legacy Wallet.\n\nHow would you like to continue?</string>
-    <string name="intro_setup_confirm_create_initial">I want to create my initial account</string>
-    <string name="intro_setup_confirm_import">I want to import existing accounts</string>
+    <string name="intro_setup_info">Going forward all new users of Concordium must use one of the second generation Concordium Wallets. This means that new identities cannot be created with the Concordium Legacy Wallet.\n\nHowever, if you already have existing legacy identities and accounts, you can still access them by importing them.</string>
+    <string name="intro_setup_confirm_create_initial">Get the new wallet</string>
+    <string name="intro_setup_confirm_import">Import legacy IDs and accounts</string>
     <string name="intro_flow_title">Introduction</string>
 
     <!-- Delegation intro -->
@@ -568,6 +568,10 @@
     <!-- Identities overview -->
     <string name="identities_overview_title">Identities</string>
     <string name="identities_overview_no_identities">You have no identities yet.</string>
+    <string name="identities_overview_not_supported_title">New identities no longer supported</string>
+    <string name="identities_overview_not_supported_message">Creation of new identities are no longer supported in the Concordium Legacy Wallet.\n\nIf you need a new identity you must download the new Concordium Wallet for Mobile.</string>
+    <string name="identities_overview_not_supported_download">Download the new wallet</string>
+    <string name="identities_overview_not_supported_okay">Okay</string>
 
     <!-- Identity details -->
     <string name="identity_details_title">Identity</string>
@@ -654,6 +658,11 @@
     <string name="accounts_overview_closing_pools_notice_title">Delegation update</string>
     <string name="accounts_overview_closing_pools_notice_message">The target pools of the following accounts will close soon. If you don’t actively change the target pool, your account will keep earning rewards as a passive delegator after the cool-down.\n\nYou can however already change your target pool via the delegation status menu, if you would rather do that.\n\nAffected delegator accounts:</string>
     <string name="accounts_overview_closing_pools_notice_ok">Remind me next time I open the wallet</string>
+
+    <string name="accounts_overview_not_supported_title">New accounts no longer supported</string>
+    <string name="accounts_overview_not_supported_message">Creation of new accounts is no longer supported in the Concordium Legacy Wallet.\n\nIf you need a new account you must download the new Concordium Wallet for Mobile.</string>
+    <string name="accounts_overview_not_supported_download">Download the new wallet</string>
+    <string name="accounts_overview_not_supported_okay">Okay</string>
 
 
     <!-- New account name -->
