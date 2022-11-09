@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 2,
-    "identityHash": "b47c638ad62463311f8c3540150fbff5",
+    "version": 8,
+    "identityHash": "b272a0d570ba068a89bad21312f7ad76",
     "entities": [
       {
         "tableName": "identity_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `status` TEXT NOT NULL, `detail` TEXT, `code_uri` TEXT NOT NULL, `next_account_number` INTEGER NOT NULL, `identity_provider` TEXT NOT NULL, `identity_object` TEXT, `private_id_object_data_encrypted` TEXT NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `status` TEXT NOT NULL, `detail` TEXT, `code_uri` TEXT NOT NULL, `identity_provider` TEXT NOT NULL, `identity_object` TEXT, `identity_provider_id` INTEGER NOT NULL, `identity_index` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -39,12 +39,6 @@
             "notNull": true
           },
           {
-            "fieldPath": "nextAccountNumber",
-            "columnName": "next_account_number",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
             "fieldPath": "identityProvider",
             "columnName": "identity_provider",
             "affinity": "TEXT",
@@ -57,9 +51,15 @@
             "notNull": false
           },
           {
-            "fieldPath": "privateIdObjectDataEncrypted",
-            "columnName": "private_id_object_data_encrypted",
-            "affinity": "TEXT",
+            "fieldPath": "identityProviderId",
+            "columnName": "identity_provider_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "identityIndex",
+            "columnName": "identity_index",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -69,12 +69,23 @@
           ],
           "autoGenerate": true
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_identity_table_identity_provider_id_identity_index",
+            "unique": true,
+            "columnNames": [
+              "identity_provider_id",
+              "identity_index"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_identity_table_identity_provider_id_identity_index` ON `${TABLE_NAME}` (`identity_provider_id`, `identity_index`)"
+          }
+        ],
         "foreignKeys": []
       },
       {
         "tableName": "account_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `identity_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `address` TEXT NOT NULL, `submission_id` TEXT NOT NULL, `transaction_status` INTEGER NOT NULL, `encrypted_account_data` TEXT NOT NULL, `revealed_attributes` TEXT NOT NULL, `credential` TEXT NOT NULL, `finalized_balance` INTEGER NOT NULL, `current_balance` INTEGER NOT NULL, `total_balance` INTEGER NOT NULL, `total_unshielded_balance` INTEGER NOT NULL, `total_shielded_balance` INTEGER NOT NULL, `finalized_encrypted_balance` TEXT, `current_encrypted_balance` TEXT, `current_balance_status` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `identity_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `address` TEXT NOT NULL, `submission_id` TEXT NOT NULL, `transaction_status` INTEGER NOT NULL, `encrypted_account_data` TEXT NOT NULL, `revealed_attributes` TEXT NOT NULL, `credential` TEXT, `finalized_balance` INTEGER NOT NULL, `current_balance` INTEGER NOT NULL, `total_balance` INTEGER NOT NULL, `total_unshielded_balance` INTEGER NOT NULL, `total_shielded_balance` INTEGER NOT NULL, `finalized_encrypted_balance` TEXT, `current_encrypted_balance` TEXT, `current_balance_status` INTEGER NOT NULL, `total_staked` INTEGER NOT NULL, `total_at_disposal` INTEGER NOT NULL, `read_only` INTEGER NOT NULL, `finalized_account_release_schedule` TEXT, `baker_id` INTEGER, `account_delegation` TEXT, `account_baker` TEXT, `accountIndex` INTEGER, `cred_number` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -128,7 +139,7 @@
             "fieldPath": "credential",
             "columnName": "credential",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "finalizedBalance",
@@ -177,6 +188,60 @@
             "columnName": "current_balance_status",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "totalStaked",
+            "columnName": "total_staked",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "totalAtDisposal",
+            "columnName": "total_at_disposal",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "readOnly",
+            "columnName": "read_only",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "finalizedAccountReleaseSchedule",
+            "columnName": "finalized_account_release_schedule",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "bakerId",
+            "columnName": "baker_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "accountDelegation",
+            "columnName": "account_delegation",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "accountBaker",
+            "columnName": "account_baker",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "accountIndex",
+            "columnName": "accountIndex",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "credNumber",
+            "columnName": "cred_number",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -185,12 +250,22 @@
           ],
           "autoGenerate": true
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_account_table_address",
+            "unique": true,
+            "columnNames": [
+              "address"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_account_table_address` ON `${TABLE_NAME}` (`address`)"
+          }
+        ],
         "foreignKeys": []
       },
       {
         "tableName": "transfer_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `account_id` INTEGER NOT NULL, `amount` INTEGER NOT NULL, `cost` INTEGER NOT NULL, `from_address` TEXT NOT NULL, `to_address` TEXT NOT NULL, `expiry` INTEGER NOT NULL, `created_at` INTEGER NOT NULL, `submission_id` TEXT NOT NULL, `transaction_status` INTEGER NOT NULL, `outcome` INTEGER NOT NULL, `transactionType` TEXT NOT NULL, `newSelfEncryptedAmount` TEXT, `newStartIndex` INTEGER NOT NULL, `nonce` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `account_id` INTEGER NOT NULL, `amount` INTEGER NOT NULL, `cost` INTEGER NOT NULL, `from_address` TEXT NOT NULL, `to_address` TEXT NOT NULL, `expiry` INTEGER NOT NULL, `memo` TEXT, `created_at` INTEGER NOT NULL, `submission_id` TEXT NOT NULL, `transaction_status` INTEGER NOT NULL, `outcome` INTEGER NOT NULL, `transactionType` TEXT NOT NULL, `newSelfEncryptedAmount` TEXT, `newStartIndex` INTEGER NOT NULL, `nonce` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -233,6 +308,12 @@
             "columnName": "expiry",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "memo",
+            "columnName": "memo",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "createdAt",
@@ -349,12 +430,98 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "account_contract_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `account_address` TEXT NOT NULL, `contract_index` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "accountAddress",
+            "columnName": "account_address",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contractIndex",
+            "columnName": "contract_index",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_account_contract_table_account_address_contract_index",
+            "unique": true,
+            "columnNames": [
+              "account_address",
+              "contract_index"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_account_contract_table_account_address_contract_index` ON `${TABLE_NAME}` (`account_address`, `contract_index`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "contract_token_table",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `contract_index` TEXT NOT NULL, `token_id` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contractIndex",
+            "columnName": "contract_index",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tokenId",
+            "columnName": "token_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_contract_token_table_contract_index_token_id",
+            "unique": true,
+            "columnNames": [
+              "contract_index",
+              "token_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_contract_token_table_contract_index_token_id` ON `${TABLE_NAME}` (`contract_index`, `token_id`)"
+          }
+        ],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b47c638ad62463311f8c3540150fbff5')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b272a0d570ba068a89bad21312f7ad76')"
     ]
   }
 }
