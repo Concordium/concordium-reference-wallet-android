@@ -28,6 +28,8 @@ import com.concordium.wallet.ui.intro.introstart.WalletNotSetupActivity
 import com.concordium.wallet.ui.more.SettingsActivity
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.walletconnect.WalletConnectActivity
+import com.walletconnect.android.Core
+import com.walletconnect.android.CoreClient
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -140,6 +142,14 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
                 viewModel.setInitialStateIfNotSet()
                 viewModel.startIdentityUpdate()
                 startCheckForPendingIdentity(this, null, false) {}
+            }
+        }
+
+        val pairings: List<Core.Model.Pairing> = CoreClient.Pairing.getPairings()
+        println("LC -> EXISTING PAIRINGS in MainActivity = ${pairings.count()}")
+        pairings.forEach { pairing ->
+            CoreClient.Pairing.disconnect(pairing.topic) { modelError ->
+                println("LC -> DISCONNECT ERROR ${modelError.throwable.stackTraceToString()}")
             }
         }
     }

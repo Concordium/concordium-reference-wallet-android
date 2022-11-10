@@ -51,5 +51,13 @@ class App : Application(){
         SignClient.initialize(initParams) { modelError ->
             println("LC -> INIT ERROR ${modelError.throwable.stackTraceToString()}")
         }
+
+        val pairings: List<Core.Model.Pairing> = CoreClient.Pairing.getPairings()
+        println("LC -> EXISTING PAIRINGS in App = ${pairings.count()}")
+        pairings.forEach { pairing ->
+            CoreClient.Pairing.disconnect(pairing.topic) { modelError ->
+                println("LC -> DISCONNECT ERROR ${modelError.throwable.stackTraceToString()}")
+            }
+        }
     }
 }

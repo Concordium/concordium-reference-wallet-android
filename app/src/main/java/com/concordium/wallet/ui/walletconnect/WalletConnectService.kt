@@ -12,7 +12,7 @@ import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
 import org.greenrobot.eventbus.EventBus
 
-class WalletConnectService : Service(), SignClient.WalletDelegate {
+class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.CoreDelegate {
     private val binder = LocalBinder()
     private var sessionProposal: Sign.Model.SessionProposal? = null
     private var settledSessionResponseResult: Sign.Model.SettledSessionResponse.Result? = null
@@ -61,6 +61,10 @@ class WalletConnectService : Service(), SignClient.WalletDelegate {
     }
 
     override fun onBind(intent: Intent): IBinder {
+        CoreClient.setDelegate(this)
+        SignClient.setWalletDelegate(this)
+        val pairings: List<Core.Model.Pairing> = CoreClient.Pairing.getPairings()
+        println("LC -> EXISTING PAIRINGS in WalletConnectService = ${pairings.count()}")
         return binder
     }
 
@@ -70,7 +74,6 @@ class WalletConnectService : Service(), SignClient.WalletDelegate {
     }
 
     private fun pairWC(wcUri: String) {
-        SignClient.setWalletDelegate(this)
         println("LC -> CALL PAIR $wcUri")
         val pairingParams = Core.Params.Pair(wcUri)
         CoreClient.Pairing.pair(pairingParams) { modelError ->
@@ -157,8 +160,7 @@ class WalletConnectService : Service(), SignClient.WalletDelegate {
         val sessionTopic = binder.getSessionTopic()
         if (sessionTopic.isNotBlank()) {
             println("LC -> CALL DISCONNECT $sessionTopic")
-            val disconnectParams = Sign.Params.Disconnect(sessionTopic)
-            SignClient.disconnect(disconnectParams) { modelError ->
+            CoreClient.Pairing.disconnect(sessionTopic) { modelError ->
                 println("LC -> DISCONNECT ERROR ${modelError.throwable.stackTraceToString()}")
             }
         }
@@ -174,6 +176,7 @@ class WalletConnectService : Service(), SignClient.WalletDelegate {
 
     override fun onError(error: Sign.Model.Error) {
         println("LC -> onError ${error.throwable.stackTraceToString()}")
+        EventBus.getDefault().post(ConnectionState(false))
     }
 
     override fun onSessionDelete(deletedSession: Sign.Model.DeletedSession) {
@@ -212,6 +215,11 @@ class WalletConnectService : Service(), SignClient.WalletDelegate {
 
     override fun onSessionUpdateResponse(sessionUpdateResponse: Sign.Model.SessionUpdateResponse) {
         println("LC -> onSessionUpdateResponse $sessionUpdateResponse")
+    }
+
+    override fun onPairingDelete(deletedPairing: Core.Model.DeletedPairing) {
+        println("LC -> onPairingDelete $deletedPairing")
+        EventBus.getDefault().post(ConnectionState(false))
     }
 }
 
