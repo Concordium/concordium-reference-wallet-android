@@ -789,7 +789,7 @@
     <string name="transaction_details_value_copied">Copied full value of %1$s</string>
 
     <!-- Wallet Connect -->
-    <string name="wallet_connect_accounts_title">Choose an account to open session</string>
+    <string name="wallet_connect_accounts_title">Choose an account</string>
     <string name="scan_qr_title_wc">Scan to Open Session</string>
     <string name="wallet_connect_choose_account_title">Choose which account you want to open the session with.</string>
     <string name="wallet_connect_connect_session_text_1">You are about to open a session between your account</string>
