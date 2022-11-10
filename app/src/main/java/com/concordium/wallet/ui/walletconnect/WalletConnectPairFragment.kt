@@ -61,8 +61,8 @@ class WalletConnectPairFragment : WalletConnectBaseFragment() {
         _viewModel.permissions.observe(viewLifecycleOwner) { permissions ->
             permissions?.let {
                 binding.servicePermissions.text = permissions.joinToString("\n") { it }
-                binding.progress.visibility = View.GONE
-                binding.preparingConnection.visibility = View.GONE
+                binding.progressContainer.visibility = View.GONE
+                binding.doYouWantToOpen.visibility = View.VISIBLE
                 binding.connect.isEnabled = true
             }
         }
