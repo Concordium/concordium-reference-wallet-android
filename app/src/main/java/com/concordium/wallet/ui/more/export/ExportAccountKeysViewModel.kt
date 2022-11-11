@@ -30,7 +30,7 @@ class ExportAccountKeysViewModel(application: Application) : AndroidViewModel(ap
             val accountKeys = AccountKeys(accountDataKeys, account.credential?.getThreshold() ?: 1)
             val credentials = Credentials(account.credential?.getCredId() ?: "")
             val value = Value(accountKeys, credentials, account.address)
-            val fileContent = Gson().toJson(ExportAccountKeys("concordium-mobile-wallet-account", account.credential?.v ?: 0, BuildConfig.ENV_NAME, value))
+            val fileContent = Gson().toJson(ExportAccountKeys("concordium-browser-wallet-account", account.credential?.v ?: 0, BuildConfig.ENV_NAME, value))
             FileUtil.writeFile(destinationUri, "${account.address}.export", fileContent)
             textResourceInt.postValue(R.string.export_account_keys_file_exported)
         }
