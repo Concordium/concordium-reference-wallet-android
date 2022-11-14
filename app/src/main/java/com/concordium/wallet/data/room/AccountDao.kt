@@ -31,7 +31,7 @@ interface AccountDao {
     @Query("SELECT * FROM account_table WHERE finalized_encrypted_balance IS NOT NULL")
     suspend fun getAllDone(): List<Account>
 
-    @Query("SELECT * FROM account_table WHERE finalized_encrypted_balance IS NOT NULL")
+    @Query("SELECT * FROM account_table WHERE finalized_encrypted_balance IS NOT NULL ORDER BY name ASC")
     suspend fun getAllDoneWithIdentity(): List<AccountWithIdentity>
 
     @Query("SELECT count(*) FROM account_table WHERE transaction_status != :status")
