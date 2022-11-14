@@ -176,7 +176,6 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
 
     override fun onError(error: Sign.Model.Error) {
         println("LC -> onError ${error.throwable.stackTraceToString()}")
-        EventBus.getDefault().post(ConnectionState(false))
     }
 
     override fun onSessionDelete(deletedSession: Sign.Model.DeletedSession) {
