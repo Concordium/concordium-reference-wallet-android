@@ -581,7 +581,7 @@
     <string name="identities_overview_create_account_title">Create new account</string>
     <string name="identities_overview_create_account_select_identity">Select identity to submit account with</string>
     <string name="identities_overview_identity_verified_title">Identity verified</string>
-    <string name="identities_overview_identity_verified_message">Identity %1$s has been verified by the identity provider. You can now start using the identity to create accounts in the Concordium Wallet for Mobile.</string>
+    <string name="identities_overview_identity_verified_message">%1$s has been verified by the identity provider. You can now start using the identity to create accounts in the Concordium Wallet for Mobile.</string>
     <string name="identities_overview_identity_create_account_now">Create account now</string>
     <string name="identities_overview_identity_later">Later</string>
     <string name="identities_overview_identity_rejected_title">Identity rejected</string>
