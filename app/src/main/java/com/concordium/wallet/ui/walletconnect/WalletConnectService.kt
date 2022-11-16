@@ -183,7 +183,7 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
     }
 
     override fun onSessionDelete(deletedSession: Sign.Model.DeletedSession) {
-        println("LC -> onSessionDelete")
+        println("LC -> onSessionDelete $deletedSession")
         EventBus.getDefault().post(ConnectionState(false))
     }
 
