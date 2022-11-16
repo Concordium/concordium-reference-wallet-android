@@ -45,7 +45,7 @@ class App : Application(){
             redirect = "kotlin-wallet-wc:/request"
         )
 
-        CoreClient.initialize(relayServerUrl = relayServerUrl, connectionType = ConnectionType.AUTOMATIC, application = this, metaData = appMetaData)
+        CoreClient.initialize(relayServerUrl = relayServerUrl, connectionType = ConnectionType.MANUAL, application = this, metaData = appMetaData)
         val initParams = Sign.Params.Init(core = CoreClient)
 
         SignClient.initialize(initParams) { modelError ->

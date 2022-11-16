@@ -63,8 +63,9 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
     override fun onBind(intent: Intent): IBinder {
         CoreClient.setDelegate(this)
         SignClient.setWalletDelegate(this)
-        val pairings: List<Core.Model.Pairing> = CoreClient.Pairing.getPairings()
-        println("LC -> EXISTING PAIRINGS in WalletConnectService = ${pairings.count()}")
+        CoreClient.Relay.connect {
+            println("LC -> RELAY CONNECT ERROR $it")
+        }
         return binder
     }
 
@@ -168,6 +169,9 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
         settledSessionResponseResult = null
         settledSessionResponseError = null
         sessionRequest = null
+        CoreClient.Relay.disconnect {
+            println("LC -> RELAY DISCONNECT ERROR $it")
+        }
     }
 
     override fun onConnectionStateChange(state: Sign.Model.ConnectionState) {
@@ -179,7 +183,7 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
     }
 
     override fun onSessionDelete(deletedSession: Sign.Model.DeletedSession) {
-        println("LC -> onSessionDelete")
+        println("LC -> onSessionDelete $deletedSession")
         EventBus.getDefault().post(ConnectionState(false))
     }
 
@@ -200,6 +204,7 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
     }
 
     override fun onSessionSettleResponse(settleSessionResponse: Sign.Model.SettledSessionResponse) {
+        println("LC -> onSessionSettleResponse")
         if (settleSessionResponse is Sign.Model.SettledSessionResponse.Result) {
             println("LC -> onSessionSettleResponse SUCCESS -> ${settleSessionResponse.session.topic}")
             settledSessionResponseResult = settleSessionResponse
