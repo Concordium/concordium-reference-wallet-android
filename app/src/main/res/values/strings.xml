@@ -982,5 +982,6 @@
     <string name="export_account_keys_copied">Copied</string>
     <string name="export_account_keys_to_file">Export to file</string>
     <string name="export_account_keys_file_exported">File exported</string>
+    <string name="wallet_connect_timer_toast">It can take a while to prepare the connection, please hang on. You can also try to decline and reconnect.</string>
 
 </resources>
