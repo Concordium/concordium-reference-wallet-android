@@ -136,10 +136,14 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
 
     private fun gotoMain() {
         _viewModel.disconnect()
-        activity?.finish()
-        val intent = Intent(activity, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        startActivity(intent)
+        Timer().schedule(1000) {
+            activity?.runOnUiThread {
+                activity?.finish()
+                val intent = Intent(activity, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                startActivity(intent)
+            }
+        }
     }
 
     private fun stopPingTimer() {

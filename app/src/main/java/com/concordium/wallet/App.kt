@@ -56,7 +56,7 @@ class App : Application(){
         println("LC -> EXISTING PAIRINGS in App = ${pairings.count()}")
         pairings.forEach { pairing ->
             CoreClient.Pairing.disconnect(pairing.topic) { modelError ->
-                println("LC -> DISCONNECT ERROR ${modelError.throwable.stackTraceToString()}")
+                println("LC -> DISCONNECT ERROR in App ${modelError.throwable.stackTraceToString()}")
             }
         }
     }

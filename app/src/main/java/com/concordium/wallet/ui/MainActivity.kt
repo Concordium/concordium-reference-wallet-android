@@ -148,8 +148,9 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
         val pairings: List<Core.Model.Pairing> = CoreClient.Pairing.getPairings()
         println("LC -> EXISTING PAIRINGS in MainActivity = ${pairings.count()}")
         pairings.forEach { pairing ->
+            println("LC -> CALL DISCONNECT in MainActivity ${pairing.topic}")
             CoreClient.Pairing.disconnect(pairing.topic) { modelError ->
-                println("LC -> DISCONNECT ERROR ${modelError.throwable.stackTraceToString()}")
+                println("LC -> DISCONNECT ERROR in MainActivity ${modelError.throwable.stackTraceToString()}")
             }
         }
     }

@@ -54,7 +54,7 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
             return try {
                 Gson().fromJson(sessionRequest?.request?.params, Params::class.java)
             } catch (ex: Exception) {
-                println("LC -> getSessionRequestParams ERROR ${ex.stackTraceToString()}")
+                println("LC -> getSessionRequestParams ERROR ${throwablesRemoveLineBreaks(ex)}")
                 null
             }
         }
@@ -77,9 +77,9 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
     private fun pairWC(wcUri: String) {
         println("LC -> CALL PAIR $wcUri")
         val pairingParams = Core.Params.Pair(wcUri)
-        CoreClient.Pairing.pair(pairingParams) { modelError ->
-            println("LC -> PAIR ERROR ${modelError.throwable.stackTraceToString()}")
-            EventBus.getDefault().post(PairError(modelError.throwable.message ?: ""))
+        CoreClient.Pairing.pair(pairingParams) { error ->
+            println("LC -> PAIR ERROR ${throwablesRemoveLineBreaks(error.throwable)}")
+            EventBus.getDefault().post(PairError(error.throwable.message ?: ""))
         }
     }
 
@@ -92,7 +92,7 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
                 EventBus.getDefault().post(ConnectionState(true))
             }
             override fun onError(pingError: Sign.Model.Ping.Error) {
-                println("LC -> PING ERROR ${pingError.error.stackTraceToString()}")
+                println("LC -> PING ERROR ${throwablesRemoveLineBreaks(pingError.error)}")
             }
         })
     }
@@ -100,9 +100,9 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
     private fun rejectSessionWC() {
         println("LC -> CALL REJECT SESSION ${binder.getSessionTopic()}")
         val rejectParams = Sign.Params.Reject(sessionProposal?.proposerPublicKey ?: "", "")
-        SignClient.rejectSession(rejectParams) { modelError ->
-            println("LC -> REJECT SESSION ERROR ${modelError.throwable.stackTraceToString()}")
-            EventBus.getDefault().post(RejectError(modelError.throwable.message ?: ""))
+        SignClient.rejectSession(rejectParams) { error ->
+            println("LC -> REJECT SESSION ERROR ${throwablesRemoveLineBreaks(error.throwable)}")
+            EventBus.getDefault().post(RejectError(error.throwable.message ?: ""))
         }
     }
 
@@ -121,9 +121,9 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
                 proposerPublicKey = sessionProposal?.proposerPublicKey ?: "",
                 namespaces = sessionNamespaces
             )
-            SignClient.approveSession(approveParams) { modelError ->
-                println("LC -> APPROVE SESSION ERROR ${modelError.throwable.stackTraceToString()}")
-                EventBus.getDefault().post(ApproveError(modelError.throwable.message ?: ""))
+            SignClient.approveSession(approveParams) { error ->
+                println("LC -> APPROVE SESSION ERROR ${throwablesRemoveLineBreaks(error.throwable)}")
+                EventBus.getDefault().post(ApproveError(error.throwable.message ?: ""))
             }
         }
     }
@@ -137,8 +137,8 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
                 result
             )
         )
-        SignClient.respond(response) { modelError ->
-            println("LC -> RESPOND ERROR ${modelError.throwable.stackTraceToString()}")
+        SignClient.respond(response) { error ->
+            println("LC -> RESPOND ERROR ${throwablesRemoveLineBreaks(error.throwable)}")
         }
     }
 
@@ -152,17 +152,17 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
                 message = message
             )
         )
-        SignClient.respond(responseParams) { modelError ->
-            println("LC -> REJECT ERROR ${modelError.throwable.stackTraceToString()}")
+        SignClient.respond(responseParams) { error ->
+            println("LC -> REJECT ERROR ${throwablesRemoveLineBreaks(error.throwable)}")
         }
     }
 
     private fun disconnectWC() {
         val sessionTopic = binder.getSessionTopic()
         if (sessionTopic.isNotBlank()) {
-            println("LC -> CALL DISCONNECT $sessionTopic")
-            CoreClient.Pairing.disconnect(sessionTopic) { modelError ->
-                println("LC -> DISCONNECT ERROR ${modelError.throwable.stackTraceToString()}")
+            println("LC -> CALL DISCONNECT on CoreClient $sessionTopic")
+            CoreClient.Pairing.disconnect(sessionTopic) { error ->
+                println("LC -> DISCONNECT ERROR on CoreClient ${throwablesRemoveLineBreaks(error.throwable)}")
             }
         }
         sessionProposal = null
@@ -179,7 +179,7 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
     }
 
     override fun onError(error: Sign.Model.Error) {
-        println("LC -> onError ${error.throwable.stackTraceToString()}")
+        println("LC -> onError ${throwablesRemoveLineBreaks(error.throwable)}")
     }
 
     override fun onSessionDelete(deletedSession: Sign.Model.DeletedSession) {
@@ -224,6 +224,10 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
     override fun onPairingDelete(deletedPairing: Core.Model.DeletedPairing) {
         println("LC -> onPairingDelete $deletedPairing")
         EventBus.getDefault().post(ConnectionState(false))
+    }
+
+    private fun throwablesRemoveLineBreaks(throwable: Throwable): String {
+        return throwable.stackTraceToString().replace("\n", " LINEBREAK ")
     }
 }
 
