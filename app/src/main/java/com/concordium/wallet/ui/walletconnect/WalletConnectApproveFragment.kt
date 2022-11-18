@@ -135,7 +135,6 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
     }
 
     private fun gotoMain() {
-        _viewModel.disconnect()
         Timer().schedule(1000) {
             activity?.runOnUiThread {
                 activity?.finish()
@@ -147,18 +146,18 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
     }
 
     private fun stopPingTimer() {
-        pingTimer?.cancel()
-        pingTimer?.purge()
-        pingTimer = null
+        //pingTimer?.cancel()
+        //pingTimer?.purge()
+        //pingTimer = null
     }
 
     private fun startPingTimer() {
-        stopPingTimer()
-        pingTimer = Timer()
-        pingTimer?.schedule(5000) {
-            _viewModel.ping()
-            if (continuePinging)
-                startPingTimer()
-        }
+        //stopPingTimer()
+        //pingTimer = Timer()
+        //pingTimer?.schedule(5000) {
+        //    _viewModel.ping()
+        //    if (continuePinging)
+        //        startPingTimer()
+        //}
     }
 }

@@ -158,11 +158,11 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
     }
 
     private fun disconnectWC() {
-        val sessionTopic = binder.getSessionTopic()
-        if (sessionTopic.isNotBlank()) {
-            println("LC -> CALL DISCONNECT on CoreClient $sessionTopic")
-            CoreClient.Pairing.disconnect(sessionTopic) { error ->
-                println("LC -> DISCONNECT ERROR on CoreClient ${throwablesRemoveLineBreaks(error.throwable)}")
+        val pairings: List<Core.Model.Pairing> = CoreClient.Pairing.getPairings()
+        println("LC -> EXISTING PAIRINGS in Service = ${pairings.count()}")
+        pairings.forEach { pairing ->
+            CoreClient.Pairing.disconnect(pairing.topic) { modelError ->
+                println("LC -> DISCONNECT ERROR in Service ${modelError.throwable.stackTraceToString()}")
             }
         }
         sessionProposal = null
