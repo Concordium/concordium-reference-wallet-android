@@ -8,12 +8,33 @@ import com.walletconnect.android.CoreClient
 import com.walletconnect.android.relay.ConnectionType
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
+import org.matomo.sdk.Matomo
+import org.matomo.sdk.Tracker
 
-class App : Application(){
+import org.matomo.sdk.TrackerBuilder
+import org.matomo.sdk.extra.MatomoApplication
+
+
+class App : MatomoApplication(){
 
     companion object {
         lateinit var appContext: Context
         lateinit var appCore: AppCore
+    }
+    /*
+       private var tracker: Tracker? = null
+
+     @Synchronized
+       fun getTracker(): Tracker? {
+           if (tracker == null) {
+               tracker = TrackerBuilder.createDefault("https://concordium.matomo.cloud/matomo.php", 5)
+                   .build(Matomo.getInstance(this))
+           }
+           return tracker
+       }*/
+
+    override fun onCreateTrackerConfig(): TrackerBuilder {
+        return TrackerBuilder.createDefault("https://concordium.matomo.cloud/matomo.php", 5)
     }
 
     override fun onCreate() {
