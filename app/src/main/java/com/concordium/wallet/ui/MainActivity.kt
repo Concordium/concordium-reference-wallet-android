@@ -29,13 +29,10 @@ import com.concordium.wallet.ui.intro.introstart.WalletNotSetupActivity
 import com.concordium.wallet.ui.more.SettingsActivity
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.walletconnect.WalletConnectActivity
-import com.walletconnect.android.Core
-import com.walletconnect.android.CoreClient
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.matomo.sdk.extra.MatomoApplication
-
 
 class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDelegateImpl() {
     companion object {
@@ -70,7 +67,6 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
         EventBus.getDefault().register(this)
 
         AppTracker((application as MatomoApplication).tracker).trackVersionAndNetwork()
-
     }
 
     private fun setupToolbar() {
@@ -148,15 +144,6 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
                 viewModel.setInitialStateIfNotSet()
                 viewModel.startIdentityUpdate()
                 startCheckForPendingIdentity(this, null, false) {}
-            }
-        }
-
-        val pairings: List<Core.Model.Pairing> = CoreClient.Pairing.getPairings()
-        println("LC -> EXISTING PAIRINGS in MainActivity = ${pairings.count()}")
-        pairings.forEach { pairing ->
-            println("LC -> CALL DISCONNECT in MainActivity ${pairing.topic}")
-            CoreClient.Pairing.disconnect(pairing.topic) { modelError ->
-                println("LC -> DISCONNECT ERROR in MainActivity ${modelError.throwable.stackTraceToString()}")
             }
         }
     }

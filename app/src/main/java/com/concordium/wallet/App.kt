@@ -1,6 +1,5 @@
 package com.concordium.wallet
 
-import android.app.Application
 import android.content.Context
 import com.concordium.wallet.util.Log
 import com.walletconnect.android.Core
@@ -8,12 +7,8 @@ import com.walletconnect.android.CoreClient
 import com.walletconnect.android.relay.ConnectionType
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
-import org.matomo.sdk.Matomo
-import org.matomo.sdk.Tracker
-
 import org.matomo.sdk.TrackerBuilder
 import org.matomo.sdk.extra.MatomoApplication
-
 
 class App : MatomoApplication(){
 
@@ -21,17 +16,6 @@ class App : MatomoApplication(){
         lateinit var appContext: Context
         lateinit var appCore: AppCore
     }
-    /*
-       private var tracker: Tracker? = null
-
-     @Synchronized
-       fun getTracker(): Tracker? {
-           if (tracker == null) {
-               tracker = TrackerBuilder.createDefault("https://concordium.matomo.cloud/matomo.php", 5)
-                   .build(Matomo.getInstance(this))
-           }
-           return tracker
-       }*/
 
     override fun onCreateTrackerConfig(): TrackerBuilder {
         return TrackerBuilder.createDefault("https://concordium.matomo.cloud/matomo.php", 5)
@@ -71,14 +55,6 @@ class App : MatomoApplication(){
 
         SignClient.initialize(initParams) { modelError ->
             println("LC -> INIT ERROR ${modelError.throwable.stackTraceToString()}")
-        }
-
-        val pairings: List<Core.Model.Pairing> = CoreClient.Pairing.getPairings()
-        println("LC -> EXISTING PAIRINGS in App = ${pairings.count()}")
-        pairings.forEach { pairing ->
-            CoreClient.Pairing.disconnect(pairing.topic) { modelError ->
-                println("LC -> DISCONNECT ERROR in App ${modelError.throwable.stackTraceToString()}")
-            }
         }
     }
 }
