@@ -8,6 +8,7 @@ import com.concordium.wallet.data.AccountContractRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.CIS2TokensMetadataItem
+import com.concordium.wallet.data.model.Thumbnail
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.data.room.Account
@@ -44,10 +45,10 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val waitingTokens: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val updateWithSelectedTokensDone: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val stepPageBy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
-    val tokenDetails: MutableLiveData<Pair<String, TokenMetadata>> by lazy { MutableLiveData<Pair<String, TokenMetadata>>() }
+    val tokenDetails: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val hasExistingAccountContract: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val nonSelected: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val contractTokens: MutableLiveData<List<ContractToken>> by lazy { MutableLiveData<List<ContractToken>>() }
+    //val contractTokens: MutableLiveData<List<ContractToken>> by lazy { MutableLiveData<List<ContractToken>>() }
 
     private val proxyRepository = ProxyRepository()
 
@@ -61,8 +62,12 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             accountContracts.forEach { accountContract ->
                 contractTokens.addAll(contractTokensRepository.getTokens(accountContract.contractIndex, isFungible))
             }
+            tokens.clear()
+            tokens.addAll(contractTokens.map { Token(it.tokenId, it.tokenId, "", null, true, it.contractIndex) })
             waiting.postValue(false)
-            this@TokensViewModel.contractTokens.postValue(contractTokens)
+            contractTokens.groupBy { it.contractIndex }.forEach { group ->
+                loadTokensMetadataUrls(group.key, group.value.map { it.tokenId })
+            }
         }
     }
 
@@ -80,7 +85,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             val existingTokens = existingContractTokens.map { it.tokenId }.toSet()
             proxyRepository.getCIS2Tokens(tokenData.contractIndex, "0", from, success = { cis2Tokens ->
                 cis2Tokens.tokens.forEach { token ->
-                    if (existingTokens.contains(token.id))
+                    if (existingTokens.contains(token.token))
                         token.isSelected = true
                 }
                 tokens.addAll(cis2Tokens.tokens)
@@ -151,7 +156,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     selectedTokens.forEach { selectedToken ->
                         val existingContractToken =  contractTokensRepository.find(tokenData.contractIndex, selectedToken.id)
                         if (existingContractToken == null) {
-                            contractTokensRepository.insert(ContractToken(0, tokenData.contractIndex, selectedToken.id, selectedToken.tokenMetadata?.unique ?: false))
+                            contractTokensRepository.insert(ContractToken(0, tokenData.contractIndex, selectedToken.token, selectedToken.tokenMetadata?.unique ?: false))
                             anyChanges = true
                         }
                     }
@@ -167,10 +172,10 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun loadTokensMetadataUrls(tokens: List<Token>) {
         viewModelScope.launch {
-            val tokenIds = tokens.joinToString(",") { it.token }
-            proxyRepository.getCIS2TokenMetadata(tokenData.contractIndex, "0", tokenIds = tokenIds, success = { cis2TokensMetadata ->
+            val commaSeparated = tokens.joinToString(",") { it.token }
+            proxyRepository.getCIS2TokenMetadata(tokenData.contractIndex, "0", tokenIds = commaSeparated, success = { cis2TokensMetadata ->
                 cis2TokensMetadata.forEach {
-                    loadTokenMetadata(it)
+                    loadTokenMetadata(tokenData.contractIndex, it)
                 }
             }, failure = {
                 handleBackendError(it)
@@ -178,19 +183,34 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private fun loadTokenMetadata(cis2TokensMetadataItem: CIS2TokensMetadataItem) {
+    private fun loadTokensMetadataUrls(contractIndex: String, tokenIds: List<String>) {
+        viewModelScope.launch {
+            val commaSeparated = tokenIds.joinToString(",") { it }
+            proxyRepository.getCIS2TokenMetadata(contractIndex, "0", tokenIds = commaSeparated, success = { cis2TokensMetadata ->
+                cis2TokensMetadata.forEach {
+                    loadTokenMetadata(contractIndex, it)
+                }
+            }, failure = {
+                handleBackendError(it)
+            })
+        }
+    }
+
+    private fun loadTokenMetadata(contractIndex: String, cis2TokensMetadataItem: CIS2TokensMetadataItem) {
         println("LC -> ${cis2TokensMetadataItem.metadataURL}")
         if (cis2TokensMetadataItem.metadataURL.isBlank())
             return
 
         viewModelScope.launch {
-            val tokenMetadata = MetadataApiInstance.safeMetadataCall(cis2TokensMetadataItem.metadataURL)
-            if (tokenMetadata != null) {
-                val index = tokens.indexOfFirst { it.token == cis2TokensMetadataItem.tokenId }
-                if (tokens.count() > index) {
+            val index = tokens.indexOfFirst { it.token == cis2TokensMetadataItem.tokenId && it.contractIndex == contractIndex }
+            if (tokens.count() > index && index >= 0) {
+                val tokenMetadata = MetadataApiInstance.safeMetadataCall(cis2TokensMetadataItem.metadataURL)
+                if (tokenMetadata != null) {
                     tokens[index].tokenMetadata = tokenMetadata
-                    tokenDetails.postValue(Pair(cis2TokensMetadataItem.tokenId, tokenMetadata))
+                } else {
+                    tokens[index].tokenMetadata = TokenMetadata(-1, "", "", "", Thumbnail("none"), false)
                 }
+                tokenDetails.postValue(true)
             }
         }
     }

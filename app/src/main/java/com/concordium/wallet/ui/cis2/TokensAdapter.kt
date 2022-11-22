@@ -44,6 +44,11 @@ class TokensAdapter(private val context: Context, private val showCheckBox: Bool
         }
 
         val token = dataSet[position]
+
+
+        println("LC -> THUMB: ${token.tokenMetadata}")
+
+
         token.tokenMetadata?.let { tokenMetadata ->
             if (tokenMetadata.thumbnail.url.isNotBlank()) {
                 Glide.with(context)
@@ -53,6 +58,8 @@ class TokensAdapter(private val context: Context, private val showCheckBox: Bool
                     .fitCenter()
                     .error(R.drawable.ic_token_no_image)
                     .into(holder.binding.tokenIcon)
+            } else if (tokenMetadata.thumbnail.url == "none") {
+                holder.binding.tokenIcon.setImageResource(R.drawable.ic_token_no_image)
             }
             holder.binding.title.text = tokenMetadata.name
             holder.binding.subTitle.text = tokenMetadata.description

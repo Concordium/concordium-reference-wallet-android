@@ -102,6 +102,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     }
 
     fun approveSession() {
+        // binder?.approveSession("0x4460735849b78FD924cF0F21fcA0fFc80c8b16cF") // Ethereum
         binder?.approveSession(walletConnectData.account!!.address)
     }
 
