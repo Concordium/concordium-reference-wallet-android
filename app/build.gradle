@@ -5,7 +5,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def versionBuildNumberSequential = 17
+def versionBuildNumberSequential = 21
 
 def versionBuildNumberMajor = 1
 def versionBuildNumberMinor = 1
@@ -345,4 +345,6 @@ dependencies {
     implementation("com.walletconnect:sign:2.1.0")
 
     implementation 'com.github.bumptech.glide:glide:4.14.2'
+    
+    implementation 'com.github.matomo-org:matomo-sdk-android:4.1.4'
 }

@@ -35,6 +35,7 @@ class WalletConnectActivity : BaseActivity() {
                 accountsView()
         }
         override fun onServiceDisconnected(componentName: ComponentName) {
+            println("LC -> onServiceDisconnected")
         }
     }
 

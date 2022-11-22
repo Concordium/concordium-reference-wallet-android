@@ -76,11 +76,7 @@ abstract class BaseActivity : AppCompatActivity() {
         val share = Intent(Intent.ACTION_SEND)
         share.type = "message/rfc822"
         share.putExtra(Intent.EXTRA_STREAM, fileName)
-        val resInfoList = this.packageManager.queryIntentActivities(share, PackageManager.MATCH_DEFAULT_ONLY)
-        for (resolveInfo in resInfoList) {
-            val packageName = resolveInfo.activityInfo.packageName
-            grantUriPermission(packageName, fileName, Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
+        share.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
         activityResult.launch(Intent.createChooser(share, null))
     }
 

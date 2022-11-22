@@ -5,7 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import com.concordium.wallet.App
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_KEYS
@@ -15,9 +17,11 @@ import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivi
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.common.GenericFlowActivity
 import com.concordium.wallet.uicore.dialog.AuthenticationDialogFragment
+import com.concordium.wallet.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
 
 class BakerRegistrationCloseActivity : BaseDelegationBakerActivity() {
     private lateinit var binding: ActivityBakerRegistrationCloseBinding
@@ -26,7 +30,11 @@ class BakerRegistrationCloseActivity : BaseDelegationBakerActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityBakerRegistrationCloseBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.baker_registration_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.baker_registration_title
+        )
         initViews()
         generateKeys()
     }
@@ -86,6 +94,7 @@ class BakerRegistrationCloseActivity : BaseDelegationBakerActivity() {
             override fun onAnotherApp() {
                 shareBakerFile()
             }
+
             override fun onLocalStorage() {
                 openFolderPicker(getResultFolderPicker)
             }
@@ -97,8 +106,19 @@ class BakerRegistrationCloseActivity : BaseDelegationBakerActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             val bakerKeysJson = viewModel.bakerKeysJson()
             if (!bakerKeysJson.isNullOrEmpty()) {
-                FileUtil.saveFile(App.appContext, DelegationBakerViewModel.FILE_NAME_BAKER_KEYS, bakerKeysJson)
-                shareFile(getResultShare, viewModel.getTempFileWithPath())
+                FileUtil.saveFile(
+                    App.appContext,
+                    DelegationBakerViewModel.FILE_NAME_BAKER_KEYS,
+                    bakerKeysJson
+                )
+
+                val file = File(App.appContext.getFileStreamPath(DelegationBakerViewModel.FILE_NAME_BAKER_KEYS).absolutePath)
+                if (file.exists()) {
+                    val uri = FileProvider.getUriForFile(App.appContext, BuildConfig.APPLICATION_ID, file)
+                    shareFile(getResultShare, uri)
+                } else {
+                    Log.d("File DOESN'T EXIST")
+                }
             }
         }
     }
@@ -121,7 +141,10 @@ class BakerRegistrationCloseActivity : BaseDelegationBakerActivity() {
     private fun continueToBakerConfirmation() {
         val intent = Intent(this, BakerRegistrationConfirmationActivity::class.java)
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
-        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
+        intent.putExtra(
+            DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
+            viewModel.bakerDelegationData
+        )
         startActivityForResultAndHistoryCheck(intent)
     }
 

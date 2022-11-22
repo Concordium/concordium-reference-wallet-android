@@ -1,9 +1,14 @@
 package com.concordium.wallet.ui.walletconnect
 
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentWalletConnectPairBinding
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.WALLET_CONNECT_DATA
 
@@ -11,6 +16,9 @@ class WalletConnectPairFragment : WalletConnectBaseFragment() {
     private var _binding: FragmentWalletConnectPairBinding? = null
     private val binding get() = _binding!!
     private lateinit var _viewModel: WalletConnectViewModel
+
+    private var countDownTimer: CountDownTimer? = null
+    private val TIMER_VALUE = 15000L
 
     companion object {
         @JvmStatic
@@ -22,7 +30,11 @@ class WalletConnectPairFragment : WalletConnectBaseFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentWalletConnectPairBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -32,11 +44,25 @@ class WalletConnectPairFragment : WalletConnectBaseFragment() {
         initViews()
         initObservers()
         _viewModel.pair()
+        countDownTimer = object : CountDownTimer(TIMER_VALUE, 1000) {
+            override fun onTick(millisecondFinished: Long) {
+            }
+            override fun onFinish() {
+                Toast.makeText(requireContext(), getString(R.string.wallet_connect_timer_toast), Toast.LENGTH_LONG).show()
+            }
+        }.start()
+
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        cancelTimer()
         _binding = null
+    }
+
+    private fun cancelTimer() {
+        countDownTimer?.cancel()
+        countDownTimer = null
     }
 
     private fun initViews() {
@@ -46,6 +72,7 @@ class WalletConnectPairFragment : WalletConnectBaseFragment() {
             _viewModel.connect.postValue(true)
         }
         binding.decline.setOnClickListener {
+            cancelTimer()
             binding.decline.isEnabled = false
             _viewModel.rejectSession()
             _viewModel.decline.postValue(true)
@@ -60,6 +87,7 @@ class WalletConnectPairFragment : WalletConnectBaseFragment() {
         }
         _viewModel.permissions.observe(viewLifecycleOwner) { permissions ->
             permissions?.let {
+                cancelTimer()
                 binding.servicePermissions.text = permissions.joinToString("\n") { it }
                 binding.progressContainer.visibility = View.GONE
                 binding.doYouWantToOpen.visibility = View.VISIBLE
