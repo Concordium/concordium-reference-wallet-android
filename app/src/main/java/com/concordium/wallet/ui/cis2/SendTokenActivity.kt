@@ -58,7 +58,7 @@ class SendTokenActivity : BaseActivity() {
             binding.balanceTitle.text = getString(R.string.cis_token_balance, viewModel.sendTokenData.token?.token ?: "")
             binding.balance.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.token?.id?.toLong() ?: 0, true)
         } else {
-            viewModel.sendTokenData.token = Token(0, "default", "0", "")
+            viewModel.sendTokenData.token = Token("0", "default", "0", null, false, "")
         }
         binding.atDisposal.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.account?.getAtDisposal() ?: 0,true)
         binding.amount.setText(CurrencyUtil.formatGTU(0, false))

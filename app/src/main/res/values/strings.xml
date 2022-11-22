@@ -581,7 +581,7 @@
     <string name="identities_overview_create_account_title">Create new account</string>
     <string name="identities_overview_create_account_select_identity">Select identity to submit account with</string>
     <string name="identities_overview_identity_verified_title">Identity verified</string>
-    <string name="identities_overview_identity_verified_message">Identity %1$s has been verified by the identity provider. You can now start using the identity to create accounts in the Concordium Wallet for Mobile.</string>
+    <string name="identities_overview_identity_verified_message">%1$s has been verified by the identity provider. You can now start using the identity to create accounts in the Concordium Wallet for Mobile.</string>
     <string name="identities_overview_identity_create_account_now">Create account now</string>
     <string name="identities_overview_identity_later">Later</string>
     <string name="identities_overview_identity_rejected_title">Identity rejected</string>
@@ -789,7 +789,7 @@
     <string name="transaction_details_value_copied">Copied full value of %1$s</string>
 
     <!-- Wallet Connect -->
-    <string name="wallet_connect_accounts_title">Choose an account to open session</string>
+    <string name="wallet_connect_accounts_title">Choose an account</string>
     <string name="scan_qr_title_wc">Scan to Open Session</string>
     <string name="wallet_connect_choose_account_title">Choose which account you want to open the session with.</string>
     <string name="wallet_connect_connect_session_text_1">You are about to open a session between your account</string>
@@ -840,6 +840,7 @@
     <string name="wallet_connect_message_sign_and_return">Sign &amp; Return</string>
     <string name="wallet_connect_message_signed">The message has been signed and returned.</string>
     <string name="wallet_connect_insufficient_funds">Insufficient funds</string>
+    <string name="wallet_connect_preparing_connection">Preparing connection…</string>
 
     <!-- ***** More ***** -->
 
@@ -980,6 +981,7 @@
     <string name="export_account_keys_copied">Copied</string>
     <string name="export_account_keys_to_file">Export to file</string>
     <string name="export_account_keys_file_exported">File exported</string>
+    <string name="wallet_connect_timer_toast">It can take a while to prepare the connection, please hang on. You can also try to decline and reconnect.</string>
 
     <string name="cis_tab_fungible">Fungible</string>
     <string name="cis_tab_collectibles">Collectibles</string>

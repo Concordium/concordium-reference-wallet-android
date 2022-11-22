@@ -11,15 +11,12 @@ import com.concordium.wallet.databinding.FragmentWalletConnectApproveBinding
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.WALLET_CONNECT_DATA
-import java.util.*
-import kotlin.concurrent.schedule
 
 class WalletConnectApproveFragment : WalletConnectBaseFragment() {
     private var _binding: FragmentWalletConnectApproveBinding? = null
     private val binding get() = _binding!!
     private lateinit var _viewModel: WalletConnectViewModel
     private var didConnectBefore = false
-    private var pingTimer: Timer? = null
     private var continuePinging = true
 
     companion object {
@@ -49,7 +46,6 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        stopPingTimer()
         _binding = null
     }
 
@@ -73,12 +69,10 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
                 binding.header2.text = getString(R.string.wallet_connect_connecting_is_connected_to)
                 binding.waitForActions.visibility = View.VISIBLE
                 (activity as BaseActivity).setActionBarTitle(getString(R.string.wallet_connect_session_with, _viewModel.sessionName()))
-                startPingTimer()
             }
             else {
                 if (didConnectBefore) {
                     continuePinging = false
-                    stopPingTimer()
                     showConnectionLost()
                 } else {
                     binding.statusImageview.setImageResource(R.drawable.ic_logo_icon_pending)
@@ -135,26 +129,9 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
     }
 
     private fun gotoMain() {
-        _viewModel.disconnect()
         activity?.finish()
         val intent = Intent(activity, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
-    }
-
-    private fun stopPingTimer() {
-        pingTimer?.cancel()
-        pingTimer?.purge()
-        pingTimer = null
-    }
-
-    private fun startPingTimer() {
-        stopPingTimer()
-        pingTimer = Timer()
-        pingTimer?.schedule(5000) {
-            _viewModel.ping()
-            if (continuePinging)
-                startPingTimer()
-        }
     }
 }

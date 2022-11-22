@@ -1,6 +1,7 @@
 package com.concordium.wallet.ui.walletconnect
 
 import android.app.Application
+import android.os.CountDownTimer
 import android.text.TextUtils
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -20,12 +21,16 @@ import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.walletconnect.TransactionError
 import com.concordium.wallet.data.walletconnect.TransactionSuccess
+import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
+import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toHex
 import com.google.gson.Gson
 import com.walletconnect.sign.client.Sign
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -72,12 +77,13 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val walletConnectData = WalletConnectData()
     var binder: WalletConnectService.LocalBinder? = null
 
+    private val accountUpdater = AccountUpdater(application, viewModelScope)
     private val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
     private val proxyRepository = ProxyRepository()
     private var submitTransaction: BackendRequest<SubmissionData>? = null
-
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
     private var accountNonce: AccountNonce? = null
+    private var accountUpdaterTimer: CountDownTimer? = null
 
     fun register() {
         EventBus.getDefault().register(this)
@@ -96,6 +102,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     }
 
     fun approveSession() {
+        // binder?.approveSession("0x4460735849b78FD924cF0F21fcA0fFc80c8b16cF") // Ethereum
         binder?.approveSession(walletConnectData.account!!.address)
     }
 
@@ -113,6 +120,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     fun disconnect() {
         binder?.disconnect()
+        accountUpdaterTimer?.cancel()
     }
 
     fun loadAccounts() {
@@ -273,6 +281,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                 println("LC -> submitTransaction SUCCESS = ${it.submissionId}")
                 transactionSubmittedSuccess.postValue(Gson().toJson(TransactionSuccess(it.submissionId)))
                 waiting.postValue(false)
+                initializeAccountUpdater()
             },
             {
                 println("LC -> submitTransaction ERROR ${it.stackTraceToString()}")
@@ -294,6 +303,27 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                 messageSignedSuccess.postValue(Gson().toJson(signMessageOutput))
             }
         }
+    }
+
+    private fun initializeAccountUpdater() {
+        accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
+            override fun onDone(totalBalances: TotalBalancesData) {
+                walletConnectData.account?.let {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        walletConnectData.account = accountRepository.findById(it.id)
+                    }
+                }
+            }
+            override fun onError(stringRes: Int) { }
+            override fun onNewAccountFinalized(accountName: String) { }
+        })
+        accountUpdaterTimer = object: CountDownTimer(Long.MAX_VALUE, 5000) {
+            override fun onTick(millisUntilFinished: Long) {
+                walletConnectData.account?.let { accountUpdater.updateForAccount(it) }
+            }
+            override fun onFinish() {}
+        }
+        accountUpdaterTimer?.start()
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

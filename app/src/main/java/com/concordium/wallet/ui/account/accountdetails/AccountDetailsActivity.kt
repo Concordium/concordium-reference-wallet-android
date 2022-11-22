@@ -260,6 +260,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun showFindTokensDialog() {
+        viewModelTokens.tokenData.contractIndex = ""
         lookForNewTokensFragment = LookForNewTokensFragment.newInstance(viewModelTokens)
         lookForNewTokensFragment?.show(supportFragmentManager, "")
     }

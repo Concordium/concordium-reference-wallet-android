@@ -65,9 +65,9 @@ class ContractAddressFragment : TokensBaseFragment() {
     }
 
     private fun initObservers() {
-        _viewModel.waitingTokens.observe(viewLifecycleOwner) { waiting ->
+        _viewModel.lookForTokens.observe(viewLifecycleOwner) { waiting ->
             showWaiting(waiting)
-            if (!waiting && _viewModel.tokens.isEmpty()) {
+            if (!waiting && _viewModel.tokens.isEmpty() && _viewModel.tokenData.contractIndex.isNotBlank()) {
                 error(true)
             } else {
                 error(false)

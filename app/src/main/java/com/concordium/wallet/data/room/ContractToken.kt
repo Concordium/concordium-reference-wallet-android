@@ -10,5 +10,7 @@ data class ContractToken(
     @ColumnInfo(name = "contract_index")
     val contractIndex: String,
     @ColumnInfo(name = "token_id")
-    val tokenId: Int
+    val tokenId: String,
+    @ColumnInfo(name = "is_fungible")
+    val isFungible: Boolean
 ) : Serializable

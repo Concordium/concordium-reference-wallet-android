@@ -62,6 +62,7 @@ class SelectTokensFragment : TokensBaseFragment() {
         binding.tokensFound.layoutManager = LinearLayoutManager(activity)
         tokensAdapter = TokensAdapter(requireActivity(), showCheckBox = true, showLastRow = false, dataSet = arrayOf())
         tokensAdapter.also { binding.tokensFound.adapter = it }
+        tokensAdapter.dataSet = _viewModel.tokens.toTypedArray()
 
         binding.tokensFound.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -70,7 +71,7 @@ class SelectTokensFragment : TokensBaseFragment() {
                 val visibleItemCount = layoutManager.childCount
                 val totalItemCount = layoutManager.itemCount
                 val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-                if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0) {
+                if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount > 3) {
                     _viewModel.lookForTokens(from = _viewModel.tokens[_viewModel.tokens.size - 1].id)
                 }
             }
@@ -108,16 +109,18 @@ class SelectTokensFragment : TokensBaseFragment() {
     }
 
     private fun initObservers() {
-        _viewModel.waitingTokens.observe(viewLifecycleOwner) { waiting ->
+        _viewModel.lookForTokens.observe(viewLifecycleOwner) { waiting ->
             if (!waiting) {
                 tokensAdapter.dataSet = _viewModel.tokens.filter {
-                    it.token.uppercase().contains(currentFilter)
+                    it.token.uppercase().contains(currentFilter) ||
+                        (it.tokenMetadata?.name != null && it.tokenMetadata!!.name.uppercase().contains(currentFilter)) ||
+                        (it.tokenMetadata?.description != null && it.tokenMetadata!!.description.uppercase().contains(currentFilter))
                 }.toTypedArray()
                 tokensAdapter.notifyDataSetChanged()
             }
         }
-        _viewModel.tokenDetails.observe(viewLifecycleOwner) { tokenId ->
-            tokensAdapter.notifyItemChanged(_viewModel.findTokenPositionById(tokenId))
+        _viewModel.tokenDetails.observe(viewLifecycleOwner) {
+            tokensAdapter.notifyDataSetChanged()
         }
         _viewModel.hasExistingAccountContract.observe(viewLifecycleOwner) { hasExistingAccountContract ->
             if (hasExistingAccountContract)

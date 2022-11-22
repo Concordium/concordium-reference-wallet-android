@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
+import com.concordium.wallet.core.tracking.AppTracker
 import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.databinding.ActivityMainBinding
 import com.concordium.wallet.ui.account.accountsoverview.AccountsOverviewFragment
@@ -31,6 +32,7 @@ import com.concordium.wallet.ui.walletconnect.WalletConnectActivity
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import org.matomo.sdk.extra.MatomoApplication
 
 class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDelegateImpl() {
     companion object {
@@ -63,6 +65,8 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
         }
 
         EventBus.getDefault().register(this)
+
+        AppTracker((application as MatomoApplication).tracker).trackVersionAndNetwork()
     }
 
     private fun setupToolbar() {

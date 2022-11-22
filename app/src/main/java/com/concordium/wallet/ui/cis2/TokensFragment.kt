@@ -53,14 +53,17 @@ class TokensFragment : Fragment() {
     }
 
     private fun initObservers() {
-        _viewModel.contractTokens.observe(viewLifecycleOwner) { contractTokens ->
+        _viewModel.waiting.observe(viewLifecycleOwner) { waiting ->
             if (!_isFungible) {
-                if (contractTokens.isEmpty())
+                if (_viewModel.tokens.isEmpty())
                     binding.noItems.visibility = View.VISIBLE
                 else
                     binding.noItems.visibility = View.GONE
             }
-            tokensAdapter.dataSet = contractTokens.map { Token(it.tokenId, it.tokenId.toString(), it.contractIndex, "", true) }.toTypedArray()
+            tokensAdapter.dataSet = _viewModel.tokens.toTypedArray()
+            tokensAdapter.notifyDataSetChanged()
+        }
+        _viewModel.tokenDetails.observe(viewLifecycleOwner) {
             tokensAdapter.notifyDataSetChanged()
         }
     }

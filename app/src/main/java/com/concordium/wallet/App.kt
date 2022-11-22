@@ -1,6 +1,5 @@
 package com.concordium.wallet
 
-import android.app.Application
 import android.content.Context
 import com.concordium.wallet.util.Log
 import com.walletconnect.android.Core
@@ -8,12 +7,18 @@ import com.walletconnect.android.CoreClient
 import com.walletconnect.android.relay.ConnectionType
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
+import org.matomo.sdk.TrackerBuilder
+import org.matomo.sdk.extra.MatomoApplication
 
-class App : Application(){
+class App : MatomoApplication(){
 
     companion object {
         lateinit var appContext: Context
         lateinit var appCore: AppCore
+    }
+
+    override fun onCreateTrackerConfig(): TrackerBuilder {
+        return TrackerBuilder.createDefault("https://concordium.matomo.cloud/matomo.php", 5)
     }
 
     override fun onCreate() {

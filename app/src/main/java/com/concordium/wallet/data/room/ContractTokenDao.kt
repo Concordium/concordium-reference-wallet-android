@@ -5,7 +5,10 @@ import androidx.room.*
 @Dao
 interface ContractTokenDao {
     @Query("SELECT * FROM contract_token_table WHERE contract_index = :contractIndex")
-    fun getTokensByContractIndex(contractIndex: String): List<ContractToken>
+    fun getTokens(contractIndex: String): List<ContractToken>
+
+    @Query("SELECT * FROM contract_token_table WHERE contract_index = :contractIndex AND is_fungible = :isFungible")
+    fun getTokens(contractIndex: String, isFungible: Boolean): List<ContractToken>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg contractToken: ContractToken)
@@ -17,5 +20,5 @@ interface ContractTokenDao {
     suspend fun delete(contractToken: ContractToken)
 
     @Query("SELECT * FROM contract_token_table WHERE contract_index = :contractIndex AND token_id = :tokenId")
-    fun find(contractIndex: String, tokenId: Int): ContractToken?
+    fun find(contractIndex: String, tokenId: String): ContractToken?
 }
