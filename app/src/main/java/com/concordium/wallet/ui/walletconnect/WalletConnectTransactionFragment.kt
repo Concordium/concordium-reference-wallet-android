@@ -10,8 +10,9 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentWalletConnectTransactionBinding
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.WALLET_CONNECT_DATA
+import com.google.gson.ExclusionStrategy
+import com.google.gson.FieldAttributes
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
 
 class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
     private var _binding: FragmentWalletConnectTransactionBinding? = null
@@ -54,7 +55,7 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
             binding.accountToSendFrom.text = "${account.name}\n\n$line1\n$line2"
         }
         binding.amount.text = CurrencyUtil.formatGTU(_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.amount ?: "", true)
-        binding.contractAddress.text = "${_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.address?.index} ${_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.address?.subIndex}"
+        binding.contractAddress.text = "${_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.address?.index}"
         binding.parameters.text = prettyPrintJson()
         binding.reject.setOnClickListener {
             binding.reject.isEnabled = false
@@ -87,10 +88,19 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
     }
 
     private fun prettyPrintJson(): String {
-        _viewModel.binder?.getSessionRequestParamsAsString()?.let { jsonString ->
-            val json = JsonParser.parseString(jsonString).asJsonObject
-            val gson = GsonBuilder().setPrettyPrinting().create()
-            return gson.toJson(json)
+        _viewModel.binder?.getSessionRequestParams()?.let { params ->
+            params.payloadObj = params.parsePayload()
+            params.payload = ""
+            val strategy: ExclusionStrategy = object : ExclusionStrategy {
+                override fun shouldSkipField(f: FieldAttributes): Boolean {
+                    return f.name == "payload"
+                }
+                override fun shouldSkipClass(clazz: Class<*>?): Boolean {
+                    return false
+                }
+            }
+            val gson = GsonBuilder().setPrettyPrinting().addSerializationExclusionStrategy(strategy).create()
+            return gson.toJson(params).replace("payloadObj", "payload")
         }
         return ""
     }
