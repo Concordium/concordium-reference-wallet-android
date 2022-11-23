@@ -10,7 +10,8 @@ import com.concordium.wallet.data.room.typeconverter.GlobalTypeConverters
     version = VERSION_NUMBER,
     exportSchema = true,
     autoMigrations = [
-        AutoMigration (from = 7, to = 8)
+        AutoMigration (from = 7, to = 8),
+        AutoMigration (from = 8, to = 9)
     ]
 )
 @TypeConverters(GlobalTypeConverters::class)
@@ -25,7 +26,7 @@ abstract class WalletDatabase : RoomDatabase() {
     abstract fun contractTokenDao(): ContractTokenDao
 
     companion object {
-        const val VERSION_NUMBER = 8
+        const val VERSION_NUMBER = 9
 
         // Singleton prevents multiple instances of database opening at the same time.
         @Volatile
