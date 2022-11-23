@@ -54,7 +54,7 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
             binding.accountToSendFrom.text = "${account.name}\n\n$line1\n$line2"
         }
         binding.amount.text = CurrencyUtil.formatGTU(_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.amount ?: "", true)
-        binding.contractAddress.text = "${_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.address?.index} ${_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.address?.subIndex}"
+        binding.contractAddress.text = "${_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.address?.index}"
         binding.parameters.text = prettyPrintJson()
         binding.reject.setOnClickListener {
             binding.reject.isEnabled = false
