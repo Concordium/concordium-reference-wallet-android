@@ -1,5 +1,9 @@
 package com.concordium.wallet.ui.more
 
+import android.app.AlarmManager
+import android.app.AlertDialog
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -8,6 +12,7 @@ import com.concordium.wallet.AppConfig
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivitySettingsBinding
+import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
 import com.concordium.wallet.ui.more.about.AboutActivity
@@ -15,6 +20,8 @@ import com.concordium.wallet.ui.more.alterpassword.AlterPasswordActivity
 import com.concordium.wallet.ui.more.dev.DevActivity
 import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessActivity
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
+import java.io.File
+import kotlin.system.exitProcess
 
 class SettingsActivity : BaseActivity() {
     private lateinit var binding: ActivitySettingsBinding
@@ -59,7 +66,51 @@ class SettingsActivity : BaseActivity() {
             alterPassword()
         }
 
+        binding.walletConnectLayout.setOnClickListener {
+            clearWalletConnectAndRestart()
+        }
+
         initializeAppVersion()
+    }
+
+    private fun clearWalletConnectAndRestart() {
+        showConfirmDeleteWalletConnect()
+    }
+
+    private fun showConfirmDeleteWalletConnect() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.wallet_connect_clear_data_warning_title)
+        builder.setMessage(getString(R.string.wallet_connect_clear_data_warning_message))
+        builder.setPositiveButton(getString(R.string.wallet_connect_clear_data_warning_ok)) { _, _ ->
+            deleteWCDatabaseAndRestart()
+        }
+        builder.setNegativeButton(getString(R.string.wallet_connect_clear_data_warning_cancel)) { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.create().show()
+    }
+
+    private fun deleteWCDatabaseAndRestart() {
+        try {
+            val path = dataDir.absolutePath
+            File("$path/databases/WalletConnectAndroidCore.db").delete()
+            File("$path/databases/WalletConnectV2.db").delete()
+            restartApp()
+        } catch (ex: Exception) {
+            println(ex.stackTraceToString())
+        }
+    }
+
+    private fun restartApp () {
+        try {
+            val intent = Intent(applicationContext, MainActivity::class.java)
+            val pendingIntent = PendingIntent.getActivity(applicationContext,9999, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT)
+            val alarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            alarmManager[AlarmManager.RTC, System.currentTimeMillis() + 100] = pendingIntent
+            exitProcess(0)
+        } catch (ex: Exception) {
+            println(ex.stackTraceToString())
+        }
     }
 
     private fun gotoDevConfig() {
