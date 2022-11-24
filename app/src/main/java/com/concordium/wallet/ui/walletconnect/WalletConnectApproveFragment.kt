@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.walletconnect
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +18,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
     private val binding get() = _binding!!
     private lateinit var _viewModel: WalletConnectViewModel
     private var didConnectBefore = false
-    private var continuePinging = true
+    private var timeoutTimer: CountDownTimer? = null
 
     companion object {
         @JvmStatic
@@ -42,10 +43,12 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
             _viewModel.waiting.postValue(true)
             _viewModel.approveSession()
         }
+        startTimeOutTimer()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        stopTimeOutTimer()
         _binding = null
     }
 
@@ -62,6 +65,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         _viewModel.connectStatus.observe(viewLifecycleOwner) { isConnected ->
             _viewModel.waiting.postValue(false)
             if (isConnected) {
+                stopTimeOutTimer()
                 didConnectBefore = true
                 binding.statusImageview.setImageResource(R.drawable.ic_big_logo_ok)
                 binding.disconnect.isEnabled = true
@@ -72,7 +76,6 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
             }
             else {
                 if (didConnectBefore) {
-                    continuePinging = false
                     showConnectionLost()
                 } else {
                     binding.statusImageview.setImageResource(R.drawable.ic_logo_icon_pending)
@@ -88,6 +91,22 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
             _viewModel.waiting.postValue(false)
             showTryApproveAgain()
         }
+    }
+
+    private fun startTimeOutTimer() {
+        timeoutTimer = object : CountDownTimer(15000, 1000) {
+            override fun onTick(millisecondFinished: Long) {
+            }
+            override fun onFinish() {
+                if (!didConnectBefore)
+                    showTryApproveAgain()
+            }
+        }.start()
+    }
+
+    private fun stopTimeOutTimer() {
+        timeoutTimer?.cancel()
+        timeoutTimer = null
     }
 
     private fun showTryApproveAgain() {
