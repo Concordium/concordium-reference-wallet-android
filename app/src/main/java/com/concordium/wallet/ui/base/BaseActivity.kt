@@ -33,6 +33,7 @@ import javax.crypto.Cipher
 abstract class BaseActivity : AppCompatActivity() {
     private var titleView: TextView? = null
     private val isStageNet: Boolean get() = (BuildConfig.ENV_NAME == "staging")
+    private val isTestNet: Boolean get() = (BuildConfig.ENV_NAME == "prod_testnet")
     protected lateinit var popup: Popup
     protected lateinit var dialogs: Dialogs
     var isActive = false
@@ -44,7 +45,7 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (!BuildConfig.DEBUG && !isStageNet) {
+        if (!BuildConfig.DEBUG && !isStageNet && !isTestNet) {
             window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         }
 
