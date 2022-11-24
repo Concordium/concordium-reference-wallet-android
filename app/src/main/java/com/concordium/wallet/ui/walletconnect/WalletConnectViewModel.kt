@@ -97,10 +97,6 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         binder?.pair(walletConnectData.wcUri ?: "")
     }
 
-    fun ping() {
-        binder?.ping()
-    }
-
     fun approveSession() {
         binder?.approveSession(walletConnectData.account!!.address)
     }
