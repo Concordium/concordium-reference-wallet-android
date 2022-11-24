@@ -10,5 +10,6 @@ data class Token (
     var isSelected: Boolean = false,
     var contractIndex: String,
     var isCCDToken: Boolean = false,
-    var balance: Long = 0
+    var totalBalance: Long = 0,
+    var atDisposal: Long = 0
 ): Serializable

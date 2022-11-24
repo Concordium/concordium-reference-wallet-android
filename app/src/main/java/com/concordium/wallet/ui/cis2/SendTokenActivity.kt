@@ -41,8 +41,12 @@ class SendTokenActivity : BaseActivity() {
         binding = ActivitySendTokenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel.sendTokenData.account = intent.getSerializable(ACCOUNT, Account::class.java)
-        if (intent.hasExtra(TOKEN))
+        if (intent.hasExtra(TOKEN)) {
             viewModel.sendTokenData.token = intent.getSerializable(TOKEN, Token::class.java)
+            updateWithToken(viewModel.sendTokenData.token)
+        } else {
+            viewModel.loadCCDDefaultToken(viewModel.sendTokenData.account?.address ?: "")
+        }
         initViews()
         initObservers()
     }
@@ -54,15 +58,7 @@ class SendTokenActivity : BaseActivity() {
 
     private fun initViews() {
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.cis_send_funds)
-        if (viewModel.sendTokenData.token != null) {
-            binding.balanceTitle.text = getString(R.string.cis_token_balance, viewModel.sendTokenData.token?.token ?: "")
-            binding.balance.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.token?.id?.toLong() ?: 0, true)
-        } else {
-            viewModel.sendTokenData.token = Token("0", "default", "0", null, false, "")
-        }
-        binding.atDisposal.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.account?.getAtDisposal() ?: 0,true)
         binding.amount.setText(CurrencyUtil.formatGTU(0, false))
-        initializeSearchToken()
         initializeAmount()
         initializeMax()
         initializeMemo()
@@ -222,6 +218,20 @@ class SendTokenActivity : BaseActivity() {
         }
         viewModel.feeReady.observe(this) { fee ->
             binding.fee.text = getString(R.string.cis_estimated_fee, CurrencyUtil.formatGTU(fee, true))
+        }
+        viewModel.defaultToken.observe(this) { token ->
+            viewModel.sendTokenData.token = token
+            updateWithToken(token)
+        }
+    }
+
+    private fun updateWithToken(token: Token?) {
+        token?.let {
+            binding.balanceTitle.text = getString(R.string.cis_token_balance, it.token)
+            binding.balance.text = CurrencyUtil.formatGTU(it.totalBalance, true)
+            binding.atDisposal.text = CurrencyUtil.formatGTU(it.atDisposal,true)
+            binding.searchToken.tokenShortName.text = it.token
+            initializeSearchToken()
         }
     }
 

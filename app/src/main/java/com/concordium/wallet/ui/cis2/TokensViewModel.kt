@@ -16,6 +16,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountContract
 import com.concordium.wallet.data.room.ContractToken
 import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
@@ -65,9 +66,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             tokens.clear()
             if (isFungible) {
                 // On fungible tab we add CCD as default at the top
-                val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
-                val account = accountRepository.findByAddress(accountAddress)
-                tokens.add(Token("", "", "", null, false, "", true, account?.totalBalance ?: 0))
+                tokens.add(getCCDDefaultToken(accountAddress))
             }
             tokens.addAll(contractTokens.map { Token(it.tokenId, it.tokenId, "", null, true, it.contractIndex) })
             waiting.postValue(false)
@@ -174,6 +173,13 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
     fun stepPage(by: Int) {
         stepPageBy.postValue(by)
+    }
+
+    private suspend fun getCCDDefaultToken(accountAddress: String): Token {
+        val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+        val account = accountRepository.findByAddress(accountAddress)
+        val atDisposal = account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) ?: 0
+        return Token("", "CCD", "", null, false, "", true, account?.totalBalance ?: 0, atDisposal)
     }
 
     private fun loadTokensMetadataUrls(tokens: List<Token>) {

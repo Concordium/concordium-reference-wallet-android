@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.data.AccountContractRepository
+import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
@@ -32,6 +33,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val transactionReady: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val feeReady: MutableLiveData<Long> by lazy { MutableLiveData<Long>() }
+    val defaultToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
 
     fun loadTokens() {
         waiting.postValue(true)
@@ -64,6 +66,15 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch {
             waiting.postValue(false)
             feeReady.postValue(12300)
+        }
+    }
+
+    fun loadCCDDefaultToken(accountAddress: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+            val account = accountRepository.findByAddress(accountAddress)
+            val atDisposal = account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) ?: 0
+            defaultToken.postValue(Token("", "CCD", "", null, false, "", true, account?.totalBalance ?: 0, atDisposal))
         }
     }
 }
