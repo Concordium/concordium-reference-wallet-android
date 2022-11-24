@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
@@ -25,6 +26,7 @@ import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
 import com.concordium.wallet.util.getSerializable
+import javax.crypto.Cipher
 
 class SendTokenActivity : BaseActivity() {
     private lateinit var binding: ActivitySendTokenBinding
@@ -41,19 +43,19 @@ class SendTokenActivity : BaseActivity() {
         binding = ActivitySendTokenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel.sendTokenData.account = intent.getSerializable(ACCOUNT, Account::class.java)
+        initObservers()
         if (intent.hasExtra(TOKEN)) {
             viewModel.sendTokenData.token = intent.getSerializable(TOKEN, Token::class.java)
             updateWithToken(viewModel.sendTokenData.token)
+            initViews()
         } else {
             viewModel.loadCCDDefaultToken(viewModel.sendTokenData.account?.address ?: "")
         }
-        initViews()
-        initObservers()
     }
 
-    override fun onResume() {
-        super.onResume()
-        binding.send.isEnabled = true
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.dispose()
     }
 
     private fun initViews() {
@@ -66,11 +68,14 @@ class SendTokenActivity : BaseActivity() {
         initializeAddressBook()
         initializeScanQrCode()
         initializeSend()
+        initializeSearchToken()
+        viewModel.loadTransactionFee()
+        viewModel.getGlobalInfo()
     }
 
     private fun initializeSend() {
         binding.send.setOnClickListener {
-            if (binding.receiver.text.toString().isNullOrEmpty()) {
+            if (binding.receiver.text.toString().isEmpty()) {
                 binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.text_pink))
                 binding.contractAddressError.text = getString(R.string.cis_enter_receiver_address)
                 binding.contractAddressError.visibility = View.VISIBLE
@@ -93,13 +98,24 @@ class SendTokenActivity : BaseActivity() {
     private fun initializeAmount() {
         binding.amount.addTextChangedListener {
             viewModel.loadTransactionFee()
+            enableSend()
         }
     }
 
     private fun initializeMax() {
+        binding.max.isEnabled = false
         binding.max.setOnClickListener {
-            //binding.amount.setText(CurrencyUtil.formatGTU(viewModel.sendTokenData.token?.balance ?: 0, false))
+            binding.amount.setText(CurrencyUtil.formatGTU(viewModel.sendTokenData.max ?: 0, false))
+            enableSend()
         }
+    }
+
+    private fun enableSend() {
+        val amountText = binding.amount.text.toString().replace(",", "").replace(".", "").trim()
+        if (amountText.isEmpty())
+            binding.send.isEnabled = false
+        else
+            binding.send.isEnabled = (amountText.toLong() > 0)
     }
 
     private fun initializeMemo() {
@@ -113,6 +129,7 @@ class SendTokenActivity : BaseActivity() {
                 binding.memoClear.setOnClickListener {
                     binding.memo.text = getString(R.string.cis_optional_add_memo)
                     binding.memoClear.visibility = View.GONE
+                    viewModel.sendTokenData.memo = null
                 }
             }
         }
@@ -162,6 +179,7 @@ class SendTokenActivity : BaseActivity() {
                 it.data?.getStringExtra(AddMemoActivity.EXTRA_MEMO)?.let { memo ->
                     binding.memo.text = memo
                     binding.memoClear.visibility = View.VISIBLE
+                    viewModel.sendTokenData.memo = memo
                 }
             }
         }
@@ -218,10 +236,30 @@ class SendTokenActivity : BaseActivity() {
         }
         viewModel.feeReady.observe(this) { fee ->
             binding.fee.text = getString(R.string.cis_estimated_fee, CurrencyUtil.formatGTU(fee, true))
+            binding.max.isEnabled = true
         }
         viewModel.defaultToken.observe(this) { token ->
             viewModel.sendTokenData.token = token
+            initViews()
             updateWithToken(token)
+        }
+        viewModel.errorInt.observe(this) {
+            Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
+        }
+        viewModel.showAuthentication.observe(this) {
+            showAuthentication(authenticateText(), object : AuthenticationCallback {
+                override fun getCipherForBiometrics() : Cipher? {
+                    return viewModel.getCipherForBiometrics()
+                }
+                override fun onCorrectPassword(password: String) {
+                    viewModel.continueWithPassword(password)
+                }
+                override fun onCipher(cipher: Cipher) {
+                    viewModel.checkLogin(cipher)
+                }
+                override fun onCancelled() {
+                }
+            })
         }
     }
 
@@ -231,7 +269,6 @@ class SendTokenActivity : BaseActivity() {
             binding.balance.text = CurrencyUtil.formatGTU(it.totalBalance, true)
             binding.atDisposal.text = CurrencyUtil.formatGTU(it.atDisposal,true)
             binding.searchToken.tokenShortName.text = it.token
-            initializeSearchToken()
         }
     }
 
