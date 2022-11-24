@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.FragmentDialogSelectTokensBinding
-import com.concordium.wallet.ui.cis2.TokensAdapter
+import com.concordium.wallet.ui.cis2.TokensAddAdapter
 import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.ui.cis2.TokensViewModel.Companion.TOKEN_DATA
@@ -19,7 +19,7 @@ class SelectTokensFragment : TokensBaseFragment() {
     private var _binding: FragmentDialogSelectTokensBinding? = null
     private val binding get() = _binding!!
     private lateinit var _viewModel: TokensViewModel
-    private lateinit var tokensAdapter: TokensAdapter
+    private lateinit var tokensAddAdapter: TokensAddAdapter
     private var firstTime = true
     private var currentFilter = ""
 
@@ -47,7 +47,7 @@ class SelectTokensFragment : TokensBaseFragment() {
     override fun onResume() {
         super.onResume()
         if (!firstTime)
-            tokensAdapter.notifyDataSetChanged()
+            tokensAddAdapter.notifyDataSetChanged()
         firstTime = false
         _viewModel.hasExistingTokens()
         binding.nonSelected.visibility = View.INVISIBLE
@@ -60,9 +60,9 @@ class SelectTokensFragment : TokensBaseFragment() {
 
     private fun initViews() {
         binding.tokensFound.layoutManager = LinearLayoutManager(activity)
-        tokensAdapter = TokensAdapter(requireActivity(), showCheckBox = true, showLastRow = false, dataSet = arrayOf())
-        tokensAdapter.also { binding.tokensFound.adapter = it }
-        tokensAdapter.dataSet = _viewModel.tokens.toTypedArray()
+        tokensAddAdapter = TokensAddAdapter(requireActivity(), showCheckBox = true, dataSet = arrayOf())
+        tokensAddAdapter.also { binding.tokensFound.adapter = it }
+        tokensAddAdapter.dataSet = _viewModel.tokens.toTypedArray()
 
         binding.tokensFound.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -90,7 +90,7 @@ class SelectTokensFragment : TokensBaseFragment() {
             }
         })
 
-        tokensAdapter.setTokenClickListener(object : TokensAdapter.TokenClickListener {
+        tokensAddAdapter.setTokenClickListener(object : TokensAddAdapter.TokenClickListener {
             override fun onRowClick(token: Token) {
                 _viewModel.stepPage(1)
             }
@@ -111,16 +111,16 @@ class SelectTokensFragment : TokensBaseFragment() {
     private fun initObservers() {
         _viewModel.lookForTokens.observe(viewLifecycleOwner) { waiting ->
             if (!waiting) {
-                tokensAdapter.dataSet = _viewModel.tokens.filter {
+                tokensAddAdapter.dataSet = _viewModel.tokens.filter {
                     it.token.uppercase().contains(currentFilter) ||
                         (it.tokenMetadata?.name != null && it.tokenMetadata!!.name.uppercase().contains(currentFilter)) ||
                         (it.tokenMetadata?.description != null && it.tokenMetadata!!.description.uppercase().contains(currentFilter))
                 }.toTypedArray()
-                tokensAdapter.notifyDataSetChanged()
+                tokensAddAdapter.notifyDataSetChanged()
             }
         }
         _viewModel.tokenDetails.observe(viewLifecycleOwner) {
-            tokensAdapter.notifyDataSetChanged()
+            tokensAddAdapter.notifyDataSetChanged()
         }
         _viewModel.hasExistingAccountContract.observe(viewLifecycleOwner) { hasExistingAccountContract ->
             if (hasExistingAccountContract)

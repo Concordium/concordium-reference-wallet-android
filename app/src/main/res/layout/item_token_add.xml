@@ -8,7 +8,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="visible"
-        tools:visibility="gone"
         android:orientation="horizontal">
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/token_icon"
@@ -45,13 +44,4 @@
             android:layout_height="match_parent"
             android:paddingHorizontal="@dimen/activity_horizontal_margin_half" />
     </LinearLayout>
-    <TextView
-        android:id="@+id/add_more"
-        style="@style/TextView.XSmall.Light"
-        android:text="@string/cis_add_more"
-        android:textAlignment="center"
-        android:layout_centerInParent="true"
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:layout_marginHorizontal="@dimen/activity_horizontal_margin_double" />
 </RelativeLayout>

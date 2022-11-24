@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.data.AccountContractRepository
+import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.CIS2TokensMetadataItem
@@ -48,7 +49,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val tokenDetails: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val hasExistingAccountContract: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val nonSelected: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    //val contractTokens: MutableLiveData<List<ContractToken>> by lazy { MutableLiveData<List<ContractToken>>() }
 
     private val proxyRepository = ProxyRepository()
 
@@ -63,6 +63,12 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                 contractTokens.addAll(contractTokensRepository.getTokens(accountContract.contractIndex, isFungible))
             }
             tokens.clear()
+            if (isFungible) {
+                // On fungible tab we add CCD as default at the top
+                val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+                val account = accountRepository.findByAddress(accountAddress)
+                tokens.add(Token("", "", "", null, false, "", true, account?.totalBalance ?: 0))
+            }
             tokens.addAll(contractTokens.map { Token(it.tokenId, it.tokenId, "", null, true, it.contractIndex) })
             waiting.postValue(false)
             contractTokens.groupBy { it.contractIndex }.forEach { group ->

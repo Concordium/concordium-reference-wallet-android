@@ -108,7 +108,7 @@ class SendTokenActivity : BaseActivity() {
 
     private fun initializeMemo() {
         viewModel.sendTokenData.token?.let {
-            if (!it.isCCDToken()) {
+            if (!it.isCCDToken) {
                 binding.memoContainer.visibility = View.GONE
             } else {
                 binding.memo.setOnClickListener {
