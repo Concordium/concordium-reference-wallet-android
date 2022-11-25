@@ -78,7 +78,7 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
 
         CoreClient.Pairing.getPairings().forEach { pairing ->
 
-            CoreClient.Pairing.disconnect(pairing.topic) { modelError ->
+            CoreClient.Pairing.disconnect(Core.Params.Disconnect(pairing.topic)) { modelError ->
                 println("LC -> DISCONNECT ERROR in Service ${modelError.throwable.stackTraceToString()}")
             }
         }
@@ -107,9 +107,8 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
             CoreClient.Pairing.getPairings().forEach {
                 println("LC -> PAIR EXPIRE TIME ${it.expiry}")
 
-                CoreClient.Pairing.disconnect(it.topic) { error ->
-                    //println("LC -> ERROR DISCONECCTING ${throwableRemoveLineBreaks(error.throwable)}")
-                    println(error)
+                CoreClient.Pairing.disconnect(Core.Params.Disconnect(it.topic)) { error ->
+                    println("LC -> ERROR DISCONECCTING ${throwableRemoveLineBreaks(error.throwable)}")
                 }
             }
 
@@ -217,7 +216,7 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
         val pairings: List<Core.Model.Pairing> = CoreClient.Pairing.getPairings()
         println("LC -> EXISTING PAIRINGS in Service = ${pairings.count()}")
         pairings.forEach { pairing ->
-            CoreClient.Pairing.disconnect(pairing.topic) { modelError ->
+            CoreClient.Pairing.disconnect(Core.Params.Disconnect(pairing.topic)) { modelError ->
                 println("LC -> DISCONNECT ERROR in Service ${modelError.throwable.stackTraceToString()}")
             }
         }
