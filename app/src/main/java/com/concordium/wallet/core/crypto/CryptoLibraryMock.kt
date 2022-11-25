@@ -69,4 +69,8 @@ class CryptoLibraryMock(val gson: Gson) : CryptoLibrary {
     override suspend fun signMessage(signMessageInput: SignMessageInput): SignMessageOutput? {
         TODO("Not yet implemented")
     }
+
+    override suspend fun serializeTokenTransferParameters(serializeTokenTransferParametersInput: SerializeTokenTransferParametersInput): SerializeTokenTransferParametersOutput? {
+        TODO("Not yet implemented")
+    }
 }

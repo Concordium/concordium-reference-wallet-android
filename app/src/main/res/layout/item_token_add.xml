@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/list_item_height">
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        android:orientation="horizontal">
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/token_icon"
+            android:layout_width="@dimen/list_item_height"
+            android:layout_height="@dimen/list_item_height"
+            android:paddingVertical="@dimen/activity_vertical_margin"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/activity_horizontal_margin_half"
+            android:src="@drawable/ic_token_loading_image" />
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="@dimen/activity_horizontal_margin_half"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/title"
+                style="@style/TextView.ListItemHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Example Fungible 1" />
+            <TextView
+                android:id="@+id/sub_title"
+                style="@style/TextView.ListItemSubHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Your balance: 0.00" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/selection"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="@dimen/activity_horizontal_margin_half" />
+    </LinearLayout>
+</RelativeLayout>

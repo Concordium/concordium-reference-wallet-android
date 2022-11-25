@@ -23,9 +23,6 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
         fun pair(wcUri: String) {
             pairWC(wcUri)
         }
-        fun ping() {
-            pingWC()
-        }
         fun rejectSession() {
             rejectSessionWC()
         }
@@ -78,20 +75,6 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
             println("LC -> PAIR ERROR ${throwableRemoveLineBreaks(error.throwable)}")
             EventBus.getDefault().post(PairError(error.throwable.message ?: ""))
         }
-    }
-
-    private fun pingWC() {
-        println("LC -> CALL PING ${binder.getSessionTopic()}")
-        val pingParams = Sign.Params.Ping(binder.getSessionTopic())
-        SignClient.ping(pingParams, object : Sign.Listeners.SessionPing {
-            override fun onSuccess(pingSuccess: Sign.Model.Ping.Success) {
-                println("LC -> PING SUCCESS ${pingSuccess.topic}")
-                EventBus.getDefault().post(ConnectionState(true))
-            }
-            override fun onError(pingError: Sign.Model.Ping.Error) {
-                println("LC -> PING ERROR ${throwableRemoveLineBreaks(pingError.error)}")
-            }
-        })
     }
 
     private fun rejectSessionWC() {

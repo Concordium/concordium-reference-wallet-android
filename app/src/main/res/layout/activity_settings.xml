@@ -90,6 +90,19 @@
                     android:text="@string/more_overview_item_about" />
             </LinearLayout>
             <View style="@style/Divider" />
+            <LinearLayout
+                android:id="@+id/wallet_connect_layout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/list_item_height"
+                android:background="@drawable/list_item"
+                android:orientation="horizontal">
+                <TextView
+                    style="@style/TextView.MoreMenuItem"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:text="@string/more_overview_item_wallet_connect" />
+            </LinearLayout>
+            <View style="@style/Divider" />
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/dev_layout"
                 android:layout_width="match_parent"

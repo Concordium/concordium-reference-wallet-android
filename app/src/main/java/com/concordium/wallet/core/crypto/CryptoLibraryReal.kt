@@ -172,4 +172,17 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             Log.e("CryptoLib failed")
             return@withContext null
         }
+
+    override suspend fun serializeTokenTransferParameters(serializeTokenTransferParametersInput: SerializeTokenTransferParametersInput): SerializeTokenTransferParametersOutput? =
+        withContext(Dispatchers.Default) {
+            val input = gson.toJson(serializeTokenTransferParametersInput)
+            loadWalletLib()
+            val result = serialize_token_transfer_parameters(input)
+            Log.d("Output (Code ${result.result}): ${result.output}")
+            if (result.result == CryptoLibrary.SUCCESS) {
+                return@withContext gson.fromJson(result.output, SerializeTokenTransferParametersOutput::class.java)
+            }
+            Log.e("CryptoLib failed")
+            return@withContext null
+        }
 }

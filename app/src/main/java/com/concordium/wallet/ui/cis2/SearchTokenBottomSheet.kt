@@ -14,7 +14,7 @@ import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DAT
 class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
     private var _binding: DialogSearchTokenBinding? = null
     private val binding get() = _binding!!
-    private lateinit var tokensAdapter: TokensAdapter
+    private lateinit var tokensAddAdapter: TokensAddAdapter
     private lateinit var _viewModel: SendTokenViewModel
 
     companion object {
@@ -53,10 +53,10 @@ class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
 
     private fun initViews() {
         binding.tokensFound.layoutManager = LinearLayoutManager(activity)
-        tokensAdapter = TokensAdapter(requireActivity(), showCheckBox = true, showLastRow = false, dataSet = arrayOf())
-        tokensAdapter.also { binding.tokensFound.adapter = it }
+        tokensAddAdapter = TokensAddAdapter(requireActivity(), showCheckBox = true, dataSet = arrayOf())
+        tokensAddAdapter.also { binding.tokensFound.adapter = it }
 
-        tokensAdapter.setTokenClickListener(object : TokensAdapter.TokenClickListener {
+        tokensAddAdapter.setTokenClickListener(object : TokensAddAdapter.TokenClickListener {
             override fun onRowClick(token: Token) {
                 _viewModel.chooseToken.postValue(token)
             }
@@ -66,13 +66,13 @@ class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
 
         binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                tokensAdapter.dataSet = _viewModel.tokens.value!!.filter { it.token.uppercase().contains(query?.uppercase() ?: "") }.toTypedArray()
-                tokensAdapter.notifyDataSetChanged()
+                tokensAddAdapter.dataSet = _viewModel.tokens.value!!.filter { it.token.uppercase().contains(query?.uppercase() ?: "") }.toTypedArray()
+                tokensAddAdapter.notifyDataSetChanged()
                 return false
             }
             override fun onQueryTextChange(newText: String?): Boolean {
-                tokensAdapter.dataSet = _viewModel.tokens.value!!.filter { it.token.uppercase().contains(newText?.uppercase() ?: "") }.toTypedArray()
-                tokensAdapter.notifyDataSetChanged()
+                tokensAddAdapter.dataSet = _viewModel.tokens.value!!.filter { it.token.uppercase().contains(newText?.uppercase() ?: "") }.toTypedArray()
+                tokensAddAdapter.notifyDataSetChanged()
                 return false
             }
         })
@@ -83,8 +83,8 @@ class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
             showWaiting(waiting)
         }
         _viewModel.tokens.observe(this) { tokens ->
-            tokensAdapter.dataSet = tokens.toTypedArray()
-            tokensAdapter.notifyDataSetChanged()
+            tokensAddAdapter.dataSet = tokens.toTypedArray()
+            tokensAddAdapter.notifyDataSetChanged()
         }
     }
 

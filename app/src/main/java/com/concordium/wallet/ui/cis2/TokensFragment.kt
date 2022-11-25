@@ -13,7 +13,7 @@ class TokensFragment : Fragment() {
     private var _binding: FragmentTokensBinding? = null
     private val binding get() = _binding!!
     private lateinit var _viewModel: TokensViewModel
-    private lateinit var tokensAdapter: TokensAdapter
+    private lateinit var tokensAccountDetailsAdapter: TokensAccountDetailsAdapter
     private var _accountAddress = ""
     private var _isFungible = true
 
@@ -40,10 +40,10 @@ class TokensFragment : Fragment() {
 
     private fun initViews() {
         binding.tokensFound.layoutManager = LinearLayoutManager(activity)
-        tokensAdapter = TokensAdapter(requireContext(), false, _isFungible, arrayOf())
-        tokensAdapter.also { binding.tokensFound.adapter = it }
+        tokensAccountDetailsAdapter = TokensAccountDetailsAdapter(requireContext(), _isFungible, arrayOf())
+        tokensAccountDetailsAdapter.also { binding.tokensFound.adapter = it }
 
-        tokensAdapter.setTokenClickListener(object : TokensAdapter.TokenClickListener {
+        tokensAccountDetailsAdapter.setTokenClickListener(object : TokensAccountDetailsAdapter.TokenClickListener {
             override fun onRowClick(token: Token) {
                 _viewModel.chooseToken.postValue(token)
             }
@@ -53,18 +53,18 @@ class TokensFragment : Fragment() {
     }
 
     private fun initObservers() {
-        _viewModel.waiting.observe(viewLifecycleOwner) { waiting ->
+        _viewModel.waiting.observe(viewLifecycleOwner) {
             if (!_isFungible) {
                 if (_viewModel.tokens.isEmpty())
                     binding.noItems.visibility = View.VISIBLE
                 else
                     binding.noItems.visibility = View.GONE
             }
-            tokensAdapter.dataSet = _viewModel.tokens.toTypedArray()
-            tokensAdapter.notifyDataSetChanged()
+            tokensAccountDetailsAdapter.dataSet = _viewModel.tokens.toTypedArray()
+            tokensAccountDetailsAdapter.notifyDataSetChanged()
         }
         _viewModel.tokenDetails.observe(viewLifecycleOwner) {
-            tokensAdapter.notifyDataSetChanged()
+            tokensAccountDetailsAdapter.notifyDataSetChanged()
         }
     }
 }
