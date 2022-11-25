@@ -842,7 +842,7 @@
     <string name="wallet_connect_insufficient_funds">Insufficient funds</string>
     <string name="wallet_connect_preparing_connection">Preparing connection…</string>
     <string name="wallet_connect_timeout_dialog_title">Could not connect</string>
-    <string name="wallet_connect_timeout_dialog_content">The QR Code probably expired or connection issues, please generate a new QR code and try again…</string>
+    <string name="wallet_connect_timeout_dialog_content">The QR code seems to be expired. Please generate a new one and try again.</string>
 
     <!-- ***** More ***** -->
 
