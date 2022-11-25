@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.backend.BackendRequest
-import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.AccountContractRepository
 import com.concordium.wallet.data.AccountRepository
@@ -18,6 +17,8 @@ import com.concordium.wallet.data.cryptolib.*
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.data.walletconnect.ContractAddress
+import com.concordium.wallet.data.walletconnect.Payload
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
@@ -52,6 +53,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     private val proxyRepository = ProxyRepository()
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
+    private var submitTransaction: BackendRequest<SubmissionData>? = null
 
     var sendTokenData = SendTokenData()
     val tokens: MutableLiveData<List<Token>> by lazy { MutableLiveData<List<Token>>() }
@@ -66,6 +68,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     fun dispose() {
         accountNonceRequest?.dispose()
         globalParamsRequest?.dispose()
+        submitTransaction?.dispose()
     }
 
     fun loadTokens() {
@@ -117,9 +120,38 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun loadTransactionFee() {
+        if (sendTokenData.account == null || sendTokenData.token == null || sendTokenData.receiver.isEmpty()) {
+            return
+        }
+
         waiting.postValue(true)
-        proxyRepository.getTransferCost(type = ProxyRepository.SIMPLE_TRANSFER,
+        viewModelScope.launch {
+            val serializeTokenTransferParametersInput = SerializeTokenTransferParametersInput(sendTokenData.token!!.token, sendTokenData.amount.toString(), sendTokenData.account!!.address, sendTokenData.receiver)
+            val serializeTokenTransferParametersOutput = App.appCore.cryptoLibrary.serializeTokenTransferParameters(serializeTokenTransferParametersInput)
+            if (serializeTokenTransferParametersOutput == null) {
+                waiting.postValue(false)
+                errorInt.postValue(R.string.app_error_lib)
+            } else {
+                getTransferCost(serializeTokenTransferParametersOutput)
+            }
+        }
+    }
+
+    private fun getTransferCost(serializeTokenTransferParametersOutput: SerializeTokenTransferParametersOutput) {
+        if (sendTokenData.account == null || sendTokenData.token == null) {
+            errorInt.postValue(R.string.app_error_general)
+            return
+        }
+
+        proxyRepository.getTransferCost(
+            type = ProxyRepository.UPDATE,
             memoSize = if (sendTokenData.memo == null) null else sendTokenData.memo!!.length / 2,
+            amount = sendTokenData.amount,
+            sender = sendTokenData.account!!.address,
+            contractIndex = sendTokenData.token!!.contractIndex.toInt(),
+            contractSubindex = 0,
+            receiveName = sendTokenData.token!!.name,
+            parameter = serializeTokenTransferParametersOutput.parameter,
             success = {
                 sendTokenData.energy = it.energy
                 sendTokenData.fee = it.cost.toLong()
@@ -130,6 +162,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 feeReady.postValue(sendTokenData.fee)
             },
             failure = {
+                waiting.postValue(false)
                 handleBackendError(it)
             })
     }
@@ -207,71 +240,49 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     private fun createTransaction(keys: AccountData, encryptionSecretKey: String) {
+        if (sendTokenData.account == null || sendTokenData.token == null || sendTokenData.energy == null || sendTokenData.accountNonce == null) {
+            errorInt.postValue(R.string.app_error_general)
+            return
+        }
 
         val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
 
         viewModelScope.launch {
-            val serializeTokenTransferParametersInput = SerializeTokenTransferParametersInput(
-                tokenId = sendTokenData.token?.token ?: "",
-                amount = sendTokenData.amount.toString(),
-                from = sendTokenData.account?.address ?: "",
-                to = sendTokenData.receiver)
+            val serializeTokenTransferParametersInput = SerializeTokenTransferParametersInput(sendTokenData.token!!.token, sendTokenData.amount.toString(), sendTokenData.account!!.address, sendTokenData.receiver)
             val serializeTokenTransferParametersOutput = App.appCore.cryptoLibrary.serializeTokenTransferParameters(serializeTokenTransferParametersInput)
-/*
-            val accountTransactionInput = CreateAccountTransactionInput(
-                expiry.toInt(),
-                sendTokenData.account?.address ?: "",
-                keys,
-                sendTokenData.accountNonce?.nonce ?: -1,
-                serializeTokenTransferParametersOutput?.parameter ?: "",
-                CryptoLibrary.REGULAR_TRANSFER)
-*/
-            //val createTransferOutput = CreateTransferOutput("", "", "", serializeTokenTransferParametersOutput?.parameter ?: "")
-
+            if (serializeTokenTransferParametersOutput == null) {
+                errorInt.postValue(R.string.app_error_lib)
+            } else {
+                val payload = Payload(ContractAddress(sendTokenData.token!!.contractIndex.toInt(), 0), sendTokenData.amount.toString(), sendTokenData.energy!!.toInt(), serializeTokenTransferParametersOutput.parameter, sendTokenData.token!!.name)
+                val accountTransactionInput = CreateAccountTransactionInput(expiry.toInt(), sendTokenData.account!!.address, keys, sendTokenData.accountNonce!!.nonce, payload, "Update")
+                val accountTransactionOutput = App.appCore.cryptoLibrary.createAccountTransaction(accountTransactionInput)
+                if (accountTransactionOutput == null) {
+                    errorInt.postValue(R.string.app_error_lib)
+                } else {
+                    val createTransferOutput = CreateTransferOutput(accountTransactionOutput.signatures, "", "", accountTransactionOutput.transaction)
+                    submitTransaction(createTransferOutput)
+                }
+            }
         }
-
-
-        val toAddress = sendTokenData.receiver
-        val nonce = sendTokenData.accountNonce
-        val amount = sendTokenData.amount
-        val energy = sendTokenData.energy
-        val memo = sendTokenData.memo
-
-        if (nonce == null || energy == null) {
-            errorInt.postValue(R.string.app_error_general)
-            waiting.postValue(false)
-            return
-        }
-
-        sendTokenData.expiry = expiry
-        val transferInput = CreateTransferInput(
-            sendTokenData.account?.address ?: "",
-            keys,
-            toAddress,
-            expiry,
-            amount.toString(),
-            energy,
-            nonce.nonce,
-            memo,
-            sendTokenData.globalParams,
-            sendTokenData.receiverPublicKey,
-            encryptionSecretKey,
-            null, //calculateInputEncryptedAmount(),
-            null)
-
-        val transactionType = CryptoLibrary.REGULAR_TRANSFER
-        sendTokenData.createTransferInput = transferInput
-/*
-        val output = App.appCore.cryptoLibrary.createTransfer(transferInput, transactionType)
-        if (output == null) {
-            waiting.postValue(false)
-            errorInt.postValue(R.string.app_error_lib)
-        } else {
-            sendTokenData.createTransferOutput = output
-            submitTransfer(output)
-        }*/
     }
 
+    private fun submitTransaction(createTransferOutput: CreateTransferOutput) {
+        waiting.postValue(true)
+        submitTransaction = proxyRepository.submitTransfer(createTransferOutput,
+            {
+                println("LC -> submitTransaction SUCCESS = ${it.submissionId}")
+                //transactionSubmittedSuccess.postValue(Gson().toJson(TransactionSuccess(it.submissionId)))
+                waiting.postValue(false)
+                //initializeAccountUpdater()
+            },
+            {
+                println("LC -> submitTransaction ERROR ${it.stackTraceToString()}")
+                //transactionSubmittedError.postValue(Gson().toJson(TransactionError(500, it.message ?: "")))
+                handleBackendError(it)
+                waiting.postValue(false)
+            }
+        )
+    }
     //  //        transactionReady.postValue(true)
 
     private fun handleBackendError(throwable: Throwable) {

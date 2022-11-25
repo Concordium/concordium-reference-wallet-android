@@ -23,6 +23,7 @@ class ProxyRepository {
         const val UPDATE_BAKER_KEYS = "updateBakerKeys"
         const val REMOVE_BAKER = "removeBaker"
         const val CONFIGURE_BAKER = "configureBaker"
+        const val UPDATE = "update"
     }
 
     fun submitCredential(
@@ -196,8 +197,7 @@ class ProxyRepository {
                         failure: ((Throwable) -> Unit)?): BackendRequest<TransferCost> {
         val lPoolArg = if (lPool == true) "lPool" else null
         val targetArg = if (targetChange == true) "target" else null
-        val call = backend.transferCost(type, memoSize, amount, restake, lPoolArg, targetArg, metadataSize, openStatus, sender, contractIndex, contractSubindex,
-            receiveName, parameter, executionNRGBuffer)
+        val call = backend.transferCost(type, memoSize, amount, restake, lPoolArg, targetArg, metadataSize, openStatus, sender, contractIndex, contractSubindex, receiveName, parameter, executionNRGBuffer)
         call.enqueue(object : BackendCallback<TransferCost>() {
             override fun onResponseData(response: TransferCost) {
                 success(response)
