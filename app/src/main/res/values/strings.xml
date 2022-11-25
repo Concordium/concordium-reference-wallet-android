@@ -841,6 +841,8 @@
     <string name="wallet_connect_message_signed">The message has been signed and returned.</string>
     <string name="wallet_connect_insufficient_funds">Insufficient funds</string>
     <string name="wallet_connect_preparing_connection">Preparing connection…</string>
+    <string name="wallet_connect_timeout_dialog_title">Could not connect</string>
+    <string name="wallet_connect_timeout_dialog_content">The QR Code probably expired or connection issues, please generate a new QR code and try again…</string>
 
     <!-- ***** More ***** -->
 
@@ -860,6 +862,8 @@
     <string name="wallet_connect_clear_data_warning_message">This will clear the local WalletConnect database. You can do this if you experience connection problems with WalletConnect. A restart of the app will be required. Do you want to proceed?</string>
     <string name="wallet_connect_clear_data_warning_ok">Okay</string>
     <string name="wallet_connect_clear_data_warning_cancel">Cancel</string>
+    <string name="wallet_connect_timer_toast">It can take a while to prepare the connection, please hang on. You can also try to decline and reconnect.</string>
+
 
     <!-- About -->
     <string name="about_title">About</string>
@@ -986,6 +990,4 @@
     <string name="export_account_keys_copied">Copied</string>
     <string name="export_account_keys_to_file">Export to file</string>
     <string name="export_account_keys_file_exported">File exported</string>
-    <string name="wallet_connect_timer_toast">It can take a while to prepare the connection, please hang on. You can also try to decline and reconnect.</string>
-
 </resources>

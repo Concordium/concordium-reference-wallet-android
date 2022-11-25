@@ -82,11 +82,12 @@ class WalletConnectActivity : BaseActivity() {
         }
     }
 
+
     override fun onDestroy() {
-        super.onDestroy()
         viewModel.disconnect()
         viewModel.unregister()
         unbindService(connection)
+        super.onDestroy()
     }
 
     override fun onBackPressed() {
