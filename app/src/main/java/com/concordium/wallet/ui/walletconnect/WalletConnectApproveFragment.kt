@@ -39,7 +39,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initObservers()
-        if (_viewModel.binder?.getSessionTopic()?.isNotEmpty() == false) {
+        if (_viewModel.binder?.getSessionTopic()?.isNotEmpty() == false && savedInstanceState == null) {
             _viewModel.waiting.postValue(true)
             _viewModel.approveSession()
         }
