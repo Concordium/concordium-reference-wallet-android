@@ -112,6 +112,7 @@ class WalletConnectPairFragment : WalletConnectBaseFragment() {
         builder.setCancelable(false)
         builder.create().show()
     }
+
     private fun gotoMain() {
         activity?.finish()
         val intent = Intent(activity, MainActivity::class.java)

@@ -93,7 +93,8 @@ class WalletConnectActivity : BaseActivity() {
     override fun onBackPressed() {
         if (currentPage < PAGE_APPROVE) {
             if (!fromDeepLink) {
-                super.onBackPressed()
+                viewModel.rejectSession()
+                viewModel.decline.postValue(true)
             }
             else {
                 CoroutineScope(Dispatchers.IO).launch {
