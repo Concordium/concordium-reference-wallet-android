@@ -392,4 +392,28 @@ class ProxyRepository {
             failure = failure
         )
     }
+
+    fun getCIS2TokenBalance(
+        index: String,
+        subIndex: String,
+        accountAddress: String,
+        tokenIds: String,
+        success: (CIS2TokensBalances) -> Unit,
+        failure: ((Throwable) -> Unit)?
+    ): BackendRequest<CIS2TokensBalances> {
+        val call = backend.cis2TokenBalance(index, subIndex, accountAddress, tokenIds)
+        call.enqueue(object : BackendCallback<CIS2TokensBalances>() {
+            override fun onResponseData(response: CIS2TokensBalances) {
+                success(response)
+            }
+            override fun onFailure(t: Throwable) {
+                failure?.invoke(t)
+            }
+        })
+        return BackendRequest(
+            call = call,
+            success = success,
+            failure = failure
+        )
+    }
 }

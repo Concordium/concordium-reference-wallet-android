@@ -108,6 +108,14 @@ interface ProxyBackend {
     fun cis2TokenMetadata(
         @Path("index") index: String,
         @Path("subIndex") subIndex: String,
-        @Query("tokenId") from: String
+        @Query("tokenId") tokenId: String
     ): Call<CIS2TokensMetadata>
+
+    @GET("v0/CIS2TokenBalance/{index}/{subIndex}/{accountAddress}")
+    fun cis2TokenBalance(
+        @Path("index") index: String,
+        @Path("subIndex") subIndex: String,
+        @Path("accountAddress") accountAddress: String,
+        @Query("tokenId") tokenId: String
+    ): Call<CIS2TokensBalances>
 }
