@@ -107,16 +107,11 @@ class WalletConnectPairFragment : WalletConnectBaseFragment() {
 
         builder.setNegativeButton(getString(R.string.wallet_connect_connection_lost_okay)) {dialog, _ ->
             dialog.dismiss()
-            gotoMain()
+            binding.decline.isEnabled = false
+            _viewModel.rejectSession()
+            _viewModel.decline.postValue(true)
         }
         builder.setCancelable(false)
         builder.create().show()
-    }
-
-    private fun gotoMain() {
-        activity?.finish()
-        val intent = Intent(activity, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        startActivity(intent)
     }
 }
