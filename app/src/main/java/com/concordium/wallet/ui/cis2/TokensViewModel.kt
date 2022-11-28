@@ -27,6 +27,7 @@ import java.io.Serializable
 
 data class TokenData(
     var account: Account? = null,
+    var selectedToken: Token? = null,
     var contractIndex: String = ""
 ): Serializable
 

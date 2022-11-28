@@ -17,7 +17,7 @@ class TokenDetailsActivity : BaseActivity() {
 
     companion object {
         const val ACCOUNT = "ACCOUNT"
-        const val TOKEN_NAME = "TOKEN_NAME"
+        const val TOKEN = "TOKEN"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +31,8 @@ class TokenDetailsActivity : BaseActivity() {
 
     private fun initViews() {
         viewModel.tokenData.account = intent.getSerializable(ACCOUNT, Account::class.java)
-        val tokenName = intent.extras!!.getString(TOKEN_NAME)
+        viewModel.tokenData.selectedToken = intent.getSerializable(TOKEN, Token::class.java)
+        val tokenName = viewModel.tokenData.selectedToken?.token
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.app_name)
         setActionBarTitle(getString(R.string.cis_token_details_title, tokenName, viewModel.tokenData.account?.name))
         binding.includeButtons.send.setOnClickListener {
