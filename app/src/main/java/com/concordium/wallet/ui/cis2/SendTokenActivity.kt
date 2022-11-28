@@ -18,6 +18,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Thumbnail
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TokenMetadata
+import com.concordium.wallet.data.model.UrlHolder
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -56,10 +57,26 @@ class SendTokenActivity : BaseActivity() {
             viewModel.loadCCDDefaultToken(viewModel.sendTokenData.account?.address ?: "")
         }
         */
+
         viewModel.sendTokenData.token = Token("1084", "00", "100",
-            TokenMetadata(6, "Optimal FT metadata values. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-            "CIS2-Multi.transfer", "FT",
-            Thumbnail("https://developer.concordium.software/en/mainnet/_images/wCCD.svg"),false), false, "1696", false, 1000000000000, 200000005, "CIS2-Multi")
+            TokenMetadata(
+                6,
+                "Optimal FT metadata values. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                "CIS2-Multi.transfer",
+                "FT",
+                Thumbnail("https://developer.concordium.software/en/mainnet/_images/wCCD.svg"),
+                false,
+                UrlHolder(""),
+                UrlHolder(""),
+                null,
+                null,
+                null),
+            false,
+            "1696",
+            false,
+            1000000000000,
+            200000005,
+            "CIS2-Multi")
 
         updateWithToken(viewModel.sendTokenData.token)
         initViews()
