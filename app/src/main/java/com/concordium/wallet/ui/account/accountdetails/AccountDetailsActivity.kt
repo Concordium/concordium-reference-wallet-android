@@ -268,7 +268,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     private fun showTokenDetailsDialog(token: Token) {
         val intent = Intent(this, TokenDetailsActivity::class.java)
         intent.putExtra(TokenDetailsActivity.ACCOUNT, viewModelAccountDetails.account)
-        intent.putExtra(TokenDetailsActivity.TOKEN_NAME, token.token)
+        intent.putExtra(TokenDetailsActivity.TOKEN, token)
         startActivity(intent)
     }
 
