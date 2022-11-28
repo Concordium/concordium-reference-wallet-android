@@ -190,7 +190,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             val commaSeparated = tokens.joinToString(",") { it.token }
             proxyRepository.getCIS2TokenMetadata(tokenData.contractIndex, "0", tokenIds = commaSeparated, success = { cis2TokensMetadata ->
-                cis2TokensMetadata.forEach {
+                cis2TokensMetadata.metadata.forEach {
                     loadTokenMetadata(tokenData.contractIndex, it)
                 }
             }, failure = {
@@ -203,7 +203,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             val commaSeparated = tokenIds.joinToString(",") { it }
             proxyRepository.getCIS2TokenMetadata(contractIndex, "0", tokenIds = commaSeparated, success = { cis2TokensMetadata ->
-                cis2TokensMetadata.forEach {
+                cis2TokensMetadata.metadata.forEach {
                     loadTokenMetadata(contractIndex, it)
                 }
             }, failure = {
