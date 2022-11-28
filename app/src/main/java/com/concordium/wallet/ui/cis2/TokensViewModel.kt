@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.data.AccountContractRepository
+import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.CIS2TokensMetadataItem
@@ -15,6 +16,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountContract
 import com.concordium.wallet.data.room.ContractToken
 import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
@@ -48,7 +50,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val tokenDetails: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val hasExistingAccountContract: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val nonSelected: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    //val contractTokens: MutableLiveData<List<ContractToken>> by lazy { MutableLiveData<List<ContractToken>>() }
 
     private val proxyRepository = ProxyRepository()
 
@@ -63,6 +64,10 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                 contractTokens.addAll(contractTokensRepository.getTokens(accountContract.contractIndex, isFungible))
             }
             tokens.clear()
+            if (isFungible) {
+                // On fungible tab we add CCD as default at the top
+                tokens.add(getCCDDefaultToken(accountAddress))
+            }
             tokens.addAll(contractTokens.map { Token(it.tokenId, it.tokenId, "", null, true, it.contractIndex) })
             waiting.postValue(false)
             contractTokens.groupBy { it.contractIndex }.forEach { group ->
@@ -170,11 +175,18 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         stepPageBy.postValue(by)
     }
 
+    private suspend fun getCCDDefaultToken(accountAddress: String): Token {
+        val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+        val account = accountRepository.findByAddress(accountAddress)
+        val atDisposal = account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) ?: 0
+        return Token("", "CCD", "", null, false, "", true, account?.totalBalance ?: 0, atDisposal)
+    }
+
     private fun loadTokensMetadataUrls(tokens: List<Token>) {
         viewModelScope.launch {
             val commaSeparated = tokens.joinToString(",") { it.token }
             proxyRepository.getCIS2TokenMetadata(tokenData.contractIndex, "0", tokenIds = commaSeparated, success = { cis2TokensMetadata ->
-                cis2TokensMetadata.forEach {
+                cis2TokensMetadata.metadata.forEach {
                     loadTokenMetadata(tokenData.contractIndex, it)
                 }
             }, failure = {
@@ -187,7 +199,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             val commaSeparated = tokenIds.joinToString(",") { it }
             proxyRepository.getCIS2TokenMetadata(contractIndex, "0", tokenIds = commaSeparated, success = { cis2TokensMetadata ->
-                cis2TokensMetadata.forEach {
+                cis2TokensMetadata.metadata.forEach {
                     loadTokenMetadata(contractIndex, it)
                 }
             }, failure = {

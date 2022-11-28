@@ -23,6 +23,7 @@ class ProxyRepository {
         const val UPDATE_BAKER_KEYS = "updateBakerKeys"
         const val REMOVE_BAKER = "removeBaker"
         const val CONFIGURE_BAKER = "configureBaker"
+        const val UPDATE = "update"
     }
 
     fun submitCredential(
@@ -196,8 +197,7 @@ class ProxyRepository {
                         failure: ((Throwable) -> Unit)?): BackendRequest<TransferCost> {
         val lPoolArg = if (lPool == true) "lPool" else null
         val targetArg = if (targetChange == true) "target" else null
-        val call = backend.transferCost(type, memoSize, amount, restake, lPoolArg, targetArg, metadataSize, openStatus, sender, contractIndex, contractSubindex,
-            receiveName, parameter, executionNRGBuffer)
+        val call = backend.transferCost(type, memoSize, amount, restake, lPoolArg, targetArg, metadataSize, openStatus, sender, contractIndex, contractSubindex, receiveName, parameter, executionNRGBuffer)
         call.enqueue(object : BackendCallback<TransferCost>() {
             override fun onResponseData(response: TransferCost) {
                 success(response)
@@ -380,6 +380,30 @@ class ProxyRepository {
         val call = backend.cis2TokenMetadata(index, subIndex, tokenIds)
         call.enqueue(object : BackendCallback<CIS2TokensMetadata>() {
             override fun onResponseData(response: CIS2TokensMetadata) {
+                success(response)
+            }
+            override fun onFailure(t: Throwable) {
+                failure?.invoke(t)
+            }
+        })
+        return BackendRequest(
+            call = call,
+            success = success,
+            failure = failure
+        )
+    }
+
+    fun getCIS2TokenBalance(
+        index: String,
+        subIndex: String,
+        accountAddress: String,
+        tokenIds: String,
+        success: (CIS2TokensBalances) -> Unit,
+        failure: ((Throwable) -> Unit)?
+    ): BackendRequest<CIS2TokensBalances> {
+        val call = backend.cis2TokenBalance(index, subIndex, accountAddress, tokenIds)
+        call.enqueue(object : BackendCallback<CIS2TokensBalances>() {
+            override fun onResponseData(response: CIS2TokensBalances) {
                 success(response)
             }
             override fun onFailure(t: Throwable) {

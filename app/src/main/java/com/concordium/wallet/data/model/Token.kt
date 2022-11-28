@@ -8,9 +8,9 @@ data class Token (
     val totalSupply: String,
     var tokenMetadata: TokenMetadata?,
     var isSelected: Boolean = false,
-    var contractIndex: String
-): Serializable {
-    fun isCCDToken() : Boolean {
-        return true
-    }
-}
+    var contractIndex: String,
+    var isCCDToken: Boolean = false,
+    var totalBalance: Long = 0,
+    var atDisposal: Long = 0,
+    var name: String = ""
+): Serializable

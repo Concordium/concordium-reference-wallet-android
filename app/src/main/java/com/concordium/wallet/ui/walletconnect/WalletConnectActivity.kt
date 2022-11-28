@@ -82,17 +82,19 @@ class WalletConnectActivity : BaseActivity() {
         }
     }
 
+
     override fun onDestroy() {
-        super.onDestroy()
         viewModel.disconnect()
         viewModel.unregister()
         unbindService(connection)
+        super.onDestroy()
     }
 
     override fun onBackPressed() {
         if (currentPage < PAGE_APPROVE) {
             if (!fromDeepLink) {
-                super.onBackPressed()
+                viewModel.rejectSession()
+                viewModel.decline.postValue(true)
             }
             else {
                 CoroutineScope(Dispatchers.IO).launch {

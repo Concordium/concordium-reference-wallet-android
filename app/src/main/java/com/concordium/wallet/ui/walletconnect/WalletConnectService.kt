@@ -23,33 +23,44 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
         fun pair(wcUri: String) {
             pairWC(wcUri)
         }
+
         fun ping() {
             pingWC()
         }
+
         fun rejectSession() {
             rejectSessionWC()
         }
+
         fun approveSession(accountAddress: String) {
             approveSessionWC(accountAddress)
         }
+
         fun respondSuccess(message: String) {
             respondSuccessWC(message)
         }
+
         fun respondError(message: String) {
             respondErrorWC(message)
         }
+
         fun disconnect() {
+
             disconnectWC()
         }
+
         fun getSessionName(): String {
             return sessionProposal?.name ?: ""
         }
+
         fun getSessionTopic(): String {
             return settledSessionResponseResult?.session?.topic ?: ""
         }
+
         fun getSessionRequestParamsAsString(): String? {
             return sessionRequest?.request?.params
         }
+
         fun getSessionRequestParams(): Params? {
             return try {
                 Gson().fromJson(sessionRequest?.request?.params, Params::class.java)
@@ -61,22 +72,54 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
     }
 
     override fun onBind(intent: Intent): IBinder {
+
         CoreClient.setDelegate(this)
         SignClient.setWalletDelegate(this)
+
+        CoreClient.Pairing.getPairings().forEach { pairing ->
+
+            CoreClient.Pairing.disconnect(Core.Params.Disconnect(pairing.topic)) { modelError ->
+                println("LC -> DISCONNECT ERROR in Service ${modelError.throwable.stackTraceToString()}")
+            }
+        }
         return binder
     }
 
     override fun onDestroy() {
         super.onDestroy()
         println("LC -> onDestroy Service")
+        disconnectWC()
     }
 
     private fun pairWC(wcUri: String) {
+
         println("LC -> CALL PAIR $wcUri")
-        val pairingParams = Core.Params.Pair(wcUri)
-        CoreClient.Pairing.pair(pairingParams) { error ->
-            println("LC -> PAIR ERROR ${throwableRemoveLineBreaks(error.throwable)}")
-            EventBus.getDefault().post(PairError(error.throwable.message ?: ""))
+        if (CoreClient.Pairing.getPairings().isEmpty()) {
+            val pairingParams = Core.Params.Pair(wcUri)
+            println("LC -> PAIR IS EMPTY")
+
+            CoreClient.Pairing.pair(pairingParams) { error ->
+                println("LC -> PAIR ERROR ${throwableRemoveLineBreaks(error.throwable)}")
+                EventBus.getDefault().post(PairError(error.throwable.message ?: ""))
+            }
+        } else {
+            println("LC -> PAIR NOT EMPTY")
+            CoreClient.Pairing.getPairings().forEach {
+                println("LC -> PAIR EXPIRE TIME ${it.expiry}")
+
+                CoreClient.Pairing.disconnect(Core.Params.Disconnect(it.topic)) { error ->
+                    println("LC -> ERROR DISCONECCTING ${throwableRemoveLineBreaks(error.throwable)}")
+                }
+            }
+
+            val pairingParams = Core.Params.Pair(wcUri)
+
+            println("LC -> PAIR RETRY")
+
+            CoreClient.Pairing.pair(pairingParams) { error ->
+                println("LC -> PAIR ERROR ${throwableRemoveLineBreaks(error.throwable)}")
+                EventBus.getDefault().post(PairError(error.throwable.message ?: ""))
+            }
         }
     }
 
@@ -88,6 +131,7 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
                 println("LC -> PING SUCCESS ${pingSuccess.topic}")
                 EventBus.getDefault().post(ConnectionState(true))
             }
+
             override fun onError(pingError: Sign.Model.Ping.Error) {
                 println("LC -> PING ERROR ${throwableRemoveLineBreaks(pingError.error)}")
             }
@@ -111,17 +155,25 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
             val firstChain = firstNameSpace.value.chains.firstOrNull()
             val methods = firstNameSpace.value.methods
             val events = firstNameSpace.value.events
-            val accounts = listOf( "$firstChain:$accountAddress" )
-            val namespaceValue = Sign.Model.Namespace.Session(accounts = accounts, methods = methods, events = events, extensions = null)
+            val accounts = listOf("$firstChain:$accountAddress")
+            val namespaceValue = Sign.Model.Namespace.Session(
+                accounts = accounts,
+                methods = methods,
+                events = events,
+                extensions = null
+            )
             val sessionNamespaces = mapOf(Pair(firstNameSpaceKey, namespaceValue))
             val approveParams = Sign.Params.Approve(
                 proposerPublicKey = sessionProposal?.proposerPublicKey ?: "",
                 namespaces = sessionNamespaces
             )
+
             SignClient.approveSession(approveParams) { error ->
                 println("LC -> APPROVE SESSION ERROR ${throwableRemoveLineBreaks(error.throwable)}")
                 EventBus.getDefault().post(ApproveError(error.throwable.message ?: ""))
             }
+        } else {
+            println("LC -> FIRST NAMESPACE IS NULL")
         }
     }
 
@@ -164,7 +216,7 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
         val pairings: List<Core.Model.Pairing> = CoreClient.Pairing.getPairings()
         println("LC -> EXISTING PAIRINGS in Service = ${pairings.count()}")
         pairings.forEach { pairing ->
-            CoreClient.Pairing.disconnect(pairing.topic) { modelError ->
+            CoreClient.Pairing.disconnect(Core.Params.Disconnect(pairing.topic)) { modelError ->
                 println("LC -> DISCONNECT ERROR in Service ${modelError.throwable.stackTraceToString()}")
             }
         }
@@ -209,8 +261,7 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
             println("LC -> onSessionSettleResponse SUCCESS -> ${settleSessionResponse.session.topic}")
             settledSessionResponseResult = settleSessionResponse
             EventBus.getDefault().post(ConnectionState(true))
-        }
-        else if (settleSessionResponse is Sign.Model.SettledSessionResponse.Error) {
+        } else if (settleSessionResponse is Sign.Model.SettledSessionResponse.Error) {
             println("LC -> onSessionSettleResponse ERROR -> ${settleSessionResponse.errorMessage}")
             settledSessionResponseError = settleSessionResponse
             EventBus.getDefault().post(ConnectionState(false))

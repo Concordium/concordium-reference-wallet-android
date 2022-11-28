@@ -8,13 +8,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.Thumbnail
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -25,6 +28,7 @@ import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
 import com.concordium.wallet.util.getSerializable
+import javax.crypto.Cipher
 
 class SendTokenActivity : BaseActivity() {
     private lateinit var binding: ActivitySendTokenBinding
@@ -41,28 +45,34 @@ class SendTokenActivity : BaseActivity() {
         binding = ActivitySendTokenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel.sendTokenData.account = intent.getSerializable(ACCOUNT, Account::class.java)
-        if (intent.hasExtra(TOKEN))
-            viewModel.sendTokenData.token = intent.getSerializable(TOKEN, Token::class.java)
-        initViews()
         initObservers()
+        /*
+        if (intent.hasExtra(TOKEN)) {
+            viewModel.sendTokenData.token = intent.getSerializable(TOKEN, Token::class.java)
+            updateWithToken(viewModel.sendTokenData.token)
+            initViews()
+            viewModel.loadTransactionFee()
+        } else {
+            viewModel.loadCCDDefaultToken(viewModel.sendTokenData.account?.address ?: "")
+        }
+        */
+        viewModel.sendTokenData.token = Token("1084", "00", "100",
+        TokenMetadata(6, "Optimal FT metadata values. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        "CIS1-NFT.transfer", "FT",
+        Thumbnail("https://developer.concordium.software/en/mainnet/_images/wCCD.svg"),false), false, "1696", false, 1, 2000, "FT example")
+        updateWithToken(viewModel.sendTokenData.token)
+        initViews()
+        viewModel.loadTransactionFee()
     }
 
-    override fun onResume() {
-        super.onResume()
-        binding.send.isEnabled = true
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.dispose()
     }
 
     private fun initViews() {
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.cis_send_funds)
-        if (viewModel.sendTokenData.token != null) {
-            binding.balanceTitle.text = getString(R.string.cis_token_balance, viewModel.sendTokenData.token?.token ?: "")
-            binding.balance.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.token?.id?.toLong() ?: 0, true)
-        } else {
-            viewModel.sendTokenData.token = Token("0", "default", "0", null, false, "")
-        }
-        binding.atDisposal.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.account?.getAtDisposal() ?: 0,true)
         binding.amount.setText(CurrencyUtil.formatGTU(0, false))
-        initializeSearchToken()
         initializeAmount()
         initializeMax()
         initializeMemo()
@@ -70,11 +80,13 @@ class SendTokenActivity : BaseActivity() {
         initializeAddressBook()
         initializeScanQrCode()
         initializeSend()
+        initializeSearchToken()
+        viewModel.getGlobalInfo()
     }
 
     private fun initializeSend() {
         binding.send.setOnClickListener {
-            if (binding.receiver.text.toString().isNullOrEmpty()) {
+            if (binding.receiver.text.toString().isEmpty()) {
                 binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.text_pink))
                 binding.contractAddressError.text = getString(R.string.cis_enter_receiver_address)
                 binding.contractAddressError.visibility = View.VISIBLE
@@ -97,18 +109,29 @@ class SendTokenActivity : BaseActivity() {
     private fun initializeAmount() {
         binding.amount.addTextChangedListener {
             viewModel.loadTransactionFee()
+            enableSend()
         }
     }
 
     private fun initializeMax() {
+        binding.max.isEnabled = false
         binding.max.setOnClickListener {
-            //binding.amount.setText(CurrencyUtil.formatGTU(viewModel.sendTokenData.token?.balance ?: 0, false))
+            binding.amount.setText(CurrencyUtil.formatGTU(viewModel.sendTokenData.max ?: 0, false))
+            enableSend()
         }
+    }
+
+    private fun enableSend() {
+        val amountText = binding.amount.text.toString().replace(",", "").replace(".", "").trim()
+        if (amountText.isEmpty())
+            binding.send.isEnabled = false
+        else
+            binding.send.isEnabled = (amountText.toLong() > 0)
     }
 
     private fun initializeMemo() {
         viewModel.sendTokenData.token?.let {
-            if (!it.isCCDToken()) {
+            if (!it.isCCDToken) {
                 binding.memoContainer.visibility = View.GONE
             } else {
                 binding.memo.setOnClickListener {
@@ -117,6 +140,7 @@ class SendTokenActivity : BaseActivity() {
                 binding.memoClear.setOnClickListener {
                     binding.memo.text = getString(R.string.cis_optional_add_memo)
                     binding.memoClear.visibility = View.GONE
+                    viewModel.sendTokenData.memo = null
                 }
             }
         }
@@ -166,6 +190,7 @@ class SendTokenActivity : BaseActivity() {
                 it.data?.getStringExtra(AddMemoActivity.EXTRA_MEMO)?.let { memo ->
                     binding.memo.text = memo
                     binding.memoClear.visibility = View.VISIBLE
+                    viewModel.sendTokenData.memo = memo
                 }
             }
         }
@@ -175,8 +200,7 @@ class SendTokenActivity : BaseActivity() {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.getSerializable(RecipientListActivity.EXTRA_RECIPIENT, Recipient::class.java)?.let { recipient ->
                     binding.receiver.text = recipient.address
-                    binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.text_blue))
-                    binding.contractAddressError.visibility = View.GONE
+                    receiverAddressSet()
                 }
             }
         }
@@ -186,8 +210,7 @@ class SendTokenActivity : BaseActivity() {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.getStringExtra(ScanQRActivity.EXTRA_BARCODE)?.let { barcode ->
                     binding.receiver.text = barcode
-                    binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.text_blue))
-                    binding.contractAddressError.visibility = View.GONE
+                    receiverAddressSet()
                 }
             }
         }
@@ -199,13 +222,19 @@ class SendTokenActivity : BaseActivity() {
             when (item!!.itemId) {
                 R.id.paste -> {
                     binding.receiver.text = clipText
-                    binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.text_blue))
-                    binding.contractAddressError.visibility = View.GONE
+                    receiverAddressSet()
                 }
             }
             true
         }
         popupMenu.show()
+    }
+
+    private fun receiverAddressSet() {
+        binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.text_blue))
+        binding.contractAddressError.visibility = View.GONE
+        viewModel.sendTokenData.receiver = binding.receiver.text.toString()
+        viewModel.loadTransactionFee()
     }
 
     private fun initObservers() {
@@ -222,6 +251,40 @@ class SendTokenActivity : BaseActivity() {
         }
         viewModel.feeReady.observe(this) { fee ->
             binding.fee.text = getString(R.string.cis_estimated_fee, CurrencyUtil.formatGTU(fee, true))
+            binding.max.isEnabled = true
+        }
+        viewModel.defaultToken.observe(this) { token ->
+            viewModel.sendTokenData.token = token
+            initViews()
+            updateWithToken(token)
+            viewModel.loadTransactionFee()
+        }
+        viewModel.errorInt.observe(this) {
+            Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
+        }
+        viewModel.showAuthentication.observe(this) {
+            showAuthentication(authenticateText(), object : AuthenticationCallback {
+                override fun getCipherForBiometrics() : Cipher? {
+                    return viewModel.getCipherForBiometrics()
+                }
+                override fun onCorrectPassword(password: String) {
+                    viewModel.continueWithPassword(password)
+                }
+                override fun onCipher(cipher: Cipher) {
+                    viewModel.checkLogin(cipher)
+                }
+                override fun onCancelled() {
+                }
+            })
+        }
+    }
+
+    private fun updateWithToken(token: Token?) {
+        token?.let {
+            binding.balanceTitle.text = getString(R.string.cis_token_balance, it.token)
+            binding.balance.text = CurrencyUtil.formatGTU(it.totalBalance, true)
+            binding.atDisposal.text = CurrencyUtil.formatGTU(it.atDisposal,true)
+            binding.searchToken.tokenShortName.text = it.token
         }
     }
 

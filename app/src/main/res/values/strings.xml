@@ -820,7 +820,7 @@
     <string name="wallet_connect_transaction_submitted_ok">Okay</string>
     <string name="wallet_connect_transaction_currently_available_amounts">Currently available amounts:</string>
     <string name="wallet_connect_transaction_balance_at_disposal">Balance (at disposal):</string>
-    <string name="wallet_connect_session">Wallet Connect session</string>
+    <string name="wallet_connect_session">WalletConnect session</string>
     <string name="wallet_connect_session_with">Session with %1$s</string>
     <string name="wallet_connect_allow_session">Allow session?</string>
     <string name="wallet_connect_connection_lost_title">Connection lost</string>
@@ -841,6 +841,8 @@
     <string name="wallet_connect_message_signed">The message has been signed and returned.</string>
     <string name="wallet_connect_insufficient_funds">Insufficient funds</string>
     <string name="wallet_connect_preparing_connection">Preparing connection…</string>
+    <string name="wallet_connect_timeout_dialog_title">Could not connect</string>
+    <string name="wallet_connect_timeout_dialog_content">The QR code seems to be expired. Please generate a new one and try again.</string>
 
     <!-- ***** More ***** -->
 
@@ -852,14 +854,16 @@
     <string name="more_overview_item_about">About</string>
     <string name="more_overview_item_alter_password"><![CDATA[Update Passcode & Biometrics]]></string>
     <string name="more_overview_item_developer_options">Developer Options</string>
-    <string name="more_overview_item_wallet_connect">Clear Wallet Connect</string>
+    <string name="more_overview_item_wallet_connect">Clear WalletConnect</string>
     <string name="export_method_question">Do you want to export your backup via another app, or save it to local storage?</string>
     <string name="export_method_another_app">Another app</string>
     <string name="export_method_local_storage">Local storage</string>
-    <string name="wallet_connect_clear_data_warning_title">Clear Wallet Connect</string>
-    <string name="wallet_connect_clear_data_warning_message">This will clear the local Wallet Connect database. You can do this if you experience connection problems with Wallet Connect. A restart of the app will be required. Do you want to proceed?</string>
+    <string name="wallet_connect_clear_data_warning_title">Clear WalletConnect</string>
+    <string name="wallet_connect_clear_data_warning_message">This will clear the local WalletConnect database. You can do this if you experience connection problems with WalletConnect. A restart of the app will be required. Do you want to proceed?</string>
     <string name="wallet_connect_clear_data_warning_ok">Okay</string>
     <string name="wallet_connect_clear_data_warning_cancel">Cancel</string>
+    <string name="wallet_connect_timer_toast">It can take a while to prepare the connection, please hang on. You can also try to decline and reconnect.</string>
+
 
     <!-- About -->
     <string name="about_title">About</string>
@@ -985,7 +989,6 @@
     <string name="export_account_keys_copied">Copied</string>
     <string name="export_account_keys_to_file">Export to file</string>
     <string name="export_account_keys_file_exported">File exported</string>
-    <string name="wallet_connect_timer_toast">It can take a while to prepare the connection, please hang on. You can also try to decline and reconnect.</string>
 
     <string name="cis_tab_fungible">Fungible</string>
     <string name="cis_tab_collectibles">Collectibles</string>
@@ -1030,4 +1033,5 @@
     <string name="cis_tokens_not_updated">No updates made to token list</string>
     <string name="cis_no_collectibles_added">No collectibles have been added to this account yet.</string>
     <string name="cis_add_more">You can add more tokens from the Manage menu.</string>
+
 </resources>

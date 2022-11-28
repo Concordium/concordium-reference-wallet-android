@@ -215,12 +215,13 @@
                     android:id="@+id/memo"
                     style="@style/TextView.Standard"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                     android:layout_weight="1"
                     android:background="@null"
                     android:gravity="center"
+                    android:clickable="true"
                     android:textColor="@color/text_blue"
                     android:text="@string/cis_optional_add_memo" />
                 <androidx.appcompat.widget.AppCompatImageView
@@ -267,6 +268,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scrollView"
+        android:enabled="false"
         android:layout_margin="@dimen/activity_horizontal_margin"
         android:layout_width="match_parent"
         android:text="@string/cis_send_funds" />
