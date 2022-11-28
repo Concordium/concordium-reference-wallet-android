@@ -120,11 +120,20 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun loadTransactionFee() {
-        if (sendTokenData.account == null || sendTokenData.token == null || sendTokenData.receiver.isEmpty()) {
+        if (sendTokenData.token == null)
+            return
+
+        if (sendTokenData.token!!.isCCDToken) {
+            waiting.postValue(true)
+            viewModelScope.launch {
+                getTransferCostCCD()
+            }
+        }
+
+        if (sendTokenData.account == null || sendTokenData.receiver.isEmpty()) {
             return
         }
 
-        waiting.postValue(true)
         viewModelScope.launch {
             val serializeTokenTransferParametersInput = SerializeTokenTransferParametersInput(sendTokenData.token!!.token, sendTokenData.amount.toString(), sendTokenData.account!!.address, sendTokenData.receiver)
             val serializeTokenTransferParametersOutput = App.appCore.cryptoLibrary.serializeTokenTransferParameters(serializeTokenTransferParametersInput)
@@ -137,6 +146,26 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    private fun getTransferCostCCD() {
+        proxyRepository.getTransferCost(
+            type = ProxyRepository.SIMPLE_TRANSFER,
+            memoSize = if (sendTokenData.memo == null) null else sendTokenData.memo!!.length / 2,
+            success = {
+                sendTokenData.energy = it.energy
+                sendTokenData.fee = it.cost.toLong()
+                sendTokenData.account?.let { account ->
+                    sendTokenData.max = account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) - (sendTokenData.fee ?: 0)
+                }
+                waiting.postValue(false)
+                feeReady.postValue(sendTokenData.fee)
+            },
+            failure = {
+                waiting.postValue(false)
+                handleBackendError(it)
+            }
+        )
+    }
+
     private fun getTransferCost(serializeTokenTransferParametersOutput: SerializeTokenTransferParametersOutput) {
         if (sendTokenData.account == null || sendTokenData.token == null) {
             errorInt.postValue(R.string.app_error_general)
@@ -145,12 +174,12 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
 
         proxyRepository.getTransferCost(
             type = ProxyRepository.UPDATE,
-            memoSize = if (sendTokenData.memo == null) null else sendTokenData.memo!!.length / 2,
+            memoSize = null,
             amount = sendTokenData.amount,
             sender = sendTokenData.account!!.address,
             contractIndex = sendTokenData.token!!.contractIndex.toInt(),
             contractSubindex = 0,
-            receiveName = sendTokenData.token!!.name,
+            receiveName = sendTokenData.token!!.contractName + ".transfer",
             parameter = serializeTokenTransferParametersOutput.parameter,
             success = {
                 sendTokenData.energy = it.energy
@@ -164,7 +193,8 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             failure = {
                 waiting.postValue(false)
                 handleBackendError(it)
-            })
+            }
+        )
     }
 
     fun loadCCDDefaultToken(accountAddress: String) {
@@ -253,7 +283,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             if (serializeTokenTransferParametersOutput == null) {
                 errorInt.postValue(R.string.app_error_lib)
             } else {
-                val payload = Payload(ContractAddress(sendTokenData.token!!.contractIndex.toInt(), 0), sendTokenData.amount.toString(), sendTokenData.energy!!.toInt(), serializeTokenTransferParametersOutput.parameter, sendTokenData.token!!.name)
+                val payload = Payload(ContractAddress(sendTokenData.token!!.contractIndex.toInt(), 0), sendTokenData.amount.toString(), sendTokenData.energy!!.toInt(), serializeTokenTransferParametersOutput.parameter, sendTokenData.token!!.contractName + ".transfer")
                 val accountTransactionInput = CreateAccountTransactionInput(expiry.toInt(), sendTokenData.account!!.address, keys, sendTokenData.accountNonce!!.nonce, payload, "Update")
                 val accountTransactionOutput = App.appCore.cryptoLibrary.createAccountTransaction(accountTransactionInput)
                 if (accountTransactionOutput == null) {
@@ -271,19 +301,16 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         submitTransaction = proxyRepository.submitTransfer(createTransferOutput,
             {
                 println("LC -> submitTransaction SUCCESS = ${it.submissionId}")
-                //transactionSubmittedSuccess.postValue(Gson().toJson(TransactionSuccess(it.submissionId)))
                 waiting.postValue(false)
-                //initializeAccountUpdater()
+                transactionReady.postValue(true)
             },
             {
                 println("LC -> submitTransaction ERROR ${it.stackTraceToString()}")
-                //transactionSubmittedError.postValue(Gson().toJson(TransactionError(500, it.message ?: "")))
                 handleBackendError(it)
                 waiting.postValue(false)
             }
         )
     }
-    //  //        transactionReady.postValue(true)
 
     private fun handleBackendError(throwable: Throwable) {
         Log.e("Backend request failed", throwable)

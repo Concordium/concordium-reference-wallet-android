@@ -57,9 +57,10 @@ class SendTokenActivity : BaseActivity() {
         }
         */
         viewModel.sendTokenData.token = Token("1084", "00", "100",
-        TokenMetadata(6, "Optimal FT metadata values. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-        "CIS1-NFT.transfer", "FT",
-        Thumbnail("https://developer.concordium.software/en/mainnet/_images/wCCD.svg"),false), false, "1696", false, 1, 2000, "FT example")
+            TokenMetadata(6, "Optimal FT metadata values. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "CIS2-Multi.transfer", "FT",
+            Thumbnail("https://developer.concordium.software/en/mainnet/_images/wCCD.svg"),false), false, "1696", false, 1000000000000, 200000005, "CIS2-Multi")
+
         updateWithToken(viewModel.sendTokenData.token)
         initViews()
         viewModel.loadTransactionFee()

@@ -1020,7 +1020,7 @@
     <string name="cis_receiver">Receiver</string>
     <string name="cis_finish">Finish</string>
     <string name="cis_back">Back</string>
-    <string name="cis_estimated_fee">Estimated transaction fee:\nϾ%1$s</string>
+    <string name="cis_estimated_fee">Estimated transaction fee:\n%1$s</string>
     <string name="cis_back_to_list">Back to list</string>
     <string name="cis_invalid_account_address">Invalid account address</string>
     <string name="cis_enter_receiver_address">Please enter a receiver address</string>
