@@ -62,8 +62,12 @@ class TokensFragment : Fragment() {
             }
             tokensAccountDetailsAdapter.dataSet = _viewModel.tokens.toTypedArray()
             tokensAccountDetailsAdapter.notifyDataSetChanged()
+            _viewModel.loadTokensBalances()
         }
         _viewModel.tokenDetails.observe(viewLifecycleOwner) {
+            tokensAccountDetailsAdapter.notifyDataSetChanged()
+        }
+        _viewModel.tokenBalances.observe(viewLifecycleOwner) {
             tokensAccountDetailsAdapter.notifyDataSetChanged()
         }
     }

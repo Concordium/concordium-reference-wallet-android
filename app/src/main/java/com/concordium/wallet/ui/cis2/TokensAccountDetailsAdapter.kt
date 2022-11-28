@@ -49,7 +49,7 @@ class TokensAccountDetailsAdapter(private val context: Context, private val isFu
         val token = dataSet[position]
 
         if (isFungible && token.isCCDToken) {
-            holder.binding.title.text = "${CurrencyUtil.formatGTU(token.totalBalance, false)} CCD"
+            holder.binding.title.text = "${CurrencyUtil.formatGTU(token.totalBalance, true)} CCD"
             Glide.with(context).load(R.drawable.ic_concordium_logo_no_text).into(holder.binding.tokenIcon)
         } else {
             token.tokenMetadata?.let { tokenMetadata ->
@@ -64,7 +64,7 @@ class TokensAccountDetailsAdapter(private val context: Context, private val isFu
                 } else if (tokenMetadata.thumbnail.url == "none") {
                     holder.binding.tokenIcon.setImageResource(R.drawable.ic_token_no_image)
                 }
-                holder.binding.title.text = tokenMetadata.name
+                holder.binding.title.text = "${CurrencyUtil.formatGTU(token.totalBalance, false)} ${token.symbol}"
             }
         }
 

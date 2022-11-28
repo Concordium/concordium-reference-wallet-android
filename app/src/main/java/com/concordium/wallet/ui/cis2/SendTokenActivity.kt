@@ -76,7 +76,8 @@ class SendTokenActivity : BaseActivity() {
             false,
             1000000000000,
             200000005,
-            "CIS2-Multi")
+            "CIS2-Multi",
+            "wCCD")
 
         updateWithToken(viewModel.sendTokenData.token)
         initViews()

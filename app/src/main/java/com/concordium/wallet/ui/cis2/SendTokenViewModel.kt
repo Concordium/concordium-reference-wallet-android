@@ -81,7 +81,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 val accountContracts = accountContractRepository.find(account.address)
                 accountContracts.forEach { accountContract ->
                     val tokens = contractTokensRepository.getTokens(accountContract.contractIndex)
-                    tokensFound.addAll(tokens.map { Token(it.tokenId, "", "", null, false, "") })
+                    tokensFound.addAll(tokens.map { Token(it.tokenId, "", "", null, false, "", false, 0, 0, "", "CCD") })
                 }
             }
             waiting.postValue(false)
@@ -202,7 +202,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
             val account = accountRepository.findByAddress(accountAddress)
             val atDisposal = account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) ?: 0
-            defaultToken.postValue(Token("", "CCD", "", null, false, "", true, account?.totalBalance ?: 0, atDisposal))
+            defaultToken.postValue(Token("", "CCD", "", null, false, "", true, account?.totalBalance ?: 0, atDisposal, "", "CCD"))
         }
     }
 
