@@ -71,9 +71,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             }
             tokens.addAll(contractTokens.map { Token(it.tokenId, it.tokenId, "", it.tokenMetadata, true, it.contractIndex) })
             waiting.postValue(false)
-           /* contractTokens.groupBy { it.contractIndex }.forEach { group ->
-                loadTokensMetadataUrls(group.key, group.value.map { it.tokenId })
-            }*/
         }
     }
 
@@ -192,19 +189,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             proxyRepository.getCIS2TokenMetadata(tokenData.contractIndex, "0", tokenIds = commaSeparated, success = { cis2TokensMetadata ->
                 cis2TokensMetadata.metadata.forEach {
                     loadTokenMetadata(tokenData.contractIndex, it)
-                }
-            }, failure = {
-                handleBackendError(it)
-            })
-        }
-    }
-
-    private fun loadTokensMetadataUrls(contractIndex: String, tokenIds: List<String>) {
-        viewModelScope.launch {
-            val commaSeparated = tokenIds.joinToString(",") { it }
-            proxyRepository.getCIS2TokenMetadata(contractIndex, "0", tokenIds = commaSeparated, success = { cis2TokensMetadata ->
-                cis2TokensMetadata.metadata.forEach {
-                    loadTokenMetadata(contractIndex, it)
                 }
             }, failure = {
                 handleBackendError(it)
