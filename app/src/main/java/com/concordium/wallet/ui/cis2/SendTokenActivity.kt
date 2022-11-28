@@ -15,7 +15,9 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.Thumbnail
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -44,13 +46,23 @@ class SendTokenActivity : BaseActivity() {
         setContentView(binding.root)
         viewModel.sendTokenData.account = intent.getSerializable(ACCOUNT, Account::class.java)
         initObservers()
+        /*
         if (intent.hasExtra(TOKEN)) {
             viewModel.sendTokenData.token = intent.getSerializable(TOKEN, Token::class.java)
             updateWithToken(viewModel.sendTokenData.token)
             initViews()
+            viewModel.loadTransactionFee()
         } else {
             viewModel.loadCCDDefaultToken(viewModel.sendTokenData.account?.address ?: "")
         }
+        */
+        viewModel.sendTokenData.token = Token("1084", "00", "100",
+        TokenMetadata(6, "Optimal FT metadata values. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        "CIS1-NFT.transfer", "FT",
+        Thumbnail("https://developer.concordium.software/en/mainnet/_images/wCCD.svg"),false), false, "1696", false, 1, 2000, "FT example")
+        updateWithToken(viewModel.sendTokenData.token)
+        initViews()
+        viewModel.loadTransactionFee()
     }
 
     override fun onDestroy() {
@@ -69,7 +81,6 @@ class SendTokenActivity : BaseActivity() {
         initializeScanQrCode()
         initializeSend()
         initializeSearchToken()
-        viewModel.loadTransactionFee()
         viewModel.getGlobalInfo()
     }
 
@@ -189,8 +200,7 @@ class SendTokenActivity : BaseActivity() {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.getSerializable(RecipientListActivity.EXTRA_RECIPIENT, Recipient::class.java)?.let { recipient ->
                     binding.receiver.text = recipient.address
-                    binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.text_blue))
-                    binding.contractAddressError.visibility = View.GONE
+                    receiverAddressSet()
                 }
             }
         }
@@ -200,8 +210,7 @@ class SendTokenActivity : BaseActivity() {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.getStringExtra(ScanQRActivity.EXTRA_BARCODE)?.let { barcode ->
                     binding.receiver.text = barcode
-                    binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.text_blue))
-                    binding.contractAddressError.visibility = View.GONE
+                    receiverAddressSet()
                 }
             }
         }
@@ -213,13 +222,19 @@ class SendTokenActivity : BaseActivity() {
             when (item!!.itemId) {
                 R.id.paste -> {
                     binding.receiver.text = clipText
-                    binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.text_blue))
-                    binding.contractAddressError.visibility = View.GONE
+                    receiverAddressSet()
                 }
             }
             true
         }
         popupMenu.show()
+    }
+
+    private fun receiverAddressSet() {
+        binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.text_blue))
+        binding.contractAddressError.visibility = View.GONE
+        viewModel.sendTokenData.receiver = binding.receiver.text.toString()
+        viewModel.loadTransactionFee()
     }
 
     private fun initObservers() {
@@ -242,6 +257,7 @@ class SendTokenActivity : BaseActivity() {
             viewModel.sendTokenData.token = token
             initViews()
             updateWithToken(token)
+            viewModel.loadTransactionFee()
         }
         viewModel.errorInt.observe(this) {
             Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
