@@ -6,7 +6,7 @@ data class TokenMetadata(
     val decimals: Int,
     val description: String,
     val name: String,
-    val symbol: String,
+    val symbol: String?,
     val thumbnail: Thumbnail,
     val unique: Boolean,
     var display: UrlHolder?,

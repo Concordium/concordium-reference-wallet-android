@@ -206,8 +206,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             if (tokens.count() > index && index >= 0) {
                 val tokenMetadata = MetadataApiInstance.safeMetadataCall(cis2TokensMetadataItem.metadataURL)
 
-                Log.d("TOKEN METADATA: ${tokenMetadata}")
-
                 if (tokenMetadata != null) {
                     tokens[index].tokenMetadata = tokenMetadata
                 } else {

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="0dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginTop="@dimen/activity_vertical_margin"
     android:layout_weight="1"
     android:background="@drawable/rounded_transparent"
@@ -65,7 +66,7 @@
             android:visibility="gone"
             tools:visibility="visible">
 
-            <RelativeLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
@@ -76,15 +77,20 @@
                     style="@style/TextView.XSmall.Light"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/cis_name_and_icon" />
+                    android:text="@string/cis_name_and_icon"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"/>
 
                 <TextView
                     android:id="@+id/name"
                     style="@style/TextView.Standard"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/name_title"
-                    tools:text="Global Transaction Unit" />
+                    tools:text="Global Transaction Unit"
+                    app:layout_constraintTop_toBottomOf="@id/name_title"
+                    app:layout_constraintEnd_toStartOf="@id/icon"
+                    app:layout_constraintStart_toStartOf="parent"/>
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/icon"
@@ -93,15 +99,18 @@
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     tools:src="@drawable/ic_icon_qr"
-                    tools:tint="@color/theme_blue" />
-            </RelativeLayout>
+                    tools:tint="@color/theme_blue"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <View style="@style/Divider" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/mint_address_holder"
+            android:id="@+id/contract_index_holder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -114,10 +123,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin_half"
-                android:text="@string/cis_mint_address" />
+                android:text="@string/cis_contract_index" />
 
             <TextView
-                android:id="@+id/mint_address"
+                android:id="@+id/contract_index"
                 style="@style/TextView.Standard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

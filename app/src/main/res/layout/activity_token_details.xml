@@ -30,8 +30,12 @@
 
         <include layout="@layout/activity_token_details_about" android:id="@+id/include_about" />
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+        <include
+            android:id="@+id/include_progress"
+            layout="@layout/progress"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
-    <include layout="@layout/progress" android:id="@+id/include_progress" android:visibility="gone" tools:visibility="visible" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

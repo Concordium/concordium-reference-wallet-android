@@ -9,7 +9,6 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityTokenDetailsBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.Log
@@ -39,7 +38,7 @@ class TokenDetailsActivity : BaseActivity() {
     private fun initViews() {
         viewModel.tokenData.account = intent.getSerializable(ACCOUNT, Account::class.java)
         viewModel.tokenData.selectedToken = intent.getSerializable(TOKEN, Token::class.java)
-        Log.d("TOKEN METADATA : ${viewModel.tokenData.selectedToken}")
+        Log.d("TOKEN : ${viewModel.tokenData.selectedToken}")
 
 
         val tokenName = viewModel.tokenData.selectedToken?.tokenMetadata?.name
@@ -66,10 +65,13 @@ class TokenDetailsActivity : BaseActivity() {
 
         }
 
+        viewModel.tokenData.selectedToken?.let {
+            setContractIndex(it)
+        }
+
         viewModel.tokenData.selectedToken?.tokenMetadata?.let {
 
             setNameAndIcon(it)
-            setMintAddress(it)
 
             if (it.unique) {
                 setImage(it)
@@ -100,8 +102,12 @@ class TokenDetailsActivity : BaseActivity() {
         binding.includeAbout.name.text = name
     }
 
-    private fun setMintAddress(tokenMetadata: TokenMetadata) {
+    private fun setContractIndex(token: Token) {
 
+        if (token.contractIndex.isNotBlank()) {
+            binding.includeAbout.contractIndexHolder.visibility = View.VISIBLE
+            binding.includeAbout.contractIndex.text = token.contractIndex
+        }
     }
 
     private fun setImage(tokenMetadata: TokenMetadata) {
@@ -123,6 +129,11 @@ class TokenDetailsActivity : BaseActivity() {
     }
 
     private fun setTicker(tokenMetadata: TokenMetadata) {
+
+        if (tokenMetadata.symbol != null && tokenMetadata.symbol.isNotBlank()) {
+            binding.includeAbout.tokenHolder.visibility = View.VISIBLE
+            binding.includeAbout.token.text = tokenMetadata.symbol
+        }
 
     }
 

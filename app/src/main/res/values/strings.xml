@@ -1027,7 +1027,7 @@
     <string name="cis_about_token">About token</string>
     <string name="cis_name_and_icon">Name and icon</string>
     <string name="cis_image">Image</string>
-    <string name="cis_mint_address">Mint address</string>
+    <string name="cis_contract_index">Contract Index</string>
     <string name="cis_decimals">Decimals</string>
     <string name="cis_no_tokens_selected">You haven\'t selected any tokens.</string>
     <string name="cis_tokens_updated">Token list updated</string>
