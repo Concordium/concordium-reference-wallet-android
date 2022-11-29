@@ -10,9 +10,6 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentWalletConnectTransactionBinding
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.WALLET_CONNECT_DATA
-import com.google.gson.ExclusionStrategy
-import com.google.gson.FieldAttributes
-import com.google.gson.GsonBuilder
 
 class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
     private var _binding: FragmentWalletConnectTransactionBinding? = null
@@ -38,6 +35,7 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initObservers()
+        _viewModel.prettyPrintJson()
         _viewModel.loadTransactionFee()
     }
 
@@ -56,7 +54,6 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
         }
         binding.amount.text = CurrencyUtil.formatGTU(_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.amount ?: "", true)
         binding.contractAddress.text = "${_viewModel.binder?.getSessionRequestParams()?.parsePayload()?.address?.index}"
-        binding.parameters.text = prettyPrintJson()
         binding.reject.setOnClickListener {
             binding.reject.isEnabled = false
             _viewModel.binder?.respondError("User reject")
@@ -85,23 +82,8 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
         _viewModel.errorInt.observe(viewLifecycleOwner) {
             binding.submit.isEnabled = true
         }
-    }
-
-    private fun prettyPrintJson(): String {
-        _viewModel.binder?.getSessionRequestParams()?.let { params ->
-            params.payloadObj = params.parsePayload()
-            params.payload = ""
-            val strategy: ExclusionStrategy = object : ExclusionStrategy {
-                override fun shouldSkipField(f: FieldAttributes): Boolean {
-                    return f.name == "payload"
-                }
-                override fun shouldSkipClass(clazz: Class<*>?): Boolean {
-                    return false
-                }
-            }
-            val gson = GsonBuilder().setPrettyPrinting().addSerializationExclusionStrategy(strategy).create()
-            return gson.toJson(params).replace("payloadObj", "payload")
+        _viewModel.jsonPretty.observe(viewLifecycleOwner) { jsonPretty ->
+            binding.parameters.text = jsonPretty
         }
-        return ""
     }
 }
