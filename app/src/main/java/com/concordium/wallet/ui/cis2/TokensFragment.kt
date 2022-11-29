@@ -40,7 +40,7 @@ class TokensFragment : Fragment() {
 
     private fun initViews() {
         binding.tokensFound.layoutManager = LinearLayoutManager(activity)
-        tokensAccountDetailsAdapter = TokensAccountDetailsAdapter(requireContext(), _isFungible, arrayOf())
+        tokensAccountDetailsAdapter = TokensAccountDetailsAdapter(requireContext(), _isFungible, _isFungible, arrayOf())
         tokensAccountDetailsAdapter.also { binding.tokensFound.adapter = it }
 
         tokensAccountDetailsAdapter.setTokenClickListener(object : TokensAccountDetailsAdapter.TokenClickListener {

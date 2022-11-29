@@ -13,7 +13,7 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenAccountDetailsBinding
 import com.concordium.wallet.util.UnitConvertUtil
 
-class TokensAccountDetailsAdapter(private val context: Context, private val isFungible: Boolean, var dataSet: Array<Token>) : RecyclerView.Adapter<TokensAccountDetailsAdapter.ViewHolder>() {
+class TokensAccountDetailsAdapter(private val context: Context, private val isFungible: Boolean, private val showManageInfo: Boolean, var dataSet: Array<Token>) : RecyclerView.Adapter<TokensAccountDetailsAdapter.ViewHolder>() {
     private var tokenClickListener: TokenClickListener? = null
     private val iconSize: Int get() = UnitConvertUtil.convertDpToPixel(context.resources.getDimension(R.dimen.list_item_height))
 
@@ -28,7 +28,7 @@ class TokensAccountDetailsAdapter(private val context: Context, private val isFu
         this.tokenClickListener = tokenClickListener
     }
 
-    override fun getItemCount() = if (isFungible) dataSet.size + 1 else dataSet.size
+    override fun getItemCount() = if (showManageInfo) dataSet.size + 1 else dataSet.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemTokenAccountDetailsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -37,7 +37,7 @@ class TokensAccountDetailsAdapter(private val context: Context, private val isFu
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (position == itemCount - 1 && isFungible) {
+        if (position == itemCount - 1 && showManageInfo) {
             holder.binding.addMore.visibility = View.VISIBLE
             holder.binding.content.visibility = View.GONE
             return
@@ -64,7 +64,7 @@ class TokensAccountDetailsAdapter(private val context: Context, private val isFu
                 } else if (tokenMetadata.thumbnail.url == "none") {
                     holder.binding.tokenIcon.setImageResource(R.drawable.ic_token_no_image)
                 }
-                holder.binding.title.text = "${CurrencyUtil.formatGTU(token.totalBalance, false)} ${token.symbol}"
+                holder.binding.title.text = "${CurrencyUtil.formatGTU(token.totalBalance, false, token.tokenMetadata?.decimals ?: 6)} ${token.symbol}"
             }
         }
 

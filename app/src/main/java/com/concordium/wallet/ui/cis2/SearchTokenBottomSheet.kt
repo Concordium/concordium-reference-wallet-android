@@ -14,16 +14,19 @@ import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DAT
 class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
     private var _binding: DialogSearchTokenBinding? = null
     private val binding get() = _binding!!
-    private lateinit var tokensAddAdapter: TokensAddAdapter
+    private lateinit var tokensAccountDetailsAdapter: TokensAccountDetailsAdapter
     private lateinit var _viewModel: SendTokenViewModel
+    private lateinit var _viewModelTokens: TokensViewModel
 
     companion object {
         @JvmStatic
-        fun newInstance(viewModel: SendTokenViewModel) = SearchTokenBottomSheet().apply {
+        fun newInstance(viewModel: SendTokenViewModel, viewModelTokens: TokensViewModel) = SearchTokenBottomSheet().apply {
             arguments = Bundle().apply {
                 putSerializable(SEND_TOKEN_DATA, viewModel.sendTokenData)
             }
             _viewModel = viewModel
+            _viewModelTokens = viewModelTokens
+            _viewModelTokens.tokenData.account = _viewModel.sendTokenData.account
         }
     }
 
@@ -46,10 +49,10 @@ class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
 
     private fun initViews() {
         binding.tokensFound.layoutManager = LinearLayoutManager(activity)
-        tokensAddAdapter = TokensAddAdapter(requireActivity(), showCheckBox = true, dataSet = arrayOf())
-        tokensAddAdapter.also { binding.tokensFound.adapter = it }
+        tokensAccountDetailsAdapter = TokensAccountDetailsAdapter(requireActivity(), isFungible = true, showManageInfo = false, dataSet = arrayOf())
+        tokensAccountDetailsAdapter.also { binding.tokensFound.adapter = it }
 
-        tokensAddAdapter.setTokenClickListener(object : TokensAddAdapter.TokenClickListener {
+        tokensAccountDetailsAdapter.setTokenClickListener(object : TokensAccountDetailsAdapter.TokenClickListener {
             override fun onRowClick(token: Token) {
                 _viewModel.chooseToken.postValue(token)
             }
@@ -59,13 +62,13 @@ class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
 
         binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                tokensAddAdapter.dataSet = _viewModel.tokens.value!!.filter { it.token.uppercase().contains(query?.uppercase() ?: "") }.toTypedArray()
-                tokensAddAdapter.notifyDataSetChanged()
+                tokensAccountDetailsAdapter.dataSet = _viewModel.tokens.value!!.filter { it.token.uppercase().contains(query?.uppercase() ?: "") }.toTypedArray()
+                tokensAccountDetailsAdapter.notifyDataSetChanged()
                 return false
             }
             override fun onQueryTextChange(newText: String?): Boolean {
-                tokensAddAdapter.dataSet = _viewModel.tokens.value!!.filter { it.token.uppercase().contains(newText?.uppercase() ?: "") }.toTypedArray()
-                tokensAddAdapter.notifyDataSetChanged()
+                tokensAccountDetailsAdapter.dataSet = _viewModel.tokens.value!!.filter { it.token.uppercase().contains(newText?.uppercase() ?: "") }.toTypedArray()
+                tokensAccountDetailsAdapter.notifyDataSetChanged()
                 return false
             }
         })
@@ -76,8 +79,14 @@ class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
             showWaiting(waiting)
         }
         _viewModel.tokens.observe(this) { tokens ->
-            tokensAddAdapter.dataSet = tokens.toTypedArray()
-            tokensAddAdapter.notifyDataSetChanged()
+            tokensAccountDetailsAdapter.dataSet = tokens.toTypedArray()
+            tokensAccountDetailsAdapter.notifyDataSetChanged()
+            _viewModelTokens.tokens = tokens as MutableList<Token>
+            _viewModelTokens.loadTokensBalances()
+        }
+        _viewModelTokens.tokenBalances.observe(viewLifecycleOwner) {
+            tokensAccountDetailsAdapter.dataSet = _viewModelTokens.tokens.toTypedArray()
+            tokensAccountDetailsAdapter.notifyDataSetChanged()
         }
     }
 

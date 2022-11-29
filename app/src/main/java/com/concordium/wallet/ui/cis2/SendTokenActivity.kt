@@ -14,6 +14,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
+import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
@@ -25,13 +26,16 @@ import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DAT
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
+import com.concordium.wallet.util.UnitConvertUtil
 import com.concordium.wallet.util.getSerializable
 import javax.crypto.Cipher
 
 class SendTokenActivity : BaseActivity() {
     private lateinit var binding: ActivitySendTokenBinding
     private val viewModel: SendTokenViewModel by viewModels()
+    private val viewModelTokens: TokensViewModel by viewModels()
     private var searchTokenBottomSheet: SearchTokenBottomSheet? = null
+    private val iconSize: Int get() = UnitConvertUtil.convertDpToPixel(resources.getDimension(R.dimen.list_item_height))
 
     companion object {
         const val ACCOUNT = "ACCOUNT"
@@ -86,7 +90,7 @@ class SendTokenActivity : BaseActivity() {
 
     private fun initializeSearchToken() {
         binding.searchToken.searchToken.setOnClickListener {
-            searchTokenBottomSheet = SearchTokenBottomSheet.newInstance(viewModel)
+            searchTokenBottomSheet = SearchTokenBottomSheet.newInstance(viewModel, viewModelTokens)
             searchTokenBottomSheet?.show(supportFragmentManager, "")
         }
     }
@@ -234,6 +238,15 @@ class SendTokenActivity : BaseActivity() {
             searchTokenBottomSheet?.dismiss()
             searchTokenBottomSheet = null
             binding.searchToken.tokenShortName.text = token.symbol
+            token.tokenMetadata?.thumbnail?.let { thumbnail ->
+                Glide.with(this)
+                    .load(thumbnail.url)
+                    .placeholder(R.drawable.ic_token_loading_image)
+                    .override(iconSize)
+                    .fitCenter()
+                    .error(R.drawable.ic_token_no_image)
+                    .into(binding.searchToken.tokenIcon)
+            }
         }
         viewModel.transactionReady.observe(this) {
             gotoReceipt()
