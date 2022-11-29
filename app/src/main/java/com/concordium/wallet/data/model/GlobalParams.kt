@@ -4,4 +4,4 @@ data class GlobalParams(
     val onChainCommitmentKey: String,
     val bulletproofGenerators: String,
     val genesisString: String
-)
+): java.io.Serializable

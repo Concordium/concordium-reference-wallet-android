@@ -26,14 +26,7 @@ class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
             _viewModel = viewModel
         }
     }
-/*
-    private lateinit var tokenData: TokenData
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        tokenData = requireArguments().getSerializableFromBundle(TokensViewModel.TOKEN_DATA, TokenData::class.java)
-    }
-  */
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = DialogSearchTokenBinding.inflate(inflater, container, false)
         return binding.root

@@ -10,4 +10,4 @@ data class CreateTransferOutput(
     val addedSelfEncryptedAmount: String?,
     val remaining: String?,
     val transaction: String
-)
+) : java.io.Serializable

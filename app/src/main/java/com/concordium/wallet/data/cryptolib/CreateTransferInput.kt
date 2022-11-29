@@ -24,4 +24,4 @@ data class CreateTransferInput(
     val transactionFeeCommission: Double? = null,
     val bakingRewardCommission: Double? = null,
     val finalizationRewardCommission: Double? = null
-)
+): java.io.Serializable

@@ -90,6 +90,7 @@
                                     android:layout_height="wrap_content"
                                     tools:text="2.00" />
                                 <TextView
+                                    android:id="@+id/token_title"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
