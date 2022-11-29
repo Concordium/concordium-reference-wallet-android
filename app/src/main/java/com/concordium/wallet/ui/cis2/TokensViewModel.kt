@@ -51,6 +51,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val tokenDetails: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val hasExistingAccountContract: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val nonSelected: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val tokenBalances: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 
     private val proxyRepository = ProxyRepository()
 
@@ -70,7 +71,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                 // On fungible tab we add CCD as default at the top
                 tokens.add(getCCDDefaultToken(accountAddress))
             }
-            tokens.addAll(contractTokens.map { Token(it.tokenId, it.tokenId, "", it.tokenMetadata, true, it.contractIndex) })
+            tokens.addAll(contractTokens.map { Token(it.tokenId, it.tokenId, "", it.tokenMetadata, true, it.contractIndex, false, 0, 0, "", it.tokenMetadata?.symbol ?: "") })
             waiting.postValue(false)
         }
     }
@@ -181,7 +182,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
         val account = accountRepository.findByAddress(accountAddress)
         val atDisposal = account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) ?: 0
-        return Token("", "CCD", "", null, false, "", true, account?.totalBalance ?: 0, atDisposal)
+        return Token("", "CCD", "", null, false, "", true, account?.totalBalance ?: 0, atDisposal, "", "CCD")
     }
 
     private fun loadTokensMetadataUrls(tokens: List<Token>) {
@@ -212,6 +213,27 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     tokens[index].tokenMetadata = TokenMetadata(-1, "", "", "", Thumbnail("none"), false, null, null, null, null, null)
                 }
                 tokenDetails.postValue(true)
+            }
+        }
+    }
+
+    fun loadTokensBalances() {
+        if (tokenData.account == null)
+            return
+
+        tokens.filter { !it.isCCDToken }.groupBy { it.contractIndex }.forEach { group ->
+            val commaSeparated = group.value.joinToString(",") {  it.token }
+            viewModelScope.launch {
+                proxyRepository.getCIS2TokenBalance(group.key, "0", tokenData.account!!.address, commaSeparated,
+                    success = { cis2TokensBalances ->
+                        cis2TokensBalances.forEach { cis2TokenBalance ->
+                            tokens.firstOrNull { it.token == cis2TokenBalance.tokenId }?.totalBalance = cis2TokenBalance.balance.toLong()
+                        }
+                        tokenBalances.postValue(true)
+                    }, failure = {
+                        handleBackendError(it)
+                    }
+                )
             }
         }
     }
