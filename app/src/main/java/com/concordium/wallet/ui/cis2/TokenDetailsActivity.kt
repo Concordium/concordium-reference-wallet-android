@@ -9,6 +9,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityTokenDetailsBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.Log
@@ -67,6 +68,7 @@ class TokenDetailsActivity : BaseActivity() {
 
         viewModel.tokenData.selectedToken?.let {
             setContractIndex(it)
+            setBalance(it)
         }
 
         viewModel.tokenData.selectedToken?.tokenMetadata?.let {
@@ -79,6 +81,12 @@ class TokenDetailsActivity : BaseActivity() {
                 setTicker(it)
                 setDecimals(it)
             }
+        }
+    }
+
+    private fun setBalance(token: Token) {
+        if(token.totalBalance != null){
+            binding.includeBalance.tokenAmount.text = CurrencyUtil.formatGTU(token.totalBalance, false)
         }
     }
 

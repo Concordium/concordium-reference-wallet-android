@@ -310,15 +310,19 @@
                             android:background="@drawable/slider_button"
                             android:clickable="true"
                             android:layout_weight="0.33">
+
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:layout_width="25dp"
                                 android:layout_height="25dp"
-                                android:layout_margin="15dp"
-                                android:scaleType="fitCenter"
                                 android:layout_centerInParent="true"
-                                android:tint="@color/theme_white"
+                                android:layout_marginStart="15dp"
+                                android:layout_marginTop="15dp"
+                                android:layout_marginEnd="15dp"
+                                android:layout_marginBottom="15dp"
+                                android:gravity="center"
+                                android:scaleType="fitCenter"
                                 android:src="@drawable/ic_icon_qr"
-                                android:gravity="center" />
+                                android:tint="@color/theme_white" />
                         </RelativeLayout>
                     </androidx.appcompat.widget.LinearLayoutCompat>
                 </androidx.cardview.widget.CardView>
