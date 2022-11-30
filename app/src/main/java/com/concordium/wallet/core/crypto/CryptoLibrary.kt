@@ -40,4 +40,6 @@ interface CryptoLibrary {
     suspend fun createAccountTransaction(createAccountTransactionInput: CreateAccountTransactionInput): CreateAccountTransactionOutput?
 
     suspend fun signMessage(signMessageInput: SignMessageInput): SignMessageOutput?
+
+    suspend fun parameterToJson(parameterToJsonInput: ParameterToJsonInput): String?
 }
