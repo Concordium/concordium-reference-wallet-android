@@ -95,7 +95,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 val accountContracts = accountContractRepository.find(account.address)
                 accountContracts.forEach { accountContract ->
                     val tokens = contractTokensRepository.getTokens(accountContract.contractIndex)
-                    tokensFound.addAll(tokens.map { Token(it.tokenId, "", "", it.tokenMetadata, false, it.contractIndex, false, 0, 0, "", it.tokenMetadata?.symbol ?: "") })
+                    tokensFound.addAll(tokens.map { Token(it.tokenId, it.tokenId, "", it.tokenMetadata, false, it.contractIndex, false, 0, 0, "", it.tokenMetadata?.symbol ?: "") })
                 }
             }
             waiting.postValue(false)
