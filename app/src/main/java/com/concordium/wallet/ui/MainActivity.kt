@@ -44,6 +44,11 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
     private var wcUri = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        if (!isTaskRoot) {
+            finish();
+        }
+
         setTheme(R.style.AppTheme_NoActionBar)  // Set theme to default to remove launcher theme
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -62,6 +67,17 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
         // we could end up with overlapping fragments.
         if (savedInstanceState != null) {
             return
+        }else{
+            intent?.data?.let {
+                if (it.toString().startsWith("wc")) {
+                    wcUri = it.toString()
+                    if (App.appCore.session.isLoggedIn.value == true && AuthPreferences(this).hasSeedPhrase()) {
+                        gotoWalletConnect()
+                    } else {
+                        showAuthenticationIfRequired()
+                    }
+                }
+            }
         }
 
         EventBus.getDefault().register(this)
