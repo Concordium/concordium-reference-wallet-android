@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.cis2
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
@@ -27,6 +28,7 @@ class TokenDetailsActivity : BaseActivity() {
     companion object {
         const val ACCOUNT = "ACCOUNT"
         const val TOKEN = "TOKEN"
+        const val DELETED = "DELETED"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +44,7 @@ class TokenDetailsActivity : BaseActivity() {
         viewModel.tokenData.account = intent.getSerializable(ACCOUNT, Account::class.java)
         viewModel.tokenData.selectedToken = intent.getSerializable(TOKEN, Token::class.java)
         Log.d("TOKEN : ${viewModel.tokenData.selectedToken}")
+        Log.d("ACCOUNT : ${viewModel.tokenData.account}")
 
 
         val tokenName = viewModel.tokenData.selectedToken?.tokenMetadata?.name
@@ -99,13 +102,20 @@ class TokenDetailsActivity : BaseActivity() {
         builder.setTitle(R.string.cis_delete_dialog_title)
         builder.setMessage(getString(R.string.cis_delete_dialog_content))
 
-        builder.setPositiveButton(getString(R.string.cis_delete_dialog_confirm)) {dialog, _ ->
+        builder.setPositiveButton(getString(R.string.cis_delete_dialog_confirm)) { dialog, _ ->
             dialog.dismiss()
-            viewModel.deleteSingleToken(viewModel.tokenData.contractIndex, viewModel.tokenData.selectedToken!!.id)
-            //finish()
+            viewModel.deleteSingleToken(
+                viewModel.tokenData.account!!.address,
+                viewModel.tokenData.selectedToken!!.contractIndex,
+                viewModel.tokenData.selectedToken!!.id
+            )
+            val intent = Intent()
+            intent.putExtra(DELETED, true)
+            setResult(Activity.RESULT_OK, intent)
+            finish()
         }
 
-        builder.setNegativeButton(getString(R.string.cis_delete_dialog_cancel)) {dialog, _ ->
+        builder.setNegativeButton(getString(R.string.cis_delete_dialog_cancel)) { dialog, _ ->
             dialog.dismiss()
 
         }
@@ -113,8 +123,9 @@ class TokenDetailsActivity : BaseActivity() {
     }
 
     private fun setBalance(token: Token) {
-        if(token.totalBalance != null){
-            binding.includeBalance.tokenAmount.text = CurrencyUtil.formatGTU(token.totalBalance, false)
+        if (token.totalBalance != null) {
+            binding.includeBalance.tokenAmount.text =
+                CurrencyUtil.formatGTU(token.totalBalance, false)
         }
     }
 

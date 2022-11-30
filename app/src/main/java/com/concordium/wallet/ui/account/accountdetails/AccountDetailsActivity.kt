@@ -266,11 +266,23 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun showTokenDetailsDialog(token: Token) {
+
         val intent = Intent(this, TokenDetailsActivity::class.java)
         intent.putExtra(TokenDetailsActivity.ACCOUNT, viewModelAccountDetails.account)
         intent.putExtra(TokenDetailsActivity.TOKEN, token)
-        startActivity(intent)
+        showTokenDetails.launch(intent)
     }
+
+    private val showTokenDetails =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                it.data?.getBooleanExtra(TokenDetailsActivity.DELETED, false)?.let { isDeleted ->
+                   if (isDeleted){
+                       viewModelTokens.updateWithSelectedTokensDone.postValue(true)
+                   }
+                }
+            }
+        }
 
     private fun updateShieldEnabledUI() {
         binding.toggleContainer.visibility = if (viewModelAccountDetails.shieldingEnabledLiveData.value == true) View.VISIBLE else View.GONE

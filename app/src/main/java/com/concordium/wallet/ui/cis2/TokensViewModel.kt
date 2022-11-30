@@ -339,15 +339,22 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun deleteSingleToken(contractIndex: String, tokenId: String) {
+    fun deleteSingleToken(accountAddress: String, contractIndex: String, tokenId: String) {
         val contractTokensRepository = ContractTokensRepository(
             WalletDatabase.getDatabase(getApplication()).contractTokenDao()
+        )
+        val accountContractRepository = AccountContractRepository(
+            WalletDatabase.getDatabase(getApplication()).accountContractDao()
         )
 
         CoroutineScope(Dispatchers.IO).launch {
             Log.d("ATTEMPTING DELETE SCOPE LOUNCHED : Contract Index: $contractIndex, TokenId: $tokenId ")
+
+            val existingContractTokens =
+                contractTokensRepository.getTokens(contractIndex)
+
             val token = contractTokensRepository.find(contractIndex, tokenId)
-            if(token == null){
+            if (token == null) {
                 Log.d("TOKEN IS NULL")
             }
             contractTokensRepository.find(contractIndex, tokenId)
@@ -355,7 +362,16 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     Log.d("ATTEMPTING DELETE : ${existingNotSelectedContractToken.tokenId}")
                     contractTokensRepository.delete(existingNotSelectedContractToken)
                     Log.d("DELETED : ${existingNotSelectedContractToken.tokenId}")
-                    updateWithSelectedTokensDone.postValue(true)
+
+                    if (existingContractTokens.size == 1) {
+                        val existingAccountContract =
+                            accountContractRepository.find(accountAddress, tokenData.contractIndex)
+                        if (existingAccountContract == null) {
+                            nonSelected.postValue(true)
+                        } else {
+                            accountContractRepository.delete(existingAccountContract)
+                        }
+                    }
                 }
         }
     }
