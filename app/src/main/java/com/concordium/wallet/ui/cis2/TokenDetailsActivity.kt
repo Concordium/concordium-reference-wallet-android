@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.cis2
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -71,6 +72,10 @@ class TokenDetailsActivity : BaseActivity() {
 
         }
 
+        binding.includeAbout.deleteToken.setOnClickListener {
+            showDeleteDialog()
+        }
+
         viewModel.tokenData.selectedToken?.let {
             setContractIndex(it)
             setBalance(it)
@@ -87,6 +92,24 @@ class TokenDetailsActivity : BaseActivity() {
                 setDecimals(it)
             }
         }
+    }
+
+    private fun showDeleteDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.cis_delete_dialog_title)
+        builder.setMessage(getString(R.string.cis_delete_dialog_content))
+
+        builder.setPositiveButton(getString(R.string.cis_delete_dialog_confirm)) {dialog, _ ->
+            dialog.dismiss()
+            viewModel.deleteSingleToken(viewModel.tokenData.contractIndex, viewModel.tokenData.selectedToken!!.id)
+            //finish()
+        }
+
+        builder.setNegativeButton(getString(R.string.cis_delete_dialog_cancel)) {dialog, _ ->
+            dialog.dismiss()
+
+        }
+        builder.create().show()
     }
 
     private fun setBalance(token: Token) {

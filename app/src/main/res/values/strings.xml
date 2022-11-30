@@ -1034,5 +1034,10 @@
     <string name="cis_tokens_not_updated">No updates made to token list</string>
     <string name="cis_no_collectibles_added">No collectibles have been added to this account yet.</string>
     <string name="cis_add_more">You can add more tokens from the Manage menu.</string>
+    <string name="cis_delete_token">Don’t show token in wallet</string>
+    <string name="cis_delete_dialog_title">Confirm Delete!</string>
+    <string name="cis_delete_dialog_content">Delete Token from wallet?</string>
+    <string name="cis_delete_dialog_confirm">Delete</string>
+    <string name="cis_delete_dialog_cancel">Cancel</string>
 
 </resources>
