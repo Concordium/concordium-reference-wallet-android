@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.walletconnect
 import android.app.Application
 import android.os.CountDownTimer
 import android.text.TextUtils
+import android.util.Base64
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -27,7 +28,10 @@ import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toHex
+import com.google.gson.ExclusionStrategy
+import com.google.gson.FieldAttributes
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.walletconnect.sign.client.Sign
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -73,6 +77,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val messageSignedError: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val errorString: MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val jsonPretty: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val errorWalletConnectApprove: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val walletConnectData = WalletConnectData()
     var binder: WalletConnectService.LocalBinder? = null
@@ -268,6 +273,36 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     fun prepareMessage() {
         showAuthentication.postValue(true)
+    }
+
+    fun prettyPrintJson() {
+        binder?.getSessionRequestParams()?.let { params ->
+            val strategy: ExclusionStrategy = object : ExclusionStrategy {
+                override fun shouldSkipField(f: FieldAttributes): Boolean {
+                    return f.name == "payload" || f.name == "schema"
+                }
+                override fun shouldSkipClass(clazz: Class<*>?): Boolean {
+                    return false
+                }
+            }
+            val gson = GsonBuilder().setPrettyPrinting().addSerializationExclusionStrategy(strategy).create()
+            params.payloadObj = params.parsePayload()
+            params.payload = ""
+            if (params.payloadObj != null && params.payloadObj?.message != null && params.schema != null) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val base64Decoded = Base64.decode(params.schema!!, Base64.DEFAULT)
+                    val hexEncoded = base64Decoded.toHex()
+                    val jsonMessage = App.appCore.cryptoLibrary.parameterToJson(ParameterToJsonInput(params.payloadObj!!.message, params.payloadObj!!.receiveName, hexEncoded, null))
+                    if (jsonMessage != null) {
+                        println("LC -> $jsonMessage")
+                        params.message = jsonMessage.replace("\"", "")
+                    }
+                    jsonPretty.postValue(gson.toJson(params).replace("payloadObj", "payload"))
+                }
+            } else {
+                jsonPretty.postValue(gson.toJson(params).replace("payloadObj", "payload"))
+            }
+        }
     }
 
     private fun submitTransaction(createTransferOutput: CreateTransferOutput) {

@@ -7,8 +7,9 @@ data class Params(
     val type: String?,
     val sender: String?,
     var payload: String?,
-    val message: String?,
-    var payloadObj: Payload?
+    var message: String?,
+    var payloadObj: Payload?,
+    var schema: String?
 ) : Serializable {
     fun parsePayload(): Payload? {
         return try {
