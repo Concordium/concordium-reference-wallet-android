@@ -49,7 +49,11 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         super.onCreate(savedInstanceState)
         binding = ActivityAccountDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.account_details_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.account_details_title
+        )
         initializeViewModelAccountDetails()
         viewModelAccountDetails.account = intent.getSerializable(EXTRA_ACCOUNT, Account::class.java)
         initializeViewModelTokens()
@@ -61,7 +65,15 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         if (continueToShieldIntro) {
             gotoAccountSettings(true)
         }
-        supportFragmentManager.beginTransaction().replace(R.id.tokens_fragment, TokensFragment.newInstance(viewModelTokens, viewModelAccountDetails.account.address, true), null).commit()
+        supportFragmentManager.beginTransaction().replace(
+            R.id.tokens_fragment,
+            TokensFragment.newInstance(
+                viewModelTokens,
+                viewModelAccountDetails.account.address,
+                true
+            ),
+            null
+        ).commit()
         binding.balances.afterMeasured {
             binding.balances.minimumHeight = binding.balances.height
         }
@@ -101,10 +113,28 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
             runOnUiThread {
                 lookForNewTokensFragment?.dismiss()
                 lookForNewTokensFragment = null
-                supportFragmentManager.beginTransaction().replace(R.id.tokens_fragment, TokensFragment.newInstance(viewModelTokens, viewModelAccountDetails.account.address, true), null).commit()
-                if (anyChanges)
+                supportFragmentManager.beginTransaction().replace(
+                    R.id.tokens_fragment,
+                    TokensFragment.newInstance(
+                        viewModelTokens,
+                        viewModelAccountDetails.account.address,
+                        true
+                    ),
+                    null
+                ).commit()
+                if (anyChanges) {
                     Toast.makeText(this, R.string.cis_tokens_updated, Toast.LENGTH_SHORT).show()
-                else
+                    binding.markerFungible.visibility = View.VISIBLE
+                    binding.markerCollectibles.visibility = View.GONE
+                    binding.tabFungibleText.setTypeface(
+                        binding.tabFungibleText.typeface,
+                        Typeface.BOLD
+                    )
+                    binding.tabCollectiblesText.setTypeface(
+                        binding.tabCollectiblesText.typeface,
+                        Typeface.NORMAL
+                    )
+                } else
                     Toast.makeText(this, R.string.cis_tokens_not_updated, Toast.LENGTH_SHORT).show()
             }
         }
@@ -211,15 +241,37 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
             binding.markerFungible.visibility = View.VISIBLE
             binding.markerCollectibles.visibility = View.GONE
             binding.tabFungibleText.setTypeface(binding.tabFungibleText.typeface, Typeface.BOLD)
-            binding.tabCollectiblesText.setTypeface(binding.tabCollectiblesText.typeface, Typeface.NORMAL)
-            supportFragmentManager.beginTransaction().replace(R.id.tokens_fragment, TokensFragment.newInstance(viewModelTokens, viewModelAccountDetails.account.address, true), null).commit()
+            binding.tabCollectiblesText.setTypeface(
+                binding.tabCollectiblesText.typeface,
+                Typeface.NORMAL
+            )
+            supportFragmentManager.beginTransaction().replace(
+                R.id.tokens_fragment,
+                TokensFragment.newInstance(
+                    viewModelTokens,
+                    viewModelAccountDetails.account.address,
+                    true
+                ),
+                null
+            ).commit()
         }
         binding.tabCollectibles.setOnClickListener {
             binding.markerFungible.visibility = View.GONE
             binding.markerCollectibles.visibility = View.VISIBLE
             binding.tabFungibleText.setTypeface(binding.tabFungibleText.typeface, Typeface.NORMAL)
-            binding.tabCollectiblesText.setTypeface(binding.tabCollectiblesText.typeface, Typeface.BOLD)
-            supportFragmentManager.beginTransaction().replace(R.id.tokens_fragment, TokensFragment.newInstance(viewModelTokens, viewModelAccountDetails.account.address, false), null).commit()
+            binding.tabCollectiblesText.setTypeface(
+                binding.tabCollectiblesText.typeface,
+                Typeface.BOLD
+            )
+            supportFragmentManager.beginTransaction().replace(
+                R.id.tokens_fragment,
+                TokensFragment.newInstance(
+                    viewModelTokens,
+                    viewModelAccountDetails.account.address,
+                    false
+                ),
+                null
+            ).commit()
         }
         binding.tabAddNew.setOnClickListener {
             showFindTokensDialog()
@@ -227,7 +279,12 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun initTopContent() {
-        setActionBarTitle(getString(if(viewModelAccountDetails.isShielded) R.string.account_details_title_shielded_balance else R.string.account_details_title_regular_balance, viewModelAccountDetails.account.getAccountName()))
+        setActionBarTitle(
+            getString(
+                if (viewModelAccountDetails.isShielded) R.string.account_details_title_shielded_balance else R.string.account_details_title_regular_balance,
+                viewModelAccountDetails.account.getAccountName()
+            )
+        )
         when (viewModelAccountDetails.account.transactionStatus) {
             TransactionStatus.ABSENT -> {
                 setErrorMode()
@@ -256,7 +313,11 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
             initViews()
             showTransactionsView()
         }
-        binding.accountTotalDetailsDisposalText.text = if(viewModelAccountDetails.isShielded) resources.getString(R.string.account_shielded_total_details_disposal, viewModelAccountDetails.account.name) else resources.getString(R.string.account_total_details_disposal)
+        binding.accountTotalDetailsDisposalText.text =
+            if (viewModelAccountDetails.isShielded) resources.getString(
+                R.string.account_shielded_total_details_disposal,
+                viewModelAccountDetails.account.name
+            ) else resources.getString(R.string.account_total_details_disposal)
     }
 
     private fun showFindTokensDialog() {
@@ -277,18 +338,22 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.getBooleanExtra(TokenDetailsActivity.DELETED, false)?.let { isDeleted ->
-                   if (isDeleted){
-                       viewModelTokens.updateWithSelectedTokensDone.postValue(true)
-                   }
+                    if (isDeleted) {
+                        viewModelTokens.updateWithSelectedTokensDone.postValue(true)
+                    }
                 }
             }
         }
 
     private fun updateShieldEnabledUI() {
-        binding.toggleContainer.visibility = if (viewModelAccountDetails.shieldingEnabledLiveData.value == true) View.VISIBLE else View.GONE
-        binding.shieldedIcon.visibility = if (viewModelAccountDetails.shieldingEnabledLiveData.value == true && viewModelAccountDetails.isShielded) View.VISIBLE else View.GONE
-        binding.markerBalance.visibility = if (viewModelAccountDetails.isShielded) View.GONE else View.VISIBLE
-        binding.markerShielded.visibility = if (viewModelAccountDetails.isShielded) View.VISIBLE else View.GONE
+        binding.toggleContainer.visibility =
+            if (viewModelAccountDetails.shieldingEnabledLiveData.value == true) View.VISIBLE else View.GONE
+        binding.shieldedIcon.visibility =
+            if (viewModelAccountDetails.shieldingEnabledLiveData.value == true && viewModelAccountDetails.isShielded) View.VISIBLE else View.GONE
+        binding.markerBalance.visibility =
+            if (viewModelAccountDetails.isShielded) View.GONE else View.VISIBLE
+        binding.markerShielded.visibility =
+            if (viewModelAccountDetails.isShielded) View.VISIBLE else View.GONE
         updateButtonsSlider()
     }
 
@@ -299,20 +364,31 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         binding.accountsOverviewTotalDetailsStakedContainer.visibility = View.GONE
         if (viewModelAccountDetails.isShielded) {
             binding.accountsOverviewTotalDetailsDisposalContainer.visibility = View.GONE
-        }
-        else {
+        } else {
             binding.accountsOverviewTotalDetailsDisposalContainer.visibility = View.VISIBLE
             if (viewModelAccountDetails.account.isBaking()) {
                 binding.accountsOverviewTotalDetailsBakerContainer.visibility = View.VISIBLE
-                binding.accountsOverviewTotalTitleBaker.text = getString(R.string.account_details_stake_with_baker, viewModelAccountDetails.account.accountBaker?.bakerId?.toString() ?: "")
-                binding.accountsOverviewTotalDetailsBaker.text = CurrencyUtil.formatGTU(viewModelAccountDetails.account.accountBaker?.stakedAmount ?: "0", true)
+                binding.accountsOverviewTotalTitleBaker.text = getString(
+                    R.string.account_details_stake_with_baker,
+                    viewModelAccountDetails.account.accountBaker?.bakerId?.toString() ?: ""
+                )
+                binding.accountsOverviewTotalDetailsBaker.text = CurrencyUtil.formatGTU(
+                    viewModelAccountDetails.account.accountBaker?.stakedAmount ?: "0", true
+                )
             } else if (viewModelAccountDetails.account.isDelegating()) {
                 binding.accountsOverviewTotalDetailsStakedContainer.visibility = View.VISIBLE
                 if (viewModelAccountDetails.account.accountDelegation?.delegationTarget?.delegateType == DelegationTarget.TYPE_DELEGATE_TO_L_POOL)
-                    binding.accountsOverviewTotalTitleStaked.text = getString(R.string.account_details_delegation_with_passive_pool)
+                    binding.accountsOverviewTotalTitleStaked.text =
+                        getString(R.string.account_details_delegation_with_passive_pool)
                 else
-                    binding.accountsOverviewTotalTitleStaked.text = getString(R.string.account_details_delegation_with_baker_pool, viewModelAccountDetails.account.accountDelegation?.delegationTarget?.bakerId ?: "")
-                binding.accountsOverviewTotalDetailsStaked.text = CurrencyUtil.formatGTU(viewModelAccountDetails.account.accountDelegation?.stakedAmount ?: "", true)
+                    binding.accountsOverviewTotalTitleStaked.text = getString(
+                        R.string.account_details_delegation_with_baker_pool,
+                        viewModelAccountDetails.account.accountDelegation?.delegationTarget?.bakerId
+                            ?: ""
+                    )
+                binding.accountsOverviewTotalDetailsStaked.text = CurrencyUtil.formatGTU(
+                    viewModelAccountDetails.account.accountDelegation?.stakedAmount ?: "", true
+                )
             }
         }
     }
@@ -337,7 +413,8 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun showWaitingTokens(waiting: Boolean) {
-        binding.includeProgressTokens.progressLayout.visibility = if (waiting) View.VISIBLE else View.GONE
+        binding.includeProgressTokens.progressLayout.visibility =
+            if (waiting) View.VISIBLE else View.GONE
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -352,22 +429,31 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
 
     private fun showTotalBalance(totalBalance: Long) {
         binding.balanceTextview.text = CurrencyUtil.formatGTU(totalBalance, true)
-        binding.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(viewModelAccountDetails.account.getAtDisposalWithoutStakedOrScheduled(totalBalance), true)
+        binding.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(
+            viewModelAccountDetails.account.getAtDisposalWithoutStakedOrScheduled(totalBalance),
+            true
+        )
     }
 
     private fun onSendFundsClicked() {
         if (binding.tokens.visibility == View.VISIBLE) {
             val intent = Intent(this, SendTokenActivity::class.java)
             intent.putExtra(SendTokenActivity.ACCOUNT, viewModelAccountDetails.account)
-            intent.putExtra(SendTokenActivity.TOKEN, Token("", "", "",
-                null,
-                false,
-                "",
-                true,
-                viewModelAccountDetails.account.totalUnshieldedBalance,
-                viewModelAccountDetails.account.getAtDisposalWithoutStakedOrScheduled(viewModelAccountDetails.account.totalUnshieldedBalance),
-                "",
-                "CCD"))
+            intent.putExtra(
+                SendTokenActivity.TOKEN, Token(
+                    "", "", "",
+                    null,
+                    false,
+                    "",
+                    true,
+                    viewModelAccountDetails.account.totalUnshieldedBalance,
+                    viewModelAccountDetails.account.getAtDisposalWithoutStakedOrScheduled(
+                        viewModelAccountDetails.account.totalUnshieldedBalance
+                    ),
+                    "",
+                    "CCD"
+                )
+            )
             startActivity(intent)
         } else {
             val intent = Intent(this, SendFundsActivity::class.java)
@@ -381,7 +467,14 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         val intent = Intent(this, SendFundsActivity::class.java)
         intent.putExtra(SendFundsActivity.EXTRA_SHIELDED, viewModelAccountDetails.isShielded)
         intent.putExtra(SendFundsActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
-        intent.putExtra(SendFundsActivity.EXTRA_RECIPIENT, Recipient(viewModelAccountDetails.account.id, viewModelAccountDetails.account.name, viewModelAccountDetails.account.address))
+        intent.putExtra(
+            SendFundsActivity.EXTRA_RECIPIENT,
+            Recipient(
+                viewModelAccountDetails.account.id,
+                viewModelAccountDetails.account.name,
+                viewModelAccountDetails.account.address
+            )
+        )
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
     }
@@ -445,7 +538,12 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         }
         if ((viewModelAccountDetails.shieldingEnabledLiveData.value == true && !viewModelAccountDetails.isShielded) || viewModelAccountDetails.shieldingEnabledLiveData.value == false) {
             binding.buttonsSlider.addButton(R.drawable.ic_earn, "6") {
-                gotoEarn(this, viewModelAccountDetails.account, viewModelAccountDetails.hasPendingDelegationTransactions, viewModelAccountDetails.hasPendingBakingTransactions)
+                gotoEarn(
+                    this,
+                    viewModelAccountDetails.account,
+                    viewModelAccountDetails.hasPendingDelegationTransactions,
+                    viewModelAccountDetails.hasPendingBakingTransactions
+                )
             }
         }
         binding.buttonsSlider.addButton(R.drawable.ic_scan, "7") {
@@ -471,7 +569,10 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         intent.putExtra(AccountSettingsActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
         intent.putExtra(AccountSettingsActivity.EXTRA_SHIELDED, viewModelAccountDetails.isShielded)
         if (continueToShieldIntro)
-            intent.putExtra(AccountSettingsActivity.EXTRA_CONTINUE_TO_SHIELD_INTRO, viewModelAccountDetails.isShielded)
+            intent.putExtra(
+                AccountSettingsActivity.EXTRA_CONTINUE_TO_SHIELD_INTRO,
+                viewModelAccountDetails.isShielded
+            )
         startActivity(intent)
     }
 
