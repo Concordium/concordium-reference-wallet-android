@@ -11,6 +11,7 @@ import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityTokenDetailsBinding
+import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.UnitConvertUtil
@@ -63,6 +64,10 @@ class TokenDetailsActivity : BaseActivity() {
             startActivity(intent)
         }
         binding.includeButtons.receive.setOnClickListener {
+
+            val intent = Intent(this, AccountQRCodeActivity::class.java)
+            intent.putExtra(AccountQRCodeActivity.EXTRA_ACCOUNT, viewModel.tokenData.account)
+            startActivity(intent)
 
         }
 

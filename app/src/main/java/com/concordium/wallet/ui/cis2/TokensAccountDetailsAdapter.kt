@@ -13,11 +13,22 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenAccountDetailsBinding
 import com.concordium.wallet.util.UnitConvertUtil
 
-class TokensAccountDetailsAdapter(private val context: Context, private val isFungible: Boolean, private val showManageInfo: Boolean, var dataSet: Array<Token>) : RecyclerView.Adapter<TokensAccountDetailsAdapter.ViewHolder>() {
+class TokensAccountDetailsAdapter(
+    private val context: Context,
+    private val isFungible: Boolean,
+    private val showManageInfo: Boolean,
+    var dataSet: Array<Token>
+) : RecyclerView.Adapter<TokensAccountDetailsAdapter.ViewHolder>() {
     private var tokenClickListener: TokenClickListener? = null
-    private val iconSize: Int get() = UnitConvertUtil.convertDpToPixel(context.resources.getDimension(R.dimen.list_item_height))
+    private val iconSize: Int
+        get() = UnitConvertUtil.convertDpToPixel(
+            context.resources.getDimension(
+                R.dimen.list_item_height
+            )
+        )
 
-    inner class ViewHolder(val binding: ItemTokenAccountDetailsBinding): RecyclerView.ViewHolder(binding.root)
+    inner class ViewHolder(val binding: ItemTokenAccountDetailsBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
     interface TokenClickListener {
         fun onRowClick(token: Token)
@@ -31,7 +42,11 @@ class TokensAccountDetailsAdapter(private val context: Context, private val isFu
     override fun getItemCount() = if (showManageInfo) dataSet.size + 1 else dataSet.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemTokenAccountDetailsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemTokenAccountDetailsBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
         return ViewHolder(binding)
     }
 
@@ -49,8 +64,11 @@ class TokensAccountDetailsAdapter(private val context: Context, private val isFu
         val token = dataSet[position]
 
         if (isFungible && token.isCCDToken) {
-            holder.binding.title.text = "${CurrencyUtil.formatGTU(token.totalBalance, true)} CCD"
-            Glide.with(context).load(R.drawable.ic_concordium_logo_no_text).into(holder.binding.tokenIcon)
+            holder.binding.title.text =
+                "${CurrencyUtil.formatGTU(token.totalBalance!!, true)} CCD"
+
+            Glide.with(context).load(R.drawable.ic_concordium_logo_no_text)
+                .into(holder.binding.tokenIcon)
         } else {
             token.tokenMetadata?.let { tokenMetadata ->
                 if (tokenMetadata.thumbnail.url.isNotBlank()) {
@@ -64,7 +82,16 @@ class TokensAccountDetailsAdapter(private val context: Context, private val isFu
                 } else if (tokenMetadata.thumbnail.url == "none") {
                     holder.binding.tokenIcon.setImageResource(R.drawable.ic_token_no_image)
                 }
-                holder.binding.title.text = "${CurrencyUtil.formatGTU(token.totalBalance, false, token.tokenMetadata?.decimals ?: 6)} ${token.symbol}"
+                if (token.totalBalance != null) {
+                    holder.binding.title.text = "${
+                        CurrencyUtil.formatGTU(
+                            token.totalBalance,
+                            false,
+                            token.tokenMetadata?.decimals ?: 6
+                        )
+                    } ${token.symbol}"
+                }
+
             }
         }
 
