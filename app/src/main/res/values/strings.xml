@@ -1005,7 +1005,7 @@
     <string name="cis_send_funds">Send funds</string>
     <string name="cis_currently_available_amounts">Currently available amounts:</string>
     <string name="cis_token_balance">%1$s Balance:</string>
-    <string name="cis_at_disposal">At disposal:</string>
+    <string name="cis_at_disposal">CCD available:</string>
     <string name="cis_max">Max</string>
     <string name="cis_paste_receiver_address">Paste receiver address here, or use one of the options below</string>
     <string name="cis_paste">Paste</string>

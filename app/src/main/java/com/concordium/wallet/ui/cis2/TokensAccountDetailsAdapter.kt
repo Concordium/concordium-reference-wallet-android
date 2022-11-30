@@ -69,7 +69,7 @@ class TokensAccountDetailsAdapter(private val context: Context, private val isFu
         }
 
         holder.binding.root.setOnClickListener {
-            if (!token.isCCDToken) // Don't go to details of the default CCD token
+            if (!token.isCCDToken || !showManageInfo)
                 tokenClickListener?.onRowClick(token)
         }
     }

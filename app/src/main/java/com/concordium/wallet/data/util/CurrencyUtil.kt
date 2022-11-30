@@ -18,7 +18,7 @@ object CurrencyUtil {
         val isNegative = value < 0
         val str = if (isNegative) value.toString().replace("-", "") else value.toString()
         val strBuilder = StringBuilder(str)
-        if (strBuilder.length < decimals - 1) {
+        if (strBuilder.length < decimals) {
             // Add zeroes in front of the value until there are four chars
             while (strBuilder.length < decimals) {
                 strBuilder.insert(0, "0")

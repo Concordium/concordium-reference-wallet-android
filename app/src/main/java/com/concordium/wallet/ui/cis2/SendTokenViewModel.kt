@@ -11,6 +11,7 @@ import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.AccountContractRepository
+import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
@@ -83,12 +84,13 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         accountBalanceRequest?.dispose()
     }
 
-    fun loadTokens() {
+    fun loadTokens(accountAddress: String) {
         waiting.postValue(true)
         CoroutineScope(Dispatchers.IO).launch {
             val accountContractRepository = AccountContractRepository(WalletDatabase.getDatabase(getApplication()).accountContractDao())
             val contractTokensRepository = ContractTokensRepository(WalletDatabase.getDatabase(getApplication()).contractTokenDao())
             val tokensFound = mutableListOf<Token>()
+            tokensFound.add(getCCDDefaultToken(accountAddress))
             sendTokenData.account?.let { account ->
                 val accountContracts = accountContractRepository.find(account.address)
                 accountContracts.forEach { accountContract ->
@@ -216,7 +218,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 sendTokenData.energy = it.energy
                 sendTokenData.fee = it.cost.toLong()
                 sendTokenData.account?.let { account ->
-                    sendTokenData.max = account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) - (sendTokenData.fee ?: 0)
+                    sendTokenData.max = sendTokenData.token!!.totalBalance
                 }
                 waiting.postValue(false)
                 feeReady.postValue(sendTokenData.fee)
@@ -226,6 +228,13 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 handleBackendError(it)
             }
         )
+    }
+
+    private suspend fun getCCDDefaultToken(accountAddress: String): Token {
+        val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+        val account = accountRepository.findByAddress(accountAddress)
+        val atDisposal = account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) ?: 0
+        return Token("", "CCD", "", null, false, "", true, account?.totalBalance ?: 0, atDisposal, "", "CCD")
     }
 
     fun getCipherForBiometrics(): Cipher? {
