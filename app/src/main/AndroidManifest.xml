@@ -36,6 +36,8 @@
         <activity
             android:name=".ui.MainActivity"
             android:screenOrientation="portrait"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar.Launcher"
             android:exported="true">
             <intent-filter>
