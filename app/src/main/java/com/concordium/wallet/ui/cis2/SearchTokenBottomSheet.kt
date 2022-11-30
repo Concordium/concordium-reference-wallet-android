@@ -39,7 +39,7 @@ class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initObservers()
-        _viewModel.loadTokens()
+        _viewModel.loadTokens(_viewModel.sendTokenData.account?.address ?: "")
     }
 
     override fun onDestroyView() {

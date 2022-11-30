@@ -237,16 +237,25 @@ class SendTokenActivity : BaseActivity() {
         viewModel.chooseToken.observe(this) { token ->
             searchTokenBottomSheet?.dismiss()
             searchTokenBottomSheet = null
+            viewModel.sendTokenData.token = token
+            binding.balanceTitle.text = getString(R.string.cis_token_balance, token.symbol)
+            binding.balance.text = CurrencyUtil.formatGTU(token.totalBalance, token.isCCDToken)
             binding.searchToken.tokenShortName.text = token.symbol
-            token.tokenMetadata?.thumbnail?.let { thumbnail ->
-                Glide.with(this)
-                    .load(thumbnail.url)
-                    .placeholder(R.drawable.ic_token_loading_image)
-                    .override(iconSize)
-                    .fitCenter()
-                    .error(R.drawable.ic_token_no_image)
-                    .into(binding.searchToken.tokenIcon)
+            if (token.isCCDToken) {
+                Glide.with(this).load(R.drawable.ic_concordium_logo_no_text).into(binding.searchToken.tokenIcon)
+            } else {
+                token.tokenMetadata?.thumbnail?.let { thumbnail ->
+                    Glide.with(this)
+                        .load(thumbnail.url)
+                        .placeholder(R.drawable.ic_token_loading_image)
+                        .override(iconSize)
+                        .fitCenter()
+                        .error(R.drawable.ic_token_no_image)
+                        .into(binding.searchToken.tokenIcon)
+                }
             }
+            binding.amount.setText(CurrencyUtil.formatGTU(0, false))
+            viewModel.loadTransactionFee()
         }
         viewModel.transactionReady.observe(this) {
             gotoReceipt()
