@@ -347,6 +347,15 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         if (binding.tokens.visibility == View.VISIBLE) {
             val intent = Intent(this, SendTokenActivity::class.java)
             intent.putExtra(SendTokenActivity.ACCOUNT, viewModelAccountDetails.account)
+            intent.putExtra(SendTokenActivity.TOKEN, Token("", "", "",
+                null,
+                false,
+                "",
+                true,
+                viewModelAccountDetails.account.totalUnshieldedBalance,
+                viewModelAccountDetails.account.getAtDisposalWithoutStakedOrScheduled(viewModelAccountDetails.account.totalUnshieldedBalance),
+                "",
+                "CCD"))
             startActivity(intent)
         } else {
             val intent = Intent(this, SendFundsActivity::class.java)

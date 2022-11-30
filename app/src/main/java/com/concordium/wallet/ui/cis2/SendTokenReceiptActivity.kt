@@ -13,7 +13,6 @@ import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DAT
 import com.concordium.wallet.util.getSerializable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SendTokenReceiptActivity : BaseActivity() {
@@ -52,6 +51,10 @@ class SendTokenReceiptActivity : BaseActivity() {
         }
         binding.finish.setOnClickListener {
             onFinish()
+        }
+        if (viewModel.sendTokenData.token!!.isCCDToken) {
+            binding.tokenTitle.visibility = View.GONE
+            binding.token.visibility = View.GONE
         }
     }
 

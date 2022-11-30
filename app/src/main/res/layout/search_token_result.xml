@@ -12,7 +12,8 @@
         android:id="@+id/token_icon"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:scaleType="fitStart"
+        android:scaleType="fitCenter"
+        android:layout_gravity="center_vertical"
         android:padding="12dp"
         android:src="@drawable/ic_send" />
     <TextView

@@ -185,4 +185,17 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             Log.e("CryptoLib failed")
             return@withContext null
         }
+
+    override suspend fun parameterToJson(parameterToJsonInput: ParameterToJsonInput): String? =
+        withContext(Dispatchers.Default) {
+            val input = gson.toJson(parameterToJsonInput)
+            loadWalletLib()
+            val result = parameter_to_json(input)
+            Log.d("Output (Code ${result.result}): ${result.output}")
+            if (result.result == CryptoLibrary.SUCCESS) {
+                return@withContext result.output
+            }
+            Log.e("CryptoLib failed")
+            return@withContext null
+        }
 }

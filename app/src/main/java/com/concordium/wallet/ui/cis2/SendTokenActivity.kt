@@ -14,11 +14,9 @@ import androidx.activity.viewModels
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
+import com.bumptech.glide.Glide
 import com.concordium.wallet.R
-import com.concordium.wallet.data.model.Thumbnail
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.model.TokenMetadata
-import com.concordium.wallet.data.model.UrlHolder
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -28,13 +26,16 @@ import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DAT
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
+import com.concordium.wallet.util.UnitConvertUtil
 import com.concordium.wallet.util.getSerializable
 import javax.crypto.Cipher
 
 class SendTokenActivity : BaseActivity() {
     private lateinit var binding: ActivitySendTokenBinding
     private val viewModel: SendTokenViewModel by viewModels()
+    private val viewModelTokens: TokensViewModel by viewModels()
     private var searchTokenBottomSheet: SearchTokenBottomSheet? = null
+    private val iconSize: Int get() = UnitConvertUtil.convertDpToPixel(resources.getDimension(R.dimen.list_item_height))
 
     companion object {
         const val ACCOUNT = "ACCOUNT"
@@ -46,42 +47,10 @@ class SendTokenActivity : BaseActivity() {
         binding = ActivitySendTokenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel.sendTokenData.account = intent.getSerializable(ACCOUNT, Account::class.java)
+        viewModel.sendTokenData.token = intent.getSerializable(TOKEN, Token::class.java)
         initObservers()
-        /*
-        if (intent.hasExtra(TOKEN)) {
-            viewModel.sendTokenData.token = intent.getSerializable(TOKEN, Token::class.java)
-            updateWithToken(viewModel.sendTokenData.token)
-            initViews()
-            viewModel.loadTransactionFee()
-        } else {
-            viewModel.loadCCDDefaultToken(viewModel.sendTokenData.account?.address ?: "")
-        }
-        */
-
-        viewModel.sendTokenData.token = Token("1084", "00", "100",
-            TokenMetadata(
-                6,
-                "Optimal FT metadata values. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-                "CIS2-Multi.transfer",
-                "FT",
-                Thumbnail("https://developer.concordium.software/en/mainnet/_images/wCCD.svg"),
-                false,
-                UrlHolder(""),
-                UrlHolder(""),
-                null,
-                null,
-                null),
-            false,
-            "1696",
-            false,
-            1000000000000,
-            200000005,
-            "CIS2-Multi",
-            "wCCD")
-
         updateWithToken(viewModel.sendTokenData.token)
         initViews()
-        viewModel.loadTransactionFee()
     }
 
     override fun onDestroy() {
@@ -101,6 +70,7 @@ class SendTokenActivity : BaseActivity() {
         initializeSend()
         initializeSearchToken()
         viewModel.getGlobalInfo()
+        viewModel.getAccountBalance()
     }
 
     private fun initializeSend() {
@@ -111,7 +81,7 @@ class SendTokenActivity : BaseActivity() {
                 binding.contractAddressError.visibility = View.VISIBLE
             } else {
                 binding.send.isEnabled = false
-                viewModel.sendTokenData.amount = binding.amount.text.toString().replace(",", "").replace(".", "").toLong()
+                viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(binding.amount.text.toString().replace(",", "").replace(".", "")) ?:0
                 viewModel.sendTokenData.receiver = binding.receiver.text.toString()
                 viewModel.send()
             }
@@ -120,7 +90,7 @@ class SendTokenActivity : BaseActivity() {
 
     private fun initializeSearchToken() {
         binding.searchToken.searchToken.setOnClickListener {
-            searchTokenBottomSheet = SearchTokenBottomSheet.newInstance(viewModel)
+            searchTokenBottomSheet = SearchTokenBottomSheet.newInstance(viewModel, viewModelTokens)
             searchTokenBottomSheet?.show(supportFragmentManager, "")
         }
     }
@@ -129,6 +99,10 @@ class SendTokenActivity : BaseActivity() {
         binding.amount.addTextChangedListener {
             viewModel.loadTransactionFee()
             enableSend()
+        }
+        binding.amount.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && (binding.amount.text.toString() == "0,00" || binding.amount.text.toString() == "0.00"))
+                binding.amount.setText("")
         }
     }
 
@@ -263,7 +237,16 @@ class SendTokenActivity : BaseActivity() {
         viewModel.chooseToken.observe(this) { token ->
             searchTokenBottomSheet?.dismiss()
             searchTokenBottomSheet = null
-            binding.searchToken.tokenShortName.text = token.token
+            binding.searchToken.tokenShortName.text = token.symbol
+            token.tokenMetadata?.thumbnail?.let { thumbnail ->
+                Glide.with(this)
+                    .load(thumbnail.url)
+                    .placeholder(R.drawable.ic_token_loading_image)
+                    .override(iconSize)
+                    .fitCenter()
+                    .error(R.drawable.ic_token_no_image)
+                    .into(binding.searchToken.tokenIcon)
+            }
         }
         viewModel.transactionReady.observe(this) {
             gotoReceipt()
@@ -271,12 +254,6 @@ class SendTokenActivity : BaseActivity() {
         viewModel.feeReady.observe(this) { fee ->
             binding.fee.text = getString(R.string.cis_estimated_fee, CurrencyUtil.formatGTU(fee, true))
             binding.max.isEnabled = true
-        }
-        viewModel.defaultToken.observe(this) { token ->
-            viewModel.sendTokenData.token = token
-            initViews()
-            updateWithToken(token)
-            viewModel.loadTransactionFee()
         }
         viewModel.errorInt.observe(this) {
             Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
@@ -300,10 +277,10 @@ class SendTokenActivity : BaseActivity() {
 
     private fun updateWithToken(token: Token?) {
         token?.let {
-            binding.balanceTitle.text = getString(R.string.cis_token_balance, it.token)
-            binding.balance.text = CurrencyUtil.formatGTU(it.totalBalance, true)
-            binding.atDisposal.text = CurrencyUtil.formatGTU(it.atDisposal,true)
-            binding.searchToken.tokenShortName.text = it.token
+            binding.balanceTitle.text = getString(R.string.cis_token_balance, it.symbol)
+            binding.balance.text = CurrencyUtil.formatGTU(it.totalBalance, it.isCCDToken)
+            binding.atDisposal.text = CurrencyUtil.formatGTU(it.atDisposal, it.isCCDToken)
+            binding.searchToken.tokenShortName.text = it.symbol
         }
     }
 

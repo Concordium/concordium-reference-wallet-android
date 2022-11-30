@@ -42,4 +42,6 @@ interface CryptoLibrary {
     suspend fun signMessage(signMessageInput: SignMessageInput): SignMessageOutput?
 
     suspend fun serializeTokenTransferParameters(serializeTokenTransferParametersInput: SerializeTokenTransferParametersInput): SerializeTokenTransferParametersOutput?
+    
+    suspend fun parameterToJson(parameterToJsonInput: ParameterToJsonInput): String?
 }

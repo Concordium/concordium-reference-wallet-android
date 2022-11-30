@@ -8,10 +8,11 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.backend.BackendRequest
+import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.AccountContractRepository
-import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
+import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.*
 import com.concordium.wallet.data.model.*
@@ -19,6 +20,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.walletconnect.ContractAddress
 import com.concordium.wallet.data.walletconnect.Payload
+import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
@@ -42,7 +44,9 @@ data class SendTokenData(
     var createTransferInput: CreateTransferInput? = null,
     var createTransferOutput: CreateTransferOutput? = null,
     var receiverPublicKey: String? = null,
-    var globalParams: GlobalParams? = null
+    var globalParams: GlobalParams? = null,
+    var accountBalance: AccountBalance? = null,
+    var newSelfEncryptedAmount: String? = null
 ): Serializable
 
 class SendTokenViewModel(application: Application) : AndroidViewModel(application), Serializable {
@@ -51,9 +55,13 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     private val proxyRepository = ProxyRepository()
+    private val transferRepository: TransferRepository
+    private val accountUpdater = AccountUpdater(application, viewModelScope)
+
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
     private var submitTransaction: BackendRequest<SubmissionData>? = null
+    private var accountBalanceRequest: BackendRequest<AccountBalance>? = null
 
     var sendTokenData = SendTokenData()
     val tokens: MutableLiveData<List<Token>> by lazy { MutableLiveData<List<Token>>() }
@@ -61,14 +69,18 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val transactionReady: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val feeReady: MutableLiveData<Long> by lazy { MutableLiveData<Long>() }
-    val defaultToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+
+    init {
+        transferRepository = TransferRepository(WalletDatabase.getDatabase(application).transferDao())
+    }
 
     fun dispose() {
         accountNonceRequest?.dispose()
         globalParamsRequest?.dispose()
         submitTransaction?.dispose()
+        accountBalanceRequest?.dispose()
     }
 
     fun loadTokens() {
@@ -81,7 +93,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 val accountContracts = accountContractRepository.find(account.address)
                 accountContracts.forEach { accountContract ->
                     val tokens = contractTokensRepository.getTokens(accountContract.contractIndex)
-                    tokensFound.addAll(tokens.map { Token(it.tokenId, "", "", null, false, "", false, 0, 0, "", "CCD") })
+                    tokensFound.addAll(tokens.map { Token(it.tokenId, "", "", it.tokenMetadata, false, it.contractIndex, false, 0, 0, "", it.tokenMetadata?.symbol ?: "") })
                 }
             }
             waiting.postValue(false)
@@ -95,6 +107,24 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         globalParamsRequest = proxyRepository.getIGlobalInfo(
             {
                 sendTokenData.globalParams = it.value
+                waiting.postValue(false)
+            },
+            {
+                waiting.postValue(false)
+                handleBackendError(it)
+            }
+        )
+    }
+
+    fun getAccountBalance() {
+        if (sendTokenData.account == null)
+            return
+
+        waiting.postValue(true)
+        accountBalanceRequest?.dispose()
+        accountBalanceRequest = proxyRepository.getAccountBalance(sendTokenData.account!!.address,
+            {
+                sendTokenData.accountBalance = it
                 waiting.postValue(false)
             },
             {
@@ -128,6 +158,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             viewModelScope.launch {
                 getTransferCostCCD()
             }
+            return
         }
 
         if (sendTokenData.account == null || sendTokenData.receiver.isEmpty()) {
@@ -197,15 +228,6 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         )
     }
 
-    fun loadCCDDefaultToken(accountAddress: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
-            val account = accountRepository.findByAddress(accountAddress)
-            val atDisposal = account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) ?: 0
-            defaultToken.postValue(Token("", "CCD", "", null, false, "", true, account?.totalBalance ?: 0, atDisposal, "", "CCD"))
-        }
-    }
-
     fun getCipherForBiometrics(): Cipher? {
         return try {
             val cipher =
@@ -255,18 +277,104 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    private fun getAccountEncryptedKey(credentialsOutput: StorageAccountData) {
+    private suspend fun getAccountEncryptedKey(credentialsOutput: StorageAccountData) {
         proxyRepository.getAccountEncryptedKey(
             sendTokenData.receiver,
             {
                 sendTokenData.receiverPublicKey = it.accountEncryptionKey
-                createTransaction(credentialsOutput.accountKeys, credentialsOutput.encryptionSecretKey)
+                if (sendTokenData.token!!.isCCDToken)
+                    viewModelScope.launch {
+                        createTransactionCCD(credentialsOutput.accountKeys, credentialsOutput.encryptionSecretKey)
+                    }
+                else
+                    createTransaction(credentialsOutput.accountKeys, credentialsOutput.encryptionSecretKey)
             },
             {
                 waiting.postValue(false)
                 handleBackendError(it)
             }
         )
+    }
+
+    private suspend fun createTransactionCCD(keys: AccountData, encryptionSecretKey: String) {
+        val toAddress = sendTokenData.receiver
+        val nonce = sendTokenData.accountNonce
+        val amount = sendTokenData.amount
+        val energy = sendTokenData.energy
+        val memo = sendTokenData.memo
+
+        if (nonce == null || energy == null) {
+            errorInt.postValue(R.string.app_error_general)
+            waiting.postValue(false)
+            return
+        }
+
+        sendTokenData.expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
+
+        val transferInput = CreateTransferInput(
+            sendTokenData.account!!.address,
+            keys,
+            toAddress,
+            sendTokenData.expiry!!,
+            amount.toString(),
+            energy,
+            nonce.nonce,
+            memo,
+            sendTokenData.globalParams,
+            sendTokenData.receiverPublicKey,
+            encryptionSecretKey,
+            calculateInputEncryptedAmount(),
+            null,
+            null,
+            null)
+
+        sendTokenData.createTransferInput = transferInput
+
+        val output = App.appCore.cryptoLibrary.createTransfer(transferInput, CryptoLibrary.REGULAR_TRANSFER)
+
+        if (output == null) {
+            errorInt.postValue(R.string.app_error_general)
+            waiting.postValue(false)
+        } else {
+            sendTokenData.createTransferOutput = output
+
+            viewModelScope.launch {
+                if (output.addedSelfEncryptedAmount != null) {
+                    sendTokenData.account!!.finalizedEncryptedBalance?.let { encBalance ->
+                        val newEncryptedAmount = App.appCore.cryptoLibrary.combineEncryptedAmounts(
+                            output.addedSelfEncryptedAmount,
+                            encBalance.selfAmount
+                        ).toString()
+                        sendTokenData.newSelfEncryptedAmount = newEncryptedAmount
+                        val oldDecryptedAmount =
+                            accountUpdater.lookupMappedAmount(encBalance.selfAmount)
+                        oldDecryptedAmount?.let {
+                            accountUpdater.saveDecryptedAmount(
+                                newEncryptedAmount,
+                                (it.toLong() + amount).toString()
+                            )
+                        }
+                    }
+                }
+                if (output.remaining != null) {
+                    sendTokenData.newSelfEncryptedAmount = output.remaining
+                    val remainingAmount =
+                        accountUpdater.decryptAndSaveAmount(encryptionSecretKey, output.remaining)
+
+                    sendTokenData.account!!.finalizedEncryptedBalance?.let { encBalance ->
+                        val oldDecryptedAmount =
+                            accountUpdater.lookupMappedAmount(encBalance.selfAmount)
+                        oldDecryptedAmount?.let {
+                            accountUpdater.saveDecryptedAmount(
+                                output.remaining,
+                                remainingAmount.toString()
+                            )
+                        }
+                    }
+                }
+                submitTransaction(output)
+            }
+        }
     }
 
     private fun createTransaction(keys: AccountData, encryptionSecretKey: String) {
@@ -298,6 +406,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
 
     private fun submitTransaction(createTransferOutput: CreateTransferOutput) {
         waiting.postValue(true)
+        submitTransaction?.dispose()
         submitTransaction = proxyRepository.submitTransfer(createTransferOutput,
             {
                 println("LC -> submitTransaction SUCCESS = ${it.submissionId}")
@@ -315,5 +424,64 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     private fun handleBackendError(throwable: Throwable) {
         Log.e("Backend request failed", throwable)
         errorInt.postValue(BackendErrorHandler.getExceptionStringRes(throwable))
+    }
+
+    private suspend fun calculateInputEncryptedAmount(): InputEncryptedAmount? {
+        if (sendTokenData.account == null)
+            return null
+
+        val lastNounceToInclude = sendTokenData.accountBalance?.finalizedBalance?.accountNonce ?: -2
+
+        val allTransfers = transferRepository.getAllByAccountId(sendTokenData.account!!.id)
+        val unfinalisedTransfers = allTransfers.filter {
+            it.transactionStatus != TransactionStatus.FINALIZED && (it.nonce?.nonce ?: -1) >= lastNounceToInclude
+        }
+
+        val aggEncryptedAmount = if (unfinalisedTransfers.isNotEmpty()) {
+            val lastTransaction = unfinalisedTransfers.maxWithOrNull { a, b -> a.id.compareTo(b.id) }
+            if (lastTransaction != null) {
+                sendTokenData.accountBalance?.finalizedBalance?.let { accountBalanceInfo ->
+                    val incomingAmounts = accountBalanceInfo.accountEncryptedAmount.incomingAmounts.filter { incomingAmount ->
+                        accountUpdater.lookupMappedAmount(incomingAmount) != null
+                    }
+                    var agg = lastTransaction.newSelfEncryptedAmount ?: ""
+                    for (i in lastTransaction.newStartIndex until accountBalanceInfo.accountEncryptedAmount.startIndex + incomingAmounts.count()) {
+                        agg = App.appCore.cryptoLibrary.combineEncryptedAmounts(agg, incomingAmounts[i]).toString()
+                    }
+                    agg
+                } ?: ""
+            } else {
+                ""
+            }
+        } else {
+            sendTokenData.accountBalance?.finalizedBalance?.let {
+                var agg = it.accountEncryptedAmount.selfAmount
+                it.accountEncryptedAmount.incomingAmounts.forEach { incomingAmount ->
+                    if (accountUpdater.lookupMappedAmount(incomingAmount) != null) {
+                        agg = App.appCore.cryptoLibrary.combineEncryptedAmounts(agg, incomingAmount).toString()
+                    }
+                }
+                agg
+            } ?: ""
+        }
+
+        val aggAmount = sendTokenData.accountBalance?.finalizedBalance?.let { accountBalanceInfo ->
+            var agg = accountUpdater.lookupMappedAmount(accountBalanceInfo.accountEncryptedAmount.selfAmount)?.toLong() ?: 0
+            accountBalanceInfo.accountEncryptedAmount.incomingAmounts.forEach { incomingAmount ->
+                agg += accountUpdater.lookupMappedAmount(incomingAmount)?.toLong() ?: 0
+            }
+            unfinalisedTransfers.forEach { transfer ->
+                agg -= transfer.amount
+            }
+            agg
+        } ?: ""
+
+        val index = sendTokenData.accountBalance?.finalizedBalance?.let {
+            it.accountEncryptedAmount.startIndex + it.accountEncryptedAmount.incomingAmounts.count {
+                accountUpdater.lookupMappedAmount(it) != null
+            }
+        } ?: 0
+
+        return InputEncryptedAmount(aggEncryptedAmount, aggAmount.toString(), index)
     }
 }
