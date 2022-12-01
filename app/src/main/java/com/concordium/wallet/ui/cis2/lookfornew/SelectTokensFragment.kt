@@ -92,6 +92,7 @@ class SelectTokensFragment : TokensBaseFragment() {
 
         tokensAddAdapter.setTokenClickListener(object : TokensAddAdapter.TokenClickListener {
             override fun onRowClick(token: Token) {
+                _viewModel.chooseTokenInfo.postValue(token)
                 _viewModel.stepPage(1)
             }
             override fun onCheckBoxClick(token: Token) {

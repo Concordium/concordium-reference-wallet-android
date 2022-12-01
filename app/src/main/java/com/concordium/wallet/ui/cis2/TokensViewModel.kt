@@ -42,6 +42,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     var tokens: MutableList<Token> = mutableListOf()
 
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
+    val chooseTokenInfo: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val lookForTokens: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }

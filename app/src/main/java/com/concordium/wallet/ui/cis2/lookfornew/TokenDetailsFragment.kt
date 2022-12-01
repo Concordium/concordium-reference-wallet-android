@@ -4,14 +4,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
+import com.concordium.wallet.R
+import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.databinding.FragmentDialogTokenDetailsBinding
 import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
+import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.UnitConvertUtil
 
 class TokenDetailsFragment : TokensBaseFragment() {
     private var _binding: FragmentDialogTokenDetailsBinding? = null
     private val binding get() = _binding!!
     private lateinit var _viewModel: TokensViewModel
+    private val iconSize: Int get() = UnitConvertUtil.convertDpToPixel(this.resources.getDimension(R.dimen.list_item_height))
 
     companion object {
         @JvmStatic
@@ -23,7 +30,11 @@ class TokenDetailsFragment : TokensBaseFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentDialogTokenDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -39,8 +50,79 @@ class TokenDetailsFragment : TokensBaseFragment() {
     }
 
     private fun initViews() {
+        binding.details.deleteToken.visibility = View.GONE
         binding.backToList.setOnClickListener {
             _viewModel.stepPage(-1)
         }
+        _viewModel.chooseTokenInfo.observe(viewLifecycleOwner) { token ->
+            setContractIndex(token)
+            Log.d("TOKEN : ${token}")
+            token.tokenMetadata?.let { tokenMetadata ->
+                setNameAndIcon(tokenMetadata)
+                setImage(tokenMetadata)
+                setTicker(tokenMetadata)
+                setDecimals(tokenMetadata)
+            }
+        }
+    }
+
+    private fun setNameAndIcon(tokenMetadata: TokenMetadata) {
+
+        val name = tokenMetadata.name
+        val thumbnail = tokenMetadata.thumbnail.url
+        binding.details.nameAndIconHolder.visibility = View.VISIBLE
+
+        if (thumbnail.isNotBlank()) {
+            Glide.with(this)
+                .load(thumbnail)
+                .placeholder(R.drawable.ic_token_loading_image)
+                .override(iconSize)
+                .fitCenter()
+                .error(R.drawable.ic_token_no_image)
+                .into(binding.details.icon)
+        } else if (thumbnail == "none") {
+            binding.details.icon.setImageResource(R.drawable.ic_token_no_image)
+        }
+        binding.details.name.text = name
+    }
+
+    private fun setContractIndex(token: Token) {
+
+        if (token.contractIndex.isNotBlank()) {
+            binding.details.contractIndexHolder.visibility = View.VISIBLE
+            binding.details.contractIndex.text = token.contractIndex
+        }
+    }
+
+    private fun setImage(tokenMetadata: TokenMetadata) {
+
+        if (tokenMetadata.display?.url != null) {
+
+            binding.details.imageHolder.visibility = View.VISIBLE
+
+            Glide.with(this)
+                .load(tokenMetadata.display?.url)
+                .placeholder(R.drawable.ic_token_loading_image)
+                .override(iconSize)
+                .fitCenter()
+                .error(R.drawable.ic_token_no_image)
+                .into(binding.details.image)
+
+        }
+
+    }
+
+    private fun setTicker(tokenMetadata: TokenMetadata) {
+
+        if (tokenMetadata.symbol != null && tokenMetadata.symbol.isNotBlank()) {
+            binding.details.tokenHolder.visibility = View.VISIBLE
+            binding.details.token.text = tokenMetadata.symbol
+        }
+
+    }
+
+    private fun setDecimals(tokenMetadata: TokenMetadata) {
+        binding.details.decimalsHolder.visibility = View.VISIBLE
+        binding.details.decimals.text = tokenMetadata.decimals.toString()
     }
 }

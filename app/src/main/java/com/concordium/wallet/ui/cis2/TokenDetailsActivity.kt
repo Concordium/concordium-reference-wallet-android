@@ -43,7 +43,7 @@ class TokenDetailsActivity : BaseActivity() {
     private fun initViews() {
         viewModel.tokenData.account = intent.getSerializable(ACCOUNT, Account::class.java)
         viewModel.tokenData.selectedToken = intent.getSerializable(TOKEN, Token::class.java)
-        Log.d("TOKEN : ${viewModel.tokenData.selectedToken}")
+        Log.d("TOKEN : ${viewModel.tokenData}")
         Log.d("ACCOUNT : ${viewModel.tokenData.account}")
 
 
@@ -79,18 +79,12 @@ class TokenDetailsActivity : BaseActivity() {
             showDeleteDialog()
         }
 
-        viewModel.tokenData.selectedToken?.let {
-            setContractIndex(it)
-            setBalance(it)
-        }
-
-        viewModel.tokenData.selectedToken?.tokenMetadata?.let {
-
-            setNameAndIcon(it)
-
-            if (it.unique) {
+        viewModel.tokenData.selectedToken?.let {token ->
+            setContractIndex(token)
+            setBalance(token)
+            token.tokenMetadata?.let {
+                setNameAndIcon(it)
                 setImage(it)
-            } else {
                 setTicker(it)
                 setDecimals(it)
             }
