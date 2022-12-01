@@ -1,9 +1,13 @@
 package com.concordium.wallet.data.backend
 
 import android.content.Context
+import com.concordium.wallet.App
 import com.concordium.wallet.AppConfig
 import com.concordium.wallet.BuildConfig
 import com.google.gson.Gson
+import okhttp3.Cookie
+import okhttp3.CookieJar
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -11,7 +15,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 class ProxyBackendConfig(val context: Context, val gson: Gson) {
-
     val retrofit: Retrofit
     val backend: ProxyBackend
 
@@ -35,8 +38,14 @@ class ProxyBackendConfig(val context: Context, val gson: Gson) {
             .writeTimeout(30, TimeUnit.SECONDS)
             .cache(null)
             .addInterceptor(NetworkConnectionInterceptor(context))
-            .addInterceptor(AddCookiesInterceptor())
-            .addInterceptor(ReceivedCookiesInterceptor())
+            .cookieJar(object : CookieJar {
+                override fun loadForRequest(url: HttpUrl): List<Cookie> {
+                    return App.appCore.cookies
+                }
+                override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
+                    App.appCore.cookies = cookies
+                }
+            })
             .addInterceptor(ModifyHeaderInterceptor())
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level =
