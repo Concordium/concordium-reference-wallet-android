@@ -14,6 +14,7 @@ import com.concordium.wallet.data.model.RawJson
 import com.concordium.wallet.data.room.Identity
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import okhttp3.Cookie
 
 class AppCore(val context: Context) {
 
@@ -22,7 +23,7 @@ class AppCore(val context: Context) {
     val cryptoLibrary: CryptoLibrary = if (BuildConfig.USE_LIB_MOCK) CryptoLibraryMock(gson) else CryptoLibraryReal(gson)
     val session: Session = Session(App.appContext)
     var closingPoolsChecked = false
-    var sessionCookie: String? = null
+    var cookies: List<Cookie> = emptyList()
     var appSettingsForceUpdateChecked = false
     var newIdentities = mutableMapOf<Int, Identity>()
 
