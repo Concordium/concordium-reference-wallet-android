@@ -256,6 +256,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             return
         }
 
+        payload.maxEnergy = walletConnectData.energy?.toInt() ?: 0
         val accountTransactionInput = CreateAccountTransactionInput(expiry.toInt(), from, keys, this.accountNonce?.nonce ?: -1, payload, type)
 
         val accountTransactionOutput = App.appCore.cryptoLibrary.createAccountTransaction(accountTransactionInput)

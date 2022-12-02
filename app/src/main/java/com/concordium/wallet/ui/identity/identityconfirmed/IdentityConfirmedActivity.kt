@@ -76,8 +76,8 @@ class IdentityConfirmedActivity : BaseAccountActivity(), IdentityStatusDelegate 
         viewModel.updateState()
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroy() {
+        super.onDestroy()
         stopCheckForPendingIdentity()
         if (showForFirstIdentity)
             viewModel.stopIdentityUpdate()
