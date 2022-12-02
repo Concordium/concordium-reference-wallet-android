@@ -1,5 +1,4 @@
 package com.concordium.wallet.ui.cis2
-
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
@@ -18,6 +17,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.UnitConvertUtil
 import com.concordium.wallet.util.getSerializable
+
 
 class TokenDetailsActivity : BaseActivity() {
     private lateinit var binding: ActivityTokenDetailsBinding
@@ -80,13 +80,16 @@ class TokenDetailsActivity : BaseActivity() {
         }
 
         viewModel.tokenData.selectedToken?.let {token ->
-            setContractIndex(token)
+            setContractIndexAndSubIndex(token)
+            setTokenId(token.token)
             setBalance(token)
-            token.tokenMetadata?.let {
-                setNameAndIcon(it)
-                setImage(it)
-                setTicker(it)
-                setDecimals(it)
+            token.tokenMetadata?.let {tokenMetadata ->
+                setNameAndIcon(tokenMetadata)
+                setImage(tokenMetadata)
+                setOwnership(tokenMetadata)
+                setDescription(tokenMetadata)
+                setTicker(tokenMetadata)
+                setDecimals(tokenMetadata)
             }
         }
     }
@@ -123,13 +126,34 @@ class TokenDetailsActivity : BaseActivity() {
         }
     }
 
+    private fun setTokenId(tokenId: String) {
+        if (!tokenId.isNullOrBlank()) {
+            binding.includeAbout.tokenIdHolder.visibility = View.VISIBLE
+            binding.includeAbout.tokenId.text= tokenId
+        }
+    }
+
+
+    private fun setDescription(tokenMetadata: TokenMetadata) {
+        if (!tokenMetadata.description.isNullOrBlank()) {
+            binding.includeAbout.descriptionHolder.visibility = View.VISIBLE
+            binding.includeAbout.description.text = tokenMetadata.description
+        }
+    }
+
+    private fun setOwnership(tokenMetadata: TokenMetadata) {
+        if (tokenMetadata.unique == true) {
+            binding.includeAbout.ownershipHolder.visibility = View.VISIBLE
+        }
+    }
+
     private fun setNameAndIcon(tokenMetadata: TokenMetadata) {
 
         val name = tokenMetadata.name
         val thumbnail = tokenMetadata.thumbnail.url
         binding.includeAbout.nameAndIconHolder.visibility = View.VISIBLE
 
-        if (thumbnail.isNotBlank()) {
+        if (!thumbnail.isNullOrBlank()) {
             Glide.with(this)
                 .load(thumbnail)
                 .placeholder(R.drawable.ic_token_loading_image)
@@ -143,17 +167,25 @@ class TokenDetailsActivity : BaseActivity() {
         binding.includeAbout.name.text = name
     }
 
-    private fun setContractIndex(token: Token) {
+    private fun setContractIndexAndSubIndex(token: Token) {
 
-        if (token.contractIndex.isNotBlank()) {
+        val tokenIndex = token.contractIndex
+
+        if (!tokenIndex.isNullOrBlank()) {
             binding.includeAbout.contractIndexHolder.visibility = View.VISIBLE
             binding.includeAbout.contractIndex.text = token.contractIndex
+            if (!token.subIndex.isNullOrBlank()) {
+                val combinedInfo = "${tokenIndex}, ${token.subIndex}"
+                binding.includeAbout.contractIndex.text = combinedInfo
+            }else{
+                binding.includeAbout.contractIndex.text = tokenIndex
+            }
         }
     }
 
     private fun setImage(tokenMetadata: TokenMetadata) {
 
-        if (tokenMetadata.display?.url != null) {
+        if (!tokenMetadata.display?.url.isNullOrBlank()) {
 
             binding.includeAbout.imageHolder.visibility = View.VISIBLE
 
@@ -171,7 +203,7 @@ class TokenDetailsActivity : BaseActivity() {
 
     private fun setTicker(tokenMetadata: TokenMetadata) {
 
-        if (tokenMetadata.symbol != null && tokenMetadata.symbol.isNotBlank()) {
+        if (!tokenMetadata.symbol.isNullOrBlank()) {
             binding.includeAbout.tokenHolder.visibility = View.VISIBLE
             binding.includeAbout.token.text = tokenMetadata.symbol
         }
@@ -179,8 +211,11 @@ class TokenDetailsActivity : BaseActivity() {
     }
 
     private fun setDecimals(tokenMetadata: TokenMetadata) {
-        binding.includeAbout.decimalsHolder.visibility = View.VISIBLE
-        binding.includeAbout.decimals.text = tokenMetadata.decimals.toString()
+
+        if(tokenMetadata.decimals != null) {
+            binding.includeAbout.decimalsHolder.visibility = View.VISIBLE
+            binding.includeAbout.decimals.text = tokenMetadata.decimals.toString()
+        }
     }
 
     private fun initObservers() {

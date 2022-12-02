@@ -1017,6 +1017,7 @@
     <string name="cis_sender">Sender</string>
     <string name="cis_amount">Amount</string>
     <string name="cis_token">Token</string>
+    <string name="cis_token_id">Token ID</string>
     <string name="cis_receiver">Receiver</string>
     <string name="cis_finish">Finish</string>
     <string name="cis_back">Back</string>
@@ -1027,8 +1028,11 @@
     <string name="cis_about_token">About token</string>
     <string name="cis_name_and_icon">Name and icon</string>
     <string name="cis_image">Image</string>
-    <string name="cis_contract_index">Contract Index</string>
+    <string name="cis_description">Description</string>
+    <string name="cis_contract_index">Contract index, subindex</string>
     <string name="cis_decimals">Decimals</string>
+    <string name="cis_ownership">Ownership</string>
+    <string name="cis_not_owned">Not owned</string>
     <string name="cis_no_tokens_selected">You haven\'t selected any tokens.</string>
     <string name="cis_tokens_updated">Token list updated</string>
     <string name="cis_tokens_not_updated">No updates made to token list</string>

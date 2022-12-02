@@ -11,7 +11,6 @@ import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.databinding.FragmentDialogTokenDetailsBinding
 import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
-import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.UnitConvertUtil
 
 class TokenDetailsFragment : TokensBaseFragment() {
@@ -55,14 +54,37 @@ class TokenDetailsFragment : TokensBaseFragment() {
             _viewModel.stepPage(-1)
         }
         _viewModel.chooseTokenInfo.observe(viewLifecycleOwner) { token ->
-            setContractIndex(token)
-            Log.d("TOKEN : ${token}")
+            setContractIndexAndSubIndex(token)
+            setTokenId(token.token)
             token.tokenMetadata?.let { tokenMetadata ->
                 setNameAndIcon(tokenMetadata)
                 setImage(tokenMetadata)
+                setOwnership(tokenMetadata)
+                setDescription(tokenMetadata)
                 setTicker(tokenMetadata)
                 setDecimals(tokenMetadata)
             }
+        }
+    }
+
+    private fun setTokenId(tokenId: String) {
+        if (!tokenId.isNullOrBlank()) {
+            binding.details.tokenIdHolder.visibility = View.VISIBLE
+            binding.details.tokenId.text= tokenId
+        }
+    }
+
+
+    private fun setDescription(tokenMetadata: TokenMetadata) {
+        if (!tokenMetadata.description.isNullOrBlank()) {
+            binding.details.descriptionHolder.visibility = View.VISIBLE
+            binding.details.description.text = tokenMetadata.description
+        }
+    }
+
+    private fun setOwnership(tokenMetadata: TokenMetadata) {
+        if (tokenMetadata.unique == true) {
+            binding.details.ownershipHolder.visibility = View.VISIBLE
         }
     }
 
@@ -72,7 +94,7 @@ class TokenDetailsFragment : TokensBaseFragment() {
         val thumbnail = tokenMetadata.thumbnail.url
         binding.details.nameAndIconHolder.visibility = View.VISIBLE
 
-        if (thumbnail.isNotBlank()) {
+        if (!thumbnail.isNullOrBlank()) {
             Glide.with(this)
                 .load(thumbnail)
                 .placeholder(R.drawable.ic_token_loading_image)
@@ -86,17 +108,25 @@ class TokenDetailsFragment : TokensBaseFragment() {
         binding.details.name.text = name
     }
 
-    private fun setContractIndex(token: Token) {
+    private fun setContractIndexAndSubIndex(token: Token) {
 
-        if (token.contractIndex.isNotBlank()) {
+        val tokenIndex = token.contractIndex
+
+        if (!tokenIndex.isNullOrBlank()) {
             binding.details.contractIndexHolder.visibility = View.VISIBLE
             binding.details.contractIndex.text = token.contractIndex
+            if (!token.subIndex.isNullOrBlank()) {
+                val combinedInfo = "${tokenIndex}, ${token.subIndex}"
+                binding.details.contractIndex.text = combinedInfo
+            }else{
+                binding.details.contractIndex.text = tokenIndex
+            }
         }
     }
 
     private fun setImage(tokenMetadata: TokenMetadata) {
 
-        if (tokenMetadata.display?.url != null) {
+        if (!tokenMetadata.display?.url.isNullOrBlank()) {
 
             binding.details.imageHolder.visibility = View.VISIBLE
 
@@ -114,7 +144,7 @@ class TokenDetailsFragment : TokensBaseFragment() {
 
     private fun setTicker(tokenMetadata: TokenMetadata) {
 
-        if (tokenMetadata.symbol != null && tokenMetadata.symbol.isNotBlank()) {
+        if (!tokenMetadata.symbol.isNullOrBlank()) {
             binding.details.tokenHolder.visibility = View.VISIBLE
             binding.details.token.text = tokenMetadata.symbol
         }
@@ -122,7 +152,10 @@ class TokenDetailsFragment : TokensBaseFragment() {
     }
 
     private fun setDecimals(tokenMetadata: TokenMetadata) {
-        binding.details.decimalsHolder.visibility = View.VISIBLE
-        binding.details.decimals.text = tokenMetadata.decimals.toString()
+
+        if(tokenMetadata.decimals != null) {
+            binding.details.decimalsHolder.visibility = View.VISIBLE
+            binding.details.decimals.text = tokenMetadata.decimals.toString()
+        }
     }
 }

@@ -95,7 +95,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 val accountContracts = accountContractRepository.find(account.address)
                 accountContracts.forEach { accountContract ->
                     val tokens = contractTokensRepository.getTokens(accountContract.contractIndex)
-                    tokensFound.addAll(tokens.map { Token(it.tokenId, it.tokenId, "", it.tokenMetadata, false, it.contractIndex, false, 0, 0, "", it.tokenMetadata?.symbol ?: "") })
+                    tokensFound.addAll(tokens.map { Token(it.tokenId, it.tokenId, "", it.tokenMetadata, false, it.contractIndex, "0",false, 0, 0, "", it.tokenMetadata?.symbol ?: "") })
                 }
             }
             waiting.postValue(false)
@@ -234,7 +234,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
         val account = accountRepository.findByAddress(accountAddress)
         val atDisposal = account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) ?: 0
-        return Token("", "CCD", "", null, false, "", true, account?.totalBalance ?: 0, atDisposal, "", "CCD")
+        return Token("", "CCD", "", null, false, "", "",true, account?.totalBalance ?: 0, atDisposal, "", "CCD")
     }
 
     fun getCipherForBiometrics(): Cipher? {

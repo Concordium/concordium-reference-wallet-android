@@ -445,6 +445,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
                     null,
                     false,
                     "",
+                    "",
                     true,
                     viewModelAccountDetails.account.totalUnshieldedBalance,
                     viewModelAccountDetails.account.getAtDisposalWithoutStakedOrScheduled(

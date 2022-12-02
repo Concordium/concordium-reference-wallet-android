@@ -11,11 +11,20 @@ import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.ItemTokenAddBinding
 import com.concordium.wallet.util.UnitConvertUtil
 
-class TokensAddAdapter(private val context: Context, private val showCheckBox: Boolean, var dataSet: Array<Token>) : RecyclerView.Adapter<TokensAddAdapter.ViewHolder>() {
+class TokensAddAdapter(
+    private val context: Context,
+    private val showCheckBox: Boolean,
+    var dataSet: Array<Token>
+) : RecyclerView.Adapter<TokensAddAdapter.ViewHolder>() {
     private var tokenClickListener: TokenClickListener? = null
-    private val iconSize: Int get() = UnitConvertUtil.convertDpToPixel(context.resources.getDimension(R.dimen.list_item_height))
+    private val iconSize: Int
+        get() = UnitConvertUtil.convertDpToPixel(
+            context.resources.getDimension(
+                R.dimen.list_item_height
+            )
+        )
 
-    inner class ViewHolder(val binding: ItemTokenAddBinding): RecyclerView.ViewHolder(binding.root)
+    inner class ViewHolder(val binding: ItemTokenAddBinding) : RecyclerView.ViewHolder(binding.root)
 
     interface TokenClickListener {
         fun onRowClick(token: Token)
@@ -29,7 +38,8 @@ class TokensAddAdapter(private val context: Context, private val showCheckBox: B
     override fun getItemCount() = dataSet.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemTokenAddBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemTokenAddBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 

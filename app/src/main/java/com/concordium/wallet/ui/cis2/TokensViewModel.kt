@@ -28,7 +28,8 @@ import java.io.Serializable
 data class TokenData(
     var account: Account? = null,
     var selectedToken: Token? = null,
-    var contractIndex: String = ""
+    var contractIndex: String = "",
+    var subIndex: String = "0"
 ) : Serializable
 
 class TokensViewModel(application: Application) : AndroidViewModel(application) {
@@ -89,6 +90,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     it.tokenMetadata,
                     true,
                     it.contractIndex,
+                    tokenData.subIndex,
                     false,
                     0,
                     0,
@@ -116,7 +118,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             val existingTokens = existingContractTokens.map { it.tokenId }.toSet()
             proxyRepository.getCIS2Tokens(
                 tokenData.contractIndex,
-                "0",
+                tokenData.subIndex,
                 from,
                 success = { cis2Tokens ->
                     cis2Tokens.tokens.forEach { token ->
@@ -125,6 +127,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                         }
 
                         token.contractIndex = tokenData.contractIndex
+                        token.subIndex = tokenData.subIndex
                     }
                     tokens.addAll(cis2Tokens.tokens)
                     loadTokensMetadataUrls(cis2Tokens.tokens)
@@ -252,6 +255,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             null,
             false,
             "",
+            "",
             true,
             account?.totalBalance ?: 0,
             atDisposal,
@@ -265,7 +269,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             val commaSeparated = tokens.joinToString(",") { it.token }
             proxyRepository.getCIS2TokenMetadata(
                 tokenData.contractIndex,
-                "0",
+                tokenData.subIndex,
                 tokenIds = commaSeparated,
                 success = { cis2TokensMetadata ->
                     cis2TokensMetadata.metadata.forEach {
@@ -322,7 +326,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             val commaSeparated = group.value.joinToString(",") { it.token }
             viewModelScope.launch {
                 proxyRepository.getCIS2TokenBalance(group.key,
-                    "0",
+                    tokenData.subIndex,
                     tokenData.account!!.address,
                     commaSeparated,
                     success = { cis2TokensBalances ->

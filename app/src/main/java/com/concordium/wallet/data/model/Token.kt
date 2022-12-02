@@ -9,6 +9,7 @@ data class Token (
     var tokenMetadata: TokenMetadata?,
     var isSelected: Boolean = false,
     var contractIndex: String,
+    var subIndex: String,
     var isCCDToken: Boolean = false,
     var totalBalance: Long = 0,
     var atDisposal: Long = 0,
