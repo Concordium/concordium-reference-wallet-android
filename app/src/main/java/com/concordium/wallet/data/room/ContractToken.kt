@@ -20,5 +20,7 @@ data class ContractToken(
     @ColumnInfo(name = "is_fungible")
     val isFungible: Boolean,
     @ColumnInfo(name = "token_metadata")
-    val tokenMetadata: TokenMetadata?
+    val tokenMetadata: TokenMetadata?,
+    @ColumnInfo(name = "contract_name", defaultValue = "")
+    val contractName: String
 ) : Serializable

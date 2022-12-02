@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 9,
-    "identityHash": "8fead4e69b34e7b93d51390f49c09587",
+    "identityHash": "7a9926031574c085c2dc844e7ea85389",
     "entities": [
       {
         "tableName": "identity_table",
@@ -476,7 +476,7 @@
       },
       {
         "tableName": "contract_token_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `contract_index` TEXT NOT NULL, `token_id` TEXT NOT NULL, `is_fungible` INTEGER NOT NULL, `token_metadata` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `contract_index` TEXT NOT NULL, `token_id` TEXT NOT NULL, `is_fungible` INTEGER NOT NULL, `token_metadata` TEXT, `contract_name` TEXT NOT NULL DEFAULT '')",
         "fields": [
           {
             "fieldPath": "id",
@@ -507,6 +507,13 @@
             "columnName": "token_metadata",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "contractName",
+            "columnName": "contract_name",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "''"
           }
         ],
         "primaryKey": {
@@ -533,7 +540,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8fead4e69b34e7b93d51390f49c09587')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7a9926031574c085c2dc844e7ea85389')"
     ]
   }
 }

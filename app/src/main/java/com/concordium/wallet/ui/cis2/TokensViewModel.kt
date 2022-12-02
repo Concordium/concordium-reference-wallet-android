@@ -16,7 +16,6 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountContract
 import com.concordium.wallet.data.room.ContractToken
 import com.concordium.wallet.data.room.WalletDatabase
-import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
@@ -29,7 +28,8 @@ data class TokenData(
     var account: Account? = null,
     var selectedToken: Token? = null,
     var contractIndex: String = "",
-    var subIndex: String = "0"
+    var subIndex: String = "0",
+    var contractName: String = ""
 ) : Serializable
 
 class TokensViewModel(application: Application) : AndroidViewModel(application) {
@@ -94,7 +94,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     false,
                     0,
                     0,
-                    "",
+                    it.contractName,
                     it.tokenMetadata?.symbol ?: ""
                 )
             })
@@ -226,7 +226,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                                     tokenData.contractIndex,
                                     selectedToken.token,
                                     selectedToken.tokenMetadata?.unique ?: false,
-                                    selectedToken.tokenMetadata
+                                    selectedToken.tokenMetadata,
+                                    tokenData.contractName
                                 )
                             )
                             anyChanges = true
@@ -272,8 +273,9 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                 tokenData.subIndex,
                 tokenIds = commaSeparated,
                 success = { cis2TokensMetadata ->
+                    tokenData.contractName = cis2TokensMetadata.contractName
                     cis2TokensMetadata.metadata.forEach {
-                        loadTokenMetadata(tokenData.contractIndex, it)
+                        loadTokenMetadata(tokenData.contractIndex, tokenData.contractName, it)
                     }
                 },
                 failure = {
@@ -284,6 +286,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun loadTokenMetadata(
         contractIndex: String,
+        contractName: String,
         cis2TokensMetadataItem: CIS2TokensMetadataItem
     ) {
         println("LC -> ${cis2TokensMetadataItem.metadataURL}")
@@ -313,6 +316,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                         null
                     )
                 }
+                tokens[index].contractIndex = contractIndex
+                tokens[index].contractName = contractName
                 tokenDetails.postValue(true)
             }
         }
