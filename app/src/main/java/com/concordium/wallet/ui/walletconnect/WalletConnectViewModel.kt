@@ -256,6 +256,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             return
         }
 
+        payload.maxEnergy = walletConnectData.energy?.toInt() ?: 0
         val accountTransactionInput = CreateAccountTransactionInput(expiry.toInt(), from, keys, this.accountNonce?.nonce ?: -1, payload, type)
 
         val accountTransactionOutput = App.appCore.cryptoLibrary.createAccountTransaction(accountTransactionInput)
@@ -290,11 +291,8 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             params.payload = ""
             if (params.payloadObj != null && params.payloadObj?.message != null && params.schema != null) {
                 CoroutineScope(Dispatchers.IO).launch {
-                    val base64Decoded = Base64.decode(params.schema!!, Base64.DEFAULT)
-                    val hexEncoded = base64Decoded.toHex()
-                    val jsonMessage = App.appCore.cryptoLibrary.parameterToJson(ParameterToJsonInput(params.payloadObj!!.message, params.payloadObj!!.receiveName, hexEncoded, null))
+                    val jsonMessage = App.appCore.cryptoLibrary.parameterToJson(ParameterToJsonInput(params.payloadObj!!.message, params.payloadObj!!.receiveName, params.schema!!, null))
                     if (jsonMessage != null) {
-                        println("LC -> $jsonMessage")
                         params.message = jsonMessage.replace("\"", "")
                     }
                     jsonPretty.postValue(gson.toJson(params).replace("payloadObj", "payload"))
