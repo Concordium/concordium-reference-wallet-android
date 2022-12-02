@@ -15,6 +15,13 @@ object CurrencyUtil {
     }
 
     fun formatGTU(value: Long, withGStroke: Boolean = false, decimals: Int = 6): String {
+        val gStroke = App.appContext.getString(R.string.app_gstroke)
+        if (decimals <= 0) {
+            if (withGStroke)
+                return gStroke + value.toString()
+            return value.toString()
+        }
+
         val isNegative = value < 0
         val str = if (isNegative) value.toString().replace("-", "") else value.toString()
         val strBuilder = StringBuilder(str)
@@ -35,7 +42,6 @@ object CurrencyUtil {
         }
 
         if (withGStroke) {
-            val gStroke = App.appContext.getString(R.string.app_gstroke)
             strBuilder.insert(0, gStroke)
         }
         if (isNegative) {
