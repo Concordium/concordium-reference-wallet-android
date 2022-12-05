@@ -46,7 +46,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val chooseTokenInfo: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
-    val lookForTokens: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val lookForTokens: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val waitingTokens: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val updateWithSelectedTokensDone: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val stepPageBy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
@@ -108,7 +108,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
         allowToLoadMore = false
 
-        lookForTokens.postValue(true)
+        lookForTokens.postValue(0)
 
         CoroutineScope(Dispatchers.IO).launch {
             val contractTokensRepository = ContractTokensRepository(
@@ -131,11 +131,14 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     }
                     tokens.addAll(cis2Tokens.tokens)
                     loadTokensMetadataUrls(cis2Tokens.tokens)
-                    lookForTokens.postValue(false)
+                    if (cis2Tokens.tokens.isEmpty())
+                        lookForTokens.postValue(1)
+                    else
+                        lookForTokens.postValue(0)
                     allowToLoadMore = true
                 },
                 failure = {
-                    lookForTokens.postValue(false)
+                    lookForTokens.postValue(2)
                     handleBackendError(it)
                     allowToLoadMore = true
                 })

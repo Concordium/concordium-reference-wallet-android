@@ -13,8 +13,8 @@
         android:scrollbars="vertical" />
     <TextView
         android:id="@+id/no_items"
-        style="@style/TextView.Standard"
-        tools:text="@string/cis_no_collectibles_added"
+        style="@style/TextView.XSmall.Light"
+        android:text="@string/cis_no_collectibles_added"
         android:textAlignment="center"
         android:visibility="gone"
         tools:visibility="visible"

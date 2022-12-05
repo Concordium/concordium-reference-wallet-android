@@ -111,14 +111,12 @@ class SelectTokensFragment : TokensBaseFragment() {
 
     private fun initObservers() {
         _viewModel.lookForTokens.observe(viewLifecycleOwner) { waiting ->
-            if (!waiting) {
-                tokensAddAdapter.dataSet = _viewModel.tokens.filter {
-                    it.token.uppercase().contains(currentFilter) ||
-                        (it.tokenMetadata?.name != null && it.tokenMetadata!!.name.uppercase().contains(currentFilter)) ||
-                        (it.tokenMetadata?.description != null && it.tokenMetadata!!.description.uppercase().contains(currentFilter))
-                }.toTypedArray()
-                tokensAddAdapter.notifyDataSetChanged()
-            }
+            tokensAddAdapter.dataSet = _viewModel.tokens.filter {
+                it.token.uppercase().contains(currentFilter) ||
+                    (it.tokenMetadata?.name != null && it.tokenMetadata!!.name.uppercase().contains(currentFilter)) ||
+                    (it.tokenMetadata?.description != null && it.tokenMetadata!!.description.uppercase().contains(currentFilter))
+            }.toTypedArray()
+            tokensAddAdapter.notifyDataSetChanged()
         }
         _viewModel.tokenDetails.observe(viewLifecycleOwner) {
             tokensAddAdapter.notifyDataSetChanged()
