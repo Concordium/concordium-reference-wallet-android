@@ -81,7 +81,7 @@ class SendTokenActivity : BaseActivity() {
                 binding.contractAddressError.visibility = View.VISIBLE
             } else {
                 binding.send.isEnabled = false
-                viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(binding.amount.text.toString().replace(",", "").replace(".", "")) ?:0
+                viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(binding.amount.text.toString().replace(",", "").replace(".", "")) ?: 0
                 viewModel.sendTokenData.receiver = binding.receiver.text.toString()
                 viewModel.send()
             }
@@ -101,7 +101,7 @@ class SendTokenActivity : BaseActivity() {
             enableSend()
         }
         binding.amount.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && (binding.amount.text.toString() == "0,00" || binding.amount.text.toString() == "0.00"))
+            if (hasFocus && (binding.amount.text.toString().replace(".", "").replace(",", "").toInt() == 0))
                 binding.amount.setText("")
         }
     }
@@ -109,7 +109,12 @@ class SendTokenActivity : BaseActivity() {
     private fun initializeMax() {
         binding.max.isEnabled = false
         binding.max.setOnClickListener {
-            binding.amount.setText(CurrencyUtil.formatGTU(viewModel.sendTokenData.max ?: 0, false))
+            var decimals = 6
+            viewModel.sendTokenData.token?.let { token ->
+                if (!token.isCCDToken)
+                    decimals = token.tokenMetadata?.decimals?: 0
+            }
+            binding.amount.setText(CurrencyUtil.formatGTU(viewModel.sendTokenData.max ?: 0, false, decimals))
             enableSend()
         }
     }
@@ -239,7 +244,8 @@ class SendTokenActivity : BaseActivity() {
             searchTokenBottomSheet = null
             viewModel.sendTokenData.token = token
             binding.balanceTitle.text = getString(R.string.cis_token_balance, token.symbol).trim()
-            binding.balance.text = CurrencyUtil.formatGTU(token.totalBalance, token.isCCDToken)
+            val decimals: Int = if (token.isCCDToken) 6 else token.tokenMetadata?.decimals ?: 0
+            binding.balance.text = CurrencyUtil.formatGTU(token.totalBalance, token.isCCDToken, decimals)
             binding.searchToken.tokenShortName.text = token.symbol
             if (token.isCCDToken) {
                 Glide.with(this).load(R.drawable.ic_concordium_logo_no_text).into(binding.searchToken.tokenIcon)
@@ -287,7 +293,8 @@ class SendTokenActivity : BaseActivity() {
     private fun updateWithToken(token: Token?) {
         token?.let {
             binding.balanceTitle.text = getString(R.string.cis_token_balance, it.symbol).trim()
-            binding.balance.text = CurrencyUtil.formatGTU(it.totalBalance, it.isCCDToken)
+            val decimals: Int = if (token.isCCDToken) 6 else token.tokenMetadata?.decimals ?: 0
+            binding.balance.text = CurrencyUtil.formatGTU(it.totalBalance, it.isCCDToken, decimals)
             binding.atDisposal.text = CurrencyUtil.formatGTU(it.atDisposal, it.isCCDToken)
             binding.searchToken.tokenShortName.text = it.symbol
             it.tokenMetadata?.thumbnail?.url?.let {

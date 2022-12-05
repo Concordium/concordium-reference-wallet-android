@@ -2,6 +2,7 @@ package com.concordium.wallet.data.util
 
 import com.concordium.wallet.App
 import com.concordium.wallet.R
+import com.concordium.wallet.data.model.Token
 import java.text.DecimalFormatSymbols
 import java.util.regex.Pattern
 
@@ -12,6 +13,18 @@ object CurrencyUtil {
     fun formatGTU(value: String, withGStroke: Boolean = false, decimals: Int = 6): String {
         val valueLong = value.toLong()
         return formatGTU(valueLong, withGStroke, decimals)
+    }
+
+    fun formatGTU(value: Long, token: Token?): String {
+        var decimals = 6
+        var withGStroke = true
+        token?.let {
+            withGStroke = it.isCCDToken
+            it.tokenMetadata?.let { tokenMetadata ->
+                decimals = tokenMetadata.decimals
+            }
+        }
+        return formatGTU(value, withGStroke, decimals)
     }
 
     fun formatGTU(value: Long, withGStroke: Boolean = false, decimals: Int = 6): String {

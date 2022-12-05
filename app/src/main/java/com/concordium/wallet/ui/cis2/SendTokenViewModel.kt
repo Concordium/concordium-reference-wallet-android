@@ -19,6 +19,7 @@ import com.concordium.wallet.data.cryptolib.*
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.data.walletconnect.ContractAddress
 import com.concordium.wallet.data.walletconnect.Payload
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
@@ -217,9 +218,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             success = {
                 sendTokenData.energy = it.energy
                 sendTokenData.fee = it.cost.toLong()
-                sendTokenData.account?.let { account ->
-                    sendTokenData.max = sendTokenData.token!!.totalBalance
-                }
+                sendTokenData.max = sendTokenData.token!!.totalBalance
                 waiting.postValue(false)
                 feeReady.postValue(sendTokenData.fee)
             },
@@ -395,18 +394,22 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
 
         viewModelScope.launch {
-            val serializeTokenTransferParametersInput = SerializeTokenTransferParametersInput(sendTokenData.token!!.token, sendTokenData.amount.toString(), sendTokenData.account!!.address, sendTokenData.receiver)
+            val serializeTokenTransferParametersInput = SerializeTokenTransferParametersInput(sendTokenData.token!!.token, CurrencyUtil.formatGTU(sendTokenData.amount, sendTokenData.token), sendTokenData.account!!.address, sendTokenData.receiver)
             val serializeTokenTransferParametersOutput = App.appCore.cryptoLibrary.serializeTokenTransferParameters(serializeTokenTransferParametersInput)
             if (serializeTokenTransferParametersOutput == null) {
                 errorInt.postValue(R.string.app_error_lib)
             } else {
                 val payload = Payload(ContractAddress(sendTokenData.token!!.contractIndex.toInt(), 0), sendTokenData.amount.toString(), sendTokenData.energy!!.toInt(), serializeTokenTransferParametersOutput.parameter, sendTokenData.token!!.contractName + ".transfer")
+                println("LC -> payload = $payload")
                 val accountTransactionInput = CreateAccountTransactionInput(expiry.toInt(), sendTokenData.account!!.address, keys, sendTokenData.accountNonce!!.nonce, payload, "Update")
+                println("LC -> accountTransactionInput = $accountTransactionInput")
                 val accountTransactionOutput = App.appCore.cryptoLibrary.createAccountTransaction(accountTransactionInput)
+                println("LC -> accountTransactionOutput = $accountTransactionOutput")
                 if (accountTransactionOutput == null) {
                     errorInt.postValue(R.string.app_error_lib)
                 } else {
                     val createTransferOutput = CreateTransferOutput(accountTransactionOutput.signatures, "", "", accountTransactionOutput.transaction)
+                    println("LC -> createTransferOutput = $createTransferOutput")
                     submitTransaction(createTransferOutput)
                 }
             }
