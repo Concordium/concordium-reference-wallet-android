@@ -238,7 +238,7 @@ class SendTokenActivity : BaseActivity() {
             searchTokenBottomSheet?.dismiss()
             searchTokenBottomSheet = null
             viewModel.sendTokenData.token = token
-            binding.balanceTitle.text = getString(R.string.cis_token_balance, token.symbol)
+            binding.balanceTitle.text = getString(R.string.cis_token_balance, token.symbol).trim()
             binding.balance.text = CurrencyUtil.formatGTU(token.totalBalance, token.isCCDToken)
             binding.searchToken.tokenShortName.text = token.symbol
             if (token.isCCDToken) {
@@ -286,10 +286,13 @@ class SendTokenActivity : BaseActivity() {
 
     private fun updateWithToken(token: Token?) {
         token?.let {
-            binding.balanceTitle.text = getString(R.string.cis_token_balance, it.symbol)
+            binding.balanceTitle.text = getString(R.string.cis_token_balance, it.symbol).trim()
             binding.balance.text = CurrencyUtil.formatGTU(it.totalBalance, it.isCCDToken)
             binding.atDisposal.text = CurrencyUtil.formatGTU(it.atDisposal, it.isCCDToken)
             binding.searchToken.tokenShortName.text = it.symbol
+            it.tokenMetadata?.thumbnail?.url?.let {
+                Glide.with(this).load(it).into(binding.searchToken.tokenIcon)
+            }
         }
     }
 
