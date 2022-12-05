@@ -1,4 +1,5 @@
 package com.concordium.wallet.ui.cis2
+
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
@@ -18,11 +19,9 @@ import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.UnitConvertUtil
 import com.concordium.wallet.util.getSerializable
 
-
 class TokenDetailsActivity : BaseActivity() {
     private lateinit var binding: ActivityTokenDetailsBinding
     private val viewModel: TokensViewModel by viewModels()
-
     private val iconSize: Int get() = UnitConvertUtil.convertDpToPixel(this.resources.getDimension(R.dimen.list_item_height))
 
     companion object {
@@ -46,7 +45,6 @@ class TokenDetailsActivity : BaseActivity() {
         Log.d("TOKEN : ${viewModel.tokenData}")
         Log.d("ACCOUNT : ${viewModel.tokenData.account}")
 
-
         val tokenName = viewModel.tokenData.selectedToken?.tokenMetadata?.name
         setupActionBar(
             binding.toolbarLayout.toolbar,
@@ -68,11 +66,9 @@ class TokenDetailsActivity : BaseActivity() {
             startActivity(intent)
         }
         binding.includeButtons.receive.setOnClickListener {
-
             val intent = Intent(this, AccountQRCodeActivity::class.java)
             intent.putExtra(AccountQRCodeActivity.EXTRA_ACCOUNT, viewModel.tokenData.account)
             startActivity(intent)
-
         }
 
         binding.includeAbout.deleteToken.setOnClickListener {
@@ -98,7 +94,6 @@ class TokenDetailsActivity : BaseActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.cis_delete_dialog_title)
         builder.setMessage(getString(R.string.cis_delete_dialog_content))
-
         builder.setPositiveButton(getString(R.string.cis_delete_dialog_confirm)) { dialog, _ ->
             dialog.dismiss()
             viewModel.deleteSingleToken(
@@ -111,49 +106,42 @@ class TokenDetailsActivity : BaseActivity() {
             setResult(Activity.RESULT_OK, intent)
             finish()
         }
-
         builder.setNegativeButton(getString(R.string.cis_delete_dialog_cancel)) { dialog, _ ->
             dialog.dismiss()
-
         }
         builder.create().show()
     }
 
     private fun setBalance(token: Token) {
-        if (token.totalBalance != null) {
-            binding.includeBalance.tokenAmount.text =
-                CurrencyUtil.formatGTU(token.totalBalance, false)
-        }
+        binding.includeBalance.tokenAmount.text =
+            CurrencyUtil.formatGTU(token.totalBalance, false, token.tokenMetadata?.decimals ?: 0)
     }
 
     private fun setTokenId(tokenId: String) {
-        if (!tokenId.isNullOrBlank()) {
+        if (tokenId.isNotBlank()) {
             binding.includeAbout.tokenIdHolder.visibility = View.VISIBLE
             binding.includeAbout.tokenId.text= tokenId
         }
     }
 
-
     private fun setDescription(tokenMetadata: TokenMetadata) {
-        if (!tokenMetadata.description.isNullOrBlank()) {
+        if (tokenMetadata.description.isNotBlank()) {
             binding.includeAbout.descriptionHolder.visibility = View.VISIBLE
             binding.includeAbout.description.text = tokenMetadata.description
         }
     }
 
     private fun setOwnership(tokenMetadata: TokenMetadata) {
-        if (tokenMetadata.unique == true) {
+        if (tokenMetadata.unique) {
             binding.includeAbout.ownershipHolder.visibility = View.VISIBLE
         }
     }
 
     private fun setNameAndIcon(tokenMetadata: TokenMetadata) {
-
         val name = tokenMetadata.name
         val thumbnail = tokenMetadata.thumbnail.url
         binding.includeAbout.nameAndIconHolder.visibility = View.VISIBLE
-
-        if (!thumbnail.isNullOrBlank()) {
+        if (thumbnail.isNotBlank()) {
             Glide.with(this)
                 .load(thumbnail)
                 .placeholder(R.drawable.ic_token_loading_image)
@@ -168,13 +156,11 @@ class TokenDetailsActivity : BaseActivity() {
     }
 
     private fun setContractIndexAndSubIndex(token: Token) {
-
         val tokenIndex = token.contractIndex
-
-        if (!tokenIndex.isNullOrBlank()) {
+        if (tokenIndex.isNotBlank()) {
             binding.includeAbout.contractIndexHolder.visibility = View.VISIBLE
             binding.includeAbout.contractIndex.text = token.contractIndex
-            if (!token.subIndex.isNullOrBlank()) {
+            if (token.subIndex.isNotBlank()) {
                 val combinedInfo = "${tokenIndex}, ${token.subIndex}"
                 binding.includeAbout.contractIndex.text = combinedInfo
             }else{
@@ -184,11 +170,8 @@ class TokenDetailsActivity : BaseActivity() {
     }
 
     private fun setImage(tokenMetadata: TokenMetadata) {
-
         if (!tokenMetadata.display?.url.isNullOrBlank()) {
-
             binding.includeAbout.imageHolder.visibility = View.VISIBLE
-
             Glide.with(this)
                 .load(tokenMetadata.display?.url)
                 .placeholder(R.drawable.ic_token_loading_image)
@@ -196,26 +179,19 @@ class TokenDetailsActivity : BaseActivity() {
                 .fitCenter()
                 .error(R.drawable.ic_token_no_image)
                 .into(binding.includeAbout.image)
-
         }
-
     }
 
     private fun setTicker(tokenMetadata: TokenMetadata) {
-
         if (!tokenMetadata.symbol.isNullOrBlank()) {
             binding.includeAbout.tokenHolder.visibility = View.VISIBLE
             binding.includeAbout.token.text = tokenMetadata.symbol
         }
-
     }
 
     private fun setDecimals(tokenMetadata: TokenMetadata) {
-
-        if(tokenMetadata.decimals != null) {
-            binding.includeAbout.decimalsHolder.visibility = View.VISIBLE
-            binding.includeAbout.decimals.text = tokenMetadata.decimals.toString()
-        }
+        binding.includeAbout.decimalsHolder.visibility = View.VISIBLE
+        binding.includeAbout.decimals.text = tokenMetadata.decimals.toString()
     }
 
     private fun initObservers() {
