@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -26,6 +27,7 @@ import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DAT
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
+import com.concordium.wallet.util.KeyboardUtil
 import com.concordium.wallet.util.UnitConvertUtil
 import com.concordium.wallet.util.getSerializable
 import javax.crypto.Cipher
@@ -76,16 +78,20 @@ class SendTokenActivity : BaseActivity() {
 
     private fun initializeSend() {
         binding.send.setOnClickListener {
-            if (binding.receiver.text.toString().isEmpty()) {
-                binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.text_pink))
-                binding.contractAddressError.text = getString(R.string.cis_enter_receiver_address)
-                binding.contractAddressError.visibility = View.VISIBLE
-            } else {
-                binding.send.isEnabled = false
-                viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(binding.amount.text.toString().replace(",", "").replace(".", "")) ?: 0
-                viewModel.sendTokenData.receiver = binding.receiver.text.toString()
-                viewModel.send()
-            }
+            send()
+        }
+    }
+
+    private fun send() {
+        if (binding.receiver.text.toString().isEmpty()) {
+            binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.text_pink))
+            binding.contractAddressError.text = getString(R.string.cis_enter_receiver_address)
+            binding.contractAddressError.visibility = View.VISIBLE
+        } else {
+            binding.send.isEnabled = false
+            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(binding.amount.text.toString().replace(",", "").replace(".", "")) ?: 0
+            viewModel.sendTokenData.receiver = binding.receiver.text.toString()
+            viewModel.send()
         }
     }
 
@@ -105,6 +111,17 @@ class SendTokenActivity : BaseActivity() {
             if (hasFocus && (binding.amount.text.toString().replace(".", "").replace(",", "").toInt() == 0))
                 binding.amount.setText("")
         }
+        binding.amount.setOnEditorActionListener { _, actionId, _ ->
+            return@setOnEditorActionListener when (actionId) {
+                EditorInfo.IME_ACTION_DONE -> {
+                    KeyboardUtil.hideKeyboard(this)
+                    if (enableSend())
+                        send()
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
     private fun initializeMax() {
@@ -120,12 +137,13 @@ class SendTokenActivity : BaseActivity() {
         }
     }
 
-    private fun enableSend() {
+    private fun enableSend(): Boolean {
         val amountText = binding.amount.text.toString().replace(",", "").replace(".", "").trim()
         if (amountText.isEmpty())
             binding.send.isEnabled = false
         else
-            binding.send.isEnabled = (amountText.toLong() > 0)
+            binding.send.isEnabled = (amountText.toLong() > 0) && viewModel.hasEnoughFunds()
+        return binding.send.isEnabled
     }
 
     private fun initializeMemo() {
@@ -270,6 +288,10 @@ class SendTokenActivity : BaseActivity() {
         viewModel.feeReady.observe(this) { fee ->
             binding.fee.text = getString(R.string.cis_estimated_fee, CurrencyUtil.formatGTU(fee, true))
             binding.max.isEnabled = true
+            if (!viewModel.hasEnoughFunds())
+                binding.feeError.visibility = View.VISIBLE
+            else
+                binding.feeError.visibility = View.GONE
         }
         viewModel.errorInt.observe(this) {
             Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
@@ -286,6 +308,7 @@ class SendTokenActivity : BaseActivity() {
                     viewModel.checkLogin(cipher)
                 }
                 override fun onCancelled() {
+                    enableSend()
                 }
             })
         }
@@ -297,8 +320,8 @@ class SendTokenActivity : BaseActivity() {
             val decimals: Int = if (token.isCCDToken) 6 else token.tokenMetadata?.decimals ?: 0
             binding.balance.text = CurrencyUtil.formatGTU(it.totalBalance, it.isCCDToken, decimals)
             binding.searchToken.tokenShortName.text = it.symbol
-            it.tokenMetadata?.thumbnail?.url?.let {
-                Glide.with(this).load(it).into(binding.searchToken.tokenIcon)
+            it.tokenMetadata?.thumbnail?.url?.let { url ->
+                Glide.with(this).load(url).into(binding.searchToken.tokenIcon)
             }
         }
     }
