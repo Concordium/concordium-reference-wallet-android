@@ -61,6 +61,7 @@ class SendTokenActivity : BaseActivity() {
     private fun initViews() {
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.cis_send_funds)
         binding.amount.setText(CurrencyUtil.formatGTU(0, false))
+        binding.atDisposal.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.account?.getAtDisposalWithoutStakedOrScheduled(viewModel.sendTokenData.account?.totalUnshieldedBalance ?: 0) ?: 0, true)
         initializeAmount()
         initializeMax()
         initializeMemo()
@@ -295,7 +296,6 @@ class SendTokenActivity : BaseActivity() {
             binding.balanceTitle.text = getString(R.string.cis_token_balance, it.symbol).trim()
             val decimals: Int = if (token.isCCDToken) 6 else token.tokenMetadata?.decimals ?: 0
             binding.balance.text = CurrencyUtil.formatGTU(it.totalBalance, it.isCCDToken, decimals)
-            binding.atDisposal.text = CurrencyUtil.formatGTU(it.atDisposal, it.isCCDToken)
             binding.searchToken.tokenShortName.text = it.symbol
             it.tokenMetadata?.thumbnail?.url?.let {
                 Glide.with(this).load(it).into(binding.searchToken.tokenIcon)
