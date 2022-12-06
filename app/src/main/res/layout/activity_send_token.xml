@@ -102,6 +102,7 @@
                     android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                     android:layout_height="match_parent"
                     style="@style/TextView.BlueRegular.Mono"
+                    android:imeOptions="actionDone"
                     android:gravity="center_vertical"
                     tools:text="123.45" />
                 <TextView

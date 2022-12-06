@@ -19,7 +19,6 @@ import com.concordium.wallet.data.cryptolib.*
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.WalletDatabase
-import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.data.walletconnect.ContractAddress
 import com.concordium.wallet.data.walletconnect.Payload
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
@@ -180,6 +179,22 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    fun hasEnoughFunds(): Boolean {
+        if (sendTokenData.token == null)
+            return false
+
+        var atDisposal: Long = 0
+        sendTokenData.account?.let { account ->
+            atDisposal = account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
+        }
+
+        return if (sendTokenData.token!!.isCCDToken) {
+            atDisposal >= sendTokenData.amount + (sendTokenData.fee ?: 0)
+        } else {
+            atDisposal >= (sendTokenData.fee ?: 0) && sendTokenData.token!!.totalBalance >= sendTokenData.amount
+        }
+    }
+
     private fun getTransferCostCCD() {
         proxyRepository.getTransferCost(
             type = ProxyRepository.SIMPLE_TRANSFER,
@@ -295,7 +310,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                         createTransactionCCD(credentialsOutput.accountKeys, credentialsOutput.encryptionSecretKey)
                     }
                 else
-                    createTransaction(credentialsOutput.accountKeys, credentialsOutput.encryptionSecretKey)
+                    createTransaction(credentialsOutput.accountKeys)
             },
             {
                 waiting.postValue(false)
@@ -385,7 +400,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    private fun createTransaction(keys: AccountData, encryptionSecretKey: String) {
+    private fun createTransaction(keys: AccountData) {
         if (sendTokenData.account == null || sendTokenData.token == null || sendTokenData.energy == null || sendTokenData.accountNonce == null) {
             errorInt.postValue(R.string.app_error_general)
             return
@@ -394,7 +409,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
 
         viewModelScope.launch {
-            val serializeTokenTransferParametersInput = SerializeTokenTransferParametersInput(sendTokenData.token!!.token, CurrencyUtil.formatGTU(sendTokenData.amount, sendTokenData.token), sendTokenData.account!!.address, sendTokenData.receiver)
+            val serializeTokenTransferParametersInput = SerializeTokenTransferParametersInput(sendTokenData.token!!.token, sendTokenData.amount.toString(), sendTokenData.account!!.address, sendTokenData.receiver)
             val serializeTokenTransferParametersOutput = App.appCore.cryptoLibrary.serializeTokenTransferParameters(serializeTokenTransferParametersInput)
             if (serializeTokenTransferParametersOutput == null) {
                 errorInt.postValue(R.string.app_error_lib)
