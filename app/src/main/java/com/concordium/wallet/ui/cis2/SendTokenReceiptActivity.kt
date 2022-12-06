@@ -39,7 +39,6 @@ class SendTokenReceiptActivity : BaseActivity() {
     private fun initViews() {
         binding.sender.text = viewModel.sendTokenData.account?.name.plus("\n\n").plus(viewModel.sendTokenData.account?.address)
         binding.amount.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.amount, false)
-        binding.token.text = viewModel.sendTokenData.token?.token ?: ""
         binding.receiver.text = viewModel.sendTokenData.receiver
         CoroutineScope(Dispatchers.Default).launch {
             runOnUiThread {
@@ -55,6 +54,14 @@ class SendTokenReceiptActivity : BaseActivity() {
         if (viewModel.sendTokenData.token!!.isCCDToken) {
             binding.tokenTitle.visibility = View.GONE
             binding.token.visibility = View.GONE
+        } else {
+            val symbol: String = viewModel.sendTokenData.token!!.tokenMetadata?.symbol ?: ""
+            if (symbol.isNotBlank())
+                binding.token.text = symbol
+            else {
+                binding.tokenTitle.visibility = View.GONE
+                binding.token.visibility = View.GONE
+            }
         }
     }
 

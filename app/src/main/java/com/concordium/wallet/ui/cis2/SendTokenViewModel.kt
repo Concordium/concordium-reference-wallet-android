@@ -191,7 +191,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         return if (sendTokenData.token!!.isCCDToken) {
             atDisposal >= sendTokenData.amount + (sendTokenData.fee ?: 0)
         } else {
-            atDisposal >= (sendTokenData.fee ?: 0)
+            atDisposal >= (sendTokenData.fee ?: 0) && sendTokenData.token!!.totalBalance >= sendTokenData.amount
         }
     }
 
