@@ -47,7 +47,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val lookForTokens: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
-    val waitingTokens: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val updateWithSelectedTokensDone: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val stepPageBy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val tokenDetails: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }

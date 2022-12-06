@@ -23,7 +23,6 @@ class SelectTokensFragment : TokensBaseFragment() {
     private lateinit var _viewModel: TokensViewModel
     private lateinit var tokensAddAdapter: TokensAddAdapter
     private var firstTime = true
-    private var currentFilter = ""
 
     companion object {
         @JvmStatic
@@ -47,13 +46,13 @@ class SelectTokensFragment : TokensBaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.search.inputType = InputType.TYPE_CLASS_NUMBER
         initViews()
         initObservers()
     }
 
     override fun onResume() {
         super.onResume()
+
         if (!firstTime)
             tokensAddAdapter.notifyDataSetChanged()
         firstTime = false
@@ -88,23 +87,19 @@ class SelectTokensFragment : TokensBaseFragment() {
 
         binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                currentFilter = query?.uppercase() ?: ""
-                //_viewModel.waitingTokens.postValue(false)
+                val currentFilter = query?.uppercase() ?: ""
                 tokensAddAdapter.dataSet = _viewModel.tokens.filter {
                     it.token.uppercase() == currentFilter
                 }.toTypedArray()
                 tokensAddAdapter.notifyDataSetChanged()
-                _viewModel.waitingTokens.postValue(false)
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                currentFilter = newText?.uppercase() ?: ""
                 if (newText.isNullOrBlank()) {
                     tokensAddAdapter.dataSet = _viewModel.tokens.toTypedArray()
                     tokensAddAdapter.notifyDataSetChanged()
                 }
-                _viewModel.waitingTokens.postValue(false)
                 return false
             }
         })
@@ -121,6 +116,8 @@ class SelectTokensFragment : TokensBaseFragment() {
         })
 
         binding.back.setOnClickListener {
+
+            binding.search.setQuery("", false)
             _viewModel.stepPage(-1)
         }
 
@@ -130,17 +127,14 @@ class SelectTokensFragment : TokensBaseFragment() {
     }
 
     private fun initObservers() {
-         _viewModel.lookForTokens.observe(viewLifecycleOwner) { waiting ->
-             if (!waiting) {
-                 tokensAddAdapter.dataSet = _viewModel.tokens.filter {
-                     it.token.uppercase().contains(currentFilter) /*||
-                         (it.tokenMetadata?.name != null && it.tokenMetadata!!.name.uppercase().contains(currentFilter)) ||
-                         (it.tokenMetadata?.description != null && it.tokenMetadata!!.description.uppercase().contains(currentFilter))*/
-                 }.toTypedArray()
-                 tokensAddAdapter.notifyDataSetChanged()
-             }
-         }
+        _viewModel.lookForTokens.observe(viewLifecycleOwner) {
+
+            tokensAddAdapter.dataSet = arrayOf()
+            tokensAddAdapter.notifyDataSetChanged()
+
+        }
         _viewModel.tokenDetails.observe(viewLifecycleOwner) {
+            tokensAddAdapter.dataSet = _viewModel.tokens.toTypedArray()
             tokensAddAdapter.notifyDataSetChanged()
         }
         _viewModel.hasExistingAccountContract.observe(viewLifecycleOwner) { hasExistingAccountContract ->
