@@ -224,7 +224,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         proxyRepository.getTransferCost(
             type = ProxyRepository.UPDATE,
             memoSize = null,
-            amount = sendTokenData.amount,
+            amount = 0,
             sender = sendTokenData.account!!.address,
             contractIndex = sendTokenData.token!!.contractIndex.toInt(),
             contractSubindex = 0,
@@ -414,7 +414,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             if (serializeTokenTransferParametersOutput == null) {
                 errorInt.postValue(R.string.app_error_lib)
             } else {
-                val payload = Payload(ContractAddress(sendTokenData.token!!.contractIndex.toInt(), 0), sendTokenData.amount.toString(), sendTokenData.energy!!.toInt(), serializeTokenTransferParametersOutput.parameter, sendTokenData.token!!.contractName + ".transfer")
+                val payload = Payload(ContractAddress(sendTokenData.token!!.contractIndex.toInt(), 0), "0", sendTokenData.energy!!.toInt(), serializeTokenTransferParametersOutput.parameter, sendTokenData.token!!.contractName + ".transfer")
                 println("LC -> payload = $payload")
                 val accountTransactionInput = CreateAccountTransactionInput(expiry.toInt(), sendTokenData.account!!.address, keys, sendTokenData.accountNonce!!.nonce, payload, "Update")
                 println("LC -> accountTransactionInput = $accountTransactionInput")

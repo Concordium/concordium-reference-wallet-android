@@ -54,6 +54,9 @@ object CurrencyUtil {
             strBuilder.delete(strBuilder.length - 1, strBuilder.length)
         }
 
+        if (strBuilder.toString().startsWith(separator))
+            strBuilder.insert(0, "0")
+
         if (withGStroke) {
             strBuilder.insert(0, gStroke)
         }
