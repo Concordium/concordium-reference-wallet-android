@@ -361,24 +361,17 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         )
 
         CoroutineScope(Dispatchers.IO).launch {
-            Log.d("ATTEMPTING DELETE SCOPE LOUNCHED : Contract Index: $contractIndex, TokenId: $tokenId ")
 
             val existingContractTokens =
                 contractTokensRepository.getTokens(contractIndex)
 
-            val token = contractTokensRepository.find(contractIndex, tokenId)
-            if (token == null) {
-                Log.d("TOKEN IS NULL")
-            }
             contractTokensRepository.find(contractIndex, tokenId)
                 ?.let { existingNotSelectedContractToken ->
-                    Log.d("ATTEMPTING DELETE : ${existingNotSelectedContractToken.tokenId}")
                     contractTokensRepository.delete(existingNotSelectedContractToken)
-                    Log.d("DELETED : ${existingNotSelectedContractToken.tokenId}")
 
                     if (existingContractTokens.size == 1) {
                         val existingAccountContract =
-                            accountContractRepository.find(accountAddress, tokenData.contractIndex)
+                            accountContractRepository.find(accountAddress, contractIndex)
                         if (existingAccountContract == null) {
                             nonSelected.postValue(true)
                         } else {
