@@ -1,6 +1,7 @@
 package com.concordium.wallet.ui.cis2.lookfornew
 
 import android.os.Bundle
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import com.concordium.wallet.ui.cis2.TokensAddAdapter
 import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.ui.cis2.TokensViewModel.Companion.TOKEN_DATA
+import com.concordium.wallet.util.Log
 
 class SelectTokensFragment : TokensBaseFragment() {
     private var _binding: FragmentDialogSelectTokensBinding? = null
@@ -21,7 +23,6 @@ class SelectTokensFragment : TokensBaseFragment() {
     private lateinit var _viewModel: TokensViewModel
     private lateinit var tokensAddAdapter: TokensAddAdapter
     private var firstTime = true
-    private var currentFilter = ""
 
     companion object {
         @JvmStatic
@@ -33,19 +34,25 @@ class SelectTokensFragment : TokensBaseFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentDialogSelectTokensBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initViews()
         initObservers()
     }
 
     override fun onResume() {
         super.onResume()
+
         if (!firstTime)
             tokensAddAdapter.notifyDataSetChanged()
         firstTime = false
@@ -60,7 +67,8 @@ class SelectTokensFragment : TokensBaseFragment() {
 
     private fun initViews() {
         binding.tokensFound.layoutManager = LinearLayoutManager(activity)
-        tokensAddAdapter = TokensAddAdapter(requireActivity(), showCheckBox = true, dataSet = arrayOf())
+        tokensAddAdapter =
+            TokensAddAdapter(requireActivity(), showCheckBox = true, dataSet = arrayOf())
         tokensAddAdapter.also { binding.tokensFound.adapter = it }
         tokensAddAdapter.dataSet = _viewModel.tokens.toTypedArray()
 
@@ -79,13 +87,19 @@ class SelectTokensFragment : TokensBaseFragment() {
 
         binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                currentFilter = query?.uppercase() ?: ""
-                _viewModel.waitingTokens.postValue(false)
+                val currentFilter = query?.uppercase() ?: ""
+                tokensAddAdapter.dataSet = _viewModel.tokens.filter {
+                    it.token.uppercase() == currentFilter
+                }.toTypedArray()
+                tokensAddAdapter.notifyDataSetChanged()
                 return false
             }
+
             override fun onQueryTextChange(newText: String?): Boolean {
-                currentFilter = newText?.uppercase() ?: ""
-                _viewModel.waitingTokens.postValue(false)
+                if (newText.isNullOrBlank()) {
+                    tokensAddAdapter.dataSet = _viewModel.tokens.toTypedArray()
+                    tokensAddAdapter.notifyDataSetChanged()
+                }
                 return false
             }
         })
@@ -95,12 +109,15 @@ class SelectTokensFragment : TokensBaseFragment() {
                 _viewModel.chooseTokenInfo.postValue(token)
                 _viewModel.stepPage(1)
             }
+
             override fun onCheckBoxClick(token: Token) {
                 _viewModel.toggleNewToken(token)
             }
         })
 
         binding.back.setOnClickListener {
+
+            binding.search.setQuery("", false)
             _viewModel.stepPage(-1)
         }
 
@@ -110,15 +127,14 @@ class SelectTokensFragment : TokensBaseFragment() {
     }
 
     private fun initObservers() {
-        _viewModel.lookForTokens.observe(viewLifecycleOwner) { waiting ->
-            tokensAddAdapter.dataSet = _viewModel.tokens.filter {
-                it.token.uppercase().contains(currentFilter) ||
-                    (it.tokenMetadata?.name != null && it.tokenMetadata!!.name.uppercase().contains(currentFilter)) ||
-                    (it.tokenMetadata?.description != null && it.tokenMetadata!!.description.uppercase().contains(currentFilter))
-            }.toTypedArray()
+        _viewModel.lookForTokens.observe(viewLifecycleOwner) {
+
+            tokensAddAdapter.dataSet = arrayOf()
             tokensAddAdapter.notifyDataSetChanged()
+
         }
         _viewModel.tokenDetails.observe(viewLifecycleOwner) {
+            tokensAddAdapter.dataSet = _viewModel.tokens.toTypedArray()
             tokensAddAdapter.notifyDataSetChanged()
         }
         _viewModel.hasExistingAccountContract.observe(viewLifecycleOwner) { hasExistingAccountContract ->

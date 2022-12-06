@@ -1000,9 +1000,9 @@
     <string name="cis_select_tokens_title">Please select the tokens you want to add from the contract.</string>
     <string name="cis_add_tokens">Add tokens</string>
     <string name="cis_update_tokens">Update tokens</string>
-    <string name="cis_find_tokens_error">Invalid contract index.</string>
     <string name="cis_find_tokens_none">This contract has no tokens.</string>
-    <string name="cis_search">Search</string>
+    <string name="cis_find_tokens_error">Invalid contract index</string>
+    <string name="cis_search">Search for token ID</string>
     <string name="cis_send_funds">Send funds</string>
     <string name="cis_currently_available_amounts">Currently available amounts:</string>
     <string name="cis_token_balance">%1$s Balance:</string>
@@ -1044,5 +1044,6 @@
     <string name="cis_delete_dialog_content">Delete Token from wallet?</string>
     <string name="cis_delete_dialog_confirm">Delete</string>
     <string name="cis_delete_dialog_cancel">Cancel</string>
+    <string name="cis_search_balance">Your balance: %1$s</string>
 
 </resources>
