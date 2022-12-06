@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenAddBinding
 import com.concordium.wallet.util.UnitConvertUtil
 
@@ -59,7 +60,17 @@ class TokensAddAdapter(
                 holder.binding.tokenIcon.setImageResource(R.drawable.ic_token_no_image)
             }
             holder.binding.title.text = tokenMetadata.name
-            holder.binding.subTitle.text = tokenMetadata.description
+            //holder.binding.subTitle.text = tokenMetadata.description
+
+            if (token.totalBalance != null) {
+                val tokenBalance = CurrencyUtil.formatGTU(
+                    token.totalBalance,
+                    false,
+                    token.tokenMetadata?.decimals ?: 6
+                )
+
+                holder.binding.subTitle.text = context.getString(R.string.cis_search_balance, tokenBalance)
+            }
         }
 
         if (showCheckBox) {
