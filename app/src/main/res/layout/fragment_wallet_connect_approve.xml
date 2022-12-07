@@ -1,92 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/Layout.Root">
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/disconnect">
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/status_imageview"
-            android:layout_width="110dp"
-            android:layout_height="110dp"
-            android:src="@drawable/ic_logo_icon_pending"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-        <TextView
-            android:id="@+id/header_1"
-            style="@style/TextView.Standard"
-            android:text="@string/wallet_connect_connecting_account"
-            android:layout_marginTop="@dimen/activity_vertical_margin_extended"
-            android:textAlignment="center"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/status_imageview" />
-        <TextView
-            android:id="@+id/account_name"
-            style="@style/TextView.Standard.Bold"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:textAlignment="center"
-            tools:text="Account 1"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/header_1" />
-        <TextView
-            android:id="@+id/header_2"
-            style="@style/TextView.Standard"
-            android:text="@string/wallet_connect_connecting_account_to"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:textAlignment="center"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/account_name" />
-        <TextView
-            android:id="@+id/service_name"
-            style="@style/TextView.Standard.Bold"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:textAlignment="center"
-            tools:text="Service 1"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/header_2" />
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <include android:id="@+id/wallet_connect_status_card" layout="@layout/wallet_connect_status_card" />
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/wait_for_actions"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:visibility="gone"
             tools:visibility="visible"
-            android:orientation="horizontal"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/service_name">
+            android:orientation="horizontal">
             <TextView
                 style="@style/TextView.Standard"
                 android:gravity="center_vertical"
                 android:text="@string/wallet_connect_connecting_waiting_for_actions" />
             <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="17dp"
-                android:layout_height="17dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_marginStart="4dp"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/ic_pending" />
         </androidx.appcompat.widget.LinearLayoutCompat>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
     <Button
         android:id="@+id/disconnect"
         style="@style/Button.Standard.Danger"
-        android:layout_width="0dp"
-        android:layout_weight="0.5"
+        android:layout_width="match_parent"
         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
         android:layout_marginVertical="@dimen/activity_vertical_margin"
         android:text="@string/wallet_connect_connect_session_disconnect"
         android:enabled="false"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_alignParentBottom="true" />
+</RelativeLayout>

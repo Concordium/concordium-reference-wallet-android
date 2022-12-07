@@ -13,6 +13,7 @@
     <color name="theme_blue">#4486AB</color>
     <color name="theme_dark_blue">#325D76</color>
     <color name="theme_light_blue">#D9EFFC</color>
+    <color name="theme_green">#4AC29E</color>
 
     <!-- Theme - Secondary -->
     <color name="theme_component">@color/theme_accent</color>

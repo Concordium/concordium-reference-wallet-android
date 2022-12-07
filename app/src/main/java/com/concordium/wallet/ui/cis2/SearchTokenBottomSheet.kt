@@ -10,7 +10,6 @@ import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.DialogSearchTokenBinding
 import com.concordium.wallet.ui.base.BaseBottomSheetDialogFragment
 import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DATA
-import com.concordium.wallet.util.Log
 
 class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
     private var _binding: DialogSearchTokenBinding? = null

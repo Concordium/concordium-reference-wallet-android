@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="@dimen/activity_horizontal_margin_half"
+    android:layout_margin="@dimen/activity_horizontal_margin_half"
+    android:background="@drawable/background_rounded_black"
+    tools:showIn="@layout/fragment_wallet_connect_pair">
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/status_icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="@dimen/activity_horizontal_margin_half"
+        android:src="@drawable/ic_logo_icon_connect"
+        android:layout_gravity="center_vertical" />
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/status_text"
+            style="@style/TextView.Standard.White"
+            android:text="@string/wallet_connect_open_connection_between" />
+        <TextView
+            android:id="@+id/status_text_account"
+            style="@style/TextView.Standard.White"
+            tools:text="3h3R...TqBq" />
+        <TextView
+            android:id="@+id/status_text_service"
+            style="@style/TextView.Standard.White"
+            tools:text="My test dApp" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.appcompat.widget.LinearLayoutCompat>
