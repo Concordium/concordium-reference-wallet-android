@@ -79,7 +79,7 @@ class SelectTokensFragment : TokensBaseFragment() {
                 val visibleItemCount = layoutManager.childCount
                 val totalItemCount = layoutManager.itemCount
                 val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-                if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount > 3) {
+                if (_viewModel.tokens.size > 0 && visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount > 3) {
                     _viewModel.lookForTokens(from = _viewModel.tokens[_viewModel.tokens.size - 1].id)
                 }
             }
@@ -128,10 +128,8 @@ class SelectTokensFragment : TokensBaseFragment() {
 
     private fun initObservers() {
         _viewModel.lookForTokens.observe(viewLifecycleOwner) {
-
-            tokensAddAdapter.dataSet = arrayOf()
+            tokensAddAdapter.dataSet = _viewModel.tokens.toTypedArray()
             tokensAddAdapter.notifyDataSetChanged()
-
         }
         _viewModel.tokenDetails.observe(viewLifecycleOwner) {
             tokensAddAdapter.dataSet = _viewModel.tokens.toTypedArray()
