@@ -3,7 +3,6 @@ package com.concordium.wallet.ui.walletconnect
 import android.app.Application
 import android.os.CountDownTimer
 import android.text.TextUtils
-import android.util.Base64
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
