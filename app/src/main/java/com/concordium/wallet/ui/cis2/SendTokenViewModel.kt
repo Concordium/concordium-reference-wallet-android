@@ -415,16 +415,12 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 errorInt.postValue(R.string.app_error_lib)
             } else {
                 val payload = Payload(ContractAddress(sendTokenData.token!!.contractIndex.toInt(), 0), "0", sendTokenData.energy!!.toInt(), serializeTokenTransferParametersOutput.parameter, sendTokenData.token!!.contractName + ".transfer")
-                println("LC -> payload = $payload")
                 val accountTransactionInput = CreateAccountTransactionInput(expiry.toInt(), sendTokenData.account!!.address, keys, sendTokenData.accountNonce!!.nonce, payload, "Update")
-                println("LC -> accountTransactionInput = $accountTransactionInput")
                 val accountTransactionOutput = App.appCore.cryptoLibrary.createAccountTransaction(accountTransactionInput)
-                println("LC -> accountTransactionOutput = $accountTransactionOutput")
                 if (accountTransactionOutput == null) {
                     errorInt.postValue(R.string.app_error_lib)
                 } else {
                     val createTransferOutput = CreateTransferOutput(accountTransactionOutput.signatures, "", "", accountTransactionOutput.transaction)
-                    println("LC -> createTransferOutput = $createTransferOutput")
                     submitTransaction(createTransferOutput)
                 }
             }

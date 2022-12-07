@@ -89,7 +89,7 @@ class SendTokenActivity : BaseActivity() {
             binding.contractAddressError.visibility = View.VISIBLE
         } else {
             binding.send.isEnabled = false
-            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(binding.amount.text.toString().replace(",", "").replace(".", "")) ?: 0
+            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(binding.amount.text.toString(), viewModel.sendTokenData.token) ?: 0
             viewModel.sendTokenData.receiver = binding.receiver.text.toString()
             viewModel.send()
         }
@@ -104,6 +104,7 @@ class SendTokenActivity : BaseActivity() {
 
     private fun initializeAmount() {
         binding.amount.addTextChangedListener {
+            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(it.toString(), viewModel.sendTokenData.token) ?: 0
             viewModel.loadTransactionFee()
             enableSend()
         }
@@ -133,6 +134,7 @@ class SendTokenActivity : BaseActivity() {
                     decimals = token.tokenMetadata?.decimals?: 0
             }
             binding.amount.setText(CurrencyUtil.formatGTU(viewModel.sendTokenData.max ?: 0, false, decimals))
+            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(it.toString(), viewModel.sendTokenData.token) ?: 0
             enableSend()
         }
     }
@@ -288,10 +290,27 @@ class SendTokenActivity : BaseActivity() {
         viewModel.feeReady.observe(this) { fee ->
             binding.fee.text = getString(R.string.cis_estimated_fee, CurrencyUtil.formatGTU(fee, true))
             binding.max.isEnabled = true
-            if (!viewModel.hasEnoughFunds())
+            if (!viewModel.hasEnoughFunds()) {
                 binding.feeError.visibility = View.VISIBLE
-            else
+                if (viewModel.sendTokenData.token != null && viewModel.sendTokenData.token!!.isCCDToken) {
+                    binding.balanceTitle.setTextColor(getColor(R.color.text_black))
+                    binding.balance.setTextColor(getColor(R.color.text_black))
+                    binding.atDisposalTitle.setTextColor(getColor(R.color.text_pink))
+                    binding.atDisposal.setTextColor(getColor(R.color.text_pink))
+                } else {
+                    binding.balanceTitle.setTextColor(getColor(R.color.text_pink))
+                    binding.balance.setTextColor(getColor(R.color.text_pink))
+                    binding.atDisposalTitle.setTextColor(getColor(R.color.text_black))
+                    binding.atDisposal.setTextColor(getColor(R.color.text_black))
+                }
+            }
+            else {
                 binding.feeError.visibility = View.GONE
+                binding.balanceTitle.setTextColor(getColor(R.color.text_black))
+                binding.balance.setTextColor(getColor(R.color.text_black))
+                binding.atDisposalTitle.setTextColor(getColor(R.color.text_black))
+                binding.atDisposal.setTextColor(getColor(R.color.text_black))
+            }
         }
         viewModel.errorInt.observe(this) {
             Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()

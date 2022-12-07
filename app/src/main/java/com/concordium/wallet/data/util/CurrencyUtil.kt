@@ -82,7 +82,17 @@ object CurrencyUtil {
         }
     }
 
-    fun toGTUValue(stringValue: String): Long? {
+    fun toGTUValue(stringValue: String, token: Token?): Long? {
+        var decimals = 6
+        token?.let {
+            it.tokenMetadata?.let { tokenMetadata ->
+                decimals = tokenMetadata.decimals
+            }
+        }
+        return toGTUValue(stringValue, decimals)
+    }
+
+    fun toGTUValue(stringValue: String, decimals: Int = 6): Long? {
         var str = stringValue.replace("Ͼ", "")
         if (str.isEmpty()) {
             return null

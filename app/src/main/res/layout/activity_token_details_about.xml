@@ -133,7 +133,7 @@
 
                 <TextView
                     android:id="@+id/ownership"
-                    style="@style/TextView.Standard.Bold"
+                    style="@style/TextView.Standard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
