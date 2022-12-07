@@ -821,8 +821,8 @@
     <string name="wallet_connect_transaction_currently_available_amounts">Currently available amounts:</string>
     <string name="wallet_connect_transaction_balance_at_disposal">Balance (at disposal):</string>
     <string name="wallet_connect_session">WalletConnect session</string>
-    <string name="wallet_connect_session_with">Session with %1$s</string>
-    <string name="wallet_connect_allow_session">Allow session?</string>
+    <string name="wallet_connect_session_with">WalletConnect Session</string>
+    <string name="wallet_connect_allow_session">Accept connection?</string>
     <string name="wallet_connect_connection_lost_title">Connection lost</string>
     <string name="wallet_connect_connection_lost_message">The session connection with the service was lost.</string>
     <string name="wallet_connect_connection_lost_okay">Okay</string>
@@ -842,7 +842,8 @@
     <string name="wallet_connect_insufficient_funds">Insufficient funds</string>
     <string name="wallet_connect_preparing_connection">Preparing connection…</string>
     <string name="wallet_connect_timeout_dialog_title">Could not connect</string>
-    <string name="wallet_connect_timeout_dialog_content">The QR code seems to be expired. Please generate a new one and try again.</string>
+    <string name="wallet_connect_timeout_dialog_content">It can take a while to prepare the connection, please hang on. You can also try to decline and reconnect.</string>
+    <string name="wallet_connect_open_connection_between">About to open connection between:</string>
 
     <!-- ***** More ***** -->
 

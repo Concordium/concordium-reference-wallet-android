@@ -7,6 +7,7 @@ import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentWalletConnectApproveBinding
 import com.concordium.wallet.ui.MainActivity
@@ -53,8 +54,8 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
     }
 
     private fun initViews() {
-        binding.accountName.text = _viewModel.walletConnectData.account?.name ?: ""
-        binding.serviceName.text = _viewModel.sessionName()
+        binding.walletConnectStatusCard.statusTextAccount.text = _viewModel.walletConnectData.account?.name ?: ""
+        binding.walletConnectStatusCard.statusTextService.text = _viewModel.sessionName()
         binding.disconnect.setOnClickListener {
             binding.disconnect.isEnabled = false
             showDisconnectWarning()
@@ -67,21 +68,18 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
             if (isConnected) {
                 stopTimeOutTimer()
                 didConnectBefore = true
-                binding.statusImageview.setImageResource(R.drawable.ic_big_logo_ok)
+                binding.walletConnectStatusCard.statusIcon.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_big_logo_ok))
+                binding.walletConnectStatusCard.statusIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.theme_green))
                 binding.disconnect.isEnabled = true
-                binding.header1.visibility = View.GONE
-                binding.header2.text = getString(R.string.wallet_connect_connecting_is_connected_to)
                 binding.waitForActions.visibility = View.VISIBLE
-                (activity as BaseActivity).setActionBarTitle(getString(R.string.wallet_connect_session_with, _viewModel.sessionName()))
             }
             else {
                 if (didConnectBefore) {
                     showConnectionLost()
                 } else {
-                    binding.statusImageview.setImageResource(R.drawable.ic_logo_icon_pending)
+                    binding.walletConnectStatusCard.statusIcon.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_logo_icon_pending))
+                    binding.walletConnectStatusCard.statusIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.theme_green))
                     binding.disconnect.isEnabled = false
-                    binding.header1.visibility = View.VISIBLE
-                    binding.header2.text = getString(R.string.wallet_connect_connecting_account_to)
                     binding.waitForActions.visibility = View.GONE
                     (activity as BaseActivity).setActionBarTitle(getString(R.string.wallet_connect_session))
                 }

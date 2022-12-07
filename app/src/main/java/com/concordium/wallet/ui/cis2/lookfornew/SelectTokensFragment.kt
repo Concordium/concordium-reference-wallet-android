@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.cis2.lookfornew
 
 import android.os.Bundle
-import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +14,6 @@ import com.concordium.wallet.ui.cis2.TokensAddAdapter
 import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.ui.cis2.TokensViewModel.Companion.TOKEN_DATA
-import com.concordium.wallet.util.Log
 
 class SelectTokensFragment : TokensBaseFragment() {
     private var _binding: FragmentDialogSelectTokensBinding? = null

@@ -215,14 +215,14 @@ class WalletConnectActivity : BaseActivity() {
     private fun approveView() {
         currentPage = PAGE_APPROVE
         hideActionBarBack()
-        setActionBarTitle(getString(R.string.wallet_connect_session))
+        setActionBarTitle(getString(R.string.wallet_connect_session_with))
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectApproveFragment.newInstance(viewModel), null).commit()
     }
 
     private fun transactionView() {
         currentPage = PAGE_TRANSACTION
         hideActionBarBack()
-        setActionBarTitle(getString(R.string.wallet_connect_session_with, viewModel.sessionName()))
+        setActionBarTitle(getString(R.string.wallet_connect_session_with))
         viewModel.walletConnectData.isTransaction = true
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectTransactionFragment.newInstance(viewModel), null).commit()
     }
@@ -235,7 +235,7 @@ class WalletConnectActivity : BaseActivity() {
     private fun messageView() {
         currentPage = PAGE_MESSAGE
         hideActionBarBack()
-        setActionBarTitle(getString(R.string.wallet_connect_session_with, viewModel.sessionName()))
+        setActionBarTitle(getString(R.string.wallet_connect_session_with))
         viewModel.walletConnectData.isTransaction = false
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectMessageFragment.newInstance(viewModel), null).commit()
     }
