@@ -147,7 +147,7 @@ class WalletConnectActivity : BaseActivity() {
         viewModel.reject.observe(this) {
             approveView()
         }
-        viewModel.transaction.observe(this) {
+        viewModel.transactionAction.observe(this) {
             runOnUiThread {
                 transactionView()
             }
@@ -162,9 +162,14 @@ class WalletConnectActivity : BaseActivity() {
         viewModel.transactionSubmittedOkay.observe(this) {
             approveView()
         }
-        viewModel.message.observe(this) {
+        viewModel.messageAction.observe(this) {
             runOnUiThread {
                 messageView()
+            }
+        }
+        viewModel.proofOfIdentityAction.observe(this) {
+            runOnUiThread {
+                // proofOfIdentityView()
             }
         }
         viewModel.messageSignedSuccess.observe(this) { message ->

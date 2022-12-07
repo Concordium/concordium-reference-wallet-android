@@ -20,6 +20,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
     private lateinit var _viewModel: WalletConnectViewModel
     private var didConnectBefore = false
     private var timeoutTimer: CountDownTimer? = null
+    private var requestMethod: String = ""
 
     companion object {
         @JvmStatic
@@ -47,6 +48,11 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         startTimeOutTimer()
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.walletConnectActionCard.root.visibility = View.GONE
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         stopTimeOutTimer()
@@ -59,6 +65,15 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         binding.disconnect.setOnClickListener {
             binding.disconnect.isEnabled = false
             showDisconnectWarning()
+        }
+        binding.walletConnectActionCard.root.setOnClickListener {
+            binding.walletConnectActionCard.root.visibility = View.GONE
+            when (requestMethod) {
+                "sign_and_send_transaction" -> _viewModel.transactionAction.postValue(true)
+                "sign_message" -> _viewModel.messageAction.postValue(true)
+                "proof_of_identity" -> _viewModel.proofOfIdentityAction.postValue(true)
+            }
+            requestMethod = ""
         }
     }
 
@@ -89,6 +104,22 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
             _viewModel.waiting.postValue(false)
             showTryApproveAgain()
         }
+        _viewModel.transaction.observe(viewLifecycleOwner) { method ->
+            setAction(method, R.drawable.ic_send, R.string.wallet_connect_transaction)
+        }
+        _viewModel.message.observe(viewLifecycleOwner) { method ->
+            setAction(method, R.drawable.ic_message, R.string.wallet_connect_message)
+        }
+        _viewModel.proofOfIdentity.observe(viewLifecycleOwner) { method ->
+            setAction(method, R.drawable.ic_identity, R.string.wallet_connect_proof_of_identity)
+        }
+    }
+
+    private fun setAction(method: String, iconResource: Int, stringResource: Int) {
+        requestMethod = method
+        binding.walletConnectActionCard.actionIcon.setImageDrawable(ContextCompat.getDrawable(requireContext(), iconResource))
+        binding.walletConnectActionCard.actionText.text = getString(stringResource)
+        binding.walletConnectActionCard.root.visibility = View.VISIBLE
     }
 
     private fun startTimeOutTimer() {
