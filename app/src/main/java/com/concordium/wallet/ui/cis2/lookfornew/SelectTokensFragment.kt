@@ -77,7 +77,7 @@ class SelectTokensFragment : TokensBaseFragment() {
                 val visibleItemCount = layoutManager.childCount
                 val totalItemCount = layoutManager.itemCount
                 val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-                if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount > 3) {
+                if (_viewModel.tokens.size > 0 && visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount > 3) {
                     _viewModel.lookForTokens(_viewModel.tokenData.account!!.address, from = _viewModel.tokens[_viewModel.tokens.size - 1].id)
                 }
             }
