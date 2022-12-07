@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.cis2.lookfornew
 
 import android.os.Bundle
-import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +14,6 @@ import com.concordium.wallet.ui.cis2.TokensAddAdapter
 import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.ui.cis2.TokensViewModel.Companion.TOKEN_DATA
-import com.concordium.wallet.util.Log
 
 class SelectTokensFragment : TokensBaseFragment() {
     private var _binding: FragmentDialogSelectTokensBinding? = null
@@ -80,7 +78,7 @@ class SelectTokensFragment : TokensBaseFragment() {
                 val totalItemCount = layoutManager.itemCount
                 val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
                 if (visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount > 3) {
-                    _viewModel.lookForTokens(from = _viewModel.tokens[_viewModel.tokens.size - 1].id)
+                    _viewModel.lookForTokens(_viewModel.tokenData.account!!.address, from = _viewModel.tokens[_viewModel.tokens.size - 1].id)
                 }
             }
         })
@@ -91,6 +89,9 @@ class SelectTokensFragment : TokensBaseFragment() {
                 tokensAddAdapter.dataSet = _viewModel.tokens.filter {
                     it.token.uppercase() == currentFilter
                 }.toTypedArray()
+
+                _viewModel.searchedTokens.clear()
+                _viewModel.searchedTokens.addAll(tokensAddAdapter.dataSet)
                 tokensAddAdapter.notifyDataSetChanged()
                 return false
             }
@@ -98,6 +99,8 @@ class SelectTokensFragment : TokensBaseFragment() {
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText.isNullOrBlank()) {
                     tokensAddAdapter.dataSet = _viewModel.tokens.toTypedArray()
+                    _viewModel.searchedTokens.clear()
+                    //_viewModel.visibleTokens.addAll(tokensAddAdapter.dataSet)
                     tokensAddAdapter.notifyDataSetChanged()
                 }
                 return false
@@ -130,6 +133,7 @@ class SelectTokensFragment : TokensBaseFragment() {
         _viewModel.lookForTokens.observe(viewLifecycleOwner) {
 
             tokensAddAdapter.dataSet = arrayOf()
+            _viewModel.searchedTokens.clear()
             tokensAddAdapter.notifyDataSetChanged()
 
         }

@@ -7,7 +7,7 @@ import java.io.Serializable
 
 @Entity(
     tableName = "contract_token_table",
-    indices = [Index(value = ["contract_index", "token_id"], unique = true)]
+    indices = [Index(value = ["contract_index", "token_id", "account_address"], unique = true)]
 )
 @TypeConverters(ContractTypeConverters::class)
 data class ContractToken(
@@ -17,6 +17,8 @@ data class ContractToken(
     val contractIndex: String,
     @ColumnInfo(name = "token_id")
     val tokenId: String,
+    @ColumnInfo(name = "account_address")
+    val accountAddress: String?,
     @ColumnInfo(name = "is_fungible")
     val isFungible: Boolean,
     @ColumnInfo(name = "token_metadata")

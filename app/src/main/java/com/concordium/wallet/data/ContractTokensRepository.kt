@@ -12,15 +12,15 @@ class ContractTokensRepository(private val contractTokenDao: ContractTokenDao) {
         contractTokenDao.delete(contractToken)
     }
 
-    fun find(contractIndex: String, tokenId: String): ContractToken? {
-        return contractTokenDao.find(contractIndex, tokenId)
+    fun find(accountAddress: String, contractIndex: String, tokenId: String): ContractToken? {
+        return contractTokenDao.find(accountAddress, contractIndex, tokenId)
     }
 
-    fun getTokens(contractIndex: String): List<ContractToken> {
-        return contractTokenDao.getTokens(contractIndex)
+    fun getTokens(accountAddress: String, contractIndex: String): List<ContractToken> {
+        return contractTokenDao.getTokens(accountAddress, contractIndex)
     }
 
-    fun getTokens(contractIndex: String, isFungible: Boolean): List<ContractToken> {
-        return contractTokenDao.getTokens(contractIndex, isFungible)
+    fun getTokens(accountAddress: String, contractIndex: String, isFungible: Boolean): List<ContractToken> {
+        return contractTokenDao.getTokens(accountAddress, contractIndex, isFungible)
     }
 }

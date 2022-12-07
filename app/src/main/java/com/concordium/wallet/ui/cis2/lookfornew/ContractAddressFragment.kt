@@ -80,7 +80,7 @@ class ContractAddressFragment : TokensBaseFragment() {
         _viewModel.tokenData.contractIndex = binding.contractAddress.text.toString()
         if (binding.contractAddress.text.isNotBlank()) {
             _viewModel.tokens.clear()
-            _viewModel.lookForTokens()
+            _viewModel.lookForTokens(_viewModel.tokenData.account!!.address)
         }
     }
 

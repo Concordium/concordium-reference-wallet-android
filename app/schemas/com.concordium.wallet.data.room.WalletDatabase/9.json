@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 9,
-    "identityHash": "7a9926031574c085c2dc844e7ea85389",
+    "identityHash": "7d48c22b796136535c3e78d51e864131",
     "entities": [
       {
         "tableName": "identity_table",
@@ -476,7 +476,7 @@
       },
       {
         "tableName": "contract_token_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `contract_index` TEXT NOT NULL, `token_id` TEXT NOT NULL, `is_fungible` INTEGER NOT NULL, `token_metadata` TEXT, `contract_name` TEXT NOT NULL DEFAULT '')",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `contract_index` TEXT NOT NULL, `token_id` TEXT NOT NULL, `account_address` TEXT, `is_fungible` INTEGER NOT NULL, `token_metadata` TEXT, `contract_name` TEXT NOT NULL DEFAULT '')",
         "fields": [
           {
             "fieldPath": "id",
@@ -495,6 +495,12 @@
             "columnName": "token_id",
             "affinity": "TEXT",
             "notNull": true
+          },
+          {
+            "fieldPath": "accountAddress",
+            "columnName": "account_address",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "isFungible",
@@ -524,14 +530,15 @@
         },
         "indices": [
           {
-            "name": "index_contract_token_table_contract_index_token_id",
+            "name": "index_contract_token_table_contract_index_token_id_account_address",
             "unique": true,
             "columnNames": [
               "contract_index",
-              "token_id"
+              "token_id",
+              "account_address"
             ],
             "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_contract_token_table_contract_index_token_id` ON `${TABLE_NAME}` (`contract_index`, `token_id`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_contract_token_table_contract_index_token_id_account_address` ON `${TABLE_NAME}` (`contract_index`, `token_id`, `account_address`)"
           }
         ],
         "foreignKeys": []
@@ -540,7 +547,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7a9926031574c085c2dc844e7ea85389')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7d48c22b796136535c3e78d51e864131')"
     ]
   }
 }
