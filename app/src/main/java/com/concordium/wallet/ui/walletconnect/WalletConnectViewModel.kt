@@ -61,11 +61,15 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val connect: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val decline: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val reject: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val transaction: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val transactionSubmittedSuccess: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val transactionSubmittedError: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val transactionSubmittedOkay: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val message: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val transaction: MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val message: MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val proofOfIdentity: MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val transactionAction: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val messageAction: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val proofOfIdentityAction: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val connectStatus: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val serviceName: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val permissions: MutableLiveData<List<String>> by lazy { MutableLiveData<List<String>>() }
@@ -371,9 +375,11 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(sessionRequest: Sign.Model.SessionRequest) {
         if (sessionRequest.request.method == "sign_and_send_transaction")
-            transaction.postValue(true)
+            transaction.postValue(sessionRequest.request.method)
         else if (sessionRequest.request.method == "sign_message")
-            message.postValue(true)
+            message.postValue(sessionRequest.request.method)
+        else if (sessionRequest.request.method == "proof_of_identity")
+            proofOfIdentity.postValue(sessionRequest.request.method)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

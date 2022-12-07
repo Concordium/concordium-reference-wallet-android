@@ -844,6 +844,9 @@
     <string name="wallet_connect_timeout_dialog_title">Could not connect</string>
     <string name="wallet_connect_timeout_dialog_content">It can take a while to prepare the connection, please hang on. You can also try to decline and reconnect.</string>
     <string name="wallet_connect_open_connection_between">About to open connection between:</string>
+    <string name="wallet_connect_proof_of_identity">Proof of Identity</string>
+    <string name="wallet_connect_message">Message</string>
+    <string name="wallet_connect_transaction">Transaction</string>
 
     <!-- ***** More ***** -->
 

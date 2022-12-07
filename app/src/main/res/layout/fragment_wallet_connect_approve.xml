@@ -12,7 +12,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin_extended"
             android:visibility="gone"
             tools:visibility="visible"
             android:orientation="horizontal">
@@ -27,6 +27,7 @@
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/ic_pending" />
         </androidx.appcompat.widget.LinearLayoutCompat>
+        <include android:id="@+id/wallet_connect_action_card" layout="@layout/wallet_connect_action_card" android:visibility="gone" tools:visibility="visible" />
     </androidx.appcompat.widget.LinearLayoutCompat>
     <Button
         android:id="@+id/disconnect"
