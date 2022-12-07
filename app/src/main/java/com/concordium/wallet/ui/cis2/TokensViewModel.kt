@@ -170,9 +170,67 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
     fun updateWithSelectedTokens() {
         if (searchedTokens.isNotEmpty()) {
-            updateTokens(searchedTokens)
+            updateSearchedTokens(searchedTokens)
         } else {
             updateTokens(tokens)
+        }
+    }
+
+    private fun updateSearchedTokens(updatedTokens: MutableList<Token>) {
+        tokenData.account?.let { account ->
+            val accountContractRepository = AccountContractRepository(
+                WalletDatabase.getDatabase(getApplication()).accountContractDao()
+            )
+            val contractTokensRepository = ContractTokensRepository(
+                WalletDatabase.getDatabase(getApplication()).contractTokenDao()
+            )
+            CoroutineScope(Dispatchers.IO).launch {
+                var anyChanges = false
+
+                val accountContract =
+                    accountContractRepository.find(account.address, tokenData.contractIndex)
+                if (accountContract == null) {
+                    accountContractRepository.insert(
+                        AccountContract(
+                            0,
+                            account.address,
+                            tokenData.contractIndex
+                        )
+                    )
+                    anyChanges = true
+                }
+
+                updatedTokens.forEach { selectedToken ->
+
+                    val existingContractToken =
+                        contractTokensRepository.find(
+                            account.address,
+                            tokenData.contractIndex,
+                            selectedToken.token
+                        )
+
+                    if (existingContractToken == null && selectedToken.isSelected) {
+                        contractTokensRepository.insert(
+                            ContractToken(
+                                0,
+                                tokenData.contractIndex,
+                                selectedToken.token,
+                                account.address,
+                                selectedToken.tokenMetadata?.unique ?: false,
+                                selectedToken.tokenMetadata,
+                                tokenData.contractName
+                            )
+                        )
+                        anyChanges = true
+                    }
+                    if(existingContractToken != null && !selectedToken.isSelected){
+                        deleteSingleToken(account.address, tokenData.contractIndex,
+                            selectedToken.token)
+                        anyChanges = true
+                    }
+                }
+                updateWithSelectedTokensDone.postValue(anyChanges)
+            }
         }
     }
 
