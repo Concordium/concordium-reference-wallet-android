@@ -3,77 +3,111 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/header_cardview"
-    style="@style/Layout.CardView"
+    style="@style/Layout.CardView.Dark.Blue"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/root_layout"
         android:layout_width="match_parent"
         android:layout_height="220dp"
         android:background="@drawable/list_item">
 
-        <ImageView
-            android:id="@+id/logo_imageview"
-            style="@style/Image"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="20dp"
-            android:adjustViewBounds="true"
-            android:scaleType="centerInside"
-            android:src="@null"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/status_imageview"
-            android:layout_width="12dp"
-            android:layout_height="29dp"
-            android:layout_marginStart="10dp"
-            android:src="@drawable/ic_pending"
-            app:layout_constraintBottom_toBottomOf="@id/logo_imageview"
-            app:layout_constraintStart_toEndOf="@id/logo_imageview"
-            app:layout_constraintTop_toTopOf="@id/logo_imageview" />
-
-        <TextView
-            android:id="@+id/identity_textview"
-            style="@style/TextView.Medium"
-            android:layout_width="0dp"
-            android:layout_marginRight="20dp"
-            android:text="@string/view_identity_identity"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/logo_imageview" />
-
-        <TextView
-            android:id="@+id/name_textview"
-            style="@style/TextView.MediumLarge"
-            android:layout_width="wrap_content"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintTop_toBottomOf="@id/identity_textview"
-            app:layout_constraintBottom_toTopOf="@id/expires_textview"
+            android:background="@drawable/rounded_top_dark_blue"
+            android:padding="@dimen/activity_vertical_margin"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:orientation="horizontal">
+            <RelativeLayout
+                android:layout_width="62dp"
+                android:layout_height="wrap_content">
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="53dp"
+                    android:layout_height="29dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_identity_no_status" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/status_icon"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:scaleType="fitCenter"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/ic_ok_filled" />
+            </RelativeLayout>
+            <TextView
+                android:id="@+id/identity_provider_name"
+                style="@style/TextView.Medium.White"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:lines="1"
+                android:ellipsize="end"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                tools:text="Concordium Identity" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/edit"
+                android:layout_width="22dp"
+                android:layout_height="18dp"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center_vertical"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:tint="@color/theme_white"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_edit" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <TextView
+            android:id="@+id/identity_name"
+            style="@style/TextView.MediumLarge"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:ellipsize="end"
             android:gravity="center"
             android:lines="2"
-            tools:text="Identity 1"
-            android:paddingStart="@dimen/activity_horizontal_margin"
-            android:paddingEnd="@dimen/activity_horizontal_margin_double" />
+            tools:text="Identity 1" />
 
-        <TextView
-            android:id="@+id/expires_textview"
-            style="@style/TextView.Standard.Light"
-            android:layout_width="0dp"
-            android:layout_marginHorizontal="@dimen/list_item_horizontal_margin"
-            android:layout_marginBottom="30dp"
-            android:gravity="center_horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
-            tools:text="Concordium Beta xxxxxxxxxxxxxxxxxxxxxxx vvvvvvvv vvvvvvvvvvvvvv vvv" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/identity_name"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="horizontal">
+            <TextView
+                style="@style/TextView.Small.Light"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_gravity="center_vertical"
+                android:text="@string/identity_verified_by" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/identity_provider_logo"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_gravity="center_vertical"
+                android:scaleType="fitCenter"
+                tools:src="@drawable/ic_concordium_logo_no_text" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_identity_corner" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.cardview.widget.CardView>

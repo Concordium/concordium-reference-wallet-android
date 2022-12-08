@@ -79,6 +79,12 @@
         <item name="android:foreground">@drawable/bg_cardview_border</item>
     </style>
 
+    <style name="Layout.CardView.Dark.Blue" parent="Base.CardView">
+        <item name="cardCornerRadius">@dimen/card_corner_radius</item>
+        <item name="cardElevation">0dp</item>
+        <item name="android:foreground">@drawable/bg_cardview_border_dark_blue</item>
+    </style>
+
     <style name="Layout.CardView.Gray" parent="Base.CardView">
         <item name="cardCornerRadius">@dimen/card_corner_radius</item>
         <item name="cardElevation">0dp</item>
@@ -144,12 +150,20 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="TextView.Medium.White">
+        <item name="android:textColor">@color/text_white</item>
+    </style>
+
     <style name="TextView.Medium.Bold">
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="TextView.Small">
         <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextView.Small.Light">
+        <item name="android:textColor">@color/text_grey</item>
     </style>
 
     <style name="TextView.XSmall">
