@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
@@ -60,11 +59,11 @@ class RecipientActivity : BaseActivity() {
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[RecipientViewModel::class.java]
 
-        viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
+        viewModel.waitingLiveData.observe(this) { waiting ->
             waiting?.let {
                 showWaiting(waiting)
             }
-        })
+        }
         viewModel.errorLiveData.observe(
             this, object : EventObserver<Int>() {
                 override fun onUnhandledEvent(value: Int) {
@@ -167,6 +166,7 @@ class RecipientActivity : BaseActivity() {
 
     private fun gotoScanBarCode() {
         val intent = Intent(this, ScanQRActivity::class.java)
+        intent.putExtra(ScanQRActivity.QR_MODE, ScanQRActivity.QR_MODE_CONCORDIUM_ACCOUNT)
         getResultScanQr.launch(intent)
     }
 

@@ -61,4 +61,16 @@ class CryptoLibraryMock(val gson: Gson) : CryptoLibrary {
     override suspend fun getAccountKeysAndRandomness(accountKeysAndRandomnessInput: AccountKeysAndRandomnessInput): AccountKeysAndRandomnessOutput? {
         TODO("Not yet implemented")
     }
+
+    override suspend fun createAccountTransaction(createAccountTransactionInput: CreateAccountTransactionInput): CreateAccountTransactionOutput? {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun signMessage(signMessageInput: SignMessageInput): SignMessageOutput? {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun parameterToJson(parameterToJsonInput: ParameterToJsonInput): String? {
+        TODO("Not yet implemented")
+    }
 }

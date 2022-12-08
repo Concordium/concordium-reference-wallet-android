@@ -60,10 +60,6 @@
         <item name="android:background">@null</item>
     </style>
 
-    <style name="Layout.TextInputLayout">
-        <item name="android:textColorHint">@color/text_blue</item>
-    </style>
-
     <style name="Layout.Card">
         <item name="android:background">@drawable/bg_cardview_border</item>
         <item name="android:elevation">0dp</item>
@@ -129,7 +125,7 @@
 
     <style name="TextView.Standard.Error">
         <item name="android:textColor">@color/text_pink</item>
-        <item name="android:textSize">12dp</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="TextView.Standard.Bold">
@@ -154,6 +150,14 @@
 
     <style name="TextView.Small">
         <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="TextView.XSmall">
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="TextView.XSmall.Light">
+        <item name="android:textColor">@color/text_grey</item>
     </style>
 
     <style name="TextView.MediumLarge">
@@ -202,6 +206,10 @@
         <item name="android:fontFamily">monospace</item>
     </style>
 
+    <style name="TextView.Mono.XSmall">
+        <item name="android:textSize">8sp</item>
+        <item name="android:fontFamily">monospace</item>
+    </style>
 
     <style name="TextView.SendFundBalance">
         <item name="android:textSize">15sp</item>
@@ -345,14 +353,6 @@
         <item name="android:textColor">@color/theme_blue</item>
     </style>
 
-    <style name="EditText.Name">
-        <item name="android:inputType">textCapSentences</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/text_black</item>
-        <item name="android:backgroundTint">@color/text_grey</item>
-        <item name="android:textColorHint">@color/text_blue</item>
-    </style>
-
     <style name="EditText.AuthOnDark">
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/text_white</item>
@@ -374,6 +374,7 @@
     <style name="Button" parent="TextAppearance.AppCompat.Button">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:stateListAnimator">@null</item>
     </style>
 
     <style name="Button.Standard">
@@ -404,14 +405,24 @@
         <item name="android:drawablePadding">8dp</item>
     </style>
 
-    <style name="Button.Standard.Intro.White">
+    <style name="WhiteButton">
         <item name="android:background">@drawable/button_standard_white</item>
         <item name="android:textColor">@color/text_grey</item>
-    </style>
-
-    <style name="Button.Standard.White">
-        <item name="android:background">@drawable/button_standard_white</item>
-        <item name="android:textColor">@color/text_grey</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minWidth">100dp</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:stateListAnimator">@null</item>
     </style>
 
     <style name="Button.Standard.Transparent">
@@ -450,6 +461,17 @@
         <item name="android:padding">10dp</item>
         <item name="android:scaleType">fitCenter</item>
         <item name="android:background">@drawable/button_action_card</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <style name="ButtonsSliderButton">
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:background">@drawable/slider_button</item>
+        <item name="android:clickable">true</item>
+    </style>
+    <style name="ButtonsSliderButtonArrow">
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:background">@drawable/slider_button_arrow</item>
         <item name="android:clickable">true</item>
     </style>
 

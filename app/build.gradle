@@ -5,10 +5,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def versionBuildNumberSequential = 15
+def versionBuildNumberSequential = 26
 
 def versionBuildNumberMajor = 1
-def versionBuildNumberMinor = 0
+def versionBuildNumberMinor = 1
 def versionBuildNumberPatch = 0
 
 //def LOCAL_IP = getLocalIPv4()
@@ -73,7 +73,7 @@ def buildTimeTicks() {
 }
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 33
     defaultConfig {
         applicationId "software.concordium.mobilewallet.seedphrase"
         minSdkVersion 26
@@ -108,7 +108,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
@@ -259,6 +259,10 @@ android {
     packagingOptions {
         resources {
             excludes += ['META-INF/atomicfu.kotlin_module']
+            excludes += ['META-INF/INDEX.LIST']
+            excludes += ['META-INF/DEPENDENCIES']
+            excludes += ['META-INF/LICENSE.md']
+            excludes += ['META-INF/NOTICE.md']
         }
     }
 
@@ -269,14 +273,14 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Coroutines
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
 
     // Android/Google
-    implementation 'androidx.appcompat:appcompat:1.5.0'
-    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
-    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.biometric:biometric:1.1.0'
 
@@ -286,7 +290,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
-    implementation 'androidx.fragment:fragment-ktx:1.5.2'
+    implementation 'androidx.fragment:fragment-ktx:1.5.4'
 
     // Room
     def room_version = "2.4.3"
@@ -314,7 +318,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.9'
 
     // Navigation
-    def navigationVersion = '2.5.1'
+    def navigationVersion = '2.5.3'
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
@@ -325,7 +329,7 @@ dependencies {
 
     // Test
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
 
     // Generate QR
@@ -336,4 +340,9 @@ dependencies {
 
     // BIP39
     implementation "cash.z.ecc.android:kotlin-bip39:1.0.4"
+
+    implementation("com.walletconnect:android-core:1.4.0")
+    implementation("com.walletconnect:sign:2.2.0")
+
+    implementation 'com.github.matomo-org:matomo-sdk-android:4.1.4'
 }

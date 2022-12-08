@@ -69,7 +69,7 @@ class AccountDaoUnitTest {
             null,
             null,
             null,
-            null)
+            null, 0, 0)
 
         runBlocking { accountDao.insert(account) }
         val listLiveData = accountDao.getAllAsLiveData()

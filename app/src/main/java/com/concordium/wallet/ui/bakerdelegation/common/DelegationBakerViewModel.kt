@@ -50,7 +50,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     private var bakerPoolRequest: BackendRequest<BakerPoolStatus>? = null
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
-    private var submitCredentialRequest: BackendRequest<SubmissionData>? = null
+    private var submitTransaction: BackendRequest<SubmissionData>? = null
     private var transferSubmissionStatusRequest: BackendRequest<TransferSubmissionStatus>? = null
 
     companion object {
@@ -274,7 +274,6 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun loadTransactionFee(notifyObservers: Boolean, requestId: Int? = null, metadataSizeForced: Int? = null) {
-
         val amount = when (bakerDelegationData.type) {
             UPDATE_DELEGATION, UPDATE_BAKER_STAKE, CONFIGURE_BAKER -> bakerDelegationData.amount
             else -> null
@@ -302,21 +301,20 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             bakerDelegationData.bakerPoolInfo?.openStatus
         } else null
 
-        proxyRepository.getTransferCost(bakerDelegationData.type,
-            null,
-            amount,
-            restake,
-            bakerDelegationData.isLPool,
-            targetChange,
-            metadataSize,
-            openStatus,
-            {
+        proxyRepository.getTransferCost(type = bakerDelegationData.type,
+            amount = amount,
+            restake = restake,
+            lPool = bakerDelegationData.isLPool,
+            targetChange = targetChange,
+            metadataSize = metadataSize,
+            openStatus = openStatus,
+            success = {
                 bakerDelegationData.energy = it.energy
                 bakerDelegationData.cost = it.cost.toLong()
                 if (notifyObservers)
                     _transactionFeeLiveData.value = Pair(bakerDelegationData.cost, requestId)
             },
-            {
+            failure = {
                 handleBackendError(it)
             }
         )
@@ -414,21 +412,17 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
-    fun shouldUseBiometrics(): Boolean {
-        return App.appCore.getCurrentAuthenticationManager().useBiometrics()
-    }
-
     fun getCipherForBiometrics(): Cipher? {
-        try {
+        return try {
             val cipher =
                 App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
             if (cipher == null) {
                 _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
             }
-            return cipher
+            cipher
         } catch (e: KeystoreEncryptionException) {
             _errorLiveData.value = Event(R.string.app_error_keystore)
-            return null
+            null
         }
     }
 
@@ -477,7 +471,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     private suspend fun createBakingTransaction(keys: AccountData, encryptionSecretKey: String?) {
 
         val from = bakerDelegationData.account?.address
-        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000 // Expiry should me now + 10 minutes (in seconds)
+        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
         val energy = bakerDelegationData.energy
         val nonce = bakerDelegationData.accountNonce
 
@@ -551,7 +545,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     private suspend fun createDelegationTransaction(keys: AccountData, encryptionSecretKey: String?) {
         val from = bakerDelegationData.account?.address
-        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000 // Expiry should me now + 10 minutes (in seconds)
+        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
         val energy = bakerDelegationData.energy
         val nonce = bakerDelegationData.accountNonce
 
@@ -619,10 +613,10 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     private fun submitTransfer(transfer: CreateTransferOutput, localTransactionType: TransactionType) {
         _waitingLiveData.value = true
-        submitCredentialRequest?.dispose()
-        submitCredentialRequest = proxyRepository.submitTransfer(transfer,
+        submitTransaction?.dispose()
+        submitTransaction = proxyRepository.submitTransfer(transfer,
             {
-                Log.d("Success:"+it)
+                Log.d("Success:$it")
                 bakerDelegationData.submissionId = it.submissionId
                 submissionStatus(localTransactionType)
                 // Do not disable waiting state yet

@@ -89,7 +89,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
     private fun getIdentityProviderInfo() {
         identityProvidersRequest = IdentityProviderRepository().getIdentityProviderInfo(
             { identityProviders ->
-                this.identityProviders = identityProviders
+                this.identityProviders = identityProviders.filterNot { it.ipInfo.ipDescription.name == "instant_fail_provider" } as ArrayList<IdentityProvider>
                 getIdentities()
             },
             {

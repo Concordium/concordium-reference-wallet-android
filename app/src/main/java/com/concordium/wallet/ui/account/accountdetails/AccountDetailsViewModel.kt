@@ -42,14 +42,13 @@ import java.util.*
 import javax.crypto.Cipher
 
 class AccountDetailsViewModel(application: Application) : AndroidViewModel(application) {
-
-    fun <T> MutableLiveData<T>.forceRefresh() {
+    private fun <T> MutableLiveData<T>.forceRefresh() {
         this.value = this.value
     }
 
     private val session: Session = App.appCore.session
 
-    var hasTransactionsToDecrypt: Boolean = false
+    private var hasTransactionsToDecrypt: Boolean = false
 
     lateinit var account: Account
     var isShielded: Boolean = false
@@ -159,28 +158,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    fun enableShielded() {
-        App.appCore.session.setShieldingEnabled(account.address, true)
-        _shieldingEnabledLiveData.value = true
-    }
-
-    fun disableShielded() {
-        App.appCore.session.setShieldingEnabled(account.address, false)
-        _shieldingEnabledLiveData.value = false
-    }
-
-    fun changeAccountName(name: String) {
-        viewModelScope.launch {
-            account.name = name
-            accountRepository.update(account)
-            recipientRepository.getRecipientByAddress(account.address)?.let { recipient ->
-                recipient.name = name
-                recipientRepository.update(recipient)
-            }
-            _accountUpdatedLiveData.value = true
-        }
-    }
-
     fun requestGTUDrop() {
         _waitingLiveData.value = true
         proxyRepository.requestGTUDrop(
@@ -195,6 +172,16 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 _waitingLiveData.value = false
             }
         )
+    }
+
+    fun loadAccount(accountAddress: String) {
+        viewModelScope.launch {
+            accountRepository.findByAddress(accountAddress)?.let {
+                account = it
+                _shieldingEnabledLiveData.value = App.appCore.session.isShieldingEnabled(account.address)
+                _accountUpdatedLiveData.value = true
+            }
+        }
     }
 
     private fun updateGTUDropState() {
@@ -234,9 +221,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         transferRepository.insert(transfer)
         populateTransferList()
     }
-
-    //region Transaction list update/merge
-    //************************************************************
 
     private fun clearTransactionListState() {
         _transferListLiveData.value = null
@@ -412,20 +396,16 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    fun shouldUseBiometrics(): Boolean {
-        return App.appCore.getCurrentAuthenticationManager().useBiometrics()
-    }
-
     fun getCipherForBiometrics(): Cipher? {
-        try {
+        return try {
             val cipher = App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
             if (cipher == null) {
                 _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
             }
-            return cipher
+            cipher
         } catch (e: KeystoreEncryptionException) {
             _errorLiveData.value = Event(R.string.app_error_keystore)
-            return null
+            null
         }
     }
 
@@ -506,7 +486,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         updater.cancel()
     }
 
-    var updater =
+    private var updater =
         object : CountDownTimer(Long.MAX_VALUE, BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC * 1000) {
             private var first = true
             override fun onTick(millisUntilFinished: Long) {
@@ -521,7 +501,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             }
         }
 
-    suspend fun decryptTransactionListUnencryptedAmounts(secretKey: String) {
+    private suspend fun decryptTransactionListUnencryptedAmounts(secretKey: String) {
         _transferListLiveData.value?.forEach {
             if(it.getItemType() == AdapterItem.ItemType.Item){
                 val transactionItem = it as TransactionItem
@@ -531,7 +511,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    suspend fun decryptTransactionUnencryptedAmounts(secretKey: String, transaction: Transaction?) {
+    private suspend fun decryptTransactionUnencryptedAmounts(secretKey: String, transaction: Transaction?) {
         GlobalScope.launch(Dispatchers.IO) {
             transaction?.let {
                 if (it.encrypted != null) {
@@ -541,27 +521,23 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                         if (it.encrypted.newSelfEncryptedAmount != null && it.details?.inputEncryptedAmount != null) {
                             var newSelfAmount = 0L
                             var inputAmount = 0L
-                            if (it.encrypted.newSelfEncryptedAmount != null) {
-                                val output = App.appCore.cryptoLibrary.decryptEncryptedAmount(
-                                    DecryptAmountInput(
-                                        it.encrypted.newSelfEncryptedAmount,
-                                        secretKey
-                                    )
+                            val decryptedSelfEncryptedAmount = App.appCore.cryptoLibrary.decryptEncryptedAmount(
+                                DecryptAmountInput(
+                                    it.encrypted.newSelfEncryptedAmount,
+                                    secretKey
                                 )
-                                if (output != null) {
-                                    newSelfAmount = output.toLong()
-                                }
+                            )
+                            if (decryptedSelfEncryptedAmount != null) {
+                                newSelfAmount = decryptedSelfEncryptedAmount.toLong()
                             }
-                            if (it.details.inputEncryptedAmount != null) {
-                                val output = App.appCore.cryptoLibrary.decryptEncryptedAmount(
-                                    DecryptAmountInput(
-                                        it.details.inputEncryptedAmount,
-                                        secretKey
-                                    )
+                            val decryptedEncryptedAmount = App.appCore.cryptoLibrary.decryptEncryptedAmount(
+                                DecryptAmountInput(
+                                    it.details.inputEncryptedAmount,
+                                    secretKey
                                 )
-                                if (output != null) {
-                                    inputAmount = output.toLong()
-                                }
+                            )
+                            if (decryptedEncryptedAmount != null) {
+                                inputAmount = decryptedEncryptedAmount.toLong()
                             }
                             it.encrypted.encryptedAmount.let {
                                 accountUpdater.saveDecryptedAmount(it, (-(newSelfAmount - inputAmount)).toString())
@@ -570,12 +546,10 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                                 }
                             }
                         }
-                        else
-                        if (it.encrypted.encryptedAmount != null) {
-                            val output =
-                                App.appCore.cryptoLibrary.decryptEncryptedAmount(DecryptAmountInput(it.encrypted.encryptedAmount, secretKey))
-                            if (output != null) {
-                                accountUpdater.saveDecryptedAmount(it.encrypted.encryptedAmount, output)
+                        else {
+                            val decryptAmount = App.appCore.cryptoLibrary.decryptEncryptedAmount(DecryptAmountInput(it.encrypted.encryptedAmount, secretKey))
+                            if (decryptAmount != null) {
+                                accountUpdater.saveDecryptedAmount(it.encrypted.encryptedAmount, decryptAmount)
                                 GlobalScope.launch(Dispatchers.Main) {
                                     _transferListLiveData.forceRefresh()
                                 }
@@ -616,5 +590,4 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
-    // endregion
 }

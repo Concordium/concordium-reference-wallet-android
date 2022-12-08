@@ -13,6 +13,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -30,22 +31,21 @@ import java.io.Serializable
 import javax.crypto.Cipher
 
 abstract class BaseActivity : AppCompatActivity() {
-
     private var titleView: TextView? = null
+    private val isStageNet: Boolean get() = (BuildConfig.ENV_NAME == "staging")
+    private val isTestNet: Boolean get() = (BuildConfig.ENV_NAME == "prod_testnet")
     protected lateinit var popup: Popup
     protected lateinit var dialogs: Dialogs
-    public var isActive = false
+    var isActive = false
 
     companion object {
         const val POP_UNTIL_ACTIVITY = "POP_UNTIL_ACTIVITY"
-        const val RESULT_FOLDER_PICKER = 101
-        const val RESULT_SHARE_FILE = 102
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (!BuildConfig.DEBUG) {
+        if (!BuildConfig.DEBUG && !isStageNet && !isTestNet) {
             window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         }
 
@@ -73,16 +73,12 @@ abstract class BaseActivity : AppCompatActivity() {
         isActive = false
     }
 
-    protected fun shareFile(fileName: Uri) {
+    protected fun shareFile(activityResult: ActivityResultLauncher<Intent>, fileName: Uri) {
         val share = Intent(Intent.ACTION_SEND)
         share.type = "message/rfc822"
         share.putExtra(Intent.EXTRA_STREAM, fileName)
-        val resInfoList = this.packageManager.queryIntentActivities(share, PackageManager.MATCH_DEFAULT_ONLY)
-        for (resolveInfo in resInfoList) {
-            val packageName = resolveInfo.activityInfo.packageName
-            grantUriPermission(packageName, fileName, Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-        startActivityForResult(Intent.createChooser(share, null), RESULT_SHARE_FILE)
+        share.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        activityResult.launch(Intent.createChooser(share, null))
     }
 
     // Upon returning, we check the result and pop if needed
@@ -109,7 +105,7 @@ abstract class BaseActivity : AppCompatActivity() {
         getResultGeneric.launch(intent)
     }
 
-    protected fun openFolderPicker() {
+    protected fun openFolderPicker(activityResult: ActivityResultLauncher<Intent>) {
         val intent: Intent?
         if (SDK_INT >= Build.VERSION_CODES.Q) {
             val storageManager = getSystemService(STORAGE_SERVICE) as StorageManager
@@ -125,7 +121,7 @@ abstract class BaseActivity : AppCompatActivity() {
             intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
         }
         intent.apply { flags = Intent.FLAG_GRANT_READ_URI_PERMISSION }
-        startActivityForResult(intent, RESULT_FOLDER_PICKER)
+        activityResult.launch(intent)
     }
 
     fun finishUntilClass(canonicalClassName: String?, thenStart: String? = null, withKey: String? = null, withData: Serializable? = null) {
@@ -200,7 +196,6 @@ abstract class BaseActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-    // authentication region
 
     interface AuthenticationCallback {
         fun getCipherForBiometrics() : Cipher?
@@ -209,15 +204,19 @@ abstract class BaseActivity : AppCompatActivity() {
         fun onCancelled()
     }
 
-    protected fun showAuthentication(text: String?, shouldUseBiometrics: Boolean, usePasscode: Boolean, callback: AuthenticationCallback) {
-        if (shouldUseBiometrics) {
+    protected fun showAuthentication(text: String?, callback: AuthenticationCallback) {
+        val useBiometrics = App.appCore.getCurrentAuthenticationManager().useBiometrics()
+        val usePasscode = App.appCore.getCurrentAuthenticationManager().usePasscode()
+        if (useBiometrics) {
             showBiometrics(text, usePasscode, callback)
         } else {
             showPasswordDialog(text, callback)
         }
     }
 
-    fun authenticateText(useBiometrics: Boolean, usePasscode: Boolean): String {
+    fun authenticateText(): String {
+        val useBiometrics = App.appCore.getCurrentAuthenticationManager().useBiometrics()
+        val usePasscode = App.appCore.getCurrentAuthenticationManager().usePasscode()
         return when {
             useBiometrics -> getString(R.string.auth_login_biometrics_dialog_subtitle)
             usePasscode -> getString(R.string.auth_login_biometrics_dialog_cancel_passcode)
@@ -299,6 +298,4 @@ abstract class BaseActivity : AppCompatActivity() {
         App.appCore.session.resetLogoutTimeout()
         return super.dispatchTouchEvent(event)
     }
-
-    // end authentication region
 }

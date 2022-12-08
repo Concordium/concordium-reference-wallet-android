@@ -17,7 +17,6 @@ import android.os.Handler
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityScanQrBinding
@@ -39,20 +38,21 @@ class ScanQRActivity : BaseActivity(), Dialogs.DialogFragmentListener {
         private const val RC_HANDLE_GMS = 9001
         private const val INVALID_QR_STATE_TIMER = 500L
         const val EXTRA_BARCODE = "EXTRA_BARCODE"
+        const val QR_MODE = "QR_MODE"
+        const val QR_MODE_UNDEFINED = 8000
+        const val QR_MODE_CONCORDIUM_ACCOUNT = 8001
+        const val QR_MODE_WALLET_CONNECT = 8002
     }
 
     private lateinit var binding: ActivityScanQrBinding
     private lateinit var viewModel: ScanQRViewModel
 
     private var mCameraSource: CameraSource? = null
-    private val autoFocus = true
-    private val useFlash = false
-
     private var latestInvalidBarcodeShownTime: Long = 0
     private var latestObservedInvalidBarcode: Long = 0
     private var hasFoundValidBarcode = false
-
     private val invalidQRStateHandler = Handler()
+    private var qrMode = QR_MODE_UNDEFINED
 
     /**
      * This runnable has the responsibility to deactivate the invalid QR state.
@@ -78,7 +78,8 @@ class ScanQRActivity : BaseActivity(), Dialogs.DialogFragmentListener {
         super.onCreate(savedInstanceState)
         binding = ActivityScanQrBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.scan_qr_title)
+
+        qrMode = intent.extras?.getInt(QR_MODE, QR_MODE_UNDEFINED) ?: QR_MODE_UNDEFINED
 
         initViewModel()
         viewModel.initialize()
@@ -87,13 +88,13 @@ class ScanQRActivity : BaseActivity(), Dialogs.DialogFragmentListener {
         // Check for the camera permission before accessing the camera.
         // If the permission is not granted yet, request permission.
         if (hasCameraPermission()) {
-            createCameraSource(autoFocus, useFlash)
+            createCameraSource()
         } else {
             requestCameraPermission()
         }
         invalidQRStateHandler.postDelayed(
             invalidQRStateRunnable,
-            INVALID_QR_STATE_TIMER.toLong()
+            INVALID_QR_STATE_TIMER
         )
     }
 
@@ -115,7 +116,7 @@ class ScanQRActivity : BaseActivity(), Dialogs.DialogFragmentListener {
             try {
                 binding.cameraPreview.release()
             } catch (e: Exception){
-                Log.e("Failed releasing camera: "+e)
+                Log.e("Failed releasing camera: $e")
             }
         }
         invalidQRStateHandler.removeCallbacks(invalidQRStateRunnable)
@@ -139,13 +140,16 @@ class ScanQRActivity : BaseActivity(), Dialogs.DialogFragmentListener {
             this,
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[ScanQRViewModel::class.java]
-        viewModel.stateLiveData.observe(this, Observer { state ->
+        viewModel.stateLiveData.observe(this) { state ->
             onStateChanged(state)
-        })
+        }
     }
 
     private fun initializeViews() {
-
+        if (qrMode == QR_MODE_CONCORDIUM_ACCOUNT)
+            setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.scan_qr_title)
+        else if (qrMode == QR_MODE_WALLET_CONNECT)
+            setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.scan_qr_title_wc)
     }
 
     //endregion
@@ -218,23 +222,20 @@ class ScanQRActivity : BaseActivity(), Dialogs.DialogFragmentListener {
         )
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String?>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == RequestCodes.REQUEST_PERMISSION_CAMERA) {
-            if (grantResults.size != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Log.d("Camera permission granted - initialize the camera source")
-                // We have permission, so create the camerasource
-                createCameraSource(autoFocus, useFlash)
+                // We have permission, so create the camera source
+                createCameraSource()
                 // Start CameraSource here (it was not ready in onResume)
                 startCameraSource()
                 return
             }
             Log.d(
                 "Permission not granted: results len = " + grantResults.size +
-                        " Result code = " + if (grantResults.size > 0) grantResults[0] else "(empty)"
+                        " Result code = " + if (grantResults.isNotEmpty()) grantResults[0] else "(empty)"
             )
             dialogs.showOkDialog(
                 this, RequestCodes.REQUEST_CODE_CAMERA_PERMISSION_NOT_AVAILABLE_DIALOG,
@@ -260,7 +261,7 @@ class ScanQRActivity : BaseActivity(), Dialogs.DialogFragmentListener {
         val code = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this)
         if (code != ConnectionResult.SUCCESS) {
             val dlg = GoogleApiAvailability.getInstance().getErrorDialog(this, code, RC_HANDLE_GMS)
-            dlg.show()
+            dlg?.show()
         }
         mCameraSource?.let { cameraSource ->
             try {
@@ -280,7 +281,7 @@ class ScanQRActivity : BaseActivity(), Dialogs.DialogFragmentListener {
      * Creates and starts the camera.
      *
      */
-    private fun createCameraSource(autoFocus: Boolean, useFlash: Boolean) {
+    private fun createCameraSource() {
         // A barcode detector is created to track barcodes.
         val barcodeDetector = BarcodeDetector.Builder(this)
             .setBarcodeFormats(Barcode.QR_CODE)
@@ -314,8 +315,8 @@ class ScanQRActivity : BaseActivity(), Dialogs.DialogFragmentListener {
             Log.w("Detector dependencies are not yet available.")
             // Check for low storage.  If there is low storage, the native library will not be
             // downloaded, so detection will not become operational.
-            val lowstorageFilter = IntentFilter(Intent.ACTION_DEVICE_STORAGE_LOW)
-            val hasLowStorage = registerReceiver(null, lowstorageFilter) != null
+            val lowStorageFilter = IntentFilter(Intent.ACTION_DEVICE_STORAGE_LOW)
+            val hasLowStorage = registerReceiver(null, lowStorageFilter) != null
             if (hasLowStorage) {
                 Toast.makeText(this, R.string.scan_qr_error_low_storage, Toast.LENGTH_LONG).show()
                 Log.w(getString(R.string.scan_qr_error_low_storage))
@@ -328,12 +329,10 @@ class ScanQRActivity : BaseActivity(), Dialogs.DialogFragmentListener {
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
                 .setRequestedPreviewSize(1600, 1024)
                 .setRequestedFps(15.0f)
+
         // Make sure that auto focus is an available option
-        builder =
-            builder.setFocusMode(if (autoFocus) Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE else null)
-        mCameraSource = builder
-            .setFlashMode(if (useFlash) Camera.Parameters.FLASH_MODE_TORCH else null)
-            .build()
+        builder = builder.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)
+        mCameraSource = builder.setFlashMode(null).build()
     }
 
     /**
@@ -345,7 +344,12 @@ class ScanQRActivity : BaseActivity(), Dialogs.DialogFragmentListener {
         if (hasFoundValidBarcode) {
             return false
         }
-        hasFoundValidBarcode = viewModel.checkQrCode(barcode.displayValue)
+
+        if (qrMode == QR_MODE_CONCORDIUM_ACCOUNT)
+            hasFoundValidBarcode = viewModel.checkQrAccountAddress(barcode.displayValue)
+        else if (qrMode == QR_MODE_WALLET_CONNECT)
+            hasFoundValidBarcode = viewModel.checkQrWalletConnect(barcode.displayValue)
+
         if (hasFoundValidBarcode) {
             val runnable = Runnable {
                 Log.d("Valid barCode found")

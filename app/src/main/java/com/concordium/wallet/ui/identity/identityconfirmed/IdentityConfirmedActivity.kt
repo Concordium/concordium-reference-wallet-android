@@ -15,6 +15,7 @@ import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.common.account.BaseAccountActivity
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
+import com.concordium.wallet.util.getSerializable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -54,7 +55,7 @@ class IdentityConfirmedActivity : BaseAccountActivity(), IdentityStatusDelegate 
         if (!showForFirstIdentity && showForCreateAccount)
             showActionBarBack()
 
-        identity = intent.extras!!.getSerializable(EXTRA_IDENTITY) as Identity
+        identity = intent.getSerializable(EXTRA_IDENTITY, Identity::class.java)
 
         initializeNewAccountViewModel()
         initializeAuthenticationObservers()
@@ -75,8 +76,8 @@ class IdentityConfirmedActivity : BaseAccountActivity(), IdentityStatusDelegate 
         viewModel.updateState()
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroy() {
+        super.onDestroy()
         stopCheckForPendingIdentity()
         if (showForFirstIdentity)
             viewModel.stopIdentityUpdate()
@@ -121,6 +122,8 @@ class IdentityConfirmedActivity : BaseAccountActivity(), IdentityStatusDelegate 
         identity?.let {
             binding.identityView.setIdentityData(it)
             startCheckForPendingIdentity(this, it.id, showForFirstIdentity) { newIdentity ->
+                identity = newIdentity
+                binding.btnSubmitAccount.isEnabled = newIdentity.status == IdentityStatus.DONE
                 binding.identityView.setIdentityData(newIdentity)
             }
         }
@@ -156,20 +159,7 @@ class IdentityConfirmedActivity : BaseAccountActivity(), IdentityStatusDelegate 
         startActivity(intent)
     }
 
-    private fun updateIdentityView() {
-        CoroutineScope(Dispatchers.IO).launch {
-            identity?.let {
-                viewModel.getIdentityFromId(it.id)?.let { refreshedIdentity ->
-                    identity = refreshedIdentity
-                    runOnUiThread {
-                        binding.identityView.setIdentityData(refreshedIdentity)
-                    }
-                }
-            }
-        }
-    }
-
-     override fun showWaiting(waiting: Boolean) {
+    override fun showWaiting(waiting: Boolean) {
         if (waiting) {
             binding.includeProgress.progressLayout.visibility = View.VISIBLE
         } else {

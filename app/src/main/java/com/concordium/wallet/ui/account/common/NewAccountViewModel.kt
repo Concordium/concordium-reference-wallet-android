@@ -138,10 +138,6 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
         )
     }
 
-    fun shouldUseBiometrics(): Boolean {
-        return App.appCore.getCurrentAuthenticationManager().useBiometrics()
-    }
-
     fun getCipherForBiometrics(): Cipher? {
         return try {
             val cipher = App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()

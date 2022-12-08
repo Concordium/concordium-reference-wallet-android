@@ -7,6 +7,7 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.security.BiometricPromptCallback
@@ -155,7 +156,7 @@ class IdentityProviderListActivity : BaseActivity() {
     }
 
     private fun showAuthentication() {
-        if (viewModel.shouldUseBiometrics()) {
+        if (App.appCore.getCurrentAuthenticationManager().useBiometrics()) {
             showBiometrics()
         } else {
             showPasswordDialog()
