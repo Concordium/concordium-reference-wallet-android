@@ -5,26 +5,17 @@ import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.cardview.widget.CardView
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.databinding.ViewIdentityBinding
-import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.ImageUtil
+import com.concordium.wallet.util.UnitConvertUtil.convertDpToPixel
 
 class IdentityView : CardView {
     private val binding = ViewIdentityBinding.inflate(LayoutInflater.from(context), this, true)
-
-    private lateinit var rootLayout: View
-    private lateinit var nameTextView: TextView
-    private lateinit var expiresTextView: TextView
-    private lateinit var iconImageView: ImageView
-    private lateinit var statusImageView: ImageView
-
     private var onItemClickListener: OnItemClickListener? = null
     private var onChangeNameClickListener: OnChangeNameClickListener? = null
 
@@ -42,31 +33,38 @@ class IdentityView : CardView {
 
     @Suppress("UNUSED_PARAMETER")
     private fun init(attrs: AttributeSet?) {
-        rootLayout = binding.rootLayout
-        nameTextView = binding.nameTextview
-        expiresTextView = binding.expiresTextview
-        iconImageView = binding.logoImageview
-        statusImageView = binding.statusImageview
     }
 
     fun enableChangeNameOption(identity: Identity) {
-        binding.nameTextview.compoundDrawablePadding = 20
-        val drawable = AppCompatResources.getDrawable(context, R.drawable.ic_edit)
-        binding.nameTextview.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, drawable, null)
-        binding.nameTextview.setOnClickListener {
+        binding.edit.visibility = View.VISIBLE
+        binding.edit.setOnClickListener {
             onChangeNameClickListener?.onChangeNameClicked(identity)
         }
     }
 
     fun setIdentityData(identity: Identity) {
+        binding.identityProviderName.text = identity.identityProvider.ipInfo.ipDescription.name
+
         if (!TextUtils.isEmpty(identity.identityProvider.metadata.icon)) {
             val image = ImageUtil.getImageBitmap(identity.identityProvider.metadata.icon)
-            iconImageView.setImageBitmap(image)
+            val layoutParams = binding.identityProviderLogo.layoutParams
+            layoutParams.height = convertDpToPixel(50f)
+            if (image.width > image.height) {
+                val aspectRatio = image.width.toFloat() / image.height.toFloat()
+                layoutParams.width = ((image.height.toFloat() * aspectRatio) - layoutParams.height.toFloat()).toInt()
+            } else if (image.width < image.height) {
+                val aspectRatio = image.height.toFloat() / image.width.toFloat()
+                layoutParams.width = ((image.height.toFloat() * aspectRatio) - layoutParams.height.toFloat()).toInt()
+            } else {
+                layoutParams.width = layoutParams.height
+            }
+            binding.identityProviderLogo.layoutParams = layoutParams
+            binding.identityProviderLogo.setImageBitmap(image)
         }
 
-        statusImageView.setImageResource(
+        binding.statusIcon.setImageResource(
             when (identity.status) {
-                IdentityStatus.PENDING -> R.drawable.ic_pending
+                IdentityStatus.PENDING -> R.drawable.ic_pending_white
                 IdentityStatus.DONE -> R.drawable.ic_ok_filled
                 IdentityStatus.ERROR -> R.drawable.ic_status_problem
                 else -> 0
@@ -77,17 +75,9 @@ class IdentityView : CardView {
         foreground = AppCompatResources.getDrawable(context, drawableResource)
         isEnabled = identity.status != IdentityStatus.PENDING
 
-        nameTextView.text = identity.name
+        binding.identityName.text = identity.name
 
-        val identityObject = identity.identityObject
-        if(identityObject != null && !TextUtils.isEmpty(identityObject.attributeList.validTo)) {
-            val expireDate = DateTimeUtil.convertShortDate(identityObject.attributeList.validTo)
-            expiresTextView.text = context.getString(R.string.view_identity_attributes_expiry_data, expireDate)
-        } else {
-            expiresTextView.text = ""
-        }
-
-        rootLayout.setOnClickListener {
+        binding.rootLayout.setOnClickListener {
             onItemClickListener?.onItemClicked(identity)
         }
     }
