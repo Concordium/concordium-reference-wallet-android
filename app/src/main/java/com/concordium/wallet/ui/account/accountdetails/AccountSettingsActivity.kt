@@ -14,6 +14,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityAccountSettingsBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.more.export.ExportAccountKeysActivity
+import com.concordium.wallet.ui.more.export.ExportTransactionLogActivity
 import com.concordium.wallet.uicore.setEditText
 import com.concordium.wallet.util.getSerializable
 
@@ -73,11 +74,14 @@ class AccountSettingsActivity : BaseActivity() {
         binding.releaseSchedule.setOnClickListener {
             gotoAccountReleaseSchedule(viewModel.account, viewModel.isShielded)
         }
-        binding.changeName.setOnClickListener {
-            showChangeNameDialog()
-        }
         binding.exportKey.setOnClickListener {
             exportKey()
+        }
+        binding.exportTransactionLog.setOnClickListener {
+            exportTransactionLog()
+        }
+        binding.changeName.setOnClickListener {
+            showChangeNameDialog()
         }
 
         binding.showShielded.visibility = if (viewModel.shieldingEnabledLiveData.value == true || viewModel.account.readOnly) View.GONE else View.VISIBLE
@@ -103,6 +107,18 @@ class AccountSettingsActivity : BaseActivity() {
         startActivity(intent)
     }
 
+    private fun exportKey() {
+        val intent = Intent(this, ExportAccountKeysActivity::class.java)
+        intent.putExtra(ExportAccountKeysActivity.EXTRA_ACCOUNT, viewModel.account)
+        startActivity(intent)
+    }
+
+    private fun exportTransactionLog() {
+        val intent = Intent(this, ExportTransactionLogActivity::class.java)
+        intent.putExtra(ExportTransactionLogActivity.EXTRA_ACCOUNT, viewModel.account)
+        startActivity(intent)
+    }
+
     private fun showChangeNameDialog() {
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.account_details_change_name_popup_title))
@@ -118,12 +134,6 @@ class AccountSettingsActivity : BaseActivity() {
             dialog.cancel()
         }
         builder.show()
-    }
-
-    private fun exportKey() {
-        val intent = Intent(this, ExportAccountKeysActivity::class.java)
-        intent.putExtra(ExportAccountKeysActivity.EXTRA_ACCOUNT, viewModel.account)
-        startActivity(intent)
     }
 
     private fun startShieldedIntroFlow() {

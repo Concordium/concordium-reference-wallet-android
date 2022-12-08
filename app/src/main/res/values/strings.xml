@@ -921,6 +921,7 @@
     <string name="account_details_menu_decrypt">Decrypt</string>
     <string name="account_details_menu_change_name">Change account name</string>
     <string name="account_details_menu_export_key">Export private key</string>
+    <string name="account_details_menu_export_transaction_log">Export transaction logs</string>
     <string name="account_details_delegation_with_baker_pool">Delegation with baker pool %1$s</string>
     <string name="account_details_delegation_with_passive_pool">Passive delegation</string>
     <string name="account_details_stake_with_baker">Stake with baker %1$s</string>
@@ -989,6 +990,14 @@
     <string name="export_account_keys_copied">Copied</string>
     <string name="export_account_keys_to_file">Export to file</string>
     <string name="export_account_keys_file_exported">File exported</string>
+
+    <string name="export_transaction_log_title">Export transaction logs</string>
+    <string name="export_transaction_log_description">Transaction logs of an account can be generated and downloaded via %1$s\n\nIt can take a little while to generate the file if the account has a lot of transactions.\n\nOnce the logs have been generated, you will be able to save them as a CSV file. Please note that if the account has a lot of transactions, the file size can be quite large.\n\nYou can also visit %1$s and manually generate your transaction logs from a desktop browser.</string>
+    <string name="export_transaction_log_generate">Generate transaction logs</string>
+    <string name="export_transaction_log_done">Done</string>
+    <string name="export_transaction_log_generating">Generating transaction logs, please hold on.</string>
+    <string name="export_transaction_log_ready">The logs are ready!</string>
+    <string name="export_transaction_log_failed">Download failed</string>
 
     <string name="cis_tab_fungible">Fungible</string>
     <string name="cis_tab_collectibles">Collectibles</string>
