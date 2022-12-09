@@ -843,6 +843,8 @@
     <string name="wallet_connect_preparing_connection">Preparing connection…</string>
     <string name="wallet_connect_timeout_dialog_title">Could not connect</string>
     <string name="wallet_connect_timeout_dialog_content">The QR code seems to be expired. Please generate a new one and try again.</string>
+    <string name="wallet_connect_service_running">Service running…</string>
+    <string name="wallet_connect_stop_service">Stop service</string>
 
     <!-- ***** More ***** -->
 

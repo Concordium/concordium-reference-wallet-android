@@ -1,9 +1,12 @@
 package com.concordium.wallet.ui.walletconnect
 
-import android.app.Service
+import android.app.*
+import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import androidx.core.app.NotificationCompat
+import com.concordium.wallet.R
 import com.concordium.wallet.data.walletconnect.Params
 import com.google.gson.Gson
 import com.walletconnect.android.Core
@@ -18,6 +21,12 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
     private var settledSessionResponseResult: Sign.Model.SettledSessionResponse.Result? = null
     private var settledSessionResponseError: Sign.Model.SettledSessionResponse.Error? = null
     private var sessionRequest: Sign.Model.SessionRequest? = null
+
+    companion object {
+        const val FOREGROUND_SERVICE = 101
+        const val START_FOREGROUND_ACTION = "START_FOREGROUND_ACTION"
+        const val STOP_FOREGROUND_ACTION = "STOP_FOREGROUND_ACTION"
+    }
 
     inner class LocalBinder : Binder() {
         fun pair(wcUri: String) {
@@ -45,7 +54,6 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
         }
 
         fun disconnect() {
-
             disconnectWC()
         }
 
@@ -71,8 +79,33 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
         }
     }
 
-    override fun onBind(intent: Intent): IBinder {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent!!.action == START_FOREGROUND_ACTION) {
+            val channel = NotificationChannel("WalletConnect", "WalletConnect Channel", NotificationManager.IMPORTANCE_HIGH)
+            (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel)
 
+            val stopActionIntent = Intent(this, WalletConnectService::class.java)
+            stopActionIntent.action = STOP_FOREGROUND_ACTION
+            val stopActionPendingIntent = PendingIntent.getService(this, 0, stopActionIntent, PendingIntent.FLAG_IMMUTABLE)
+
+            val notification: Notification = NotificationCompat.Builder(this, "WalletConnect")
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(getString(R.string.wallet_connect_service_running))
+                .setSmallIcon(R.drawable.ic_service_notification)
+                .setOngoing(true)
+                .addAction(android.R.drawable.ic_media_pause, getString(R.string.wallet_connect_stop_service), stopActionPendingIntent)
+                .build()
+
+            startForeground(FOREGROUND_SERVICE, notification)
+        } else {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+            stopSelf()
+        }
+
+        return START_STICKY
+    }
+
+    override fun onBind(intent: Intent): IBinder {
         CoreClient.setDelegate(this)
         SignClient.setWalletDelegate(this)
 
