@@ -25,7 +25,7 @@ import retrofit2.http.Url
 
 interface FileDownloadApi {
     @Streaming
-    @GET suspend fun downloadZipFile(@Url url: String?): ResponseBody
+    @GET suspend fun downloadFile(@Url url: String?): ResponseBody
 }
 
 sealed class FileDownloadScreenState {
@@ -54,24 +54,28 @@ class ExportTransactionLogViewModel(application: Application) : AndroidViewModel
     }
 
     fun downloadFile(destinationFolder: Uri) {
+        //val downloadFile = "statement?accountAddress=35CJPZohio6Ztii2zy1AYzJKvuxbGG44wrBn7hLHiYLoF2nxnh"
         val downloadFile = "statement?accountAddress=${account.address}"
-        //val downloadFile = "100MB.bin"
         viewModelScope.launch(Dispatchers.IO) {
-            api.downloadZipFile(downloadFile)
-                .saveFile(destinationFolder)
-                .collect { downloadState ->
-                    this@ExportTransactionLogViewModel.downloadState.postValue(when (downloadState) {
-                        is DownloadState.Downloading -> {
-                            FileDownloadScreenState.Downloading(progress = downloadState.progress, downloadState.bytesProgress, downloadState.bytesTotal)
-                        }
-                        is DownloadState.Failed -> {
-                            FileDownloadScreenState.Failed(error = downloadState.error)
-                        }
-                        DownloadState.Finished -> {
-                            FileDownloadScreenState.Downloaded
-                        }
-                    })
-                }
+            try {
+                api.downloadFile(downloadFile)
+                    .saveFile(destinationFolder)
+                    .collect { downloadState ->
+                        this@ExportTransactionLogViewModel.downloadState.postValue(when (downloadState) {
+                            is DownloadState.Downloading -> {
+                                FileDownloadScreenState.Downloading(progress = downloadState.progress, downloadState.bytesProgress, downloadState.bytesTotal)
+                            }
+                            is DownloadState.Failed -> {
+                                FileDownloadScreenState.Failed(error = downloadState.error)
+                            }
+                            DownloadState.Finished -> {
+                                FileDownloadScreenState.Downloaded
+                            }
+                        })
+                    }
+            } catch (ex: Exception) {
+                FileDownloadScreenState.Failed(error = ex)
+            }
         }
     }
 
@@ -110,8 +114,8 @@ class ExportTransactionLogViewModel(application: Application) : AndroidViewModel
         api = Retrofit.Builder()
             .client(
                 OkHttpClient.Builder()
-                    .readTimeout(30L, TimeUnit.SECONDS)
-                    .writeTimeout(30L, TimeUnit.SECONDS)
+                    .readTimeout(120L, TimeUnit.SECONDS)
+                    .writeTimeout(120L, TimeUnit.SECONDS)
                     .addInterceptor(loggingInterceptor)
                     .build()
             )

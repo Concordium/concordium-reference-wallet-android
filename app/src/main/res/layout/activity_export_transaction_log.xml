@@ -21,10 +21,22 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/activity_vertical_margin_extended"
             android:layout_marginHorizontal="@dimen/activity_horizontal_margin_double"
+            android:gravity="center_horizontal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar_layout"
             tools:text="@string/export_transaction_log_description" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/status_imageview"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:src="@drawable/ic_logo_icon_pending"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/description"
+            app:layout_constraintBottom_toTopOf="@+id/done" />
         <ProgressBar
             android:id="@+id/download_progress"
             style="?android:attr/progressBarStyleHorizontal"
@@ -32,23 +44,25 @@
             android:layout_height="wrap_content"
             android:min="0"
             android:max="100"
-            tools:progress="65"
+            tools:progress="62"
             android:visibility="gone"
             tools:visibility="visible"
             android:layout_marginHorizontal="@dimen/activity_vertical_margin_extended"
             android:layout_marginTop="@dimen/activity_vertical_margin_extended"
+            android:foregroundTint="@color/theme_grey"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/description" />
         <TextView
             android:id="@+id/bytes_progress"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/activity_vertical_margin_extended"
+            android:layout_marginTop="@dimen/activity_vertical_margin_half"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/download_progress"
-            tools:text="121 / 22111 bytes" />
+            tools:text="@string/export_transaction_log_progress" />
         <Button
             android:id="@+id/generate"
             style="@style/Button.Standard.Intro"
@@ -61,7 +75,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:text="@string/export_transaction_log_generate" />
+            android:text="@string/export_transaction_log_save" />
         <Button
             android:id="@+id/done"
             style="@style/Button.Standard.Intro"
