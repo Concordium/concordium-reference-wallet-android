@@ -31,6 +31,7 @@ import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
 import com.walletconnect.sign.client.Sign
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -302,9 +303,10 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                 CoroutineScope(Dispatchers.IO).launch {
                     val jsonMessage = App.appCore.cryptoLibrary.parameterToJson(ParameterToJsonInput(params.payloadObj!!.message, params.payloadObj!!.receiveName, params.schema!!, null))
                     if (jsonMessage != null) {
-                        params.message = jsonMessage.replace("\"", "")
+                        jsonPretty.postValue(gson.toJson(JsonParser.parseString(jsonMessage)))
+                    } else {
+                        jsonPretty.postValue(gson.toJson(params).replace("payloadObj", "payload"))
                     }
-                    jsonPretty.postValue(gson.toJson(params).replace("payloadObj", "payload"))
                 }
             } else {
                 jsonPretty.postValue(gson.toJson(params).replace("payloadObj", "payload"))
