@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.USE_BIOMETRIC" /> <!-- Protection level: normal -->
     <uses-permission android:name="android.permission.CAMERA" /> <!-- Protection level: dangerous -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <uses-feature
         android:name="android.hardware.camera.any"
@@ -331,6 +332,11 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.more.export.ExportAccountKeysActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.more.SettingsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.more.export.ExportTransactionLogActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.more.SettingsActivity"
             android:screenOrientation="portrait" />

@@ -31,8 +31,8 @@ import javax.crypto.Cipher
 
 abstract class BaseActivity : AppCompatActivity() {
     private var titleView: TextView? = null
-    private val isStageNet: Boolean get() = (BuildConfig.ENV_NAME == "staging")
-    private val isTestNet: Boolean get() = (BuildConfig.ENV_NAME == "prod_testnet")
+    protected val isStageNet: Boolean get() = (BuildConfig.ENV_NAME == "staging")
+    protected val isTestNet: Boolean get() = (BuildConfig.ENV_NAME == "prod_testnet")
     protected lateinit var popup: Popup
     protected lateinit var dialogs: Dialogs
     var isActive = false

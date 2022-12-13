@@ -847,6 +847,9 @@
     <string name="wallet_connect_proof_of_identity">Proof of Identity</string>
     <string name="wallet_connect_message">Message</string>
     <string name="wallet_connect_transaction">Transaction</string>
+    <string name="wallet_connect_timeout_dialog_content">The QR code seems to be expired. Please generate a new one and try again.</string>
+    <string name="wallet_connect_service_running">WalletConnect session open…</string>
+    <string name="wallet_connect_stop_service">Stop service</string>
 
     <!-- ***** More ***** -->
 
@@ -925,6 +928,7 @@
     <string name="account_details_menu_decrypt">Decrypt</string>
     <string name="account_details_menu_change_name">Change account name</string>
     <string name="account_details_menu_export_key">Export private key</string>
+    <string name="account_details_menu_export_transaction_log">Export transaction logs</string>
     <string name="account_details_delegation_with_baker_pool">Delegation with baker pool %1$s</string>
     <string name="account_details_delegation_with_passive_pool">Passive delegation</string>
     <string name="account_details_stake_with_baker">Stake with baker %1$s</string>
@@ -993,6 +997,16 @@
     <string name="export_account_keys_copied">Copied</string>
     <string name="export_account_keys_to_file">Export to file</string>
     <string name="export_account_keys_file_exported">File exported</string>
+
+    <string name="export_transaction_log_title">Export transaction logs</string>
+    <string name="export_transaction_log_description">Transaction logs of an account can be generated and saved via %1$s\n\nIf your account contains a lot of transactions, it may take a moment for CCDScan to prepare the file. Once the logs are ready, they will be downloaded to your device as a CSV file. Please note that if the account has a lot of transactions, the file size can be quite large.\n\nYou can also visit %1$s and manually generate your transaction logs from a desktop browser.</string>
+    <string name="export_transaction_log_save">Save transaction logs</string>
+    <string name="export_transaction_log_done">Done</string>
+    <string name="export_transaction_log_generating">Generating transaction logs, please hold on.</string>
+    <string name="export_transaction_log_saved">The transaction logs have been saved.</string>
+    <string name="export_transaction_log_failed">Failed to download transaction logs</string>
+    <string name="export_transaction_log_progress">%1$s/%2$s KB downloaded</string>
+    <string name="export_transaction_log_downloading">Downloading transaction logs.</string>
 
     <string name="cis_tab_fungible">Fungible</string>
     <string name="cis_tab_collectibles">Collectibles</string>
