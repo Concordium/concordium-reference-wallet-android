@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.IdentityStatus
 import com.concordium.wallet.data.room.Identity
@@ -62,16 +63,33 @@ class IdentityView : CardView {
             binding.identityProviderLogo.setImageBitmap(image)
         }
 
-        binding.statusIcon.setImageResource(
-            when (identity.status) {
-                IdentityStatus.PENDING -> R.drawable.ic_pending_white
-                IdentityStatus.DONE -> R.drawable.ic_ok_filled
-                IdentityStatus.ERROR -> R.drawable.ic_status_problem
-                else -> 0
+        when (identity.status) {
+            IdentityStatus.PENDING -> {
+                binding.statusIcon.setImageResource(R.drawable.ic_pending_white)
+                binding.top.background = ContextCompat.getDrawable(context, R.drawable.rounded_top_grey)
+                binding.statusText.text = context.getString(R.string.identity_pending_verification_with)
+                binding.rosette.visibility = View.GONE
             }
-        )
+            IdentityStatus.DONE -> {
+                binding.statusIcon.setImageResource(R.drawable.ic_ok_filled)
+                binding.top.background = ContextCompat.getDrawable(context, R.drawable.rounded_top_dark_blue)
+                binding.statusText.text = context.getString(R.string.identity_verified_by)
+                binding.rosette.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_identity_corner_done))
+            }
+            IdentityStatus.ERROR -> {
+                binding.statusIcon.setImageResource(R.drawable.ic_status_problem)
+                binding.top.background = ContextCompat.getDrawable(context, R.drawable.rounded_top_red)
+                binding.statusText.text = context.getString(R.string.identity_rejected_by)
+                binding.rosette.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.ic_identity_corner_rejected))
+            }
+        }
 
-        val drawableResource = if (identity.status == IdentityStatus.DONE || identity.status == IdentityStatus.PENDING) R.drawable.bg_cardview_border else R.drawable.bg_cardview_error_border
+        val drawableResource = when (identity.status) {
+            IdentityStatus.DONE -> R.drawable.bg_cardview_border_dark_blue
+            IdentityStatus.PENDING -> R.drawable.bg_cardview_border_disabled
+            IdentityStatus.ERROR -> R.drawable.bg_cardview_error_border
+            else -> 0
+        }
         foreground = AppCompatResources.getDrawable(context, drawableResource)
         isEnabled = identity.status != IdentityStatus.PENDING
 

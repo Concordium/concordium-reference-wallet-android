@@ -13,6 +13,7 @@
         android:background="@drawable/list_item">
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_top_dark_blue"
@@ -82,13 +83,14 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:orientation="horizontal">
             <TextView
+                android:id="@+id/status_text"
                 style="@style/TextView.Small.Light"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_gravity="center_vertical"
-                android:text="@string/identity_verified_by" />
+                tools:text="@string/identity_verified_by" />
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/identity_provider_logo"
                 android:layout_width="40dp"
@@ -102,12 +104,13 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/rosette"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_identity_corner" />
+            tools:src="@drawable/ic_identity_corner_done" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

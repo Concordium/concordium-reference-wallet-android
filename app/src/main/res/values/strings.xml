@@ -593,6 +593,8 @@
     <string name="identity_details_title">Identity</string>
     <string name="identity_details_attribute_header">Identity data</string>
     <string name="identity_verified_by">Verified by</string>
+    <string name="identity_pending_verification_with">Pending verification with</string>
+    <string name="identity_rejected_by">Rejected by</string>
 
     <!-- Identity create -->
     <string name="identity_create_identity_provider_header">Choosing an identity provider</string>
