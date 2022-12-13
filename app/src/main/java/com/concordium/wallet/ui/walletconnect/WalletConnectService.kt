@@ -84,16 +84,11 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
             val channel = NotificationChannel("WalletConnect", "WalletConnect Channel", NotificationManager.IMPORTANCE_HIGH)
             (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel)
 
-            val stopActionIntent = Intent(this, WalletConnectService::class.java)
-            stopActionIntent.action = STOP_FOREGROUND_ACTION
-            val stopActionPendingIntent = PendingIntent.getService(this, 0, stopActionIntent, PendingIntent.FLAG_IMMUTABLE)
-
             val notification: Notification = NotificationCompat.Builder(this, "WalletConnect")
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.wallet_connect_service_running))
                 .setSmallIcon(R.drawable.ic_service_notification)
                 .setOngoing(true)
-                .addAction(android.R.drawable.ic_media_pause, getString(R.string.wallet_connect_stop_service), stopActionPendingIntent)
                 .build()
 
             startForeground(FOREGROUND_SERVICE, notification)
