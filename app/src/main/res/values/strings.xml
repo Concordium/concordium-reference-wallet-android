@@ -847,9 +847,7 @@
     <string name="wallet_connect_proof_of_identity">Proof of Identity</string>
     <string name="wallet_connect_message">Message</string>
     <string name="wallet_connect_transaction">Transaction</string>
-    <string name="wallet_connect_timeout_dialog_content">The QR code seems to be expired. Please generate a new one and try again.</string>
     <string name="wallet_connect_service_running">WalletConnect session open…</string>
-    <string name="wallet_connect_stop_service">Stop service</string>
 
     <!-- ***** More ***** -->
 
