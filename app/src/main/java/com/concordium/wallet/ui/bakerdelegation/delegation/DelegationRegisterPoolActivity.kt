@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
+import android.text.util.Linkify
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.core.content.ContextCompat
@@ -153,7 +155,15 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity() {
     private fun updateVisibilities() {
         binding.poolId.hint = if (viewModel.bakerDelegationData.oldDelegationTargetPoolId == null) getString(R.string.delegation_register_delegation_pool_id_hint) else getString(R.string.delegation_register_delegation_pool_id_hint_update)
         binding.poolId.visibility = if (viewModel.bakerDelegationData.isLPool) View.GONE else View.VISIBLE
-        if (viewModel.bakerDelegationData.isLPool) binding.poolDesc.setText(R.string.delegation_register_delegation_desc_passive) else binding.poolDesc.setText(R.string.delegation_register_delegation_desc)
+
+        val ccdScanLink = if (isStageNet) "https://stagenet.ccdscan.io/staking" else if (isTestNet) "https://testnet.ccdscan.io/staking" else "https://ccdscan.io/staking"
+        binding.poolDesc.movementMethod = LinkMovementMethod.getInstance()
+        binding.poolDesc.autoLinkMask = Linkify.WEB_URLS
+        if (viewModel.bakerDelegationData.isLPool)
+            binding.poolDesc.setText(R.string.delegation_register_delegation_desc_passive)
+        else
+            binding.poolDesc.text = getString(R.string.delegation_register_delegation_desc, ccdScanLink)
+
         binding.poolDesc.handleUrlClicks { url ->
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             ContextCompat.startActivity(this, browserIntent, null)
