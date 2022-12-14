@@ -18,6 +18,7 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.*
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.walletconnect.ContractAddress
 import com.concordium.wallet.data.walletconnect.Payload
@@ -29,6 +30,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.Serializable
+import java.util.*
 import javax.crypto.Cipher
 
 data class SendTokenData(
@@ -36,7 +38,7 @@ data class SendTokenData(
     var account: Account? = null,
     var amount: Long = 0,
     var receiver: String = "",
-    var fee: Long? = null,
+    var cost: Long? = null,
     var max: Long? = null,
     var memo: String? = null,
     var energy: Long? = null,
@@ -63,6 +65,9 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
     private var submitTransaction: BackendRequest<SubmissionData>? = null
     private var accountBalanceRequest: BackendRequest<AccountBalance>? = null
+    private var transferSubmissionStatusRequest: BackendRequest<TransferSubmissionStatus>? = null
+    private var transferSubmissionStatus: TransferSubmissionStatus? = null
+    private var submissionId: String? = null
 
     var sendTokenData = SendTokenData()
     val tokens: MutableLiveData<List<Token>> by lazy { MutableLiveData<List<Token>>() }
@@ -82,6 +87,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         globalParamsRequest?.dispose()
         submitTransaction?.dispose()
         accountBalanceRequest?.dispose()
+        transferSubmissionStatusRequest?.dispose()
     }
 
     fun loadTokens(accountAddress: String) {
@@ -189,9 +195,9 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         }
 
         return if (sendTokenData.token!!.isCCDToken) {
-            atDisposal >= sendTokenData.amount + (sendTokenData.fee ?: 0)
+            atDisposal >= sendTokenData.amount + (sendTokenData.cost ?: 0)
         } else {
-            atDisposal >= (sendTokenData.fee ?: 0) && sendTokenData.token!!.totalBalance >= sendTokenData.amount
+            atDisposal >= (sendTokenData.cost ?: 0) && sendTokenData.token!!.totalBalance >= sendTokenData.amount
         }
     }
 
@@ -201,12 +207,12 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             memoSize = if (sendTokenData.memo == null) null else sendTokenData.memo!!.length / 2,
             success = {
                 sendTokenData.energy = it.energy
-                sendTokenData.fee = it.cost.toLong()
+                sendTokenData.cost = it.cost.toLong()
                 sendTokenData.account?.let { account ->
-                    sendTokenData.max = account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) - (sendTokenData.fee ?: 0)
+                    sendTokenData.max = account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) - (sendTokenData.cost ?: 0)
                 }
                 waiting.postValue(false)
-                feeReady.postValue(sendTokenData.fee)
+                feeReady.postValue(sendTokenData.cost)
             },
             failure = {
                 waiting.postValue(false)
@@ -232,10 +238,10 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             parameter = serializeTokenTransferParametersOutput.parameter,
             success = {
                 sendTokenData.energy = it.energy
-                sendTokenData.fee = it.cost.toLong()
+                sendTokenData.cost = it.cost.toLong()
                 sendTokenData.max = sendTokenData.token!!.totalBalance
                 waiting.postValue(false)
-                feeReady.postValue(sendTokenData.fee)
+                feeReady.postValue(sendTokenData.cost)
             },
             failure = {
                 waiting.postValue(false)
@@ -433,8 +439,9 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         submitTransaction = proxyRepository.submitTransfer(createTransferOutput,
             {
                 println("LC -> submitTransaction SUCCESS = ${it.submissionId}")
+                this.submissionId = it.submissionId
                 waiting.postValue(false)
-                transactionReady.postValue(true)
+                submissionStatus()
             },
             {
                 println("LC -> submitTransaction ERROR ${it.stackTraceToString()}")
@@ -442,6 +449,65 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 waiting.postValue(false)
             }
         )
+    }
+
+    private fun submissionStatus() {
+        waiting.postValue(true)
+        transferSubmissionStatusRequest?.dispose()
+        transferSubmissionStatusRequest = submissionId?.let { submissionId ->
+            proxyRepository.getTransferSubmissionStatus(submissionId,
+                { transferSubmissionStatus ->
+                    this.transferSubmissionStatus = transferSubmissionStatus
+                    finishTransferCreation()
+                },
+                {
+                    waiting.postValue(false)
+                    handleBackendError(it)
+                }
+            )
+        }
+    }
+
+    private fun finishTransferCreation() {
+        val createdAt = Date().time
+        val accountId = sendTokenData.account?.id
+        val fromAddress = sendTokenData.account?.address
+        val submissionId = this.submissionId
+        val transferSubmissionStatus = this.transferSubmissionStatus
+        val cost = sendTokenData.cost
+        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
+
+        if (transferSubmissionStatus == null || cost == null || accountId == null || fromAddress == null || submissionId == null) {
+            errorInt.postValue(R.string.app_error_general)
+            waiting.postValue(false)
+            return
+        }
+
+        val transfer = Transfer(
+            0,
+            accountId,
+            cost,
+            0,
+            fromAddress,
+            fromAddress,
+            expiry,
+            "",
+            createdAt,
+            submissionId,
+            TransactionStatus.UNKNOWN,
+            TransactionOutcome.UNKNOWN,
+            TransactionType.TRANSFER,
+            null,
+            0,
+            null
+        )
+        saveNewTransfer(transfer)
+    }
+
+    private fun saveNewTransfer(transfer: Transfer) = viewModelScope.launch {
+        transferRepository.insert(transfer)
+        waiting.postValue(false)
+        transactionReady.postValue(true)
     }
 
     private fun handleBackendError(throwable: Throwable) {
