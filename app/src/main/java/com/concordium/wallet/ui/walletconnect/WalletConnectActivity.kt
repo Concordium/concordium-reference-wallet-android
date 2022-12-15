@@ -14,6 +14,8 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityWalletConnectBinding
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.cis2.lookfornew.LookForNewTokensFragment
+import com.concordium.wallet.ui.walletconnect.proof.of.identity.ProofOfIdentityFragment
 import com.concordium.wallet.util.getSerializable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +27,9 @@ class WalletConnectActivity : BaseActivity() {
     private lateinit var viewModel: WalletConnectViewModel
     private var fromDeepLink = true
     private var currentPage = 0
+
+
+    private var proofOfIdentityFragment: ProofOfIdentityFragment? = null
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
@@ -168,9 +173,7 @@ class WalletConnectActivity : BaseActivity() {
             }
         }
         viewModel.proofOfIdentityAction.observe(this) {
-            runOnUiThread {
-                // proofOfIdentityView()
-            }
+                proofOfIdentityView()
         }
         viewModel.messageSignedSuccess.observe(this) { message ->
             viewModel.respondSuccess(message)
@@ -197,6 +200,11 @@ class WalletConnectActivity : BaseActivity() {
                 }
             })
         }
+    }
+
+    private fun proofOfIdentityView() {
+        proofOfIdentityFragment = ProofOfIdentityFragment()
+        proofOfIdentityFragment?.show(supportFragmentManager, "")
     }
 
     private fun showWaiting(waiting: Boolean) {

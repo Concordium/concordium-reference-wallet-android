@@ -15,6 +15,7 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.*
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.AccountNonce
+import com.concordium.wallet.data.model.ProofOfIdentity
 import com.concordium.wallet.data.model.SubmissionData
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
@@ -24,6 +25,7 @@ import com.concordium.wallet.data.walletconnect.TransactionSuccess
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.common.BackendErrorHandler
+import com.concordium.wallet.ui.walletconnect.proof.of.identity.ProofOfIdentityHelper
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toHex
@@ -47,7 +49,7 @@ data class WalletConnectData(
     var energy: Long? = null,
     var cost: Long? = null,
     var isTransaction: Boolean = true
-): Serializable
+) : Serializable
 
 class WalletConnectViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
@@ -67,6 +69,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val transaction: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val message: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val proofOfIdentity: MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val proofOfIdentityRequest: MutableLiveData<ProofOfIdentity> by lazy { MutableLiveData<ProofOfIdentity>() }
     val transactionAction: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val messageAction: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val proofOfIdentityAction: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
@@ -85,8 +88,11 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val walletConnectData = WalletConnectData()
     var binder: WalletConnectService.LocalBinder? = null
 
+    val stepPageBy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+
     private val accountUpdater = AccountUpdater(application, viewModelScope)
-    private val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+    private val accountRepository =
+        AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
     private val proxyRepository = ProxyRepository()
     private var submitTransaction: BackendRequest<SubmissionData>? = null
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
@@ -181,7 +187,9 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         val fee = walletConnectData.cost
         if (amount != null && fee != null) {
             walletConnectData.account?.totalUnshieldedBalance?.let { totalUnshieldedBalance ->
-                walletConnectData.account?.getAtDisposalWithoutStakedOrScheduled(totalUnshieldedBalance)?.let { atDisposal ->
+                walletConnectData.account?.getAtDisposalWithoutStakedOrScheduled(
+                    totalUnshieldedBalance
+                )?.let { atDisposal ->
                     if (atDisposal >= amount.toLong() + fee.toLong())
                         return true
                 }
@@ -216,7 +224,8 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     fun checkLogin(cipher: Cipher) = viewModelScope.launch {
         waiting.postValue(true)
-        val password = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
+        val password =
+            App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
         if (password != null) {
             decryptAndContinue(password)
         } else {
@@ -233,9 +242,11 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                 waiting.postValue(false)
                 return
             }
-            val decryptedJson = App.appCore.getCurrentAuthenticationManager().decryptInBackground(password, storageAccountDataEncrypted)
+            val decryptedJson = App.appCore.getCurrentAuthenticationManager()
+                .decryptInBackground(password, storageAccountDataEncrypted)
             if (decryptedJson != null) {
-                val credentialsOutput = App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
+                val credentialsOutput =
+                    App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
                 if (walletConnectData.isTransaction)
                     createTransaction(credentialsOutput.accountKeys)
                 else
@@ -260,18 +271,31 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         }
 
         payload.maxEnergy = walletConnectData.energy?.toInt() ?: 0
-        val accountTransactionInput = CreateAccountTransactionInput(expiry.toInt(), from, keys, this.accountNonce?.nonce ?: -1, payload, type)
+        val accountTransactionInput = CreateAccountTransactionInput(
+            expiry.toInt(),
+            from,
+            keys,
+            this.accountNonce?.nonce ?: -1,
+            payload,
+            type
+        )
 
-        val accountTransactionOutput = App.appCore.cryptoLibrary.createAccountTransaction(accountTransactionInput)
+        val accountTransactionOutput =
+            App.appCore.cryptoLibrary.createAccountTransaction(accountTransactionInput)
         if (accountTransactionOutput == null) {
             errorInt.postValue(R.string.app_error_lib)
         } else {
-            val createTransferOutput = CreateTransferOutput(accountTransactionOutput.signatures, "", "", accountTransactionOutput.transaction)
+            val createTransferOutput = CreateTransferOutput(
+                accountTransactionOutput.signatures,
+                "",
+                "",
+                accountTransactionOutput.transaction
+            )
             submitTransaction(createTransferOutput)
         }
     }
 
-    fun sessionName() : String {
+    fun sessionName(): String {
         return binder?.getSessionName() ?: ""
     }
 
@@ -285,16 +309,25 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                 override fun shouldSkipField(f: FieldAttributes): Boolean {
                     return f.name == "payload" || f.name == "schema"
                 }
+
                 override fun shouldSkipClass(clazz: Class<*>?): Boolean {
                     return false
                 }
             }
-            val gson = GsonBuilder().setPrettyPrinting().addSerializationExclusionStrategy(strategy).create()
+            val gson = GsonBuilder().setPrettyPrinting().addSerializationExclusionStrategy(strategy)
+                .create()
             params.payloadObj = params.parsePayload()
             params.payload = ""
             if (params.payloadObj != null && params.payloadObj?.message != null && params.schema != null) {
                 CoroutineScope(Dispatchers.IO).launch {
-                    val jsonMessage = App.appCore.cryptoLibrary.parameterToJson(ParameterToJsonInput(params.payloadObj!!.message, params.payloadObj!!.receiveName, params.schema!!, null))
+                    val jsonMessage = App.appCore.cryptoLibrary.parameterToJson(
+                        ParameterToJsonInput(
+                            params.payloadObj!!.message,
+                            params.payloadObj!!.receiveName,
+                            params.schema!!,
+                            null
+                        )
+                    )
                     if (jsonMessage != null) {
                         params.message = jsonMessage.replace("\"", "")
                     }
@@ -317,7 +350,14 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             },
             {
                 println("LC -> submitTransaction ERROR ${it.stackTraceToString()}")
-                transactionSubmittedError.postValue(Gson().toJson(TransactionError(500, it.message ?: "")))
+                transactionSubmittedError.postValue(
+                    Gson().toJson(
+                        TransactionError(
+                            500,
+                            it.message ?: ""
+                        )
+                    )
+                )
                 handleBackendError(it)
                 waiting.postValue(false)
             }
@@ -326,7 +366,11 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     private fun signMessage(keys: AccountData) {
         viewModelScope.launch {
-            val signMessageInput = SignMessageInput(walletConnectData.account?.address ?: "", binder?.getSessionRequestParams()?.message ?: "", keys)
+            val signMessageInput = SignMessageInput(
+                walletConnectData.account?.address ?: "",
+                binder?.getSessionRequestParams()?.message ?: "",
+                keys
+            )
             val signMessageOutput = App.appCore.cryptoLibrary.signMessage(signMessageInput)
             if (signMessageOutput == null) {
                 errorInt.postValue(R.string.app_error_lib)
@@ -346,16 +390,22 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                     }
                 }
             }
-            override fun onError(stringRes: Int) { }
-            override fun onNewAccountFinalized(accountName: String) { }
+
+            override fun onError(stringRes: Int) {}
+            override fun onNewAccountFinalized(accountName: String) {}
         })
-        accountUpdaterTimer = object: CountDownTimer(Long.MAX_VALUE, 5000) {
+        accountUpdaterTimer = object : CountDownTimer(Long.MAX_VALUE, 5000) {
             override fun onTick(millisUntilFinished: Long) {
                 walletConnectData.account?.let { accountUpdater.updateForAccount(it) }
             }
+
             override fun onFinish() {}
         }
         accountUpdaterTimer?.start()
+    }
+
+    fun stepPage(by: Int) {
+        stepPageBy.postValue(by)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -395,5 +445,18 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(rejectError: RejectError) {
         errorString.postValue(rejectError.message)
+    }
+
+    fun validateProofOfIdentity(proofOfIdentity: ProofOfIdentity) {
+
+        chooseAccount.value?.let {
+
+            val proofOfIdentityHelper = ProofOfIdentityHelper(proofOfIdentity, it.account.revealedAttributes)
+
+            viewModelScope.launch {
+                val proofs = proofOfIdentityHelper.getProofs()
+            }
+        }
+
     }
 }

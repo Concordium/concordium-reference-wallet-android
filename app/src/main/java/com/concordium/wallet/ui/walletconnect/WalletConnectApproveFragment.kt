@@ -32,7 +32,11 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentWalletConnectApproveBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -41,7 +45,9 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initObservers()
-        if (_viewModel.binder?.getSessionTopic()?.isNotEmpty() == false && savedInstanceState == null) {
+        if (_viewModel.binder?.getSessionTopic()
+                ?.isNotEmpty() == false && savedInstanceState == null
+        ) {
             _viewModel.waiting.postValue(true)
             _viewModel.approveSession()
         }
@@ -60,12 +66,19 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
     }
 
     private fun initViews() {
-        binding.walletConnectStatusCard.statusTextAccount.text = _viewModel.walletConnectData.account?.name ?: ""
+        binding.walletConnectStatusCard.statusTextAccount.text =
+            _viewModel.walletConnectData.account?.name ?: ""
         binding.walletConnectStatusCard.statusTextService.text = _viewModel.sessionName()
         binding.disconnect.setOnClickListener {
             binding.disconnect.isEnabled = false
             showDisconnectWarning()
         }
+
+        //FIXME: Remove when not testing
+        binding.walletConnectTestCard.root.setOnClickListener {
+            _viewModel.proofOfIdentityAction.postValue(true)
+        }
+
         binding.walletConnectActionCard.root.setOnClickListener {
             binding.walletConnectActionCard.root.visibility = View.GONE
             when (requestMethod) {
@@ -83,17 +96,36 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
             if (isConnected) {
                 stopTimeOutTimer()
                 didConnectBefore = true
-                binding.walletConnectStatusCard.statusIcon.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_big_logo_ok))
-                binding.walletConnectStatusCard.statusIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.theme_green))
+                binding.walletConnectStatusCard.statusIcon.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.ic_big_logo_ok
+                    )
+                )
+                binding.walletConnectStatusCard.statusIcon.setColorFilter(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.theme_green
+                    )
+                )
                 binding.disconnect.isEnabled = true
                 binding.waitForActions.visibility = View.VISIBLE
-            }
-            else {
+            } else {
                 if (didConnectBefore) {
                     showConnectionLost()
                 } else {
-                    binding.walletConnectStatusCard.statusIcon.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.ic_logo_icon_pending))
-                    binding.walletConnectStatusCard.statusIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.theme_green))
+                    binding.walletConnectStatusCard.statusIcon.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            requireContext(),
+                            R.drawable.ic_logo_icon_pending
+                        )
+                    )
+                    binding.walletConnectStatusCard.statusIcon.setColorFilter(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.theme_green
+                        )
+                    )
                     binding.disconnect.isEnabled = false
                     binding.waitForActions.visibility = View.GONE
                     (activity as BaseActivity).setActionBarTitle(getString(R.string.wallet_connect_session))
@@ -117,7 +149,12 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
 
     private fun setAction(method: String, iconResource: Int, stringResource: Int) {
         requestMethod = method
-        binding.walletConnectActionCard.actionIcon.setImageDrawable(ContextCompat.getDrawable(requireContext(), iconResource))
+        binding.walletConnectActionCard.actionIcon.setImageDrawable(
+            ContextCompat.getDrawable(
+                requireContext(),
+                iconResource
+            )
+        )
         binding.walletConnectActionCard.actionText.text = getString(stringResource)
         binding.walletConnectActionCard.root.visibility = View.VISIBLE
     }
@@ -126,6 +163,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         timeoutTimer = object : CountDownTimer(15000, 1000) {
             override fun onTick(millisecondFinished: Long) {
             }
+
             override fun onFinish() {
                 if (!didConnectBefore)
                     showTryApproveAgain()
@@ -145,7 +183,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         builder.setPositiveButton(getString(R.string.wallet_connect_approve_try_again_try_again)) { _, _ ->
             _viewModel.approveSession()
         }
-        builder.setNegativeButton(getString(R.string.wallet_connect_approve_try_again_later)) {dialog, _ ->
+        builder.setNegativeButton(getString(R.string.wallet_connect_approve_try_again_later)) { dialog, _ ->
             dialog.dismiss()
             gotoMain()
         }
@@ -155,7 +193,12 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
     private fun showDisconnectWarning() {
         val builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.wallet_connect_disconnect_warning_title)
-        builder.setMessage(getString(R.string.wallet_connect_disconnect_warning_message, _viewModel.sessionName()))
+        builder.setMessage(
+            getString(
+                R.string.wallet_connect_disconnect_warning_message,
+                _viewModel.sessionName()
+            )
+        )
         builder.setPositiveButton(getString(R.string.wallet_connect_disconnect_warning_button_disconnect)) { _, _ ->
             gotoMain()
         }

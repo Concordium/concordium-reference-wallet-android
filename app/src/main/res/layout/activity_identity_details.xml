@@ -108,15 +108,16 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         tools:text="Error message from API is shown here" />
+
                     <Button
                         android:id="@+id/remove_button"
                         style="@style/Button.Standard"
                         android:layout_width="match_parent"
+                        android:layout_alignParentBottom="true"
                         android:layout_marginLeft="@dimen/activity_horizontal_margin"
                         android:layout_marginRight="@dimen/activity_horizontal_margin"
                         android:layout_marginBottom="@dimen/activity_vertical_margin"
-                        android:text="@string/failed_remove"
-                        android:layout_alignParentBottom="true"/>
+                        android:text="@string/failed_remove" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

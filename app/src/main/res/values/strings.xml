@@ -1050,4 +1050,57 @@
     <string name="cis_delete_dialog_cancel">Cancel</string>
     <string name="cis_search_balance">Your balance: %1$s</string>
 
+
+    <string name="proof_of_identity_prompt_title">Proof of Identity</string>
+    <string name="proof_of_identity_prompt_subtitle">%1$s requests the following information about you:</string>
+    <string name="proof_of_identity_prompt_proof_not_met">You don’t meet all requirements, and will not be able to accept the request.</string>
+    <string name="proof_of_identity_prompt_accept">Accept</string>
+    <string name="proof_of_identity_prompt_reject">Reject</string>
+    <string name="proof_of_identity_status_done">Done</string>
+    <string name="proof_of_identity_status_success">Proof of identity successful.</string>
+    <string name="proof_of_identity_status_rejected">Proof of identity was rejected.</string>
+
+    <string name="proof_of_identity_information_to_reveal">Information to reveal</string>
+
+    <string name="proof_of_identity_meet">You meet this requirement</string>
+    <string name="proof_of_identity_not_meet">You don’t meet this requirement</string>
+
+    <string name="proof_of_identity_first_name">First name:</string>
+    <string name="proof_of_identity_last_name">Last name:</string>
+    <string name="proof_of_identity_sex">Sex:</string>
+    <string name="proof_of_identity_date_of_birth">Date of birth:</string>
+    <string name="proof_of_identity_dob">D.O.B:</string>
+    <string name="proof_of_identity_country_of_residence">Country of residence:</string>
+    <string name="proof_of_identity_nationality">Nationality:</string>
+    <string name="proof_of_identity_id_document_type">ID document type:</string>
+    <string name="proof_of_identity_id_document_number">ID document number:</string>
+    <string name="proof_of_identity_id_document_issuer">ID document issuer:</string>
+    <string name="proof_of_identity_id_document_issued_at">ID valid from:</string>
+    <string name="proof_of_identity_id_document_expires_at">ID valid to:</string>
+    <string name="proof_of_identity_national_id_number">National ID number:</string>
+    <string name="proof_of_identity_tax_id_number">Tax ID number:</string>
+
+    <string name="proof_of_identity_range_age">Age:</string>
+    <string name="proof_of_identity_range_date_of_birth">D.O.B:</string>
+    <string name="proof_of_identity_range_id_expires">ID expires:</string>
+    <string name="proof_of_identity_range_id_issued">ID issued:</string>
+
+    <string name="proof_of_identity_membership_country_of_residence">Country of residence:</string>
+    <string name="proof_of_identity_membership_nationality">Nationality:</string>
+    <string name="proof_of_identity_membership_document_type">Document type:</string>
+    <string name="proof_of_identity_membership_document_issuer">Document issuer:</string>
+
+    <string name="proof_of_identity_minimum_age">More than %1$s years old</string>
+    <string name="proof_of_identity_maximum_age">Less than %1$s years old</string>
+    <string name="proof_of_identity_between_age">%1$s to %2$s years old</string>
+    <string name="proof_of_identity_exact_age">%1$s years old</string>
+    <string name="proof_of_identity_minimum_age_description">Your date of birth is before %1$s.</string>
+    <string name="proof_of_identity_maximum_age_description">Your date of birth is after %1$s.</string>
+    <string name="proof_of_identity_between_age_description">Your date of birth is between %1$s and %2$s.</string>
+    <string name="proof_of_identity_exact_age_description">Your date of birth is exactly %1$s.</string>
+
+    <string name="proof_of_identity_after_date">After %1$s</string>
+    <string name="proof_of_identity_before_date">Before %1$s</string>
+    <string name="proof_of_identity_between_dates">%1$s to %2$s</string>
+
 </resources>

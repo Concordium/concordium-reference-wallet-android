@@ -162,12 +162,20 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="TextView.Small.White">
+        <item name="android:textColor">@color/text_white</item>
+    </style>
+
     <style name="TextView.Small.Light">
         <item name="android:textColor">@color/text_grey</item>
     </style>
 
     <style name="TextView.XSmall">
         <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="TextView.XSmall.White">
+        <item name="android:textColor">@color/text_white</item>
     </style>
 
     <style name="TextView.XSmall.Light">

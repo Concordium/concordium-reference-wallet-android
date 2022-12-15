@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/activity_vertical_margin">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_top_blue"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/action_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginVertical="@dimen/activity_vertical_margin_half"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:scaleType="fitCenter"
+            android:tint="@color/theme_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/info_visible" />
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/TextView.Small.White"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            app:layout_constraintStart_toEndOf="@id/action_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/proof_of_identity_information_to_reveal" />
+
+        <TextView
+            android:id="@+id/sub_title"
+            style="@style/TextView.XSmall.White"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            app:layout_constraintStart_toEndOf="@id/action_icon"
+            app:layout_constraintTop_toBottomOf="@id/title"
+            tools:text="@string/proof_of_identity_meet" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/proof_status"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginVertical="@dimen/activity_vertical_margin_half"
+            android:layout_marginStart="@dimen/activity_horizontal_margin_half"
+            android:scaleType="fitCenter"
+            android:tint="@color/theme_white"
+            app:layout_constraintBottom_toBottomOf="@id/sub_title"
+            app:layout_constraintStart_toEndOf="@id/sub_title"
+            app:layout_constraintTop_toTopOf="@id/sub_title"
+            tools:src="@drawable/ic_ok" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/info"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="@dimen/activity_vertical_margin_half"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin_half"
+            android:scaleType="fitCenter"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/warning_exclamation" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/proofs_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_bottom_transparent"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/header">
+
+        <include layout="@layout/item_proof_of_identity_condition" android:visibility="gone" tools:visibility="visible"/>
+        <TextView
+            android:id="@+id/statement"
+            style="@style/TextView.Small"
+            android:layout_width="match_parent"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin_half"
+            android:layout_marginRight="@dimen/activity_horizontal_margin_half"
+            tools:text="Your country of residence is NOT one of the following:" />
+        <TextView
+            android:id="@+id/statement_value"
+            style="@style/TextView.Small"
+            android:layout_width="match_parent"
+            android:layout_marginRight="@dimen/activity_horizontal_margin_half"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin_half"
+            android:layout_marginBottom="@dimen/activity_horizontal_margin"
+            tools:text="Andorra, United Arab Emirates, Afghanistan, Antigua and Barbuda, Anguilla, Albania, Benin, Brazil, Bahamas, Bhutan, Belize, Canada, Chile, Spain, Finland, Fiji, Ghana, Hong Kong, Indonesia, Korea, Mali, Malta, Malawi, Mexico, Mozambique, Namibia, Nigeria, Nicaragua, Panama, Peru" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
