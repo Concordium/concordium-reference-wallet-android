@@ -91,7 +91,7 @@ class TokenDetailsFragment : TokensBaseFragment() {
     private fun setNameAndIcon(tokenMetadata: TokenMetadata) {
 
         val name = tokenMetadata.name
-        val thumbnail = tokenMetadata.thumbnail.url
+        val thumbnail = tokenMetadata.thumbnail?.url
         binding.details.nameAndIconHolder.visibility = View.VISIBLE
 
         if (!thumbnail.isNullOrBlank()) {
@@ -102,7 +102,7 @@ class TokenDetailsFragment : TokensBaseFragment() {
                 .fitCenter()
                 .error(R.drawable.ic_token_no_image)
                 .into(binding.details.icon)
-        } else if (thumbnail == "none") {
+        } else {
             binding.details.icon.setImageResource(R.drawable.ic_token_no_image)
         }
         binding.details.name.text = name
