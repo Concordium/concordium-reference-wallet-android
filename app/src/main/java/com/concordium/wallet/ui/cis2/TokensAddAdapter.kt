@@ -48,7 +48,7 @@ class TokensAddAdapter(
         val token = dataSet[position]
 
         token.tokenMetadata?.let { tokenMetadata ->
-            if (tokenMetadata.thumbnail != null && !tokenMetadata.thumbnail.url.isNullOrEmpty()) {
+            if (tokenMetadata.thumbnail != null && !tokenMetadata.thumbnail.url.isNullOrBlank()) {
                 Glide.with(context)
                     .load(tokenMetadata.thumbnail.url)
                     .placeholder(R.drawable.ic_token_loading_image)

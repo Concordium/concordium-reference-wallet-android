@@ -65,7 +65,7 @@ class TokensAccountDetailsAdapter(
 
         if (isFungible && token.isCCDToken) {
             holder.binding.title.text =
-                "${CurrencyUtil.formatGTU(token.totalBalance!!, true)} CCD"
+                "${CurrencyUtil.formatGTU(token.totalBalance, true)} CCD"
 
             Glide.with(context).load(R.drawable.ic_concordium_logo_no_text)
                 .into(holder.binding.tokenIcon)

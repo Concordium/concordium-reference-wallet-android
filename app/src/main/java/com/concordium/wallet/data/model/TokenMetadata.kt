@@ -17,7 +17,7 @@ data class TokenMetadata(
 ) : Serializable
 
 data class Thumbnail(
-    val url: String
+    val url: String?
 ) : Serializable
 
 data class UrlHolder(
