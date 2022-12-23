@@ -14,6 +14,8 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityWalletConnectBinding
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.walletconnect.WalletConnectService.Companion.START_FOREGROUND_ACTION
+import com.concordium.wallet.ui.walletconnect.WalletConnectService.Companion.STOP_FOREGROUND_ACTION
 import com.concordium.wallet.ui.cis2.lookfornew.LookForNewTokensFragment
 import com.concordium.wallet.ui.walletconnect.proof.of.identity.ProofOfIdentityFragment
 import com.concordium.wallet.util.getSerializable
@@ -82,16 +84,19 @@ class WalletConnectActivity : BaseActivity() {
             println("LC -> From Camera = ${viewModel.walletConnectData.wcUri}")
         }
 
-        Intent(this, WalletConnectService::class.java).also { intent ->
-            bindService(intent, connection, Context.BIND_AUTO_CREATE)
-        }
+        val intent = Intent(this, WalletConnectService::class.java)
+        intent.action = START_FOREGROUND_ACTION
+        startService(intent)
+        bindService(intent, connection, Context.BIND_AUTO_CREATE)
     }
-
 
     override fun onDestroy() {
         viewModel.disconnect()
         viewModel.unregister()
         unbindService(connection)
+        val intent = Intent(this, WalletConnectService::class.java)
+        intent.action = STOP_FOREGROUND_ACTION
+        stopService(intent)
         super.onDestroy()
     }
 

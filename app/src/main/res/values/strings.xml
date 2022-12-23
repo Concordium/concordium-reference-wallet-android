@@ -274,7 +274,7 @@
     <string name="delegation_status_content_delegation_will_be_stopped">The delegation will be stopped, and the delegation amount will be unlocked on the public balance of the account.</string>
 
     <string name="delegation_register_delegation_intro">You can delegate to an open pool of your choice, or you can stake using passive delegation.</string>
-    <string name="delegation_register_delegation_desc">If you don\'t already know which baker pool you want to delegate an amount to, you can look for one here:\n\n<a href="https://ccdscan.io/staking">https://ccdscan.io/staking</a></string>
+    <string name="delegation_register_delegation_desc">If you don\'t already know which baker pool you want to delegate an amount to, you can look for one here:\n\n%1$s</string>
     <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific baker pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a baker node.\n\nFor more info you can visit\n\n<a href="https://developer.concordium.software/en/mainnet/net/concepts/concepts-delegation.html">developer.concordium.software</a></string>
     <string name="delegation_register_delegation_pool_id_hint">Enter baker pool ID</string>
     <string name="delegation_register_delegation_pool_id_hint_update">Optional: New baker pool ID</string>
@@ -593,6 +593,8 @@
     <string name="identity_details_title">Identity</string>
     <string name="identity_details_attribute_header">Identity data</string>
     <string name="identity_verified_by">Verified by</string>
+    <string name="identity_pending_verification_with">Pending verification with</string>
+    <string name="identity_rejected_by">Rejected by</string>
 
     <!-- Identity create -->
     <string name="identity_create_identity_provider_header">Choosing an identity provider</string>
@@ -847,6 +849,7 @@
     <string name="wallet_connect_proof_of_identity">Proof of Identity</string>
     <string name="wallet_connect_message">Message</string>
     <string name="wallet_connect_transaction">Transaction</string>
+    <string name="wallet_connect_service_running">WalletConnect session open…</string>
 
     <!-- ***** More ***** -->
 
@@ -925,6 +928,7 @@
     <string name="account_details_menu_decrypt">Decrypt</string>
     <string name="account_details_menu_change_name">Change account name</string>
     <string name="account_details_menu_export_key">Export private key</string>
+    <string name="account_details_menu_export_transaction_log">Export transaction logs</string>
     <string name="account_details_delegation_with_baker_pool">Delegation with baker pool %1$s</string>
     <string name="account_details_delegation_with_passive_pool">Passive delegation</string>
     <string name="account_details_stake_with_baker">Stake with baker %1$s</string>
@@ -993,6 +997,16 @@
     <string name="export_account_keys_copied">Copied</string>
     <string name="export_account_keys_to_file">Export to file</string>
     <string name="export_account_keys_file_exported">File exported</string>
+
+    <string name="export_transaction_log_title">Export transaction logs</string>
+    <string name="export_transaction_log_description">Transaction logs of an account can be generated and saved via %1$s\n\nIf your account contains a lot of transactions, it may take a moment for CCDScan to prepare the file. Once the logs are ready, they will be downloaded to your device as a CSV file. Please note that if the account has a lot of transactions, the file size can be quite large.\n\nYou can also visit %1$s and manually generate your transaction logs from a desktop browser.</string>
+    <string name="export_transaction_log_save">Save transaction logs</string>
+    <string name="export_transaction_log_done">Done</string>
+    <string name="export_transaction_log_generating">Generating transaction logs, please hold on.</string>
+    <string name="export_transaction_log_saved">The transaction logs have been saved.</string>
+    <string name="export_transaction_log_failed">Failed to download transaction logs</string>
+    <string name="export_transaction_log_progress">%1$s/%2$s KB downloaded</string>
+    <string name="export_transaction_log_downloading">Downloading transaction logs.</string>
 
     <string name="cis_tab_fungible">Fungible</string>
     <string name="cis_tab_collectibles">Collectibles</string>

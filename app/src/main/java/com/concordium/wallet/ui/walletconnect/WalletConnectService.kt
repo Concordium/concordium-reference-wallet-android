@@ -1,9 +1,12 @@
 package com.concordium.wallet.ui.walletconnect
 
-import android.app.Service
+import android.app.*
+import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import androidx.core.app.NotificationCompat
+import com.concordium.wallet.R
 import com.concordium.wallet.data.walletconnect.Params
 import com.google.gson.Gson
 import com.walletconnect.android.Core
@@ -19,13 +22,15 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
     private var settledSessionResponseError: Sign.Model.SettledSessionResponse.Error? = null
     private var sessionRequest: Sign.Model.SessionRequest? = null
 
+    companion object {
+        const val FOREGROUND_SERVICE = 101
+        const val START_FOREGROUND_ACTION = "START_FOREGROUND_ACTION"
+        const val STOP_FOREGROUND_ACTION = "STOP_FOREGROUND_ACTION"
+    }
+
     inner class LocalBinder : Binder() {
         fun pair(wcUri: String) {
             pairWC(wcUri)
-        }
-
-        fun ping() {
-            pingWC()
         }
 
         fun rejectSession() {
@@ -45,7 +50,6 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
         }
 
         fun disconnect() {
-
             disconnectWC()
         }
 
@@ -71,13 +75,31 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
         }
     }
 
-    override fun onBind(intent: Intent): IBinder {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent!!.action == START_FOREGROUND_ACTION) {
+            val channelId = "WalletConnect"
+            val channel = NotificationChannel(channelId,"WalletConnect Channel",NotificationManager.IMPORTANCE_HIGH)
+            (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel)
+            val notification = NotificationCompat.Builder(this, channelId)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(getString(R.string.wallet_connect_service_running))
+                .setSmallIcon(R.drawable.ic_service_notification)
+                .setOngoing(true)
+                .setShowWhen(false)
+                .setAllowSystemGeneratedContextualActions(false)
+                .setSound(null)
+                .setVibrate(null)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .build()
+            startForeground(FOREGROUND_SERVICE, notification)
+        }
+        return START_STICKY
+    }
 
+    override fun onBind(intent: Intent): IBinder {
         CoreClient.setDelegate(this)
         SignClient.setWalletDelegate(this)
-
         CoreClient.Pairing.getPairings().forEach { pairing ->
-
             CoreClient.Pairing.disconnect(Core.Params.Disconnect(pairing.topic)) { modelError ->
                 println("LC -> DISCONNECT ERROR in Service ${modelError.throwable.stackTraceToString()}")
             }
@@ -89,15 +111,15 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
         super.onDestroy()
         println("LC -> onDestroy Service")
         disconnectWC()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
     }
 
     private fun pairWC(wcUri: String) {
-
         println("LC -> CALL PAIR $wcUri")
         if (CoreClient.Pairing.getPairings().isEmpty()) {
             val pairingParams = Core.Params.Pair(wcUri)
             println("LC -> PAIR IS EMPTY")
-
             CoreClient.Pairing.pair(pairingParams) { error ->
                 println("LC -> PAIR ERROR ${throwableRemoveLineBreaks(error.throwable)}")
                 EventBus.getDefault().post(PairError(error.throwable.message ?: ""))
@@ -106,36 +128,17 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
             println("LC -> PAIR NOT EMPTY")
             CoreClient.Pairing.getPairings().forEach {
                 println("LC -> PAIR EXPIRE TIME ${it.expiry}")
-
                 CoreClient.Pairing.disconnect(Core.Params.Disconnect(it.topic)) { error ->
-                    println("LC -> ERROR DISCONECCTING ${throwableRemoveLineBreaks(error.throwable)}")
+                    println("LC -> ERROR DISCONNECTING ${throwableRemoveLineBreaks(error.throwable)}")
                 }
             }
-
             val pairingParams = Core.Params.Pair(wcUri)
-
             println("LC -> PAIR RETRY")
-
             CoreClient.Pairing.pair(pairingParams) { error ->
                 println("LC -> PAIR ERROR ${throwableRemoveLineBreaks(error.throwable)}")
                 EventBus.getDefault().post(PairError(error.throwable.message ?: ""))
             }
         }
-    }
-
-    private fun pingWC() {
-        println("LC -> CALL PING ${binder.getSessionTopic()}")
-        val pingParams = Sign.Params.Ping(binder.getSessionTopic())
-        SignClient.ping(pingParams, object : Sign.Listeners.SessionPing {
-            override fun onSuccess(pingSuccess: Sign.Model.Ping.Success) {
-                println("LC -> PING SUCCESS ${pingSuccess.topic}")
-                EventBus.getDefault().post(ConnectionState(true))
-            }
-
-            override fun onError(pingError: Sign.Model.Ping.Error) {
-                println("LC -> PING ERROR ${throwableRemoveLineBreaks(pingError.error)}")
-            }
-        })
     }
 
     private fun rejectSessionWC() {
@@ -167,7 +170,6 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
                 proposerPublicKey = sessionProposal?.proposerPublicKey ?: "",
                 namespaces = sessionNamespaces
             )
-
             SignClient.approveSession(approveParams) { error ->
                 println("LC -> APPROVE SESSION ERROR ${throwableRemoveLineBreaks(error.throwable)}")
                 EventBus.getDefault().post(ApproveError(error.throwable.message ?: ""))

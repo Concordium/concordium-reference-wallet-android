@@ -131,11 +131,9 @@ class SelectTokensFragment : TokensBaseFragment() {
 
     private fun initObservers() {
         _viewModel.lookForTokens.observe(viewLifecycleOwner) {
-
-            tokensAddAdapter.dataSet = arrayOf()
+            tokensAddAdapter.dataSet = _viewModel.tokens.toTypedArray()
             _viewModel.searchedTokens.clear()
             tokensAddAdapter.notifyDataSetChanged()
-
         }
         _viewModel.tokenDetails.observe(viewLifecycleOwner) {
             tokensAddAdapter.dataSet = _viewModel.tokens.toTypedArray()
