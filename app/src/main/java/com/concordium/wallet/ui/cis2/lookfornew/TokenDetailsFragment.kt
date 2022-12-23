@@ -91,7 +91,7 @@ class TokenDetailsFragment : TokensBaseFragment() {
     private fun setNameAndIcon(tokenMetadata: TokenMetadata) {
 
         val name = tokenMetadata.name
-        val thumbnail = tokenMetadata.thumbnail.url
+        val thumbnail = tokenMetadata.thumbnail?.url
         binding.details.nameAndIconHolder.visibility = View.VISIBLE
 
         if (!thumbnail.isNullOrBlank()) {

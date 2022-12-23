@@ -139,9 +139,9 @@ class TokenDetailsActivity : BaseActivity() {
 
     private fun setNameAndIcon(tokenMetadata: TokenMetadata) {
         val name = tokenMetadata.name
-        val thumbnail = tokenMetadata.thumbnail.url
+        val thumbnail = tokenMetadata.thumbnail?.url
         binding.includeAbout.nameAndIconHolder.visibility = View.VISIBLE
-        if (thumbnail.isNotBlank()) {
+        if (!thumbnail.isNullOrBlank()) {
             Glide.with(this)
                 .load(thumbnail)
                 .placeholder(R.drawable.ic_token_loading_image)
@@ -149,7 +149,7 @@ class TokenDetailsActivity : BaseActivity() {
                 .fitCenter()
                 .error(R.drawable.ic_token_no_image)
                 .into(binding.includeAbout.icon)
-        } else if (thumbnail == "none") {
+        } else {
             binding.includeAbout.icon.setImageResource(R.drawable.ic_token_no_image)
         }
         binding.includeAbout.name.text = name
