@@ -17,7 +17,9 @@ class ProofOfIdentityFragment : BaseBottomSheetDialogFragment() {
     private val binding get() = _binding!!
     private val viewModel: WalletConnectViewModel by activityViewModels()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentProofOfIdentityBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -36,10 +38,15 @@ class ProofOfIdentityFragment : BaseBottomSheetDialogFragment() {
 
     private fun initObservers() {
         viewModel.stepPageBy.observe(this) {
-            if (binding.viewPager.currentItem + it >= 0 && binding.viewPager.currentItem + it < (binding.viewPager.adapter?.itemCount ?: 0)) {
-                binding.viewPager.currentItem = binding.viewPager.currentItem + it
+            if (it == -1) {
+                dismiss()
+            } else {
+                if (binding.viewPager.currentItem + it >= 0 && binding.viewPager.currentItem + it < (binding.viewPager.adapter?.itemCount
+                        ?: 0)
+                ) {
+                    binding.viewPager.currentItem = binding.viewPager.currentItem + it
+                }
             }
-
         }
     }
 

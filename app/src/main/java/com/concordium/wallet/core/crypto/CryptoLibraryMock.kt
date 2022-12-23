@@ -33,6 +33,10 @@ class CryptoLibraryMock(val gson: Gson) : CryptoLibrary {
         return gson.fromJson(output, CreateTransferOutput::class.java)
     }
 
+    override suspend fun proveIdStatement(statement: String): String? {
+        TODO("Not yet implemented")
+    }
+
     override fun checkAccountAddress(address: String): Boolean {
         return true
     }

@@ -19,14 +19,23 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
         seed: String, net: String, identityIndex: Int
     ): IdRequestAndPrivateDataOutputV1? =
         withContext(Dispatchers.Default) {
-            val inputObj = IdRequestAndPrivateDataInputV1(identityProviderInfo, global, arsInfo, seed, net, identityIndex)
+            val inputObj = IdRequestAndPrivateDataInputV1(
+                identityProviderInfo,
+                global,
+                arsInfo,
+                seed,
+                net,
+                identityIndex
+            )
             val input = gson.toJson(inputObj)
             loadWalletLib()
             val result = create_id_request_and_private_data_v1(input)
             Log.d("Output (Code ${result.result}): ${result.output}")
             if (result.result == CryptoLibrary.SUCCESS) {
-                return@withContext gson.fromJson(result.output,
-                    IdRequestAndPrivateDataOutputV1::class.java)
+                return@withContext gson.fromJson(
+                    result.output,
+                    IdRequestAndPrivateDataOutputV1::class.java
+                )
             }
             Log.e("CryptoLib failed")
             return@withContext null
@@ -39,14 +48,19 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             val result = create_credential_v1(input)
             Log.d("Output (Code ${result.result}): ${result.output}")
             if (result.result == CryptoLibrary.SUCCESS) {
-                return@withContext gson.fromJson(result.output,
-                    CreateCredentialOutputV1::class.java)
+                return@withContext gson.fromJson(
+                    result.output,
+                    CreateCredentialOutputV1::class.java
+                )
             }
             Log.e("CryptoLib failed")
             return@withContext null
         }
 
-    override suspend fun createTransfer(createTransferInput: CreateTransferInput, type: Int): CreateTransferOutput? =
+    override suspend fun createTransfer(
+        createTransferInput: CreateTransferInput,
+        type: Int
+    ): CreateTransferOutput? =
         withContext(Dispatchers.Default) {
             val input = gson.toJson(createTransferInput)
             Log.d("Input: $input")
@@ -60,13 +74,27 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             return@withContext null
         }
 
+    override suspend fun proveIdStatement(statement: String): String? =
+        withContext(Dispatchers.Default) {
+            val result = prove_id_statement(statement)
+            if (result.result == CryptoLibrary.SUCCESS) {
+                return@withContext result.output
+            }
+            Log.e("CryptoLib failed")
+            return@withContext null
+        }
+
     private fun internalCreateTransfer(input: String, type: Int): ReturnValue {
         when (type) {
             CryptoLibrary.PUBLIC_TO_SEC_TRANSFER -> return create_pub_to_sec_transfer(input)
             CryptoLibrary.SEC_TO_PUBLIC_TRANSFER -> return create_sec_to_pub_transfer(input)
             CryptoLibrary.ENCRYPTED_TRANSFER -> return create_encrypted_transfer(input)
-            CryptoLibrary.CONFIGURE_DELEGATION_TRANSACTION -> return create_configure_delegation_transaction(input)
-            CryptoLibrary.CONFIGURE_BAKING_TRANSACTION -> return create_configure_baker_transaction(input)
+            CryptoLibrary.CONFIGURE_DELEGATION_TRANSACTION -> return create_configure_delegation_transaction(
+                input
+            )
+            CryptoLibrary.CONFIGURE_BAKING_TRANSACTION -> return create_configure_baker_transaction(
+                input
+            )
         }
         return create_transfer(input)
     }
@@ -87,7 +115,8 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
 
     override fun combineEncryptedAmounts(selfAmount: String, incomingAmounts: String): String {
         loadWalletLib()
-        val result = combine_encrypted_amounts(gson.toJson(selfAmount), gson.toJson(incomingAmounts))
+        val result =
+            combine_encrypted_amounts(gson.toJson(selfAmount), gson.toJson(incomingAmounts))
         return gson.fromJson(result.output, String::class.java)
     }
 
@@ -128,7 +157,10 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             val result = get_identity_keys_and_randomness(input)
             Log.d("Output (Code ${result.result}): ${result.output}")
             if (result.result == CryptoLibrary.SUCCESS) {
-                return@withContext gson.fromJson(result.output, IdentityKeysAndRandomnessOutput::class.java)
+                return@withContext gson.fromJson(
+                    result.output,
+                    IdentityKeysAndRandomnessOutput::class.java
+                )
             }
             Log.e("CryptoLib failed")
             return@withContext null
@@ -141,7 +173,10 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             val result = get_account_keys_and_randomness(input)
             Log.d("Output (Code ${result.result}): ${result.output}")
             if (result.result == CryptoLibrary.SUCCESS) {
-                return@withContext gson.fromJson(result.output, AccountKeysAndRandomnessOutput::class.java)
+                return@withContext gson.fromJson(
+                    result.output,
+                    AccountKeysAndRandomnessOutput::class.java
+                )
             }
             Log.e("CryptoLib failed")
             return@withContext null
@@ -154,7 +189,10 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             val result = create_account_transaction(input)
             Log.d("Output (Code ${result.result}): ${result.output}")
             if (result.result == CryptoLibrary.SUCCESS) {
-                return@withContext gson.fromJson(result.output, CreateAccountTransactionOutput::class.java)
+                return@withContext gson.fromJson(
+                    result.output,
+                    CreateAccountTransactionOutput::class.java
+                )
             }
             Log.e("CryptoLib failed")
             return@withContext null
@@ -180,7 +218,10 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             val result = serialize_token_transfer_parameters(input)
             Log.d("Output (Code ${result.result}): ${result.output}")
             if (result.result == CryptoLibrary.SUCCESS) {
-                return@withContext gson.fromJson(result.output, SerializeTokenTransferParametersOutput::class.java)
+                return@withContext gson.fromJson(
+                    result.output,
+                    SerializeTokenTransferParametersOutput::class.java
+                )
             }
             Log.e("CryptoLib failed")
             return@withContext null

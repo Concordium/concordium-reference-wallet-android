@@ -74,10 +74,20 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
             showDisconnectWarning()
         }
 
-        //FIXME: Remove when not testing
+        //FIXME: Remove when ID 2.0 is not mocked
+        //
+        binding.walletConnectTestCard.actionIcon.setImageDrawable(
+            ContextCompat.getDrawable(
+                requireContext(),
+                R.drawable.ic_identity
+            )
+        )
+        binding.walletConnectTestCard.actionText.text = getString(R.string.wallet_connect_proof_of_identity)
         binding.walletConnectTestCard.root.setOnClickListener {
             _viewModel.proofOfIdentityAction.postValue(true)
         }
+        //
+
 
         binding.walletConnectActionCard.root.setOnClickListener {
             binding.walletConnectActionCard.root.visibility = View.GONE

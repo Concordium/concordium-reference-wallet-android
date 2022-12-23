@@ -1065,6 +1065,8 @@
     <string name="proof_of_identity_meet">You meet this requirement</string>
     <string name="proof_of_identity_not_meet">You don’t meet this requirement</string>
 
+    <string name="proof_of_identity_not_available">N/A</string>
+
     <string name="proof_of_identity_first_name">First name:</string>
     <string name="proof_of_identity_last_name">Last name:</string>
     <string name="proof_of_identity_sex">Sex:</string>
@@ -1103,4 +1105,41 @@
     <string name="proof_of_identity_before_date">Before %1$s</string>
     <string name="proof_of_identity_between_dates">%1$s to %2$s</string>
 
+
+    <string name="proof_of_identity_membership_eu">EU</string>
+    <string name="proof_of_identity_membership_not_eu">Outside of EU</string>
+    <string name="proof_of_identity_membership_nationality_in_eu_description">You are a national of an EU country.</string>
+    <string name="proof_of_identity_membership_nationality_not_in_eu_description">You are NOT a national of an EU country.</string>
+    <string name="proof_of_identity_membership_country_in_eu_description">Your country of residence is an EU country.</string>
+    <string name="proof_of_identity_membership_country_not_in_eu_description">Your country of residence is NOT an EU country.</string>
+
+    <string name="proof_of_identity_membership_country_in_set">Your country of residence is one of the following:\n%1$s</string>
+    <string name="proof_of_identity_membership_country_not_in_set">Your country of residence is NOT one of the following:\n%1$s</string>
+
+    <string name="proof_of_identity_membership_nationality_in_set">You are a national of one of these countries:\n%1$s</string>
+    <string name="proof_of_identity_membership_nationality_not_in_set">You are NOT a national of one of these countries:\n%1$s</string>
+
+    <string name="proof_of_identity_membership_one">1 of %1$s countries</string>
+    <string name="proof_of_identity_membership_none">None of %1$s countries</string>
+
+    <string name="proof_of_identity_type_one">1 of %1$s types</string>
+    <string name="proof_of_identity_type_none">None of %1$s types</string>
+    <string name="proof_of_identity_type_in_set">Your identity document type is one of the following:\n%1$s</string>
+    <string name="proof_of_identity_type_not_in_set">Your identity document type is NOT one of the following:\n%1$s</string>
+
+    <string name="proof_of_identity_issuers_one">1 of %1$s issuers</string>
+    <string name="proof_of_identity_issuers_none">None of %1$s issuers</string>
+
+    <string name="proof_of_identity_issuers_in_set">Your identity document issuer is one of the following:\n%1$s</string>
+    <string name="proof_of_identity_issuers_not_in_set">Your identity document issuer is NOT one of the following:\n%1$s</string>
+    <string name="proof_of_identity_reveal_main_description">%1$s will be given all the information above. You should only accept to do so, if you have absolute trust in the service, and if you are familiar with their privacy policiy.</string>
+    <string name="proof_of_identity_reveal_main_description_bold">Important:</string>
+
+    <string name="dialog_identity_proof_more">You can read more on</string>
+    <string name="dialog_identity_proof_okay">Okay</string>
+    <string name="dialog_identity_proof_reveal_title">Revealing information</string>
+    <string name="dialog_identity_proof_zero_title">Zero Knowledge proof</string>
+    <string name="dialog_identity_proof_reveal_content">When you reveal information for a third party, you effectively hand over the information to them. This means that you should only do this, if you have absolute trust in them, and if you are familiar with their data usage and protection procedures.</string>
+    <string name="dialog_identity_proof_zero_content">Zero knowledge proofs are a way of proving something to a service or dApp, without revealing the exact personal information. One example can be that you prove that you are more than 18 years old, without revealing your exact date of birth. Another example could be that you live in one of a range of countries, without revealing exactly which country you live in.</string>
+    <string name="dialog_identity_proof_link"><a href="https://developer.concordium.software/en/mainnet/index.html">developer.concordium.software</a></string>
 </resources>

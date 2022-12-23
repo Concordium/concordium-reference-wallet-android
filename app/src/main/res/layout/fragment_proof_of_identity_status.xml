@@ -21,8 +21,6 @@
         android:layout_width="110dp"
         android:layout_height="110dp"
         android:src="@drawable/ic_big_logo_ok"
-        android:visibility="gone"
-        tools:visibility="visible"
         android:layout_marginTop="@dimen/activity_vertical_margin_extended"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

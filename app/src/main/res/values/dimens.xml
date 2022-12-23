@@ -62,4 +62,7 @@
     <!-- Text sizes  -->
     <dimen name="mono_standard">14sp</dimen>
 
+    <!-- Identity Proofs  -->
+    <dimen name="identity_proof_icon_margin_small">4dp</dimen>
+
 </resources>

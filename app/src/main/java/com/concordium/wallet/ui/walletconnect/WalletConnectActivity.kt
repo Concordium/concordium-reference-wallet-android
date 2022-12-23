@@ -173,7 +173,7 @@ class WalletConnectActivity : BaseActivity() {
             }
         }
         viewModel.proofOfIdentityAction.observe(this) {
-                proofOfIdentityView()
+            if (it) proofOfIdentityView()
         }
         viewModel.messageSignedSuccess.observe(this) { message ->
             viewModel.respondSuccess(message)

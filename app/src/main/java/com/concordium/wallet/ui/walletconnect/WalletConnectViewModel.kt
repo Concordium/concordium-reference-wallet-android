@@ -13,10 +13,7 @@ import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.*
-import com.concordium.wallet.data.model.AccountData
-import com.concordium.wallet.data.model.AccountNonce
-import com.concordium.wallet.data.model.ProofOfIdentity
-import com.concordium.wallet.data.model.SubmissionData
+import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.WalletDatabase
@@ -70,6 +67,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val message: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val proofOfIdentity: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val proofOfIdentityRequest: MutableLiveData<ProofOfIdentity> by lazy { MutableLiveData<ProofOfIdentity>() }
+    val proofOfIdentityCheck: MutableLiveData<Proofs> by lazy { MutableLiveData<Proofs>() }
     val transactionAction: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val messageAction: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val proofOfIdentityAction: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
@@ -404,10 +402,6 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         accountUpdaterTimer?.start()
     }
 
-    fun stepPage(by: Int) {
-        stepPageBy.postValue(by)
-    }
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(sessionProposal: Sign.Model.SessionProposal) {
         serviceName.postValue(sessionProposal.name)
@@ -449,14 +443,56 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     fun validateProofOfIdentity(proofOfIdentity: ProofOfIdentity) {
 
-        chooseAccount.value?.let {
-
-            val proofOfIdentityHelper = ProofOfIdentityHelper(proofOfIdentity, it.account.revealedAttributes)
+        if (walletConnectData.account != null) {
 
             viewModelScope.launch {
-                val proofs = proofOfIdentityHelper.getProofs()
+                try {
+                    val localAccount = accountRepository.getAllDoneWithIdentity()
+                        .first { it.identity.id == walletConnectData.account!!.identityId }
+
+                    localAccount.identity.identityObject?.let {
+                        val identityAttributes = it.attributeList.chosenAttributes
+                        val proofOfIdentityHelper =
+                            ProofOfIdentityHelper(
+                                proofOfIdentity.challenge!!,
+                                proofOfIdentity,
+                                identityAttributes
+                            )
+                        proofOfIdentityCheck.postValue(proofOfIdentityHelper.getProofs())
+                    }
+                } catch (_: NoSuchElementException) {
+                    Log.e("No Such Identity!")
+                }
             }
         }
+    }
 
+    fun sendIdentityProof() {
+        viewModelScope.launch {
+            val proof = proofOfIdentityCheck.value!!
+            val challenge = proof.challenge!!
+            val proofs = ArrayList<ProofLocal>()
+
+            proof.proofsReveal?.let { proofsRevealList ->
+                for (revealProof in proofsRevealList) {
+                    val encryptedProof = App.appCore.cryptoLibrary.proveIdStatement(revealProof.rawValue!!)!!
+                    proofs.add(ProofLocal(proof = encryptedProof, type = revealProof.type!!.type))
+                }
+            }
+
+            proof.proofsZeroKnowledge?.let { zeroProfs ->
+                for (zeroProof in zeroProfs) {
+                    val encryptedProof = App.appCore.cryptoLibrary.proveIdStatement(zeroProof.rawValue!!)!!
+                    proofs.add(ProofLocal(proof = encryptedProof, type = zeroProof.type!!.type))
+                }
+            }
+
+            val valueLocal = ValueLocal(proofs)
+            val proofSecondary = ProofSecondary(v = 0, value = valueLocal)
+            val proofPrimary = ProofPrimary(credential = "null", proof = proofSecondary)
+            val proofsData = ProofsData(challenge, proofPrimary)
+            Log.d("PROOF: $proofsData")
+
+        }
     }
 }
