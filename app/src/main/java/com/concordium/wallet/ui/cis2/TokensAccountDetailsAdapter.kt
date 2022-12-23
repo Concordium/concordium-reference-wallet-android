@@ -65,13 +65,13 @@ class TokensAccountDetailsAdapter(
 
         if (isFungible && token.isCCDToken) {
             holder.binding.title.text =
-                "${CurrencyUtil.formatGTU(token.totalBalance!!, true)} CCD"
+                "${CurrencyUtil.formatGTU(token.totalBalance, true)} CCD"
 
             Glide.with(context).load(R.drawable.ic_concordium_logo_no_text)
                 .into(holder.binding.tokenIcon)
         } else {
             token.tokenMetadata?.let { tokenMetadata ->
-                if (tokenMetadata.thumbnail.url.isNotBlank()) {
+                if (tokenMetadata.thumbnail != null && !tokenMetadata.thumbnail.url.isNullOrBlank()) {
                     Glide.with(context)
                         .load(tokenMetadata.thumbnail.url)
                         .placeholder(R.drawable.ic_token_loading_image)
@@ -79,7 +79,7 @@ class TokensAccountDetailsAdapter(
                         .fitCenter()
                         .error(R.drawable.ic_token_no_image)
                         .into(holder.binding.tokenIcon)
-                } else if (tokenMetadata.thumbnail.url == "none") {
+                } else {
                     holder.binding.tokenIcon.setImageResource(R.drawable.ic_token_no_image)
                 }
                 if (token.totalBalance != null) {
