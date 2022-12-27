@@ -282,12 +282,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun initTopContent() {
-        setActionBarTitle(
-            getString(
-                if (viewModelAccountDetails.isShielded) R.string.account_details_title_shielded_balance else R.string.account_details_title_regular_balance,
-                viewModelAccountDetails.account.getAccountName()
-            )
-        )
+        setActionBarTitle(viewModelAccountDetails.account.getAccountName())
         when (viewModelAccountDetails.account.transactionStatus) {
             TransactionStatus.ABSENT -> {
                 setErrorMode()
