@@ -30,11 +30,14 @@
         <TextView
             android:id="@+id/title"
             style="@style/TextView.Small.White"
-            android:layout_gravity="center_vertical"
+            android:layout_gravity="left"
+            android:layout_width="0dp"
             android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:text="@string/dialog_identity_proof_zero_title"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin_half"
+            tools:text="@string/proof_of_identity_zero_title"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toEndOf="@id/action_icon"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toStartOf="@id/info"/>
 
         <TextView
             android:id="@+id/sub_title"

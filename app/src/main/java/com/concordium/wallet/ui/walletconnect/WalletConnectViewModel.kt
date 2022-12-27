@@ -50,7 +50,7 @@ data class WalletConnectData(
     var energy: Long? = null,
     var cost: Long? = null,
     var isTransaction: Boolean = true
-): Serializable
+) : Serializable
 
 class WalletConnectViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
@@ -93,8 +93,10 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val stepPageBy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
 
     private val accountUpdater = AccountUpdater(application, viewModelScope)
-    private val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
-    private val transferRepository = TransferRepository(WalletDatabase.getDatabase(application).transferDao())
+    private val accountRepository =
+        AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+    private val transferRepository =
+        TransferRepository(WalletDatabase.getDatabase(application).transferDao())
     private val proxyRepository = ProxyRepository()
     private var submitTransaction: BackendRequest<SubmissionData>? = null
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
@@ -278,12 +280,25 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         }
 
         payload.maxEnergy = walletConnectData.energy?.toInt() ?: 0
-        val accountTransactionInput = CreateAccountTransactionInput(expiry.toInt(), from, keys, this.accountNonce?.nonce ?: -1, payload, type)
-        val accountTransactionOutput = App.appCore.cryptoLibrary.createAccountTransaction(accountTransactionInput)
+        val accountTransactionInput = CreateAccountTransactionInput(
+            expiry.toInt(),
+            from,
+            keys,
+            this.accountNonce?.nonce ?: -1,
+            payload,
+            type
+        )
+        val accountTransactionOutput =
+            App.appCore.cryptoLibrary.createAccountTransaction(accountTransactionInput)
         if (accountTransactionOutput == null) {
             errorInt.postValue(R.string.app_error_lib)
         } else {
-            val createTransferOutput = CreateTransferOutput(accountTransactionOutput.signatures, "", "", accountTransactionOutput.transaction)
+            val createTransferOutput = CreateTransferOutput(
+                accountTransactionOutput.signatures,
+                "",
+                "",
+                accountTransactionOutput.transaction
+            )
             submitTransaction(createTransferOutput)
         }
     }
@@ -302,6 +317,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                 override fun shouldSkipField(f: FieldAttributes): Boolean {
                     return f.name == "payload" || f.name == "schema"
                 }
+
                 override fun shouldSkipClass(clazz: Class<*>?): Boolean {
                     return false
                 }
@@ -344,7 +360,14 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             },
             {
                 println("LC -> submitTransaction ERROR ${it.stackTraceToString()}")
-                transactionSubmittedError.postValue(Gson().toJson(TransactionError(500, it.message ?: "")))
+                transactionSubmittedError.postValue(
+                    Gson().toJson(
+                        TransactionError(
+                            500,
+                            it.message ?: ""
+                        )
+                    )
+                )
                 handleBackendError(it)
                 waiting.postValue(false)
             }
@@ -412,7 +435,11 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     private fun signMessage(keys: AccountData) {
         viewModelScope.launch {
-            val signMessageInput = SignMessageInput(walletConnectData.account?.address ?: "", binder?.getSessionRequestParams()?.message ?: "", keys)
+            val signMessageInput = SignMessageInput(
+                walletConnectData.account?.address ?: "",
+                binder?.getSessionRequestParams()?.message ?: "",
+                keys
+            )
             val signMessageOutput = App.appCore.cryptoLibrary.signMessage(signMessageInput)
             if (signMessageOutput == null) {
                 errorInt.postValue(R.string.app_error_lib)
@@ -432,13 +459,15 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                     }
                 }
             }
-            override fun onError(stringRes: Int) { }
-            override fun onNewAccountFinalized(accountName: String) { }
+
+            override fun onError(stringRes: Int) {}
+            override fun onNewAccountFinalized(accountName: String) {}
         })
-        accountUpdaterTimer = object: CountDownTimer(Long.MAX_VALUE, 5000) {
+        accountUpdaterTimer = object : CountDownTimer(Long.MAX_VALUE, 5000) {
             override fun onTick(millisUntilFinished: Long) {
                 walletConnectData.account?.let { accountUpdater.updateForAccount(it) }
             }
+
             override fun onFinish() {}
         }
         accountUpdaterTimer?.start()
@@ -516,23 +545,41 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
             proof.proofsReveal?.let { proofsRevealList ->
                 for (revealProof in proofsRevealList) {
-                    val encryptedProof = App.appCore.cryptoLibrary.proveIdStatement(revealProof.rawValue!!)!!
-                    proofs.add(ProofLocal(proof = encryptedProof, type = revealProof.type!!.type))
+                    App.appCore.cryptoLibrary.proveIdStatement(revealProof.rawValue!!)?.let {
+                        proofs.add(
+                            ProofLocal(
+                                proof = it,
+                                type = revealProof.type!!.type,
+                                attribute = revealProof.rawValue
+                            )
+                        )
+                    }
                 }
             }
 
             proof.proofsZeroKnowledge?.let { zeroProfs ->
                 for (zeroProof in zeroProfs) {
-                    val encryptedProof = App.appCore.cryptoLibrary.proveIdStatement(zeroProof.rawValue!!)!!
-                    proofs.add(ProofLocal(proof = encryptedProof, type = zeroProof.type!!.type))
+                    App.appCore.cryptoLibrary.proveIdStatement(zeroProof.rawValue!!)?.let {
+                        proofs.add(
+                            ProofLocal(
+                                proof = it,
+                                type = zeroProof.type!!.type,
+                                attribute = null
+                            )
+                        )
+                    }
                 }
             }
 
-            val valueLocal = ValueLocal(proofs)
-            val proofSecondary = ProofSecondary(v = 0, value = valueLocal)
-            val proofPrimary = ProofPrimary(credential = "null", proof = proofSecondary)
-            val proofsData = ProofsData(challenge, proofPrimary)
-            Log.d("PROOF: $proofsData")
+            if (proofs.isNotEmpty()) {
+                val valueLocal = ValueLocal(proofs)
+                val proofSecondary = ProofSecondary(v = 0, value = valueLocal)
+                val proofPrimary = ProofPrimary(credential = "null", proof = proofSecondary)
+                val proofsData = ProofsData(challenge, proofPrimary)
+                Log.d("PROOF: $proofsData")
+            } else {
+                Log.e("NO PROOFS TO SEND")
+            }
 
         }
     }

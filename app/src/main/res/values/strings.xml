@@ -639,6 +639,9 @@
     <string name="identity_attribute_tax_id_no">Tax ID number</string>
     <string name="identity_attribute_sex_male">Male</string>
     <string name="identity_attribute_sex_female">Female</string>
+    <string name="identity_attribute_sex_not_known">Not Known</string>
+    <string name="identity_attribute_sex_not_available">NA</string>
+    <string name="identity_attribute_doc_type_not_available">NA</string>
     <string name="identity_attribute_doc_type_passport">Passport</string>
     <string name="identity_attribute_doc_type_national_id">National id card"</string>
     <string name="identity_attribute_doc_type_driving_license">Driving license</string>
@@ -1156,4 +1159,14 @@
     <string name="dialog_identity_proof_reveal_content">When you reveal information for a third party, you effectively hand over the information to them. This means that you should only do this, if you have absolute trust in them, and if you are familiar with their data usage and protection procedures.</string>
     <string name="dialog_identity_proof_zero_content">Zero knowledge proofs are a way of proving something to a service or dApp, without revealing the exact personal information. One example can be that you prove that you are more than 18 years old, without revealing your exact date of birth. Another example could be that you live in one of a range of countries, without revealing exactly which country you live in.</string>
     <string name="dialog_identity_proof_link"><a href="https://developer.concordium.software/en/mainnet/index.html">developer.concordium.software</a></string>
+
+    <string name="proof_of_identity_zero_title">Zero Knowledge proof of %1$s</string>
+    <string name="proof_of_identity_zero_title_age">age</string>
+    <string name="proof_of_identity_zero_title_dob">date of birth</string>
+    <string name="proof_of_identity_zero_title_nationality">nationality</string>
+    <string name="proof_of_identity_zero_title_id_validity">ID validity</string>
+    <string name="proof_of_identity_zero_title_country_of_residence">country of residence</string>
+    <string name="proof_of_identity_zero_title_document_type">identity document type</string>
+    <string name="proof_of_identity_zero_title_document_issuer">identity document issuer</string>
+
 </resources>

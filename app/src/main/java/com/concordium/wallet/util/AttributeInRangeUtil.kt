@@ -21,6 +21,7 @@ object AttributeInRangeUtil {
         var rawValue: String?
         val status: Boolean?
         val description: String?
+        val title: String?
 
         val mContext = App.appContext
 
@@ -37,17 +38,18 @@ object AttributeInRangeUtil {
                 rawValue = data[attributeTag.tag]
                 if (!rawValue.isNullOrEmpty()) {
                     val dob = dateStringToDate(rawValue)
-                    val today = LocalDate.now()
+                    val today = dateStringToDate(getPastDate(0))
                     val age = differenceInYears(dob, today)
                     val upperDate = dateStringToDate(statement.upper!!)
                     val lowerDate = dateStringToDate(statement.lower!!)
                     val upper = if (today < upperDate) today else upperDate
 
                     if (ageStatement) {
+                        title = mContext.getString(
+                            R.string.proof_of_identity_zero_title_age
+                        )
                         val ageMin = today.year - upper.year
-                        val ageMax =
-                            today.year - getYearFromDateString(statement.lower)
-                        //const ageMax = getYearFromDateString(today) - getYearFromDateString(addDays(statement.lower, -1)) - 1;
+                        val ageMax = today.year - getYearFromDateString(statement.lower)
 
                         if (statement.lower == MIN_DATE) {
                             value = mContext.getString(
@@ -58,7 +60,6 @@ object AttributeInRangeUtil {
                                 R.string.proof_of_identity_minimum_age_description,
                                 dateToFormattedString(upper)
                             )
-                            //  return t('ageMin', { age: ageMin });
                         } else if (upperDate > today) {
                             value = mContext.getString(
                                 R.string.proof_of_identity_maximum_age, ageMax.toString()
@@ -68,7 +69,6 @@ object AttributeInRangeUtil {
                                 R.string.proof_of_identity_maximum_age_description,
                                 dateToFormattedString(upperDate)
                             )
-                            //return t('ageMax', { age: ageMax });
                         } else if (ageMin == ageMax) {
                             value = mContext.getString(
                                 R.string.proof_of_identity_exact_age, age.toString()
@@ -78,7 +78,6 @@ object AttributeInRangeUtil {
                                 R.string.proof_of_identity_exact_age_description,
                                 dateToFormattedString(dob)
                             )
-                            //return t('ageExact', { age: ageMin });
                         } else {
                             value = mContext.getString(
                                 R.string.proof_of_identity_between_age,
@@ -91,10 +90,12 @@ object AttributeInRangeUtil {
                                 dateToFormattedString(lowerDate),
                                 dateToFormattedString(upperDate)
                             )
-                            //return t('ageBetween', { ageMin, ageMax });
                         }
 
                     } else {
+                        title = mContext.getString(
+                            R.string.proof_of_identity_zero_title_dob
+                        )
 
                         if (statement.lower == MIN_DATE) {
                             value = mContext.getString(
@@ -102,7 +103,6 @@ object AttributeInRangeUtil {
                             )
                             status = dob.isAfter(upper)
                             description = null
-                            //return t('dateAfter', { dateString: maxDateString });
                         } else if (upperDate > today) {
                             value = mContext.getString(
                                 R.string.proof_of_identity_before_date,
@@ -110,7 +110,6 @@ object AttributeInRangeUtil {
                             )
                             status = dob.isBefore(upper)
                             description = null
-                            //return t('dateBefore', { dateString: minDateString });
                         } else {
                             value = mContext.getString(
                                 R.string.proof_of_identity_between_dates,
@@ -119,7 +118,6 @@ object AttributeInRangeUtil {
                             )
                             status = lowerDate < dob && dob < upper
                             description = null
-                            //return t('dateBetween', { minDateString, maxDateString });
                         }
                     }
                 } else {
@@ -127,10 +125,14 @@ object AttributeInRangeUtil {
                     value = mContext.getString(R.string.proof_of_identity_not_available)
                     status = false
                     description = null
+                    title = mContext.getString(R.string.proof_of_identity_not_available)
                 }
             }
             AttributeTag.ID_DOC_ISSUED_AT.tag -> {
                 attributeTag = AttributeTag.ID_DOC_ISSUED_AT
+                title = mContext.getString(
+                    R.string.proof_of_identity_zero_title_id_validity
+                )
                 name = mContext.getString(R.string.proof_of_identity_range_id_issued)
                 rawValue = data[attributeTag.tag]
                 if (!rawValue.isNullOrEmpty()) {
@@ -144,15 +146,12 @@ object AttributeInRangeUtil {
                         )
                         status = date.isAfter(maxDate)
                         description = null
-
-                        //return t('dateAfter', { dateString: maxDateString });
                     } else if (statement.upper == MAX_DATE) {
                         value = mContext.getString(
                             R.string.proof_of_identity_before_date, dateToFormattedString(minDate)
                         )
                         status = date.isBefore(minDate)
                         description = null
-                        //return t('dateBefore', { dateString: minDateString });
                     } else {
                         value = mContext.getString(
                             R.string.proof_of_identity_between_dates,
@@ -161,7 +160,6 @@ object AttributeInRangeUtil {
                         )
                         status = minDate < date && date < maxDate
                         description = null
-                        //return t('dateBetween', { minDateString, maxDateString })
                     }
                 } else {
                     rawValue = null
@@ -173,6 +171,9 @@ object AttributeInRangeUtil {
             AttributeTag.ID_DOC_EXPIRES_AT.tag -> {
                 attributeTag = AttributeTag.ID_DOC_EXPIRES_AT
                 name = mContext.getString(R.string.proof_of_identity_range_id_expires)
+                title = mContext.getString(
+                    R.string.proof_of_identity_zero_title_id_validity
+                )
                 rawValue = data[attributeTag.tag]
                 if (!rawValue.isNullOrEmpty()) {
                     val date = dateStringToDate(rawValue)
@@ -185,15 +186,12 @@ object AttributeInRangeUtil {
                         )
                         status = date.isAfter(maxDate)
                         description = null
-
-                        //return t('dateAfter', { dateString: maxDateString });
                     } else if (statement.upper == MAX_DATE) {
                         value = mContext.getString(
                             R.string.proof_of_identity_before_date, dateToFormattedString(minDate)
                         )
                         status = date.isBefore(minDate)
                         description = null
-                        //return t('dateBefore', { dateString: minDateString });
                     } else {
                         value = mContext.getString(
                             R.string.proof_of_identity_between_dates,
@@ -202,7 +200,6 @@ object AttributeInRangeUtil {
                         )
                         status = minDate < date && date < maxDate
                         description = null
-                        //return t('dateBetween', { minDateString, maxDateString })
                     }
                 } else {
                     rawValue = null
@@ -218,6 +215,7 @@ object AttributeInRangeUtil {
                 rawValue = null
                 value = name
                 status = false
+                title = name
                 description = null
             }
         }
@@ -229,38 +227,38 @@ object AttributeInRangeUtil {
             value,
             rawValue,
             description,
+            title,
             status
         )
     }
 
-    private fun getYearFromDateString(timeStr: String): Int {
-        return timeStr.substring(0, 4).toInt()
-    }
-
-
     private fun isAgeStatement(statement: ProofOfIdentityStatement): Boolean {
-        val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
-        val current = LocalDate.now().format(formatter)
-
+        val current = getPastDate(0)
         val isYearOffsetUpper = statement.upper?.substring(4) == current.substring(4)
-        val isYearOffsetLower =
-            statement.lower?.substring(4) == current.substring(4)
-        Log.d("isYearOffsetUpper : $isYearOffsetUpper")
-        Log.d("isYearOffsetLower : $isYearOffsetLower")
+        val isYearOffsetLower = statement.lower!!.substring(4) == current.substring(4)
         if (statement.lower == MIN_DATE) {
-
-            Log.d("statement.lower == MIN_DATE : true")
             return isYearOffsetUpper
         }
-        if (dateStringToDate(statement.upper!!).isAfter(LocalDate.now())) {
-            Log.d("dateStringToDate(statement.upper!!).isAfter(LocalDate.now()): true")
+        if (dateStringToDate(statement.upper!!).isAfter(dateStringToDate(current))) {
             return isYearOffsetLower
         }
 
-        Log.d("isYearOffsetUpper && isYearOffsetLower : ${isYearOffsetUpper && isYearOffsetLower}")
-
         return isYearOffsetUpper && isYearOffsetLower
 
+    }
+
+    /**
+     * Given a number x, return the date string for x years ago.
+     * @returns YYYYMMDD for x years ago today in local time.
+     */
+    private fun getPastDate(yearsAgo: Int): String {
+        var current = LocalDate.now()
+        current = current.minusYears(yearsAgo.toLong())
+        return dateToDateString(current);
+    }
+
+    private fun getYearFromDateString(timeStr: String): Int {
+        return timeStr.substring(0, 4).toInt()
     }
 
     /**

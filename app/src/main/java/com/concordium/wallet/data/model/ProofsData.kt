@@ -21,5 +21,6 @@ data class ValueLocal(
 
 data class ProofLocal(
     val proof: String,
+    val attribute: String?,
     val type: String
 )

@@ -76,11 +76,12 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
 
     override suspend fun proveIdStatement(statement: String): String? =
         withContext(Dispatchers.Default) {
+            loadWalletLib()
             val result = prove_id_statement(statement)
             if (result.result == CryptoLibrary.SUCCESS) {
                 return@withContext result.output
             }
-            Log.e("CryptoLib failed")
+            Log.e("CryptoLib failed : Result = ${result.result}, Output = ${result.output} ")
             return@withContext null
         }
 

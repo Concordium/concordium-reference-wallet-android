@@ -17,6 +17,7 @@ object AttributeInSetUtil {
         val value: String?
         var rawValue: String?
         val status: Boolean?
+        val title: String?
         var description: String? = null
 
         val mContext = App.appContext
@@ -26,6 +27,10 @@ object AttributeInSetUtil {
                 attributeTag = AttributeTag.COUNTRY_OF_RESIDENCE
                 name =
                     mContext.getString(R.string.proof_of_identity_membership_country_of_residence)
+
+                title = mContext.getString(
+                    R.string.proof_of_identity_zero_title_country_of_residence
+                )
                 rawValue = data[attributeTag.tag]
                 if (!rawValue.isNullOrEmpty()) {
 
@@ -36,9 +41,7 @@ object AttributeInSetUtil {
                         value = mContext.getString(
                             R.string.proof_of_identity_membership_eu
                         )
-
                         status = statement.set.contains(rawValue)
-
                         description = mContext.getString(
                             R.string.proof_of_identity_membership_country_in_eu_description
                         )
@@ -46,16 +49,12 @@ object AttributeInSetUtil {
                     } else {
 
                         status = statement.set.contains(rawValue)
-
                         value = mContext.getString(
                             R.string.proof_of_identity_membership_one, statement.set.size.toString()
                         )
-
-                        description =
-
-                            mContext.getString(
-                                R.string.proof_of_identity_membership_country_in_set, countries
-                            )
+                        description = mContext.getString(
+                            R.string.proof_of_identity_membership_country_in_set, countries
+                        )
 
                     }
                 } else {
@@ -68,6 +67,9 @@ object AttributeInSetUtil {
                 attributeTag = AttributeTag.NATIONALITY
                 name = mContext.getString(R.string.proof_of_identity_membership_nationality)
                 rawValue = data[attributeTag.tag]
+                title = mContext.getString(
+                    R.string.proof_of_identity_zero_title_nationality
+                )
                 if (!rawValue.isNullOrEmpty()) {
                     val countries = getCountriesString(statement.set!!)
 
@@ -76,9 +78,7 @@ object AttributeInSetUtil {
                         value = mContext.getString(
                             R.string.proof_of_identity_membership_eu
                         )
-
                         status = statement.set.contains(rawValue)
-
                         description = mContext.getString(
                             R.string.proof_of_identity_membership_nationality_in_eu_description
                         )
@@ -86,11 +86,9 @@ object AttributeInSetUtil {
                     } else {
 
                         status = statement.set.contains(rawValue)
-
                         value = mContext.getString(
                             R.string.proof_of_identity_membership_one, statement.set.size.toString()
                         )
-
                         description =
 
                             mContext.getString(
@@ -107,6 +105,9 @@ object AttributeInSetUtil {
             AttributeTag.ID_DOC_TYPE.tag -> {
                 attributeTag = AttributeTag.ID_DOC_TYPE
                 name = mContext.getString(R.string.proof_of_identity_membership_document_type)
+                title = mContext.getString(
+                    R.string.proof_of_identity_zero_title_document_type
+                )
                 val types = getDocTypesString(mContext, statement.set!!)
                 rawValue = data[attributeTag.tag]
                 if (!rawValue.isNullOrEmpty()) {
@@ -118,7 +119,6 @@ object AttributeInSetUtil {
                         R.string.proof_of_identity_type_in_set, types
                     )
 
-
                 } else {
                     rawValue = null
                     value = mContext.getString(R.string.proof_of_identity_not_available)
@@ -128,22 +128,22 @@ object AttributeInSetUtil {
             AttributeTag.ID_DOC_ISSUER.tag -> {
                 attributeTag = AttributeTag.ID_DOC_ISSUER
                 name = mContext.getString(R.string.proof_of_identity_membership_document_issuer)
+                title = mContext.getString(
+                    R.string.proof_of_identity_zero_title_document_issuer
+                )
                 rawValue = data[attributeTag.tag]
                 if (!rawValue.isNullOrEmpty()) {
                     val countries = getCountriesString(statement.set!!)
 
                     status = statement.set.contains(rawValue)
-
                     value = mContext.getString(
                         R.string.proof_of_identity_issuers_one, statement.set.size.toString()
                     )
-
                     description =
 
                         mContext.getString(
                             R.string.proof_of_identity_issuers_in_set, countries
                         )
-
 
                 } else {
                     rawValue = null
@@ -157,14 +157,21 @@ object AttributeInSetUtil {
                 name = mContext.getString(R.string.proof_of_identity_not_available)
                 rawValue = null
                 value = name
+                title = name
                 status = false
             }
         }
 
         return ProofZeroKnowledge(
-            AttributeType.ATTRIBUTE_IN_SET, attributeTag, name, value, rawValue, description, status
+            AttributeType.ATTRIBUTE_IN_SET,
+            attributeTag,
+            name,
+            value,
+            rawValue,
+            description,
+            title,
+            status
         )
-
     }
 
     private fun isEuCountrySet(countries: List<String>?, euMembers: List<String>): Boolean {
@@ -175,7 +182,6 @@ object AttributeInSetUtil {
             return true
         }
         return false
-
     }
 
     private fun getCountriesString(statement: List<String>): String {
@@ -205,6 +211,7 @@ object AttributeInSetUtil {
 
     private fun getDocType(context: Context, value: String): String {
         return when (value) {
+            "0" -> context.getString(R.string.identity_attribute_doc_type_not_available)
             "1" -> context.getString(R.string.identity_attribute_doc_type_passport)
             "2" -> context.getString(R.string.identity_attribute_doc_type_national_id)
             "3" -> context.getString(R.string.identity_attribute_doc_type_driving_license)

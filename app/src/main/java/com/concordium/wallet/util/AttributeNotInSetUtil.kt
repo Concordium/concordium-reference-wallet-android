@@ -18,6 +18,7 @@ object AttributeNotInSetUtil {
         var rawValue: String?
         val status: Boolean?
         var description: String? = null
+        val title: String?
 
         val mContext = App.appContext
 
@@ -26,6 +27,9 @@ object AttributeNotInSetUtil {
                 attributeTag = AttributeTag.COUNTRY_OF_RESIDENCE
                 name =
                     mContext.getString(R.string.proof_of_identity_membership_country_of_residence)
+                title = mContext.getString(
+                    R.string.proof_of_identity_zero_title_country_of_residence
+                )
                 rawValue = data[attributeTag.tag]
                 if (!rawValue.isNullOrEmpty()) {
 
@@ -36,9 +40,7 @@ object AttributeNotInSetUtil {
                         value = mContext.getString(
                             R.string.proof_of_identity_membership_not_eu
                         )
-
                         status = !statement.set.contains(rawValue)
-
                         description = mContext.getString(
                             R.string.proof_of_identity_membership_country_not_in_eu_description
                         )
@@ -46,12 +48,10 @@ object AttributeNotInSetUtil {
                     } else {
 
                         status = !statement.set.contains(rawValue)
-
                         value = mContext.getString(
                             R.string.proof_of_identity_membership_none,
                             statement.set.size.toString()
                         )
-
                         description = mContext.getString(
                             R.string.proof_of_identity_membership_country_not_in_set, countries
                         )
@@ -66,6 +66,9 @@ object AttributeNotInSetUtil {
             AttributeTag.NATIONALITY.tag -> {
                 attributeTag = AttributeTag.NATIONALITY
                 name = mContext.getString(R.string.proof_of_identity_membership_nationality)
+                title = mContext.getString(
+                    R.string.proof_of_identity_zero_title_nationality
+                )
                 rawValue = data[attributeTag.tag]
                 if (!rawValue.isNullOrEmpty()) {
                     val countries = getCountriesString(statement.set!!)
@@ -75,9 +78,7 @@ object AttributeNotInSetUtil {
                         value = mContext.getString(
                             R.string.proof_of_identity_membership_not_eu
                         )
-
                         status = !statement.set.contains(rawValue)
-
                         description = mContext.getString(
                             R.string.proof_of_identity_membership_nationality_not_in_eu_description
                         )
@@ -85,12 +86,10 @@ object AttributeNotInSetUtil {
                     } else {
 
                         status = !statement.set.contains(rawValue)
-
                         value = mContext.getString(
                             R.string.proof_of_identity_membership_none,
                             statement.set.size.toString()
                         )
-
                         description = mContext.getString(
                             R.string.proof_of_identity_membership_nationality_not_in_set, countries
                         )
@@ -105,6 +104,9 @@ object AttributeNotInSetUtil {
             AttributeTag.ID_DOC_TYPE.tag -> {
                 attributeTag = AttributeTag.ID_DOC_TYPE
                 name = mContext.getString(R.string.proof_of_identity_membership_document_type)
+                title = mContext.getString(
+                    R.string.proof_of_identity_zero_title_document_type
+                )
                 val types = getDocTypesString(mContext, statement.set!!)
                 rawValue = data[attributeTag.tag]
                 if (!rawValue.isNullOrEmpty()) {
@@ -124,20 +126,20 @@ object AttributeNotInSetUtil {
             AttributeTag.ID_DOC_ISSUER.tag -> {
                 attributeTag = AttributeTag.ID_DOC_ISSUER
                 name = mContext.getString(R.string.proof_of_identity_membership_document_issuer)
+                title = mContext.getString(
+                    R.string.proof_of_identity_zero_title_document_issuer
+                )
                 rawValue = data[attributeTag.tag]
                 if (!rawValue.isNullOrEmpty()) {
                     val countries = getCountriesString(statement.set!!)
 
                     status = !statement.set.contains(rawValue)
-
                     value = mContext.getString(
                         R.string.proof_of_identity_issuers_none, statement.set.size.toString()
                     )
-
                     description = mContext.getString(
                         R.string.proof_of_identity_issuers_not_in_set, countries
                     )
-
 
                 } else {
                     rawValue = null
@@ -151,14 +153,21 @@ object AttributeNotInSetUtil {
                 name = mContext.getString(R.string.proof_of_identity_not_available)
                 rawValue = null
                 value = name
+                title = name
                 status = false
             }
         }
 
         return ProofZeroKnowledge(
-            AttributeType.ATTRIBUTE_IN_SET, attributeTag, name, value, rawValue, description, status
+            AttributeType.ATTRIBUTE_IN_SET,
+            attributeTag,
+            name,
+            value,
+            rawValue,
+            description,
+            title,
+            status
         )
-
     }
 
     private fun isEuCountrySet(countries: List<String>?, euMembers: List<String>): Boolean {
@@ -199,6 +208,7 @@ object AttributeNotInSetUtil {
 
     private fun getDocType(context: Context, value: String): String {
         return when (value) {
+            "0" -> context.getString(R.string.identity_attribute_doc_type_not_available)
             "1" -> context.getString(R.string.identity_attribute_doc_type_passport)
             "2" -> context.getString(R.string.identity_attribute_doc_type_national_id)
             "3" -> context.getString(R.string.identity_attribute_doc_type_driving_license)

@@ -214,8 +214,10 @@ object AttributeRevealUtil {
 
     private fun convertSex(context: Context, value: String?): String? {
         return when (value) {
+            "0" -> context.getString(R.string.identity_attribute_sex_not_known)
             "1" -> context.getString(R.string.identity_attribute_sex_male)
             "2" -> context.getString(R.string.identity_attribute_sex_female)
+            "9" -> context.getString(R.string.identity_attribute_sex_not_available)
             else -> null
         }
     }
@@ -227,6 +229,7 @@ object AttributeRevealUtil {
 
     private fun getDocType(context: Context, value: String): String {
         return when (value) {
+            "0" -> context.getString(R.string.identity_attribute_doc_type_not_available)
             "1" -> context.getString(R.string.identity_attribute_doc_type_passport)
             "2" -> context.getString(R.string.identity_attribute_doc_type_national_id)
             "3" -> context.getString(R.string.identity_attribute_doc_type_driving_license)

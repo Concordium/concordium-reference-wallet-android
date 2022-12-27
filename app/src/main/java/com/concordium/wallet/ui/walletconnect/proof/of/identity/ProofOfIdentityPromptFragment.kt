@@ -49,7 +49,7 @@ class ProofOfIdentityPromptFragment : BaseFragment() {
     private fun loadDummyData() {
 
         val proofs = ArrayList<ProofOfIdentityStatement>()
-        proofs.add(
+       /* proofs.add(
             ProofOfIdentityStatement(
                 type = "RevealAttribute",
                 attributeTag = "firstName",
@@ -57,8 +57,8 @@ class ProofOfIdentityPromptFragment : BaseFragment() {
                 upper = null,
                 set = null
             )
-        )
-      /*  proofs.add(
+        )*/
+        proofs.add(
             ProofOfIdentityStatement(
                 type = "RevealAttribute",
                 attributeTag = "dob",
@@ -67,7 +67,7 @@ class ProofOfIdentityPromptFragment : BaseFragment() {
                 set = null
             )
         )
-        proofs.add(
+        /*proofs.add(
             ProofOfIdentityStatement(
                 type = "RevealAttribute",
                 attributeTag = "sex",
@@ -93,14 +93,14 @@ class ProofOfIdentityPromptFragment : BaseFragment() {
                 upper = "99990101",
                 set = null
             )
-        )
+        )*/
         //Age: 0 to 18 years old false
         proofs.add(
             ProofOfIdentityStatement(
                 type = "AttributeInRange",
                 attributeTag = "dob",
-                lower = "20041222",
-                upper = "20221222",
+                lower = "20041227",
+                upper = "20221227",
                 set = null
             )
         )
@@ -110,7 +110,7 @@ class ProofOfIdentityPromptFragment : BaseFragment() {
                 type = "AttributeInRange",
                 attributeTag = "dob",
                 lower = "18000101",
-                upper = "20041222",
+                upper = "20041227",
                 set = null
             )
         )
@@ -119,8 +119,8 @@ class ProofOfIdentityPromptFragment : BaseFragment() {
             ProofOfIdentityStatement(
                 type = "AttributeInRange",
                 attributeTag = "dob",
-                lower = "19921222",
-                upper = "20041222",
+                lower = "19921227",
+                upper = "20041227",
                 set = null
             )
         )
@@ -136,7 +136,7 @@ class ProofOfIdentityPromptFragment : BaseFragment() {
             )
         )
 
-        proofs.add(
+      /*  proofs.add(
             ProofOfIdentityStatement(
                 type = "AttributeInSet",
                 attributeTag = "nationality",

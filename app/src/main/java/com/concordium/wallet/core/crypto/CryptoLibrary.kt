@@ -1,6 +1,5 @@
 package com.concordium.wallet.core.crypto
 
-import com.concordium.mobile_wallet_lib.ReturnValue
 import com.concordium.wallet.data.cryptolib.*
 import com.concordium.wallet.data.model.ArsInfo
 import com.concordium.wallet.data.model.BakerKeys

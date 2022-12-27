@@ -39,6 +39,7 @@ class ProofOfIdentityZeroProofAdapter(
         val zeroProof = arrayList[position]
         holder.binding.content.title.text = zeroProof.name
         holder.binding.content.proof.text = zeroProof.value
+        holder.binding.title.text = context.getString(R.string.proof_of_identity_zero_title, zeroProof.title)
 
         if(!zeroProof.description.isNullOrEmpty()){
             holder.binding.explanation.visibility = View.VISIBLE

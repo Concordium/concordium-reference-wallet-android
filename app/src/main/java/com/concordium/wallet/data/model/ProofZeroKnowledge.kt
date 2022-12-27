@@ -7,5 +7,6 @@ data class ProofZeroKnowledge(
     val value: String?,
     val rawValue: String?,
     val description: String?,
+    val title: String?,
     val status: Boolean?
 )
