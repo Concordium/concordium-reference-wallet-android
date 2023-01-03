@@ -10,19 +10,19 @@ import kotlinx.android.synthetic.main.view_import_result.view.*
 
 class ImportResultView : ConstraintLayout {
 
-    constructor (context: Context?) : super(context) {
+    constructor (context: Context) : super(context) {
         init(null)
     }
 
     constructor(
-        context: Context?,
+        context: Context,
         attrs: AttributeSet?
     ) : super(context, attrs) {
         init(attrs)
     }
 
     constructor(
-        context: Context?,
+        context: Context,
         attrs: AttributeSet?,
         defStyleAttr: Int
     ) : super(context, attrs, defStyleAttr) {

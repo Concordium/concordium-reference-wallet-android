@@ -77,7 +77,6 @@ def buildTimeTicks() {
 
 android {
     compileSdkVersion 33
-    buildToolsVersion "30.0.0"
     defaultConfig {
         applicationId "software.concordium.mobilewallet"
         minSdkVersion 26
@@ -264,11 +263,14 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/atomicfu.kotlin_module']
+        }
+    }
 
     // Room - exclude the atomic functions module from the package and prevent warnings.
-    packagingOptions {
-        exclude 'META-INF/atomicfu.kotlin_module'
-    }
+    namespace 'com.concordium.wallet'
 }
 
 dependencies {
@@ -324,7 +326,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.8'
 
     // Navigation
-    def navigationVersion = '2.3.1'
+    def navigationVersion = '2.5.3'
     implementation "androidx.navigation:navigation-fragment:$navigationVersion"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-ui:$navigationVersion"

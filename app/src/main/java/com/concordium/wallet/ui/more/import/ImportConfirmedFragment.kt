@@ -82,12 +82,12 @@ class ImportConfirmedFragment(titleId: Int? = null) : BaseFragment(titleId) {
     private fun addImportResultViews(view: View) {
         val importResult = viewModel.importResult
         for (identityImportResult in importResult.identityResultList) {
-            val importResultView = ImportResultView(activity)
+            val importResultView = ImportResultView(requireActivity())
             importResultView.setIdentityData(identityImportResult)
             addImportResultView(view, importResultView)
         }
 
-        val importResultView = ImportResultView(activity)
+        val importResultView = ImportResultView(requireActivity())
         importResultView.setAddressBookData(importResult)
         addImportResultView(view, importResultView)
     }
