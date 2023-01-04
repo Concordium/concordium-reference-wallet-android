@@ -34,3 +34,14 @@ fun <T : Serializable?> Bundle.getSerializableFromBundle(key: String, m_class: C
         this.getSerializable(key) as T
     }
 }
+
+fun String.decodeHexToIntegers(): Array<Int> {
+    check(length % 2 == 0) { "Must have an even length" }
+
+    return chunked(2)
+        .map { it.toInt(16).toByte() }
+        .map { it.toPositiveInt() }
+        .toTypedArray()
+}
+
+private fun Byte.toPositiveInt() = toInt() and 0xFF

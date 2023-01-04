@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.AppConfig
 import com.concordium.wallet.R
-import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.AccountRepository
@@ -31,12 +30,11 @@ import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.walletconnect.proof.of.identity.ProofOfIdentityHelper
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.decodeHexToIntegers
 import com.concordium.wallet.util.toHex
-import com.google.gson.ExclusionStrategy
-import com.google.gson.FieldAttributes
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
+
+//import com.concordium.wallet.util.decodeHexToIntegers
+import com.google.gson.*
 import com.walletconnect.sign.client.Sign
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +45,6 @@ import org.greenrobot.eventbus.ThreadMode
 import java.io.Serializable
 import java.util.*
 import javax.crypto.Cipher
-import kotlin.collections.ArrayList
 
 data class WalletConnectData(
     var account: Account? = null,
@@ -550,7 +547,8 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     fun sendIdentityProof() {
         viewModelScope.launch {
             val proof = proofOfIdentityCheck.value!!
-            val challenge = proof.challenge!!.toByteArray()
+            //val challenge = Base64.decode(proof.challenge!!, Base64.DEFAULT)
+            val challenge = proof.challenge!!.decodeHexToIntegers()
 
             val localAccount = accountRepository.getAllDoneWithIdentity()
                 .first { it.identity.id == walletConnectData.account!!.identityId }
@@ -578,34 +576,18 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                         net
                     )
                     viewModelScope.launch {
+                        //Log.d("INPUT: $proofInput")
                         App.appCore.cryptoLibrary.proveIdStatement(proofInput)?.let {
-                            Log.e("PROOF RESPONSE: $it")
+                            Log.d("PROOF RESPONSE: $it")
 
                         }
                     }
-
-
                 },
                 {
 
                 })
-
-
-/*
-            val proofInput = ProofsInput(
-                method = "proof_of_identity",
-                params = identityParams
-            )
-
-            App.appCore.cryptoLibrary.proveIdStatement(proofInput)?.let {
-                proofs.add(
-                    ProofLocal(
-                        proof = it,
-                        type = revealProof.type!!.type,
-                        attribute = revealProof.rawValue
-                    )
-                )
-            }*/
         }
     }
+
+
 }

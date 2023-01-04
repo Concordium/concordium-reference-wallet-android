@@ -155,7 +155,7 @@ class ProofOfIdentityPromptFragment : BaseFragment() {
             )
         )*/
 
-        val proofOfIdentity = ProofOfIdentity(challenge = "170cdb1aaa0db1fe6514ac14d98205d1b752c2ba83742910234a98a6cbb0813a", statement = proofs)
+        val proofOfIdentity = ProofOfIdentity(challenge = "6d7955057b669ce8e739f82728fa1c40d8150eba20d5d06d542637f0d6513f97", statement = proofs)
         viewModel.proofOfIdentityRequest.postValue(proofOfIdentity)
     }
 

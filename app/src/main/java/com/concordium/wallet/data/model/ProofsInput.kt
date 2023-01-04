@@ -7,7 +7,7 @@ data class ProofsInput(
     val global: GlobalParams?,
     val identityObject: IdentityObject?,
     val statements: List<ProofOfIdentityStatement>?,
-    val challenge: ByteArray?,
+    val challenge: Array<Int>,
     val identityIndex: Int?,
     val accountNumber: Int?,
     val seed: String?,

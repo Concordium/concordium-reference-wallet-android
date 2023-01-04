@@ -59,7 +59,7 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
         type: Int
     ): CreateTransferOutput? =
         withContext(Dispatchers.Default) {
-            val input = gson.toJson(createTransferInput)
+            val input = gson.toJson(createTransferInput, ProofsInput::class.java)
             Log.d("Input: $input")
             loadWalletLib()
             val result = internalCreateTransfer(input, type)
