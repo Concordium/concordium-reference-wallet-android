@@ -94,47 +94,47 @@ class ProofOfIdentityPromptFragment : BaseFragment() {
                 set = null
             )
         )*/
-        //Age: 0 to 18 years old false
-        proofs.add(
-            ProofOfIdentityStatement(
-                type = "AttributeInRange",
-                attributeTag = "dob",
-                lower = "20041227",
-                upper = "20221227",
-                set = null
-            )
-        )
-        //Age: More than 18 years old true
-        proofs.add(
-            ProofOfIdentityStatement(
-                type = "AttributeInRange",
-                attributeTag = "dob",
-                lower = "18000101",
-                upper = "20041227",
-                set = null
-            )
-        )
-        //Age in Range Age: 18 to 30 years old false
-        proofs.add(
-            ProofOfIdentityStatement(
-                type = "AttributeInRange",
-                attributeTag = "dob",
-                lower = "19921227",
-                upper = "20041227",
-                set = null
-            )
-        )
+        /*   //Age: 0 to 18 years old false
+          proofs.add(
+              ProofOfIdentityStatement(
+                  type = "AttributeInRange",
+                  attributeTag = "dob",
+                  lower = "20041227",
+                  upper = "20221227",
+                  set = null
+              )
+          )
+         //Age: More than 18 years old true
+          proofs.add(
+              ProofOfIdentityStatement(
+                  type = "AttributeInRange",
+                  attributeTag = "dob",
+                  lower = "18000101",
+                  upper = "20041227",
+                  set = null
+              )
+          )
+          //Age in Range Age: 18 to 30 years old false
+          proofs.add(
+              ProofOfIdentityStatement(
+                  type = "AttributeInRange",
+                  attributeTag = "dob",
+                  lower = "19921227",
+                  upper = "20041227",
+                  set = null
+              )
+          )
 
-        //D.O.B Date of birth: Before 1990-05-05 false
-        proofs.add(
-            ProofOfIdentityStatement(
-                type = "AttributeInRange",
-                attributeTag = "dob",
-                lower = "19900505",
-                upper = "99990101",
-                set = null
-            )
-        )
+          //D.O.B Date of birth: Before 1990-05-05 false
+          proofs.add(
+              ProofOfIdentityStatement(
+                  type = "AttributeInRange",
+                  attributeTag = "dob",
+                  lower = "19900505",
+                  upper = "99990101",
+                  set = null
+              )
+          )*/
 
       /*  proofs.add(
             ProofOfIdentityStatement(

@@ -1,10 +1,7 @@
 package com.concordium.wallet.core.crypto
 
 import com.concordium.wallet.data.cryptolib.*
-import com.concordium.wallet.data.model.ArsInfo
-import com.concordium.wallet.data.model.BakerKeys
-import com.concordium.wallet.data.model.GlobalParams
-import com.concordium.wallet.data.model.IdentityProviderInfo
+import com.concordium.wallet.data.model.*
 
 interface CryptoLibrary {
     companion object {
@@ -33,7 +30,7 @@ interface CryptoLibrary {
         type: Int
     ): CreateTransferOutput?
 
-    suspend fun proveIdStatement(statement: String): String?
+    suspend fun proveIdStatement(statement: ProofsInput): String?
 
     fun checkAccountAddress(address: String): Boolean
 

@@ -2,10 +2,7 @@ package com.concordium.wallet.core.crypto
 
 import com.concordium.mobile_wallet_lib.*
 import com.concordium.wallet.data.cryptolib.*
-import com.concordium.wallet.data.model.ArsInfo
-import com.concordium.wallet.data.model.BakerKeys
-import com.concordium.wallet.data.model.GlobalParams
-import com.concordium.wallet.data.model.IdentityProviderInfo
+import com.concordium.wallet.data.model.*
 import com.concordium.wallet.util.Log
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -74,10 +71,12 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             return@withContext null
         }
 
-    override suspend fun proveIdStatement(statement: String): String? =
+    override suspend fun proveIdStatement(statement: ProofsInput): String? =
         withContext(Dispatchers.Default) {
+            val input = gson.toJson(statement)
+            Log.d("Input: $input")
             loadWalletLib()
-            val result = prove_id_statement(statement)
+            val result = prove_id_statement(input)
             if (result.result == CryptoLibrary.SUCCESS) {
                 return@withContext result.output
             }

@@ -7,14 +7,18 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
+import com.concordium.wallet.AppConfig
 import com.concordium.wallet.R
+import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.TransferRepository
+import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.*
 import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.Transfer
@@ -43,6 +47,7 @@ import org.greenrobot.eventbus.ThreadMode
 import java.io.Serializable
 import java.util.*
 import javax.crypto.Cipher
+import kotlin.collections.ArrayList
 
 data class WalletConnectData(
     var account: Account? = null,
@@ -105,6 +110,9 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     private var accountUpdaterTimer: CountDownTimer? = null
     private var transferSubmissionStatus: TransferSubmissionStatus? = null
     private var submissionId: String? = null
+
+    private val identityProviderRepository: IdentityProviderRepository =
+        IdentityProviderRepository()
 
     fun register() {
         EventBus.getDefault().register(this)
@@ -520,6 +528,8 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                     val localAccount = accountRepository.getAllDoneWithIdentity()
                         .first { it.identity.id == walletConnectData.account!!.identityId }
 
+                    localAccount.identity.identityProvider.ipInfo
+
                     localAccount.identity.identityObject?.let {
                         val identityAttributes = it.attributeList.chosenAttributes
                         val proofOfIdentityHelper =
@@ -540,47 +550,62 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     fun sendIdentityProof() {
         viewModelScope.launch {
             val proof = proofOfIdentityCheck.value!!
-            val challenge = proof.challenge!!
-            val proofs = ArrayList<ProofLocal>()
+            val challenge = proof.challenge!!.toByteArray()
 
-            proof.proofsReveal?.let { proofsRevealList ->
-                for (revealProof in proofsRevealList) {
-                    App.appCore.cryptoLibrary.proveIdStatement(revealProof.rawValue!!)?.let {
-                        proofs.add(
-                            ProofLocal(
-                                proof = it,
-                                type = revealProof.type!!.type,
-                                attribute = revealProof.rawValue
-                            )
-                        )
+            val localAccount = accountRepository.getAllDoneWithIdentity()
+                .first { it.identity.id == walletConnectData.account!!.identityId }
+
+            val ipInfo = localAccount.identity.identityProvider.ipInfo
+            val identityObject = localAccount.identity.identityObject
+            val identityIndex = localAccount.identity.identityIndex
+            val accountNumber = localAccount.account.credNumber
+            val net = AppConfig.net
+            val seed = AuthPreferences(getApplication()).getSeedPhrase()
+            val statements = proofOfIdentityRequest.value!!.statement
+
+            identityProviderRepository.getIGlobalInfo(
+                {
+                    val global = it.value
+                    val proofInput = ProofsInput(
+                        ipInfo,
+                        global,
+                        identityObject,
+                        statements,
+                        challenge,
+                        identityIndex,
+                        accountNumber,
+                        seed,
+                        net
+                    )
+                    viewModelScope.launch {
+                        App.appCore.cryptoLibrary.proveIdStatement(proofInput)?.let {
+                            Log.e("PROOF RESPONSE: $it")
+
+                        }
                     }
-                }
-            }
 
-            proof.proofsZeroKnowledge?.let { zeroProfs ->
-                for (zeroProof in zeroProfs) {
-                    App.appCore.cryptoLibrary.proveIdStatement(zeroProof.rawValue!!)?.let {
-                        proofs.add(
-                            ProofLocal(
-                                proof = it,
-                                type = zeroProof.type!!.type,
-                                attribute = null
-                            )
-                        )
-                    }
-                }
-            }
 
-            if (proofs.isNotEmpty()) {
-                val valueLocal = ValueLocal(proofs)
-                val proofSecondary = ProofSecondary(v = 0, value = valueLocal)
-                val proofPrimary = ProofPrimary(credential = "null", proof = proofSecondary)
-                val proofsData = ProofsData(challenge, proofPrimary)
-                Log.d("PROOF: $proofsData")
-            } else {
-                Log.e("NO PROOFS TO SEND")
-            }
+                },
+                {
 
+                })
+
+
+/*
+            val proofInput = ProofsInput(
+                method = "proof_of_identity",
+                params = identityParams
+            )
+
+            App.appCore.cryptoLibrary.proveIdStatement(proofInput)?.let {
+                proofs.add(
+                    ProofLocal(
+                        proof = it,
+                        type = revealProof.type!!.type,
+                        attribute = revealProof.rawValue
+                    )
+                )
+            }*/
         }
     }
 }
