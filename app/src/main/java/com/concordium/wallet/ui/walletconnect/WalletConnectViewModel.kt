@@ -51,15 +51,19 @@ data class WalletConnectData(
     var wcUri: String? = null,
     var energy: Long? = null,
     var cost: Long? = null,
-    var isTransaction: Boolean = true
+    var method: String? = null
 ) : Serializable
 
 class WalletConnectViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
         const val WALLET_CONNECT_DATA = "WALLET_CONNECT_DATA"
+        const val SIGN_AND_SEND_TRANSACTION = "sign_and_send_transaction"
+        const val SIGN_MESSAGE = "sign_message"
+        const val PROOF_OF_IDENTITY = "proof_of_identity"
     }
 
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val authCanceled: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val accounts: MutableLiveData<List<AccountWithIdentity>> by lazy { MutableLiveData<List<AccountWithIdentity>>() }
     val chooseAccount: MutableLiveData<AccountWithIdentity> by lazy { MutableLiveData<AccountWithIdentity>() }
     val pair: MutableLiveData<String> by lazy { MutableLiveData<String>() }
@@ -74,6 +78,10 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val proofOfIdentity: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val proofOfIdentityRequest: MutableLiveData<ProofOfIdentity> by lazy { MutableLiveData<ProofOfIdentity>() }
     val proofOfIdentityCheck: MutableLiveData<Proofs> by lazy { MutableLiveData<Proofs>() }
+    val proofOfIdentitySuccess: MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val proofRejected: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val proofOfIdentityError: MutableLiveData<String> by lazy { MutableLiveData<String>() }
+    val proofOfIdentityOkay: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val transactionAction: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val messageAction: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val proofOfIdentityAction: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
@@ -261,10 +269,13 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             if (decryptedJson != null) {
                 val credentialsOutput =
                     App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
-                if (walletConnectData.isTransaction)
+                if (walletConnectData.method == SIGN_AND_SEND_TRANSACTION)
                     createTransaction(credentialsOutput.accountKeys)
-                else
+                if (walletConnectData.method == SIGN_MESSAGE)
                     signMessage(credentialsOutput.accountKeys)
+                if (walletConnectData.method == PROOF_OF_IDENTITY) {
+                    sendIdentityProof()
+                }
             } else {
                 errorInt.postValue(R.string.app_error_encryption)
                 waiting.postValue(false)
@@ -313,6 +324,10 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     }
 
     fun prepareMessage() {
+        showAuthentication.postValue(true)
+    }
+
+    fun prepareProof() {
         showAuthentication.postValue(true)
     }
 
@@ -494,10 +509,10 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(sessionRequest: Sign.Model.SessionRequest) {
-        when (sessionRequest.request.method) {
-            "sign_and_send_transaction" -> transaction.postValue(sessionRequest.request.method)
-            "sign_message" -> message.postValue(sessionRequest.request.method)
-            "proof_of_identity" -> proofOfIdentity.postValue(sessionRequest.request.method)
+        when (val method = sessionRequest.request.method) {
+            "sign_and_send_transaction" -> transaction.postValue(method)
+            "sign_message" -> message.postValue(method)
+            "proof_of_identity" -> proofOfIdentity.postValue(method)
         }
     }
 
@@ -562,7 +577,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             val statements = proofOfIdentityRequest.value!!.statement
 
             identityProviderRepository.getIGlobalInfo(
-                {
+                { it ->
                     val global = it.value
                     val proofInput = ProofsInput(
                         ipInfo,
@@ -576,15 +591,26 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                         net
                     )
                     viewModelScope.launch {
-                        //Log.d("INPUT: $proofInput")
-                        App.appCore.cryptoLibrary.proveIdStatement(proofInput)?.let {
-                            Log.d("PROOF RESPONSE: $it")
-
+                        App.appCore.cryptoLibrary.proveIdStatement(proofInput).let { proof ->
+                            Log.d("PROOF RESPONSE: $proof")
+                            if (proof == null) {
+                                errorInt.postValue(R.string.app_error_lib)
+                                proofOfIdentityError.postValue(
+                                    Gson().toJson(
+                                        TransactionError(
+                                            500,
+                                            ""
+                                        )
+                                    )
+                                )
+                            } else {
+                                proofOfIdentitySuccess.postValue(proof)
+                            }
                         }
                     }
                 },
                 {
-
+                    errorInt.postValue(R.string.app_error_lib)
                 })
         }
     }

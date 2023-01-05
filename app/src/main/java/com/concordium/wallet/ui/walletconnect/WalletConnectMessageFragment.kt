@@ -57,5 +57,10 @@ class WalletConnectMessageFragment : WalletConnectBaseFragment() {
         _viewModel.errorInt.observe(viewLifecycleOwner) {
             binding.sign.isEnabled = true
         }
+        _viewModel.authCanceled.observe(viewLifecycleOwner){
+            if (it == true) {
+                binding.sign.isEnabled = true
+            }
+        }
     }
 }

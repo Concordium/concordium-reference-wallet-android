@@ -49,15 +49,15 @@ class ProofOfIdentityPromptFragment : BaseFragment() {
     private fun loadDummyData() {
 
         val proofs = ArrayList<ProofOfIdentityStatement>()
-       /* proofs.add(
-            ProofOfIdentityStatement(
-                type = "RevealAttribute",
-                attributeTag = "firstName",
-                lower = null,
-                upper = null,
-                set = null
-            )
-        )*/
+        /* proofs.add(
+             ProofOfIdentityStatement(
+                 type = "RevealAttribute",
+                 attributeTag = "firstName",
+                 lower = null,
+                 upper = null,
+                 set = null
+             )
+         )*/
         proofs.add(
             ProofOfIdentityStatement(
                 type = "RevealAttribute",
@@ -136,26 +136,29 @@ class ProofOfIdentityPromptFragment : BaseFragment() {
               )
           )*/
 
-      /*  proofs.add(
-            ProofOfIdentityStatement(
-                type = "AttributeInSet",
-                attributeTag = "nationality",
-                lower = null,
-                upper = null,
-                set = listOf("BG", "DK", "GR", "UK")
-            )
-        )
-        proofs.add(
-            ProofOfIdentityStatement(
-                type = "AttributeNotInSet",
-                attributeTag = "nationality",
-                lower = null,
-                upper = null,
-                set = listOf("BG", "DK", "GR", "UK")
-            )
-        )*/
+        /*  proofs.add(
+              ProofOfIdentityStatement(
+                  type = "AttributeInSet",
+                  attributeTag = "nationality",
+                  lower = null,
+                  upper = null,
+                  set = listOf("BG", "DK", "GR", "UK")
+              )
+          )
+          proofs.add(
+              ProofOfIdentityStatement(
+                  type = "AttributeNotInSet",
+                  attributeTag = "nationality",
+                  lower = null,
+                  upper = null,
+                  set = listOf("BG", "DK", "GR", "UK")
+              )
+          )*/
 
-        val proofOfIdentity = ProofOfIdentity(challenge = "6d7955057b669ce8e739f82728fa1c40d8150eba20d5d06d542637f0d6513f97", statement = proofs)
+        val proofOfIdentity = ProofOfIdentity(
+            challenge = "6d7955057b669ce8e739f82728fa1c40d8150eba20d5d06d542637f0d6513f97",
+            statement = proofs
+        )
         viewModel.proofOfIdentityRequest.postValue(proofOfIdentity)
     }
 
@@ -187,15 +190,18 @@ class ProofOfIdentityPromptFragment : BaseFragment() {
                 content = getString(R.string.dialog_identity_proof_reveal_content),
                 icon = R.drawable.warning_exclamation
             )
-
         }
 
         binding.accept.setOnClickListener {
-            //viewModel.stepPageBy.value = 1
-            viewModel.sendIdentityProof()
+            viewModel.proofRejected.postValue(false)
+            binding.accept.isEnabled = false
+            viewModel.prepareProof()
 
         }
         binding.reject.setOnClickListener {
+            viewModel.binder?.respondError("User reject")
+            viewModel.reject.postValue(true)
+            viewModel.proofRejected.postValue(true)
             viewModel.stepPageBy.value = 1
         }
     }
@@ -230,6 +236,21 @@ class ProofOfIdentityPromptFragment : BaseFragment() {
 
             _binding!!.accept.isEnabled = it.revealStatus == true && it.zeroKnowledgeStatus == true
 
+        }
+        viewModel.authCanceled.observe(viewLifecycleOwner) {
+            if (it == true) {
+                viewModel.proofOfIdentityCheck.value?.let { proofs ->
+                    _binding!!.accept.isEnabled =
+                        proofs.revealStatus == true && proofs.zeroKnowledgeStatus == true
+                }
+            }
+        }
+        viewModel.errorInt.observe(viewLifecycleOwner) {
+            viewModel.proofOfIdentityCheck.value?.let { proofs ->
+                _binding!!.accept.isEnabled =
+                    proofs.revealStatus == true && proofs.zeroKnowledgeStatus == true
+            }
+            _binding!!.reject.isEnabled = true
         }
     }
 

@@ -12,6 +12,9 @@ import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentWalletConnectApproveBinding
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.PROOF_OF_IDENTITY
+import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.SIGN_AND_SEND_TRANSACTION
+import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.SIGN_MESSAGE
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.WALLET_CONNECT_DATA
 
 class WalletConnectApproveFragment : WalletConnectBaseFragment() {
@@ -92,9 +95,9 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         binding.walletConnectActionCard.root.setOnClickListener {
             binding.walletConnectActionCard.root.visibility = View.GONE
             when (requestMethod) {
-                "sign_and_send_transaction" -> _viewModel.transactionAction.postValue(true)
-                "sign_message" -> _viewModel.messageAction.postValue(true)
-                "proof_of_identity" -> _viewModel.proofOfIdentityAction.postValue(true)
+                SIGN_AND_SEND_TRANSACTION -> _viewModel.transactionAction.postValue(true)
+                SIGN_MESSAGE-> _viewModel.messageAction.postValue(true)
+                PROOF_OF_IDENTITY -> _viewModel.proofOfIdentityAction.postValue(true)
             }
             requestMethod = ""
         }

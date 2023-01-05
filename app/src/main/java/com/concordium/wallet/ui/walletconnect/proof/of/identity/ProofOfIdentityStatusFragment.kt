@@ -34,10 +34,10 @@ class ProofOfIdentityStatusFragment : BaseFragment() {
     }
 
     private fun initObservers() {
-        viewModel.proofOfIdentityCheck.observe(viewLifecycleOwner) {
+        viewModel.proofRejected.observe(viewLifecycleOwner) { isRejected ->
             val icon: Int
             val description: String
-            if (it.revealStatus== true && it.zeroKnowledgeStatus == true) {
+            if (!isRejected) {
                 icon = R.drawable.ic_big_logo_ok
                 description = getString(R.string.proof_of_identity_status_success)
             } else {
@@ -58,6 +58,9 @@ class ProofOfIdentityStatusFragment : BaseFragment() {
     private fun initViews() {
         _binding!!.done.setOnClickListener {
             viewModel.stepPageBy.value = -1
+            if (viewModel.proofRejected.value != true) {
+                viewModel.proofOfIdentityOkay.postValue(true)
+            }
         }
     }
 
