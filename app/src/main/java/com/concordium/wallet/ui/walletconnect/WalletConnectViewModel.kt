@@ -510,9 +510,9 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(sessionRequest: Sign.Model.SessionRequest) {
         when (val method = sessionRequest.request.method) {
-            "sign_and_send_transaction" -> transaction.postValue(method)
-            "sign_message" -> message.postValue(method)
-            "proof_of_identity" -> proofOfIdentity.postValue(method)
+            SIGN_AND_SEND_TRANSACTION -> transaction.postValue(method)
+            SIGN_MESSAGE -> message.postValue(method)
+            PROOF_OF_IDENTITY -> proofOfIdentity.postValue(method)
         }
     }
 

@@ -163,6 +163,14 @@ class ProofOfIdentityPromptFragment : BaseFragment() {
     }
 
     private fun initViews() {
+/*
+        viewModel.binder?.getSessionRequestParams()?.let { params ->
+            val proofOfIdentity = ProofOfIdentity(
+                challenge = params.challenge,
+                statement = params.statement
+            )
+            viewModel.proofOfIdentityRequest.postValue(proofOfIdentity)
+        }*/
 
         binding.subTitle.text =
             getString(R.string.proof_of_identity_prompt_subtitle, viewModel.sessionName())

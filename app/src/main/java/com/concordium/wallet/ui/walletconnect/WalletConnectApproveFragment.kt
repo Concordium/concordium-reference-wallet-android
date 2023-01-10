@@ -115,12 +115,14 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
                         R.drawable.ic_big_logo_ok
                     )
                 )
+
                 binding.walletConnectStatusCard.statusIcon.setColorFilter(
                     ContextCompat.getColor(
                         requireContext(),
                         R.color.theme_green
                     )
                 )
+                binding.walletConnectStatusCard.statusText.text = getString(R.string.wallet_connect_opened_connection_between)
                 binding.disconnect.isEnabled = true
                 binding.waitForActions.visibility = View.VISIBLE
             } else {
