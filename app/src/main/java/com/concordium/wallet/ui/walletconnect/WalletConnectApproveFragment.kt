@@ -76,6 +76,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
             binding.disconnect.isEnabled = false
             showDisconnectWarning()
         }
+/*
 
         //FIXME: Remove when ID 2.0 is not mocked
         //
@@ -90,6 +91,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
             _viewModel.proofOfIdentityAction.postValue(true)
         }
         //
+*/
 
 
         binding.walletConnectActionCard.root.setOnClickListener {

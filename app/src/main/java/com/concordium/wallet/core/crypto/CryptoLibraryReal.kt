@@ -71,14 +71,21 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             return@withContext null
         }
 
-    override suspend fun proveIdStatement(statement: ProofsInput): String? =
+    override suspend fun proveIdStatement(
+        statement: ProofsInput,
+        credential: String?,
+        challenge: String
+    ): String? =
         withContext(Dispatchers.Default) {
             val input = gson.toJson(statement, ProofsInput::class.java)
             Log.d("Input: $input")
             loadWalletLib()
             val result = prove_id_statement(input)
             if (result.result == CryptoLibrary.SUCCESS) {
-                return@withContext result.output
+                val data = gson.fromJson(result.output, ProofsData::class.java)
+                val proof = Proof(credential = credential, proof = data.idProof)
+                val proofOutput = ProofOutput(challenge = challenge, idProof =  proof)
+                return@withContext Gson().toJson(proofOutput)
             }
             Log.e("CryptoLib failed : Result = ${result.result}, Output = ${result.output} ")
             return@withContext null

@@ -10,12 +10,20 @@ import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.concordium.wallet.databinding.FragmentProofOfIdentityBinding
 import com.concordium.wallet.ui.base.BaseBottomSheetDialogFragment
+import com.concordium.wallet.ui.cis2.SearchTokenBottomSheet
+import com.concordium.wallet.ui.cis2.SendTokenViewModel
+import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel
 
 class ProofOfIdentityFragment : BaseBottomSheetDialogFragment() {
     private var _binding: FragmentProofOfIdentityBinding? = null
     private val binding get() = _binding!!
     private val viewModel: WalletConnectViewModel by activityViewModels()
+
+    companion object {
+        @JvmStatic
+        fun newInstance() = ProofOfIdentityFragment().apply {}
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -39,6 +47,7 @@ class ProofOfIdentityFragment : BaseBottomSheetDialogFragment() {
     private fun initObservers() {
         viewModel.stepPageBy.observe(this) {
             if (it == -1) {
+                viewModel.stepPageBy.value = 0
                 dismiss()
             } else {
                 if (binding.viewPager.currentItem + it >= 0 && binding.viewPager.currentItem + it < (binding.viewPager.adapter?.itemCount

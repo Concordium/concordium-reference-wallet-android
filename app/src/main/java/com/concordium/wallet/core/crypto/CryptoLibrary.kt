@@ -30,7 +30,7 @@ interface CryptoLibrary {
         type: Int
     ): CreateTransferOutput?
 
-    suspend fun proveIdStatement(statement: ProofsInput): String?
+    suspend fun proveIdStatement(statement: ProofsInput, credential: String?, challenge: String): String?
 
     fun checkAccountAddress(address: String): Boolean
 

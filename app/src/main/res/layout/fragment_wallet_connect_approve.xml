@@ -28,7 +28,6 @@
                 android:src="@drawable/ic_pending" />
         </androidx.appcompat.widget.LinearLayoutCompat>
         <include android:id="@+id/wallet_connect_action_card" layout="@layout/wallet_connect_action_card" android:visibility="gone" tools:visibility="visible" />
-        <include android:id="@+id/wallet_connect_test_card" layout="@layout/wallet_connect_action_card" />
     </androidx.appcompat.widget.LinearLayoutCompat>
     <Button
         android:id="@+id/disconnect"

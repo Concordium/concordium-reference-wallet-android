@@ -30,7 +30,11 @@ class CryptoLibraryMock(val gson: Gson) : CryptoLibrary {
         return gson.fromJson(output, CreateTransferOutput::class.java)
     }
 
-    override suspend fun proveIdStatement(statement: ProofsInput): String? {
+    override suspend fun proveIdStatement(
+        statement: ProofsInput,
+        credential: String?,
+        challenge: String
+    ): String? {
         TODO("Not yet implemented")
     }
 

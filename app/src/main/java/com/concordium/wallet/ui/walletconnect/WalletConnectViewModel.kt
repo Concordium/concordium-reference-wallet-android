@@ -575,9 +575,11 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             val net = AppConfig.net
             val seed = AuthPreferences(getApplication()).getSeedPhrase()
             val statements = proofOfIdentityRequest.value!!.statement
+            val credential = localAccount.account.credential?.getCredId()
+            Log.d("CREDENTIAL : $credential")
 
             identityProviderRepository.getIGlobalInfo(
-                { it ->
+                {
                     val global = it.value
                     val proofInput = ProofsInput(
                         ipInfo,
@@ -591,7 +593,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                         net
                     )
                     viewModelScope.launch {
-                        App.appCore.cryptoLibrary.proveIdStatement(proofInput).let { proof ->
+                        App.appCore.cryptoLibrary.proveIdStatement(proofInput, credential, proof.challenge).let { proof ->
                             Log.d("PROOF RESPONSE: $proof")
                             if (proof == null) {
                                 errorInt.postValue(R.string.app_error_lib)

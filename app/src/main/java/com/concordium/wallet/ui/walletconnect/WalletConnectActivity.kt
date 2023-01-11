@@ -16,8 +16,8 @@ import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.walletconnect.WalletConnectService.Companion.START_FOREGROUND_ACTION
 import com.concordium.wallet.ui.walletconnect.WalletConnectService.Companion.STOP_FOREGROUND_ACTION
-import com.concordium.wallet.ui.cis2.lookfornew.LookForNewTokensFragment
 import com.concordium.wallet.ui.walletconnect.proof.of.identity.ProofOfIdentityFragment
+import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.getSerializable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -227,8 +227,11 @@ class WalletConnectActivity : BaseActivity() {
     }
 
     private fun proofOfIdentityView() {
+        Log.e("START PROOF OF IDENTYTY")
         viewModel.walletConnectData.method = WalletConnectViewModel.PROOF_OF_IDENTITY
-        proofOfIdentityFragment = ProofOfIdentityFragment()
+
+        proofOfIdentityFragment = ProofOfIdentityFragment.newInstance()
+
         proofOfIdentityFragment?.show(supportFragmentManager, "")
     }
 
@@ -259,6 +262,7 @@ class WalletConnectActivity : BaseActivity() {
     }
 
     private fun approveView() {
+
         currentPage = PAGE_APPROVE
         hideActionBarBack()
         setActionBarTitle(getString(R.string.wallet_connect_session_with))
