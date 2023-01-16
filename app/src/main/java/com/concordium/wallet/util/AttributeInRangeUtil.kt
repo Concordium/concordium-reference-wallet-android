@@ -108,7 +108,7 @@ object AttributeInRangeUtil {
                                 R.string.proof_of_identity_before_date,
                                 dateToFormattedString(lowerDate)
                             )
-                            status = dob.isBefore(upper)
+                            status = dob.isAfter(lowerDate)
                             description = null
                         } else {
                             value = mContext.getString(
@@ -150,7 +150,7 @@ object AttributeInRangeUtil {
                         value = mContext.getString(
                             R.string.proof_of_identity_before_date, dateToFormattedString(minDate)
                         )
-                        status = date.isBefore(minDate)
+                        status = date.isAfter(minDate)
                         description = null
                     } else {
                         value = mContext.getString(
@@ -190,7 +190,7 @@ object AttributeInRangeUtil {
                         value = mContext.getString(
                             R.string.proof_of_identity_before_date, dateToFormattedString(minDate)
                         )
-                        status = date.isBefore(minDate)
+                        status = date.isAfter(minDate)
                         description = null
                     } else {
                         value = mContext.getString(

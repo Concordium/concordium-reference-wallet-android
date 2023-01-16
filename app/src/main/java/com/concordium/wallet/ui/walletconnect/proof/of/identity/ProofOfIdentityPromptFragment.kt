@@ -42,126 +42,7 @@ class ProofOfIdentityPromptFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initObservers()
-        //loadDummyData()
     }
-
-    //FIXME: delete this function when testing done
-    private fun loadDummyData() {
-
-        val proofs = ArrayList<ProofOfIdentityStatement>()
-        /* proofs.add(
-             ProofOfIdentityStatement(
-                 type = "RevealAttribute",
-                 attributeTag = "firstName",
-                 lower = null,
-                 upper = null,
-                 set = null
-             )
-         )*/
-        proofs.add(
-            ProofOfIdentityStatement(
-                type = "RevealAttribute",
-                attributeTag = "dob",
-                lower = null,
-                upper = null,
-                set = null
-            )
-        )
-        /*proofs.add(
-            ProofOfIdentityStatement(
-                type = "RevealAttribute",
-                attributeTag = "sex",
-                lower = null,
-                upper = null,
-                set = null
-            )
-        )
-        proofs.add(
-            ProofOfIdentityStatement(
-                type = "RevealAttribute",
-                attributeTag = "none",
-                lower = null,
-                upper = null,
-                set = null
-            )
-        )
-        proofs.add(
-            ProofOfIdentityStatement(
-                type = "AttributeInRange",
-                attributeTag = "idDocExpiresAt",
-                lower = "20250505",
-                upper = "99990101",
-                set = null
-            )
-        )*/
-        /*   //Age: 0 to 18 years old false
-          proofs.add(
-              ProofOfIdentityStatement(
-                  type = "AttributeInRange",
-                  attributeTag = "dob",
-                  lower = "20041227",
-                  upper = "20221227",
-                  set = null
-              )
-          )
-         //Age: More than 18 years old true
-          proofs.add(
-              ProofOfIdentityStatement(
-                  type = "AttributeInRange",
-                  attributeTag = "dob",
-                  lower = "18000101",
-                  upper = "20041227",
-                  set = null
-              )
-          )
-          //Age in Range Age: 18 to 30 years old false
-          proofs.add(
-              ProofOfIdentityStatement(
-                  type = "AttributeInRange",
-                  attributeTag = "dob",
-                  lower = "19921227",
-                  upper = "20041227",
-                  set = null
-              )
-          )
-
-          //D.O.B Date of birth: Before 1990-05-05 false
-          proofs.add(
-              ProofOfIdentityStatement(
-                  type = "AttributeInRange",
-                  attributeTag = "dob",
-                  lower = "19900505",
-                  upper = "99990101",
-                  set = null
-              )
-          )*/
-
-        /*  proofs.add(
-              ProofOfIdentityStatement(
-                  type = "AttributeInSet",
-                  attributeTag = "nationality",
-                  lower = null,
-                  upper = null,
-                  set = listOf("BG", "DK", "GR", "UK")
-              )
-          )
-          proofs.add(
-              ProofOfIdentityStatement(
-                  type = "AttributeNotInSet",
-                  attributeTag = "nationality",
-                  lower = null,
-                  upper = null,
-                  set = listOf("BG", "DK", "GR", "UK")
-              )
-          )*/
-
-        val proofOfIdentity = ProofOfIdentity(
-            challenge = "6d7955057b669ce8e739f82728fa1c40d8150eba20d5d06d542637f0d6513f97",
-            statement = proofs
-        )
-        viewModel.proofOfIdentityRequest.postValue(proofOfIdentity)
-    }
-
     private fun initViews() {
         viewModel.binder?.getSessionRequestParams()?.let { params ->
             val proofOfIdentity = ProofOfIdentity(
@@ -242,6 +123,7 @@ class ProofOfIdentityPromptFragment : BaseFragment() {
             }
 
             _binding!!.accept.isEnabled = it.revealStatus == true && it.zeroKnowledgeStatus == true
+            _binding!!.proofNotMet.visibility = if(_binding!!.accept.isEnabled) View.GONE else View.VISIBLE
 
         }
         viewModel.authCanceled.observe(viewLifecycleOwner) {

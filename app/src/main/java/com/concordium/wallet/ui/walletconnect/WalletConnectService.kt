@@ -204,6 +204,7 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
                 message = message
             )
         )
+        println("LC -> CALL RESPOND PARAMS   $responseParams")
         SignClient.respond(responseParams) { error ->
             println("LC -> REJECT ERROR ${throwableRemoveLineBreaks(error.throwable)}")
         }
