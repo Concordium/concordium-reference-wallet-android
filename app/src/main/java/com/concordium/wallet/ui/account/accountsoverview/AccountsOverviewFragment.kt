@@ -252,7 +252,6 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
         builder.setPositiveButton(getString(R.string.force_update_warning_update_now)) { _, _ ->
             gotoAppStore(url)
         }
-        builder.setNegativeButton(getString(R.string.force_update_warning_backup)) { _, _ -> gotoBackup() }
         builder.setNeutralButton(getString(R.string.force_update_warning_remind_me)) { dialog, _ ->
             App.appCore.appSettingsForceUpdateChecked = true
             dialog.dismiss()
