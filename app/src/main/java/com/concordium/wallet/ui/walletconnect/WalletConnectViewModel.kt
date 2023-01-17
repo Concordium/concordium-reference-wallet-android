@@ -3,7 +3,6 @@ package com.concordium.wallet.ui.walletconnect
 import android.app.Application
 import android.os.CountDownTimer
 import android.text.TextUtils
-import android.util.Base64
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -27,11 +26,10 @@ import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
-import com.concordium.wallet.util.toHex
+import com.concordium.wallet.util.PrettyPrint.prettyPrint
 import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.walletconnect.sign.client.Sign
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +46,7 @@ data class WalletConnectData(
     var energy: Long? = null,
     var cost: Long? = null,
     var isTransaction: Boolean = true
-): Serializable
+) : Serializable
 
 class WalletConnectViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
@@ -83,7 +81,8 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     var binder: WalletConnectService.LocalBinder? = null
 
     private val accountUpdater = AccountUpdater(application, viewModelScope)
-    private val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+    private val accountRepository =
+        AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
     private val proxyRepository = ProxyRepository()
     private var submitTransaction: BackendRequest<SubmissionData>? = null
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
@@ -159,7 +158,8 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                 contractIndex = payload.address.index,
                 contractSubindex = payload.address.subIndex,
                 receiveName = payload.receiveName,
-                parameter = (binder?.getSessionRequestParamsAsString() ?: "").toHex(),
+                // parameter = (binder?.getSessionRequestParamsAsString() ?: "").toHex(),
+                parameter = payload.message,
                 success = {
                     walletConnectData.energy = it.energy
                     walletConnectData.cost = it.cost.toLong()
@@ -177,7 +177,9 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         val fee = walletConnectData.cost
         if (amount != null && fee != null) {
             walletConnectData.account?.totalUnshieldedBalance?.let { totalUnshieldedBalance ->
-                walletConnectData.account?.getAtDisposalWithoutStakedOrScheduled(totalUnshieldedBalance)?.let { atDisposal ->
+                walletConnectData.account?.getAtDisposalWithoutStakedOrScheduled(
+                    totalUnshieldedBalance
+                )?.let { atDisposal ->
                     if (atDisposal >= amount.toLong() + fee.toLong())
                         return true
                 }
@@ -212,7 +214,8 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     fun checkLogin(cipher: Cipher) = viewModelScope.launch {
         waiting.postValue(true)
-        val password = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
+        val password =
+            App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
         if (password != null) {
             decryptAndContinue(password)
         } else {
@@ -229,9 +232,11 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                 waiting.postValue(false)
                 return
             }
-            val decryptedJson = App.appCore.getCurrentAuthenticationManager().decryptInBackground(password, storageAccountDataEncrypted)
+            val decryptedJson = App.appCore.getCurrentAuthenticationManager()
+                .decryptInBackground(password, storageAccountDataEncrypted)
             if (decryptedJson != null) {
-                val credentialsOutput = App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
+                val credentialsOutput =
+                    App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
                 if (walletConnectData.isTransaction)
                     createTransaction(credentialsOutput.accountKeys)
                 else
@@ -255,19 +260,32 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             return
         }
 
-        payload.maxEnergy = walletConnectData.energy?.toInt() ?: 0
-        val accountTransactionInput = CreateAccountTransactionInput(expiry.toInt(), from, keys, this.accountNonce?.nonce ?: -1, payload, type)
+        payload.maxEnergy = walletConnectData.energy ?: 0
+        val accountTransactionInput = CreateAccountTransactionInput(
+            expiry.toInt(),
+            from,
+            keys,
+            this.accountNonce?.nonce ?: -1,
+            payload,
+            type
+        )
 
-        val accountTransactionOutput = App.appCore.cryptoLibrary.createAccountTransaction(accountTransactionInput)
+        val accountTransactionOutput =
+            App.appCore.cryptoLibrary.createAccountTransaction(accountTransactionInput)
         if (accountTransactionOutput == null) {
             errorInt.postValue(R.string.app_error_lib)
         } else {
-            val createTransferOutput = CreateTransferOutput(accountTransactionOutput.signatures, "", "", accountTransactionOutput.transaction)
+            val createTransferOutput = CreateTransferOutput(
+                accountTransactionOutput.signatures,
+                "",
+                "",
+                accountTransactionOutput.transaction
+            )
             submitTransaction(createTransferOutput)
         }
     }
 
-    fun sessionName() : String {
+    fun sessionName(): String {
         return binder?.getSessionName() ?: ""
     }
 
@@ -281,23 +299,32 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                 override fun shouldSkipField(f: FieldAttributes): Boolean {
                     return f.name == "payload" || f.name == "schema"
                 }
+
                 override fun shouldSkipClass(clazz: Class<*>?): Boolean {
                     return false
                 }
             }
-            val gson = GsonBuilder().setPrettyPrinting().addSerializationExclusionStrategy(strategy).create()
             params.payloadObj = params.parsePayload()
             params.payload = ""
             if (params.payloadObj != null && params.payloadObj?.message != null && params.schema != null) {
                 CoroutineScope(Dispatchers.IO).launch {
-                    val jsonMessage = App.appCore.cryptoLibrary.parameterToJson(ParameterToJsonInput(params.payloadObj!!.message, params.payloadObj!!.receiveName, params.schema!!, null))
+                    val jsonMessage = App.appCore.cryptoLibrary.parameterToJson(
+                        ParameterToJsonInput(
+                            params.payloadObj!!.message,
+                            params.payloadObj!!.receiveName,
+                            params.schema!!,
+                            null
+                        )
+                    )
                     if (jsonMessage != null) {
-                        params.message = jsonMessage.replace("\"", "")
+                        params.message = jsonMessage.replace("\\/", "")
+                        jsonPretty.postValue(params.message!!.prettyPrint())
+                    } else {
+                        jsonPretty.postValue("")
                     }
-                    jsonPretty.postValue(gson.toJson(params).replace("payloadObj", "payload"))
                 }
             } else {
-                jsonPretty.postValue(gson.toJson(params).replace("payloadObj", "payload"))
+                jsonPretty.postValue("")
             }
         }
     }
@@ -313,7 +340,14 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             },
             {
                 println("LC -> submitTransaction ERROR ${it.stackTraceToString()}")
-                transactionSubmittedError.postValue(Gson().toJson(TransactionError(500, it.message ?: "")))
+                transactionSubmittedError.postValue(
+                    Gson().toJson(
+                        TransactionError(
+                            500,
+                            it.message ?: ""
+                        )
+                    )
+                )
                 handleBackendError(it)
                 waiting.postValue(false)
             }
@@ -322,7 +356,11 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     private fun signMessage(keys: AccountData) {
         viewModelScope.launch {
-            val signMessageInput = SignMessageInput(walletConnectData.account?.address ?: "", binder?.getSessionRequestParams()?.message ?: "", keys)
+            val signMessageInput = SignMessageInput(
+                walletConnectData.account?.address ?: "",
+                binder?.getSessionRequestParams()?.message ?: "",
+                keys
+            )
             val signMessageOutput = App.appCore.cryptoLibrary.signMessage(signMessageInput)
             if (signMessageOutput == null) {
                 errorInt.postValue(R.string.app_error_lib)
@@ -342,13 +380,15 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                     }
                 }
             }
-            override fun onError(stringRes: Int) { }
-            override fun onNewAccountFinalized(accountName: String) { }
+
+            override fun onError(stringRes: Int) {}
+            override fun onNewAccountFinalized(accountName: String) {}
         })
-        accountUpdaterTimer = object: CountDownTimer(Long.MAX_VALUE, 5000) {
+        accountUpdaterTimer = object : CountDownTimer(Long.MAX_VALUE, 5000) {
             override fun onTick(millisUntilFinished: Long) {
                 walletConnectData.account?.let { accountUpdater.updateForAccount(it) }
             }
+
             override fun onFinish() {}
         }
         accountUpdaterTimer?.start()
