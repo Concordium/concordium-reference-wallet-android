@@ -28,18 +28,23 @@ class DelegationStatusActivity :
     override fun initializeViewModel() {
         super.initializeViewModel()
 
-        viewModel.bakerPoolStatusLiveData.observe(this, Observer<BakerPoolStatus> {
+        viewModel.bakerPoolStatusLiveData.observe(this) {
             it?.let { bakerPoolStatus ->
                 if (bakerPoolStatus.bakerStakePendingChange.pendingChangeType == CHANGE_REMOVE_POOL) {
                     bakerPoolStatus.bakerStakePendingChange.estimatedChangeTime?.let { estimatedChangeTime ->
                         val prefix = estimatedChangeTime.toDate()?.formatTo("yyyy-MM-dd")
                         val postfix = estimatedChangeTime.toDate()?.formatTo("HH:mm")
-                        val dateStr = getString(R.string.delegation_status_effective_time, prefix, postfix)
-                        addContent(getString(R.string.delegation_status_pool_deregistered) + "\n" + dateStr, "", R.color.text_pink)
+                        val dateStr =
+                            getString(R.string.delegation_status_effective_time, prefix, postfix)
+                        addContent(
+                            getString(R.string.delegation_status_pool_deregistered) + "\n" + dateStr,
+                            "",
+                            R.color.text_pink
+                        )
                     }
                 }
             }
-        })
+        }
     }
 
     override fun initView() {

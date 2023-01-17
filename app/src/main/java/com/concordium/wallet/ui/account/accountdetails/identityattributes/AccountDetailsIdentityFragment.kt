@@ -44,8 +44,8 @@ class AccountDetailsIdentityFragment : BaseFragment() {
 
     private fun initializeViewModel() {
         viewModel = ViewModelProvider(
-            activity!!,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(activity!!.application)
+            requireActivity(),
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         ).get(AccountDetailsViewModel::class.java)
 
         viewModel.identityLiveData.observe(viewLifecycleOwner, Observer { identity ->

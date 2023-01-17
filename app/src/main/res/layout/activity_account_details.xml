@@ -77,7 +77,7 @@
                                     android:layout_gravity="center"
                                     android:layout_margin="4dp"
                                     android:src="@drawable/ic_read_only"
-                                    android:tint="@color/text_grey" />
+                                    app:tint="@color/text_grey" />
                             </LinearLayout>
 
                             <LinearLayout
@@ -271,13 +271,13 @@
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:src="@drawable/ic_send"
-                        android:tint="@color/theme_white"
                         app:layout_constraintBottom_toTopOf="@+id/send_textview"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.5"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_chainStyle="packed" />
+                        app:layout_constraintVertical_chainStyle="packed"
+                        app:tint="@color/theme_white" />
 
                     <TextView
                         android:id="@+id/send_textview"
@@ -307,13 +307,13 @@
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:src="@drawable/ic_icon_send_shielded"
-                        android:tint="@color/theme_white"
                         app:layout_constraintBottom_toTopOf="@+id/shield_textview"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.5"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_chainStyle="packed" />
+                        app:layout_constraintVertical_chainStyle="packed"
+                        app:tint="@color/theme_white" />
 
                     <TextView
                         android:id="@+id/shield_textview"
@@ -343,13 +343,13 @@
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:src="@drawable/ic_recipient_address_qr"
-                        android:tint="@color/theme_white"
                         app:layout_constraintBottom_toTopOf="@+id/address_textview"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.5"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_chainStyle="packed" />
+                        app:layout_constraintVertical_chainStyle="packed"
+                        app:tint="@color/theme_white" />
 
                     <TextView
                         android:id="@+id/address_textview"

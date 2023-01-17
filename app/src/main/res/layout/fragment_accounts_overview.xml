@@ -30,7 +30,7 @@
                         android:src="@drawable/ic_pending"
                         android:layout_margin="10dp"
                         android:layout_gravity="center"
-                        android:tint="@color/theme_blue"/>
+                        app:tint="@color/theme_blue" />
                     <TextView
                         android:id="@+id/identity_pending_tv"
                         style="@style/TextView.Standard"
@@ -48,7 +48,7 @@
                         android:layout_margin="10dp"
                         android:layout_gravity="center"
                         android:clickable="true"
-                        android:tint="@color/theme_black"/>
+                        app:tint="@color/theme_black" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
@@ -65,7 +65,7 @@
                         android:src="@android:drawable/stat_sys_warning"
                         android:layout_margin="10dp"
                         android:layout_gravity="center"
-                        android:tint="@color/warning_orange"/>
+                        app:tint="@color/warning_orange" />
                     <TextView
                         style="@style/TextView.Standard"
                         android:layout_gravity="center"
@@ -153,7 +153,7 @@
                             android:src="@drawable/ic_shielded_icon"
                             android:layout_marginLeft="3dp"
                             android:layout_gravity="center_vertical"
-                            android:tint="@color/theme_blue" />
+                            app:tint="@color/theme_blue" />
 
                     </LinearLayout>
                 </LinearLayout>
@@ -208,7 +208,7 @@
                                 android:src="@drawable/ic_shielded_icon"
                                 android:layout_marginLeft="6dp"
                                 android:layout_gravity="center_vertical"
-                                android:tint="@color/theme_blue" />
+                                app:tint="@color/theme_blue" />
                         </LinearLayout>
                     </LinearLayout>
 

@@ -62,8 +62,8 @@ class AccountDetailsTransfersFragment : Fragment() {
 
     private fun initializeViewModel() {
         accountDetailsViewModel = ViewModelProvider(
-            activity!!,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(activity!!.application)
+            requireActivity(),
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         ).get(AccountDetailsViewModel::class.java)
 
         accountDetailsViewModel.totalBalanceLiveData.observe(this, Observer {
@@ -173,7 +173,7 @@ class AccountDetailsTransfersFragment : Fragment() {
             accountDetailsViewModel.requestGTUDrop()
         }
 
-        transactionAdapter = TransactionAdapter(accountDetailsViewModel.viewModelScope, AccountUpdater(activity!!.application, accountDetailsViewModel.viewModelScope), context!!, mutableListOf<AdapterItem>())
+        transactionAdapter = TransactionAdapter(accountDetailsViewModel.viewModelScope, AccountUpdater(requireActivity().application, accountDetailsViewModel.viewModelScope), requireContext(), mutableListOf<AdapterItem>())
         transactionAdapter.setOnDecryptListener(object : TransactionAdapter.OnDecryptClickListenerInterface {
             override fun onDecrypt(ta: Transaction) {
                 accountDetailsViewModel.selectTransactionForDecryption(ta)

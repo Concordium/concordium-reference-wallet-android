@@ -18,10 +18,6 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-
-
-            more_overview_export
-
             <LinearLayout
                 android:id="@+id/identities"
                 android:layout_width="match_parent"

@@ -222,6 +222,8 @@ class ScanQRActivity : BaseActivity(R.layout.activity_scan_qr, R.string.scan_qr_
         permissions: Array<String?>,
         grantResults: IntArray
     ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == RequestCodes.REQUEST_PERMISSION_CAMERA) {
             if (grantResults.size != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Log.d("Camera permission granted - initialize the camera source")

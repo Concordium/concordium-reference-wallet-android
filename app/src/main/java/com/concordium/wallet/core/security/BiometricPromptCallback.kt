@@ -5,12 +5,16 @@ import com.concordium.wallet.util.Log
 import javax.crypto.Cipher
 
 open class BiometricPromptCallback : BiometricPrompt.AuthenticationCallback() {
+    companion object{
+        const val ERROR_NEGATIVE_BUTTON = 13
+        const val ERROR_USER_CANCELED = 10
+    }
     override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
         super.onAuthenticationError(errorCode, errString)
         Log.d("Biometrics auth error (code: $errorCode): $errString")
-        if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON) {
+        if (errorCode == ERROR_NEGATIVE_BUTTON) {
             onNegativeButtonClicked()
-        } else if (errorCode == BiometricPrompt.ERROR_USER_CANCELED) {
+        } else if (errorCode == ERROR_USER_CANCELED) {
             onUserCancelled()
         }
     }

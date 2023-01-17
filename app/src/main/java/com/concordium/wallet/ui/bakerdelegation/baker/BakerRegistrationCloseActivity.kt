@@ -43,7 +43,7 @@ class BakerRegistrationCloseActivity :
         })
 
         viewModel.bakerKeysLiveData.observe(this, Observer { bakerKeys ->
-            baker_registration_export_election_verify_key.text = bakerKeys.electionVerifyKey
+            baker_registration_export_election_verify_key.text = bakerKeys!!.electionVerifyKey
             baker_registration_export_signature_verify_key.text = bakerKeys.signatureVerifyKey
             baker_registration_export_aggregation_verify_key.text = bakerKeys.aggregationVerifyKey
         })

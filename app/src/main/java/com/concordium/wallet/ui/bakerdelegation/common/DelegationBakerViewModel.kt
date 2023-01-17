@@ -92,16 +92,16 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     val showAuthenticationLiveData: LiveData<Event<Boolean>>
         get() = _showAuthenticationLiveData
 
-    private val _bakerKeysLiveData = MutableLiveData<BakerKeys>()
-    val bakerKeysLiveData: LiveData<BakerKeys>
+    private val _bakerKeysLiveData = MutableLiveData<BakerKeys?>()
+    val bakerKeysLiveData: MutableLiveData<BakerKeys?>
         get() = _bakerKeysLiveData
 
     private val _fileSavedLiveData = MutableLiveData<Event<Int>>()
     val fileSavedLiveData: LiveData<Event<Int>>
         get() = _fileSavedLiveData
 
-    private val _bakerPoolStatusLiveData = MutableLiveData<BakerPoolStatus>()
-    val bakerPoolStatusLiveData: LiveData<BakerPoolStatus>
+    private val _bakerPoolStatusLiveData = MutableLiveData<BakerPoolStatus?>()
+    val bakerPoolStatusLiveData: MutableLiveData<BakerPoolStatus?>
         get() = _bakerPoolStatusLiveData
 
     init {

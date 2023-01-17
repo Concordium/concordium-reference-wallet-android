@@ -103,11 +103,11 @@ class DelegationRegisterPoolActivity :
             }
         })
 
-        viewModel.bakerPoolStatusLiveData.observe(this, Observer<BakerPoolStatus> {
+        viewModel.bakerPoolStatusLiveData.observe(this) {
             showWaiting(false)
             viewModel.bakerDelegationData.bakerPoolStatus = it
             showDetailedPage()
-        })
+        }
     }
 
     override fun errorLiveData(value: Int) {
