@@ -19,6 +19,13 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
     private var settledSessionResponseError: Sign.Model.SettledSessionResponse.Error? = null
     private var sessionRequest: Sign.Model.SessionRequest? = null
 
+    interface ParsingInterface {
+
+        var onSuccess: String   // abstract property
+
+        var onError: Exception
+    }
+
     inner class LocalBinder : Binder() {
         fun pair(wcUri: String) {
             pairWC(wcUri)

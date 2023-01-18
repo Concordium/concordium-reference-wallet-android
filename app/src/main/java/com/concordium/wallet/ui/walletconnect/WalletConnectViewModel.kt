@@ -294,6 +294,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     }
 
     fun prettyPrintJson() {
+
         binder?.getSessionRequestParams()?.let { params ->
             val strategy: ExclusionStrategy = object : ExclusionStrategy {
                 override fun shouldSkipField(f: FieldAttributes): Boolean {

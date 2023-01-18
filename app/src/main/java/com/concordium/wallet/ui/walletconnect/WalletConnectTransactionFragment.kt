@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.concordium.wallet.R
+import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentWalletConnectTransactionBinding
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.WALLET_CONNECT_DATA
@@ -38,10 +40,13 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initViews()
         initObservers()
+
         _viewModel.prettyPrintJson()
         _viewModel.loadTransactionFee()
+
     }
 
     override fun onDestroyView() {
@@ -61,15 +66,28 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
             binding.accountToSendFrom.text = "${account.name}\n\n$line1\n$line2"
         }
 
-        _viewModel.binder?.getSessionRequestParams()?.parsePayload()?.let { payload ->
-            binding.amount.text = CurrencyUtil.formatGTU(
-                payload.amount ?: "", true
-            )
-            payload.address.let {
-                binding.contractAddress.text = "${it.index} (${it.subIndex})"
+
+        _viewModel.binder?.getSessionRequestParams().let { requestParams ->
+            if (requestParams == null) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.wallet_connect_transaction_parsing_error),
+                    Toast.LENGTH_SHORT
+                ).show()
+                _viewModel.binder?.respondError("User reject")
+                _viewModel.reject.postValue(true)
+            } else {
+
+                requestParams.parsePayload()?.let { payload ->
+                    binding.amount.text = CurrencyUtil.formatGTU(
+                        payload.amount ?: "", true
+                    )
+                    payload.address.let {
+                        binding.contractAddress.text = "${it.index} (${it.subIndex})"
+                    }
+                    binding.contractFeature.text = payload.receiveName
+                }
             }
-            binding.contractFeature.text = payload.receiveName
-            binding.maxEnergyAllowed.text = "${payload.maxContractExecutionEnergy} NRG"
         }
 
         binding.reject.setOnClickListener {
@@ -89,6 +107,7 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
                 R.string.wallet_connect_transaction_estimated_transaction_fee,
                 CurrencyUtil.formatGTU(fee)
             )
+            binding.maxEnergyAllowed.text = "${_viewModel.walletConnectData.energy} NRG"
             if (_viewModel.hasEnoughFunds())
                 binding.submit.isEnabled = true
             else {

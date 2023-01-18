@@ -23,6 +23,7 @@ import com.concordium.wallet.data.room.*
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.passphrase.recoverprocess.retrofit.IdentityProviderApiInstance
 import com.concordium.wallet.util.DateTimeUtil
+import com.concordium.wallet.util.Log
 import com.google.gson.JsonArray
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -117,7 +118,11 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             return
         }
 
-        val recoverRequestUrl = getRecoverRequestUrl(identityProvider, globalInfo, identityIndex)
+        var recoverRequestUrl = getRecoverRequestUrl(identityProvider, globalInfo, identityIndex)
+        if(identityIndex == 0){
+            recoverRequestUrl = ""
+            Log.e("URL CRASHED ON PURPOSE")
+        }
         if (recoverRequestUrl != null) {
             val recoverResponsePair = IdentityProviderApiInstance.safeRecoverCall(recoverRequestUrl)
             if (recoverResponsePair.first && recoverResponsePair.second != null && recoverResponsePair.second!!.value != null) {

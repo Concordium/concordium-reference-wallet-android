@@ -993,4 +993,5 @@
     <string name="export_account_keys_copied">Copied</string>
     <string name="export_account_keys_to_file">Export to file</string>
     <string name="export_account_keys_file_exported">File exported</string>
+    <string name="wallet_connect_transaction_parsing_error">Error parsing the request!</string>
 </resources>

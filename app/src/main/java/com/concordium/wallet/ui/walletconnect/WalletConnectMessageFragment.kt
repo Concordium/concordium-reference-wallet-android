@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentWalletConnectMessageBinding
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.WALLET_CONNECT_DATA
 
@@ -22,7 +24,11 @@ class WalletConnectMessageFragment : WalletConnectBaseFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentWalletConnectMessageBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -39,8 +45,22 @@ class WalletConnectMessageFragment : WalletConnectBaseFragment() {
     }
 
     private fun initViews() {
-        _viewModel.binder?.getSessionRequestParams()?.message?.let { message ->
-            binding.messageText.text = message
+        _viewModel.binder?.getSessionRequestParams().let { requestParameters ->
+
+            if (requestParameters == null) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.wallet_connect_transaction_parsing_error),
+                    Toast.LENGTH_SHORT
+                ).show()
+                _viewModel.binder?.respondError("User reject")
+                _viewModel.reject.postValue(true)
+            } else {
+
+                requestParameters.message?.let { message ->
+                    binding.messageText.text = message
+                }
+            }
         }
         binding.reject.setOnClickListener {
             binding.reject.isEnabled = false
