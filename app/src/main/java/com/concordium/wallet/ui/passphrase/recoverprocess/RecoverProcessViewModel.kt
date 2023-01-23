@@ -118,11 +118,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             return
         }
 
-        var recoverRequestUrl = getRecoverRequestUrl(identityProvider, globalInfo, identityIndex)
-        if(identityIndex == 0){
-            recoverRequestUrl = ""
-            Log.e("URL CRASHED ON PURPOSE")
-        }
+        val recoverRequestUrl = getRecoverRequestUrl(identityProvider, globalInfo, identityIndex)
         if (recoverRequestUrl != null) {
             val recoverResponsePair = IdentityProviderApiInstance.safeRecoverCall(recoverRequestUrl)
             if (recoverResponsePair.first && recoverResponsePair.second != null && recoverResponsePair.second!!.value != null) {

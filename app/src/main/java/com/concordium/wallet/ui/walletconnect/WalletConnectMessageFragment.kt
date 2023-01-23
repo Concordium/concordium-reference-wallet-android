@@ -46,7 +46,6 @@ class WalletConnectMessageFragment : WalletConnectBaseFragment() {
 
     private fun initViews() {
         _viewModel.binder?.getSessionRequestParams().let { requestParameters ->
-
             if (requestParameters == null) {
                 Toast.makeText(
                     requireContext(),
