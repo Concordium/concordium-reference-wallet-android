@@ -80,7 +80,7 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
 
                 requestParams.parsePayload()?.let { payload ->
                     binding.amount.text = CurrencyUtil.formatGTU(
-                        payload.amount ?: "", true
+                        payload.amount, true
                     )
                     payload.address.let {
                         binding.contractAddress.text = "${it.index} (${it.subIndex})"
