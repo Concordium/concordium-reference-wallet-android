@@ -16,7 +16,6 @@ import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.ProofOfIdentity
-import com.concordium.wallet.data.model.ProofOfIdentityStatement
 import com.concordium.wallet.databinding.DialogRevealInformationBinding
 import com.concordium.wallet.databinding.FragmentProofOfIdentityPromptBinding
 import com.concordium.wallet.ui.base.BaseFragment
@@ -40,10 +39,10 @@ class ProofOfIdentityPromptFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initViews()
         initObservers()
-    }
-    private fun initViews() {
+
         viewModel.binder?.getSessionRequestParams()?.let { params ->
             val proofOfIdentity = ProofOfIdentity(
                 challenge = params.challenge,
@@ -51,6 +50,8 @@ class ProofOfIdentityPromptFragment : BaseFragment() {
             )
             viewModel.proofOfIdentityRequest.postValue(proofOfIdentity)
         }
+    }
+    private fun initViews() {
 
         binding.subTitle.text =
             getString(R.string.proof_of_identity_prompt_subtitle, viewModel.sessionName())
@@ -122,8 +123,10 @@ class ProofOfIdentityPromptFragment : BaseFragment() {
                 proofOfIdentityZeroAdapter.notifyDataSetChanged()
             }
 
-            _binding!!.accept.isEnabled = it.revealStatus == true && it.zeroKnowledgeStatus == true
-            _binding!!.proofNotMet.visibility = if(_binding!!.accept.isEnabled) View.GONE else View.VISIBLE
+            val checkOk = it.revealStatus == true && it.zeroKnowledgeStatus == true
+
+            _binding!!.accept.isEnabled = checkOk
+            _binding!!.proofNotMet.visibility = if(checkOk) View.GONE else View.VISIBLE
 
         }
         viewModel.authCanceled.observe(viewLifecycleOwner) {
