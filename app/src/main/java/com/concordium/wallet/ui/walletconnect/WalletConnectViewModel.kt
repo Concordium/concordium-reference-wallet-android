@@ -159,7 +159,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                 contractIndex = payload.address.index,
                 contractSubindex = payload.address.subIndex,
                 receiveName = payload.receiveName,
-                parameter = (binder?.getSessionRequestParamsAsString() ?: "").toHex(),
+                parameter = payload.message,
                 success = {
                     walletConnectData.energy = it.energy
                     walletConnectData.cost = it.cost.toLong()
