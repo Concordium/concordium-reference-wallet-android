@@ -295,15 +295,6 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     fun prettyPrintJson() {
 
         binder?.getSessionRequestParams()?.let { params ->
-            val strategy: ExclusionStrategy = object : ExclusionStrategy {
-                override fun shouldSkipField(f: FieldAttributes): Boolean {
-                    return f.name == "payload" || f.name == "schema"
-                }
-
-                override fun shouldSkipClass(clazz: Class<*>?): Boolean {
-                    return false
-                }
-            }
             params.payloadObj = params.parsePayload()
             params.payload = ""
             if (params.payloadObj != null && params.payloadObj?.message != null && params.schema != null) {
@@ -317,8 +308,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                         )
                     )
                     if (jsonMessage != null) {
-                        params.message = jsonMessage.replace("\\/", "")
-                        jsonPretty.postValue(params.message!!.prettyPrint())
+                        jsonPretty.postValue(jsonMessage.prettyPrint())
                     } else {
                         jsonPretty.postValue("")
                     }
