@@ -811,8 +811,11 @@
     <string name="wallet_connect_transaction_receipt_title">Transaction: Update Contract</string>
     <string name="wallet_connect_transaction_sender_account">Sender account</string>
     <string name="wallet_connect_transaction_amount">Amount</string>
-    <string name="wallet_connect_transaction_contract_address">Contract index</string>
+    <string name="wallet_connect_transaction_contract_address">Contract index (subindex):</string>
+    <string name="wallet_connect_transaction_contract_and_function_name">Contract and function name:</string>
+    <string name="wallet_connect_transaction_contract_max_energy">Max energy allowed:</string>
     <string name="wallet_connect_transaction_parameters">Parameters</string>
+    <string name="wallet_connect_transaction_no_parameters">No parameters</string>
     <string name="wallet_connect_transaction_reject">Reject</string>
     <string name="wallet_connect_transaction_submit">Submit</string>
     <string name="wallet_connect_transaction_estimated_transaction_fee">Estimated transaction fee:\nϾ%1$s</string>
@@ -990,4 +993,5 @@
     <string name="export_account_keys_copied">Copied</string>
     <string name="export_account_keys_to_file">Export to file</string>
     <string name="export_account_keys_file_exported">File exported</string>
+    <string name="wallet_connect_transaction_parsing_error">Error parsing the request!</string>
 </resources>
