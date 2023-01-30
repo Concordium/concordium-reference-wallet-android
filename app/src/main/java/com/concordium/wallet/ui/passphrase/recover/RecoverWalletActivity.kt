@@ -12,9 +12,14 @@ import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityRecoverWalletBinding
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.common.delegates.AuthDelegate
+import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class RecoverWalletActivity : BaseActivity() {
+class RecoverWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
     private lateinit var binding: ActivityRecoverWalletBinding
     private lateinit var viewModel: PassPhraseRecoverViewModel
 
@@ -30,7 +35,14 @@ class RecoverWalletActivity : BaseActivity() {
         if (BuildConfig.DEBUG) {
             binding.toolbarLayout.toolbarTitle.isClickable = true
             binding.toolbarLayout.toolbarTitle.setOnClickListener {
-                viewModel.hack()
+                showAuthentication(this) { password ->
+                    password?.let {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            viewModel.hack(it)
+                        }
+                    }
+                }
+
             }
         }
     }
@@ -78,9 +90,18 @@ class RecoverWalletActivity : BaseActivity() {
     }
 
     private fun initObservers() {
-        viewModel.validate.observe(this) { success ->
-            if (success)
-                binding.pager.currentItem++
+        viewModel.seed.observe(this){seed ->
+                showAuthentication(this) { password ->
+                    password?.let {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            viewModel.setSeedPhrase(seed, password).let {
+                                if(it){
+                                    binding.pager.currentItem++
+                                }
+                            }
+                        }
+                    }
+                }
         }
     }
 

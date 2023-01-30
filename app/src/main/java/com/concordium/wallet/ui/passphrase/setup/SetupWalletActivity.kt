@@ -11,12 +11,16 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
-import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.databinding.ActivitySetupWalletBinding
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.common.delegates.AuthDelegate
+import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.identity.identitycreate.IdentityIntroFlow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class SetupWalletActivity : BaseActivity() {
+class SetupWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
     private lateinit var binding: ActivitySetupWalletBinding
     private lateinit var viewModel: PassPhraseViewModel
 
@@ -25,7 +29,11 @@ class SetupWalletActivity : BaseActivity() {
         binding = ActivitySetupWalletBinding.inflate(layoutInflater)
         setContentView(binding.root)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.pass_phrase_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.pass_phrase_title
+        )
         initializeViewModel()
         initViews()
         initObservers()
@@ -78,8 +86,17 @@ class SetupWalletActivity : BaseActivity() {
     private fun initObservers() {
         viewModel.validate.observe(this) { success ->
             if (success) {
-                AuthPreferences(this).setSeedPhrase(viewModel.generatedPhrase())
-                moveNext()
+                showAuthentication(this) { password ->
+                    password?.let {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            viewModel.setSeedPhrase(password).let {
+                                if(it){
+                                    moveNext()
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -92,7 +109,8 @@ class SetupWalletActivity : BaseActivity() {
         }
     }
 
-    private inner class ScreenSlidePagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
+    private inner class ScreenSlidePagerAdapter(fragmentActivity: FragmentActivity) :
+        FragmentStateAdapter(fragmentActivity) {
         override fun getItemCount(): Int = 4
 
         override fun createFragment(position: Int): Fragment {

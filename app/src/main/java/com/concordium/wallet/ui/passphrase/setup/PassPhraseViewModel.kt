@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import cash.z.ecc.android.bip39.Mnemonics
 import com.concordium.wallet.BuildConfig
+import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.ui.passphrase.common.WordsPickedBaseListAdapter
 import java.io.Serializable
 
@@ -52,5 +53,12 @@ class PassPhraseViewModel(application: Application) : AndroidViewModel(applicati
 
     fun generatedPhrase(): String {
         return mnemonicCodeToConfirm.joinToString(" ") { String(it) }
+    }
+
+    suspend fun setSeedPhrase(password: String): Boolean{
+       return AuthPreferences(getApplication()).setSeedPhrase(
+            generatedPhrase(),
+            password
+        )
     }
 }

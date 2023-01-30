@@ -25,6 +25,10 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
     val validate: LiveData<Boolean>
         get() = _validateLiveData
 
+    private val _seedLiveData = MutableLiveData<String>()
+    val seed: LiveData<String>
+        get() = _seedLiveData
+
     fun loadAllWords() {
         allWords = Mnemonics.getCachedWords(Locale.ENGLISH.language)
     }
@@ -33,11 +37,17 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
         wordsPicked = arrayOfNulls(wordsPicked.size)
     }
 
-    fun hack() {
+    suspend fun hack(password: String) {
         if (BuildConfig.DEBUG) {
             //AuthPreferences(getApplication()).setSeedPhrase("health smoke abandon middle outer method meadow sorry whale random cupboard thank album exclude idle month exit quarter shell portion eternal legal rent tonight") // testnet CBW-320
-            AuthPreferences(getApplication()).setSeedPhrase("nothing ill myself guitar antique demise awake twelve fall victory grow segment bus puppy iron vicious skate piece tobacco stable police plunge coin fee") // testnet
-            _validateLiveData.value = true
+            AuthPreferences(getApplication()).setSeedPhrase(
+                "nothing ill myself guitar antique demise awake twelve fall victory grow segment bus puppy iron vicious skate piece tobacco stable police plunge coin fee",
+                password
+            ).let {
+                if (it) {
+                    _validateLiveData.value = true
+                }
+            }// testnet
         }
     }
 
@@ -52,12 +62,19 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
                 val result = Mnemonics.MnemonicCode(enteredPhrase).toSeed()
                 success = result.isNotEmpty() && result.size == 64 && result.toHex().length == 128
                 if (success) {
-                    AuthPreferences(getApplication()).setSeedPhrase(enteredPhrase)
+                    _seedLiveData.value = enteredPhrase
                 }
             } catch (ex: Exception) {
                 Log.d(ex.message ?: "")
             }
         }
         _validateLiveData.value = success
+    }
+
+    suspend fun setSeedPhrase(seed: String, password: String): Boolean {
+        return AuthPreferences(getApplication()).setSeedPhrase(
+            seed,
+            password
+        )
     }
 }

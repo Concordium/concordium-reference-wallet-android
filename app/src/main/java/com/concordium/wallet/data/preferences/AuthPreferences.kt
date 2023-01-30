@@ -3,6 +3,7 @@ package com.concordium.wallet.data.preferences
 import android.content.Context
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
+import com.concordium.wallet.App
 import com.concordium.wallet.util.toHex
 
 class AuthPreferences(val context: Context) :
@@ -24,6 +25,7 @@ class AuthPreferences(val context: Context) :
         const val PREFKEY_SHIELDED_WARNING_DISMISSED_ = "PREFKEY_SHIELDED_WARNING_DISMISSED_"
         const val PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED = "PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED_"
         const val SEED_PHRASE = "SEED_PHRASE"
+        const val SEED_PHRASE_ENCRYPTED = "SEED_PHRASE_ENCRYPTED"
     }
 
     fun setHasSetupUser(value: Boolean) {
@@ -142,17 +144,23 @@ class AuthPreferences(val context: Context) :
         setString(SEED_PHRASE, "")
     }
 
-    fun setSeedPhrase(value: String) {
+    suspend fun setSeedPhrase(value: String, password: String): Boolean {
         val seed = Mnemonics.MnemonicCode(value).toSeed()
         val seedEncoded = seed.toHex()
-        setString(SEED_PHRASE, seedEncoded)
+        val encryptedSeed = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, seedEncoded)
+            ?: return false
+       return setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed)
     }
 
-    fun getSeedPhrase(): String {
+    fun getSeedPhrase(password: String): String {
+        if(getString(SEED_PHRASE_ENCRYPTED) == null){
+
+        }
+
         return getString(SEED_PHRASE, "")
     }
 
     fun hasSeedPhrase(): Boolean {
-        return getSeedPhrase() != ""
+        return getString(SEED_PHRASE) != null || getString(SEED_PHRASE_ENCRYPTED) != null
     }
 }
