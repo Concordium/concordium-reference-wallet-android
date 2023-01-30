@@ -40,7 +40,6 @@ class RecoverWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl()
                             viewModel.hack(it)
                     }
                 }
-
             }
         }
     }

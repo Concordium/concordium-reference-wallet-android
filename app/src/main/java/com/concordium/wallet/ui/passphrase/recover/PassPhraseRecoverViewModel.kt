@@ -50,6 +50,7 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
                 "nothing ill myself guitar antique demise awake twelve fall victory grow segment bus puppy iron vicious skate piece tobacco stable police plunge coin fee",
                 password
             )// testnet
+            _saveSeedLiveData.value = saveSuccess
             if (saveSuccess) {
                 _validateLiveData.postValue(true)
             }
