@@ -4,6 +4,7 @@ import android.content.Context
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import com.concordium.wallet.App
+import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toHex
 
 class AuthPreferences(val context: Context) :
@@ -152,15 +153,31 @@ class AuthPreferences(val context: Context) :
        return setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed)
     }
 
-    fun getSeedPhrase(password: String): String {
-        if(getString(SEED_PHRASE_ENCRYPTED) == null){
+    suspend fun getSeedPhrase(password: String): String {
+        val seedEncrypted = getString(SEED_PHRASE_ENCRYPTED)
+            ?: getString(SEED_PHRASE, "").let {seedUnencrypted ->
+                if(seedUnencrypted != ""){
+                    setStringWithResult(SEED_PHRASE, null).let {deleteSuccess ->
+                        if(deleteSuccess){
+                            val encryptedSeed = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, seedUnencrypted)
+                                ?: return ""
+                            setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed).let {saveSuccess ->
+                                if(saveSuccess){
+                                    Log.d("ENCRYPTED SEED UPDATED")
+                                    return  seedUnencrypted
+                                }
+                            }
+                        }
+                    }
+                }
+                    return ""
+            }
 
-        }
-
-        return getString(SEED_PHRASE, "")
+        return App.appCore.getCurrentAuthenticationManager().decryptInBackground(password, seedEncrypted)
+            ?: return ""
     }
 
     fun hasSeedPhrase(): Boolean {
-        return getString(SEED_PHRASE) != null || getString(SEED_PHRASE_ENCRYPTED) != null
+        return getString(SEED_PHRASE_ENCRYPTED) != null || getString(SEED_PHRASE) != null
     }
 }
