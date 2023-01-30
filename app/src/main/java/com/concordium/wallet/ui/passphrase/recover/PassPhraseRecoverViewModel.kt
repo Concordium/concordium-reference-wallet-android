@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import com.concordium.wallet.BuildConfig
@@ -11,6 +12,7 @@ import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.ui.passphrase.common.WordsPickedBaseListAdapter
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toHex
+import kotlinx.coroutines.launch
 import java.util.*
 
 class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(application) {
@@ -20,6 +22,10 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
     companion object {
         val WORD_COUNT: Int = Mnemonics.WordCount.COUNT_24.count
     }
+
+    private val _saveSeedLiveData = MutableLiveData<Boolean>()
+    val saveSeed: LiveData<Boolean>
+        get() = _saveSeedLiveData
 
     private val _validateLiveData = MutableLiveData<Boolean>()
     val validate: LiveData<Boolean>
@@ -37,17 +43,16 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
         wordsPicked = arrayOfNulls(wordsPicked.size)
     }
 
-    suspend fun hack(password: String) {
+    fun hack(password: String) = viewModelScope.launch  {
         if (BuildConfig.DEBUG) {
             //AuthPreferences(getApplication()).setSeedPhrase("health smoke abandon middle outer method meadow sorry whale random cupboard thank album exclude idle month exit quarter shell portion eternal legal rent tonight") // testnet CBW-320
-            AuthPreferences(getApplication()).setSeedPhrase(
+            val saveSuccess = AuthPreferences(getApplication()).setSeedPhrase(
                 "nothing ill myself guitar antique demise awake twelve fall victory grow segment bus puppy iron vicious skate piece tobacco stable police plunge coin fee",
                 password
-            ).let {
-                if (it) {
-                    _validateLiveData.value = true
-                }
-            }// testnet
+            )// testnet
+            if (saveSuccess) {
+                _validateLiveData.postValue(true)
+            }
         }
     }
 
@@ -71,8 +76,8 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
         _validateLiveData.value = success
     }
 
-    suspend fun setSeedPhrase(seed: String, password: String): Boolean {
-        return AuthPreferences(getApplication()).setSeedPhrase(
+    fun setSeedPhrase(seed: String, password: String) = viewModelScope.launch {
+        _saveSeedLiveData.value = AuthPreferences(getApplication()).setSeedPhrase(
             seed,
             password
         )

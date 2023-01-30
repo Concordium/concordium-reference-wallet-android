@@ -88,15 +88,15 @@ class SetupWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
             if (success) {
                 showAuthentication(this) { password ->
                     password?.let {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            viewModel.setSeedPhrase(password).let {
-                                if(it){
-                                    moveNext()
-                                }
-                            }
-                        }
+                        viewModel.setSeedPhrase(password)
                     }
                 }
+            }
+        }
+
+        viewModel.saveSeed.observe(this) {
+            if (it) {
+                moveNext()
             }
         }
 

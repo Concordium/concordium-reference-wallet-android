@@ -37,9 +37,7 @@ class RecoverWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl()
             binding.toolbarLayout.toolbarTitle.setOnClickListener {
                 showAuthentication(this) { password ->
                     password?.let {
-                        CoroutineScope(Dispatchers.IO).launch {
                             viewModel.hack(it)
-                        }
                     }
                 }
 
@@ -93,15 +91,14 @@ class RecoverWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl()
         viewModel.seed.observe(this){seed ->
                 showAuthentication(this) { password ->
                     password?.let {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            viewModel.setSeedPhrase(seed, password).let {
-                                if(it){
-                                    binding.pager.currentItem++
-                                }
-                            }
-                        }
+                            viewModel.setSeedPhrase(seed, password)
                     }
                 }
+        }
+        viewModel.saveSeed.observe(this){
+            if(it){
+                binding.pager.currentItem++
+            }
         }
     }
 
