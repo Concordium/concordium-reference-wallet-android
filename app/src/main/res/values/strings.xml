@@ -1034,8 +1034,8 @@
     <string name="force_update_needed_backup">Make backup</string>
 
     <string name="force_update_warning_title">New wallet app available</string>
-    <string name="force_update_warning_message">Going forward the Concordium Legacy Wallet will not receive any new features. We therefor recommend that you install the new Concordium Wallet for Mobile, to be able to use all the latest Concordium features. You will still be able to access your existing accounts and identities in the Concordium Legacy Wallet, but be sure to keep a backup of your private keys.</string>
-    <string name="force_update_warning_update_now">Update now</string>
+    <string name="force_update_warning_message">Going forward the Concordium Legacy Wallet will not receive any new features. Therefore, we recommend that you install the new Concordium Wallet for Mobile to use all the latest Concordium features. You can still access your existing accounts and identities in the Concordium Legacy Wallet, but you cannot create new ones. Be sure to keep a backup of your private keys.</string>
+    <string name="force_update_warning_update_now">Download the new wallet app</string>
     <string name="force_update_warning_remind_me">Remind me next time I open the wallet</string>
     <string name="force_update_warning_backup">Make backup</string>
 
