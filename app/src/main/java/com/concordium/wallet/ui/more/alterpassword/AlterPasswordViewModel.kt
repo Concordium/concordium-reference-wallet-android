@@ -12,6 +12,7 @@ import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
+import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
@@ -26,6 +27,8 @@ class AlterPasswordViewModel(application: Application) :
 
     private var initialDecryptedAccountsList: ArrayList<Account> = ArrayList()
     private var initialDecryptedIdentityList: List<Identity> = emptyList()
+
+    private var decryptedSeed: String? = null
 
     private var database: WalletDatabase
 
@@ -163,6 +166,13 @@ class AlterPasswordViewModel(application: Application) :
                 allSuccess = false
             }
 
+            val seed = AuthPreferences(getApplication()).getSeedPhraseDecrypted(decryptKey)
+            if(seed == null){
+                allSuccess = false
+            }else{
+                decryptedSeed = seed
+            }
+
             if(allSuccess){
                 App.appCore.startResetAuthFlow()
                 _doneInitialAuthenticationLiveData.value = Event(true)
@@ -197,6 +207,21 @@ class AlterPasswordViewModel(application: Application) :
                     initialDecryptedAccountsList = ArrayList()
                     initialDecryptedIdentityList = emptyList()
                 } catch (e: Exception) {
+                    allSuccess = false
+                }
+
+                if(decryptedSeed != null){
+                    val seedPhraseEncrypted = App.appCore.getOriginalAuthenticationManager().encryptInBackground(encryptKey, decryptedSeed!!)
+                    if(seedPhraseEncrypted != null) {
+                        if(!AuthPreferences(getApplication()).setSeedPhraseEncrypted(seedPhraseEncrypted)){
+                            allSuccess = false
+                        }else{
+                            decryptedSeed = null
+                        }
+                    }else{
+                        allSuccess = false
+                    }
+                }else{
                     allSuccess = false
                 }
 

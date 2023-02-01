@@ -6,6 +6,7 @@ import cash.z.ecc.android.bip39.toSeed
 import com.concordium.wallet.App
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toHex
+import javax.crypto.SecretKey
 
 class AuthPreferences(val context: Context) :
     Preferences(context, SharedPreferencesKeys.PREF_FILE_AUTH, Context.MODE_PRIVATE) {
@@ -175,6 +176,29 @@ class AuthPreferences(val context: Context) :
 
         return App.appCore.getCurrentAuthenticationManager().decryptInBackground(password, seedEncrypted)
             ?: return ""
+    }
+
+    suspend fun getSeedPhraseDecrypted(decryptKey: SecretKey): String? {
+        val seedEncrypted = getString(SEED_PHRASE_ENCRYPTED)
+        if (seedEncrypted != null) {
+            return App.appCore.getOriginalAuthenticationManager()
+                .decryptInBackground(decryptKey, seedEncrypted)
+        }
+        return getString(SEED_PHRASE)
+    }
+
+    fun setSeedPhraseEncrypted(encryptedSeed: String): Boolean {
+        if(getString(SEED_PHRASE) != null){
+            setStringWithResult(SEED_PHRASE, null).let {deleteSuccess ->
+                if(deleteSuccess){
+                   return setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed)
+                }else{
+                    return false
+                }
+            }
+
+        }
+        return setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed)
     }
 
     fun hasSeedPhrase(): Boolean {
