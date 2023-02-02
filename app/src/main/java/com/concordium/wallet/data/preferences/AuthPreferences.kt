@@ -196,7 +196,6 @@ class AuthPreferences(val context: Context) :
                     return false
                 }
             }
-
         }
         return setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed)
     }

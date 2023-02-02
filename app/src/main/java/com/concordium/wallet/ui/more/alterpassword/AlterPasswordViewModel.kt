@@ -166,11 +166,14 @@ class AlterPasswordViewModel(application: Application) :
                 allSuccess = false
             }
 
-            val seed = AuthPreferences(getApplication()).getSeedPhraseDecrypted(decryptKey)
-            if(seed == null){
+            try {
+                decryptedSeed = AuthPreferences(getApplication()).getSeedPhraseDecrypted(decryptKey)
+                if(decryptedSeed == null){
+                    allSuccess = false
+                }
+            }catch (e: Exception) {
+                e.printStackTrace()
                 allSuccess = false
-            }else{
-                decryptedSeed = seed
             }
 
             if(allSuccess){
@@ -188,8 +191,25 @@ class AlterPasswordViewModel(application: Application) :
     private fun encryptAndFinalize(encryptKey: SecretKey) =
         viewModelScope.launch {
             _waitingLiveData.value = true
+
+            var allSuccess = true
+
+            if(decryptedSeed != null){
+                try {
+                    val seedPhraseEncrypted = App.appCore.getOriginalAuthenticationManager()
+                        .encryptInBackground(encryptKey, decryptedSeed!!)
+                    if (seedPhraseEncrypted == null || !AuthPreferences(getApplication()).setSeedPhraseEncrypted(seedPhraseEncrypted)) {
+                            allSuccess = false
+                    }
+                    decryptedSeed = null
+                }catch (e: Exception){
+                    allSuccess = false
+                }
+            }else{
+                allSuccess = false
+            }
+
             database.withTransaction {
-                var allSuccess = true
                 try {
                     for (account in initialDecryptedAccountsList) {
                         if (account.encryptedAccountData.isNotEmpty()) {
@@ -207,21 +227,6 @@ class AlterPasswordViewModel(application: Application) :
                     initialDecryptedAccountsList = ArrayList()
                     initialDecryptedIdentityList = emptyList()
                 } catch (e: Exception) {
-                    allSuccess = false
-                }
-
-                if(decryptedSeed != null){
-                    val seedPhraseEncrypted = App.appCore.getOriginalAuthenticationManager().encryptInBackground(encryptKey, decryptedSeed!!)
-                    if(seedPhraseEncrypted != null) {
-                        if(!AuthPreferences(getApplication()).setSeedPhraseEncrypted(seedPhraseEncrypted)){
-                            allSuccess = false
-                        }else{
-                            decryptedSeed = null
-                        }
-                    }else{
-                        allSuccess = false
-                    }
-                }else{
                     allSuccess = false
                 }
 
