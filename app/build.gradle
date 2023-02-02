@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def versionBuildNumberSequential = 110
+def versionBuildNumberSequential = 111
 
 def versionBuildNumberMajor = 3
 def versionBuildNumberMinor = 2
@@ -269,8 +269,6 @@ android {
             excludes += ['META-INF/atomicfu.kotlin_module']
         }*/
     }
-
-    // Room - exclude the atomic functions module from the package and prevent warnings.
     namespace 'com.concordium.wallet'
     buildToolsVersion '33.0.1'
 }
