@@ -51,9 +51,8 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
                 password
             )// testnet
             _saveSeedLiveData.value = saveSuccess
-            if (saveSuccess) {
-                _validateLiveData.postValue(true)
-            }
+            _validateLiveData.value = saveSuccess
+
         }
     }
 

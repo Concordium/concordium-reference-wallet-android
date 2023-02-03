@@ -16,9 +16,6 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.identity.identitycreate.IdentityIntroFlow
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class SetupWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
     private lateinit var binding: ActivitySetupWalletBinding
@@ -29,11 +26,7 @@ class SetupWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
         binding = ActivitySetupWalletBinding.inflate(layoutInflater)
         setContentView(binding.root)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        setupActionBar(
-            binding.toolbarLayout.toolbar,
-            binding.toolbarLayout.toolbarTitle,
-            R.string.pass_phrase_title
-        )
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.pass_phrase_title)
         initializeViewModel()
         initViews()
         initObservers()
@@ -109,8 +102,7 @@ class SetupWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
         }
     }
 
-    private inner class ScreenSlidePagerAdapter(fragmentActivity: FragmentActivity) :
-        FragmentStateAdapter(fragmentActivity) {
+    private inner class ScreenSlidePagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
         override fun getItemCount(): Int = 4
 
         override fun createFragment(position: Int): Fragment {
