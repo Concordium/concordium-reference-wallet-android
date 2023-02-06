@@ -190,11 +190,7 @@ class AuthPreferences(val context: Context) :
     fun setSeedPhraseEncrypted(encryptedSeed: String): Boolean {
         if(getString(SEED_PHRASE) != null){
             setStringWithResult(SEED_PHRASE, null).let {deleteSuccess ->
-                if(deleteSuccess){
-                   return setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed)
-                }else{
-                    return false
-                }
+                return deleteSuccess && setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed)
             }
         }
         return setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed)
