@@ -34,7 +34,7 @@ class RecoverWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl()
             binding.toolbarLayout.toolbarTitle.setOnClickListener {
                 showAuthentication(this) { password ->
                     password?.let {
-                            viewModel.hack(it)
+                            viewModel.setPredefinedPhraseForTesting(it)
                     }
                 }
             }

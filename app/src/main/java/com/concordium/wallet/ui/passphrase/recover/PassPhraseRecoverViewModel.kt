@@ -43,10 +43,10 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
         wordsPicked = arrayOfNulls(wordsPicked.size)
     }
 
-    fun hack(password: String) = viewModelScope.launch  {
+    fun setPredefinedPhraseForTesting(password: String) = viewModelScope.launch  {
         if (BuildConfig.DEBUG) {
             //AuthPreferences(getApplication()).setSeedPhrase("health smoke abandon middle outer method meadow sorry whale random cupboard thank album exclude idle month exit quarter shell portion eternal legal rent tonight") // testnet CBW-320
-            val saveSuccess = AuthPreferences(getApplication()).setSeedPhrase(
+            val saveSuccess = AuthPreferences(getApplication()).tryToSetEncryptedSeedPhrase(
                 "nothing ill myself guitar antique demise awake twelve fall victory grow segment bus puppy iron vicious skate piece tobacco stable police plunge coin fee",
                 password
             )// testnet
@@ -77,7 +77,7 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
     }
 
     fun setSeedPhrase(seed: String, password: String) = viewModelScope.launch {
-        _saveSeedLiveData.value = AuthPreferences(getApplication()).setSeedPhrase(
+        _saveSeedLiveData.value = AuthPreferences(getApplication()).tryToSetEncryptedSeedPhrase(
             seed,
             password
         )

@@ -62,7 +62,7 @@ class PassPhraseViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     fun setSeedPhrase(password: String) = viewModelScope.launch {
-        _saveSeedLiveData.value = AuthPreferences(getApplication()).setSeedPhrase(
+        _saveSeedLiveData.value = AuthPreferences(getApplication()).tryToSetEncryptedSeedPhrase(
             generatedPhrase(),
             password
         )

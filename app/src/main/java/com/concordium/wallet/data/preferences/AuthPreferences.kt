@@ -146,7 +146,7 @@ class AuthPreferences(val context: Context) :
         setString(SEED_PHRASE, "")
     }
 
-    suspend fun setSeedPhrase(value: String, password: String): Boolean {
+    suspend fun tryToSetEncryptedSeedPhrase(value: String, password: String): Boolean {
         val seed = Mnemonics.MnemonicCode(value).toSeed()
         val seedEncoded = seed.toHex()
         val encryptedSeed = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, seedEncoded)
@@ -155,45 +155,78 @@ class AuthPreferences(val context: Context) :
     }
 
     suspend fun getSeedPhrase(password: String): String {
+
         val seedEncrypted = getString(SEED_PHRASE_ENCRYPTED)
-            ?: getString(SEED_PHRASE, "").let {seedUnencrypted ->
-                if(seedUnencrypted != ""){
-                    setStringWithResult(SEED_PHRASE, null).let {deleteSuccess ->
-                        if(deleteSuccess){
-                            val encryptedSeed = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, seedUnencrypted)
-                                ?: return ""
-                            setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed).let {saveSuccess ->
-                                if(saveSuccess){
-                                    Log.d("ENCRYPTED SEED UPDATED")
-                                    return  seedUnencrypted
-                                }
-                            }
-                        }
+        val seedUnencrypted = getString(SEED_PHRASE)
+
+        if(seedEncrypted != null && seedUnencrypted == null){
+            //Seed is encrypted and the old seed is deleted, decrypt and return the result
+            return App.appCore.getCurrentAuthenticationManager().decryptInBackground(password, seedEncrypted)
+                ?: return ""
+        }
+
+        if(seedEncrypted != null && seedUnencrypted != null){
+            //Booth encrypted and decrypted seeds present, delete the old seed
+            setString(SEED_PHRASE, null)
+            return seedUnencrypted
+        }
+
+        if(seedUnencrypted != null){
+            //Only the unencrypted seed is present, encrypt it, save it and delete the old seed
+            val encryptedSeed = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, seedUnencrypted) ?: return ""
+            setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed).let { saveSuccess ->
+                if (saveSuccess) {
+                        Log.d("ENCRYPTED SEED UPDATED")
+                        setString(SEED_PHRASE, null)
+                        return seedUnencrypted
                     }
                 }
-                    return ""
-            }
-
-        return App.appCore.getCurrentAuthenticationManager().decryptInBackground(password, seedEncrypted)
-            ?: return ""
+        }
+        return ""
     }
 
     suspend fun getSeedPhraseDecrypted(decryptKey: SecretKey): String? {
-        val seedEncrypted = getString(SEED_PHRASE_ENCRYPTED)
-        if (seedEncrypted != null) {
+
+        getString(SEED_PHRASE_ENCRYPTED)?.let {seedEncrypted ->
             return App.appCore.getOriginalAuthenticationManager()
                 .decryptInBackground(decryptKey, seedEncrypted)
         }
         return getString(SEED_PHRASE)
     }
 
-    fun setSeedPhraseEncrypted(encryptedSeed: String): Boolean {
-        if(getString(SEED_PHRASE) != null){
-            setStringWithResult(SEED_PHRASE, null).let {deleteSuccess ->
-                return deleteSuccess && setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed)
+    suspend fun checkAndTryToEncryptSeed(password: String): Boolean {
+
+        val seedEncrypted = getString(SEED_PHRASE_ENCRYPTED)
+        val seedUnencrypted = getString(SEED_PHRASE)
+
+        if(seedEncrypted != null && seedUnencrypted == null){
+            //Encrypted seed is stored, unencrypted is erased
+            return true
+        }
+
+        if(seedEncrypted != null && seedUnencrypted != null){
+            //Booth encrypted and decrypted seeds present, delete the old seed
+            return setStringWithResult(SEED_PHRASE, null)
+        }
+
+        if(seedUnencrypted != null){
+            //Only the unencrypted seed is present, encrypt it, save it and delete the old
+            val encryptedSeed = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, seedUnencrypted) ?: return false
+            setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed).let { saveSuccess ->
+                return saveSuccess && setStringWithResult(SEED_PHRASE, null)
             }
         }
-        return setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed)
+
+        return false
+    }
+
+    fun setSeedPhraseEncrypted(encryptedSeed: String): Boolean {
+        setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed).let {saveSuccess ->
+            if(saveSuccess){
+                setString(SEED_PHRASE, null)
+            }
+            return saveSuccess
+        }
     }
 
     fun hasSeedPhrase(): Boolean {
