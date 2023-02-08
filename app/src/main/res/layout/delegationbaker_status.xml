@@ -58,8 +58,8 @@
                             android:layout_width="@dimen/logo_size_small"
                             android:layout_height="@dimen/logo_size_small"
                             android:layout_margin="5dp"
-                            android:tint="@color/text_blue"
-                            tools:src="@drawable/ic_logo_icon_pending" />
+                            tools:src="@drawable/ic_logo_icon_pending"
+                            app:tint="@color/text_blue" />
                         <TextView
                             android:id="@+id/status_title"
                             android:layout_width="match_parent"

@@ -6,11 +6,11 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-def versionBuildNumberSequential = 107
+def versionBuildNumberSequential = 111
 
 def versionBuildNumberMajor = 3
-def versionBuildNumberMinor = 0
-def versionBuildNumberPatch = 3
+def versionBuildNumberMinor = 2
+def versionBuildNumberPatch = 0
 
 //def LOCAL_IP = getLocalIPv4()
 def LOCAL_IP = "10.0.2.2"
@@ -76,12 +76,11 @@ def buildTimeTicks() {
 
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.0"
+    compileSdkVersion 33
     defaultConfig {
         applicationId "software.concordium.mobilewallet"
         minSdkVersion 26
-        targetSdkVersion 30
+        targetSdkVersion 33
         versionCode versionBuildNumberSequential
         versionName "${versionBuildNumberMajor}.${versionBuildNumberMinor}.${versionBuildNumberPatch}"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -264,16 +263,19 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-
-    // Room - exclude the atomic functions module from the package and prevent warnings.
     packagingOptions {
-        exclude 'META-INF/atomicfu.kotlin_module'
+        pickFirst("META-INF/atomicfu.kotlin_module")
+       /* resources {
+            excludes += ['META-INF/atomicfu.kotlin_module']
+        }*/
     }
+    namespace 'com.concordium.wallet'
+    buildToolsVersion '33.0.1'
 }
 
 dependencies {
     def lifecycle_version = "2.2.0"
-    def room_version = "2.2.5"
+    def room_version = "2.4.3"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -283,7 +285,7 @@ dependencies {
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2"
 
     // Android/Google
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'androidx.core:core-ktx:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
@@ -324,7 +326,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.8'
 
     // Navigation
-    def navigationVersion = '2.3.1'
+    def navigationVersion = '2.5.3'
     implementation "androidx.navigation:navigation-fragment:$navigationVersion"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-ui:$navigationVersion"

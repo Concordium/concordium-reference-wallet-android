@@ -63,11 +63,11 @@ class MoreOverviewFragment : BaseFragment() {
     private fun initializeViewModel() {
         viewModel = ViewModelProvider(
             this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(activity!!.application)
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         ).get(MoreOverviewViewModel::class.java)
         mainViewModel = ViewModelProvider(
-            activity!!,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(activity!!.application)
+            requireActivity(),
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         ).get(MainViewModel::class.java)
 
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->

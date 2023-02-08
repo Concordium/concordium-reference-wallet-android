@@ -105,8 +105,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     val showPadLockLiveData: LiveData<Boolean>
         get() = _showPadLockLiveData
 
-    private var _transferListLiveData = MutableLiveData<List<AdapterItem>>()
-    val transferListLiveData: LiveData<List<AdapterItem>>
+    private var _transferListLiveData = MutableLiveData<List<AdapterItem>?>()
+    val transferListLiveData: MutableLiveData<List<AdapterItem>?>
         get() = _transferListLiveData
 
     private var _identityLiveData = MutableLiveData<Identity>()
@@ -159,7 +159,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     private fun getIdentityProvider() {
         viewModelScope.launch {
             val identity = identityRepository.findById(account.identityId)
-            _identityLiveData.value = identity
+            _identityLiveData.value = identity!!
         }
     }
 
@@ -193,7 +193,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         if (!BuildConfig.SHOW_GTU_DROP || isShielded) {
             _showGTUDropLiveData.value = false
         } else {
-            _showGTUDropLiveData.value = transferListLiveData.value?.isEmpty()
+            _showGTUDropLiveData.value = transferListLiveData.value.isNullOrEmpty()
         }
     }
 

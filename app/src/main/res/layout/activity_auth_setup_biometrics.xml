@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/activity_horizontal_margin">
 
-                <Space
+                <android.widget.Space
                     android:id="@+id/top_space"
                     android:layout_width="0dp"
                     android:layout_height="1dp"
@@ -63,11 +63,11 @@
                     android:layout_marginTop="20dp"
                     android:contentDescription="@string/auth_setup_biometrics_image"
                     android:src="@drawable/ic_fingerprint"
-                    android:tint="@color/theme_white"
                     app:layout_constraintBottom_toTopOf="@+id/button_layout"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/instruction_textview" />
+                    app:layout_constraintTop_toBottomOf="@+id/instruction_textview"
+                    app:tint="@color/theme_white" />
 
                 <LinearLayout
                     android:id="@+id/button_layout"

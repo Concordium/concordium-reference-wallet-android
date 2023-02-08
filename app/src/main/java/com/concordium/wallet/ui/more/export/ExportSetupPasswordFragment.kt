@@ -106,7 +106,7 @@ class ExportSetupPasswordFragment(val titleId: Int?=null) : BaseFragment(titleId
 
     private fun showPasswordError() {
         password_edittext.setText("")
-        KeyboardUtil.hideKeyboard(activity!!.parent)
+        KeyboardUtil.hideKeyboard(requireActivity().parent)
         popup.showSnackbar(root_layout, R.string.export_error_password_setup)
     }
 

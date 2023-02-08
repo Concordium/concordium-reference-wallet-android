@@ -30,8 +30,9 @@ object StorageAccessFrameworkUtil {
 
                 // Note it's called "Display Name". This is
                 // provider-specific, and might not necessarily be the file name.
-                val displayName: String =
-                    it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+
+                val index = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                val displayName: String = if (index == -1) "" else it.getString(index)
                 Log.i("[SAF] Display Name: $displayName")
 
                 val sizeIndex: Int = it.getColumnIndex(OpenableColumns.SIZE)

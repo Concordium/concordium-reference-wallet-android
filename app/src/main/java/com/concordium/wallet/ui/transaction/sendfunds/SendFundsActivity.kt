@@ -204,11 +204,8 @@ class SendFundsActivity :
                 }
             }
         })
-        viewModel.recipientLiveData.observe(this, object : Observer<Recipient> {
-            override fun onChanged(value: Recipient?) {
-                showRecipient(value)
-            }
-        })
+        viewModel.recipientLiveData.observe(this
+        ) { value -> showRecipient(value) }
     }
 
     private fun initViews() {

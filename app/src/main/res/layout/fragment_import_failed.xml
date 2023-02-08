@@ -41,8 +41,8 @@
                     <ImageView
                         style="@style/Image"
                         android:layout_height="100dp"
-                        android:tint="@color/text_pink"
-                        android:src="@drawable/ic_big_logo_plus" />
+                        android:src="@drawable/ic_big_logo_plus"
+                        app:tint="@color/text_pink" />
 
                     <TextView
                         android:id="@+id/import_headline_textview"
@@ -66,7 +66,7 @@
 
                     </LinearLayout>
 
-                    <Space
+                    <android.widget.Space
                         android:layout_width="match_parent"
                         android:layout_height="70dp" />
 

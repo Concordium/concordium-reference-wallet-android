@@ -120,8 +120,8 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
     val waitingReceiverAccountPublicKeyLiveData: LiveData<Boolean>
         get() = _waitingReceiverAccountPublicKeyLiveData
 
-    private val _recipientLiveData = MutableLiveData<Recipient>()
-    val recipientLiveData: LiveData<Recipient>
+    private val _recipientLiveData = MutableLiveData<Recipient?>()
+    val recipientLiveData: LiveData<Recipient?>
         get() = _recipientLiveData
 
     private val _sendAllAmountLiveData = MutableLiveData<Long>()
@@ -450,7 +450,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             it.transactionStatus != TransactionStatus.FINALIZED && it.nonce?.nonce ?: -1 >= lastNounceToInclude
         }
 
-        var aggEncryptedAmount = if (unfinalisedTransfers.size > 0) {
+        var aggEncryptedAmount = if (unfinalisedTransfers!!.size > 0) {
             val lastTransaction =
                 unfinalisedTransfers.maxWith(Comparator({ a, b -> a.id.compareTo(b.id) }))
             if (lastTransaction != null) {
