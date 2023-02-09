@@ -35,6 +35,9 @@ class AuthLoginViewModel(application: Application) : AndroidViewModel(applicatio
     val finishScreenLiveData: LiveData<Event<Boolean>>
         get() = _finishScreenLiveData
 
+    private val _errorSeedLiveData = MutableLiveData<Boolean>()
+    val errorSeedLiveData: LiveData<Boolean>
+        get() = _errorSeedLiveData
 
 
     fun initialize() {
@@ -62,14 +65,16 @@ class AuthLoginViewModel(application: Application) : AndroidViewModel(applicatio
         _waitingLiveData.value = true
         val res = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(password)
         if (res) {
-
             val seedEncryptionCheck = AuthPreferences(getApplication()).checkAndTryToEncryptSeed(password)
             if(seedEncryptionCheck){
                 Log.d("Seed is Encrypted")
+                loginSuccess()
+            }else{
+                _passwordErrorLiveData.value =
+                    Event(R.string.auth_login_seed_error)
+                _errorSeedLiveData.value = true
+                _waitingLiveData.value = false
             }
-
-            loginSuccess()
-
         } else {
             _passwordErrorLiveData.value =
                 Event(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_login_passcode_error else R.string.auth_login_password_error)
@@ -81,14 +86,16 @@ class AuthLoginViewModel(application: Application) : AndroidViewModel(applicatio
         _waitingLiveData.value = true
         val password = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
         if (password != null) {
-
             val seedEncryptionCheck = AuthPreferences(getApplication()).checkAndTryToEncryptSeed(password)
             if(seedEncryptionCheck){
                 Log.d("Seed is Encrypted")
+                loginSuccess()
+            }else{
+                _passwordErrorLiveData.value =
+                    Event(R.string.auth_login_seed_error)
+                _errorSeedLiveData.value = true
+                _waitingLiveData.value = false
             }
-
-            loginSuccess()
-
         } else {
             _passwordErrorLiveData.value =
                 Event(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_login_passcode_error else R.string.auth_login_password_error)

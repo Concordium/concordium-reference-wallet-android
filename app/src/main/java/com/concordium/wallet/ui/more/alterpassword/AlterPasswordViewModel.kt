@@ -167,7 +167,7 @@ class AlterPasswordViewModel(application: Application) :
             }
 
             try {
-                decryptedSeed = AuthPreferences(getApplication()).getSeedPhraseDecrypted(decryptKey)
+                decryptedSeed = AuthPreferences(getApplication()).getSeedPhrase(decryptKey)
                 if(decryptedSeed == null){
                     allSuccess = false
                 }
@@ -198,7 +198,7 @@ class AlterPasswordViewModel(application: Application) :
                 try {
                     val seedPhraseEncrypted = App.appCore.getOriginalAuthenticationManager()
                         .encryptInBackground(encryptKey, decryptedSeed!!)
-                    if (seedPhraseEncrypted == null || !AuthPreferences(getApplication()).setSeedPhraseEncrypted(seedPhraseEncrypted)) {
+                    if (seedPhraseEncrypted == null || !AuthPreferences(getApplication()).updateEncryptedSeedPhrase(seedPhraseEncrypted)) {
                             allSuccess = false
                     }
                     decryptedSeed = null
