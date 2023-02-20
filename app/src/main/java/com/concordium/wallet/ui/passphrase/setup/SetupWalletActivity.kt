@@ -16,6 +16,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.identity.identitycreate.IdentityIntroFlow
+import com.concordium.wallet.util.KeyboardUtil
 
 class SetupWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
     private lateinit var binding: ActivitySetupWalletBinding
@@ -90,6 +91,9 @@ class SetupWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
         viewModel.saveSeed.observe(this) {
             if (it) {
                 moveNext()
+            }else{
+                KeyboardUtil.hideKeyboard(this)
+                showError(R.string.auth_login_seed_error)
             }
         }
 
@@ -114,6 +118,10 @@ class SetupWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
                 else -> Fragment()
             }
         }
+    }
+
+    private fun showError(stringRes: Int) {
+        popup.showSnackbar(binding.root, stringRes)
     }
 
     private fun moveNext() {

@@ -15,6 +15,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessActivity
+import com.concordium.wallet.util.KeyboardUtil
 
 class RecoverWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
     private lateinit var binding: ActivityRecoverWalletBinding
@@ -94,8 +95,14 @@ class RecoverWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl()
         viewModel.saveSeed.observe(this){
             if(it){
                 binding.pager.currentItem++
+            }else{
+                KeyboardUtil.hideKeyboard(this)
+                showError(R.string.auth_login_seed_error)
             }
         }
+    }
+    private fun showError(stringRes: Int) {
+        popup.showSnackbar(binding.root, stringRes)
     }
 
     private inner class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
