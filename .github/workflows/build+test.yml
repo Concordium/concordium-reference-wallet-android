@@ -1,4 +1,4 @@
-name: Android CI
+name: Build and test
 
 on:
   push:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           java-version: '17'
@@ -19,5 +19,5 @@ jobs:
           cache: gradle
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-      - name: Build with Gradle
+      - name: Build project and run unit tests
         run: ./gradlew build
