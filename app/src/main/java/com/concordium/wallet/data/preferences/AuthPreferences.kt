@@ -166,27 +166,14 @@ class AuthPreferences(val context: Context) :
     }
 
     suspend fun checkAndTryToEncryptSeed(password: String): Boolean {
-        val seedEncrypted = getString(SEED_PHRASE_ENCRYPTED)
-        val seedUnencrypted = getString(SEED_PHRASE)
+        val seedUnencrypted = getString(SEED_PHRASE) ?: return true
 
-        if(seedEncrypted != null && seedUnencrypted == null){
-            //Encrypted seed is stored, unencrypted is erased
-            return true
-        }
-        if(seedEncrypted == null && seedUnencrypted == null){
-            //Covers case when on new install, the password was set but the app was killed before entering the seed phrase recovery
-            //When we start the app again the authentication screen will show since we have a password.
-            //We return true to resume the process of seed phrase recovery
-            return true
-        }
-        if(seedUnencrypted != null){
-            //Unencrypted seed is present, encrypt it, save it and delete the old
-            val encryptedSeed = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, seedUnencrypted) ?: return false
-            setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed).let { saveSuccess ->
-                if(saveSuccess) {
-                    val decryptedSeed = getSeedPhrase(password)
-                    return decryptedSeed == seedUnencrypted && setStringWithResult(SEED_PHRASE, null)
-                }
+        //Unencrypted seed is present, encrypt it, save it and delete the old.
+        val encryptedSeed = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, seedUnencrypted) ?: return false
+        setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed).let { saveSuccess ->
+            if(saveSuccess) {
+                val decryptedSeed = getSeedPhrase(password)
+                return decryptedSeed == seedUnencrypted && setStringWithResult(SEED_PHRASE, null)
             }
         }
         return false
