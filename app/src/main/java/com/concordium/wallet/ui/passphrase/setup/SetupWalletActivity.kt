@@ -88,8 +88,8 @@ class SetupWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
             }
         }
 
-        viewModel.saveSeed.observe(this) {
-            if (it) {
+        viewModel.saveSeed.observe(this) {saveSuccess->
+            if (saveSuccess) {
                 moveNext()
             }else{
                 KeyboardUtil.hideKeyboard(this)

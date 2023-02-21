@@ -92,8 +92,8 @@ class RecoverWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl()
                     }
                 }
         }
-        viewModel.saveSeed.observe(this){
-            if(it){
+        viewModel.saveSeed.observe(this){saveSuccess->
+            if(saveSuccess){
                 binding.pager.currentItem++
             }else{
                 KeyboardUtil.hideKeyboard(this)

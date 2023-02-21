@@ -11,7 +11,6 @@ import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.preferences.AuthPreferences
-import com.concordium.wallet.util.Log
 import kotlinx.coroutines.launch
 import javax.crypto.Cipher
 
@@ -65,16 +64,7 @@ class AuthLoginViewModel(application: Application) : AndroidViewModel(applicatio
         _waitingLiveData.value = true
         val res = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(password)
         if (res) {
-            val seedEncryptionCheck = AuthPreferences(getApplication()).checkAndTryToEncryptSeed(password)
-            if(seedEncryptionCheck){
-                Log.d("Seed is Encrypted")
-                loginSuccess()
-            }else{
-                _passwordErrorLiveData.value =
-                    Event(R.string.auth_login_seed_error)
-                _errorSeedLiveData.value = true
-                _waitingLiveData.value = false
-            }
+            checkSeed(password)
         } else {
             _passwordErrorLiveData.value =
                 Event(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_login_passcode_error else R.string.auth_login_password_error)
@@ -86,19 +76,25 @@ class AuthLoginViewModel(application: Application) : AndroidViewModel(applicatio
         _waitingLiveData.value = true
         val password = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
         if (password != null) {
-            val seedEncryptionCheck = AuthPreferences(getApplication()).checkAndTryToEncryptSeed(password)
-            if(seedEncryptionCheck){
-                Log.d("Seed is Encrypted")
-                loginSuccess()
-            }else{
-                _passwordErrorLiveData.value =
-                    Event(R.string.auth_login_seed_error)
-                _errorSeedLiveData.value = true
-                _waitingLiveData.value = false
-            }
+            checkSeed(password)
         } else {
             _passwordErrorLiveData.value =
                 Event(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_login_passcode_error else R.string.auth_login_password_error)
+            _waitingLiveData.value = false
+        }
+    }
+
+    private suspend fun checkSeed(password: String){
+        val noUnencryptedSeed = AuthPreferences(getApplication()).checkAndTryToEncryptSeed(password)
+        if(noUnencryptedSeed){
+            // The old seed is deleted or a new user resumes the seed-phrase setup process.
+            loginSuccess()
+        }else{
+            //The unencrypted seed is still present.
+            //Something went wrong when trying to encrypt it and delete it.
+            _passwordErrorLiveData.value =
+                Event(R.string.auth_login_seed_error)
+            _errorSeedLiveData.value = true
             _waitingLiveData.value = false
         }
     }

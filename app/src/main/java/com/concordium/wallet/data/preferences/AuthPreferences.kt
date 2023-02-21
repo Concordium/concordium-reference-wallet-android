@@ -164,7 +164,22 @@ class AuthPreferences(val context: Context) :
         }
         return null
     }
-
+    /**
+     * Check if the old unencrypted seed is present
+     *
+     * If the old unencrypted seed is present, encrypt it, save the new encrypted seed.
+     *
+     * Then get the encrypted seed from SharedPreference, decrypt it and compare it to the unencrypted seed. If they match delete the old seed.
+     *
+     * @param password the password required to encrypt the seed
+     * @return Returns [Boolean]
+     *
+     * **true** if there is no unencrypted seed saved. This can happen when new user has setup password and biometrics and exited the app before saving the seed phrase.
+     * Next time when he starts the app he will be presented with the Authentication screen and after successful password the user needs to be able to continue with the seed-phrase setup.
+     *
+     * **true** if the seed is successfully encrypted, the encrypted seed is successfully saved,
+     * the decrypted and unencrypted seeds match and the old seed is successfully deleted.
+    */
     suspend fun checkAndTryToEncryptSeed(password: String): Boolean {
         val seedUnencrypted = getString(SEED_PHRASE) ?: return true
 
