@@ -81,7 +81,7 @@ class AuthLoginActivity : BaseActivity() {
             }
         })
         viewModel.errorSeedLiveData.observe(this) { error ->
-            if (error == true) {
+            if (error) {
                 KeyboardUtil.hideKeyboard(this)
                 binding.errorSeedTextview.visibility = View.VISIBLE
             } else {
