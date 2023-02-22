@@ -52,7 +52,6 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
     private var password = ""
     private var identityNamePrefix = ""
     private val net = AppConfig.net
-    private val seed = AuthPreferences(getApplication()).getSeedPhrase()
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
     private var identityProvidersRequest: BackendRequest<ArrayList<IdentityProvider>>? = null
     private var globalInfo: GlobalParamsWrapper? = null
@@ -162,6 +161,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
     }
 
     private suspend fun getRecoverRequestUrl(identityProvider: IdentityProvider, globalInfo: GlobalParamsWrapper, identityIndex: Int): String? {
+        val seed = AuthPreferences(getApplication()).getSeedPhrase(password)
         val recoveryRequestInput = GenerateRecoveryRequestInput(
             identityProvider.ipInfo,
             globalInfo.value,
@@ -213,6 +213,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
 
         var createCredentialOutput: CreateCredentialOutputV1? = null
         if (identity.identityObject != null) {
+            val seed = AuthPreferences(getApplication()).getSeedPhrase(password)
             val credentialInput = CreateCredentialInputV1(
                 identity.identityProvider.ipInfo,
                 identity.identityProvider.arsInfos,

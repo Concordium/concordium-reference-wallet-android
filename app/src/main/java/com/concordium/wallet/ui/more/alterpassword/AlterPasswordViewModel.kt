@@ -12,6 +12,7 @@ import com.concordium.wallet.core.arch.Event
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.IdentityRepository
+import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
@@ -26,6 +27,8 @@ class AlterPasswordViewModel(application: Application) :
 
     private var initialDecryptedAccountsList: ArrayList<Account> = ArrayList()
     private var initialDecryptedIdentityList: List<Identity> = emptyList()
+
+    private var decryptedSeed: String? = null
 
     private var database: WalletDatabase
 
@@ -163,6 +166,16 @@ class AlterPasswordViewModel(application: Application) :
                 allSuccess = false
             }
 
+            try {
+                decryptedSeed = AuthPreferences(getApplication()).getSeedPhrase(decryptKey)
+                if(decryptedSeed == null){
+                    allSuccess = false
+                }
+            }catch (e: Exception) {
+                e.printStackTrace()
+                allSuccess = false
+            }
+
             if(allSuccess){
                 App.appCore.startResetAuthFlow()
                 _doneInitialAuthenticationLiveData.value = Event(true)
@@ -178,8 +191,25 @@ class AlterPasswordViewModel(application: Application) :
     private fun encryptAndFinalize(encryptKey: SecretKey) =
         viewModelScope.launch {
             _waitingLiveData.value = true
+
+            var allSuccess = true
+
+            if(decryptedSeed != null){
+                try {
+                    val seedPhraseEncrypted = App.appCore.getOriginalAuthenticationManager()
+                        .encryptInBackground(encryptKey, decryptedSeed!!)
+                    if (seedPhraseEncrypted == null || !AuthPreferences(getApplication()).updateEncryptedSeedPhrase(seedPhraseEncrypted)) {
+                            allSuccess = false
+                    }
+                    decryptedSeed = null
+                }catch (e: Exception){
+                    allSuccess = false
+                }
+            }else{
+                allSuccess = false
+            }
+
             database.withTransaction {
-                var allSuccess = true
                 try {
                     for (account in initialDecryptedAccountsList) {
                         if (account.encryptedAccountData.isNotEmpty()) {

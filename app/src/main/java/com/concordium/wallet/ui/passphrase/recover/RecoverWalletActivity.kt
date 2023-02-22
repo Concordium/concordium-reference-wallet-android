@@ -12,9 +12,12 @@ import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ActivityRecoverWalletBinding
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.common.delegates.AuthDelegate
+import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessActivity
+import com.concordium.wallet.util.KeyboardUtil
 
-class RecoverWalletActivity : BaseActivity() {
+class RecoverWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
     private lateinit var binding: ActivityRecoverWalletBinding
     private lateinit var viewModel: PassPhraseRecoverViewModel
 
@@ -30,7 +33,11 @@ class RecoverWalletActivity : BaseActivity() {
         if (BuildConfig.DEBUG) {
             binding.toolbarLayout.toolbarTitle.isClickable = true
             binding.toolbarLayout.toolbarTitle.setOnClickListener {
-                viewModel.hack()
+                showAuthentication(this) { password ->
+                    password?.let {
+                            viewModel.setPredefinedPhraseForTesting(it)
+                    }
+                }
             }
         }
     }
@@ -78,10 +85,24 @@ class RecoverWalletActivity : BaseActivity() {
     }
 
     private fun initObservers() {
-        viewModel.validate.observe(this) { success ->
-            if (success)
-                binding.pager.currentItem++
+        viewModel.seed.observe(this){seed ->
+                showAuthentication(this) { password ->
+                    password?.let {
+                            viewModel.setSeedPhrase(seed, password)
+                    }
+                }
         }
+        viewModel.saveSeed.observe(this){saveSuccess->
+            if(saveSuccess){
+                binding.pager.currentItem++
+            }else{
+                KeyboardUtil.hideKeyboard(this)
+                showError(R.string.auth_login_seed_error)
+            }
+        }
+    }
+    private fun showError(stringRes: Int) {
+        popup.showSnackbar(binding.root, stringRes)
     }
 
     private inner class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {

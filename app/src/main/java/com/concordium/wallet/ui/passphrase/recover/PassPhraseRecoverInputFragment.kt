@@ -54,8 +54,8 @@ class PassPhraseRecoverInputFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         (activity as BaseActivity).setActionBarTitle(R.string.pass_phrase_recover_input_title)
-        val inputMethodManager = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+        val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0)
     }
 
     override fun onPause() {
