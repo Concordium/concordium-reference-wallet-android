@@ -2,12 +2,14 @@ name: Build and test
 
 on:
   push:
-    branches: [ "main" ]
+    branches: main
   pull_request:
-    branches: [ "main" ]
+    branches: main
+    paths-ignore:
+    - "**.md"
 
 env:
-  java_version: '17'
+  java_version: "17"
 
 jobs:
   build:
@@ -18,7 +20,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: "${{env.java_version}}"
-          distribution: 'temurin'
+          distribution: temurin
           cache: gradle # caches dependencies (https://github.com/actions/setup-java#caching-packages-dependencies)
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
