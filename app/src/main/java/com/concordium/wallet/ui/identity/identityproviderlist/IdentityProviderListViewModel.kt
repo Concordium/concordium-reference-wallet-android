@@ -124,24 +124,24 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         }
     }
 
-    fun continueWithPassword() = viewModelScope.launch {
+    fun continueWithPassword(password: String) = viewModelScope.launch {
         _waitingLiveData.value = true
-        encryptAndContinue()
+        encryptAndContinue(password)
     }
 
     fun checkLogin(cipher: Cipher) = viewModelScope.launch {
         _waitingLiveData.value = true
         val password = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
         if (password != null) {
-            encryptAndContinue()
+            encryptAndContinue(password)
         } else {
             _errorLiveData.value = Event(R.string.app_error_encryption)
             _waitingLiveData.value = false
         }
     }
 
-    private suspend fun encryptAndContinue() {
-        val output = createIdRequestAndPrivateDataV1()
+    private suspend fun encryptAndContinue(password: String) {
+        val output = createIdRequestAndPrivateDataV1(password)
         if (output != null) {
             tempData.idObjectRequest = output.idObjectRequest
             _gotoIdentityProviderWebView.value = Event(true)
@@ -151,7 +151,7 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         }
     }
 
-    private suspend fun createIdRequestAndPrivateDataV1(): IdRequestAndPrivateDataOutputV1? {
+    private suspend fun createIdRequestAndPrivateDataV1(password: String): IdRequestAndPrivateDataOutputV1? {
         val identityProvider = tempData.identityProvider
         val global = tempData.globalParams
         if (identityProvider == null) {
@@ -163,7 +163,7 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         val net = AppConfig.net
         tempData.identityIndex = identityRepository.nextIdentityIndex(identityProvider.ipInfo.ipIdentity)
         tempData.identityName = identityRepository.nextIdentityName(getApplication<Application?>().getString(R.string.view_identity_identity))
-        val seed = AuthPreferences(getApplication()).getSeedPhrase()
+        val seed = AuthPreferences(getApplication()).getSeedPhrase(password)
 
         val output = App.appCore.cryptoLibrary.createIdRequestAndPrivateDataV1(identityProvider.ipInfo, identityProvider.arsInfos, global, seed, net, tempData.identityIndex)
         return if (output != null) {
