@@ -18,7 +18,7 @@ class CurrencyUtilUnitTest {
     @Test
     fun formatGTU() {
 
-        assertEquals(replaceDecimalSep("0.00"), CurrencyUtil.formatGTU(0))
+        assertEquals(replaceDecimalSep("0.00"), CurrencyUtil.formatGTU(1))
 
         assertEquals(replaceDecimalSep("1.00"), CurrencyUtil.formatGTU(1000000))
         assertEquals(replaceDecimalSep("100.00"), CurrencyUtil.formatGTU(100000000))
