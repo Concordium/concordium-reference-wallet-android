@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  java_version: '17'
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,10 +17,10 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: "${{env.java_version}}"
           distribution: 'temurin'
-          cache: gradle
+          cache: gradle # caches dependencies (https://github.com/actions/setup-java#caching-packages-dependencies)
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build project and run unit tests
-        run: ./gradlew build
+        run: ./gradlew build --no-daemon
