@@ -22,7 +22,5 @@ jobs:
           java-version: "${{env.java_version}}"
           distribution: temurin
           cache: gradle # caches dependencies (https://github.com/actions/setup-java#caching-packages-dependencies)
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
       - name: Build project and run unit tests
         run: ./gradlew build --no-daemon

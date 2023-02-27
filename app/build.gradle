@@ -18,12 +18,10 @@ def LOCAL_IP = "10.0.2.2"
 
 println("LOCAL_IP is " + LOCAL_IP)
 
-
 def URL_PROXY_BASE_LOCAL = "http://"+LOCAL_IP+":14000"
 def URL_PROXY_BASE_STAGING = "https://wallet-proxy.stagenet.concordium.com"
 def URL_PROXY_BASE_PROD_TESTNET = "https://wallet-proxy.testnet.concordium.com"
 def URL_PROXY_BASE_PRODUCTION = "https://wallet-proxy.mainnet.concordium.software"
-
 
 def PROVIDER_AUTHORITY_BASE = "software.concordium.mobilewallet.seedphrase.DataFileProvider"
 def PROVIDER_AUTHORITY_LOCAL = PROVIDER_AUTHORITY_BASE+"-local"
