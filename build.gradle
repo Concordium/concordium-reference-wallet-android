@@ -14,6 +14,12 @@ buildscript {
     }
 }
 
+plugins {
+    // Plugin that adds a task 'taskTree' for printing task dependency tree.
+    // Example: './gradlew build taskTree' prints the dependencies of the task 'build'.
+    id "com.dorongold.task-tree" version "2.1.1"
+}
+
 allprojects {
     repositories {
         google()

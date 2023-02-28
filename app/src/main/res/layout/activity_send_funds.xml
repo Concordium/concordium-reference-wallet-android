@@ -242,7 +242,7 @@
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginStart="16dp"
                                 android:src="@drawable/ic_lup"
-                                android:tint="@color/text_white" />
+                                app:tint="@color/text_white" />
 
                             <TextView
                                 android:id="@+id/select_recipient_textview"
@@ -278,7 +278,7 @@
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginStart="16dp"
                                 android:src="@drawable/background_q_r"
-                                android:tint="@color/text_white" />
+                                app:tint="@color/text_white" />
 
                             <TextView
                                 style="@style/TextView.Standard"

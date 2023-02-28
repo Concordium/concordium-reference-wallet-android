@@ -1,0 +1,26 @@
+name: Build and test
+
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+    paths-ignore:
+    - "**.md"
+
+env:
+  java_version: "17"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: "${{env.java_version}}"
+          distribution: temurin
+          cache: gradle # caches dependencies (https://github.com/actions/setup-java#caching-packages-dependencies)
+      - name: Build project and run unit tests
+        run: ./gradlew build --no-daemon

@@ -1,8 +1,11 @@
 import java.text.SimpleDateFormat
 
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'androidx.navigation.safeargs.kotlin'
+}
 
 def versionBuildNumberSequential = 33
 
@@ -15,12 +18,10 @@ def LOCAL_IP = "10.0.2.2"
 
 println("LOCAL_IP is " + LOCAL_IP)
 
-
 def URL_PROXY_BASE_LOCAL = "http://"+LOCAL_IP+":14000"
 def URL_PROXY_BASE_STAGING = "https://wallet-proxy.stagenet.concordium.com"
 def URL_PROXY_BASE_PROD_TESTNET = "https://wallet-proxy.testnet.concordium.com"
 def URL_PROXY_BASE_PRODUCTION = "https://wallet-proxy.mainnet.concordium.software"
-
 
 def PROVIDER_AUTHORITY_BASE = "software.concordium.mobilewallet.seedphrase.DataFileProvider"
 def PROVIDER_AUTHORITY_LOCAL = PROVIDER_AUTHORITY_BASE+"-local"
@@ -322,7 +323,7 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation "androidx.arch.core:core-testing:2.2.0"
-    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation 'androidx.test:runner:1.5.2'
 
     // Generate QR
     implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
