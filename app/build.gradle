@@ -8,19 +8,28 @@ plugins {
 }
 
 // Create task for reporting test coverage on unit tests run against the "local" flavor.
-tasks.create(name: "testCoverage", type: JacocoReport, dependsOn: "testLocalDebugUnitTest") {
+// Note that by enabling 'testCoverageEnabled' the tasks 'create${flavor}CoverageReport' are automatically generated.
+// However, these tasks include running integration tests which require a device to be connected.
+// TODO Unclear if this should be wrapped in 'project.afterEvaluate' (it seems unnecessary but is included in various guides).
+tasks.create(name: "unitTestCoverageReport", type: JacocoReport, dependsOn: "testLocalDebugUnitTest") {
     group = "Reporting"
-    description = "Generate Jacoco coverage reports for the test build."
+    description = "Generate Jacoco coverage reports for the 'local' debug build."
 
     reports {
-        html.enabled = true
-        xml.enabled = true
+        html.enabled = true // human readable
+        xml.enabled = true // CI-readable
     }
 
-    classDirectories.from = files([fileTree(dir: "${buildDir}/tmp/kotlin-classes/localDebug")])
+    // Execution data generated when running the tests against classes instrumented by the JaCoCo agent.
+    // This is enabled with 'testCoverageEnabled' in the 'debug' build type.
+    executionData.from = files("${project.buildDir}/outputs/unit_test_code_coverage/localDebugUnitTest/testLocalDebugUnitTest.exec")
 
-    sourceDirectories.from = files(["${projectDir}/src/main/java"])
-    executionData.from = files("${buildDir}/outputs/unit_test_code_coverage/localDebugUnitTest/testLocalDebugUnitTest.exec")
+    // Compiled Kotlin class files are written into flavor/build-type specific subdirectories of 'build/tmp/kotlin-classes'.
+    // JaCoCo execution data is a record of the executed bytecode instructions which are looked up in the class files.
+    classDirectories.from = files([fileTree(dir: "${project.buildDir}/tmp/kotlin-classes/localDebug")])
+
+    // To produce an accurate report, the bytecode is mapped back to the original source code.
+    sourceDirectories.from = files(["${project.projectDir}/src/main/java"])
 }
 
 def versionBuildNumberSequential = 32
@@ -117,7 +126,7 @@ android {
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [
-                    "room.schemaLocation": "$projectDir/schemas".toString(),
+                    "room.schemaLocation": "${project.projectDir}/schemas".toString(),
                     "room.incremental"   : "true"]
             }
         }

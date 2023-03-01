@@ -24,3 +24,9 @@ jobs:
           cache: gradle # caches dependencies (https://github.com/actions/setup-java#caching-packages-dependencies)
       - name: Build project and run unit tests
         run: ./gradlew build --no-daemon
+      - name: Add coverage to PR
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.3
+        with:
+          paths: ${{ github.workspace }}/app/build/reports/jacoco/testCoverage/testCoverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
