@@ -4,22 +4,18 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id 'jacoco'
+//    id 'jacoco'
     id 'androidx.navigation.safeargs.kotlin'
 }
 
-//test {
-//    useJUnitPlatform()
+//jacoco {
+//    toolVersion '0.8.8'
 //}
 
-jacoco {
-    toolVersion '0.8.8'
-}
-
-tasks.withType(Test) {
-    jacoco.includeNoLocationClasses = true
-    jacoco.excludes = ['jdk.internal.*']
-}
+//tasks.withType(Test) {
+//    jacoco.includeNoLocationClasses = true
+//    jacoco.excludes = ['jdk.internal.*']
+//}
 
 tasks.create(name: "testCoverage", type: JacocoReport, dependsOn: "test") {
     group = "Reporting"
@@ -31,26 +27,13 @@ tasks.create(name: "testCoverage", type: JacocoReport, dependsOn: "test") {
     }
 
     def excludes = [
-            '**/*Test*.*',
-            '**/actions/*.*',
-            '**/core/*.*',
-            '**/markers/*.*',
-            '**/services/**/*.*',
-            '**/toolwindow/*.*',
-            '**/utils/*.*'
     ]
 
-    def javaClasses = fileTree(dir: "${buildDir}/classes/java/main", excludes: excludes)
-    def kotlinClasses = fileTree(dir: "${buildDir}/classes/kotlin/main", excludes: excludes)
-    classDirectories.from = files([javaClasses, kotlinClasses])
+    def javaClasses = fileTree(dir: "${buildDir}/tmp/kotlin-classes/prodTestNetDebug", excludes: excludes)
+    classDirectories.from = files([javaClasses])
 
-    sourceDirectories.from = files([
-            "$project.projectDir/src/main/java",
-            "$project.projectDir/src/main/kotlin",
-            "$buildDir/generated/source/kapt/test"
-    ])
-
-    executionData.from = files("${project.buildDir}/jacoco/test.exec")
+    sourceDirectories.from = files(["${projectDir}/src/main/java"])
+    executionData.from = files("${buildDir}/outputs/unit_test_code_coverage/prodTestNetDebugUnitTest/testProdTestNetDebugUnitTest.exec")
 }
 
 def versionBuildNumberSequential = 32
@@ -159,6 +142,7 @@ android {
         }
         debug {
             debuggable true
+            testCoverageEnabled true
         }
     }
 
