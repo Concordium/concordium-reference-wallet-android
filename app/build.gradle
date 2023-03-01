@@ -4,20 +4,11 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
-//    id 'jacoco'
     id 'androidx.navigation.safeargs.kotlin'
 }
 
-//jacoco {
-//    toolVersion '0.8.8'
-//}
-
-//tasks.withType(Test) {
-//    jacoco.includeNoLocationClasses = true
-//    jacoco.excludes = ['jdk.internal.*']
-//}
-
-tasks.create(name: "testCoverage", type: JacocoReport, dependsOn: "test") {
+// Create task for reporting test coverage on unit tests run against the "local" flavor.
+tasks.create(name: "testCoverage", type: JacocoReport, dependsOn: "testLocalDebugUnitTest") {
     group = "Reporting"
     description = "Generate Jacoco coverage reports for the test build."
 
@@ -26,14 +17,10 @@ tasks.create(name: "testCoverage", type: JacocoReport, dependsOn: "test") {
         xml.enabled = true
     }
 
-    def excludes = [
-    ]
-
-    def javaClasses = fileTree(dir: "${buildDir}/tmp/kotlin-classes/prodTestNetDebug", excludes: excludes)
-    classDirectories.from = files([javaClasses])
+    classDirectories.from = files([fileTree(dir: "${buildDir}/tmp/kotlin-classes/localDebug")])
 
     sourceDirectories.from = files(["${projectDir}/src/main/java"])
-    executionData.from = files("${buildDir}/outputs/unit_test_code_coverage/prodTestNetDebugUnitTest/testProdTestNetDebugUnitTest.exec")
+    executionData.from = files("${buildDir}/outputs/unit_test_code_coverage/localDebugUnitTest/testLocalDebugUnitTest.exec")
 }
 
 def versionBuildNumberSequential = 32
@@ -149,7 +136,6 @@ android {
     flavorDimensions "default"
 
     productFlavors {
-
         mock {
             applicationIdSuffix ".mock"
 
