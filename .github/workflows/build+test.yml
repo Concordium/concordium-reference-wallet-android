@@ -34,11 +34,11 @@ jobs:
       - run: ls -l /home/runner/work/concordium-reference-wallet-android/concordium-reference-wallet-android/app/build
       - run: ls -l /home/runner/work/concordium-reference-wallet-android/concordium-reference-wallet-android/app/build/reports
       - run: ls -l /home/runner/work/concordium-reference-wallet-android/concordium-reference-wallet-android/app/build/reports/jacoco
-      - run: ls -l /home/runner/work/concordium-reference-wallet-android/concordium-reference-wallet-android/app/build/reports/jacoco/testCoverage
-      - run: ls -l /home/runner/work/concordium-reference-wallet-android/concordium-reference-wallet-android/app/build/reports/jacoco/testCoverage/testCoverage.xml
+      - run: ls -l /home/runner/work/concordium-reference-wallet-android/concordium-reference-wallet-android/app/build/reports/jacoco/unitTestCoverageReport
+      - run: ls -l /home/runner/work/concordium-reference-wallet-android/concordium-reference-wallet-android/app/build/reports/jacoco/unitTestCoverageReport/testCoverage.xml
       - name: Add coverage to PR
         id: jacoco
         uses: madrapps/jacoco-report@v1.3
         with:
-          paths: ${{ github.workspace }}/app/build/reports/jacoco/testCoverage/testCoverage.xml
+          paths: ${{ github.workspace }}/app/build/reports/jacoco/unitTestCoverageReport/testCoverage.xml
           token: ${{ secrets.GITHUB_TOKEN }}
