@@ -23,7 +23,10 @@ jobs:
           distribution: temurin
           cache: gradle # caches dependencies (https://github.com/actions/setup-java#caching-packages-dependencies)
       - name: Build project and run unit tests (local flavor)
-        run: ./gradlew build unitTestCoverageReport --no-daemon
+        run: ./gradlew test unitTestCoverageReport --no-daemon
+      - run: tree ./app/build/outputs/unit_test_code_coverage
+      - run: ls -l ./app/build/reports
+      - run: ls -l ./app/build/tmp/kotlin-classes
       - name: Add coverage to PR
         id: jacoco
         uses: madrapps/jacoco-report@v1.3
