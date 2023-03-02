@@ -24,21 +24,14 @@ jobs:
           cache: gradle # caches dependencies (https://github.com/actions/setup-java#caching-packages-dependencies)
       - name: Build project and run unit tests (local flavor)
         run: ./gradlew test unitTestCoverageReport --no-daemon
-      - run: pwd
-      - run: tree ./app/build/outputs/unit_test_code_coverage || true
-      - run: ls -l ./app/build/reports || true
-      - run: tree ./app/build/reports/jacoco || true
-      - run: ls -l ./app/build/tmp/kotlin-classes || true
-      - run: ls -l /home/runner/work/concordium-reference-wallet-android/concordium-reference-wallet-android/ || true
-      - run: ls -l /home/runner/work/concordium-reference-wallet-android/concordium-reference-wallet-android/app || true
-      - run: ls -l /home/runner/work/concordium-reference-wallet-android/concordium-reference-wallet-android/app/build || true
-      - run: ls -l /home/runner/work/concordium-reference-wallet-android/concordium-reference-wallet-android/app/build/reports || true
-      - run: ls -l /home/runner/work/concordium-reference-wallet-android/concordium-reference-wallet-android/app/build/reports/jacoco || true
-      - run: ls -l /home/runner/work/concordium-reference-wallet-android/concordium-reference-wallet-android/app/build/reports/jacoco/unitTestCoverageReport || true
-      - run: ls -l /home/runner/work/concordium-reference-wallet-android/concordium-reference-wallet-android/app/build/reports/jacoco/unitTestCoverageReport/unitTestCoverageReport.xml || true
-      - name: Add coverage to PR
+      - name: Add coverage comment to PR
         id: jacoco
         uses: madrapps/jacoco-report@v1.3
         with:
-          paths: ${{ github.workspace }}/app/build/reports/jacoco/unitTestCoverageReport/unitTestCoverageReport.xml
-          token: ${{ secrets.GITHUB_TOKEN }}
+          paths: "${{github.workspace}}/app/build/reports/jacoco/unitTestCoverageReport/unitTestCoverageReport.xml"
+          token: "${{secrets.GITHUB_TOKEN}}"
+      - name: Store HTML coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: "${{github.workspace}}/app/build/reports/jacoco/unitTestCoverageReport/html/"
