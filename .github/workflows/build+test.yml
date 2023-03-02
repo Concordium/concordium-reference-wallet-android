@@ -40,5 +40,5 @@ jobs:
         id: jacoco
         uses: madrapps/jacoco-report@v1.3
         with:
-          paths: ${{ github.workspace }}/app/build/reports/jacoco/unitTestCoverageReport/testCoverage.xml
+          paths: ${{ github.workspace }}/app/build/reports/jacoco/unitTestCoverageReport/unitTestCoverageReport.xml.xml
           token: ${{ secrets.GITHUB_TOKEN }}
