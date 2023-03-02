@@ -2,6 +2,11 @@ package com.concordium.wallet.data.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
+import com.concordium.wallet.App
+import com.concordium.wallet.util.Log
+
 
 open class Preferences {
 
@@ -15,9 +20,139 @@ open class Preferences {
     interface Listener {
         fun onChange()
     }
+    companion object{
+        const val ENCRYPTED_SHARED_PREFERENCES_ARE_ENCRYPTED ="encrypted_shared_preference"
+    }
 
     constructor(context: Context, preferenceName: String, preferenceMode: Int) {
-        sharedPreferences = context.getSharedPreferences(preferenceName, preferenceMode)
+        val authPreferences = initializeEncryptedSharedPreferences(context, SharedPreferencesKeys.PREF_FILE_AUTH)
+        if(authPreferences.getBoolean(ENCRYPTED_SHARED_PREFERENCES_ARE_ENCRYPTED, false)){
+            sharedPreferences = initializeEncryptedSharedPreferences(context, preferenceName)
+        }else{
+            if(migratePreferencesIfNeededOrContinue(context, preferenceMode, authPreferences)){
+                sharedPreferences = initializeEncryptedSharedPreferences(context, preferenceName)
+            }else{
+                sharedPreferences = loadSharedPreferences(context, preferenceName, preferenceMode)
+            }
+        }
+    }
+
+    /**
+     * Loads the required SharedPreferences
+     * @return [SharedPreferences] if unencrypted data is still present
+     *
+     * else [EncryptedSharedPreferences]
+     */
+    private fun loadSharedPreferences(
+        context: Context,
+        preferenceName: String,
+        preferenceMode: Int
+    ): SharedPreferences {
+        val unEncryptedSharedPreferences = context.getSharedPreferences(preferenceName, preferenceMode)
+
+        return if(unEncryptedSharedPreferences.all.isEmpty()) {
+            initializeEncryptedSharedPreferences(context, preferenceName)
+        }else{
+            unEncryptedSharedPreferences
+        }
+    }
+
+    /**
+     * Loops through all of the [SharedPreferences] and attempts to save them to [EncryptedSharedPreferences]
+     * @return *true* if the [SharedPreferences] don't need migrating
+     *
+     * *true* if [SharedPreferences] are successfully migrated and the old data cleared
+     *
+     * *false* if one or more of the migrations fail or are not cleared successfully
+     */
+    private fun migratePreferencesIfNeededOrContinue(
+        mContext: Context,
+        preferenceMode: Int,
+        authPreferences: SharedPreferences): Boolean{
+        var continueWithEncryptedSharedPreference = true
+
+        for(preferencesName in SharedPreferencesKeys.PREF_ALL){
+            if(!migrateSinglePreferencesIfNeededOrContinue(mContext, preferencesName, preferenceMode)){
+                continueWithEncryptedSharedPreference = false
+            }
+        }
+
+        if(continueWithEncryptedSharedPreference){
+            authPreferences.edit().putBoolean(ENCRYPTED_SHARED_PREFERENCES_ARE_ENCRYPTED, true).commit()
+        }
+        return  continueWithEncryptedSharedPreference
+    }
+
+    /**
+     * Migrate single [SharedPreferences] to [EncryptedSharedPreferences]
+     * @return *true* if the unencrypted preference is empty
+     *
+     * *true* if the preference is successfully migrated and cleared
+     *
+     * *false* if the migration fails
+     *
+     * *false* if the old preference in not cleared
+     */
+    private fun migrateSinglePreferencesIfNeededOrContinue(
+        mContext: Context,
+        preferenceName: String,
+        preferenceMode: Int
+    ): Boolean {
+        val unencryptedPreference = mContext.getSharedPreferences(preferenceName, preferenceMode)
+        var migrationIsSuccessful = true
+        if(unencryptedPreference.all.isNotEmpty()){
+            val encryptedSharedPreferences = initializeEncryptedSharedPreferences(mContext, preferenceName)
+
+            for (entry in unencryptedPreference.all.entries) {
+                val key = entry.key
+                val value: Any? = entry.value
+                if(!encryptedSharedPreferences.set(key, value)){
+                    migrationIsSuccessful = false
+                }
+            }
+
+            if(migrationIsSuccessful){
+                if(!unencryptedPreference.edit().clear().commit()){
+                    migrationIsSuccessful = false
+                }
+            }
+        }
+        return migrationIsSuccessful
+    }
+
+    fun SharedPreferences.set(key: String, value: Any?): Boolean {
+        return when (value) {
+            is String? -> edit { it.putString(key, value) }
+            is Int -> edit { it.putInt(key, value.toInt()) }
+            is Boolean -> edit { it.putBoolean(key, value) }
+            is Float -> edit { it.putFloat(key, value.toFloat()) }
+            is Long -> edit { it.putLong(key, value.toLong()) }
+            else -> {
+                Log.e("Unsupported Type: $value")
+                false
+            }
+        }
+    }
+
+    private inline fun SharedPreferences.edit(operation: (SharedPreferences.Editor) -> Unit): Boolean {
+        val editor = this.edit()
+        operation(editor)
+        return editor.commit()
+    }
+
+    private fun initializeEncryptedSharedPreferences(
+        context: Context,
+        preferenceName: String
+    ): SharedPreferences {
+        val masterKey = MasterKey.Builder(context).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build()
+        val encryptedPreferenceName = preferenceName +"_ENCRYPTED"
+        return EncryptedSharedPreferences.create(
+            context,
+            encryptedPreferenceName,
+            masterKey,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        )
     }
 
     // registerOnSharedPreferenceChangeListener doesn't work
