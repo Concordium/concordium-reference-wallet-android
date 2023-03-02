@@ -25,7 +25,7 @@ jobs:
       - name: Build project and run unit tests (local flavor)
         run: ./gradlew test unitTestCoverageReport --no-daemon
       - name: Add coverage comment to PR
-        id: jacoco
+        # Action uses deprecated features (https://github.com/Madrapps/jacoco-report/issues/35).
         uses: madrapps/jacoco-report@v1.3
         with:
           paths: "${{github.workspace}}/app/build/reports/jacoco/unitTestCoverageReport/unitTestCoverageReport.xml"
