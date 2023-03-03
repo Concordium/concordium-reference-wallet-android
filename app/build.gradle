@@ -4,6 +4,33 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'androidx.navigation.safeargs.kotlin'
+}
+
+// Create task for reporting test coverage on unit tests run against the debug build of the "local" flavor.
+// Note that by enabling 'testCoverageEnabled' for the 'debug' build type,
+// the tasks 'create${flavor}CoverageReport' are automatically generated for all flavors.
+// However, these tasks include running integration tests which require a device to be connected.
+// TODO It's unclear if this should be wrapped in 'project.afterEvaluate' (it seems unnecessary but some guides include it).
+tasks.create(name: "unitTestCoverageReport", type: JacocoReport, dependsOn: "testLocalDebugUnitTest") {
+    group = "Verification" // existing group containing tasks for generating linting reports etc.
+    description = "Generate Jacoco coverage reports for the 'local' debug build."
+
+    reports {
+        html.enabled = true // human readable (written into './build/reports/jacoco/unitTestCoverageReport/html')
+        xml.enabled = true // CI-readable (written into './build/reports/jacoco/unitTestCoverageReport/unitTestCoverageReport.xml')
+    }
+
+    // Execution data generated when running the tests against classes instrumented by the JaCoCo agent.
+    // This is enabled with 'testCoverageEnabled' in the 'debug' build type.
+    executionData.from = files("${project.buildDir}/outputs/unit_test_code_coverage/localDebugUnitTest/testLocalDebugUnitTest.exec")
+
+    // Compiled Kotlin class files are written into build-variant-specific subdirectories of 'build/tmp/kotlin-classes'.
+    // JaCoCo execution data is a record of the (offsets of?) executed bytecode instructions which are looked up in the class files.
+    classDirectories.from = files([fileTree(dir: "${project.buildDir}/tmp/kotlin-classes/localDebug")])
+
+    // To produce an accurate report, the bytecode is mapped back to the original source code.
+    sourceDirectories.from = files(["${project.projectDir}/src/main/java"])
 }
 
 def versionBuildNumberSequential = 33
@@ -100,7 +127,7 @@ android {
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [
-                    "room.schemaLocation": "$projectDir/schemas".toString(),
+                    "room.schemaLocation": "${project.projectDir}/schemas".toString(),
                     "room.incremental"   : "true"]
             }
         }
@@ -112,13 +139,13 @@ android {
         }
         debug {
             debuggable true
+            testCoverageEnabled true
         }
     }
 
     flavorDimensions "default"
 
     productFlavors {
-
         mock {
             applicationIdSuffix ".mock"
 
@@ -264,8 +291,6 @@ android {
             excludes += ['META-INF/NOTICE.md']
         }
     }
-
-    // Room - exclude the atomic functions module from the package and prevent warnings.
 }
 
 dependencies {
