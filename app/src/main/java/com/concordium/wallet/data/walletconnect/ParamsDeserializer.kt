@@ -25,6 +25,18 @@ class ParamsDeserializer : JsonDeserializer<Params?> {
         )
     }
 
+    /**
+     * Get the [Schema] from the [JsonElement]
+     * @param context [JsonDeserializationContext]
+     * @param schemaElement [JsonElement]
+     * @return [Schema]
+     *
+     * **null** if [schemaElement] is null
+     *
+     * **null** on [JsonParseException]
+     *
+     * **null** if **type** or **value** in [Schema] are null
+     */
     private fun getSchema(
         context: JsonDeserializationContext,
         schemaElement: JsonElement?
@@ -33,7 +45,11 @@ class ParamsDeserializer : JsonDeserializer<Params?> {
 
         if (schemaElement.isJsonObject) {
             return try {
-                context.deserialize(schemaElement, Schema::class.java)
+                val schema: Schema = context.deserialize(schemaElement, Schema::class.java)
+                if(schema.type == null || schema.value == null){
+                    return null
+                }
+                return schema
             } catch (ex: JsonParseException) {
                 null
             }
