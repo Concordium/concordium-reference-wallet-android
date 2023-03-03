@@ -23,7 +23,7 @@ jobs:
           distribution: temurin
           cache: gradle # caches dependencies (https://github.com/actions/setup-java#caching-packages-dependencies)
       - name: Build project and run unit tests (local flavor)
-        run: ./gradlew test unitTestCoverageReport --no-daemon
+        run: ./gradlew build unitTestCoverageReport --no-daemon
       - name: Add coverage comment to PR
         # Action uses deprecated features (https://github.com/Madrapps/jacoco-report/issues/35).
         uses: madrapps/jacoco-report@v1.3
@@ -35,3 +35,8 @@ jobs:
         with:
           name: coverage-report
           path: "${{github.workspace}}/app/build/reports/jacoco/unitTestCoverageReport/html/"
+      - name: Store generated APKs
+        uses: actions/upload-artifact@v3
+        with:
+          name: apks
+          path: "${{github.workspace}}/app/build/outputs/apk/"
