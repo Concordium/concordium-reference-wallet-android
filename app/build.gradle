@@ -370,4 +370,6 @@ dependencies {
     implementation("com.walletconnect:sign:2.2.0")
 
     implementation 'com.github.matomo-org:matomo-sdk-android:4.1.4'
+
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.10")
 }
