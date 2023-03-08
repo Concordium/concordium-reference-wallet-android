@@ -35,8 +35,18 @@ jobs:
         with:
           name: coverage-report
           path: "${{github.workspace}}/app/build/reports/jacoco/unitTestCoverageReport/html/"
-      - name: Store generated APKs
+      - name: Store generated release build APK for stagenet
         uses: actions/upload-artifact@v3
         with:
-          name: apks
-          path: "${{github.workspace}}/app/build/outputs/apk/"
+          name: apk-stagenet-release
+          path: "${{github.workspace}}/app/build/outputs/apk/staging/release/"
+      - name: Store generated release build APK for testnet
+        uses: actions/upload-artifact@v3
+        with:
+          name: apk-testnet-release
+          path: "${{github.workspace}}/app/build/outputs/apk/prodTestNet/release/"
+      - name: Store generated release build APK for mainnet
+        uses: actions/upload-artifact@v3
+        with:
+          name: apk-mainnet-release
+          path: "${{github.workspace}}/app/build/outputs/apk/prodMainNet/release/"
