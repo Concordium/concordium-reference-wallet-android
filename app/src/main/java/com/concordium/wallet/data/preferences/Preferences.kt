@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import com.concordium.wallet.App
 import com.concordium.wallet.util.Log
 
 
@@ -21,29 +20,30 @@ open class Preferences {
         fun onChange()
     }
     companion object{
-        const val ENCRYPTED_SHARED_PREFERENCES_ARE_ENCRYPTED ="encrypted_shared_preference"
+        const val SHARED_PREFERENCES_ARE_ENCRYPTED ="encrypted_shared_preference"
     }
 
     constructor(context: Context, preferenceName: String, preferenceMode: Int) {
         val authPreferences = initializeEncryptedSharedPreferences(context, SharedPreferencesKeys.PREF_FILE_AUTH)
-        if(authPreferences.getBoolean(ENCRYPTED_SHARED_PREFERENCES_ARE_ENCRYPTED, false)){
+        if(authPreferences.getBoolean(SHARED_PREFERENCES_ARE_ENCRYPTED, false)){
             sharedPreferences = initializeEncryptedSharedPreferences(context, preferenceName)
         }else{
-            if(migratePreferencesIfNeededOrContinue(context, preferenceMode, authPreferences)){
-                sharedPreferences = initializeEncryptedSharedPreferences(context, preferenceName)
-            }else{
-                sharedPreferences = loadSharedPreferences(context, preferenceName, preferenceMode)
-            }
+            sharedPreferences =
+                if(migratePreferencesSuccess(context, preferenceName, preferenceMode, authPreferences)){
+                    initializeEncryptedSharedPreferences(context, preferenceName)
+                }else{
+                    getSharedPreferences(context, preferenceName, preferenceMode)
+                }
         }
     }
 
     /**
-     * Loads the required SharedPreferences
-     * @return [SharedPreferences] if unencrypted data is still present
+     * Returns the required SharedPreferences
+     * @return [SharedPreferences] *if* unencrypted data is still present
      *
-     * else [EncryptedSharedPreferences]
+     * *else* an instance of encrypted [SharedPreferences]
      */
-    private fun loadSharedPreferences(
+    private fun getSharedPreferences(
         context: Context,
         preferenceName: String,
         preferenceMode: Int
@@ -61,24 +61,29 @@ open class Preferences {
      * Loops through all of the [SharedPreferences] and attempts to save them to [EncryptedSharedPreferences]
      * @return *true* if the [SharedPreferences] don't need migrating
      *
-     * *true* if [SharedPreferences] are successfully migrated and the old data cleared
+     * *true* if [SharedPreferences] is successfully migrated and the old data cleared
      *
-     * *false* if one or more of the migrations fail or are not cleared successfully
+     * *false* if the migrations fail or is not cleared successfully
      */
-    private fun migratePreferencesIfNeededOrContinue(
+    private fun migratePreferencesSuccess(
         mContext: Context,
+        preferenceName: String,
         preferenceMode: Int,
         authPreferences: SharedPreferences): Boolean{
+        var allPreferencesAreMigrated = true
         var continueWithEncryptedSharedPreference = true
 
-        for(preferencesName in SharedPreferencesKeys.PREF_ALL){
-            if(!migrateSinglePreferencesIfNeededOrContinue(mContext, preferencesName, preferenceMode)){
-                continueWithEncryptedSharedPreference = false
+        for(prefName in SharedPreferencesKeys.PREF_ALL){
+            if(!migrateSinglePreferencesIfNeededOrContinue(mContext, prefName, preferenceMode)){
+                allPreferencesAreMigrated = false
+
+                if(prefName == preferenceName) {
+                    continueWithEncryptedSharedPreference = false
+                }
             }
         }
-
-        if(continueWithEncryptedSharedPreference){
-            authPreferences.edit().putBoolean(ENCRYPTED_SHARED_PREFERENCES_ARE_ENCRYPTED, true).commit()
+        if(allPreferencesAreMigrated){
+            authPreferences.edit().putBoolean(SHARED_PREFERENCES_ARE_ENCRYPTED, true).commit()
         }
         return  continueWithEncryptedSharedPreference
     }
