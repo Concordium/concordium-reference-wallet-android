@@ -11,10 +11,10 @@ import kotlin.reflect.full.memberProperties
 /**
  * GSON doesn't understand Kotlin’s non-null types.
  *
- * This adapter adds the ability to throw an error when a non-null value is set to null.
+ * This adapter adds the ability to catch if a null value is assigned to a non-nullable field.
  * @return [TypeAdapterFactory]
  *
- * [JsonParseException] if a non-null value is null
+ * [JsonParseException] if null is assigned to a non-nullable field
  */
 class NullableTypeAdapterFactory : TypeAdapterFactory {
 
