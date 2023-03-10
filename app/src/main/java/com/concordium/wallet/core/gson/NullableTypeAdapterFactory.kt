@@ -11,6 +11,8 @@ import kotlin.reflect.full.memberProperties
 /**
  * GSON doesn't understand Kotlin’s non-null types.
  *
+ * If we try to deserialize a null value into a non-null type, GSON will do so without errors. This can easily cause unexpected behaviour.
+ *
  * This adapter adds the ability to catch if a null value is assigned to a non-nullable field.
  * @return [TypeAdapterFactory]
  *
@@ -25,6 +27,8 @@ class NullableTypeAdapterFactory : TypeAdapterFactory {
         if (type.rawType.declaredAnnotations.none { it.annotationClass.qualifiedName == "kotlin.Metadata" }) {
             return null
         }
+        val kotlinClass: KClass<Any> = Reflection.createKotlinClass(type.rawType)
+        val notNullableFields = kotlinClass.memberProperties.filter { !it.returnType.isMarkedNullable }
 
         return object : TypeAdapter<T>() {
 
@@ -34,17 +38,13 @@ class NullableTypeAdapterFactory : TypeAdapterFactory {
                 val value: T? = delegate.read(input)
 
                 if (value != null) {
-                    val kotlinClass: KClass<Any> = Reflection.createKotlinClass(type.rawType)
-
                     // Ensure none of its non-nullable fields were deserialized to null
-                    kotlinClass.memberProperties.forEach {
-                        if (!it.returnType.isMarkedNullable && it.get(value) == null) {
+                    notNullableFields.forEach {
+                        if(it.get(value) == null){
                             throw JsonParseException("Value of non-nullable member [${it.name}] cannot be null")
                         }
                     }
-
                 }
-
                 return value
             }
         }

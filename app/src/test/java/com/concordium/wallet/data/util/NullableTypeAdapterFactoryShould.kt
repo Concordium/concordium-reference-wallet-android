@@ -33,14 +33,6 @@ class NullableTypeAdapterFactoryShould {
         val testObject = gson.fromJson(validJsonString, TestObject::class.java)
 
         Assert.assertEquals(
-            testObject.type,"test type"
-        )
-
-        Assert.assertEquals(
-            testObject.sender,"test sender"
-        )
-
-        Assert.assertEquals(
             testObject, validObject
         )
     }
@@ -64,5 +56,21 @@ class NullableTypeAdapterFactoryShould {
         Assert.assertThrows(JsonParseException::class.java) {
             gson.fromJson(invalidJsonString, TestObject::class.java)
         }
+    }
+
+    @Test
+    fun throwErrorWhenGsonWithoutTheAdapterWillNot(){
+        val invalidJsonString ="{" +
+        "\"type\": \"test type\"," +
+                "\"sender\": null }"
+
+        Assert.assertThrows(JsonParseException::class.java) {
+            gson.fromJson(invalidJsonString, TestObject::class.java)
+        }
+
+        val testObject: TestObject = Gson().fromJson(invalidJsonString, TestObject::class.java)
+
+        //testObject.sender is null for Gson without the adapter
+        Assert.assertNull(testObject.sender)
     }
 }
