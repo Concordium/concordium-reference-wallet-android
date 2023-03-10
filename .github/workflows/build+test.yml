@@ -38,7 +38,7 @@ jobs:
       - name: Store generated release build APK for stagenet (slash)
         uses: actions/upload-artifact@v3
         with:
-          name: apk-stagenet-release-noslash
+          name: apk-stagenet-release-slash
           path: "${{github.workspace}}/app/build/outputs/apk/staging/"
       - name: Store generated release build APK for stagenet (noslash)
         uses: actions/upload-artifact@v3
