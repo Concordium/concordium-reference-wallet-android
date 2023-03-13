@@ -89,11 +89,12 @@
                             android:layout_centerInParent="true"
                             android:alpha="0.2"
                             app:hide_expand_bar="false" />
+
                         <Button
                             android:id="@+id/btnSubmitAccount"
                             style="@style/Button.Standard"
-                            android:enabled="false"
                             android:layout_centerInParent="true"
+                            android:enabled="false"
                             android:text="@string/new_account_setup_confirm_submit" />
                     </RelativeLayout>
                 </LinearLayout>

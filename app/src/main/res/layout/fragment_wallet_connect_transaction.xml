@@ -112,9 +112,34 @@
                     android:id="@+id/contract_address"
                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
                     android:layout_width="match_parent"
-                    tools:text="14f3632ac857400d417a7277f726c43a 8ddf07184f10a429cf0759e985247c33" />
+                    tools:text="81 (0)" />
 
                 <TextView
+                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
+                    android:text="@string/wallet_connect_transaction_contract_and_function_name" />
+
+                <TextView
+                    android:id="@+id/contract_feature"
+                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
+                    android:layout_width="match_parent"
+                    tools:text="PiggyBank.insert" />
+
+                <TextView
+                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
+                    android:text="@string/wallet_connect_transaction_contract_max_energy" />
+
+                <TextView
+                    android:id="@+id/max_energy_allowed"
+                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
+                    android:layout_width="match_parent"
+                    tools:text="30000 NRG" />
+
+                <TextView
+                    android:id="@+id/parameters_title"
                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                     android:layout_width="match_parent"
                     android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"

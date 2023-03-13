@@ -548,6 +548,8 @@
     <string name="auth_login_biometrics_dialog_subtitle">Use biometrics to authenticate</string>
     <string name="auth_login_biometrics_dialog_cancel_passcode">Use passcode</string>
     <string name="auth_login_biometrics_dialog_cancel_password">Use password</string>
+    <string name="auth_login_seed_error">Error 101: Encryption failed</string>
+    <string name="auth_login_seed_error_message">Please restart your mobile device and try to start the app again.\n\nIf it fails again, please contact \nsupport@concordium.software.com \nwith the error code 101 in the subject of your e-mail.</string>
 
     <!-- Auth Setup-->
     <string name="auth_setup_title">Select Passcode</string>
@@ -811,8 +813,11 @@
     <string name="wallet_connect_transaction_receipt_title">Transaction: Update Contract</string>
     <string name="wallet_connect_transaction_sender_account">Sender account</string>
     <string name="wallet_connect_transaction_amount">Amount</string>
-    <string name="wallet_connect_transaction_contract_address">Contract index</string>
+    <string name="wallet_connect_transaction_contract_address">Contract index (subindex):</string>
+    <string name="wallet_connect_transaction_contract_and_function_name">Contract and function name:</string>
+    <string name="wallet_connect_transaction_contract_max_energy">Max energy allowed:</string>
     <string name="wallet_connect_transaction_parameters">Parameters</string>
+    <string name="wallet_connect_transaction_no_parameters">No parameters</string>
     <string name="wallet_connect_transaction_reject">Reject</string>
     <string name="wallet_connect_transaction_submit">Submit</string>
     <string name="wallet_connect_transaction_estimated_transaction_fee">Estimated transaction fee:\nϾ%1$s</string>
@@ -1059,4 +1064,5 @@
     <string name="cis_delete_dialog_cancel">Cancel</string>
     <string name="cis_search_balance">Your balance: %1$s</string>
 
+    <string name="wallet_connect_transaction_parsing_error">Error parsing the request!</string>
 </resources>

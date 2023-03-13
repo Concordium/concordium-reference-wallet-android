@@ -4,9 +4,12 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.bip39.Mnemonics
 import com.concordium.wallet.BuildConfig
+import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.ui.passphrase.common.WordsPickedBaseListAdapter
+import kotlinx.coroutines.launch
 import java.io.Serializable
 
 class PassPhraseViewModel(application: Application) : AndroidViewModel(application), Serializable {
@@ -21,6 +24,10 @@ class PassPhraseViewModel(application: Application) : AndroidViewModel(applicati
     private val _validateLiveData = MutableLiveData<Boolean>()
     val validate: LiveData<Boolean>
         get() = _validateLiveData
+
+    private val _saveSeedLiveData = MutableLiveData<Boolean>()
+    val saveSeed: LiveData<Boolean>
+        get() = _saveSeedLiveData
 
     val continueEnabled: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 
@@ -52,5 +59,12 @@ class PassPhraseViewModel(application: Application) : AndroidViewModel(applicati
 
     fun generatedPhrase(): String {
         return mnemonicCodeToConfirm.joinToString(" ") { String(it) }
+    }
+
+    fun setSeedPhrase(password: String) = viewModelScope.launch {
+        _saveSeedLiveData.value = AuthPreferences(getApplication()).tryToSetEncryptedSeedPhrase(
+            generatedPhrase(),
+            password
+        )
     }
 }

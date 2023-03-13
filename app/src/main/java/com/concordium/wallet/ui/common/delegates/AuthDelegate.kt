@@ -73,6 +73,7 @@ class AuthDelegateImpl : AuthDelegate {
     private fun createPromptInfo(activity: AppCompatActivity): BiometricPrompt.PromptInfo {
         return BiometricPrompt.PromptInfo.Builder()
             .setTitle(activity.getString(R.string.auth_login_biometrics_dialog_title))
+            .setSubtitle(activity.getString(R.string.auth_login_biometrics_dialog_subtitle))
             .setConfirmationRequired(true)
             .setNegativeButtonText(activity.getString(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_login_biometrics_dialog_cancel_passcode else R.string.auth_login_biometrics_dialog_cancel_password))
             .build()

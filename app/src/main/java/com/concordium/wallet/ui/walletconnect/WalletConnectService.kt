@@ -8,12 +8,14 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.concordium.wallet.R
 import com.concordium.wallet.data.walletconnect.Params
-import com.google.gson.Gson
+import com.concordium.wallet.data.walletconnect.ParamsDeserializer
+import com.google.gson.GsonBuilder
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
 import org.greenrobot.eventbus.EventBus
+
 
 class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.CoreDelegate {
     private val binder = LocalBinder()
@@ -65,13 +67,14 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
             return settledSessionResponseResult?.session?.topic ?: ""
         }
 
-        fun getSessionRequestParamsAsString(): String? {
-            return sessionRequest?.request?.params
-        }
-
         fun getSessionRequestParams(): Params? {
             return try {
-                Gson().fromJson(sessionRequest?.request?.params, Params::class.java)
+                val jsonBuilder = GsonBuilder()
+                jsonBuilder.registerTypeAdapter(
+                    Params::class.java,
+                    ParamsDeserializer()
+                )
+                return jsonBuilder.create().fromJson(sessionRequest?.request?.params, Params::class.java)
             } catch (ex: Exception) {
                 println("LC -> getSessionRequestParams ERROR ${throwableRemoveLineBreaks(ex)}")
                 null
