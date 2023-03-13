@@ -295,15 +295,15 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     fun prettyPrintJson() {
 
         binder?.getSessionRequestParams()?.let { params ->
-            params.payloadObj = params.parsePayload()
-            params.payload = ""
-            if (params.payloadObj != null && params.payloadObj?.message != null && params.schema != null) {
+            val payloadObj = params.parsePayload()
+            val schema = params.schema
+            if (payloadObj != null && schema != null) {
                 CoroutineScope(Dispatchers.IO).launch {
                     val jsonMessage = App.appCore.cryptoLibrary.parameterToJson(
                         ParameterToJsonInput(
-                            params.payloadObj!!.message,
-                            params.payloadObj!!.receiveName,
-                            params.schema!!,
+                            payloadObj.message,
+                            payloadObj.receiveName,
+                            schema,
                             null
                         )
                     )

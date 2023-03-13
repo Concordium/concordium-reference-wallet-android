@@ -178,6 +178,7 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             val input = gson.toJson(parameterToJsonInput)
             loadWalletLib()
             val result = parameter_to_json(input)
+            Log.d("Input (Code $parameterToJsonInput)")
             Log.d("Result (Code ${result.result})")
             Log.d("Output (Code ${result.output}")
             if (result.result == CryptoLibrary.SUCCESS) {
