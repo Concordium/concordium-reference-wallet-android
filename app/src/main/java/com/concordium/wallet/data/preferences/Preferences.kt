@@ -50,6 +50,16 @@ open class Preferences {
         triggerChangeEvent(key)
     }
 
+    protected fun setStringWithResult(key: String, value: String?): Boolean {
+        val editor = editor
+        if (value == null) {
+            editor.remove(key)
+        } else {
+            editor.putString(key, value)
+        }
+       return editor.commit()
+    }
+
     protected fun getString(key: String, def: String): String {
         val result = sharedPreferences.getString(key, def)
         result ?: return def

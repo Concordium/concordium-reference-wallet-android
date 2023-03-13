@@ -3,7 +3,9 @@ package com.concordium.wallet.data.preferences
 import android.content.Context
 import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
+import com.concordium.wallet.App
 import com.concordium.wallet.util.toHex
+import javax.crypto.SecretKey
 
 class AuthPreferences(val context: Context) :
     Preferences(context, SharedPreferencesKeys.PREF_FILE_AUTH, Context.MODE_PRIVATE) {
@@ -24,6 +26,7 @@ class AuthPreferences(val context: Context) :
         const val PREFKEY_SHIELDED_WARNING_DISMISSED_ = "PREFKEY_SHIELDED_WARNING_DISMISSED_"
         const val PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED = "PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED_"
         const val SEED_PHRASE = "SEED_PHRASE"
+        const val SEED_PHRASE_ENCRYPTED = "SEED_PHRASE_ENCRYPTED"
     }
 
     fun setHasSetupUser(value: Boolean) {
@@ -138,21 +141,64 @@ class AuthPreferences(val context: Context) :
         return getBoolean(PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED+id, false)
     }
 
-    fun resetSeedPhrase() {
-        setString(SEED_PHRASE, "")
-    }
-
-    fun setSeedPhrase(value: String) {
+    suspend fun tryToSetEncryptedSeedPhrase(value: String, password: String): Boolean {
         val seed = Mnemonics.MnemonicCode(value).toSeed()
         val seedEncoded = seed.toHex()
-        setString(SEED_PHRASE, seedEncoded)
+        val encryptedSeed = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, seedEncoded)
+            ?: return false
+       return setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed)
     }
 
-    fun getSeedPhrase(): String {
-        return getString(SEED_PHRASE, "")
+    suspend fun getSeedPhrase(password: String): String {
+        getString(SEED_PHRASE_ENCRYPTED)?.let {seedEncrypted ->
+            return App.appCore.getOriginalAuthenticationManager()
+                .decryptInBackground(password, seedEncrypted)?: return ""
+        }
+        return ""
+    }
+
+    suspend fun getSeedPhrase(decryptKey: SecretKey): String? {
+        getString(SEED_PHRASE_ENCRYPTED)?.let {seedEncrypted ->
+            return App.appCore.getOriginalAuthenticationManager()
+                .decryptInBackground(decryptKey, seedEncrypted)
+        }
+        return null
+    }
+    /**
+     * Check if the old unencrypted seed is present
+     *
+     * If the old unencrypted seed is present, encrypt it, save the new encrypted seed.
+     *
+     * Then get the encrypted seed from SharedPreference, decrypt it and compare it to the unencrypted seed. If they match delete the old seed.
+     *
+     * @param password the password required to encrypt the seed
+     * @return Returns [Boolean]
+     *
+     * **true** if there is no unencrypted seed saved. This can happen when new user has setup password and biometrics and exited the app before saving the seed phrase.
+     * Next time when he starts the app he will be presented with the Authentication screen and after successful password the user needs to be able to continue with the seed-phrase setup.
+     *
+     * **true** if the seed is successfully encrypted, the encrypted seed is successfully saved,
+     * the decrypted and unencrypted seeds match and the old seed is successfully deleted.
+    */
+    suspend fun checkAndTryToEncryptSeed(password: String): Boolean {
+        val seedUnencrypted = getString(SEED_PHRASE) ?: return true
+
+        //Unencrypted seed is present, encrypt it, save it and delete the old.
+        val encryptedSeed = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, seedUnencrypted) ?: return false
+        setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed).let { saveSuccess ->
+            if(saveSuccess) {
+                val decryptedSeed = getSeedPhrase(password)
+                return decryptedSeed == seedUnencrypted && setStringWithResult(SEED_PHRASE, null)
+            }
+        }
+        return false
+    }
+
+    fun updateEncryptedSeedPhrase(encryptedSeed: String): Boolean {
+        return setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed)
     }
 
     fun hasSeedPhrase(): Boolean {
-        return getSeedPhrase() != ""
+        return getString(SEED_PHRASE_ENCRYPTED) != null || getString(SEED_PHRASE) != null
     }
 }

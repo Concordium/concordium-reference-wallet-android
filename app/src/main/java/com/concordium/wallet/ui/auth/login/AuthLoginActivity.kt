@@ -80,6 +80,14 @@ class AuthLoginActivity : BaseActivity() {
                 showPasswordError(value)
             }
         })
+        viewModel.errorSeedLiveData.observe(this) { error ->
+            if (error) {
+                KeyboardUtil.hideKeyboard(this)
+                binding.errorSeedTextview.visibility = View.VISIBLE
+            } else {
+                binding.errorSeedTextview.visibility = View.GONE
+            }
+        }
     }
 
     private fun initializeViews() {
@@ -95,6 +103,7 @@ class AuthLoginActivity : BaseActivity() {
             binding.passcodeView.passcodeListener = object : PasscodeView.PasscodeListener {
                 override fun onInputChanged() {
                     binding.errorTextview.text = ""
+                    binding.errorSeedTextview.visibility = View.GONE
                 }
 
                 override fun onDone() {

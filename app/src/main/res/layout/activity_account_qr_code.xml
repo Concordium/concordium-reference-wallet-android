@@ -82,7 +82,7 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:src="@drawable/ic_forward"
-                android:tint="@color/theme_white"
+                app:tint="@color/theme_white"
                 app:layout_constraintBottom_toTopOf="@+id/share_textview"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -119,13 +119,13 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:src="@drawable/ic_pages"
-                android:tint="@color/theme_white"
                 app:layout_constraintBottom_toTopOf="@+id/copy_address_textview"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_chainStyle="packed" />
+                app:layout_constraintVertical_chainStyle="packed"
+                app:tint="@color/theme_white" />
 
             <TextView
                 android:id="@+id/copy_address_textview"

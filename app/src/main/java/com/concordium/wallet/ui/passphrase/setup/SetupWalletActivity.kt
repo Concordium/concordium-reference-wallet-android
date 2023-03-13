@@ -11,12 +11,14 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
-import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.databinding.ActivitySetupWalletBinding
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.ui.common.delegates.AuthDelegate
+import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.identity.identitycreate.IdentityIntroFlow
+import com.concordium.wallet.util.KeyboardUtil
 
-class SetupWalletActivity : BaseActivity() {
+class SetupWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
     private lateinit var binding: ActivitySetupWalletBinding
     private lateinit var viewModel: PassPhraseViewModel
 
@@ -78,8 +80,20 @@ class SetupWalletActivity : BaseActivity() {
     private fun initObservers() {
         viewModel.validate.observe(this) { success ->
             if (success) {
-                AuthPreferences(this).setSeedPhrase(viewModel.generatedPhrase())
+                showAuthentication(this) { password ->
+                    password?.let {
+                        viewModel.setSeedPhrase(password)
+                    }
+                }
+            }
+        }
+
+        viewModel.saveSeed.observe(this) {saveSuccess->
+            if (saveSuccess) {
                 moveNext()
+            }else{
+                KeyboardUtil.hideKeyboard(this)
+                showError(R.string.auth_login_seed_error)
             }
         }
 
@@ -104,6 +118,10 @@ class SetupWalletActivity : BaseActivity() {
                 else -> Fragment()
             }
         }
+    }
+
+    private fun showError(stringRes: Int) {
+        popup.showSnackbar(binding.root, stringRes)
     }
 
     private fun moveNext() {

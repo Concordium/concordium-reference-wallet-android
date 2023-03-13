@@ -548,6 +548,8 @@
     <string name="auth_login_biometrics_dialog_subtitle">Use biometrics to authenticate</string>
     <string name="auth_login_biometrics_dialog_cancel_passcode">Use passcode</string>
     <string name="auth_login_biometrics_dialog_cancel_password">Use password</string>
+    <string name="auth_login_seed_error">Error 101: Encryption failed</string>
+    <string name="auth_login_seed_error_message">Please restart your mobile device and try to start the app again.\n\nIf it fails again, please contact \nsupport@concordium.software.com \nwith the error code 101 in the subject of your e-mail.</string>
 
     <!-- Auth Setup-->
     <string name="auth_setup_title">Select Passcode</string>
@@ -993,4 +995,5 @@
     <string name="export_account_keys_copied">Copied</string>
     <string name="export_account_keys_to_file">Export to file</string>
     <string name="export_account_keys_file_exported">File exported</string>
+    <string name="wallet_connect_transaction_parsing_error">Error parsing the request!</string>
 </resources>

@@ -1,0 +1,52 @@
+name: Build and test
+
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+    paths-ignore:
+    - "**.md"
+
+env:
+  java_version: "17"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: "${{env.java_version}}"
+          distribution: temurin
+          cache: gradle # caches dependencies (https://github.com/actions/setup-java#caching-packages-dependencies)
+      - name: Build project and run unit tests (local flavor)
+        run: ./gradlew build unitTestCoverageReport --no-daemon
+      - name: Add coverage comment to PR
+        # Action uses deprecated features (https://github.com/Madrapps/jacoco-report/issues/35).
+        uses: madrapps/jacoco-report@v1.3
+        with:
+          paths: "${{github.workspace}}/app/build/reports/jacoco/unitTestCoverageReport/unitTestCoverageReport.xml"
+          token: "${{secrets.GITHUB_TOKEN}}"
+      - name: Store HTML coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: "${{github.workspace}}/app/build/reports/jacoco/unitTestCoverageReport/html/"
+      - name: Store generated release build APK for stagenet
+        uses: actions/upload-artifact@v3
+        with:
+          name: apk-stagenet-release
+          path: "${{github.workspace}}/app/build/outputs/apk/staging/release/"
+      - name: Store generated release build APK for testnet
+        uses: actions/upload-artifact@v3
+        with:
+          name: apk-testnet-release
+          path: "${{github.workspace}}/app/build/outputs/apk/prodTestNet/release/"
+      - name: Store generated release build APK for mainnet
+        uses: actions/upload-artifact@v3
+        with:
+          name: apk-mainnet-release
+          path: "${{github.workspace}}/app/build/outputs/apk/prodMainNet/release/"

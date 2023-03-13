@@ -167,7 +167,7 @@ class IdentityProviderListActivity : BaseActivity() {
         val dialogFragment = AuthenticationDialogFragment()
         dialogFragment.setCallback(object : AuthenticationDialogFragment.Callback {
             override fun onCorrectPassword(password: String) {
-                viewModel.continueWithPassword()
+                viewModel.continueWithPassword(password)
             }
 
             override fun onCancelled() {

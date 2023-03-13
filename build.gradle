@@ -6,12 +6,18 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.0'
+        classpath 'com.android.tools.build:gradle:7.4.1'
         def nav_version = '2.4.1'
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version"
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
+}
+
+plugins {
+    // Plugin that adds a task 'taskTree' for printing task dependency tree.
+    // Example: './gradlew build taskTree' prints the dependencies of the task 'build'.
+    id "com.dorongold.task-tree" version "2.1.1"
 }
 
 allprojects {
