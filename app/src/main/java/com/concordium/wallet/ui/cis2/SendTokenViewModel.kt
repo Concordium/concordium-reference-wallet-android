@@ -414,7 +414,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             if (serializeTokenTransferParametersOutput == null) {
                 errorInt.postValue(R.string.app_error_lib)
             } else {
-                val payload = Payload(ContractAddress(sendTokenData.token!!.contractIndex.toInt(), 0), "0", sendTokenData.energy!!.toInt(), serializeTokenTransferParametersOutput.parameter, sendTokenData.token!!.contractName + ".transfer")
+                val payload = Payload(ContractAddress(sendTokenData.token!!.contractIndex.toInt(), 0), "0", sendTokenData.energy!!, serializeTokenTransferParametersOutput.parameter, sendTokenData.token!!.contractName + ".transfer")
                 val accountTransactionInput = CreateAccountTransactionInput(expiry.toInt(), sendTokenData.account!!.address, keys, sendTokenData.accountNonce!!.nonce, payload, "Update")
                 val accountTransactionOutput = App.appCore.cryptoLibrary.createAccountTransaction(accountTransactionInput)
                 if (accountTransactionOutput == null) {
