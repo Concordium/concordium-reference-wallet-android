@@ -24,6 +24,10 @@ jobs:
       - name: Fail if ref is not a tag
         if: "steps.ref.outputs.ref-type != 'tags'"
         run: exit 1
+      - name: "Check that tag matches the version name declared in 'build.gradle'"
+        run: |
+          v="$(./gradlew -q printVersionName)"
+          [[ "${{steps.ref.outputs.ref-name}}" = "${v}-*" ]]
       - uses: actions/checkout@v3
         with:
           ref: "${{steps.ref.outputs.ref-name}}"
@@ -34,7 +38,7 @@ jobs:
           distribution: temurin
           cache: gradle # caches dependencies (https://github.com/actions/setup-java#caching-packages-dependencies)
       - name: "Build project and run unit tests"
-        run: ./gradlew build --no-daemon
+        run: ./gradlew build
       - name: Store generated release build APK for stagenet
         uses: actions/upload-artifact@v3
         with:
