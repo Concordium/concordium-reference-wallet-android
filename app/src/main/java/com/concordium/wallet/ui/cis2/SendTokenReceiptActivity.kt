@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import com.concordium.wallet.R
-import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.data.util.CurrencyUtilImpl
 import com.concordium.wallet.databinding.ActivitySendTokenReceiptBinding
 import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.base.BaseActivity
@@ -38,7 +38,7 @@ class SendTokenReceiptActivity : BaseActivity() {
 
     private fun initViews() {
         binding.sender.text = viewModel.sendTokenData.account?.name.plus("\n\n").plus(viewModel.sendTokenData.account?.address)
-        binding.amount.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.amount, false)
+        binding.amount.text = CurrencyUtilImpl.formatGTU(viewModel.sendTokenData.amount, false)
         binding.receiver.text = viewModel.sendTokenData.receiver
         CoroutineScope(Dispatchers.Default).launch {
             runOnUiThread {
@@ -80,7 +80,7 @@ class SendTokenReceiptActivity : BaseActivity() {
             showWaiting(waiting)
         }
         viewModel.feeReady.observe(this) { fee ->
-            binding.fee.text = getString(R.string.cis_estimated_fee, CurrencyUtil.formatGTU(fee, true))
+            binding.fee.text = getString(R.string.cis_estimated_fee, CurrencyUtilImpl.formatGTU(fee, true))
         }
     }
 

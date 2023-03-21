@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.BakerDelegationData
-import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.data.util.CurrencyUtilImpl
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import javax.crypto.Cipher
@@ -47,7 +47,7 @@ abstract class BaseDelegationBakerActivity : BaseActivity() {
             response?.first?.let {
                 estimatedTransactionFee.text =
                     getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee,
-                        CurrencyUtil.formatGTU(it))
+                        CurrencyUtilImpl.formatGTU(it))
                 showWaiting(progressLayout, false)
             }
         }
