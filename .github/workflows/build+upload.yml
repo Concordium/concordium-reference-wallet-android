@@ -33,14 +33,6 @@ jobs:
           java-version: "${{env.java-version}}"
           distribution: temurin
           cache: gradle # caches dependencies (https://github.com/actions/setup-java#caching-packages-dependencies)
-      - name: debug
-        run: cat build.gradle
-      - name: debug
-        run: cat app/build.gradle
-      - name: debug
-        run: ./gradlew tasks
-      - name: debug
-        run: ./gradlew -q printVersionName
       - name: "Check that tag matches the version name declared in 'build.gradle'"
         run: |
           v="$(./gradlew -q printVersionName)"
