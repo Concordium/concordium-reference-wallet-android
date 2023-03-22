@@ -1,6 +1,8 @@
 name: Build and upload
 
 on:
+  push:
+    tags: "*-*"
   workflow_dispatch:
     inputs:
       tag-override:
