@@ -24,13 +24,13 @@ jobs:
       - name: Fail if ref is not a tag
         if: "steps.ref.outputs.ref-type != 'tags'"
         run: exit 1
+      - uses: actions/checkout@v3
+        with:
+          ref: "${{steps.ref.outputs.ref-name}}"
       - name: "Check that tag matches the version name declared in 'build.gradle'"
         run: |
           v="$(./gradlew -q printVersionName)"
           [[ "${{steps.ref.outputs.ref-name}}" = "${v}-*" ]]
-      - uses: actions/checkout@v3
-        with:
-          ref: "${{steps.ref.outputs.ref-name}}"
       - name: "Set up JDK"
         uses: actions/setup-java@v3
         with:
