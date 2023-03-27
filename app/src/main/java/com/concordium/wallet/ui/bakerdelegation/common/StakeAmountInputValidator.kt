@@ -2,7 +2,7 @@ package com.concordium.wallet.ui.bakerdelegation.common
 
 import android.content.Context
 import com.concordium.wallet.R
-import com.concordium.wallet.data.util.CurrencyUtilImpl
+import com.concordium.wallet.data.util.CurrencyUtil
 
 class StakeAmountInputValidator(
     private val minimumValue: String?,
@@ -50,8 +50,8 @@ class StakeAmountInputValidator(
     fun getErrorText(context: Context, stakeError: StakeError): String {
         return when (stakeError) {
             StakeError.NOT_ENOUGH_FUND -> context.getString(R.string.delegation_register_delegation_not_enough_funds)
-            StakeError.MINIMUM -> context.getString(R.string.delegation_register_delegation_minimum, CurrencyUtilImpl.formatGTU(minimumValue ?: "0", false))
-            StakeError.MAXIMUM -> context.getString(R.string.delegation_register_delegation_maximum, CurrencyUtilImpl.formatGTU(maximumValue ?: "0", false))
+            StakeError.MINIMUM -> context.getString(R.string.delegation_register_delegation_minimum, CurrencyUtil.formatGTU(minimumValue ?: "0", false))
+            StakeError.MAXIMUM -> context.getString(R.string.delegation_register_delegation_maximum, CurrencyUtil.formatGTU(maximumValue ?: "0", false))
             StakeError.POOL_LIMIT_REACHED -> context.getString(R.string.delegation_register_delegation_pool_limit_will_be_breached)
             StakeError.POOL_LIMIT_REACHED_COOLDOWN -> context.getString(R.string.delegation_amount_too_large_while_in_cooldown)
             StakeError.UNKNOWN -> context.getString(R.string.app_error_general)

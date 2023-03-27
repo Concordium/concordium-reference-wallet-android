@@ -9,7 +9,7 @@ import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.util.CurrencyUtilImpl
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityEarnInfoBinding
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRegistrationIntroFlow
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
@@ -57,7 +57,7 @@ class EarnInfoActivity : BaseActivity() {
     private fun initObservers() {
         viewModel.chainParameters.observe(this) { chainParameters ->
             chainParameters?.let {
-                val minimum = CurrencyUtilImpl.formatGTU(chainParameters.minimumEquityCapital, true)
+                val minimum = CurrencyUtil.formatGTU(chainParameters.minimumEquityCapital, true)
                 binding.tvBakerDescription.text = getString(R.string.earn_baker_description, minimum)
                 showWaiting(false)
                 binding.scrollViewInfo.visibility = View.VISIBLE

@@ -13,7 +13,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.Schedule
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.util.CurrencyUtilImpl
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.AccountReleaseScheduleItemBinding
 import com.concordium.wallet.databinding.AccountReleaseScheduleTransactionItemBinding
 import com.concordium.wallet.databinding.ActivityAccountReleaseScheduleBinding
@@ -89,7 +89,7 @@ class AccountReleaseScheduleActivity : BaseActivity() {
         })
         viewModel.scheduledReleasesLiveData.observe(this, Observer<List<Schedule>> { list ->
 
-            binding.accountReleaseScheduleLockedAmount.text = CurrencyUtilImpl.formatGTU(viewModel.account.finalizedAccountReleaseSchedule?.total?.toLong() ?: 0, true)
+            binding.accountReleaseScheduleLockedAmount.text = CurrencyUtil.formatGTU(viewModel.account.finalizedAccountReleaseSchedule?.total?.toLong() ?: 0, true)
 
             binding.accountReleaseScheduleList.removeAllViews()
             val dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.getDefault())
@@ -112,7 +112,7 @@ class AccountReleaseScheduleActivity : BaseActivity() {
                     }
                 }
 
-                view.amount.text = CurrencyUtilImpl.formatGTU(release.amount.toLong(), true)
+                view.amount.text = CurrencyUtil.formatGTU(release.amount.toLong(), true)
                 binding.accountReleaseScheduleList.addView(view.root)
             }
         })

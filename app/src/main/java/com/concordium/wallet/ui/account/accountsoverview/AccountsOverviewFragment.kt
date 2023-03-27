@@ -18,7 +18,7 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
-import com.concordium.wallet.data.util.CurrencyUtilImpl
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentAccountsOverviewBinding
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
@@ -453,13 +453,13 @@ class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ident
     }
 
     private fun showTotalBalance(totalBalance: Long) {
-        binding.totalBalanceTextview.text = CurrencyUtilImpl.formatGTU(totalBalance)
+        binding.totalBalanceTextview.text = CurrencyUtil.formatGTU(totalBalance)
     }
     private fun showDisposalBalance(atDisposal: Long) {
-        binding.accountsOverviewTotalDetailsDisposal.text = CurrencyUtilImpl.formatGTU(atDisposal, true)
+        binding.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(atDisposal, true)
     }
     private fun showStakedBalance(totalBalance: Long) {
-        binding.accountsOverviewTotalDetailsStaked.text = CurrencyUtilImpl.formatGTU(totalBalance, true)
+        binding.accountsOverviewTotalDetailsStaked.text = CurrencyUtil.formatGTU(totalBalance, true)
     }
 
     //endregion

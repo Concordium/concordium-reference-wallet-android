@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.util.CurrencyUtilImpl
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenAccountDetailsBinding
 import com.concordium.wallet.util.UnitConvertUtil
 
@@ -65,7 +65,7 @@ class TokensAccountDetailsAdapter(
 
         if (isFungible && token.isCCDToken) {
             holder.binding.title.text =
-                "${CurrencyUtilImpl.formatGTU(token.totalBalance, true)} CCD"
+                "${CurrencyUtil.formatGTU(token.totalBalance, true)} CCD"
 
             Glide.with(context).load(R.drawable.ic_concordium_logo_no_text)
                 .into(holder.binding.tokenIcon)
@@ -84,7 +84,7 @@ class TokensAccountDetailsAdapter(
                 }
                 if (token.totalBalance != null) {
                     holder.binding.title.text = "${
-                        CurrencyUtilImpl.formatGTU(
+                        CurrencyUtil.formatGTU(
                             token.totalBalance,
                             false,
                             token.tokenMetadata?.decimals ?: 6

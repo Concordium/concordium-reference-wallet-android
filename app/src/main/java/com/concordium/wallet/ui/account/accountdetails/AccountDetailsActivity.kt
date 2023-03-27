@@ -16,7 +16,7 @@ import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
-import com.concordium.wallet.data.util.CurrencyUtilImpl
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
@@ -372,7 +372,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
                     R.string.account_details_stake_with_baker,
                     viewModelAccountDetails.account.accountBaker?.bakerId?.toString() ?: ""
                 )
-                binding.accountsOverviewTotalDetailsBaker.text = CurrencyUtilImpl.formatGTU(
+                binding.accountsOverviewTotalDetailsBaker.text = CurrencyUtil.formatGTU(
                     viewModelAccountDetails.account.accountBaker?.stakedAmount ?: "0", true
                 )
             } else if (viewModelAccountDetails.account.isDelegating()) {
@@ -386,7 +386,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
                         viewModelAccountDetails.account.accountDelegation?.delegationTarget?.bakerId
                             ?: ""
                     )
-                binding.accountsOverviewTotalDetailsStaked.text = CurrencyUtilImpl.formatGTU(
+                binding.accountsOverviewTotalDetailsStaked.text = CurrencyUtil.formatGTU(
                     viewModelAccountDetails.account.accountDelegation?.stakedAmount ?: "", true
                 )
             }
@@ -428,8 +428,8 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun showTotalBalance(totalBalance: Long) {
-        binding.balanceTextview.text = CurrencyUtilImpl.formatGTU(totalBalance, true)
-        binding.accountsOverviewTotalDetailsDisposal.text = CurrencyUtilImpl.formatGTU(
+        binding.balanceTextview.text = CurrencyUtil.formatGTU(totalBalance, true)
+        binding.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(
             viewModelAccountDetails.account.getAtDisposalWithoutStakedOrScheduled(totalBalance),
             true
         )

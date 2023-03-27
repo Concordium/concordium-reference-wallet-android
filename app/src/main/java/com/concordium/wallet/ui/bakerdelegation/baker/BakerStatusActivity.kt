@@ -10,7 +10,7 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.U
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_POOL
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_STAKE
 import com.concordium.wallet.data.model.BakerPoolInfo
-import com.concordium.wallet.data.util.CurrencyUtilImpl
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.MenuUpdateBakerSettingsContentBinding
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerRemoveIntroFlow
 import com.concordium.wallet.ui.bakerdelegation.baker.introflow.BakerUpdateIntroFlow
@@ -49,7 +49,7 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title) {
         setContentTitle(R.string.baker_status_baker_registered_title)
 
         addContent(R.string.baker_status_baker_account, account.name + "\n\n" + account.address)
-        addContent(R.string.baker_status_baker_stake, CurrencyUtilImpl.formatGTU(accountBaker.stakedAmount, true))
+        addContent(R.string.baker_status_baker_stake, CurrencyUtil.formatGTU(accountBaker.stakedAmount, true))
         addContent(R.string.baker_status_baker_id, accountBaker.bakerId.toString())
 
         if (accountBaker.restakeEarnings) addContent(R.string.baker_status_baker_rewards_will_be, getString(R.string.baker_status_baker_added_to_stake))

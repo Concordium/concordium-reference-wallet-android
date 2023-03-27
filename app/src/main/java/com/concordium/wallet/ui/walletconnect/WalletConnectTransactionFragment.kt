@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.concordium.wallet.R
-import com.concordium.wallet.data.util.CurrencyUtilImpl
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentWalletConnectTransactionBinding
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.WALLET_CONNECT_DATA
 
@@ -56,7 +56,7 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
     @SuppressLint("SetTextI18n")
     private fun initViews() {
         _viewModel.walletConnectData.account?.let { account ->
-            binding.atDisposal.text = CurrencyUtilImpl.formatGTU(
+            binding.atDisposal.text = CurrencyUtil.formatGTU(
                 account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance),
                 true
             )
@@ -78,7 +78,7 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
             } else {
 
                 requestParams.parsePayload()?.let { payload ->
-                    binding.amount.text = CurrencyUtilImpl.formatGTU(
+                    binding.amount.text = CurrencyUtil.formatGTU(
                         payload.amount, true
                     )
                     payload.address.let {
@@ -104,7 +104,7 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
         _viewModel.transactionFee.observe(viewLifecycleOwner) { fee ->
             binding.estimatedTransactionFee.text = getString(
                 R.string.wallet_connect_transaction_estimated_transaction_fee,
-                CurrencyUtilImpl.formatGTU(fee)
+                CurrencyUtil.formatGTU(fee)
             )
             binding.maxEnergyAllowed.text = "${_viewModel.walletConnectData.energy} NRG"
             if (_viewModel.hasEnoughFunds())

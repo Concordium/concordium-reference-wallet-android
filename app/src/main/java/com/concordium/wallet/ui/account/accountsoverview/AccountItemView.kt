@@ -10,7 +10,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
-import com.concordium.wallet.data.util.CurrencyUtilImpl
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemAccountBinding
 
 class AccountItemView(context: Context, attrs: AttributeSet?): LinearLayout(context, attrs) {
@@ -34,8 +34,8 @@ class AccountItemView(context: Context, attrs: AttributeSet?): LinearLayout(cont
     }
 
     fun setAccount(account: Account) {
-        binding.totalTextview.text = CurrencyUtilImpl.formatGTU(account.totalUnshieldedBalance, withGStroke = true)
-        binding.balanceAtDisposalTextview.text = CurrencyUtilImpl.formatGTU(account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance), withGStroke = true)
+        binding.totalTextview.text = CurrencyUtil.formatGTU(account.totalUnshieldedBalance, withGStroke = true)
+        binding.balanceAtDisposalTextview.text = CurrencyUtil.formatGTU(account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance), withGStroke = true)
 
         val accountPending = account.transactionStatus == TransactionStatus.COMMITTED || account.transactionStatus == TransactionStatus.RECEIVED
 
@@ -47,8 +47,8 @@ class AccountItemView(context: Context, attrs: AttributeSet?): LinearLayout(cont
 
     fun setAccount(accountWithIdentity: AccountWithIdentity) {
         this.accountWithIdentity = accountWithIdentity
-        binding.totalTextview.text = CurrencyUtilImpl.formatGTU(accountWithIdentity.account.totalUnshieldedBalance, withGStroke = true)
-        binding.balanceAtDisposalTextview.text = CurrencyUtilImpl.formatGTU(accountWithIdentity.account.getAtDisposalWithoutStakedOrScheduled(accountWithIdentity.account.totalUnshieldedBalance), withGStroke = true)
+        binding.totalTextview.text = CurrencyUtil.formatGTU(accountWithIdentity.account.totalUnshieldedBalance, withGStroke = true)
+        binding.balanceAtDisposalTextview.text = CurrencyUtil.formatGTU(accountWithIdentity.account.getAtDisposalWithoutStakedOrScheduled(accountWithIdentity.account.totalUnshieldedBalance), withGStroke = true)
         binding.accountNameArea.setData(accountWithIdentity)
 
         val accountPending = accountWithIdentity.account.transactionStatus == TransactionStatus.COMMITTED || accountWithIdentity.account.transactionStatus == TransactionStatus.RECEIVED

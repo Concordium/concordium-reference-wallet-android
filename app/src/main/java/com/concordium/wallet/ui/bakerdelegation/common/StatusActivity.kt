@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.model.PendingChange
-import com.concordium.wallet.data.util.CurrencyUtilImpl
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.DelegationBakerStatusContentItemBinding
 import com.concordium.wallet.databinding.DelegationbakerStatusBinding
 import com.concordium.wallet.ui.base.BaseActivity
@@ -113,7 +113,7 @@ abstract class StatusActivity(private val titleId: Int) : BaseActivity() {
                 addContent(getString(removeStakeStringId), "")
             } else if (pendingChange.change == "ReduceStake") {
                 pendingChange.newStake?.let { newStake ->
-                    addContent(getString(reduceStakeStringId), CurrencyUtilImpl.formatGTU(newStake, true))
+                    addContent(getString(reduceStakeStringId), CurrencyUtil.formatGTU(newStake, true))
                 }
             }
         }

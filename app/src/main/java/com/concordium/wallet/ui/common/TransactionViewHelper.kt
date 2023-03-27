@@ -8,7 +8,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Transaction
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.util.CurrencyUtilImpl
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.util.DateTimeUtil
 
@@ -49,7 +49,7 @@ object TransactionViewHelper {
         }
 
         fun setTotalView(total: Long){
-            totalTextView.text = CurrencyUtilImpl.formatGTU(total, withGStroke = true)
+            totalTextView.text = CurrencyUtil.formatGTU(total, withGStroke = true)
             if (total > 0) {
                 totalTextView.setTextColor(colorGreen)
             } else {
@@ -108,8 +108,8 @@ object TransactionViewHelper {
                 }
 
                 amountTextView.text =
-                    "${CurrencyUtilImpl.formatGTU(ta.subtotal, withGStroke = true)} - "
-                costTextView.text = "$costPrefix${CurrencyUtilImpl.formatGTU(
+                    "${CurrencyUtil.formatGTU(ta.subtotal, withGStroke = true)} - "
+                costTextView.text = "$costPrefix${CurrencyUtil.formatGTU(
                     cost, withGStroke = true
                 )} ${costTextView.context.getString(R.string.account_details_fee)}"
             } else {

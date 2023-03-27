@@ -20,7 +20,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
-import com.concordium.wallet.data.util.CurrencyUtilImpl
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivitySendTokenBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DATA
@@ -62,8 +62,8 @@ class SendTokenActivity : BaseActivity() {
 
     private fun initViews() {
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.cis_send_funds)
-        binding.amount.setText(CurrencyUtilImpl.formatGTU(0, false))
-        binding.atDisposal.text = CurrencyUtilImpl.formatGTU(viewModel.sendTokenData.account?.getAtDisposalWithoutStakedOrScheduled(viewModel.sendTokenData.account?.totalUnshieldedBalance ?: 0) ?: 0, true)
+        binding.amount.setText(CurrencyUtil.formatGTU(0, false))
+        binding.atDisposal.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.account?.getAtDisposalWithoutStakedOrScheduled(viewModel.sendTokenData.account?.totalUnshieldedBalance ?: 0) ?: 0, true)
         initializeAmount()
         initializeMax()
         initializeMemo()
@@ -89,7 +89,7 @@ class SendTokenActivity : BaseActivity() {
             binding.contractAddressError.visibility = View.VISIBLE
         } else {
             binding.send.isEnabled = false
-            viewModel.sendTokenData.amount = CurrencyUtilImpl.toGTUValue(binding.amount.text.toString(), viewModel.sendTokenData.token) ?: 0
+            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(binding.amount.text.toString(), viewModel.sendTokenData.token) ?: 0
             viewModel.sendTokenData.receiver = binding.receiver.text.toString()
             viewModel.send()
         }
@@ -104,7 +104,7 @@ class SendTokenActivity : BaseActivity() {
 
     private fun initializeAmount() {
         binding.amount.addTextChangedListener {
-            viewModel.sendTokenData.amount = CurrencyUtilImpl.toGTUValue(it.toString(), viewModel.sendTokenData.token) ?: 0
+            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(it.toString(), viewModel.sendTokenData.token) ?: 0
             viewModel.loadTransactionFee()
             enableSend()
         }
@@ -133,8 +133,8 @@ class SendTokenActivity : BaseActivity() {
                 if (!token.isCCDToken)
                     decimals = token.tokenMetadata?.decimals?: 0
             }
-            binding.amount.setText(CurrencyUtilImpl.formatGTU(viewModel.sendTokenData.max ?: 0, false, decimals))
-            viewModel.sendTokenData.amount = CurrencyUtilImpl.toGTUValue(it.toString(), viewModel.sendTokenData.token) ?: 0
+            binding.amount.setText(CurrencyUtil.formatGTU(viewModel.sendTokenData.max ?: 0, false, decimals))
+            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(it.toString(), viewModel.sendTokenData.token) ?: 0
             enableSend()
         }
     }
@@ -266,7 +266,7 @@ class SendTokenActivity : BaseActivity() {
             viewModel.sendTokenData.token = token
             binding.balanceTitle.text = getString(R.string.cis_token_balance, token.symbol).trim()
             val decimals: Int = if (token.isCCDToken) 6 else token.tokenMetadata?.decimals ?: 0
-            binding.balance.text = CurrencyUtilImpl.formatGTU(token.totalBalance, token.isCCDToken, decimals)
+            binding.balance.text = CurrencyUtil.formatGTU(token.totalBalance, token.isCCDToken, decimals)
             binding.searchToken.tokenShortName.text = token.symbol
             if (token.isCCDToken) {
                 Glide.with(this).load(R.drawable.ic_concordium_logo_no_text).into(binding.searchToken.tokenIcon)
@@ -281,14 +281,14 @@ class SendTokenActivity : BaseActivity() {
                         .into(binding.searchToken.tokenIcon)
                 }
             }
-            binding.amount.setText(CurrencyUtilImpl.formatGTU(0, false))
+            binding.amount.setText(CurrencyUtil.formatGTU(0, false))
             viewModel.loadTransactionFee()
         }
         viewModel.transactionReady.observe(this) {
             gotoReceipt()
         }
         viewModel.feeReady.observe(this) { fee ->
-            binding.fee.text = getString(R.string.cis_estimated_fee, CurrencyUtilImpl.formatGTU(fee, true))
+            binding.fee.text = getString(R.string.cis_estimated_fee, CurrencyUtil.formatGTU(fee, true))
             binding.max.isEnabled = true
             if (!viewModel.hasEnoughFunds()) {
                 binding.feeError.visibility = View.VISIBLE
@@ -337,7 +337,7 @@ class SendTokenActivity : BaseActivity() {
         token?.let {
             binding.balanceTitle.text = getString(R.string.cis_token_balance, it.symbol).trim()
             val decimals: Int = if (token.isCCDToken) 6 else token.tokenMetadata?.decimals ?: 0
-            binding.balance.text = CurrencyUtilImpl.formatGTU(it.totalBalance, it.isCCDToken, decimals)
+            binding.balance.text = CurrencyUtil.formatGTU(it.totalBalance, it.isCCDToken, decimals)
             binding.searchToken.tokenShortName.text = it.symbol
             it.tokenMetadata?.thumbnail?.url?.let { url ->
                 Glide.with(this).load(url).into(binding.searchToken.tokenIcon)

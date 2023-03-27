@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.concordium.wallet.data.room.AccountWithIdentity
-import com.concordium.wallet.data.util.CurrencyUtilImpl
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemChooseAccountBinding
 
 class ChooseAccountListAdapter(private val context: Context, var arrayList: Array<AccountWithIdentity>) : BaseAdapter() {
@@ -35,8 +35,8 @@ class ChooseAccountListAdapter(private val context: Context, var arrayList: Arra
         val accountWithIdentity = arrayList[position]
         holder.binding.accountName.text = accountWithIdentity.account.name
         holder.binding.identityName.text = accountWithIdentity.identity.name
-        holder.binding.total.text = CurrencyUtilImpl.formatGTU(accountWithIdentity.account.totalUnshieldedBalance, true)
-        holder.binding.atDisposal.text = CurrencyUtilImpl.formatGTU(accountWithIdentity.account.getAtDisposalWithoutStakedOrScheduled(accountWithIdentity.account.totalUnshieldedBalance), true)
+        holder.binding.total.text = CurrencyUtil.formatGTU(accountWithIdentity.account.totalUnshieldedBalance, true)
+        holder.binding.atDisposal.text = CurrencyUtil.formatGTU(accountWithIdentity.account.getAtDisposalWithoutStakedOrScheduled(accountWithIdentity.account.totalUnshieldedBalance), true)
 
         holder.binding.root.setOnClickListener {
             chooseAccountClickListener?.onClick(accountWithIdentity)

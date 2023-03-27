@@ -2,7 +2,7 @@ package com.concordium.wallet.ui.bakerdelegation.common
 
 import android.widget.TextView
 import com.concordium.wallet.R
-import com.concordium.wallet.data.util.CurrencyUtilImpl
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.uicore.view.AmountEditText
 import com.concordium.wallet.uicore.view.SegmentedControlView
 import java.text.DecimalFormatSymbols
@@ -54,7 +54,7 @@ abstract class BaseDelegationBakerRegisterAmountActivity : BaseDelegationBakerAc
         setAmountHint(amount)
         if (amount.text.toString().isNotBlank() && amount.text.toString() != "Ͼ") {
             val stakeAmountInputValidator = getStakeAmountInputValidator()
-            val stakeError = stakeAmountInputValidator.validate(CurrencyUtilImpl.toGTUValue(amount.text.toString())?.toString(), validateFee)
+            val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString(), validateFee)
             if (stakeError != StakeAmountInputValidator.StakeError.OK) {
                 amountError.text = stakeAmountInputValidator.getErrorText(this, stakeError)
                 showError(stakeError)
