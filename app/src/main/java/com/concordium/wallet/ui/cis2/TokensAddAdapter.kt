@@ -62,15 +62,13 @@ class TokensAddAdapter(
             holder.binding.title.text = tokenMetadata.name
             //holder.binding.subTitle.text = tokenMetadata.description
 
-            if (token.totalBalance != null) {
-                val tokenBalance = CurrencyUtil.formatGTU(
-                    token.totalBalance,
-                    false,
-                    token.tokenMetadata?.decimals ?: 6
-                )
+            val tokenBalance = CurrencyUtil.formatGTU(
+                token.totalBalance,
+                false,
+                token.tokenMetadata?.decimals ?: 6
+            )
 
-                holder.binding.subTitle.text = context.getString(R.string.cis_search_balance, tokenBalance)
-            }
+            holder.binding.subTitle.text = context.getString(R.string.cis_search_balance, tokenBalance)
         }
 
         if (showCheckBox) {

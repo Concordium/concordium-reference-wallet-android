@@ -1,6 +1,7 @@
 package com.concordium.wallet.data.cryptolib
 
 import com.concordium.wallet.data.model.*
+import java.io.Serializable
 
 data class CreateTransferInput(
     val from: String,
@@ -24,4 +25,4 @@ data class CreateTransferInput(
     val transactionFeeCommission: Double? = null,
     val bakingRewardCommission: Double? = null,
     val finalizationRewardCommission: Double? = null
-): java.io.Serializable
+): Serializable

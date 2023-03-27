@@ -50,7 +50,7 @@ class ContractAddressFragment : TokensBaseFragment() {
 
         binding.contractAddress.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus)
-                error(0)
+                showOrHideError(TokensViewModel.TOKENS_OK)
         }
 
         binding.contractAddress.setOnEditorActionListener { _, actionId, _ ->
@@ -67,11 +67,7 @@ class ContractAddressFragment : TokensBaseFragment() {
     private fun initObservers() {
         _viewModel.lookForTokens.observe(viewLifecycleOwner) { result ->
             showWaiting(false)
-            if (_viewModel.tokens.isEmpty() && _viewModel.tokenData.contractIndex.isNotBlank()) {
-                error(result)
-            } else {
-                error(result)
-            }
+            showOrHideError(result)
         }
     }
 
@@ -96,9 +92,9 @@ class ContractAddressFragment : TokensBaseFragment() {
         }
     }
 
-    private fun error(result: Int) {
+    private fun showOrHideError(result: Int) {
         when (result) {
-            0 -> {
+            TokensViewModel.TOKENS_OK -> {
                 binding.error.visibility = View.GONE
                 binding.contractAddress.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_blue))
                 binding.contractAddress.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.text_blue))
@@ -109,7 +105,7 @@ class ContractAddressFragment : TokensBaseFragment() {
                 binding.contractAddress.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_pink))
                 binding.contractAddress.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.text_pink))
                 binding.contractAddress.background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_cardview_border_pink)
-                if (result == 1)
+                if (result == TokensViewModel.TOKENS_EMPTY)
                     binding.error.text = getString(R.string.cis_find_tokens_none)
                 else
                     binding.error.text = getString(R.string.cis_find_tokens_error)

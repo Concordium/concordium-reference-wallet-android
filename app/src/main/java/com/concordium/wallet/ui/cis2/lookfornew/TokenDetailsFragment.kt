@@ -68,28 +68,26 @@ class TokenDetailsFragment : TokensBaseFragment() {
     }
 
     private fun setTokenId(tokenId: String) {
-        if (!tokenId.isNullOrBlank()) {
+        if (tokenId.isNotBlank()) {
             binding.details.tokenIdHolder.visibility = View.VISIBLE
             binding.details.tokenId.text= tokenId
         }
     }
 
-
     private fun setDescription(tokenMetadata: TokenMetadata) {
-        if (!tokenMetadata.description.isNullOrBlank()) {
+        if (tokenMetadata.description.isNotBlank()) {
             binding.details.descriptionHolder.visibility = View.VISIBLE
             binding.details.description.text = tokenMetadata.description
         }
     }
 
     private fun setOwnership(tokenMetadata: TokenMetadata) {
-        if (tokenMetadata.unique == true) {
+        if (tokenMetadata.unique) {
             binding.details.ownershipHolder.visibility = View.VISIBLE
         }
     }
 
     private fun setNameAndIcon(tokenMetadata: TokenMetadata) {
-
         val name = tokenMetadata.name
         val thumbnail = tokenMetadata.thumbnail?.url
         binding.details.nameAndIconHolder.visibility = View.VISIBLE
@@ -109,13 +107,12 @@ class TokenDetailsFragment : TokensBaseFragment() {
     }
 
     private fun setContractIndexAndSubIndex(token: Token) {
-
         val tokenIndex = token.contractIndex
 
-        if (!tokenIndex.isNullOrBlank()) {
+        if (tokenIndex.isNotBlank()) {
             binding.details.contractIndexHolder.visibility = View.VISIBLE
             binding.details.contractIndex.text = token.contractIndex
-            if (!token.subIndex.isNullOrBlank()) {
+            if (token.subIndex.isNotBlank()) {
                 val combinedInfo = "${tokenIndex}, ${token.subIndex}"
                 binding.details.contractIndex.text = combinedInfo
             }else{
@@ -125,9 +122,7 @@ class TokenDetailsFragment : TokensBaseFragment() {
     }
 
     private fun setImage(tokenMetadata: TokenMetadata) {
-
         if (!tokenMetadata.display?.url.isNullOrBlank()) {
-
             binding.details.imageHolder.visibility = View.VISIBLE
 
             Glide.with(this)
@@ -137,25 +132,18 @@ class TokenDetailsFragment : TokensBaseFragment() {
                 .fitCenter()
                 .error(R.drawable.ic_token_no_image)
                 .into(binding.details.image)
-
         }
-
     }
 
     private fun setTicker(tokenMetadata: TokenMetadata) {
-
         if (!tokenMetadata.symbol.isNullOrBlank()) {
             binding.details.tokenHolder.visibility = View.VISIBLE
             binding.details.token.text = tokenMetadata.symbol
         }
-
     }
 
     private fun setDecimals(tokenMetadata: TokenMetadata) {
-
-        if(tokenMetadata.decimals != null) {
-            binding.details.decimalsHolder.visibility = View.VISIBLE
-            binding.details.decimals.text = tokenMetadata.decimals.toString()
-        }
+        binding.details.decimalsHolder.visibility = View.VISIBLE
+        binding.details.decimals.text = tokenMetadata.decimals.toString()
     }
 }

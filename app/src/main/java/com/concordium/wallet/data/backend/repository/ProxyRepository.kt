@@ -380,7 +380,6 @@ class ProxyRepository {
         val call = backend.cis2TokenMetadata(index, subIndex, tokenIds)
         call.enqueue(object : BackendCallback<CIS2TokensMetadata>() {
             override fun onResponseData(response: CIS2TokensMetadata) {
-
                 success(response)
             }
             override fun onFailure(t: Throwable) {

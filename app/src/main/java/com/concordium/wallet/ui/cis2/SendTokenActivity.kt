@@ -83,14 +83,15 @@ class SendTokenActivity : BaseActivity() {
     }
 
     private fun send() {
-        if (binding.receiver.text.toString().isEmpty()) {
+        val receiver = binding.receiver.text.toString()
+        if (receiver.isEmpty()) {
             binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.text_pink))
             binding.contractAddressError.text = getString(R.string.cis_enter_receiver_address)
             binding.contractAddressError.visibility = View.VISIBLE
         } else {
             binding.send.isEnabled = false
             viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(binding.amount.text.toString(), viewModel.sendTokenData.token) ?: 0
-            viewModel.sendTokenData.receiver = binding.receiver.text.toString()
+            viewModel.sendTokenData.receiver = receiver
             viewModel.send()
         }
     }

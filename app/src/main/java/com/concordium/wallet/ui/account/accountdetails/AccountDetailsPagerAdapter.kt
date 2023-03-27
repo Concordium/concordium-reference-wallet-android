@@ -49,13 +49,4 @@ class AccountDetailsPagerAdapter(fragmentManager: FragmentActivity, val account:
             }
         }
     }
-
-    /*
-    override fun getPageTitle(position: Int): CharSequence? {
-        return when (position) {
-            0 -> context.getString(R.string.account_details_transfers_title)
-            else -> context.getString(R.string.account_details_identity_data_title)
-        }
-    }
-    */
 }

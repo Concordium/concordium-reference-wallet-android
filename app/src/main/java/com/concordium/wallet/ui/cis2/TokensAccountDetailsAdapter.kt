@@ -82,15 +82,13 @@ class TokensAccountDetailsAdapter(
                 } else {
                     holder.binding.tokenIcon.setImageResource(R.drawable.ic_token_no_image)
                 }
-                if (token.totalBalance != null) {
-                    holder.binding.title.text = "${
-                        CurrencyUtil.formatGTU(
-                            token.totalBalance,
-                            false,
-                            token.tokenMetadata?.decimals ?: 6
-                        )
-                    } ${token.symbol}"
-                }
+                holder.binding.title.text = "${
+                    CurrencyUtil.formatGTU(
+                        token.totalBalance,
+                        false,
+                        token.tokenMetadata?.decimals ?: 6
+                    )
+                } ${token.symbol}"
 
             }
         }

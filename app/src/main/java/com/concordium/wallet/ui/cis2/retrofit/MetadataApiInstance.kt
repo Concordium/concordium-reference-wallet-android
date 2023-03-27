@@ -33,8 +33,6 @@ class MetadataApiInstance {
                     response.body()?.let {
                         return it
                     }
-                } else {
-                    return null
                 }
             } catch (t: Throwable) {
                 Log.d(Log.toString(t))
