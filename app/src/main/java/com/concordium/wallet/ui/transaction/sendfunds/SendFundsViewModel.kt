@@ -28,7 +28,7 @@ import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.room.WalletDatabase
-import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.data.util.CurrencyUtilImpl
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
@@ -212,7 +212,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun hasSufficientFunds(amount: String): Boolean {
-        val amountValue = CurrencyUtil.toGTUValue(amount)
+        val amountValue = CurrencyUtilImpl.toGTUValue(amount)
         val cost = _transactionFeeLiveData.value
         if (amountValue == null || cost == null) {
             return true
@@ -249,7 +249,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun sendFunds(amount: String) {
-        val amountValue = CurrencyUtil.toGTUValue(amount)
+        val amountValue = CurrencyUtilImpl.toGTUValue(amount)
         if (amountValue == null) {
             _errorLiveData.value = Event(R.string.app_error_general)
             return

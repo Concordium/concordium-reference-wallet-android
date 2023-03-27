@@ -17,7 +17,7 @@ import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.backend.BackendError
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
-import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.data.util.CurrencyUtilImpl
 import com.concordium.wallet.databinding.ActivitySendFundsBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.failed.FailedActivity
@@ -159,7 +159,7 @@ class SendFundsActivity : BaseActivity() {
             value?.let {
                 binding.feeInfoTextview.visibility = View.VISIBLE
                 binding.feeInfoTextview.text = getString(
-                    R.string.send_funds_fee_info, CurrencyUtil.formatGTU(value)
+                    R.string.send_funds_fee_info, CurrencyUtilImpl.formatGTU(value)
                 )
                 updateConfirmButton()
             }
@@ -251,7 +251,7 @@ class SendFundsActivity : BaseActivity() {
 
         viewModel.sendAllAmountLiveData.observe(this) { value ->
             value?.let {
-                binding.amountEdittext.setText(CurrencyUtil.formatGTU(value))
+                binding.amountEdittext.setText(CurrencyUtilImpl.formatGTU(value))
             }
         }
 
@@ -276,19 +276,19 @@ class SendFundsActivity : BaseActivity() {
         if (viewModel.isShielded) {
             binding.balanceTotalText.text = getString(R.string.accounts_overview_balance_at_disposal)
             binding.atDisposalTotalText.text = getString(R.string.accounts_overview_shielded_balance)
-            binding.balanceTotalTextview.text = CurrencyUtil.formatGTU(viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance), withGStroke = true)
-            binding.atDisposalTotalTextview.text = CurrencyUtil.formatGTU(viewModel.account.totalShieldedBalance, withGStroke = true)
+            binding.balanceTotalTextview.text = CurrencyUtilImpl.formatGTU(viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance), withGStroke = true)
+            binding.atDisposalTotalTextview.text = CurrencyUtilImpl.formatGTU(viewModel.account.totalShieldedBalance, withGStroke = true)
         }
         else {
             binding.balanceTotalText.text = getString(R.string.accounts_overview_account_total)
             binding.atDisposalTotalText.text = getString(R.string.accounts_overview_at_disposal)
-            binding.balanceTotalTextview.text = CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance, withGStroke = true)
-            binding.atDisposalTotalTextview.text = CurrencyUtil.formatGTU(viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance), withGStroke = true)
+            binding.balanceTotalTextview.text = CurrencyUtilImpl.formatGTU(viewModel.account.totalUnshieldedBalance, withGStroke = true)
+            binding.atDisposalTotalTextview.text = CurrencyUtilImpl.formatGTU(viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance), withGStroke = true)
         }
     }
 
     private fun check95PercentWarning() {
-        val amountValue = CurrencyUtil.toGTUValue(binding.amountEdittext.text.toString())
+        val amountValue = CurrencyUtilImpl.toGTUValue(binding.amountEdittext.text.toString())
         val atDisposal = viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance)
         if (amountValue != null) {
             if (amountValue > atDisposal * 0.95) {
@@ -449,7 +449,7 @@ class SendFundsActivity : BaseActivity() {
                     && viewModel.selectedRecipient != null
                     && viewModel.transactionFeeLiveData.value != null
                     && hasSufficientFunds
-                    && (CurrencyUtil.toGTUValue(binding.amountEdittext.text.toString()) ?: 0) > 0)
+                    && (CurrencyUtilImpl.toGTUValue(binding.amountEdittext.text.toString()) ?: 0) > 0)
         }
         return enable
     }
@@ -474,8 +474,8 @@ class SendFundsActivity : BaseActivity() {
             showError(R.string.app_error_general)
             return null
         }
-        val amountString = CurrencyUtil.formatGTU(amount, withGStroke = true)
-        val costString = CurrencyUtil.formatGTU(cost, withGStroke = true)
+        val amountString = CurrencyUtilImpl.formatGTU(amount, withGStroke = true)
+        val costString = CurrencyUtilImpl.formatGTU(cost, withGStroke = true)
 
         val memoText = if(viewModel.getClearTextMemo().isNullOrEmpty()) "" else getString(R.string.send_funds_confirmation_memo, viewModel.getClearTextMemo())
 

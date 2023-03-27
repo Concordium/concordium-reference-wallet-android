@@ -2,7 +2,7 @@ package com.concordium.wallet.uicore
 
 import android.text.Editable
 import android.text.TextWatcher
-import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.data.util.CurrencyUtilImpl
 
 class MaxAmountTextWatcher : TextWatcher {
 
@@ -18,7 +18,7 @@ class MaxAmountTextWatcher : TextWatcher {
         str.replace("Ͼ", "").also { str = it }
 
         try {
-            val intVal = CurrencyUtil.getWholePart(str)
+            val intVal = CurrencyUtilImpl.getWholePart(str)
             if (intVal != null) {
                 if (intVal > (Long.MAX_VALUE - 999999L) / 1000000L) {
                     change = true

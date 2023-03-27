@@ -8,7 +8,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_DELEGATION
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REMOVE_DELEGATION
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
-import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.data.util.CurrencyUtilImpl
 import com.concordium.wallet.databinding.ActivityDelegationRegistrationConfirmationBinding
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
@@ -68,7 +68,7 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity() {
         }
 
         binding.accountToDelegateFrom.text = (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n").plus(viewModel.bakerDelegationData.account?.address ?: "")
-        binding.delegationAmountConfirmation.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
+        binding.delegationAmountConfirmation.text = CurrencyUtilImpl.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
         binding.targetPool.text = if (viewModel.bakerDelegationData.isLPool) getString(R.string.delegation_register_delegation_passive_long) else viewModel.bakerDelegationData.poolId
         binding.rewardsWillBe.text = if (viewModel.bakerDelegationData.restake) getString(R.string.delegation_status_added_to_delegation_amount) else getString(R.string.delegation_status_at_disposal)
 

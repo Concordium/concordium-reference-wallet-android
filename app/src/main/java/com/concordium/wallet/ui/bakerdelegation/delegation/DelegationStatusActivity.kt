@@ -9,7 +9,7 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.U
 import com.concordium.wallet.data.model.BakerStakePendingChange.Companion.CHANGE_REMOVE_POOL
 import com.concordium.wallet.data.model.DelegationTarget
 import com.concordium.wallet.data.model.PendingChange
-import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.data.util.CurrencyUtilImpl
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.ui.bakerdelegation.common.StatusActivity
 import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationRemoveIntroFlowActivity
@@ -70,7 +70,7 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
         setContentTitle(R.string.delegation_status_content_registered_title)
 
         addContent(R.string.delegation_status_content_delegating_account, account.name + "\n\n" + account.address)
-        addContent(R.string.delegation_status_content_delegation_amount, CurrencyUtil.formatGTU(accountDelegation.stakedAmount, true))
+        addContent(R.string.delegation_status_content_delegation_amount, CurrencyUtilImpl.formatGTU(accountDelegation.stakedAmount, true))
 
         if (accountDelegation.delegationTarget.delegateType == DelegationTarget.TYPE_DELEGATE_TO_BAKER) addContent(R.string.delegation_status_content_target_pool, accountDelegation.delegationTarget.bakerId.toString())
         else addContent(R.string.delegation_status_content_target_pool, getString(R.string.delegation_register_delegation_passive_long))

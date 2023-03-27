@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.data.util.CurrencyUtilImpl
 import com.concordium.wallet.databinding.ItemTokenAddBinding
 import com.concordium.wallet.util.UnitConvertUtil
 
@@ -63,7 +63,7 @@ class TokensAddAdapter(
             //holder.binding.subTitle.text = tokenMetadata.description
 
             if (token.totalBalance != null) {
-                val tokenBalance = CurrencyUtil.formatGTU(
+                val tokenBalance = CurrencyUtilImpl.formatGTU(
                     token.totalBalance,
                     false,
                     token.tokenMetadata?.decimals ?: 6

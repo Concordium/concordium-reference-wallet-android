@@ -11,7 +11,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.data.util.CurrencyUtilImpl
 import com.concordium.wallet.databinding.ActivityTokenDetailsBinding
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
@@ -114,7 +114,7 @@ class TokenDetailsActivity : BaseActivity() {
 
     private fun setBalance(token: Token) {
         binding.includeBalance.tokenAmount.text =
-            CurrencyUtil.formatGTU(token.totalBalance, false, token.tokenMetadata?.decimals ?: 0)
+            CurrencyUtilImpl.formatGTU(token.totalBalance, false, token.tokenMetadata?.decimals ?: 0)
     }
 
     private fun setTokenId(tokenId: String) {

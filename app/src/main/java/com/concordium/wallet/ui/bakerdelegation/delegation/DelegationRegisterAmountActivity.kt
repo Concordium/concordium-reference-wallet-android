@@ -10,7 +10,7 @@ import androidx.lifecycle.Observer
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_DELEGATION
-import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.data.util.CurrencyUtilImpl
 import com.concordium.wallet.databinding.ActivityDelegationRegistrationAmountBinding
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
@@ -87,21 +87,21 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             onContinueClicked()
         }
 
-        binding.balanceAmount.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.account?.finalizedBalance ?: 0, true)
-        binding.delegationAmount.text = CurrencyUtil.formatGTU(0, true)
+        binding.balanceAmount.text = CurrencyUtilImpl.formatGTU(viewModel.bakerDelegationData.account?.finalizedBalance ?: 0, true)
+        binding.delegationAmount.text = CurrencyUtilImpl.formatGTU(0, true)
         viewModel.bakerDelegationData.account?.let { account ->
             account.accountDelegation?.let { accountDelegation ->
-                binding.delegationAmount.text = CurrencyUtil.formatGTU(accountDelegation.stakedAmount, true)
+                binding.delegationAmount.text = CurrencyUtilImpl.formatGTU(accountDelegation.stakedAmount, true)
             }
         }
 
         binding.poolLimit.text =
             viewModel.bakerDelegationData.bakerPoolStatus?.let {
-                CurrencyUtil.formatGTU(it.delegatedCapitalCap, true)
+                CurrencyUtilImpl.formatGTU(it.delegatedCapitalCap, true)
             }
         binding.currentPool.text =
             viewModel.bakerDelegationData.bakerPoolStatus?.let {
-                CurrencyUtil.formatGTU(it.delegatedCapital, true)
+                CurrencyUtilImpl.formatGTU(it.delegatedCapital, true)
             }
 
         binding.poolRegistrationContinue.isEnabled = false
@@ -115,7 +115,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
                     showWaiting(binding.includeProgress.progressLayout, false)
                     binding.poolEstimatedTransactionFee.visibility = View.VISIBLE
                     binding.poolEstimatedTransactionFee.text = getString(
-                        R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(validateFee ?: 0)
+                        R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtilImpl.formatGTU(validateFee ?: 0)
                     )
                     binding.poolRegistrationContinue.isEnabled = true
                     if (!viewModel.isInCoolDown())
@@ -174,7 +174,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         if (viewModel.bakerDelegationData.type == UPDATE_DELEGATION) {
             viewModel.bakerDelegationData.oldStakedAmount = viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0
             binding.amountDesc.text = getString(R.string.delegation_update_delegation_amount_enter_amount)
-            binding.amount.setText(viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.let { CurrencyUtil.formatGTU(it,false) })
+            binding.amount.setText(viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.let { CurrencyUtilImpl.formatGTU(it,false) })
         }
     }
 
@@ -183,7 +183,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         if (!binding.poolRegistrationContinue.isEnabled) return
 
         val stakeAmountInputValidator = getStakeAmountInputValidator()
-        val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(binding.amount.text.toString())?.toString(), validateFee)
+        val stakeError = stakeAmountInputValidator.validate(CurrencyUtilImpl.toGTUValue(binding.amount.text.toString())?.toString(), validateFee)
         if (stakeError != StakeAmountInputValidator.StakeError.OK) {
             binding.amountError.text = stakeAmountInputValidator.getErrorText(this, stakeError)
             showError(stakeError)
@@ -215,7 +215,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
     }
 
     private fun getAmountToStake(): Long {
-        return CurrencyUtil.toGTUValue(binding.amount.text.toString()) ?: 0
+        return CurrencyUtilImpl.toGTUValue(binding.amount.text.toString()) ?: 0
     }
 
     private fun showNewAmountZero() {
@@ -246,7 +246,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
     }
 
     private fun continueToConfirmation() {
-        viewModel.bakerDelegationData.amount = CurrencyUtil.toGTUValue(binding.amount.text.toString())
+        viewModel.bakerDelegationData.amount = CurrencyUtilImpl.toGTUValue(binding.amount.text.toString())
         val intent = if ((viewModel.bakerDelegationData.amount ?: 0) == 0L)
             Intent(this, DelegationRemoveActivity::class.java)
         else

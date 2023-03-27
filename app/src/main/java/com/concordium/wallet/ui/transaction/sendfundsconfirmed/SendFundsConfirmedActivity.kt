@@ -8,7 +8,7 @@ import com.concordium.wallet.CBORUtil
 import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.Transfer
-import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.data.util.CurrencyUtilImpl
 import com.concordium.wallet.databinding.ActivitySendFundsConfirmedBinding
 import com.concordium.wallet.ui.base.BaseActivity
 
@@ -58,11 +58,11 @@ class SendFundsConfirmedActivity : BaseActivity() {
         hideActionBarBack()
 
         binding.amountTextview.text =
-            CurrencyUtil.formatGTU(viewModel.transfer.amount, withGStroke = true)
+            CurrencyUtilImpl.formatGTU(viewModel.transfer.amount, withGStroke = true)
         binding.feeTextview.text =
             getString(
                 R.string.send_funds_confirmed_fee_info,
-                CurrencyUtil.formatGTU(viewModel.transfer.cost)
+                CurrencyUtilImpl.formatGTU(viewModel.transfer.cost)
             )
 
         if(viewModel.transfer.memo.isNullOrEmpty()){

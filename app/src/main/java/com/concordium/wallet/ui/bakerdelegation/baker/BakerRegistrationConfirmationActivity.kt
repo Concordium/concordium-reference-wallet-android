@@ -10,7 +10,7 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_KEYS
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_POOL
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_STAKE
-import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.data.util.CurrencyUtilImpl
 import com.concordium.wallet.databinding.ActivityBakerRegistrationConfirmationBinding
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
@@ -51,7 +51,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
                 response?.first?.let {
                     showWaiting(binding.includeProgress.progressLayout, false)
                     updateViews()
-                    binding.estimatedTransactionFee.text = getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(it))
+                    binding.estimatedTransactionFee.text = getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtilImpl.formatGTU(it))
                 }
             }
         })
@@ -149,7 +149,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
         if (viewModel.stakedAmountHasChanged()) {
             binding.delegationAmountConfirmationTitle.visibility = View.VISIBLE
             binding.bakerAmountConfirmation.visibility = View.VISIBLE
-            binding.bakerAmountConfirmation.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
+            binding.bakerAmountConfirmation.text = CurrencyUtilImpl.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
         }
     }
 
