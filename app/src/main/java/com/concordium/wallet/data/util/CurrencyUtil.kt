@@ -1,5 +1,6 @@
 package com.concordium.wallet.data.util
 
+import android.content.Context
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
@@ -9,6 +10,7 @@ import java.util.regex.Pattern
 object CurrencyUtil {
     private val separator: Char = DecimalFormatSymbols.getInstance().decimalSeparator
     private val patternGTU: Pattern = Pattern.compile("^-?[0-9]*[${separator}]?[0-9]{0,6}\$")
+    private var gStroke: String? = null
 
     fun formatGTU(value: String, withGStroke: Boolean = false, decimals: Int = 6): String {
         val valueLong = value.toLong()
@@ -27,8 +29,14 @@ object CurrencyUtil {
         return formatGTU(value, withGStroke, decimals)
     }
 
+    fun setGstroke(gStroke: String){
+        this.gStroke = gStroke
+    }
+
     fun formatGTU(value: Long, withGStroke: Boolean = false, decimals: Int = 6): String {
-        val gStroke = App.appContext.getString(R.string.app_gstroke)
+        if(withGStroke && gStroke == null){
+            gStroke = App.appContext.getString(R.string.app_gstroke)
+        }
         if (decimals <= 0) {
             if (withGStroke)
                 return gStroke + value.toString()

@@ -18,6 +18,8 @@ class CurrencyUtilUnitTest {
     @Test
     fun formatGTU() {
 
+        CurrencyUtil.setGstroke("Ͼ")
+
         assertEquals(replaceDecimalSep("0.00"), CurrencyUtil.formatGTU(0))
 
         assertEquals(replaceDecimalSep("1.00"), CurrencyUtil.formatGTU(1000000))
@@ -60,14 +62,9 @@ class CurrencyUtilUnitTest {
         assertEquals(replaceDecimalSep("-100.20"), CurrencyUtil.formatGTU(-100200000))
         assertEquals(replaceDecimalSep("-100.00"), CurrencyUtil.formatGTU(-100000000))
 
-
-        //For the following to be tested it needs to be in an instumented test, or an
-        // alternative solution for the resource string is needed: let the CurrencyUtil use a
-        // ResourcecProvider.getString (that is set on the AppCore) instead of having reference to context
-        //assertEquals(replaceDecimalSep("0.00"), CurrencyUtil.formatGTU(0, withGStroke = true))
-        //assertEquals(replaceDecimalSep("1.00"), CurrencyUtil.formatGTU(10000, withGStroke = true))
-        //assertEquals(replaceDecimalSep("-1.00"), CurrencyUtil.formatGTU(-10000, withGStroke = true))
-
+        assertEquals("Ͼ${replaceDecimalSep("0.00")}", CurrencyUtil.formatGTU(0, withGStroke = true))
+        assertEquals("Ͼ${replaceDecimalSep("1.00")}", CurrencyUtil.formatGTU(1000000, withGStroke = true))
+        assertEquals(replaceDecimalSep("-Ͼ1.00"), CurrencyUtil.formatGTU(-1000000, withGStroke = true))
     }
 
     @Test
