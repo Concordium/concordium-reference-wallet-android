@@ -63,7 +63,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val preferences: SendFundsPreferences
         get() {
-            return SendFundsPreferences(getApplication(), SharedPreferencesKeys.PREF_SEND_FUNDS, Context.MODE_PRIVATE)
+            return SendFundsPreferences(getApplication(), SharedPreferencesKeys.PREF_SEND_FUNDS.key, Context.MODE_PRIVATE)
         }
 
     private val gson = App.appCore.gson

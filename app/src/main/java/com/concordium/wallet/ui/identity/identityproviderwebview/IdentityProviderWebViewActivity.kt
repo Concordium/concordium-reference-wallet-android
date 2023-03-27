@@ -70,7 +70,7 @@ class IdentityProviderWebViewActivity : BaseActivity() {
 
     private val preferences: IdentityDataPreferences
         get() {
-            return IdentityDataPreferences(application, SharedPreferencesKeys.KEY_IDENTITY_CREATION_DATA, Context.MODE_PRIVATE)
+            return IdentityDataPreferences(application, SharedPreferencesKeys.KEY_IDENTITY_CREATION_DATA.key, Context.MODE_PRIVATE)
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {

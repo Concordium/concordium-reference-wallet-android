@@ -24,16 +24,15 @@ open class Preferences {
     }
 
     constructor(context: Context, preferenceName: String, preferenceMode: Int) {
-        val authPreferences = initializeEncryptedSharedPreferences(context, SharedPreferencesKeys.PREF_FILE_AUTH)
-        if(authPreferences.getBoolean(SHARED_PREFERENCES_ARE_ENCRYPTED, false)){
-            sharedPreferences = initializeEncryptedSharedPreferences(context, preferenceName)
+        val authPreferences = initializeEncryptedSharedPreferences(context, SharedPreferencesKeys.PREF_FILE_AUTH.key)
+        sharedPreferences = if(authPreferences.getBoolean(SHARED_PREFERENCES_ARE_ENCRYPTED, false)){
+            initializeEncryptedSharedPreferences(context, preferenceName)
         }else{
-            sharedPreferences =
-                if(migratePreferencesSuccess(context, preferenceName, preferenceMode, authPreferences)){
-                    initializeEncryptedSharedPreferences(context, preferenceName)
-                }else{
-                    getSharedPreferences(context, preferenceName, preferenceMode)
-                }
+            if(migratePreferencesSuccess(context, preferenceName, preferenceMode, authPreferences)){
+                initializeEncryptedSharedPreferences(context, preferenceName)
+            }else{
+                getSharedPreferences(context, preferenceName, preferenceMode)
+            }
         }
     }
 
@@ -73,11 +72,11 @@ open class Preferences {
         var allPreferencesAreMigrated = true
         var continueWithEncryptedSharedPreference = true
 
-        for(prefName in SharedPreferencesKeys.PREF_ALL){
-            if(!migrateSinglePreferencesIfNeededOrContinue(mContext, prefName, preferenceMode)){
+        for(prefName in SharedPreferencesKeys.values()){
+            if(!migrateSinglePreferencesIfNeededOrContinue(mContext, prefName.key, preferenceMode)){
                 allPreferencesAreMigrated = false
 
-                if(prefName == preferenceName) {
+                if(prefName.key == preferenceName) {
                     continueWithEncryptedSharedPreference = false
                 }
             }

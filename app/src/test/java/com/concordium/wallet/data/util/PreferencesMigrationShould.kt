@@ -23,7 +23,7 @@ class PreferencesMigrationShould {
 
     @Test
     fun encryptAndClearOldPreferences(){
-        val unencryptedPreferences = context.getSharedPreferences(SharedPreferencesKeys.PREF_FILE_AUTH, Context.MODE_PRIVATE)
+        val unencryptedPreferences = context.getSharedPreferences(SharedPreferencesKeys.PREF_FILE_AUTH.key, Context.MODE_PRIVATE)
         //Add values so that we can simulate update scenario
         unencryptedPreferences.edit()
             .putBoolean(AuthPreferences.PREFKEY_HAS_SETUP_USER, true)
@@ -55,7 +55,7 @@ class PreferencesMigrationShould {
         Assert.assertTrue(authPreferences.getHasSetupUser())
 
         //Check to see if the unencrypted shared preferences are empty
-        val unencryptedPreferences = context.getSharedPreferences(SharedPreferencesKeys.PREF_FILE_AUTH, Context.MODE_PRIVATE)
+        val unencryptedPreferences = context.getSharedPreferences(SharedPreferencesKeys.PREF_FILE_AUTH.key, Context.MODE_PRIVATE)
         Assert.assertTrue(unencryptedPreferences.all.isEmpty())
     }
 }
