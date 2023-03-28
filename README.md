@@ -1,4 +1,4 @@
-# Concordium Wallet 
+# Concordium Wallet
 
 
 **Concordium** is a science-based proof-of-stake blockchain, the first in the world with identification built into the protocol and designed to meet regulatory requirements.

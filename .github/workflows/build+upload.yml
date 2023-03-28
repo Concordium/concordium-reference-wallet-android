@@ -1,6 +1,8 @@
 name: Build and upload
 
 on:
+  push:
+    tags: "*-*"
   workflow_dispatch:
     inputs:
       tag-override:
@@ -33,8 +35,12 @@ jobs:
           java-version: "${{env.java-version}}"
           distribution: temurin
           cache: gradle # caches dependencies (https://github.com/actions/setup-java#caching-packages-dependencies)
+      - name: "Check that tag matches the version name declared in 'build.gradle'"
+        run: |
+          v="$(./gradlew -q printVersionName)"
+          [[ "${{steps.ref.outputs.ref-name}}" = ${v}-* ]]
       - name: "Build project and run unit tests"
-        run: ./gradlew build --no-daemon
+        run: ./gradlew build
       - name: Store generated release build APK for stagenet
         uses: actions/upload-artifact@v3
         with:
