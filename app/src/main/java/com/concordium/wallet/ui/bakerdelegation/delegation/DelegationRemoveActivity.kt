@@ -51,6 +51,8 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity() {
         })
 
         viewModel.loadTransactionFee(true)
+
+        viewModel.loadChainParameters()
     }
 
     private fun onContinueClicked() {
