@@ -230,7 +230,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
         } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_KEYS) {
             noticeMessage = getString(R.string.baker_notice_message_update_keys)
         } else if (viewModel.bakerDelegationData.type == REMOVE_BAKER) {
-            val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0)
+            val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.bakerDelegationData.chainParameters?.poolOwnerCooldown ?: 0)
             noticeMessage = resources.getQuantityString(R.plurals.baker_notice_message_remove, gracePeriod, gracePeriod)
         }
 

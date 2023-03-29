@@ -38,11 +38,14 @@ def versionBuildNumberMajor = 1
 def versionBuildNumberMinor = 1
 def versionBuildNumberPatch = 6
 
+task printVersionName {
+    doLast {
+        println android.defaultConfig.versionName
+    }
+}
+
 //def LOCAL_IP = getLocalIPv4()
 def LOCAL_IP = "10.0.2.2"
-
-println("LOCAL_IP is " + LOCAL_IP)
-
 def URL_PROXY_BASE_LOCAL = "http://"+LOCAL_IP+":14000"
 def URL_PROXY_BASE_STAGING = "https://wallet-proxy.stagenet.concordium.com"
 def URL_PROXY_BASE_PROD_TESTNET = "https://wallet-proxy.testnet.concordium.com"
