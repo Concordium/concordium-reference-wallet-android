@@ -91,7 +91,14 @@ class SendTokenActivity : BaseActivity() {
             binding.send.isEnabled = false
             viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(binding.amount.text.toString(), viewModel.sendTokenData.token) ?: 0
             viewModel.sendTokenData.receiver = binding.receiver.text.toString()
-            viewModel.send()
+            binding.receiverName.let {
+                if(it.visibility == View.VISIBLE){
+                    viewModel.sendTokenData.receiverName = it.text?.toString()
+                }else{
+                    viewModel.sendTokenData.receiverName = null
+                }
+            }
+            gotoReceipt()
         }
     }
 
@@ -215,10 +222,14 @@ class SendTokenActivity : BaseActivity() {
         }
 
     private val getResultRecipient =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { it ->
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.getSerializable(RecipientListActivity.EXTRA_RECIPIENT, Recipient::class.java)?.let { recipient ->
                     binding.receiver.text = recipient.address
+                    binding.receiverName.let {view ->
+                        view.visibility = View.VISIBLE
+                        view.text = recipient.name
+                    }
                     receiverAddressSet()
                 }
             }
@@ -229,6 +240,7 @@ class SendTokenActivity : BaseActivity() {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.getStringExtra(ScanQRActivity.EXTRA_BARCODE)?.let { barcode ->
                     binding.receiver.text = barcode
+                    binding.receiverName.visibility = View.GONE
                     receiverAddressSet()
                 }
             }
@@ -241,6 +253,7 @@ class SendTokenActivity : BaseActivity() {
             when (item!!.itemId) {
                 R.id.paste -> {
                     binding.receiver.text = clipText
+                    binding.receiverName.visibility = View.GONE
                     receiverAddressSet()
                 }
             }
@@ -284,9 +297,7 @@ class SendTokenActivity : BaseActivity() {
             binding.amount.setText(CurrencyUtil.formatGTU(0, false))
             viewModel.loadTransactionFee()
         }
-        viewModel.transactionReady.observe(this) {
-            gotoReceipt()
-        }
+
         viewModel.feeReady.observe(this) { fee ->
             binding.fee.text = getString(R.string.cis_estimated_fee, CurrencyUtil.formatGTU(fee, true))
             binding.max.isEnabled = true
@@ -314,22 +325,6 @@ class SendTokenActivity : BaseActivity() {
         }
         viewModel.errorInt.observe(this) {
             Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
-        }
-        viewModel.showAuthentication.observe(this) {
-            showAuthentication(authenticateText(), object : AuthenticationCallback {
-                override fun getCipherForBiometrics() : Cipher? {
-                    return viewModel.getCipherForBiometrics()
-                }
-                override fun onCorrectPassword(password: String) {
-                    viewModel.continueWithPassword(password)
-                }
-                override fun onCipher(cipher: Cipher) {
-                    viewModel.checkLogin(cipher)
-                }
-                override fun onCancelled() {
-                    enableSend()
-                }
-            })
         }
     }
 

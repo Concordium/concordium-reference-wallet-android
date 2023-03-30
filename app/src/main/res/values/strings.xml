@@ -1033,6 +1033,7 @@
     <string name="cis_optional_add_memo">Optional: Add memo</string>
     <string name="cis_receipt_confirm">Are you sure you want to make the following transaction?</string>
     <string name="cis_transaction_send_funds">Transaction: Send funds</string>
+    <string name="cis_transaction_send_tokens">Transaction: Send tokens</string>
     <string name="cis_sender">Sender</string>
     <string name="cis_amount">Amount</string>
     <string name="cis_token">Token</string>

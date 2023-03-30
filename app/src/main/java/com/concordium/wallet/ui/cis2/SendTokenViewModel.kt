@@ -36,6 +36,7 @@ data class SendTokenData(
     var account: Account? = null,
     var amount: Long = 0,
     var receiver: String = "",
+    var receiverName: String? = null,
     var fee: Long? = null,
     var max: Long? = null,
     var memo: String? = null,
@@ -68,7 +69,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     val tokens: MutableLiveData<List<Token>> by lazy { MutableLiveData<List<Token>>() }
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val transactionReady: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val transactionReady: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val feeReady: MutableLiveData<Long> by lazy { MutableLiveData<Long>() }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
@@ -434,7 +435,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             {
                 println("LC -> submitTransaction SUCCESS = ${it.submissionId}")
                 waiting.postValue(false)
-                transactionReady.postValue(true)
+                transactionReady.postValue(it.submissionId)
             },
             {
                 println("LC -> submitTransaction ERROR ${it.stackTraceToString()}")
