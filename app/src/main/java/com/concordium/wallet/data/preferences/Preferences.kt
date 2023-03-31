@@ -58,11 +58,9 @@ open class Preferences {
 
     /**
      * Loops through all of the [SharedPreferences] and attempts to save them to [EncryptedSharedPreferences]
-     * @return *true* if the [SharedPreferences] don't need migrating
+     * @return *true* if the [SharedPreferences] don't need migrating or was successfully migrated and the old data cleared
      *
-     * *true* if [SharedPreferences] is successfully migrated and the old data cleared
-     *
-     * *false* if the migrations fail or is not cleared successfully
+     * *false* otherwise
      */
     private fun migratePreferencesSuccess(
         mContext: Context,
