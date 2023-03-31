@@ -27,13 +27,11 @@ open class Preferences {
         val authPreferences = initializeEncryptedSharedPreferences(context, SharedPreferencesKeys.PREF_FILE_AUTH.key)
         sharedPreferences = if(authPreferences.getBoolean(SHARED_PREFERENCES_ARE_ENCRYPTED, false)){
             initializeEncryptedSharedPreferences(context, preferenceName)
-        }else{
-            if(migratePreferencesSuccess(context, preferenceName, preferenceMode, authPreferences)){
+        }else if(migratePreferencesSuccess(context, preferenceName, preferenceMode, authPreferences)){
                 initializeEncryptedSharedPreferences(context, preferenceName)
             }else{
                 getSharedPreferences(context, preferenceName, preferenceMode)
             }
-        }
     }
 
     /**
@@ -71,7 +69,7 @@ open class Preferences {
         var continueWithEncryptedSharedPreference = true
 
         for(prefName in SharedPreferencesKeys.values()){
-            if(!migrateSinglePreferencesIfNeededOrContinue(mContext, prefName.key, preferenceMode)){
+            if(!migrateSinglePreferences(mContext, prefName.key, preferenceMode)){
                 allPreferencesAreMigrated = false
 
                 if(prefName.key == preferenceName) {
@@ -91,7 +89,7 @@ open class Preferences {
      *
      * *false* otherwise
      */
-    private fun migrateSinglePreferencesIfNeededOrContinue(
+    private fun migrateSinglePreferences(
         mContext: Context,
         preferenceName: String,
         preferenceMode: Int
