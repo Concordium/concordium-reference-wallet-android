@@ -25,6 +25,7 @@ import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.toHex
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -149,6 +150,15 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 waiting.postValue(false)
                 handleBackendError(it)
             })
+    }
+
+    fun setMemo(memo: ByteArray?) {
+        if (memo != null) {
+            sendTokenData.memo = memo.toHex()
+        } else {
+            sendTokenData.memo = null
+        }
+        loadTransactionFee()
     }
 
     fun loadTransactionFee() {

@@ -16,6 +16,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import com.bumptech.glide.Glide
+import com.concordium.wallet.CBORUtil
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
@@ -207,9 +208,8 @@ class SendTokenActivity : BaseActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.getStringExtra(AddMemoActivity.EXTRA_MEMO)?.let { memo ->
-                    binding.memo.text = memo
                     binding.memoClear.visibility = View.VISIBLE
-                    viewModel.sendTokenData.memo = memo
+                    handleMemo(memo)
                 }
             }
         }
@@ -233,6 +233,26 @@ class SendTokenActivity : BaseActivity() {
                 }
             }
         }
+
+    private fun handleMemo(memo: String?) {
+        if (memo != null && memo.isNotEmpty()) {
+            viewModel.setMemo(CBORUtil.encodeCBOR(memo))
+            setMemoText(memo)
+        } else {
+            viewModel.setMemo(null)
+            setMemoText("")
+        }
+    }
+
+    private fun setMemoText(memo: String) {
+        if (memo.isNotEmpty()) {
+            binding.memo.text = memo
+            binding.memoClear.visibility = View.VISIBLE
+        } else {
+            binding.memo.text = getString(R.string.send_funds_optional_add_memo)
+            binding.memoClear.visibility = View.INVISIBLE
+        }
+    }
 
     private fun showPopupPaste(clipText: String) {
         val popupMenu = PopupMenu(this, binding.receiver)
