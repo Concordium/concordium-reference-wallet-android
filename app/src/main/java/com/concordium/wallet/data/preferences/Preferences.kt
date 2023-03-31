@@ -87,13 +87,9 @@ open class Preferences {
 
     /**
      * Migrate single [SharedPreferences] to [EncryptedSharedPreferences]
-     * @return *true* if the unencrypted preference is empty
+     * @return *true* if the unencrypted preference is empty or the preference was successfully migrated and cleared
      *
-     * *true* if the preference is successfully migrated and cleared
-     *
-     * *false* if the migration fails
-     *
-     * *false* if the old preference in not cleared
+     * *false* otherwise
      */
     private fun migrateSinglePreferencesIfNeededOrContinue(
         mContext: Context,
