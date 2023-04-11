@@ -27,11 +27,11 @@ open class Preferences {
         val authPreferences = initializeEncryptedSharedPreferences(context, SharedPreferencesKeys.PREF_FILE_AUTH.key)
         sharedPreferences = if(authPreferences.getBoolean(SHARED_PREFERENCES_ARE_ENCRYPTED, false)){
             initializeEncryptedSharedPreferences(context, preferenceName)
-        }else if(migratePreferencesSuccess(context, preferenceName, preferenceMode, authPreferences)){
-                initializeEncryptedSharedPreferences(context, preferenceName)
-            }else{
-                getSharedPreferences(context, preferenceName, preferenceMode)
-            }
+        }else if(migrateWorkingPreferencesSuccess(context, preferenceName, preferenceMode, authPreferences)){
+            initializeEncryptedSharedPreferences(context, preferenceName)
+        }else{
+            getSharedPreferences(context, preferenceName, preferenceMode)
+        }
     }
 
     /**
@@ -56,11 +56,11 @@ open class Preferences {
 
     /**
      * Loops through all of the [SharedPreferences] and attempts to save them to [EncryptedSharedPreferences]
-     * @return *true* if the [SharedPreferences] don't need migrating or was successfully migrated and the old data cleared
+     * @return *true* if all of the [SharedPreferences] don't need migrating or the SharedPreferences with *preferenceName* was successfully migrated and the old data cleared
      *
      * *false* otherwise
      */
-    private fun migratePreferencesSuccess(
+    private fun migrateWorkingPreferencesSuccess(
         mContext: Context,
         preferenceName: String,
         preferenceMode: Int,
