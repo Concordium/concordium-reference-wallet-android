@@ -23,7 +23,7 @@ jobs:
           distribution: temurin
           cache: gradle # caches dependencies (https://github.com/actions/setup-java#caching-packages-dependencies)
       - name: Build project and run unit tests (local flavor)
-        run: ./gradlew test unitTestCoverageReport --no-daemon
+        run: ./gradlew test unitTestCoverageReport --stacktrace
       - name: Add coverage comment to PR
         # Action uses deprecated features (https://github.com/Madrapps/jacoco-report/issues/35).
         uses: madrapps/jacoco-report@v1.3
