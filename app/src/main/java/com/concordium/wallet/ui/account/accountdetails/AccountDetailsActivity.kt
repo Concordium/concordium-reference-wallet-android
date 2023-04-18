@@ -286,16 +286,11 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
             )
         )
         when (viewModelAccountDetails.account.transactionStatus) {
-            TransactionStatus.ABSENT -> {
-                setErrorMode()
-            }
-            TransactionStatus.FINALIZED -> {
-                setFinalizedMode()
-            }
+            TransactionStatus.ABSENT -> setErrorMode()
+            TransactionStatus.FINALIZED -> setFinalizedMode()
             TransactionStatus.COMMITTED -> setPendingMode()
             TransactionStatus.RECEIVED -> setPendingMode()
-            else -> {
-            }
+            else -> {}
         }
         binding.accountRetryButton.setOnClickListener {
             setResult(RESULT_RETRY_ACCOUNT_CREATION)
@@ -327,7 +322,6 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun showTokenDetailsDialog(token: Token) {
-
         val intent = Intent(this, TokenDetailsActivity::class.java)
         intent.putExtra(TokenDetailsActivity.ACCOUNT, viewModelAccountDetails.account)
         intent.putExtra(TokenDetailsActivity.TOKEN, token)

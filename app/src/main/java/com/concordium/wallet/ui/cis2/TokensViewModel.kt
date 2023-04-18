@@ -35,6 +35,9 @@ data class TokenData(
 class TokensViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
         const val TOKEN_DATA = "TOKEN_DATA"
+        const val TOKENS_OK = 0
+        const val TOKENS_EMPTY = 1
+        const val TOKENS_ERROR = 2
     }
 
     private var allowToLoadMore = true
@@ -46,7 +49,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val chooseTokenInfo: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    private val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val lookForTokens: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val updateWithSelectedTokensDone: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val stepPageBy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
@@ -109,7 +112,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
         allowToLoadMore = false
 
-        lookForTokens.postValue(0)
+        lookForTokens.postValue(TOKENS_OK)
 
         CoroutineScope(Dispatchers.IO).launch {
             val contractTokensRepository = ContractTokensRepository(
@@ -134,13 +137,13 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     tokens.addAll(cis2Tokens.tokens)
                     loadTokensMetadataUrls(cis2Tokens.tokens)
                     if (cis2Tokens.tokens.isEmpty())
-                        lookForTokens.postValue(1)
+                        lookForTokens.postValue(TOKENS_EMPTY)
                     else
-                        lookForTokens.postValue(0)
+                        lookForTokens.postValue(TOKENS_OK)
                     allowToLoadMore = true
                 },
                 failure = {
-                    lookForTokens.postValue(2)
+                    lookForTokens.postValue(TOKENS_ERROR)
                     handleBackendError(it)
                     allowToLoadMore = true
                 })

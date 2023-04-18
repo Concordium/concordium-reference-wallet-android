@@ -31,7 +31,6 @@ import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
 import com.concordium.wallet.util.KeyboardUtil
 import com.concordium.wallet.util.UnitConvertUtil
 import com.concordium.wallet.util.getSerializable
-import javax.crypto.Cipher
 
 class SendTokenActivity : BaseActivity() {
     private lateinit var binding: ActivitySendTokenBinding
@@ -84,14 +83,15 @@ class SendTokenActivity : BaseActivity() {
     }
 
     private fun send() {
-        if (binding.receiver.text.toString().isEmpty()) {
+        val receiver = binding.receiver.text.toString()
+        if (receiver.isEmpty()) {
             binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.text_pink))
             binding.contractAddressError.text = getString(R.string.cis_enter_receiver_address)
             binding.contractAddressError.visibility = View.VISIBLE
         } else {
             binding.send.isEnabled = false
             viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(binding.amount.text.toString(), viewModel.sendTokenData.token) ?: 0
-            viewModel.sendTokenData.receiver = binding.receiver.text.toString()
+            viewModel.sendTokenData.receiver = receiver
             binding.receiverName.let {
                 if(it.visibility == View.VISIBLE){
                     viewModel.sendTokenData.receiverName = it.text?.toString()

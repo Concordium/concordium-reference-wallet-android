@@ -36,7 +36,6 @@ class TokenDetailsActivity : BaseActivity() {
         setContentView(binding.root)
         initViews()
         initObservers()
-        lookForTokensView()
     }
 
     private fun initViews() {
@@ -202,8 +201,5 @@ class TokenDetailsActivity : BaseActivity() {
 
     private fun showWaiting(waiting: Boolean) {
         binding.includeProgress.progressBar.visibility = if (waiting) View.VISIBLE else View.GONE
-    }
-
-    private fun lookForTokensView() {
     }
 }

@@ -54,7 +54,6 @@ class ExportTransactionLogViewModel(application: Application) : AndroidViewModel
     }
 
     fun downloadFile(destinationFolder: Uri) {
-        //val downloadFile = "statement?accountAddress=35CJPZohio6Ztii2zy1AYzJKvuxbGG44wrBn7hLHiYLoF2nxnh"
         val downloadFile = "statement?accountAddress=${account.address}"
         viewModelScope.launch(Dispatchers.IO) {
             try {

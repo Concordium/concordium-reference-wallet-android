@@ -100,7 +100,6 @@ class SelectTokensFragment : TokensBaseFragment() {
                 if (newText.isNullOrBlank()) {
                     tokensAddAdapter.dataSet = _viewModel.tokens.toTypedArray()
                     _viewModel.searchedTokens.clear()
-                    //_viewModel.visibleTokens.addAll(tokensAddAdapter.dataSet)
                     tokensAddAdapter.notifyDataSetChanged()
                 }
                 return false
@@ -119,7 +118,6 @@ class SelectTokensFragment : TokensBaseFragment() {
         })
 
         binding.back.setOnClickListener {
-
             binding.search.setQuery("", false)
             _viewModel.stepPage(-1)
         }

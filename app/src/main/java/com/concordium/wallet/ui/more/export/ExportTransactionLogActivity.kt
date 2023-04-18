@@ -38,7 +38,6 @@ class ExportTransactionLogActivity : BaseActivity() {
             if (isStageNet) "https://api-ccdscan.stagenet.io/rest/export/"
             else if (isTestNet) "https://api-ccdscan.testnet.concordium.com/rest/export/"
             else "https://api-ccdscan.mainnet.concordium.software/rest/export/"
-        //val baseUrl = "https://api-ccdscan.mainnet.concordium.software/rest/export/"
         viewModel.createRetrofitApi(baseUrl)
     }
 

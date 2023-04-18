@@ -507,8 +507,8 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         } ?: ""
 
         val index = sendTokenData.accountBalance?.finalizedBalance?.let {
-            it.accountEncryptedAmount.startIndex + it.accountEncryptedAmount.incomingAmounts.count {
-                accountUpdater.lookupMappedAmount(it) != null
+            it.accountEncryptedAmount.startIndex + it.accountEncryptedAmount.incomingAmounts.count { key ->
+                accountUpdater.lookupMappedAmount(key) != null
             }
         } ?: 0
 
