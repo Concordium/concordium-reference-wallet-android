@@ -153,11 +153,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun setMemo(memo: ByteArray?) {
-        if (memo != null) {
-            sendTokenData.memo = memo.toHex()
-        } else {
-            sendTokenData.memo = null
-        }
+        sendTokenData.memo = memo?.toHex();
         loadTransactionFee()
     }
 
