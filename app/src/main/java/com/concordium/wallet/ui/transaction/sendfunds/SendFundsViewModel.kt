@@ -24,6 +24,7 @@ import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.preferences.Preferences
+import com.concordium.wallet.data.preferences.SharedPreferencesKeys
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.room.Transfer
@@ -46,7 +47,6 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
     private val transferRepository: TransferRepository
 
     companion object {
-        val PREF_SEND_FUNDS = "PREF_SEND_FUNDS"
         val KEY_SHOW_MEMO_WARNING = "KEY_SHOW_MEMO_WARNING_V2"
     }
 
@@ -63,7 +63,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val preferences: SendFundsPreferences
         get() {
-            return SendFundsPreferences(getApplication(), PREF_SEND_FUNDS, Context.MODE_PRIVATE)
+            return SendFundsPreferences(getApplication(), SharedPreferencesKeys.PREF_SEND_FUNDS.key, Context.MODE_PRIVATE)
         }
 
     private val gson = App.appCore.gson

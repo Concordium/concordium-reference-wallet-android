@@ -314,6 +314,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.biometric:biometric:1.1.0'
+    implementation 'androidx.test:core-ktx:1.5.0'
 
     // Lifecycles
     def lifecycle_version = "2.5.1"
@@ -356,6 +357,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation "androidx.arch.core:core-testing:2.2.0"
     androidTestImplementation 'androidx.test:runner:1.5.2'
+    testImplementation "org.robolectric:robolectric:4.9.2"
 
     // Generate QR
     implementation 'com.journeyapps:zxing-android-embedded:4.1.0'
@@ -372,4 +374,6 @@ dependencies {
     implementation 'com.github.matomo-org:matomo-sdk-android:4.1.4'
 
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.10")
+
+    implementation "androidx.security:security-crypto:1.0.0"
 }

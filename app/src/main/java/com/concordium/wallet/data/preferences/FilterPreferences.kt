@@ -3,7 +3,7 @@ package com.concordium.wallet.data.preferences
 import android.content.Context
 
 class FilterPreferences(val context: Context) :
-    Preferences(context, SharedPreferencesKeys.PREF_FILE_FILTER, Context.MODE_PRIVATE) {
+    Preferences(context, SharedPreferencesKeys.PREF_FILE_FILTER.key, Context.MODE_PRIVATE) {
 
     companion object {
         val PREFKEY_FILTER_SHOW_REWARDS = "PREFKEY_FILTER_SHOW_REWARDS"
