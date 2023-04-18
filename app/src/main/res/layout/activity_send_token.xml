@@ -132,14 +132,28 @@
                     android:background="@drawable/rounded_transparent"
                     android:orientation="vertical">
                     <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/receiver"
+                        android:id="@+id/receiver_name"
                         style="@style/TextView.Standard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/activity_horizontal_margin"
+                        android:paddingTop="@dimen/activity_horizontal_margin"
                         android:textColor="@color/text_blue"
                         android:textColorHint="@color/text_blue"
-                        android:padding="@dimen/activity_horizontal_margin"
-                        android:hint="@string/cis_paste_receiver_address"
+                        tools:text="Account Name"
+                        android:visibility="gone"
+                        android:gravity="center_horizontal"
+                        tools:visibility="visible"/>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/receiver"
+                        style="@style/TextView.Standard"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:hint="@string/cis_paste_receiver_address"
+                        android:padding="@dimen/activity_horizontal_margin"
+                        android:textColor="@color/text_blue"
+                        android:textColorHint="@color/text_blue"
+                        android:gravity="center_horizontal" />
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -155,19 +169,22 @@
                                 android:layout_height="match_parent"
                                 android:background="@drawable/button_action_card"
                                 android:paddingVertical="@dimen/activity_vertical_margin"
-                                android:src="@drawable/ic_lup"
                                 android:scaleType="fitCenter"
+                                android:src="@drawable/ic_lup"
                                 android:tint="@color/theme_white" />
                             <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView.Standard.White"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
-                                android:gravity="center_vertical"
-                                style="@style/TextView.Standard.White"
                                 android:background="@drawable/button_action_card"
+                                android:gravity="center_vertical"
                                 android:text="@string/cis_address_book" />
                         </androidx.appcompat.widget.LinearLayoutCompat>
-                        <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/theme_white" />
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/theme_white" />
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:id="@+id/scan_qr"
                             android:layout_width="0dp"
@@ -179,16 +196,16 @@
                                 android:layout_height="match_parent"
                                 android:background="@drawable/button_action_card"
                                 android:paddingVertical="@dimen/activity_vertical_margin"
-                                android:src="@drawable/ic_recipient_address_qr"
                                 android:scaleType="fitCenter"
+                                android:src="@drawable/ic_recipient_address_qr"
                                 android:tint="@color/theme_white" />
                             <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView.Standard.White"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
-                                android:gravity="center_vertical"
-                                style="@style/TextView.Standard.White"
                                 android:background="@drawable/button_action_card"
+                                android:gravity="center_vertical"
                                 android:text="@string/cis_scan_qr" />
                         </androidx.appcompat.widget.LinearLayoutCompat>
                     </androidx.appcompat.widget.LinearLayoutCompat>

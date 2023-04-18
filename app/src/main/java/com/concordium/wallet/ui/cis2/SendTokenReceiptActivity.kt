@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.cis2
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -14,6 +15,7 @@ import com.concordium.wallet.util.getSerializable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.crypto.Cipher
 
 class SendTokenReceiptActivity : BaseActivity() {
     private lateinit var binding: ActivitySendTokenReceiptBinding
@@ -40,9 +42,13 @@ class SendTokenReceiptActivity : BaseActivity() {
         binding.sender.text = viewModel.sendTokenData.account?.name.plus("\n\n").plus(viewModel.sendTokenData.account?.address)
         binding.amount.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.amount, false)
         binding.receiver.text = viewModel.sendTokenData.receiver
+        viewModel.sendTokenData.receiverName?.let {
+            binding.receiverName.visibility = View.VISIBLE
+            binding.receiverName.text= it
+        }
         CoroutineScope(Dispatchers.Default).launch {
             runOnUiThread {
-                showPageAsReceipt()
+                showPageAsSendPrompt()
             }
         }
         binding.sendFunds.setOnClickListener {
@@ -66,6 +72,8 @@ class SendTokenReceiptActivity : BaseActivity() {
     }
 
     private fun onSend() {
+        binding.sendFunds.isEnabled = false
+        viewModel.send()
     }
 
     private fun onFinish() {
@@ -79,8 +87,40 @@ class SendTokenReceiptActivity : BaseActivity() {
         viewModel.waiting.observe(this) { waiting ->
             showWaiting(waiting)
         }
+
         viewModel.feeReady.observe(this) { fee ->
             binding.fee.text = getString(R.string.cis_estimated_fee, CurrencyUtil.formatGTU(fee, true))
+        }
+
+        viewModel.showAuthentication.observe(this) {
+            showAuthentication(authenticateText(), object : AuthenticationCallback {
+                override fun getCipherForBiometrics() : Cipher? {
+                    return viewModel.getCipherForBiometrics()
+                }
+                override fun onCorrectPassword(password: String) {
+                    viewModel.continueWithPassword(password)
+                }
+                override fun onCipher(cipher: Cipher) {
+                    viewModel.checkLogin(cipher)
+                }
+                override fun onCancelled() {
+                    binding.sendFunds.isEnabled = true
+                }
+            })
+        }
+
+        viewModel.transactionReady.observe(this) {submissionId ->
+            binding.includeTransactionSubmittedNo.transactionSubmittedDivider.visibility = View.VISIBLE
+            binding.includeTransactionSubmittedNo.transactionSubmittedId.let {view ->
+                view.visibility = View.VISIBLE
+                view.text = submissionId
+            }
+            showPageAsReceipt()
+        }
+
+        viewModel.errorInt.observe(this) {
+            Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
+            binding.sendFunds.isEnabled = true
         }
     }
 
@@ -91,6 +131,14 @@ class SendTokenReceiptActivity : BaseActivity() {
         binding.finish.visibility = View.VISIBLE
         binding.header.visibility = View.GONE
         binding.includeTransactionSubmittedHeader.transactionSubmitted.visibility = View.VISIBLE
+    }
+
+    private fun showPageAsSendPrompt() {
+        receiptMode = false
+        binding.sendFunds.visibility = View.VISIBLE
+        binding.finish.visibility = View.GONE
+        binding.header.visibility = View.VISIBLE
+        binding.includeTransactionSubmittedHeader.transactionSubmitted.visibility = View.GONE
     }
 
     private fun showWaiting(waiting: Boolean) {
