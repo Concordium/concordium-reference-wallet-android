@@ -222,9 +222,9 @@ class SendTokenActivity : BaseActivity() {
         }
 
     private val getResultRecipient =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { it ->
-            if (it.resultCode == Activity.RESULT_OK) {
-                it.data?.getSerializable(RecipientListActivity.EXTRA_RECIPIENT, Recipient::class.java)?.let { recipient ->
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                result.data?.getSerializable(RecipientListActivity.EXTRA_RECIPIENT, Recipient::class.java)?.let { recipient ->
                     binding.receiver.text = recipient.address
                     binding.receiverName.let {view ->
                         view.visibility = View.VISIBLE
