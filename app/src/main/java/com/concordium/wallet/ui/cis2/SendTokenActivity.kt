@@ -234,8 +234,8 @@ class SendTokenActivity : BaseActivity() {
             }
         }
 
-    private fun handleMemo(memo: String?) {
-        if (memo != null && memo.isNotEmpty()) {
+    private fun handleMemo(memo: String) {
+        if (memo.isNotEmpty()) {
             viewModel.setMemo(CBORUtil.encodeCBOR(memo))
             setMemoText(memo)
         } else {
