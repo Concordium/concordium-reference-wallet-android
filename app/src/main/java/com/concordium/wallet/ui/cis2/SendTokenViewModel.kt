@@ -25,6 +25,7 @@ import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.toHex
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,6 +37,7 @@ data class SendTokenData(
     var account: Account? = null,
     var amount: Long = 0,
     var receiver: String = "",
+    var receiverName: String? = null,
     var fee: Long? = null,
     var max: Long? = null,
     var memo: String? = null,
@@ -68,7 +70,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     val tokens: MutableLiveData<List<Token>> by lazy { MutableLiveData<List<Token>>() }
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
-    val transactionReady: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val transactionReady: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val feeReady: MutableLiveData<Long> by lazy { MutableLiveData<Long>() }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
@@ -149,6 +151,11 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 waiting.postValue(false)
                 handleBackendError(it)
             })
+    }
+
+    fun setMemo(memo: ByteArray?) {
+        sendTokenData.memo = memo?.toHex();
+        loadTransactionFee()
     }
 
     fun loadTransactionFee() {
@@ -434,7 +441,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             {
                 println("LC -> submitTransaction SUCCESS = ${it.submissionId}")
                 waiting.postValue(false)
-                transactionReady.postValue(true)
+                transactionReady.postValue(it.submissionId)
             },
             {
                 println("LC -> submitTransaction ERROR ${it.stackTraceToString()}")
