@@ -12,15 +12,15 @@ import com.concordium.wallet.core.backend.BackendEventResource
 
 open class BackendEventObserver<T> : Observer<BackendEventResource<T>> {
 
-    override fun onChanged(backendResource: BackendEventResource<T>?) {
+    override fun onChanged(value: BackendEventResource<T>) {
         onDone()
-        if (backendResource != null) {
-            if (backendResource.handleIfNotHandled()) {
-                val exception = backendResource.exception
+        if (value != null) {
+            if (value.handleIfNotHandled()) {
+                val exception = value.exception
                 if (exception != null) {
                     onException(exception)
                 } else {
-                    val data = backendResource.data
+                    val data = value.data
                     if (data != null) {
                         onSuccess(data)
                     }

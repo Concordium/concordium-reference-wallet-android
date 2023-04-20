@@ -11,7 +11,7 @@ import com.concordium.wallet.core.backend.BackendResource
 
 class BackendObserver<T> : Observer<BackendResource<T>> {
 
-    override fun onChanged(backendResource: BackendResource<T>?) {
+    override fun onChanged(backendResource: BackendResource<T>) {
         onDone()
         if (backendResource != null) {
             val exception = backendResource.exception
