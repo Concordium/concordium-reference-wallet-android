@@ -7,8 +7,6 @@ import java.util.*
 
 object IdentityAttributeConverterUtil {
 
-    val visibleIdentityAttributes = arrayListOf("countryOfResidence", "nationality", "idDocType", "idDocIssuer")
-
     fun convertAttributeValue(
         context: Context,
         attribute: Pair<String, String>
@@ -19,6 +17,7 @@ object IdentityAttributeConverterUtil {
                     context.getString(R.string.identity_attribute_first_name),
                     attribute.second
                 )
+
             "lastName" ->
                 Pair(
                     context.getString(R.string.identity_attribute_last_name),
@@ -78,16 +77,19 @@ object IdentityAttributeConverterUtil {
                     context.getString(R.string.identity_attribute_doc_expires_at),
                     DateTimeUtil.convertLongDate(attribute.second)
                 )
+
             "nationalIdNo" ->
                 Pair(
                     context.getString(R.string.identity_attribute_national_id_no),
                     attribute.second
                 )
+
             "taxIdNo" ->
                 Pair(
                     context.getString(R.string.identity_attribute_tax_id_no),
                     attribute.second
                 )
+
             else -> Pair("", "")
         }
     }
@@ -107,11 +109,12 @@ object IdentityAttributeConverterUtil {
 
     private fun getDocType(context: Context, value: String): String {
         return when (value) {
+            "0" -> context.getString(R.string.identity_attribute_na)
             "1" -> context.getString(R.string.identity_attribute_doc_type_passport)
             "2" -> context.getString(R.string.identity_attribute_doc_type_national_id)
             "3" -> context.getString(R.string.identity_attribute_doc_type_driving_license)
             "4" -> context.getString(R.string.identity_attribute_doc_type_immigration_card)
-            else -> context.getString(R.string.identity_attribute_na)
+            else -> value
         }
     }
 }
