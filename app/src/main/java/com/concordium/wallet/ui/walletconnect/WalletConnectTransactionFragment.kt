@@ -39,13 +39,11 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initViews()
         initObservers()
 
         _viewModel.prettyPrintJson()
         _viewModel.loadTransactionFee()
-
     }
 
     override fun onDestroyView() {

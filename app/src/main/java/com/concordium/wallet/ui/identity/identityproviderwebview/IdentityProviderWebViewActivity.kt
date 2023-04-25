@@ -15,6 +15,7 @@ import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.core.backend.BackendError
 import com.concordium.wallet.data.model.IdentityCreationData
 import com.concordium.wallet.data.preferences.Preferences
+import com.concordium.wallet.data.preferences.SharedPreferencesKeys
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.databinding.ActivityIdentityProviderWebviewBinding
 import com.concordium.wallet.ui.base.BaseActivity
@@ -69,7 +70,7 @@ class IdentityProviderWebViewActivity : BaseActivity() {
 
     private val preferences: IdentityDataPreferences
         get() {
-            return IdentityDataPreferences(application, KEY_IDENTITY_CREATION_DATA, Context.MODE_PRIVATE)
+            return IdentityDataPreferences(application, SharedPreferencesKeys.KEY_IDENTITY_CREATION_DATA.key, Context.MODE_PRIVATE)
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {

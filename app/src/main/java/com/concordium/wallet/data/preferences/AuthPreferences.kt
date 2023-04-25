@@ -8,7 +8,7 @@ import com.concordium.wallet.util.toHex
 import javax.crypto.SecretKey
 
 class AuthPreferences(val context: Context) :
-    Preferences(context, SharedPreferencesKeys.PREF_FILE_AUTH, Context.MODE_PRIVATE) {
+    Preferences(context, SharedPreferencesKeys.PREF_FILE_AUTH.key, Context.MODE_PRIVATE) {
 
     companion object {
         const val PREFKEY_HAS_SETUP_USER = "PREFKEY_HAS_SETUP_USER"
