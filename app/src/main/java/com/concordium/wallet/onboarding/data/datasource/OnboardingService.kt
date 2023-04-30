@@ -5,6 +5,6 @@ import retrofit2.http.GET
 
 interface OnboardingService {
 
-    @GET("v0/termsAndConditionsVersion")//add main path to Retrofit DI
+    @GET("v0/termsAndConditionsVersion")
     suspend fun getTermsAndConditions(): TermsAndConditionsDto
 }
