@@ -1,5 +1,6 @@
 package com.concordium.wallet.onboarding.ui.terms
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.util.Linkify
 import android.view.View
@@ -9,17 +10,18 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentTermsAndConditionsBinding
 import com.concordium.wallet.ui.base.BaseBindingFragment
+import com.concordium.wallet.ui.intro.introstart.IntroTermsActivity
 import com.google.android.material.snackbar.Snackbar
+import com.walletconnect.util.Empty
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import java.util.regex.Pattern
 
-internal const val TERMS_AND_CONDITIONS_LINK =
-    "http://wallet-proxy.mainnet.concordium.software/v0/termsAndConditionsVersion"
+internal const val TERMS_AND_CONDITIONS_WEB_LINK =
+    "https://developer.concordium.software/en/mainnet/net/resources/terms-and-conditions-bw.html"
 
 class TermsAndConditionsFragment :
-    BaseBindingFragment<FragmentTermsAndConditionsBinding>() { //todo extract to common base TermsAndConditionsFragment and TermsAndConditionsUpdateFragment
-
+    BaseBindingFragment<FragmentTermsAndConditionsBinding>() {
     private val viewModel by activityViewModel<TermsAndConditionsViewModel>()
     override fun getLayoutResId() = R.layout.fragment_terms_and_conditions
 
@@ -34,13 +36,14 @@ class TermsAndConditionsFragment :
             }
             confirmButton.setOnClickListener {
                 viewModel.onTermsAccepted()
-                //todo navigate forward
             }
+
             Linkify.addLinks(
                 approveTermsText,
                 Pattern.compile(getString(R.string.terms_and_conditions_approve_pattern)),
-                TERMS_AND_CONDITIONS_LINK
-            )
+                String.Empty,
+                null
+            ) { _, _ -> TERMS_AND_CONDITIONS_WEB_LINK }
         }
     }
 
@@ -49,21 +52,46 @@ class TermsAndConditionsFragment :
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.state.collect { state ->
                     when (state) {
-                        is TermsAndConditionsState.UpdateTerms, is TermsAndConditionsState.Error ->
+                        is TermsAndConditionsState.Error ->
                             showErrorMessage()
 
                         TermsAndConditionsState.Loading ->
                             viewDataBinding.loadingContainer.visibility = View.VISIBLE
 
-                        is TermsAndConditionsState.InitialTerms -> {
-                            viewDataBinding.apply {
-                                loadingContainer.visibility = View.GONE
-                                viewDataBinding.approveTermsSwitch.isEnabled = true
-                            }
+                        is TermsAndConditionsState.InitialTerms -> updateInitialTermsBinding()
+                        is TermsAndConditionsState.UpdateTerms -> updateUpdateTermsBinding()
+                        TermsAndConditionsState.NavigateOnboardingForward -> {
+                            startActivity(Intent(requireContext(), IntroTermsActivity::class.java))
+                        }
+
+                        TermsAndConditionsState.NavigateUpdateForward -> {
+                            //todo[SK] go back to wallet. after rewrite update this.
                         }
                     }
                 }
             }
+        }
+    }
+
+    private fun updateInitialTermsBinding() {
+        viewDataBinding.apply {
+            loadingContainer.visibility = View.GONE
+            viewDataBinding.approveTermsSwitch.isEnabled = true
+
+            padlockShieldImg.setImageResource(R.drawable.ic_padlock_shield)
+            titleText.text = getString(R.string.terms_and_conditions_title)
+            descriptionText.text = getString(R.string.terms_and_conditions_description)
+        }
+    }
+
+    private fun updateUpdateTermsBinding() {
+        viewDataBinding.apply {
+            loadingContainer.visibility = View.GONE
+            viewDataBinding.approveTermsSwitch.isEnabled = true
+
+            padlockShieldImg.setImageResource(R.drawable.ic_terms_and_conditions)
+            titleText.text = getString(R.string.terms_and_conditions_title_update)
+            descriptionText.text = getString(R.string.terms_and_conditions_description_update)
         }
     }
 

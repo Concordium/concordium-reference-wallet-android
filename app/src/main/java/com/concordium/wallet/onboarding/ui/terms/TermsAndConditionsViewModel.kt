@@ -40,13 +40,21 @@ class TermsAndConditionsViewModel(
     fun onTermsAccepted() {
         viewModelScope.launch {
             with(_state.value) {
-                val termsVersion = when (this) {
-                    is TermsAndConditionsState.InitialTerms -> terms.version
-                    is TermsAndConditionsState.UpdateTerms -> newestTerms.version
+                val termsAccepted = when (this) {
+                    is TermsAndConditionsState.InitialTerms -> {
+                        _state.update { TermsAndConditionsState.NavigateOnboardingForward }
+                        terms.version
+                    }
+
+                    is TermsAndConditionsState.UpdateTerms -> {
+                        _state.update { TermsAndConditionsState.NavigateUpdateForward }
+                        newestTerms.version
+                    }
+
                     else -> String.Empty
                 }
 
-                onboardingRepository.saveAcceptedTermsAndConditionsVersion(termsVersion)
+                onboardingRepository.saveAcceptedTermsAndConditionsVersion(termsAccepted)
             }
         }
     }
@@ -58,6 +66,9 @@ sealed class TermsAndConditionsState {
     data class UpdateTerms(val newestTerms: TermsAndConditionsItem) : TermsAndConditionsState()
 
     data class Error(val originalException: Throwable) : TermsAndConditionsState()
+
+    object NavigateOnboardingForward : TermsAndConditionsState()
+    object NavigateUpdateForward : TermsAndConditionsState()
 }
 
 

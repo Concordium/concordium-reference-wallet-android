@@ -7,7 +7,7 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import com.walletconnect.util.Empty
 
 
-class SharedPreferencesDataSourceImpl(private val prefs: EncryptedSharedPreferences) : SharedPreferencesDataSource {
+class SharedPreferencesDataSourceImpl(private val prefs: SharedPreferences) : SharedPreferencesDataSource {
 
     companion object {
         private const val TERMS_AND_CONDITIONS_VERSION_ACCEPTED_KEY = "TermsAndConditionsAccepted"

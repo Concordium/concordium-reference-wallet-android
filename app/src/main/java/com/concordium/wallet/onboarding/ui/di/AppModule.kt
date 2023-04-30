@@ -6,6 +6,8 @@ import com.concordium.wallet.core.config.EnvironmentConfiguration
 import com.concordium.wallet.onboarding.data.datasource.OnboardingService
 import com.concordium.wallet.onboarding.data.datasource.SharedPreferencesDataSource
 import com.concordium.wallet.onboarding.data.datasource.SharedPreferencesDataSourceImpl
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
@@ -60,7 +62,13 @@ class AppModule {//todo[SK] extract class to com.concordium.wallet package after
 
         single<Retrofit>() {
             Retrofit.Builder()
-                .addConverterFactory(MoshiConverterFactory.create())
+                .addConverterFactory(
+                    MoshiConverterFactory.create(
+                        Moshi.Builder()
+                            .addLast(KotlinJsonAdapterFactory())
+                            .build()
+                    )
+                )
                 .baseUrl(get<EnvironmentConfiguration>().baseUrl)
                 .client(get())
                 .build()
