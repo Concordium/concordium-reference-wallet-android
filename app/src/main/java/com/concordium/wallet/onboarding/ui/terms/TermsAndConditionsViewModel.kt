@@ -70,6 +70,3 @@ sealed class TermsAndConditionsState {
     object NavigateOnboardingForward : TermsAndConditionsState()
     object NavigateUpdateForward : TermsAndConditionsState()
 }
-
-
-

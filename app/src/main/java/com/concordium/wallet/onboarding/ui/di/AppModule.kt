@@ -2,6 +2,7 @@ package com.concordium.wallet.onboarding.ui.di
 
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import com.concordium.wallet.AppConfig
 import com.concordium.wallet.core.config.EnvironmentConfiguration
 import com.concordium.wallet.onboarding.data.datasource.OnboardingService
 import com.concordium.wallet.onboarding.data.datasource.SharedPreferencesDataSource
@@ -16,7 +17,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
-class AppModule {//todo[SK] extract class to com.concordium.wallet package after refactors
+class AppModule {
 
     val configModule = module {
         single { EnvironmentConfiguration }
@@ -46,7 +47,7 @@ class AppModule {//todo[SK] extract class to com.concordium.wallet package after
 
     val remoteModule = module {
         single {
-            val timeout = get<EnvironmentConfiguration>().maxTimeout
+            val timeout = 10L
 
             OkHttpClient.Builder()
                 .apply {
@@ -69,7 +70,7 @@ class AppModule {//todo[SK] extract class to com.concordium.wallet package after
                             .build()
                     )
                 )
-                .baseUrl(get<EnvironmentConfiguration>().baseUrl)
+                .baseUrl(AppConfig.proxyBaseUrl)
                 .client(get())
                 .build()
         }

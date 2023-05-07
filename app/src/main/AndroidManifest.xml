@@ -34,19 +34,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
 
-        <!--        new refactor-->
-        <activity
-            android:name=".onboarding.ui.OnboardingActivity"
-            android:exported="true"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-        </activity>
-
-        <!--        old code-->
         <activity
             android:name=".ui.MainActivity"
             android:alwaysRetainTaskState="true"
@@ -67,10 +54,17 @@
                 <data android:scheme="wc" />
             </intent-filter>
         </activity>
+
         <service
             android:name=".ui.walletconnect.WalletConnectService"
             android:enabled="true"
             android:exported="false" />
+
+        <activity
+            android:name=".onboarding.ui.OnboardingActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".ui.common.failed.FailedActivity"
             android:launchMode="singleTop"

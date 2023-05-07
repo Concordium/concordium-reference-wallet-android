@@ -18,7 +18,7 @@ import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import java.util.regex.Pattern
 
 internal const val TERMS_AND_CONDITIONS_WEB_LINK =
-    "https://developer.concordium.software/en/mainnet/net/resources/terms-and-conditions-bw.html"
+    "https://developer.concordium.software/en/mainnet/net/resources/terms-and-conditions.html"
 
 class TermsAndConditionsFragment :
     BaseBindingFragment<FragmentTermsAndConditionsBinding>() {
@@ -65,7 +65,7 @@ class TermsAndConditionsFragment :
                         }
 
                         TermsAndConditionsState.NavigateUpdateForward -> {
-                            //todo[SK] go back to wallet. after rewrite update this.
+                            //todo[SK] go back to wallet.
                         }
                     }
                 }

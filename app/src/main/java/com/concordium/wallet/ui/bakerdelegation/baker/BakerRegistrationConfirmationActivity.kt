@@ -25,7 +25,11 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityBakerRegistrationConfirmationBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.baker_registration_confirmation_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.baker_registration_confirmation_title
+        )
         initViews()
     }
 
@@ -46,8 +50,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
     }
 
     private fun loadFee() {
-        viewModel.transactionFeeLiveData.observe(this
-        ) { response ->
+        viewModel.transactionFeeLiveData.observe(this) { response ->
             response?.first?.let {
                 showWaiting(binding.includeProgress.progressLayout, false)
                 updateViews()
@@ -62,24 +65,32 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
 
     private fun updateViews() {
 
-        binding.submitBakerTransaction.text = getString(R.string.baker_registration_confirmation_submit)
-        binding.accountToBakeFrom.text = (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n").plus(viewModel.bakerDelegationData.account?.address ?: "")
+        binding.submitBakerTransaction.text =
+            getString(R.string.baker_registration_confirmation_submit)
+        binding.accountToBakeFrom.text =
+            (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n")
+                .plus(viewModel.bakerDelegationData.account?.address ?: "")
         binding.estimatedTransactionFee.visibility = View.VISIBLE
 
         when (viewModel.bakerDelegationData.type) {
             REGISTER_BAKER -> {
                 updateViewsRegisterBaker()
             }
+
             UPDATE_BAKER_KEYS -> {
-                viewModel.bakerDelegationData.amount = viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount?.toLong() ?: 0
+                viewModel.bakerDelegationData.amount =
+                    viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount?.toLong() ?: 0
                 updateViewsUpdateBakerKeys()
             }
+
             UPDATE_BAKER_POOL -> {
                 updateViewsUpdateBakerPool()
             }
+
             UPDATE_BAKER_STAKE -> {
                 updateViewsUpdateBakerStake()
             }
+
             REMOVE_BAKER -> {
                 updateViewsRemoveBaker()
             }
@@ -106,7 +117,8 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
     private fun updateViewsRegisterBaker() {
         setActionBarTitle(R.string.baker_registration_confirmation_title)
         binding.gracePeriod.text = getString(R.string.baker_registration_confirmation_explain)
-        binding.delegationTransactionTitle.text = getString(R.string.baker_register_confirmation_receipt_title)
+        binding.delegationTransactionTitle.text =
+            getString(R.string.baker_register_confirmation_receipt_title)
         showAmount()
         showRewards()
         showPoolStatus()
@@ -117,41 +129,52 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
     private fun updateViewsUpdateBakerKeys() {
         setActionBarTitle(R.string.baker_registration_confirmation_update_keys_title)
         binding.gracePeriod.visibility = View.GONE
-        binding.delegationTransactionTitle.text = getString(R.string.baker_registration_confirmation_update_keys_transaction_title)
-        binding.accountToBakeTitle.text = getString(R.string.baker_registration_confirmation_update_affected_account)
+        binding.delegationTransactionTitle.text =
+            getString(R.string.baker_registration_confirmation_update_keys_transaction_title)
+        binding.accountToBakeTitle.text =
+            getString(R.string.baker_registration_confirmation_update_affected_account)
         showKeys()
     }
 
     private fun updateViewsUpdateBakerPool() {
         setActionBarTitle(R.string.baker_registration_confirmation_update_pool_title)
-        binding.delegationTransactionTitle.text = getString(R.string.baker_registration_confirmation_update_pool_transaction_title)
-        binding.accountToBakeTitle.text = getString(R.string.baker_registration_confirmation_update_affected_account)
+        binding.delegationTransactionTitle.text =
+            getString(R.string.baker_registration_confirmation_update_pool_transaction_title)
+        binding.accountToBakeTitle.text =
+            getString(R.string.baker_registration_confirmation_update_affected_account)
         showPoolStatus()
         showMetaUrl()
     }
 
     private fun updateViewsUpdateBakerStake() {
         setActionBarTitle(R.string.baker_registration_confirmation_update_stake_title)
-        if (viewModel.isUpdateDecreaseAmount()) binding.gracePeriod.text = getString(R.string.baker_registration_confirmation_update_stake_update_decrease_explain)
+        if (viewModel.isUpdateDecreaseAmount()) binding.gracePeriod.text =
+            getString(R.string.baker_registration_confirmation_update_stake_update_decrease_explain)
         else binding.gracePeriod.visibility = View.GONE
-        binding.delegationTransactionTitle.text = getString(R.string.baker_registration_confirmation_update_stake_transaction_title)
-        binding.accountToBakeTitle.text = getString(R.string.baker_registration_confirmation_update_stake_update)
+        binding.delegationTransactionTitle.text =
+            getString(R.string.baker_registration_confirmation_update_stake_transaction_title)
+        binding.accountToBakeTitle.text =
+            getString(R.string.baker_registration_confirmation_update_stake_update)
         showAmount()
         showRewards()
     }
 
     private fun updateViewsRemoveBaker() {
         setActionBarTitle(R.string.baker_registration_confirmation_remove_title)
-        binding.gracePeriod.text = getString(R.string.baker_registration_confirmation_remove_are_you_sure)
-        binding.delegationTransactionTitle.text = getString(R.string.baker_registration_confirmation_remove_transaction)
-        binding.accountToBakeTitle.text = getString(R.string.baker_registration_confirmation_remove_account_to_stop)
+        binding.gracePeriod.text =
+            getString(R.string.baker_registration_confirmation_remove_are_you_sure)
+        binding.delegationTransactionTitle.text =
+            getString(R.string.baker_registration_confirmation_remove_transaction)
+        binding.accountToBakeTitle.text =
+            getString(R.string.baker_registration_confirmation_remove_account_to_stop)
     }
 
     private fun showAmount() {
         if (viewModel.stakedAmountHasChanged()) {
             binding.delegationAmountConfirmationTitle.visibility = View.VISIBLE
             binding.bakerAmountConfirmation.visibility = View.VISIBLE
-            binding.bakerAmountConfirmation.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
+            binding.bakerAmountConfirmation.text =
+                CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
         }
     }
 
@@ -159,7 +182,10 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
         if (viewModel.restakeHasChanged()) {
             binding.rewardsWillBeTitle.visibility = View.VISIBLE
             binding.rewardsWillBe.visibility = View.VISIBLE
-            binding.rewardsWillBe.text = if (viewModel.bakerDelegationData.restake) getString(R.string.baker_register_confirmation_receipt_added_to_delegation_amount) else getString(R.string.baker_register_confirmation_receipt_at_disposal)
+            binding.rewardsWillBe.text =
+                if (viewModel.bakerDelegationData.restake) getString(R.string.baker_register_confirmation_receipt_added_to_delegation_amount) else getString(
+                    R.string.baker_register_confirmation_receipt_at_disposal
+                )
         }
     }
 
@@ -167,7 +193,10 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
         if (viewModel.openStatusHasChanged()) {
             binding.poolStatusTitle.visibility = View.VISIBLE
             binding.poolStatus.visibility = View.VISIBLE
-            binding.poolStatus.text = if (viewModel.isOpenBaker()) getString(R.string.baker_register_confirmation_receipt_pool_status_open) else getString(R.string.baker_register_confirmation_receipt_pool_status_closed)
+            binding.poolStatus.text =
+                if (viewModel.isOpenBaker()) getString(R.string.baker_register_confirmation_receipt_pool_status_open) else getString(
+                    R.string.baker_register_confirmation_receipt_pool_status_closed
+                )
         }
     }
 
@@ -179,16 +208,21 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
         binding.aggregationVerifyKeyTitle.visibility = View.VISIBLE
         binding.aggregationVerifyKey.visibility = View.VISIBLE
         binding.electionVerifyKey.text = viewModel.bakerDelegationData.bakerKeys?.electionVerifyKey
-        binding.signatureVerifyKey.text = viewModel.bakerDelegationData.bakerKeys?.signatureVerifyKey
-        binding.aggregationVerifyKey.text = viewModel.bakerDelegationData.bakerKeys?.aggregationVerifyKey
+        binding.signatureVerifyKey.text =
+            viewModel.bakerDelegationData.bakerKeys?.signatureVerifyKey
+        binding.aggregationVerifyKey.text =
+            viewModel.bakerDelegationData.bakerKeys?.aggregationVerifyKey
     }
 
     private fun showMetaUrl() {
         if (viewModel.metadataUrlHasChanged()) {
             binding.metaDataUrlTitle.visibility = View.VISIBLE
             binding.metaDataUrl.visibility = View.VISIBLE
-            if ((viewModel.bakerDelegationData.metadataUrl?.length ?: 0) > 0) binding.metaDataUrl.text = viewModel.bakerDelegationData.metadataUrl
-            else binding.metaDataUrl.text = getString(R.string.baker_update_pool_settings_url_removed)
+            if ((viewModel.bakerDelegationData.metadataUrl?.length
+                    ?: 0) > 0
+            ) binding.metaDataUrl.text = viewModel.bakerDelegationData.metadataUrl
+            else binding.metaDataUrl.text =
+                getString(R.string.baker_update_pool_settings_url_removed)
         }
     }
 
@@ -208,7 +242,8 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
         binding.gracePeriod.visibility = View.GONE
         binding.includeTransactionSubmittedHeader.transactionSubmitted.visibility = View.VISIBLE
         viewModel.bakerDelegationData.submissionId?.let {
-            binding.includeTransactionSubmittedNo.transactionSubmittedDivider.visibility = View.VISIBLE
+            binding.includeTransactionSubmittedNo.transactionSubmittedDivider.visibility =
+                View.VISIBLE
             binding.includeTransactionSubmittedNo.transactionSubmittedId.visibility = View.VISIBLE
             binding.includeTransactionSubmittedNo.transactionSubmittedId.text = it
         }
@@ -220,20 +255,38 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
 
         var noticeMessage = getString(R.string.baker_notice_message)
 
-        if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount ?: 0) < (viewModel.bakerDelegationData.amount ?: 0)) {
+        if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount
+                ?: 0) < (viewModel.bakerDelegationData.amount ?: 0)
+        ) {
             noticeMessage = getString(R.string.baker_notice_message_update_increase)
-        }  else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount ?: 0) > (viewModel.bakerDelegationData.amount ?: 0)) {
-            val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0)
-            noticeMessage = resources.getQuantityString(R.plurals.baker_notice_message_update_decrease, gracePeriod, gracePeriod)
-        } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount ?: 0) == (viewModel.bakerDelegationData.amount ?: 0)) {
+        } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount
+                ?: 0) > (viewModel.bakerDelegationData.amount ?: 0)
+        ) {
+            val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(
+                viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0
+            )
+            noticeMessage = resources.getQuantityString(
+                R.plurals.baker_notice_message_update_decrease,
+                gracePeriod,
+                gracePeriod
+            )
+        } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount
+                ?: 0) == (viewModel.bakerDelegationData.amount ?: 0)
+        ) {
             noticeMessage = getString(R.string.baker_notice_message_update_pool)
         } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_POOL) {
             noticeMessage = getString(R.string.baker_notice_message_update_pool)
         } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_KEYS) {
             noticeMessage = getString(R.string.baker_notice_message_update_keys)
         } else if (viewModel.bakerDelegationData.type == REMOVE_BAKER) {
-            val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.bakerDelegationData.chainParameters?.poolOwnerCooldown ?: 0)
-            noticeMessage = resources.getQuantityString(R.plurals.baker_notice_message_remove, gracePeriod, gracePeriod)
+            val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(
+                viewModel.bakerDelegationData.chainParameters?.poolOwnerCooldown ?: 0
+            )
+            noticeMessage = resources.getQuantityString(
+                R.plurals.baker_notice_message_remove,
+                gracePeriod,
+                gracePeriod
+            )
         }
 
         builder.setMessage(noticeMessage)
@@ -249,7 +302,12 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.delegation_register_delegation_failed_title)
         val messageFromWalletProxy = getString(value)
-        builder.setMessage(getString(R.string.baker_register_transaction_failed, messageFromWalletProxy))
+        builder.setMessage(
+            getString(
+                R.string.baker_register_transaction_failed,
+                messageFromWalletProxy
+            )
+        )
         builder.setPositiveButton(getString(R.string.delegation_register_delegation_failed_try_again)) { dialog, _ ->
             dialog.dismiss()
             onContinueClicked()

@@ -19,7 +19,6 @@ import org.matomo.sdk.extra.MatomoApplication
 class App : MatomoApplication() {
 
     companion object {
-        //todo[SK] remove this, leaking context, use DI
         lateinit var appContext: Context
         lateinit var appCore: AppCore
     }
@@ -28,13 +27,13 @@ class App : MatomoApplication() {
         return TrackerBuilder.createDefault(
             "https://concordium.matomo.cloud/matomo.php",
             5
-        )//todo[SK] move to config
+        )
     }
 
     override fun onCreate() {
         super.onCreate()
 
-        Log.d("App starting - setting Log silent if release")//todo[SK] remove. all logs should be cleared before release.
+        Log.d("App starting - setting Log silent if release")
         Log.setSilent(!BuildConfig.DEBUG)
         Log.d("Log is not silent")
 
