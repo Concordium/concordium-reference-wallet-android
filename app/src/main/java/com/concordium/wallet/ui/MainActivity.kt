@@ -33,6 +33,7 @@ import com.walletconnect.util.Empty
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import org.koin.android.ext.android.getKoin
 import org.matomo.sdk.extra.MatomoApplication
 
 class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDelegateImpl() {
@@ -212,6 +213,15 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
             newAccount?.let {
             }
         }
+
+        viewModel.showTermsAndConditions.observe(this){shouldShowTermsAndConditions->
+            if(shouldShowTermsAndConditions){
+                viewModel.onTermsAndConditionsOpen()
+                startActivity(Intent(this, IntroTermsActivity::class.java))
+            }
+        }
+        viewModel.onboardingRepository = getKoin().get()
+        viewModel.checkTermsAndConditions()
     }
 
     private fun initializeViews() {

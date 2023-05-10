@@ -25,10 +25,14 @@ class TermsAndConditionsViewModel(
                 onboardingRepository.getLocalAcceptedTermsAndConditionsVersion()
             onboardingRepository.getRemoteAcceptedTermsAndConditionsVersion().onSuccess { result ->
                 _state.update {
-                    if (lastAcceptedVersion.isNullOrEmpty()) {
-                        TermsAndConditionsState.InitialTerms(result)
-                    } else {
-                        TermsAndConditionsState.UpdateTerms(result)
+                    when {
+                        lastAcceptedVersion.isNullOrEmpty() ->
+                            TermsAndConditionsState.InitialTerms(result)
+
+                        result.version != lastAcceptedVersion ->
+                            TermsAndConditionsState.UpdateTerms(result)
+
+                        else -> TermsAndConditionsState.NavigateUpdateForward
                     }
                 }
             }.onFailure { error ->

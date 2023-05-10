@@ -7,10 +7,12 @@ import android.view.View
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentTermsAndConditionsBinding
+import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseBindingFragment
-import com.concordium.wallet.ui.intro.introstart.IntroTermsActivity
+import com.concordium.wallet.ui.intro.introstart.IntroStartActivity
 import com.google.android.material.snackbar.Snackbar
 import com.walletconnect.util.Empty
 import kotlinx.coroutines.launch
@@ -60,13 +62,8 @@ class TermsAndConditionsFragment :
 
                         is TermsAndConditionsState.InitialTerms -> updateInitialTermsBinding()
                         is TermsAndConditionsState.UpdateTerms -> updateUpdateTermsBinding()
-                        TermsAndConditionsState.NavigateOnboardingForward -> {
-                            startActivity(Intent(requireContext(), IntroTermsActivity::class.java))
-                        }
-
-                        TermsAndConditionsState.NavigateUpdateForward -> {
-                            //todo[SK] go back to wallet.
-                        }
+                        TermsAndConditionsState.NavigateUpdateForward,
+                        TermsAndConditionsState.NavigateOnboardingForward -> gotoStart()
                     }
                 }
             }
@@ -101,5 +98,15 @@ class TermsAndConditionsFragment :
             getString(R.string.unexpected_error),
             Snackbar.LENGTH_LONG
         ).show()
+    }
+
+    private fun gotoStart() {
+        App.appCore.session.setTermsHashed(App.appContext.getString(R.string.terms_text).hashCode())
+        requireActivity().finish()
+        val intent = if (App.appCore.session.hasSetupPassword) Intent(
+            requireContext(),
+            AuthLoginActivity::class.java
+        ) else Intent(requireContext(), IntroStartActivity::class.java)
+        startActivity(intent)
     }
 }

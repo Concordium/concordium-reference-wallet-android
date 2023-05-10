@@ -9,7 +9,9 @@ import com.concordium.wallet.App
 import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.onboarding.data.OnboardingRepository
 import com.concordium.wallet.ui.common.identity.IdentityUpdater
+import kotlinx.coroutines.launch
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
     enum class State {
@@ -34,8 +36,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val stateLiveData: LiveData<State>
         get() = _stateLiveData
 
+    private val _showTermsAndConditions = MutableLiveData<Boolean>(false)
+    val showTermsAndConditions: LiveData<Boolean>
+        get() = _showTermsAndConditions
+    lateinit var onboardingRepository: OnboardingRepository
+
     init {
-        identityRepository = IdentityRepository(WalletDatabase.getDatabase(application).identityDao())
+        identityRepository =
+            IdentityRepository(WalletDatabase.getDatabase(application).identityDao())
     }
 
     fun initialize() {
@@ -74,5 +82,21 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun stopIdentityUpdate() {
         identityUpdater.stop()
+    }
+
+    fun checkTermsAndConditions() {
+        viewModelScope.launch {
+            val localVersion = onboardingRepository.getLocalAcceptedTermsAndConditionsVersion()
+            onboardingRepository.getRemoteAcceptedTermsAndConditionsVersion()
+                .onSuccess { result ->
+                    if (result.version != localVersion) {
+                        _showTermsAndConditions.value = true
+                    }
+                }
+        }
+    }
+
+    fun onTermsAndConditionsOpen() {
+        _showTermsAndConditions.value = false
     }
 }
