@@ -209,7 +209,7 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
             newAccount?.let {
             }
         }
-        viewModel.showTermsAndConditions.observe(this) { shouldShowTermsAndConditions->
+        viewModel.showTermsAndConditions.observe(this) { shouldShowTermsAndConditions ->
             if (shouldShowTermsAndConditions) {
                 viewModel.onTermsAndConditionsOpen()
                 startActivity(Intent(this, IntroTermsActivity::class.java))
