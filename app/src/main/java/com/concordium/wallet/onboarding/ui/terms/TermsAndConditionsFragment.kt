@@ -19,9 +19,6 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import java.util.regex.Pattern
 
-internal const val TERMS_AND_CONDITIONS_WEB_LINK =
-    "https://developer.concordium.software/en/mainnet/net/resources/terms-and-conditions.html"
-
 class TermsAndConditionsFragment :
     BaseBindingFragment<FragmentTermsAndConditionsBinding>() {
     private val viewModel by activityViewModel<TermsAndConditionsViewModel>()
@@ -39,13 +36,6 @@ class TermsAndConditionsFragment :
             confirmButton.setOnClickListener {
                 viewModel.onTermsAccepted()
             }
-
-            Linkify.addLinks(
-                approveTermsText,
-                Pattern.compile(getString(R.string.terms_and_conditions_approve_pattern)),
-                String.Empty,
-                null
-            ) { _, _ -> TERMS_AND_CONDITIONS_WEB_LINK }
         }
     }
 
@@ -60,8 +50,8 @@ class TermsAndConditionsFragment :
                         TermsAndConditionsState.Loading ->
                             viewDataBinding.loadingContainer.visibility = View.VISIBLE
 
-                        is TermsAndConditionsState.InitialTerms -> updateInitialTermsBinding()
-                        is TermsAndConditionsState.UpdateTerms -> updateUpdateTermsBinding()
+                        is TermsAndConditionsState.InitialTerms -> updateInitialTermsBinding(state)
+                        is TermsAndConditionsState.UpdateTerms -> updateUpdateTermsBinding(state)
                         TermsAndConditionsState.NavigateUpdateForward,
                         TermsAndConditionsState.NavigateOnboardingForward -> gotoStart()
                     }
@@ -70,7 +60,7 @@ class TermsAndConditionsFragment :
         }
     }
 
-    private fun updateInitialTermsBinding() {
+    private fun updateInitialTermsBinding(state: TermsAndConditionsState.InitialTerms) {
         viewDataBinding.apply {
             loadingContainer.visibility = View.GONE
             viewDataBinding.approveTermsSwitch.isEnabled = true
@@ -78,10 +68,17 @@ class TermsAndConditionsFragment :
             padlockShieldImg.setImageResource(R.drawable.ic_padlock_shield)
             titleText.text = getString(R.string.terms_and_conditions_title)
             descriptionText.text = getString(R.string.terms_and_conditions_description)
+
+            Linkify.addLinks(
+                approveTermsText,
+                Pattern.compile(getString(R.string.terms_and_conditions_approve_pattern)),
+                String.Empty,
+                null
+            ) { _, _ -> state.terms.url }
         }
     }
 
-    private fun updateUpdateTermsBinding() {
+    private fun updateUpdateTermsBinding(state: TermsAndConditionsState.UpdateTerms) {
         viewDataBinding.apply {
             loadingContainer.visibility = View.GONE
             viewDataBinding.approveTermsSwitch.isEnabled = true
@@ -89,6 +86,13 @@ class TermsAndConditionsFragment :
             padlockShieldImg.setImageResource(R.drawable.ic_terms_and_conditions)
             titleText.text = getString(R.string.terms_and_conditions_title_update)
             descriptionText.text = getString(R.string.terms_and_conditions_description_update)
+
+            Linkify.addLinks(
+                approveTermsText,
+                Pattern.compile(getString(R.string.terms_and_conditions_approve_pattern)),
+                String.Empty,
+                null
+            ) { _, _ -> state.newestTerms.url }
         }
     }
 

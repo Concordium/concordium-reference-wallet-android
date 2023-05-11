@@ -13,18 +13,16 @@ class BackendObserver<T> : Observer<BackendResource<T>> {
 
     override fun onChanged(backendResource: BackendResource<T>) {
         onDone()
-        if (backendResource != null) {
-            val exception = backendResource.exception
-            if (exception != null) {
-                onException(exception)
-            } else {
-                val data = backendResource.data
-                if (data != null) {
-                    onSuccess(data)
-                }
+        val exception = backendResource.exception
+        if (exception != null) {
+            onException(exception)
+        } else {
+            val data = backendResource.data
+            if (data != null) {
+                onSuccess(data)
             }
-            return
         }
+        return
         //custom exception
         onException(Exception("No backend resource set"))
     }
