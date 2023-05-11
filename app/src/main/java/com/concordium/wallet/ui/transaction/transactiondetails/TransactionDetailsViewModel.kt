@@ -101,11 +101,11 @@ class TransactionDetailsViewModel(application: Application) : AndroidViewModel(a
     }
 
     fun setIsShieldedAccount(shielded: Boolean) {
-        isShieldedAccount  = shielded
+        isShieldedAccount = shielded
     }
 
     fun addressLookup(address: String?, defaultTitle: String?): Any? {
-        if(address == null){
+        if (address == null) {
             return defaultTitle
         }
         return runBlocking {

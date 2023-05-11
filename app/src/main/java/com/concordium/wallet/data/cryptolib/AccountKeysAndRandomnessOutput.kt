@@ -5,9 +5,9 @@ import com.concordium.wallet.data.model.RawJson
 import com.google.gson.annotations.JsonAdapter
 import java.io.Serializable
 
-data class AccountKeysAndRandomnessOutput (
+data class AccountKeysAndRandomnessOutput(
     val signKey: String,
     val verifyKey: String,
     @JsonAdapter(RawJsonTypeAdapter::class)
     val attributeCommitmentRandomness: RawJson
-): Serializable
+) : Serializable

@@ -84,7 +84,8 @@ data class Account(
     var accountIndex: Int? = null,
 
     @ColumnInfo(name = "cred_number")
-    var credNumber: Int) : Serializable {
+    var credNumber: Int
+) : Serializable {
 
     companion object {
         fun getDefaultName(address: String): String {
@@ -105,7 +106,9 @@ data class Account(
         if (credentialValueJsonObject["type"]?.asString == "initial") {
             return true
         }
-        if (credentialValueJsonObject.getAsJsonObject("credential")?.get("type")?.asString == "initial")
+        if (credentialValueJsonObject.getAsJsonObject("credential")
+                ?.get("type")?.asString == "initial"
+        )
             return true
         return false
     }
@@ -127,7 +130,8 @@ data class Account(
     }
 
     fun getAtDisposalWithoutStakedOrScheduled(totalBalance: Long): Long {
-        val stakedAmount: Long = accountDelegation?.stakedAmount?.toLong() ?: accountBaker?.stakedAmount?.toLong() ?: 0
+        val stakedAmount: Long =
+            accountDelegation?.stakedAmount?.toLong() ?: accountBaker?.stakedAmount?.toLong() ?: 0
         val scheduledTotal: Long = finalizedAccountReleaseSchedule?.total?.toLong() ?: 0
         val subtract = if (stakedAmount in 1..scheduledTotal)
             scheduledTotal

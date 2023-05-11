@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.databinding.ItemRecipientBinding
-import java.util.*
+import java.util.Locale
 
 class RecipientAdapter :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -16,12 +16,14 @@ class RecipientAdapter :
     private var allData: List<Recipient> = emptyList()
     private var currentFilter = ""
 
-    inner class ItemViewHolder(val binding: ItemRecipientBinding): RecyclerView.ViewHolder(binding.root)
+    inner class ItemViewHolder(val binding: ItemRecipientBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
     override fun getItemCount() = data.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val binding = ItemRecipientBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemRecipientBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ItemViewHolder(binding)
     }
 
@@ -73,7 +75,8 @@ class RecipientAdapter :
 
     private fun getFilteredList(allData: List<Recipient>, filterString: String): List<Recipient> {
         return allData.filter { recipient ->
-            recipient.name.lowercase(Locale.getDefault()).contains(filterString.lowercase(Locale.getDefault()))
+            recipient.name.lowercase(Locale.getDefault())
+                .contains(filterString.lowercase(Locale.getDefault()))
         }
     }
 

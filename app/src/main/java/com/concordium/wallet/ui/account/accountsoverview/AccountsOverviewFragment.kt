@@ -32,7 +32,8 @@ import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewAc
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 
-class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by IdentityStatusDelegateImpl(), EarnDelegate by EarnDelegateImpl() {
+class AccountsOverviewFragment : BaseFragment(),
+    IdentityStatusDelegate by IdentityStatusDelegateImpl(), EarnDelegate by EarnDelegateImpl() {
     private var _binding: FragmentAccountsOverviewBinding? = null
     private val binding get() = _binding!!
 
@@ -175,15 +176,32 @@ class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ident
             checkAppSettings(appSettings)
         }
         viewModel.localTransfersLoaded.observe(this) { account ->
-            activity?.let { gotoEarn(it, account, viewModel.hasPendingDelegationTransactions, viewModel.hasPendingBakingTransactions) }
+            activity?.let {
+                gotoEarn(
+                    it,
+                    account,
+                    viewModel.hasPendingDelegationTransactions,
+                    viewModel.hasPendingBakingTransactions
+                )
+            }
         }
     }
 
     private fun checkAppSettings(appSettings: AppSettings?) {
         appSettings?.let {
             when (appSettings.status) {
-                AppSettings.APP_VERSION_STATUS_WARNING -> it.url?.let { url -> showAppUpdateWarning(url) }
-                AppSettings.APP_VERSION_STATUS_NEEDS_UPDATE -> it.url?.let { url -> showAppUpdateNeedsUpdate(url) }
+                AppSettings.APP_VERSION_STATUS_WARNING -> it.url?.let { url ->
+                    showAppUpdateWarning(
+                        url
+                    )
+                }
+
+                AppSettings.APP_VERSION_STATUS_NEEDS_UPDATE -> it.url?.let { url ->
+                    showAppUpdateNeedsUpdate(
+                        url
+                    )
+                }
+
                 else -> {}
             }
         }
@@ -233,7 +251,8 @@ class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ident
         if (App.appCore.closingPoolsChecked)
             return
 
-        App.appCore.closingPoolsChecked = true // avoid calling this more than once for each app cold launch
+        App.appCore.closingPoolsChecked =
+            true // avoid calling this more than once for each app cold launch
 
         val poolIds = accountList.mapNotNull { accountWithIdentity ->
             accountWithIdentity.account.accountDelegation?.delegationTarget?.bakerId?.toString()
@@ -256,8 +275,11 @@ class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ident
                 if (affectedAccounts.isNotEmpty()) {
                     val builder = AlertDialog.Builder(context)
                     builder.setTitle(R.string.accounts_overview_closing_pools_notice_title)
-                    builder.setMessage(getString(R.string.accounts_overview_closing_pools_notice_message).plus(
-                        affectedAccounts))
+                    builder.setMessage(
+                        getString(R.string.accounts_overview_closing_pools_notice_message).plus(
+                            affectedAccounts
+                        )
+                    )
                     builder.setPositiveButton(getString(R.string.accounts_overview_closing_pools_notice_ok)) { dialog, _ ->
                         dialog.dismiss()
                     }
@@ -272,17 +294,29 @@ class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ident
     private fun checkForUnencrypted(accountList: List<AccountWithIdentity>) {
         accountList.forEach {
 
-            val hasUnencryptedTransactions = it.account.finalizedEncryptedBalance?.incomingAmounts?.isNotEmpty()
-            if((hasUnencryptedTransactions != null && hasUnencryptedTransactions == true)
+            val hasUnencryptedTransactions =
+                it.account.finalizedEncryptedBalance?.incomingAmounts?.isNotEmpty()
+            if ((hasUnencryptedTransactions != null && hasUnencryptedTransactions == true)
                 && it.account.transactionStatus == TransactionStatus.FINALIZED
                 && !App.appCore.session.isShieldedWarningDismissed(it.account.address)
                 && !App.appCore.session.isShieldingEnabled(it.account.address)
-                && encryptedWarningDialog == null){
+                && encryptedWarningDialog == null
+            ) {
 
                 val builder = AlertDialog.Builder(context)
                 builder.setTitle(getString(R.string.account_details_shielded_warning_title))
-                builder.setMessage(getString(R.string.account_details_shielded_warning_text, it.account.name))
-                builder.setNegativeButton(getString(R.string.account_details_shielded_warning_enable, it.account.name)) { _, _ ->
+                builder.setMessage(
+                    getString(
+                        R.string.account_details_shielded_warning_text,
+                        it.account.name
+                    )
+                )
+                builder.setNegativeButton(
+                    getString(
+                        R.string.account_details_shielded_warning_enable,
+                        it.account.name
+                    )
+                ) { _, _ ->
                     startShieldedIntroFlow(it.account)
                     encryptedWarningDialog?.dismiss()
                     encryptedWarningDialog = null
@@ -328,7 +362,7 @@ class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ident
 
         eventListener = object : Preferences.Listener {
             override fun onChange() {
-                if(isInLayout && isVisible && !isDetached){
+                if (isInLayout && isVisible && !isDetached) {
                     updateWarnings()
                 }
             }
@@ -337,12 +371,13 @@ class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ident
         initializeList()
     }
 
-    private fun updateWarnings(){
+    private fun updateWarnings() {
         val identity = viewModel.pendingIdentityForWarningLiveData.value
         if (identity != null && !App.appCore.session.isIdentityPendingWarningAcknowledged(identity.id)) {
             binding.identityPending.visibility = View.VISIBLE
             viewModel.pendingIdentityForWarningLiveData.value
-            binding.identityPendingTv.text = getString(R.string.accounts_overview_identity_pending_warning, identity.name)
+            binding.identityPendingTv.text =
+                getString(R.string.accounts_overview_identity_pending_warning, identity.name)
             binding.identityPendingClose.setOnClickListener {
                 App.appCore.session.setIdentityPendingWarningAcknowledged(identity.id)
                 updateWarnings()
@@ -350,8 +385,7 @@ class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ident
             binding.identityPending.setOnClickListener {
                 startActivity(Intent(activity, IdentitiesOverviewActivity::class.java))
             }
-        }
-        else {
+        } else {
             binding.identityPending.visibility = View.GONE
         }
     }
@@ -455,9 +489,11 @@ class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ident
     private fun showTotalBalance(totalBalance: Long) {
         binding.totalBalanceTextview.text = CurrencyUtil.formatGTU(totalBalance)
     }
+
     private fun showDisposalBalance(atDisposal: Long) {
         binding.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(atDisposal, true)
     }
+
     private fun showStakedBalance(totalBalance: Long) {
         binding.accountsOverviewTotalDetailsStaked.text = CurrencyUtil.formatGTU(totalBalance, true)
     }

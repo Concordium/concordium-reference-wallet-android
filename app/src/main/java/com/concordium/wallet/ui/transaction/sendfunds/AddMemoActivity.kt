@@ -23,7 +23,11 @@ class AddMemoActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAddMemoBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.add_memo_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.add_memo_title
+        )
 
         val memo = intent.getStringExtra(EXTRA_MEMO)
         binding.memoEdittext.setText(memo)
@@ -37,9 +41,13 @@ class AddMemoActivity : BaseActivity() {
                 change = bytes.size <= CBORUtil.MAX_BYTES
                 if (!change) {
                     editable.replace(0, editable.length, previousText)
-                    binding.memoEdittext.startAnimation(AnimationUtils.loadAnimation(this@AddMemoActivity, R.anim.anim_shake))
-                }
-                else{
+                    binding.memoEdittext.startAnimation(
+                        AnimationUtils.loadAnimation(
+                            this@AddMemoActivity,
+                            R.anim.anim_shake
+                        )
+                    )
+                } else {
                     previousText = editable.toString()
                 }
             }

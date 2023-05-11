@@ -1,8 +1,15 @@
 package com.concordium.wallet.data.util
 
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.RemoteTransaction
+import com.concordium.wallet.data.model.Transaction
+import com.concordium.wallet.data.model.TransactionDetails
+import com.concordium.wallet.data.model.TransactionOrigin
+import com.concordium.wallet.data.model.TransactionOriginType
+import com.concordium.wallet.data.model.TransactionOutcome
+import com.concordium.wallet.data.model.TransactionSource
+import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Transfer
-import java.util.*
+import java.util.Date
 
 fun RemoteTransaction.toTransaction() = Transaction(
     source = TransactionSource.Remote,
@@ -45,6 +52,23 @@ fun Transfer.toTransaction() = Transaction(
     toAddressTitle = "",
     submissionId = submissionId,
     origin = TransactionOrigin(TransactionOriginType.Self, null),
-    details = TransactionDetails(transactionType, "", TransactionOutcome.UNKNOWN, "", null, null,null,null,null, memo,null, null,null,null, null, null),
+    details = TransactionDetails(
+        transactionType,
+        "",
+        TransactionOutcome.UNKNOWN,
+        "",
+        null,
+        null,
+        null,
+        null,
+        null,
+        memo,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+    ),
     encrypted = null
 )

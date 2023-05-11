@@ -30,11 +30,13 @@ abstract class BaseAccountActivity : BaseActivity() {
     }
 
     protected fun initializeAuthenticationObservers() {
-        viewModelNewAccount.showAuthenticationLiveData.observe(this, object : EventObserver<Boolean>() {
-            override fun onUnhandledEvent(value: Boolean) {
-                if (value) showAuthentication()
-            }
-        })
+        viewModelNewAccount.showAuthenticationLiveData.observe(
+            this,
+            object : EventObserver<Boolean>() {
+                override fun onUnhandledEvent(value: Boolean) {
+                    if (value) showAuthentication()
+                }
+            })
         viewModelNewAccount.waitingLiveData.observe(this) { waiting ->
             waiting?.let {
                 showWaiting(waiting)
@@ -45,18 +47,22 @@ abstract class BaseAccountActivity : BaseActivity() {
                 showError(value)
             }
         })
-        viewModelNewAccount.gotoAccountCreatedLiveData.observe(this, object : EventObserver<Account>() {
-            override fun onUnhandledEvent(value: Account) {
-                accountCreated(value)
-            }
-        })
-        viewModelNewAccount.gotoFailedLiveData.observe(this, object : EventObserver<Pair<Boolean, BackendError?>>() {
-            override fun onUnhandledEvent(value: Pair<Boolean, BackendError?>) {
-                if (value.first) {
-                    gotoFailed(value.second)
+        viewModelNewAccount.gotoAccountCreatedLiveData.observe(
+            this,
+            object : EventObserver<Account>() {
+                override fun onUnhandledEvent(value: Account) {
+                    accountCreated(value)
                 }
-            }
-        })
+            })
+        viewModelNewAccount.gotoFailedLiveData.observe(
+            this,
+            object : EventObserver<Pair<Boolean, BackendError?>>() {
+                override fun onUnhandledEvent(value: Pair<Boolean, BackendError?>) {
+                    if (value.first) {
+                        gotoFailed(value.second)
+                    }
+                }
+            })
     }
 
     protected abstract fun showWaiting(waiting: Boolean)
@@ -77,6 +83,7 @@ abstract class BaseAccountActivity : BaseActivity() {
             override fun onCorrectPassword(password: String) {
                 viewModelNewAccount.continueWithPassword(password)
             }
+
             override fun onCancelled() {
             }
         })

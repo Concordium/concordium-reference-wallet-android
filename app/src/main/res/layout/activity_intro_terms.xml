@@ -28,8 +28,7 @@
                     android:layout_margin="20dp"
                     android:layout_gravity="center_horizontal"
                     android:textAlignment="center"
-                    android:text="@string/terms_title"
-                    />
+                    android:text="@string/terms_title" />
 
                 <WebView
                     android:id="@+id/info_webview"
@@ -37,8 +36,7 @@
                     android:layout_width="match_parent"
                     android:layout_margin="20dp"
                     android:paddingBottom="100dp"
-                    android:text="@string/terms_text"
-                     />
+                    android:text="@string/terms_text" />
 
                 <Button
                     android:id="@+id/confirm_button"

@@ -35,14 +35,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         get() = _stateLiveData
 
     init {
-        identityRepository = IdentityRepository(WalletDatabase.getDatabase(application).identityDao())
+        identityRepository =
+            IdentityRepository(WalletDatabase.getDatabase(application).identityDao())
     }
 
     fun initialize() {
         try {
             WalletDatabase.getDatabase(getApplication()).openHelper.readableDatabase?.version.toString()
-        }
-        catch(e: Exception){
+        } catch (e: Exception) {
             databaseVersionAllowed = false
         }
     }

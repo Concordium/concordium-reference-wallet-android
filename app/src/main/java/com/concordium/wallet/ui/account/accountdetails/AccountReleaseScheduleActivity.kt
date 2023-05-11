@@ -19,7 +19,8 @@ import com.concordium.wallet.databinding.AccountReleaseScheduleTransactionItemBi
 import com.concordium.wallet.databinding.ActivityAccountReleaseScheduleBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import java.text.DateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 class AccountReleaseScheduleActivity : BaseActivity() {
     private lateinit var binding: ActivityAccountReleaseScheduleBinding
@@ -37,7 +38,11 @@ class AccountReleaseScheduleActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAccountReleaseScheduleBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.account_release_schedule)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.account_release_schedule
+        )
 
         val account = intent.extras!!.getSerializable(EXTRA_ACCOUNT) as Account
         val isShielded = intent.extras!!.getBoolean(EXTRA_SHIELDED)
@@ -89,26 +94,40 @@ class AccountReleaseScheduleActivity : BaseActivity() {
         })
         viewModel.scheduledReleasesLiveData.observe(this, Observer<List<Schedule>> { list ->
 
-            binding.accountReleaseScheduleLockedAmount.text = CurrencyUtil.formatGTU(viewModel.account.finalizedAccountReleaseSchedule?.total?.toLong() ?: 0, true)
+            binding.accountReleaseScheduleLockedAmount.text = CurrencyUtil.formatGTU(
+                viewModel.account.finalizedAccountReleaseSchedule?.total?.toLong() ?: 0, true
+            )
 
             binding.accountReleaseScheduleList.removeAllViews()
-            val dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.getDefault())
+            val dateFormat = DateFormat.getDateTimeInstance(
+                DateFormat.SHORT,
+                DateFormat.SHORT,
+                Locale.getDefault()
+            )
             list.forEach { release ->
                 val view = AccountReleaseScheduleItemBinding.inflate(LayoutInflater.from(this))
                 view.date.text = dateFormat.format(Date(release.timestamp))
 
                 release.transactions.forEach { transaction ->
-                    val viewTransaction = AccountReleaseScheduleTransactionItemBinding.inflate(LayoutInflater.from(this))
-                    viewTransaction.identifier.text = transaction.subSequence(0,8)
+                    val viewTransaction = AccountReleaseScheduleTransactionItemBinding.inflate(
+                        LayoutInflater.from(this)
+                    )
+                    viewTransaction.identifier.text = transaction.subSequence(0, 8)
                     view.identifierContainer.addView(viewTransaction.root)
                     viewTransaction.copy.tag = transaction
                     viewTransaction.copy.setOnClickListener {
-                        val clipboard: ClipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-                        val clip = ClipData.newPlainText(getString(R.string.account_release_schedule_copy_title),
+                        val clipboard: ClipboardManager =
+                            getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                        val clip = ClipData.newPlainText(
+                            getString(R.string.account_release_schedule_copy_title),
                             it.tag.toString()
                         )
                         clipboard.setPrimaryClip(clip)
-                        Toast.makeText(this, getString(R.string.account_release_schedule_copied), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this,
+                            getString(R.string.account_release_schedule_copied),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
 
@@ -119,7 +138,11 @@ class AccountReleaseScheduleActivity : BaseActivity() {
     }
 
     private fun initViews() {
-        setActionBarTitle(binding.toolbarLayout.toolbarSubTitle, viewModel.account.getAccountName(), getString(R.string.account_release_schedule))
+        setActionBarTitle(
+            binding.toolbarLayout.toolbarSubTitle,
+            viewModel.account.getAccountName(),
+            getString(R.string.account_release_schedule)
+        )
         showWaiting(false)
     }
 

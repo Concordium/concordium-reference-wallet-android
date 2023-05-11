@@ -46,8 +46,10 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="wc" />
             </intent-filter>
         </activity>
@@ -55,6 +57,7 @@
             android:name=".ui.walletconnect.WalletConnectService"
             android:enabled="true"
             android:exported="false" />
+
         <activity
             android:name=".ui.common.failed.FailedActivity"
             android:launchMode="singleTop"
@@ -226,6 +229,7 @@
             android:exported="true">
             <intent-filter android:label="schemefilter">
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- Accepts URIs that begin with "concordiumwallet://identity-issuer” -->
@@ -343,7 +347,7 @@
 
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_provider_paths"/>
+                android:resource="@xml/file_provider_paths" />
 
         </provider>
     </application>

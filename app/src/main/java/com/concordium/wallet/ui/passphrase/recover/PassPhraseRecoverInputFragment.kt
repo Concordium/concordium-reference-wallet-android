@@ -17,7 +17,7 @@ import com.concordium.wallet.databinding.FragmentPassPhraseRecoverInputBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.passphrase.common.WordsPickedBaseListAdapter
 import com.concordium.wallet.util.KeyboardUtil
-import java.util.*
+import java.util.Timer
 import kotlin.concurrent.schedule
 
 class PassPhraseRecoverInputFragment : Fragment() {
@@ -34,12 +34,17 @@ class PassPhraseRecoverInputFragment : Fragment() {
         private val WORD_COUNT = Mnemonics.WordCount.COUNT_24.count
 
         @JvmStatic
-        fun newInstance(viewModel: PassPhraseRecoverViewModel) = PassPhraseRecoverInputFragment().apply {
-            _viewModel = viewModel
-        }
+        fun newInstance(viewModel: PassPhraseRecoverViewModel) =
+            PassPhraseRecoverInputFragment().apply {
+                _viewModel = viewModel
+            }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentPassPhraseRecoverInputBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -54,7 +59,8 @@ class PassPhraseRecoverInputFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         (activity as BaseActivity).setActionBarTitle(R.string.pass_phrase_recover_input_title)
-        val inputMethodManager = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputMethodManager =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0)
     }
 
@@ -173,7 +179,13 @@ class PassPhraseRecoverInputFragment : Fragment() {
                 if (listViewScrollState == SCROLL_STATE_TOUCH_SCROLL)
                     listViewHasFocus = true
             }
-            override fun onScroll(view: AbsListView, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
+
+            override fun onScroll(
+                view: AbsListView,
+                firstVisibleItem: Int,
+                visibleItemCount: Int,
+                totalItemCount: Int
+            ) {
                 val changeTo = firstVisibleItem + 2
                 if (changeTo != arrayAdapter.currentPosition && listViewHasFocus) {
                     if (arrayAdapter.currentPosition != changeTo) {
@@ -198,7 +210,11 @@ class PassPhraseRecoverInputFragment : Fragment() {
             snapTimer?.schedule(50) {
                 activity?.runOnUiThread {
                     if (listViewScrollState == SCROLL_STATE_IDLE && listViewHasFocus) {
-                        binding.listView.smoothScrollToPositionFromTop(arrayAdapter.currentPosition - WordsPickedBaseListAdapter.OFFSET, 0, 100)
+                        binding.listView.smoothScrollToPositionFromTop(
+                            arrayAdapter.currentPosition - WordsPickedBaseListAdapter.OFFSET,
+                            0,
+                            100
+                        )
                         setSuggestionsVisible(false)
                         removeSnapTimer()
                     } else {
@@ -230,7 +246,11 @@ class PassPhraseRecoverInputFragment : Fragment() {
 
     private fun moveToCurrent() {
         listViewHasFocus = false
-        binding.listView.smoothScrollToPositionFromTop(arrayAdapter.currentPosition - WordsPickedBaseListAdapter.OFFSET, 0, 50)
+        binding.listView.smoothScrollToPositionFromTop(
+            arrayAdapter.currentPosition - WordsPickedBaseListAdapter.OFFSET,
+            0,
+            50
+        )
         Timer().schedule(100) {
             activity?.runOnUiThread {
                 setSuggestionsVisible(false)

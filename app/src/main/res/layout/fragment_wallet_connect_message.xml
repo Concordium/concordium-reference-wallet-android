@@ -30,17 +30,21 @@
                 android:paddingHorizontal="@dimen/activity_horizontal_margin_double"
                 android:background="@drawable/receipt_background_new"
                 android:orientation="vertical">
+
                 <TextView
                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                     android:layout_width="match_parent"
                     android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
                     android:text="@string/wallet_connect_message_vote" />
+
                 <View style="@style/Divider" />
+
                 <TextView
                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                     android:layout_width="match_parent"
                     android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
                     android:text="@string/wallet_connect_message_content" />
+
                 <TextView
                     android:id="@+id/message_text"
                     style="@style/TextView.Standard.Small"
@@ -56,6 +60,7 @@
                 android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:orientation="horizontal">
+
                 <Button
                     android:id="@+id/reject"
                     style="@style/Button.Standard.Danger"
@@ -63,6 +68,7 @@
                     android:layout_weight="0.5"
                     android:layout_marginEnd="@dimen/activity_horizontal_margin_half"
                     android:text="@string/wallet_connect_message_reject" />
+
                 <Button
                     android:id="@+id/sign"
                     style="@style/Button.Standard"

@@ -46,7 +46,9 @@
                             android:text="@string/delegation_remove_text"
                             android:gravity="center" />
 
-                        <include layout="@layout/transaction_submitted_header" android:id="@+id/include_transaction_submitted_header" />
+                        <include
+                            layout="@layout/transaction_submitted_header"
+                            android:id="@+id/include_transaction_submitted_header" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -54,28 +56,34 @@
                             android:layout_marginTop="@dimen/activity_vertical_margin"
                             android:background="@drawable/receipt_background_new"
                             android:orientation="vertical">
+
                             <TextView
                                 style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="@string/delegation_remove_confirm_title" />
+
                             <View style="@style/Divider" />
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_margin="@dimen/activity_receipt_padding"
                                 android:orientation="vertical">
+
                                 <TextView
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:text="@string/delegation_remove_account" />
+
                                 <TextView
                                     android:id="@+id/account_to_remove_delegate_from"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     tools:text="Main\n\n14f3632ac857400d417a7277f726c43a 8ddf07184f10a429cf0759e985247c33" />
+
                                 <TextView
                                     android:id="@+id/estimated_transaction_fee"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Gray"
@@ -83,7 +91,10 @@
                                     android:layout_height="wrap_content"
                                     tools:text="Estimated transaction fee:\nϾ0.0059" />
                             </LinearLayout>
-                            <include layout="@layout/transaction_submitted_no" android:id="@+id/include_transaction_submitted_no" />
+
+                            <include
+                                layout="@layout/transaction_submitted_no"
+                                android:id="@+id/include_transaction_submitted_no" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -96,11 +107,13 @@
                         android:orientation="horizontal"
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp">
+
                         <Button
                             android:id="@+id/submit_delegation_transaction"
                             style="@style/Button.Standard"
                             android:layout_width="match_parent"
                             android:text="@string/delegation_remove_submit" />
+
                         <Button
                             android:id="@+id/submit_delegation_finish"
                             style="@style/Button.Standard"
@@ -112,7 +125,10 @@
                 </LinearLayout>
             </ScrollView>
 
-            <include layout="@layout/progress" android:id="@+id/include_progress" tools:visibility="gone"/>
+            <include
+                layout="@layout/progress"
+                android:id="@+id/include_progress"
+                tools:visibility="gone" />
 
         </RelativeLayout>
     </RelativeLayout>

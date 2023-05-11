@@ -42,7 +42,11 @@ class ButtonsSlider : CardView {
         init(attrs)
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
         init(attrs)
     }
 
@@ -51,7 +55,8 @@ class ButtonsSlider : CardView {
         afterMeasured {
             val widthWithoutDividers = width - ((numberOfVisibleButtons + 1) * dividerWidth)
             widthEachActionButton = widthWithoutDividers / (numberOfVisibleButtons + 2)
-            widthLeftRightButton = widthEachActionButton + ((widthWithoutDividers % (numberOfVisibleButtons + 2)) / 2)
+            widthLeftRightButton =
+                widthEachActionButton + ((widthWithoutDividers % (numberOfVisibleButtons + 2)) / 2)
             addCardContentContainer()
             addButtonsContainer()
             addButtonLeft()
@@ -78,12 +83,16 @@ class ButtonsSlider : CardView {
             return
         currentPosition = 0
         val width = (buttons.size * widthEachActionButton) + ((buttons.size - 1) * dividerWidth)
-        val layoutParams = RelativeLayout.LayoutParams(width.roundUpToInt(), widthEachActionButton.toInt())
+        val layoutParams =
+            RelativeLayout.LayoutParams(width.roundUpToInt(), widthEachActionButton.toInt())
         layoutParams.marginStart = (widthLeftRightButton + dividerWidth).roundUpToInt()
         layoutParams.marginEnd = (widthLeftRightButton + dividerWidth).roundUpToInt()
         buttonsContainer.layoutParams = layoutParams
         for ((i, button) in buttons.withIndex()) {
-            button.layoutParams = LayoutParams(widthEachActionButton.roundUpToInt(), widthEachActionButton.roundUpToInt())
+            button.layoutParams = LayoutParams(
+                widthEachActionButton.roundUpToInt(),
+                widthEachActionButton.roundUpToInt()
+            )
             buttonsContainer.addView(button)
             if (i < buttons.size - 1)
                 addDivider(buttonsContainer)
@@ -103,8 +112,10 @@ class ButtonsSlider : CardView {
 
     private fun addCardContentContainer() {
         cardContentContainer = RelativeLayout(context)
-        cardContentContainer.layoutParams = LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT)
+        cardContentContainer.layoutParams = LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         cardContentContainer.setBackgroundColor(Color.TRANSPARENT)
         addView(cardContentContainer)
     }
@@ -124,12 +135,18 @@ class ButtonsSlider : CardView {
     }
 
     private fun addButtonLeft() {
-        buttonLeft = AppCompatImageView(ContextThemeWrapper(context, R.style.ButtonsSliderButtonArrow))
+        buttonLeft =
+            AppCompatImageView(ContextThemeWrapper(context, R.style.ButtonsSliderButtonArrow))
         val buttonContainerLayout = LinearLayout(context)
-        buttonContainerLayout.layoutParams = LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT)
+        buttonContainerLayout.layoutParams = LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         buttonContainerLayout.orientation = LinearLayout.HORIZONTAL
-        buttonLeft.layoutParams = ViewGroup.LayoutParams(widthLeftRightButton.roundUpToInt(), widthEachActionButton.toInt())
+        buttonLeft.layoutParams = ViewGroup.LayoutParams(
+            widthLeftRightButton.roundUpToInt(),
+            widthEachActionButton.toInt()
+        )
         buttonLeft.setImageResource(R.drawable.ic_button_back)
         buttonLeft.setPadding(convertDpToPixel(16f))
         buttonLeft.setOnClickListener {
@@ -148,9 +165,9 @@ class ButtonsSlider : CardView {
                     buttonsContainer.layoutParams = buttonsContainerLayout
                 }
                 animator.addListener(object : Animator.AnimatorListener {
-                    override fun onAnimationStart(animation: Animator) { }
-                    override fun onAnimationCancel(animation: Animator) { }
-                    override fun onAnimationRepeat(animation: Animator) { }
+                    override fun onAnimationStart(animation: Animator) {}
+                    override fun onAnimationCancel(animation: Animator) {}
+                    override fun onAnimationRepeat(animation: Animator) {}
                     override fun onAnimationEnd(animation: Animator) {
                         buttonRight.isEnabled = true
                     }
@@ -165,13 +182,17 @@ class ButtonsSlider : CardView {
 
     private fun addButtonRight() {
         val buttonContainerLayout = LinearLayout(context)
-        val layoutParamsButtonContainer = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT)
+        val layoutParamsButtonContainer = RelativeLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         layoutParamsButtonContainer.addRule(ALIGN_PARENT_END, TRUE)
         buttonContainerLayout.layoutParams = layoutParamsButtonContainer
         buttonContainerLayout.orientation = LinearLayout.HORIZONTAL
-        buttonRight = AppCompatImageView(ContextThemeWrapper(context, R.style.ButtonsSliderButtonArrow))
-        val layoutParams = LayoutParams(widthLeftRightButton.roundUpToInt(), widthEachActionButton.toInt())
+        buttonRight =
+            AppCompatImageView(ContextThemeWrapper(context, R.style.ButtonsSliderButtonArrow))
+        val layoutParams =
+            LayoutParams(widthLeftRightButton.roundUpToInt(), widthEachActionButton.toInt())
         buttonRight.layoutParams = layoutParams
         buttonRight.setImageResource(R.drawable.ic_button_next)
         buttonRight.setPadding(convertDpToPixel(16f))
@@ -191,9 +212,9 @@ class ButtonsSlider : CardView {
                     buttonsContainer.layoutParams = buttonsContainerLayout
                 }
                 animator.addListener(object : Animator.AnimatorListener {
-                    override fun onAnimationStart(animation: Animator) { }
-                    override fun onAnimationCancel(animation: Animator) { }
-                    override fun onAnimationRepeat(animation: Animator) { }
+                    override fun onAnimationStart(animation: Animator) {}
+                    override fun onAnimationCancel(animation: Animator) {}
+                    override fun onAnimationRepeat(animation: Animator) {}
                     override fun onAnimationEnd(animation: Animator) {
                         buttonLeft.isEnabled = true
                     }

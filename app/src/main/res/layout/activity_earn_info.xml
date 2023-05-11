@@ -23,30 +23,37 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_layout"
         app:layout_constraintBottom_toTopOf="@+id/nothing_to_recover_buttons">
+
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
             android:orientation="vertical">
+
             <TextView
                 style="@style/TextView.Standard"
                 android:text="@string/earn_subtitle"
                 android:layout_marginTop="@dimen/activity_vertical_margin" />
+
             <TextView
                 style="@style/TextView.Standard.Bold"
                 android:text="@string/earn_baker_title"
                 android:layout_marginTop="@dimen/activity_vertical_margin" />
+
             <TextView
                 android:id="@+id/tvBakerDescription"
                 style="@style/TextView.Standard"
                 android:text="@string/earn_baker_description" />
+
             <TextView
                 style="@style/TextView.Standard.Bold"
                 android:text="@string/earn_delegation_title"
                 android:layout_marginTop="@dimen/activity_vertical_margin" />
+
             <TextView
                 style="@style/TextView.Standard"
                 android:text="@string/earn_delegation_description" />
+
             <TextView
                 style="@style/TextView.Standard"
                 android:text="@string/earn_description"
@@ -66,11 +73,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
+
         <Button
             android:id="@+id/btnBaker"
             style="@style/Button.Standard.Intro"
             android:layout_width="match_parent"
             android:text="@string/earn_baker_button" />
+
         <Button
             android:id="@+id/btnDelegation"
             style="@style/Button.Standard.Intro"
@@ -78,6 +87,10 @@
             android:text="@string/earn_delegation_button" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <include layout="@layout/progress" android:id="@+id/include_progress" android:visibility="gone" tools:visibility="visible" />
+    <include
+        layout="@layout/progress"
+        android:id="@+id/include_progress"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

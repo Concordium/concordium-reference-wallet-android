@@ -2,7 +2,6 @@ package com.concordium.wallet.ui.base
 
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
@@ -46,7 +45,10 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         if (!BuildConfig.DEBUG && !isStageNet && !isTestNet) {
-            window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE
+            )
         }
 
         popup = Popup()
@@ -87,12 +89,23 @@ abstract class BaseActivity : AppCompatActivity() {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.getStringExtra(POP_UNTIL_ACTIVITY)?.let { className ->
                     if (this.javaClass.asSubclass(this.javaClass).canonicalName != className) {
-                        finishUntilClass(className, it.data?.getStringExtra("THEN_START"), it.data?.getStringExtra("WITH_KEY"), it.data?.getSerializableExtra("WITH_DATA"))
+                        finishUntilClass(
+                            className,
+                            it.data?.getStringExtra("THEN_START"),
+                            it.data?.getStringExtra("WITH_KEY"),
+                            it.data?.getSerializableExtra("WITH_DATA")
+                        )
                     } else {
                         it.data?.getStringExtra("THEN_START")?.let { thenStart ->
                             val intent = Intent(this, Class.forName(thenStart))
-                            if (it.data?.getStringExtra("WITH_KEY") != null && it.data?.getSerializableExtra("WITH_DATA") != null) {
-                                intent.putExtra(it.data?.getStringExtra("WITH_KEY"), it.data?.getSerializableExtra("WITH_DATA"))
+                            if (it.data?.getStringExtra("WITH_KEY") != null && it.data?.getSerializableExtra(
+                                    "WITH_DATA"
+                                ) != null
+                            ) {
+                                intent.putExtra(
+                                    it.data?.getStringExtra("WITH_KEY"),
+                                    it.data?.getSerializableExtra("WITH_DATA")
+                                )
                             }
                             startActivity(intent)
                         }
@@ -124,7 +137,12 @@ abstract class BaseActivity : AppCompatActivity() {
         activityResult.launch(intent)
     }
 
-    fun finishUntilClass(canonicalClassName: String?, thenStart: String? = null, withKey: String? = null, withData: Serializable? = null) {
+    fun finishUntilClass(
+        canonicalClassName: String?,
+        thenStart: String? = null,
+        withKey: String? = null,
+        withData: Serializable? = null
+    ) {
         canonicalClassName?.let {
             val intent = Intent()
             intent.putExtra(POP_UNTIL_ACTIVITY, it)
@@ -193,12 +211,13 @@ abstract class BaseActivity : AppCompatActivity() {
                 onBackPressed()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     interface AuthenticationCallback {
-        fun getCipherForBiometrics() : Cipher?
+        fun getCipherForBiometrics(): Cipher?
         fun onCorrectPassword(password: String)
         fun onCipher(cipher: Cipher)
         fun onCancelled()
@@ -227,7 +246,7 @@ abstract class BaseActivity : AppCompatActivity() {
     private fun showPasswordDialog(text: String?, callback: AuthenticationCallback) {
         val dialogFragment = AuthenticationDialogFragment()
         dialogFragment.isCancelable = false
-        if(text != null){
+        if (text != null) {
             val bundle = Bundle()
             bundle.putString(AuthenticationDialogFragment.EXTRA_ALTERNATIVE_TEXT, text)
             dialogFragment.arguments = bundle

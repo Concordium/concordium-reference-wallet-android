@@ -27,7 +27,11 @@ class SetupWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
         binding = ActivitySetupWalletBinding.inflate(layoutInflater)
         setContentView(binding.root)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.pass_phrase_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.pass_phrase_title
+        )
         initializeViewModel()
         initViews()
         initObservers()
@@ -88,10 +92,10 @@ class SetupWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
             }
         }
 
-        viewModel.saveSeed.observe(this) {saveSuccess->
+        viewModel.saveSeed.observe(this) { saveSuccess ->
             if (saveSuccess) {
                 moveNext()
-            }else{
+            } else {
                 KeyboardUtil.hideKeyboard(this)
                 showError(R.string.auth_login_seed_error)
             }
@@ -106,7 +110,8 @@ class SetupWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
         }
     }
 
-    private inner class ScreenSlidePagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
+    private inner class ScreenSlidePagerAdapter(fragmentActivity: FragmentActivity) :
+        FragmentStateAdapter(fragmentActivity) {
         override fun getItemCount(): Int = 4
 
         override fun createFragment(position: Int): Fragment {

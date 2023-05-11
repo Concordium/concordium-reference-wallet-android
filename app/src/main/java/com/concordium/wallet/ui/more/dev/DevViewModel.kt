@@ -10,8 +10,28 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.OfflineMockInterceptor
-import com.concordium.wallet.data.model.*
-import com.concordium.wallet.data.room.*
+import com.concordium.wallet.data.model.ArDescription
+import com.concordium.wallet.data.model.ArsInfo
+import com.concordium.wallet.data.model.AttributeList
+import com.concordium.wallet.data.model.CredentialWrapper
+import com.concordium.wallet.data.model.IdentityAttribute
+import com.concordium.wallet.data.model.IdentityObject
+import com.concordium.wallet.data.model.IdentityProvider
+import com.concordium.wallet.data.model.IdentityProviderDescription
+import com.concordium.wallet.data.model.IdentityProviderInfo
+import com.concordium.wallet.data.model.IdentityProviderMetaData
+import com.concordium.wallet.data.model.PreIdentityObject
+import com.concordium.wallet.data.model.PubInfoForIp
+import com.concordium.wallet.data.model.RawJson
+import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
+import com.concordium.wallet.data.model.TransactionOutcome
+import com.concordium.wallet.data.model.TransactionStatus
+import com.concordium.wallet.data.model.TransactionType
+import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.Identity
+import com.concordium.wallet.data.room.Recipient
+import com.concordium.wallet.data.room.Transfer
+import com.concordium.wallet.data.room.WalletDatabase
 import kotlinx.coroutines.launch
 
 class DevViewModel(application: Application) : AndroidViewModel(application) {
@@ -55,9 +75,13 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
             ""
         )
         val arsInfos = HashMap<String, ArsInfo>()
-        arsInfos["1"] = ArsInfo(1, "", ArDescription("","", ""))
+        arsInfos["1"] = ArsInfo(1, "", ArDescription("", "", ""))
         val identityProvider =
-            IdentityProvider(identityProviderInfo, arsInfos, IdentityProviderMetaData("", "", "", ""))
+            IdentityProvider(
+                identityProviderInfo,
+                arsInfos,
+                IdentityProviderMetaData("", "", "", "")
+            )
         val pubInfoForIP = PubInfoForIp("", RawJson("{}"), "")
         val preIdentityObject =
             PreIdentityObject(
@@ -71,7 +95,8 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 preIdentityObject,
                 RawJson("{}")
             )
-        val identity = Identity(0, "identity name", "", "","", identityProvider, identityObject, 0, 0)
+        val identity =
+            Identity(0, "identity name", "", "", "", identityProvider, identityObject, 0, 0)
         identityRepository.insert(identity)
     }
 
@@ -96,7 +121,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 TransactionStatus.FINALIZED,
                 "",
                 revealedAttributes,
-                CredentialWrapper(credential,0),
+                CredentialWrapper(credential, 0),
                 0,
                 0,
                 0,
@@ -126,7 +151,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 TransactionStatus.COMMITTED,
                 "",
                 revealedAttributes,
-                CredentialWrapper(credential,0),
+                CredentialWrapper(credential, 0),
                 0,
                 0,
                 0,
@@ -134,7 +159,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 0,
                 null,
                 null,
-                        ShieldedAccountEncryptionStatus.ENCRYPTED,
+                ShieldedAccountEncryptionStatus.ENCRYPTED,
                 0,
                 0,
                 false,
@@ -156,7 +181,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 TransactionStatus.RECEIVED,
                 "",
                 revealedAttributes,
-                CredentialWrapper(credential,0),
+                CredentialWrapper(credential, 0),
                 0,
                 0,
                 0,
@@ -186,7 +211,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 TransactionStatus.ABSENT,
                 "",
                 revealedAttributes,
-                CredentialWrapper(credential,0),
+                CredentialWrapper(credential, 0),
                 0,
                 0,
                 0,
@@ -194,7 +219,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 0,
                 null,
                 null,
-                        ShieldedAccountEncryptionStatus.ENCRYPTED,
+                ShieldedAccountEncryptionStatus.ENCRYPTED,
                 0,
                 0,
                 false,

@@ -27,7 +27,11 @@ class IdentityDetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityIdentityDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_details_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.identity_details_title
+        )
 
         val identity = intent.getSerializableExtra(EXTRA_IDENTITY) as Identity
         initializeViewModel()
@@ -61,7 +65,8 @@ class IdentityDetailsActivity : BaseActivity() {
             binding.identityView.setIdentityData(it)
         }
 
-        binding.identityView.setOnChangeNameClickListener(object : IdentityView.OnChangeNameClickListener {
+        binding.identityView.setOnChangeNameClickListener(object :
+            IdentityView.OnChangeNameClickListener {
             override fun onChangeNameClicked(item: Identity) {
                 showChangeNameDialog()
             }
@@ -72,14 +77,15 @@ class IdentityDetailsActivity : BaseActivity() {
         if (viewModel.identity.status == IdentityStatus.ERROR) {
             binding.errorWrapperLayout.visibility = View.VISIBLE
             binding.errorTextview.text = viewModel.identity.detail ?: ""
-            binding.identityView.foreground = AppCompatResources.getDrawable(this, R.drawable.bg_cardview_error_border)
+            binding.identityView.foreground =
+                AppCompatResources.getDrawable(this, R.drawable.bg_cardview_error_border)
             binding.removeButton.setOnClickListener {
                 viewModel.removeIdentity(viewModel.identity)
                 finish()
             }
-        }
-        else {
-            binding.identityView.foreground = AppCompatResources.getDrawable(this, R.drawable.bg_cardview_border)
+        } else {
+            binding.identityView.foreground =
+                AppCompatResources.getDrawable(this, R.drawable.bg_cardview_border)
             binding.errorWrapperLayout.visibility = View.GONE
         }
     }

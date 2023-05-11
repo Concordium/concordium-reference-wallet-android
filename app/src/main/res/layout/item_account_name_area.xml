@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,6 +11,7 @@
         android:layout_weight="1"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <ImageView
             android:id="@+id/status_imageview"
             style="@style/Image"
@@ -20,6 +20,7 @@
             android:layout_marginRight="4dp"
             tools:visibility="gone"
             tools:src="@drawable/ic_status_problem" />
+
         <TextView
             android:id="@+id/name_textview"
             style="@style/TextView.ListItemHeader"
@@ -29,6 +30,7 @@
             android:maxLines="4"
             android:singleLine="true"
             tools:text="Savings " />
+
         <TextView
             android:id="@+id/account_identity_name"
             style="@style/TextView.ListItemHeader"
@@ -47,6 +49,7 @@
         android:layout_height="wrap_content"
         android:gravity="right"
         android:orientation="horizontal">
+
         <TextView
             android:id="@+id/status_text"
             style="@style/TextView.ListItemHeader"
@@ -54,6 +57,7 @@
             android:textColor="@color/text_grey"
             android:layout_width="wrap_content"
             android:text="@string/view_account_delegating" />
+
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/status_icon"
             style="@style/Image"

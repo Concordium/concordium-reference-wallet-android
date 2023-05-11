@@ -22,7 +22,17 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.CreateTransferInput
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.AccountBalance
+import com.concordium.wallet.data.model.AccountData
+import com.concordium.wallet.data.model.AccountNonce
+import com.concordium.wallet.data.model.GlobalParams
+import com.concordium.wallet.data.model.GlobalParamsWrapper
+import com.concordium.wallet.data.model.InputEncryptedAmount
+import com.concordium.wallet.data.model.SubmissionData
+import com.concordium.wallet.data.model.TransactionOutcome
+import com.concordium.wallet.data.model.TransactionStatus
+import com.concordium.wallet.data.model.TransactionType
+import com.concordium.wallet.data.model.TransferSubmissionStatus
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.preferences.SharedPreferencesKeys
 import com.concordium.wallet.data.room.Account
@@ -36,7 +46,7 @@ import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toHex
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Date
 import javax.crypto.Cipher
 
 class SendFundsViewModel(application: Application) : AndroidViewModel(application) {
@@ -63,7 +73,11 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val preferences: SendFundsPreferences
         get() {
-            return SendFundsPreferences(getApplication(), SharedPreferencesKeys.PREF_SEND_FUNDS.key, Context.MODE_PRIVATE)
+            return SendFundsPreferences(
+                getApplication(),
+                SharedPreferencesKeys.PREF_SEND_FUNDS.key,
+                Context.MODE_PRIVATE
+            )
         }
 
     private val gson = App.appCore.gson
@@ -218,7 +232,8 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             return true
         }
 
-        val totalUnshieldedAtDisposal = account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
+        val totalUnshieldedAtDisposal =
+            account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
 
         if (isShielded) {
             if (isTransferToSameAccount()) {
@@ -365,7 +380,8 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             calculateInputEncryptedAmount(),
             null,
             null,
-            null)
+            null
+        )
 
         var transactionType =
             if (isShielded) {
@@ -437,11 +453,13 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
         val allTransfers = transferRepository.getAllByAccountId(account.id)
         val unfinalisedTransfers = allTransfers.filter {
-            it.transactionStatus != TransactionStatus.FINALIZED && (it.nonce?.nonce ?: -1) >= lastNounceToInclude
+            it.transactionStatus != TransactionStatus.FINALIZED && (it.nonce?.nonce
+                ?: -1) >= lastNounceToInclude
         }
 
         val aggEncryptedAmount = if (unfinalisedTransfers.isNotEmpty()) {
-            val lastTransaction = unfinalisedTransfers.maxWithOrNull { a, b -> a.id.compareTo(b.id) }
+            val lastTransaction =
+                unfinalisedTransfers.maxWithOrNull { a, b -> a.id.compareTo(b.id) }
             if (lastTransaction != null) {
                 tempData.accountBalance?.finalizedBalance?.let {
                     val incomingAmounts = it.accountEncryptedAmount.incomingAmounts.filter {
@@ -686,7 +704,9 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
                 cost = it
             }
             var amount =
-                ((if (isShielded) account.totalShieldedBalance else (account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) - cost)) )
+                ((if (isShielded) account.totalShieldedBalance else (account.getAtDisposalWithoutStakedOrScheduled(
+                    account.totalUnshieldedBalance
+                ) - cost)))
             if (amount < 0) {
                 amount = 0
             }

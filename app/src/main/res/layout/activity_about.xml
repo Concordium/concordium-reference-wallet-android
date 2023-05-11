@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout"
@@ -25,6 +24,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="@dimen/activity_horizontal_margin"
             app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -39,8 +39,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/about_support"
                     style="@style/TextView.Medium"
-                    android:textColor="@color/text_black"
-                    />
+                    android:textColor="@color/text_black" />
 
                 <TextView
                     android:id="@+id/about_support_text"
@@ -49,8 +48,7 @@
                     android:layout_marginTop="15dp"
                     android:text="@string/about_support_text"
                     style="@style/TextView.Small"
-                    android:textColor="@color/text_grey"
-                    />
+                    android:textColor="@color/text_grey" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -58,8 +56,7 @@
                     android:text="@string/about_contact"
                     android:layout_marginTop="30dp"
                     style="@style/TextView.Medium"
-                    android:textColor="@color/text_black"
-                    />
+                    android:textColor="@color/text_black" />
 
                 <TextView
                     android:id="@+id/about_contact_text"
@@ -68,8 +65,7 @@
                     android:layout_marginTop="15dp"
                     android:text="@string/about_contact_text"
                     style="@style/TextView.Small"
-                    android:textColor="@color/text_grey"
-                    />
+                    android:textColor="@color/text_grey" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -77,8 +73,7 @@
                     android:text="@string/about_version"
                     android:layout_marginTop="30dp"
                     style="@style/TextView.Medium"
-                    android:textColor="@color/text_black"
-                    />
+                    android:textColor="@color/text_black" />
 
                 <TextView
                     android:id="@+id/about_version_text"
@@ -87,8 +82,7 @@
                     android:layout_marginTop="15dp"
                     tools:text="x.y.z"
                     style="@style/TextView.Small"
-                    android:textColor="@color/text_grey"
-                    />
+                    android:textColor="@color/text_grey" />
 
             </LinearLayout>
         </ScrollView>

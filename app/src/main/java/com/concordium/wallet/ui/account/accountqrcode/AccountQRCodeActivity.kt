@@ -33,7 +33,11 @@ class AccountQRCodeActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAccountQrCodeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.account_qr_code_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.account_qr_code_title
+        )
 
         val account = intent.extras!!.getSerializable(SendFundsActivity.EXTRA_ACCOUNT) as Account
         initializeViewModel()

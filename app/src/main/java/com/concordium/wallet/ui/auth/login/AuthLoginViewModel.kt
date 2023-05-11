@@ -49,7 +49,8 @@ class AuthLoginViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun getCipherForBiometrics(): Cipher? {
         try {
-            val cipher = App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
+            val cipher =
+                App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
             if (cipher == null) {
                 _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
             }
@@ -67,29 +68,38 @@ class AuthLoginViewModel(application: Application) : AndroidViewModel(applicatio
             checkSeed(password)
         } else {
             _passwordErrorLiveData.value =
-                Event(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_login_passcode_error else R.string.auth_login_password_error)
+                Event(
+                    if (App.appCore.getCurrentAuthenticationManager()
+                            .usePasscode()
+                    ) R.string.auth_login_passcode_error else R.string.auth_login_password_error
+                )
             _waitingLiveData.value = false
         }
     }
 
     fun checkLogin(cipher: Cipher) = viewModelScope.launch {
         _waitingLiveData.value = true
-        val password = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
+        val password =
+            App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
         if (password != null) {
             checkSeed(password)
         } else {
             _passwordErrorLiveData.value =
-                Event(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_login_passcode_error else R.string.auth_login_password_error)
+                Event(
+                    if (App.appCore.getCurrentAuthenticationManager()
+                            .usePasscode()
+                    ) R.string.auth_login_passcode_error else R.string.auth_login_password_error
+                )
             _waitingLiveData.value = false
         }
     }
 
-    private suspend fun checkSeed(password: String){
+    private suspend fun checkSeed(password: String) {
         val noUnencryptedSeed = AuthPreferences(getApplication()).checkAndTryToEncryptSeed(password)
-        if(noUnencryptedSeed){
+        if (noUnencryptedSeed) {
             // The old seed is deleted or a new user resumes the seed-phrase setup process.
             loginSuccess()
-        }else{
+        } else {
             //The unencrypted seed is still present.
             //Something went wrong when trying to encrypt it and delete it.
             _passwordErrorLiveData.value =

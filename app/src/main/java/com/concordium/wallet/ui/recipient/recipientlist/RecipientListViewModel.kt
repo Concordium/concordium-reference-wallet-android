@@ -28,6 +28,7 @@ class RecipientListViewModel(application: Application) : AndroidViewModel(applic
                     filteredRecipientsLiveData.value = filteredList
                     filteredRecipientsLiveData
                 }
+
                 else -> {
                     filteredRecipientsLiveData.value = allRecipients
                     filteredRecipientsLiveData

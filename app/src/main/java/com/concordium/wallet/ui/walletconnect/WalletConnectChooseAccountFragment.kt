@@ -15,15 +15,20 @@ class WalletConnectChooseAccountFragment : WalletConnectBaseFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(viewModel: WalletConnectViewModel) = WalletConnectChooseAccountFragment().apply {
-            arguments = Bundle().apply {
-                putSerializable(WALLET_CONNECT_DATA, viewModel.walletConnectData)
+        fun newInstance(viewModel: WalletConnectViewModel) =
+            WalletConnectChooseAccountFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable(WALLET_CONNECT_DATA, viewModel.walletConnectData)
+                }
+                _viewModel = viewModel
             }
-            _viewModel = viewModel
-        }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentWalletConnectChooseAccountBinding.inflate(inflater, container, false)
         return binding.root
     }

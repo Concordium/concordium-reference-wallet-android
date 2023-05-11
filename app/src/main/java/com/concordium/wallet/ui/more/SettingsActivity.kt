@@ -32,7 +32,11 @@ class SettingsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.more_overview_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.more_overview_title
+        )
         initViews()
     }
 
@@ -101,11 +105,17 @@ class SettingsActivity : BaseActivity() {
         }
     }
 
-    private fun restartApp () {
+    private fun restartApp() {
         try {
             val intent = Intent(applicationContext, MainActivity::class.java)
-            val pendingIntent = PendingIntent.getActivity(applicationContext,9999, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT)
-            val alarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val pendingIntent = PendingIntent.getActivity(
+                applicationContext,
+                9999,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+            )
+            val alarmManager =
+                applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             alarmManager[AlarmManager.RTC, System.currentTimeMillis() + 100] = pendingIntent
             exitProcess(0)
         } catch (ex: Exception) {

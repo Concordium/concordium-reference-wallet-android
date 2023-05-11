@@ -34,6 +34,7 @@ class WalletConnectActivity : BaseActivity() {
             else
                 accountsView()
         }
+
         override fun onServiceDisconnected(componentName: ComponentName) {
             println("LC -> onServiceDisconnected")
         }
@@ -72,7 +73,8 @@ class WalletConnectActivity : BaseActivity() {
             }
         } else {
             if (intent?.hasExtra(ACCOUNT) == true)
-                viewModel.walletConnectData.account = intent?.getSerializable(ACCOUNT, Account::class.java)
+                viewModel.walletConnectData.account =
+                    intent?.getSerializable(ACCOUNT, Account::class.java)
             viewModel.walletConnectData.wcUri = intent?.getStringExtra(WC_URI) ?: ""
             println("LC -> From Camera = ${viewModel.walletConnectData.wcUri}")
         }
@@ -95,8 +97,7 @@ class WalletConnectActivity : BaseActivity() {
             if (!fromDeepLink) {
                 viewModel.rejectSession()
                 viewModel.decline.postValue(true)
-            }
-            else {
+            } else {
                 CoroutineScope(Dispatchers.IO).launch {
                     if (viewModel.hasAccounts()) {
                         finish()
@@ -110,7 +111,11 @@ class WalletConnectActivity : BaseActivity() {
     }
 
     private fun initViews() {
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.wallet_connect_accounts_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.wallet_connect_accounts_title
+        )
         if (fromDeepLink)
             hideActionBarBack()
     }
@@ -179,15 +184,18 @@ class WalletConnectActivity : BaseActivity() {
         }
         viewModel.showAuthentication.observe(this) {
             showAuthentication(authenticateText(), object : AuthenticationCallback {
-                override fun getCipherForBiometrics() : Cipher? {
+                override fun getCipherForBiometrics(): Cipher? {
                     return viewModel.getCipherForBiometrics()
                 }
+
                 override fun onCorrectPassword(password: String) {
                     viewModel.continueWithPassword(password)
                 }
+
                 override fun onCipher(cipher: Cipher) {
                     viewModel.checkLogin(cipher)
                 }
+
                 override fun onCancelled() {
                 }
             })
@@ -202,21 +210,33 @@ class WalletConnectActivity : BaseActivity() {
         currentPage = PAGE_CHOOSE_ACCOUNT
         showActionBarBack()
         setActionBarTitle(getString(R.string.wallet_connect_accounts_title))
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectChooseAccountFragment.newInstance(viewModel), null).commit()
+        supportFragmentManager.beginTransaction().replace(
+            R.id.fragment_container,
+            WalletConnectChooseAccountFragment.newInstance(viewModel),
+            null
+        ).commit()
     }
 
     private fun pairView() {
         currentPage = PAGE_PAIR
         showActionBarBack()
         setActionBarTitle(getString(R.string.wallet_connect_allow_session))
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectPairFragment.newInstance(viewModel), null).commit()
+        supportFragmentManager.beginTransaction().replace(
+            R.id.fragment_container,
+            WalletConnectPairFragment.newInstance(viewModel),
+            null
+        ).commit()
     }
 
     private fun approveView() {
         currentPage = PAGE_APPROVE
         hideActionBarBack()
         setActionBarTitle(getString(R.string.wallet_connect_session))
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectApproveFragment.newInstance(viewModel), null).commit()
+        supportFragmentManager.beginTransaction().replace(
+            R.id.fragment_container,
+            WalletConnectApproveFragment.newInstance(viewModel),
+            null
+        ).commit()
     }
 
     private fun transactionView() {
@@ -224,12 +244,20 @@ class WalletConnectActivity : BaseActivity() {
         hideActionBarBack()
         setActionBarTitle(getString(R.string.wallet_connect_session_with, viewModel.sessionName()))
         viewModel.walletConnectData.isTransaction = true
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectTransactionFragment.newInstance(viewModel), null).commit()
+        supportFragmentManager.beginTransaction().replace(
+            R.id.fragment_container,
+            WalletConnectTransactionFragment.newInstance(viewModel),
+            null
+        ).commit()
     }
 
     private fun transactionSubmittedView() {
         currentPage = PAGE_TRANSACTION_SUBMITTED
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectTransactionSubmittedFragment.newInstance(viewModel), null).commit()
+        supportFragmentManager.beginTransaction().replace(
+            R.id.fragment_container,
+            WalletConnectTransactionSubmittedFragment.newInstance(viewModel),
+            null
+        ).commit()
     }
 
     private fun messageView() {
@@ -237,12 +265,20 @@ class WalletConnectActivity : BaseActivity() {
         hideActionBarBack()
         setActionBarTitle(getString(R.string.wallet_connect_session_with, viewModel.sessionName()))
         viewModel.walletConnectData.isTransaction = false
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectMessageFragment.newInstance(viewModel), null).commit()
+        supportFragmentManager.beginTransaction().replace(
+            R.id.fragment_container,
+            WalletConnectMessageFragment.newInstance(viewModel),
+            null
+        ).commit()
     }
 
     private fun messageSignedView() {
         currentPage = PAGE_MESSAGE_SIGNED
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, WalletConnectMessageSignedFragment.newInstance(viewModel), null).commit()
+        supportFragmentManager.beginTransaction().replace(
+            R.id.fragment_container,
+            WalletConnectMessageSignedFragment.newInstance(viewModel),
+            null
+        ).commit()
     }
 
     private fun gotoMain() {

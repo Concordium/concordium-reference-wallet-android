@@ -30,7 +30,11 @@ class ExportAccountKeysActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityExportAccountKeysBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.export_account_keys_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.export_account_keys_title
+        )
         viewModel.account = intent.getSerializable(EXTRA_ACCOUNT, Account::class.java)
         initViews()
         initObservers()
@@ -67,15 +71,18 @@ class ExportAccountKeysActivity : BaseActivity() {
 
     private fun reveal() {
         showAuthentication(authenticateText(), object : AuthenticationCallback {
-            override fun getCipherForBiometrics() : Cipher? {
+            override fun getCipherForBiometrics(): Cipher? {
                 return viewModel.getCipherForBiometrics()
             }
+
             override fun onCorrectPassword(password: String) {
                 viewModel.continueWithPassword(password)
             }
+
             override fun onCipher(cipher: Cipher) {
                 viewModel.checkLogin(cipher)
             }
+
             override fun onCancelled() {
             }
         })
@@ -83,7 +90,8 @@ class ExportAccountKeysActivity : BaseActivity() {
 
     private fun copyToClipboard() {
         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        val clipData = ClipData.newPlainText("key", viewModel.accountDataKeys.level0.keys.keys.signKey)
+        val clipData =
+            ClipData.newPlainText("key", viewModel.accountDataKeys.level0.keys.keys.signKey)
         clipboardManager.setPrimaryClip(clipData)
         Toast.makeText(this, R.string.export_account_keys_copied, Toast.LENGTH_SHORT).show()
     }

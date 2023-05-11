@@ -11,7 +11,8 @@ import com.concordium.wallet.databinding.ViewTransactionDetailsEntryBinding
 import com.concordium.wallet.uicore.Formatter
 
 class TransactionDetailsEntryView : ConstraintLayout {
-    private val binding = ViewTransactionDetailsEntryBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding =
+        ViewTransactionDetailsEntryBinding.inflate(LayoutInflater.from(context), this, true)
 
     private var fullValue: String? = null
 
@@ -23,7 +24,11 @@ class TransactionDetailsEntryView : ConstraintLayout {
         init(attrs)
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
         init(attrs)
     }
 
@@ -47,7 +52,8 @@ class TransactionDetailsEntryView : ConstraintLayout {
 
     fun setValue(value: String, formatAsFirstEight: Boolean = false) {
         fullValue = value
-        binding.valueTextview.text = if(formatAsFirstEight) Formatter.formatAsFirstEight(value) else value
+        binding.valueTextview.text =
+            if (formatAsFirstEight) Formatter.formatAsFirstEight(value) else value
     }
 
     fun enableCopy(onCopyClickListener: OnCopyClickListener) {

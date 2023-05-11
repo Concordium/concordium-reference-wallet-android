@@ -45,9 +45,11 @@
                     android:layout_height="wrap_content"
                     style="@style/Layout.CardView.Dark"
                     android:orientation="vertical">
+
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -139,17 +141,20 @@
                                 android:layout_marginRight="@dimen/accounts_overview_total_details_side_margins"
                                 android:layout_marginBottom="7dp"
                                 android:orientation="horizontal">
+
                                 <LinearLayout
                                     android:id="@+id/accounts_overview_total_details_disposal_container"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:orientation="vertical">
+
                                     <TextView
                                         style="@style/TextView.BalanceInfo"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:layout_gravity="center"
                                         android:text="@string/accounts_overview_total_details_disposal" />
+
                                     <TextView
                                         android:id="@+id/accounts_overview_total_details_disposal"
                                         style="@style/TextView.TotalBalanceDetails"
@@ -170,11 +175,13 @@
                                 android:visibility="gone"
                                 tools:visibility="gone"
                                 android:orientation="vertical">
+
                                 <TextView
                                     android:id="@+id/accounts_overview_total_title_staked"
                                     style="@style/TextView.BalanceInfo"
                                     android:layout_gravity="center"
                                     tools:text="@string/account_details_delegation_with_baker_pool" />
+
                                 <TextView
                                     android:id="@+id/accounts_overview_total_details_staked"
                                     style="@style/TextView.TotalBalanceDetails"
@@ -193,11 +200,13 @@
                                 android:visibility="gone"
                                 tools:visibility="visible"
                                 android:orientation="vertical">
+
                                 <TextView
                                     android:id="@+id/accounts_overview_total_title_baker"
                                     style="@style/TextView.BalanceInfo"
                                     android:layout_gravity="center"
                                     tools:text="@string/account_details_stake_with_baker" />
+
                                 <TextView
                                     android:id="@+id/accounts_overview_total_details_baker"
                                     style="@style/TextView.TotalBalanceDetails"
@@ -207,6 +216,7 @@
                             </LinearLayout>
 
                         </LinearLayout>
+
                         <ImageView
                             android:id="@+id/shielded_icon"
                             android:layout_width="wrap_content"
@@ -220,14 +230,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
+
                         <RelativeLayout
                             android:id="@+id/toggle_balance"
                             style="@style/ActionCardButtonContainer">
+
                             <TextView
                                 style="@style/ActionCardButton"
                                 android:textAllCaps="false"
                                 android:text="@string/account_details_toggle_balance" />
                         </RelativeLayout>
+
                         <RelativeLayout
                             android:id="@+id/toggle_shielded"
                             style="@style/ActionCardButtonContainer">
@@ -264,6 +277,7 @@
                 app:layout_constraintBottom_toTopOf="@id/account_retry_button"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/buttons_slider">
+
                 <com.google.android.material.tabs.TabLayout
                     android:id="@+id/account_details_tablayout"
                     android:layout_width="match_parent"
@@ -298,7 +312,9 @@
                 app:layout_constraintRight_toRightOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <include layout="@layout/progress" android:id="@+id/include_progress" />
+        <include
+            layout="@layout/progress"
+            android:id="@+id/include_progress" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

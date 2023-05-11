@@ -3,9 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_layout"
     style="@style/Layout.Root">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <include
             android:id="@+id/toolbar_layout"
             layout="@layout/app_toolbar"
@@ -14,6 +16,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
         <LinearLayout
             android:id="@+id/content_layout"
             android:layout_width="match_parent"
@@ -22,17 +25,20 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar_layout">
+
             <RelativeLayout
                 android:id="@+id/transfer_filter"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height"
                 android:background="@drawable/list_item"
                 android:orientation="horizontal">
+
                 <TextView
                     style="@style/TextView.MoreMenuItem"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
                     android:text="@string/account_details_menu_transfer_filter" />
+
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
                     android:layout_height="16dp"
@@ -43,18 +49,24 @@
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_button_next" />
             </RelativeLayout>
-            <View style="@style/Divider" android:id="@+id/divider_transfer_filter" />
+
+            <View
+                style="@style/Divider"
+                android:id="@+id/divider_transfer_filter" />
+
             <RelativeLayout
                 android:id="@+id/show_shielded"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height"
                 android:background="@drawable/list_item"
                 android:orientation="horizontal">
+
                 <TextView
                     style="@style/TextView.MoreMenuItem"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
                     android:text="@string/account_details_menu_show_shielded" />
+
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
                     android:layout_height="16dp"
@@ -65,18 +77,24 @@
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_button_next" />
             </RelativeLayout>
-            <View style="@style/Divider" android:id="@+id/divider_show_shielded" />
+
+            <View
+                style="@style/Divider"
+                android:id="@+id/divider_show_shielded" />
+
             <RelativeLayout
                 android:id="@+id/hide_shielded"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height"
                 android:background="@drawable/list_item"
                 android:orientation="horizontal">
+
                 <TextView
                     style="@style/TextView.MoreMenuItem"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
                     android:text="@string/account_details_menu_hide_shielded" />
+
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
                     android:layout_height="16dp"
@@ -87,18 +105,24 @@
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_button_next" />
             </RelativeLayout>
-            <View style="@style/Divider" android:id="@+id/divider_hide_shielded" />
+
+            <View
+                style="@style/Divider"
+                android:id="@+id/divider_hide_shielded" />
+
             <RelativeLayout
                 android:id="@+id/release_schedule"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height"
                 android:background="@drawable/list_item"
                 android:orientation="horizontal">
+
                 <TextView
                     style="@style/TextView.MoreMenuItem"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
                     android:text="@string/account_details_menu_release_schedule" />
+
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
                     android:layout_height="16dp"
@@ -109,18 +133,24 @@
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_button_next" />
             </RelativeLayout>
-            <View style="@style/Divider" android:id="@+id/divider_release_schedule" />
+
+            <View
+                style="@style/Divider"
+                android:id="@+id/divider_release_schedule" />
+
             <RelativeLayout
                 android:id="@+id/change_name"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height"
                 android:background="@drawable/list_item"
                 android:orientation="horizontal">
+
                 <TextView
                     style="@style/TextView.MoreMenuItem"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
                     android:text="@string/account_details_menu_change_name" />
+
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
                     android:layout_height="16dp"
@@ -131,18 +161,22 @@
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_button_next" />
             </RelativeLayout>
+
             <View style="@style/Divider" />
+
             <RelativeLayout
                 android:id="@+id/export_key"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height"
                 android:background="@drawable/list_item"
                 android:orientation="horizontal">
+
                 <TextView
                     style="@style/TextView.MoreMenuItem"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
                     android:text="@string/account_details_menu_export_key" />
+
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
                     android:layout_height="16dp"
@@ -153,6 +187,7 @@
                     android:scaleType="fitCenter"
                     android:src="@drawable/ic_button_next" />
             </RelativeLayout>
+
             <View style="@style/Divider" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

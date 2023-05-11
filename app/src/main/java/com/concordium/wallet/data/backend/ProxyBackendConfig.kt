@@ -42,6 +42,7 @@ class ProxyBackendConfig(val context: Context, val gson: Gson) {
                 override fun loadForRequest(url: HttpUrl): List<Cookie> {
                     return App.appCore.cookies
                 }
+
                 override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
                     App.appCore.cookies = cookies
                 }
