@@ -12,24 +12,19 @@ import com.concordium.wallet.core.backend.BackendEventResource
 
 open class BackendEventObserver<T> : Observer<BackendEventResource<T>> {
 
-    override fun onChanged(value: BackendEventResource<T>) {
+    override fun onChanged(backendResource: BackendEventResource<T>) {
         onDone()
-        if (value != null) {
-            if (value.handleIfNotHandled()) {
-                val exception = value.exception
-                if (exception != null) {
-                    onException(exception)
-                } else {
-                    val data = value.data
-                    if (data != null) {
-                        onSuccess(data)
-                    }
+        if (backendResource.handleIfNotHandled()) {
+            val exception = backendResource.exception
+            if (exception != null) {
+                onException(exception)
+            } else {
+                val data = backendResource.data
+                if (data != null) {
+                    onSuccess(data)
                 }
             }
-            return
         }
-        //custom exception
-        onException(Exception("No backend resource set"))
     }
 
     @Suppress("UNUSED_PARAMETER")

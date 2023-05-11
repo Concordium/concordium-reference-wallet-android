@@ -33,33 +33,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-
         <activity
             android:name=".ui.MainActivity"
-            android:alwaysRetainTaskState="true"
-            android:exported="true"
-            android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar.Launcher">
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar.Launcher"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data android:scheme="wc" />
             </intent-filter>
         </activity>
-
         <service
             android:name=".ui.walletconnect.WalletConnectService"
             android:enabled="true"
             android:exported="false" />
-
         <activity
             android:name=".onboarding.ui.OnboardingActivity"
             android:exported="true"
@@ -183,8 +178,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.walletconnect.WalletConnectActivity"
-            android:alwaysRetainTaskState="true"
             android:launchMode="singleTop"
+            android:alwaysRetainTaskState="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.auth.login.AuthLoginActivity"
@@ -230,13 +225,12 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.identity.identityproviderwebview.IdentityProviderWebViewActivity"
-            android:exported="true"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.identity.identityproviderlist.IdentityProviderListActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:exported="true">
             <intent-filter android:label="schemefilter">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- Accepts URIs that begin with "concordiumwallet://identity-issuer” -->
@@ -348,13 +342,13 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}"
+            android:grantUriPermissions="true"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:authorities="${applicationId}">
 
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_provider_paths" />
+                android:resource="@xml/file_provider_paths"/>
 
         </provider>
     </application>

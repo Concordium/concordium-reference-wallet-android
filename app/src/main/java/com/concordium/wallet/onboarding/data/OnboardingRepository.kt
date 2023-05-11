@@ -9,11 +9,11 @@ class OnboardingRepository(
     private val onboardingService: OnboardingService
 ) {
 
-    suspend fun saveAcceptedTermsAndConditionsVersion(version: String) = runCatching {
+    fun saveAcceptedTermsAndConditionsVersion(version: String) = runCatching {
         sharedPreferences.termsAndConditionsVersionAccepted = version
     }
 
-    suspend fun getLocalAcceptedTermsAndConditionsVersion(): String =
+    fun getLocalAcceptedTermsAndConditionsVersion(): String =
         sharedPreferences.termsAndConditionsVersionAccepted
 
     suspend fun getRemoteAcceptedTermsAndConditionsVersion() = runCatching {

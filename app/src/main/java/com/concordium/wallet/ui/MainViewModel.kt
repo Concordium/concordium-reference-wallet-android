@@ -36,14 +36,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val stateLiveData: LiveData<State>
         get() = _stateLiveData
 
-    private val _showTermsAndConditions = MutableLiveData<Boolean>(false)
+    private val _showTermsAndConditions = MutableLiveData(false)
     val showTermsAndConditions: LiveData<Boolean>
         get() = _showTermsAndConditions
     lateinit var onboardingRepository: OnboardingRepository
 
     init {
-        identityRepository =
-            IdentityRepository(WalletDatabase.getDatabase(application).identityDao())
+        identityRepository = IdentityRepository(WalletDatabase.getDatabase(application).identityDao())
     }
 
     fun initialize() {

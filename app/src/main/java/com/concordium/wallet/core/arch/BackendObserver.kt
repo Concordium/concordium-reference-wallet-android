@@ -22,9 +22,6 @@ class BackendObserver<T> : Observer<BackendResource<T>> {
                 onSuccess(data)
             }
         }
-        return
-        //custom exception
-        onException(Exception("No backend resource set"))
     }
 
     fun onDone() {

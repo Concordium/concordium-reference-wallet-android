@@ -1,11 +1,8 @@
 package com.concordium.wallet.onboarding.data.datasource
 
-import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import androidx.security.crypto.EncryptedSharedPreferences
 import com.walletconnect.util.Empty
-
 
 class SharedPreferencesDataSourceImpl(private val prefs: SharedPreferences) : SharedPreferencesDataSource {
 

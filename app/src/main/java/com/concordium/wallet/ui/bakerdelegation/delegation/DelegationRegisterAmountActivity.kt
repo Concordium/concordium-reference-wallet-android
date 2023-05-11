@@ -108,8 +108,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         binding.amount.isEnabled = false
         showWaiting(binding.includeProgress.progressLayout, true)
 
-        viewModel.transactionFeeLiveData.observe(this
-        ) { response ->
+        viewModel.transactionFeeLiveData.observe(this) { response ->
             response?.first?.let {
                 validateFee = it
                 showWaiting(binding.includeProgress.progressLayout, false)

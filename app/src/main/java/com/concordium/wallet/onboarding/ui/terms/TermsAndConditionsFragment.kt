@@ -107,10 +107,11 @@ class TermsAndConditionsFragment :
     private fun gotoStart() {
         App.appCore.session.setTermsHashed(App.appContext.getString(R.string.terms_text).hashCode())
         requireActivity().finish()
-        val intent = if (App.appCore.session.hasSetupPassword) Intent(
-            requireContext(),
-            AuthLoginActivity::class.java
-        ) else Intent(requireContext(), IntroStartActivity::class.java)
+        val intent =
+            if (App.appCore.session.hasSetupPassword)
+                Intent(requireContext(), AuthLoginActivity::class.java)
+            else
+                Intent(requireContext(), IntroStartActivity::class.java)
         startActivity(intent)
     }
 }

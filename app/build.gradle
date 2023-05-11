@@ -16,10 +16,8 @@ tasks.create(name: "unitTestCoverageReport", type: JacocoReport, dependsOn: "tes
     description = "Generate Jacoco coverage reports for the 'local' debug build."
 
     reports {
-        // human readable (written into './build/reports/jacoco/unitTestCoverageReport/html')
-        html.enabled = true
-        // CI-readable (written into './build/reports/jacoco/unitTestCoverageReport/unitTestCoverageReport.xml')
-        xml.enabled = true
+        html.enabled = true // human readable (written into './build/reports/jacoco/unitTestCoverageReport/html')
+        xml.enabled = true // CI-readable (written into './build/reports/jacoco/unitTestCoverageReport/unitTestCoverageReport.xml')
     }
 
     // Execution data generated when running the tests against classes instrumented by the JaCoCo agent.
@@ -54,25 +52,25 @@ task printVersionName {
 
 //def LOCAL_IP = getLocalIPv4()
 def LOCAL_IP = "10.0.2.2"
-def URL_PROXY_BASE_LOCAL = "http://" + LOCAL_IP + ":14000"
+def URL_PROXY_BASE_LOCAL = "http://"+LOCAL_IP+":14000"
 def URL_PROXY_BASE_STAGING = "https://wallet-proxy.stagenet.concordium.com"
 def URL_PROXY_BASE_PROD_TESTNET = "https://wallet-proxy.testnet.concordium.com"
 def URL_PROXY_BASE_PRODUCTION = "https://wallet-proxy.mainnet.concordium.software"
 
 def PROVIDER_AUTHORITY_BASE = "software.concordium.mobilewallet.seedphrase.DataFileProvider"
-def PROVIDER_AUTHORITY_LOCAL = PROVIDER_AUTHORITY_BASE + "-local"
-def PROVIDER_AUTHORITY_MOCK = PROVIDER_AUTHORITY_BASE + "-mock"
-def PROVIDER_AUTHORITY_STAGING = PROVIDER_AUTHORITY_BASE + "-staging"
-def PROVIDER_AUTHORITY_TESTNET = PROVIDER_AUTHORITY_BASE + "-testnet"
+def PROVIDER_AUTHORITY_LOCAL = PROVIDER_AUTHORITY_BASE+"-local"
+def PROVIDER_AUTHORITY_MOCK = PROVIDER_AUTHORITY_BASE+"-mock"
+def PROVIDER_AUTHORITY_STAGING = PROVIDER_AUTHORITY_BASE+"-staging"
+def PROVIDER_AUTHORITY_TESTNET = PROVIDER_AUTHORITY_BASE+"-testnet"
 def PROVIDER_AUTHORITY_PROD = PROVIDER_AUTHORITY_BASE
 
 // We provide a compile time random string for identification in order to prevent
 // other forked apps to collide
-def SCHEME_BASE = "concordiumwallet-" + getRandomString()
-def SCHEME_LOCAL = SCHEME_BASE + "-local"
-def SCHEME_MOCK = SCHEME_BASE + "-mock"
-def SCHEME_STAGING = SCHEME_BASE + "-staging"
-def SCHEME_TESTNET = SCHEME_BASE + "-testnet"
+def SCHEME_BASE = "concordiumwallet-"+getRandomString()
+def SCHEME_LOCAL = SCHEME_BASE+"-local"
+def SCHEME_MOCK = SCHEME_BASE+"-mock"
+def SCHEME_STAGING = SCHEME_BASE+"-staging"
+def SCHEME_TESTNET = SCHEME_BASE+"-testnet"
 def SCHEME_PROD = SCHEME_BASE
 
 def getLocalIPv4() {
@@ -89,10 +87,10 @@ def getLocalIPv4() {
 
 def getRandomString() {
     def key
-    String alphabet = (('a'..'k') + ('m'..'z') + ('2'..'9')).join()
+    String alphabet = (('a'..'k')+('m'..'z')+('2'..'9')).join()
     def length = 10
     key = new Random().with {
-        (1..length).collect { alphabet[nextInt(alphabet.length())] }.join()
+        (1..length).collect { alphabet[ nextInt( alphabet.length() ) ] }.join()
     }
     return key
 }
@@ -137,8 +135,8 @@ android {
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [
-                        "room.schemaLocation": "${project.projectDir}/schemas".toString(),
-                        "room.incremental"   : "true"]
+                    "room.schemaLocation": "${project.projectDir}/schemas".toString(),
+                    "room.incremental"   : "true"]
             }
         }
     }

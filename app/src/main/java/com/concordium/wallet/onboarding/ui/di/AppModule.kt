@@ -61,7 +61,7 @@ class AppModule {
                 .build()
         }
 
-        single<Retrofit>() {
+        single<Retrofit> {
             Retrofit.Builder()
                 .addConverterFactory(
                     MoshiConverterFactory.create(

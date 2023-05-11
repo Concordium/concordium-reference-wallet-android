@@ -8,7 +8,6 @@ import android.os.Process
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.AppSettings
-import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseActivity
 
 class IntroTermsActivity : BaseActivity() {
