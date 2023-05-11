@@ -81,23 +81,27 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
             CurrencyUtil.formatGTU(accountDelegation.stakedAmount, true)
         )
 
-        if (accountDelegation.delegationTarget.delegateType == DelegationTarget.TYPE_DELEGATE_TO_BAKER) addContent(
-            R.string.delegation_status_content_target_pool,
-            accountDelegation.delegationTarget.bakerId.toString()
-        )
-        else addContent(
-            R.string.delegation_status_content_target_pool,
-            getString(R.string.delegation_register_delegation_passive_long)
-        )
+        if (accountDelegation.delegationTarget.delegateType == DelegationTarget.TYPE_DELEGATE_TO_BAKER)
+            addContent(
+                R.string.delegation_status_content_target_pool,
+                accountDelegation.delegationTarget.bakerId.toString()
+            )
+        else
+            addContent(
+                R.string.delegation_status_content_target_pool,
+                getString(R.string.delegation_register_delegation_passive_long)
+            )
 
-        if (accountDelegation.restakeEarnings) addContent(
-            R.string.delegation_status_content_rewards_will_be,
-            getString(R.string.delegation_status_added_to_delegation_amount)
-        )
-        else addContent(
-            R.string.delegation_status_content_rewards_will_be,
-            getString(R.string.delegation_status_at_disposal)
-        )
+        if (accountDelegation.restakeEarnings)
+            addContent(
+                R.string.delegation_status_content_rewards_will_be,
+                getString(R.string.delegation_status_added_to_delegation_amount)
+            )
+        else
+            addContent(
+                R.string.delegation_status_content_rewards_will_be,
+                getString(R.string.delegation_status_at_disposal)
+            )
 
         viewModel.bakerDelegationData.account?.accountDelegation?.pendingChange?.let { pendingChange ->
             addPendingChange(

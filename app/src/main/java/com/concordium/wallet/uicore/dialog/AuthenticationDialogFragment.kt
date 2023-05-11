@@ -49,16 +49,14 @@ class AuthenticationDialogFragment : DialogFragment(), TextView.OnEditorActionLi
             binding.includeDialogAuthenticationContent.passwordDescription.text = alternativeString
         } else {
             binding.includeDialogAuthenticationContent.passwordDescription.setText(
-                if (App.appCore.getCurrentAuthenticationManager()
-                        .usePasscode()
-                ) R.string.auth_dialog_passcode_description else R.string.auth_dialog_password_description
+                if (App.appCore.getCurrentAuthenticationManager().usePasscode())
+                    R.string.auth_dialog_passcode_description else R.string.auth_dialog_password_description
             )
         }
 
         binding.includeDialogAuthenticationContent.passwordEdittext.setHint(
-            if (App.appCore.getCurrentAuthenticationManager()
-                    .usePasscode()
-            ) R.string.auth_dialog_passcode else R.string.auth_dialog_password
+            if (App.appCore.getCurrentAuthenticationManager().usePasscode())
+                R.string.auth_dialog_passcode else R.string.auth_dialog_password
         )
         if (App.appCore.getCurrentAuthenticationManager().usePasscode()) {
             binding.includeDialogAuthenticationContent.passwordEdittext.inputType =
@@ -97,9 +95,8 @@ class AuthenticationDialogFragment : DialogFragment(), TextView.OnEditorActionLi
         } else {
             binding.includeDialogAuthenticationContent.passwordEdittext.setText("")
             binding.includeDialogAuthenticationContent.passwordError.setText(
-                if (App.appCore.getCurrentAuthenticationManager()
-                        .usePasscode()
-                ) R.string.auth_dialog_passcode_error else R.string.auth_dialog_password_error
+                if (App.appCore.getCurrentAuthenticationManager().usePasscode())
+                    R.string.auth_dialog_passcode_error else R.string.auth_dialog_password_error
             )
         }
     }

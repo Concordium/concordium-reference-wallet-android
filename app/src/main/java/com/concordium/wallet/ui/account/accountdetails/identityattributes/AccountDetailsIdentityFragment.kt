@@ -23,7 +23,9 @@ class AccountDetailsIdentityFragment : BaseFragment() {
     //************************************************************
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentAccountDetailsIdentityBinding.inflate(inflater, container, false)

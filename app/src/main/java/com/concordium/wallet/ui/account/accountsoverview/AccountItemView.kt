@@ -47,10 +47,13 @@ class AccountItemView(context: Context, attrs: AttributeSet?) : LinearLayout(con
         binding.buttonArea.visibility =
             if (accountPending || account.readOnly || hideExpandBar) View.GONE else View.VISIBLE
         binding.rootCardContent.setBackgroundColor(
-            if (account.readOnly) resources.getColor(
-                R.color.theme_component_background_disabled,
-                null
-            ) else resources.getColor(R.color.theme_white, null)
+            if (account.readOnly)
+                resources.getColor(
+                    R.color.theme_component_background_disabled,
+                    null
+                )
+            else
+                resources.getColor(R.color.theme_white, null)
         )
 
         this.isEnabled = !account.readOnly
@@ -74,10 +77,13 @@ class AccountItemView(context: Context, attrs: AttributeSet?) : LinearLayout(con
         binding.buttonArea.visibility =
             if (accountPending || accountWithIdentity.account.readOnly || hideExpandBar) View.GONE else View.VISIBLE
         binding.rootCardContent.setBackgroundColor(
-            if (accountWithIdentity.account.readOnly) resources.getColor(
-                R.color.theme_component_background_disabled,
-                null
-            ) else resources.getColor(R.color.theme_white, null)
+            if (accountWithIdentity.account.readOnly)
+                resources.getColor(
+                    R.color.theme_component_background_disabled,
+                    null
+                )
+            else
+                resources.getColor(R.color.theme_white, null)
         )
 
         this.isEnabled = !accountWithIdentity.account.readOnly

@@ -33,8 +33,7 @@ class AmountEditText : EditText {
 
     @Suppress("UNUSED_PARAMETER")
     private fun init(attrs: AttributeSet?) {
-        keyListener =
-            DigitsKeyListener.getInstance("0123456789" + DecimalFormatSymbols.getInstance().decimalSeparator)
+        keyListener = DigitsKeyListener.getInstance("0123456789" + DecimalFormatSymbols.getInstance().decimalSeparator)
         addTextChangedListener(DecimalTextWatcher(6))
         addTextChangedListener(MaxAmountTextWatcher())
     }

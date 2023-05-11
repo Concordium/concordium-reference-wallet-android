@@ -98,10 +98,7 @@ abstract class BaseActivity : AppCompatActivity() {
                     } else {
                         it.data?.getStringExtra("THEN_START")?.let { thenStart ->
                             val intent = Intent(this, Class.forName(thenStart))
-                            if (it.data?.getStringExtra("WITH_KEY") != null && it.data?.getSerializableExtra(
-                                    "WITH_DATA"
-                                ) != null
-                            ) {
+                            if (it.data?.getStringExtra("WITH_KEY") != null && it.data?.getSerializableExtra("WITH_DATA") != null) {
                                 intent.putExtra(
                                     it.data?.getStringExtra("WITH_KEY"),
                                     it.data?.getSerializableExtra("WITH_DATA")

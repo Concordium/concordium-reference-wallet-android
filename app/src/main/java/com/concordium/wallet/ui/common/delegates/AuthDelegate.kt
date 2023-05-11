@@ -86,9 +86,10 @@ class AuthDelegateImpl : AuthDelegate {
             .setConfirmationRequired(true)
             .setNegativeButtonText(
                 activity.getString(
-                    if (App.appCore.getCurrentAuthenticationManager()
-                            .usePasscode()
-                    ) R.string.auth_login_biometrics_dialog_cancel_passcode else R.string.auth_login_biometrics_dialog_cancel_password
+                    if (App.appCore.getCurrentAuthenticationManager().usePasscode())
+                        R.string.auth_login_biometrics_dialog_cancel_passcode
+                    else
+                        R.string.auth_login_biometrics_dialog_cancel_password
                 )
             )
             .build()

@@ -88,11 +88,15 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity() {
         binding.delegationAmountConfirmation.text =
             CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
         binding.targetPool.text =
-            if (viewModel.bakerDelegationData.isLPool) getString(R.string.delegation_register_delegation_passive_long) else viewModel.bakerDelegationData.poolId
+            if (viewModel.bakerDelegationData.isLPool)
+                getString(R.string.delegation_register_delegation_passive_long)
+            else
+                viewModel.bakerDelegationData.poolId
         binding.rewardsWillBe.text =
-            if (viewModel.bakerDelegationData.restake) getString(R.string.delegation_status_added_to_delegation_amount) else getString(
-                R.string.delegation_status_at_disposal
-            )
+            if (viewModel.bakerDelegationData.restake)
+                getString(R.string.delegation_status_added_to_delegation_amount)
+            else
+                getString(R.string.delegation_status_at_disposal)
 
         if (!viewModel.stakedAmountHasChanged()) {
             binding.delegationAmountConfirmationTitle.visibility = View.GONE
@@ -151,8 +155,7 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity() {
         binding.submitDelegationFinish.visibility = View.VISIBLE
         binding.includeTransactionSubmittedHeader.transactionSubmitted.visibility = View.VISIBLE
         viewModel.bakerDelegationData.submissionId?.let {
-            binding.includeTransactionSubmittedNo.transactionSubmittedDivider.visibility =
-                View.VISIBLE
+            binding.includeTransactionSubmittedNo.transactionSubmittedDivider.visibility = View.VISIBLE
             binding.includeTransactionSubmittedNo.transactionSubmittedId.visibility = View.VISIBLE
             binding.includeTransactionSubmittedNo.transactionSubmittedId.text = it
         }
@@ -175,9 +178,7 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity() {
             }
             when (viewModel.bakerDelegationData.type) {
                 UPDATE_DELEGATION -> {
-                    if ((viewModel.bakerDelegationData.amount
-                            ?: 0) < (viewModel.bakerDelegationData.oldStakedAmount ?: 0)
-                    ) {
+                    if ((viewModel.bakerDelegationData.amount ?: 0) < (viewModel.bakerDelegationData.oldStakedAmount ?: 0)) {
                         builder.setMessage(
                             resources.getQuantityString(
                                 R.plurals.delegation_notice_message_decrease,

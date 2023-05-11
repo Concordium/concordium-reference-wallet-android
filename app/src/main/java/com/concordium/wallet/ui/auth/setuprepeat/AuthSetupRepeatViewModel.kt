@@ -10,7 +10,6 @@ import com.concordium.wallet.core.authentication.Session
 
 class AuthSetupRepeatViewModel(application: Application) : AndroidViewModel(application) {
 
-    //App.appCore.getCurrentAuthenticationManager()
     private val session: Session = App.appCore.session
 
     private val _finishScreenLiveData = MutableLiveData<Event<Boolean>>()

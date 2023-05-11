@@ -52,7 +52,6 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
             )// testnet
             _saveSeedLiveData.value = saveSuccess
             _validateLiveData.value = saveSuccess
-
         }
     }
 

@@ -106,9 +106,7 @@ data class Account(
         if (credentialValueJsonObject["type"]?.asString == "initial") {
             return true
         }
-        if (credentialValueJsonObject.getAsJsonObject("credential")
-                ?.get("type")?.asString == "initial"
-        )
+        if (credentialValueJsonObject.getAsJsonObject("credential")?.get("type")?.asString == "initial")
             return true
         return false
     }

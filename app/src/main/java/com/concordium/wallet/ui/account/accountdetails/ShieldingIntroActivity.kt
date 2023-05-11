@@ -105,8 +105,8 @@ class ShieldingIntroActivity : BaseActivity() {
     }
 
     private inner class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
-        override fun getItemCount(): Int =
-            MAX_PAGES //There are MAX_PAGES html pages enumerated in title
+        // There are MAX_PAGES html pages enumerated in title.
+        override fun getItemCount(): Int = MAX_PAGES
 
         override fun createFragment(position: Int): Fragment = WebViewPageFragment(
             "file:///android_asset/schielded_balance_flow_en_" + (position + 1) + ".html",

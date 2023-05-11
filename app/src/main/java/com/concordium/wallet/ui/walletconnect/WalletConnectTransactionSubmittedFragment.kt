@@ -26,13 +26,8 @@ class WalletConnectTransactionSubmittedFragment : Fragment() {
             }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding =
-            FragmentWalletConnectTransactionSubmittedBinding.inflate(inflater, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentWalletConnectTransactionSubmittedBinding.inflate(inflater, container, false)
         return binding.root
     }
 

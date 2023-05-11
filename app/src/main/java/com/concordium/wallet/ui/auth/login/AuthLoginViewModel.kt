@@ -69,9 +69,8 @@ class AuthLoginViewModel(application: Application) : AndroidViewModel(applicatio
         } else {
             _passwordErrorLiveData.value =
                 Event(
-                    if (App.appCore.getCurrentAuthenticationManager()
-                            .usePasscode()
-                    ) R.string.auth_login_passcode_error else R.string.auth_login_password_error
+                    if (App.appCore.getCurrentAuthenticationManager().usePasscode())
+                        R.string.auth_login_passcode_error else R.string.auth_login_password_error
                 )
             _waitingLiveData.value = false
         }
@@ -86,9 +85,10 @@ class AuthLoginViewModel(application: Application) : AndroidViewModel(applicatio
         } else {
             _passwordErrorLiveData.value =
                 Event(
-                    if (App.appCore.getCurrentAuthenticationManager()
-                            .usePasscode()
-                    ) R.string.auth_login_passcode_error else R.string.auth_login_password_error
+                    if (App.appCore.getCurrentAuthenticationManager().usePasscode())
+                        R.string.auth_login_passcode_error
+                    else
+                        R.string.auth_login_password_error
                 )
             _waitingLiveData.value = false
         }

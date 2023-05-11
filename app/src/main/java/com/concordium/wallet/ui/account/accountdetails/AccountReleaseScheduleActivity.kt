@@ -95,7 +95,8 @@ class AccountReleaseScheduleActivity : BaseActivity() {
         viewModel.scheduledReleasesLiveData.observe(this, Observer<List<Schedule>> { list ->
 
             binding.accountReleaseScheduleLockedAmount.text = CurrencyUtil.formatGTU(
-                viewModel.account.finalizedAccountReleaseSchedule?.total?.toLong() ?: 0, true
+                viewModel.account.finalizedAccountReleaseSchedule?.total?.toLong() ?: 0,
+                true
             )
 
             binding.accountReleaseScheduleList.removeAllViews()

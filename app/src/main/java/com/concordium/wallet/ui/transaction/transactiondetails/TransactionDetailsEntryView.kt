@@ -11,8 +11,7 @@ import com.concordium.wallet.databinding.ViewTransactionDetailsEntryBinding
 import com.concordium.wallet.uicore.Formatter
 
 class TransactionDetailsEntryView : ConstraintLayout {
-    private val binding =
-        ViewTransactionDetailsEntryBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding = ViewTransactionDetailsEntryBinding.inflate(LayoutInflater.from(context), this, true)
 
     private var fullValue: String? = null
 
@@ -24,11 +23,7 @@ class TransactionDetailsEntryView : ConstraintLayout {
         init(attrs)
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         init(attrs)
     }
 

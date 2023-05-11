@@ -201,10 +201,10 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             val transferRepository = TransferRepository(transferDao)
             val transferList = transferRepository.getAllByAccountId(account.id)
             for (transfer in transferList) {
-                if (transfer.transactionType == TransactionType.LOCAL_DELEGATION) hasPendingDelegationTransactions =
-                    true
-                if (transfer.transactionType == TransactionType.LOCAL_BAKER) hasPendingBakingTransactions =
-                    true
+                if (transfer.transactionType == TransactionType.LOCAL_DELEGATION)
+                    hasPendingDelegationTransactions = true
+                if (transfer.transactionType == TransactionType.LOCAL_BAKER)
+                    hasPendingBakingTransactions = true
             }
             localTransfersLoaded.value = account
         }
@@ -230,13 +230,12 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         object : CountDownTimer(Long.MAX_VALUE, BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC * 1000) {
             private var first = true
             override fun onTick(millisUntilFinished: Long) {
-                if (first) { //ignore first tick
+                if (first) { // ignore first tick
                     first = false
                     return
                 }
                 if (isRegularUpdateNeeded()) {
                     updateState(false)
-                    // Log.d("Tick.....")
                 }
             }
 

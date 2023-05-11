@@ -183,9 +183,9 @@ class SendFundsActivity : BaseActivity() {
                 updateConfirmButton()
             }
         }
-        viewModel.recipientLiveData.observe(
-            this
-        ) { value -> showRecipient(value) }
+        viewModel.recipientLiveData.observe(this) {
+                value -> showRecipient(value)
+        }
     }
 
     private fun initViews() {
@@ -295,10 +295,8 @@ class SendFundsActivity : BaseActivity() {
         }
 
         if (viewModel.isShielded) {
-            binding.balanceTotalText.text =
-                getString(R.string.accounts_overview_balance_at_disposal)
-            binding.atDisposalTotalText.text =
-                getString(R.string.accounts_overview_shielded_balance)
+            binding.balanceTotalText.text = getString(R.string.accounts_overview_balance_at_disposal)
+            binding.atDisposalTotalText.text = getString(R.string.accounts_overview_shielded_balance)
             binding.balanceTotalTextview.text = CurrencyUtil.formatGTU(
                 viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance),
                 withGStroke = true
@@ -308,8 +306,10 @@ class SendFundsActivity : BaseActivity() {
         } else {
             binding.balanceTotalText.text = getString(R.string.accounts_overview_account_total)
             binding.atDisposalTotalText.text = getString(R.string.accounts_overview_at_disposal)
-            binding.balanceTotalTextview.text =
-                CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance, withGStroke = true)
+            binding.balanceTotalTextview.text = CurrencyUtil.formatGTU(
+                viewModel.account.totalUnshieldedBalance,
+                withGStroke = true
+            )
             binding.atDisposalTotalTextview.text = CurrencyUtil.formatGTU(
                 viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance),
                 withGStroke = true
@@ -465,7 +465,9 @@ class SendFundsActivity : BaseActivity() {
         val hasSufficientFunds =
             viewModel.hasSufficientFunds(binding.amountEdittext.text.toString())
         binding.errorTextview.visibility = if (hasSufficientFunds) View.INVISIBLE else View.VISIBLE
-        val enable = if (isWaiting()) false else {
+        val enable = if (isWaiting())
+            false
+        else {
             (binding.amountEdittext.text.isNotEmpty()
                     && viewModel.selectedRecipient != null
                     && viewModel.transactionFeeLiveData.value != null
@@ -499,9 +501,10 @@ class SendFundsActivity : BaseActivity() {
         val amountString = CurrencyUtil.formatGTU(amount, withGStroke = true)
         val costString = CurrencyUtil.formatGTU(cost, withGStroke = true)
 
-        val memoText = if (viewModel.getClearTextMemo()
-                .isNullOrEmpty()
-        ) "" else getString(R.string.send_funds_confirmation_memo, viewModel.getClearTextMemo())
+        val memoText = if (viewModel.getClearTextMemo().isNullOrEmpty())
+            ""
+        else
+            getString(R.string.send_funds_confirmation_memo, viewModel.getClearTextMemo())
 
         return if (viewModel.isShielded) {
             if (viewModel.isTransferToSameAccount()) {

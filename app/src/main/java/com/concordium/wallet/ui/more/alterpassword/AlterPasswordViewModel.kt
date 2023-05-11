@@ -202,10 +202,7 @@ class AlterPasswordViewModel(application: Application) :
                 try {
                     val seedPhraseEncrypted = App.appCore.getOriginalAuthenticationManager()
                         .encryptInBackground(encryptKey, decryptedSeed!!)
-                    if (seedPhraseEncrypted == null || !AuthPreferences(getApplication()).updateEncryptedSeedPhrase(
-                            seedPhraseEncrypted
-                        )
-                    ) {
+                    if (seedPhraseEncrypted == null || !AuthPreferences(getApplication()).updateEncryptedSeedPhrase(seedPhraseEncrypted)) {
                         allSuccess = false
                     }
                     decryptedSeed = null
@@ -220,11 +217,12 @@ class AlterPasswordViewModel(application: Application) :
                 try {
                     for (account in initialDecryptedAccountsList) {
                         if (account.encryptedAccountData.isNotEmpty()) {
+                            // Which is decrypted by now!
                             val accountDataEncrypted =
                                 App.appCore.getOriginalAuthenticationManager().encryptInBackground(
                                     encryptKey,
                                     account.encryptedAccountData
-                                )//Which is decrypted by now!
+                                )
                             if (accountDataEncrypted != null) {
                                 account.encryptedAccountData = accountDataEncrypted
                                 accountRepository.update(account)

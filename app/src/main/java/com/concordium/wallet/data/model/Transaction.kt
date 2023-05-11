@@ -4,7 +4,6 @@ import com.concordium.wallet.CBORUtil
 import java.io.Serializable
 import java.util.Date
 
-
 data class Transaction(
     val source: TransactionSource,
     val timeStamp: Date,

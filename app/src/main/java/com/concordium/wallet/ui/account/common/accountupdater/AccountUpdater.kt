@@ -175,15 +175,13 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         Log.d("start")
         supervisorScope {
             try {
-                val accountListCloned =
-                    accountList.toMutableList() // prevent ConcurrentModificationException
+                // prevent ConcurrentModificationException
+                val accountListCloned = accountList.toMutableList()
                 for (account in accountListCloned) {
                     if ((account.transactionStatus == TransactionStatus.COMMITTED
                                 || account.transactionStatus == TransactionStatus.RECEIVED
-                                || account.transactionStatus == TransactionStatus.UNKNOWN) && !TextUtils.isEmpty(
-                            account.submissionId
-                        )
-                    ) {
+                                || account.transactionStatus == TransactionStatus.UNKNOWN
+                                ) && !TextUtils.isEmpty(account.submissionId)) {
                         val deferred = async {
                             proxyRepository.getAccountSubmissionStatusSuspended(account.submissionId)
                         }
@@ -195,8 +193,8 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     }
                 }
 
-                val accountSubmissionStatusRequestListCloned =
-                    accountSubmissionStatusRequestList.toMutableList() // prevent ConcurrentModificationException
+                // prevent ConcurrentModificationException
+                val accountSubmissionStatusRequestListCloned = accountSubmissionStatusRequestList.toMutableList()
                 for (request in accountSubmissionStatusRequestListCloned) {
                     Log.d("AccountSubmissionStatus Loop item start")
                     val submissionStatus = request.deferred.await()
@@ -204,8 +202,6 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     //If we change state to finalized we save it in address book
                     if (request.account.transactionStatus != submissionStatus.status && submissionStatus.status == TransactionStatus.FINALIZED) {
                         viewModelScope.launch(Dispatchers.Default) {
-
-
                             updateListener?.onNewAccountFinalized(request.account.name)
                             recipientRepository.insert(
                                 Recipient(
@@ -356,8 +352,8 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     }
                 }
 
-                val accountBalanceRequestListCloned =
-                    accountBalanceRequestList.toMutableList() // prevent ConcurrentModificationException
+                // prevent ConcurrentModificationException
+                val accountBalanceRequestListCloned = accountBalanceRequestList.toMutableList()
                 for (request in accountBalanceRequestListCloned) {
                     Log.d("AccountBalance Loop item start")
                     val accountBalance = request.deferred.await()
@@ -485,10 +481,8 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     val amount = lookupMappedAmount(it)
                     if (amount != null) {
                         accountShieldedBalance += amount.toLong()
-                    } else {
-                        if (containsEncrypted != ShieldedAccountEncryptionStatus.ENCRYPTED) {
-                            containsEncrypted = ShieldedAccountEncryptionStatus.PARTIALLYDECRYPTED
-                        }
+                    } else if (containsEncrypted != ShieldedAccountEncryptionStatus.ENCRYPTED) {
+                        containsEncrypted = ShieldedAccountEncryptionStatus.PARTIALLYDECRYPTED
                     }
                 }
             }

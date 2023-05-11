@@ -126,9 +126,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         globalInfo: GlobalParamsWrapper,
         identityIndex: Int
     ) {
-        if ((identityGaps[identityProvider.ipInfo.ipDescription.url]
-                ?: IDENTITY_GAP_MAX) >= IDENTITY_GAP_MAX
-        ) {
+        if ((identityGaps[identityProvider.ipInfo.ipDescription.url] ?: IDENTITY_GAP_MAX) >= IDENTITY_GAP_MAX) {
             checkAllDone()
             return
         }
@@ -275,8 +273,8 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                 commitmentsRandomness = createCredentialOutput.commitmentsRandomness
             )
         )
-        val encryptedAccountData = App.appCore.getCurrentAuthenticationManager()
-            .encryptInBackground(password, jsonToBeEncrypted)
+        val encryptedAccountData =
+            App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, jsonToBeEncrypted)
             ?: return
 
         try {

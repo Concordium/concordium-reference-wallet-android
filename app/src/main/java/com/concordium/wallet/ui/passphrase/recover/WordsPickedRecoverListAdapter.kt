@@ -48,9 +48,10 @@ class WordsPickedRecoverListAdapter(
 
         val rootLayoutParams = holder.binding.root.layoutParams
         rootLayoutParams.height =
-            if (position == PassPhraseViewModel.WORD_COUNT + OFFSET) 0 else UnitConvertUtil.convertDpToPixel(
-                50f
-            )
+            if (position == PassPhraseViewModel.WORD_COUNT + OFFSET)
+                0
+            else
+                UnitConvertUtil.convertDpToPixel(50f)
         holder.binding.root.layoutParams = rootLayoutParams
 
         arrayList[position]?.let {

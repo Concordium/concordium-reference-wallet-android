@@ -169,14 +169,16 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity() {
 
     private fun updateVisibilities() {
         binding.poolId.hint =
-            if (viewModel.bakerDelegationData.oldDelegationTargetPoolId == null) getString(R.string.delegation_register_delegation_pool_id_hint) else getString(
-                R.string.delegation_register_delegation_pool_id_hint_update
-            )
+            if (viewModel.bakerDelegationData.oldDelegationTargetPoolId == null)
+                getString(R.string.delegation_register_delegation_pool_id_hint)
+            else
+                getString(R.string.delegation_register_delegation_pool_id_hint_update)
         binding.poolId.visibility =
             if (viewModel.bakerDelegationData.isLPool) View.GONE else View.VISIBLE
-        if (viewModel.bakerDelegationData.isLPool) binding.poolDesc.setText(R.string.delegation_register_delegation_desc_passive) else binding.poolDesc.setText(
-            R.string.delegation_register_delegation_desc
-        )
+        if (viewModel.bakerDelegationData.isLPool)
+            binding.poolDesc.setText(R.string.delegation_register_delegation_desc_passive)
+        else
+            binding.poolDesc.setText(R.string.delegation_register_delegation_desc)
         binding.poolDesc.handleUrlClicks { url ->
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             ContextCompat.startActivity(this, browserIntent, null)
@@ -187,9 +189,7 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity() {
     }
 
     private fun onContinueClicked() {
-        if (viewModel.isBakerPool() && viewModel.getPoolId()
-                .isEmpty() && getExistingPoolIdText().isNotEmpty()
-        )
+        if (viewModel.isBakerPool() && viewModel.getPoolId().isEmpty() && getExistingPoolIdText().isNotEmpty())
             viewModel.setPoolID(getExistingPoolIdText())
         viewModel.validatePoolId()
     }

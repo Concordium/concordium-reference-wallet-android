@@ -16,10 +16,10 @@ tasks.create(name: "unitTestCoverageReport", type: JacocoReport, dependsOn: "tes
     description = "Generate Jacoco coverage reports for the 'local' debug build."
 
     reports {
+        // Human readable (written into './build/reports/jacoco/unitTestCoverageReport/html').
         html.enabled = true
-        // human readable (written into './build/reports/jacoco/unitTestCoverageReport/html')
+        // CI-readable (written into './build/reports/jacoco/unitTestCoverageReport/unitTestCoverageReport.xml').
         xml.enabled = true
-        // CI-readable (written into './build/reports/jacoco/unitTestCoverageReport/unitTestCoverageReport.xml')
     }
 
     // Execution data generated when running the tests against classes instrumented by the JaCoCo agent.

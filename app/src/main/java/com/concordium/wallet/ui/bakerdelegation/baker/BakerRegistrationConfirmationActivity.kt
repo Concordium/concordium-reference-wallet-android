@@ -185,9 +185,10 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
             binding.rewardsWillBeTitle.visibility = View.VISIBLE
             binding.rewardsWillBe.visibility = View.VISIBLE
             binding.rewardsWillBe.text =
-                if (viewModel.bakerDelegationData.restake) getString(R.string.baker_register_confirmation_receipt_added_to_delegation_amount) else getString(
-                    R.string.baker_register_confirmation_receipt_at_disposal
-                )
+                if (viewModel.bakerDelegationData.restake)
+                    getString(R.string.baker_register_confirmation_receipt_added_to_delegation_amount)
+                else
+                    getString(R.string.baker_register_confirmation_receipt_at_disposal)
         }
     }
 
@@ -196,9 +197,10 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
             binding.poolStatusTitle.visibility = View.VISIBLE
             binding.poolStatus.visibility = View.VISIBLE
             binding.poolStatus.text =
-                if (viewModel.isOpenBaker()) getString(R.string.baker_register_confirmation_receipt_pool_status_open) else getString(
-                    R.string.baker_register_confirmation_receipt_pool_status_closed
-                )
+                if (viewModel.isOpenBaker())
+                    getString(R.string.baker_register_confirmation_receipt_pool_status_open)
+                else
+                    getString(R.string.baker_register_confirmation_receipt_pool_status_closed)
         }
     }
 
@@ -220,9 +222,8 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
         if (viewModel.metadataUrlHasChanged()) {
             binding.metaDataUrlTitle.visibility = View.VISIBLE
             binding.metaDataUrl.visibility = View.VISIBLE
-            if ((viewModel.bakerDelegationData.metadataUrl?.length
-                    ?: 0) > 0
-            ) binding.metaDataUrl.text = viewModel.bakerDelegationData.metadataUrl
+            if ((viewModel.bakerDelegationData.metadataUrl?.length ?: 0) > 0)
+                binding.metaDataUrl.text = viewModel.bakerDelegationData.metadataUrl
             else binding.metaDataUrl.text =
                 getString(R.string.baker_update_pool_settings_url_removed)
         }
@@ -244,8 +245,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
         binding.gracePeriod.visibility = View.GONE
         binding.includeTransactionSubmittedHeader.transactionSubmitted.visibility = View.VISIBLE
         viewModel.bakerDelegationData.submissionId?.let {
-            binding.includeTransactionSubmittedNo.transactionSubmittedDivider.visibility =
-                View.VISIBLE
+            binding.includeTransactionSubmittedNo.transactionSubmittedDivider.visibility = View.VISIBLE
             binding.includeTransactionSubmittedNo.transactionSubmittedId.visibility = View.VISIBLE
             binding.includeTransactionSubmittedNo.transactionSubmittedId.text = it
         }
@@ -257,13 +257,9 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
 
         var noticeMessage = getString(R.string.baker_notice_message)
 
-        if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount
-                ?: 0) < (viewModel.bakerDelegationData.amount ?: 0)
-        ) {
+        if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount ?: 0) < (viewModel.bakerDelegationData.amount ?: 0)) {
             noticeMessage = getString(R.string.baker_notice_message_update_increase)
-        } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount
-                ?: 0) > (viewModel.bakerDelegationData.amount ?: 0)
-        ) {
+        } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount ?: 0) > (viewModel.bakerDelegationData.amount ?: 0)) {
             val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(
                 viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0
             )
@@ -272,9 +268,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
                 gracePeriod,
                 gracePeriod
             )
-        } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount
-                ?: 0) == (viewModel.bakerDelegationData.amount ?: 0)
-        ) {
+        } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount ?: 0) == (viewModel.bakerDelegationData.amount ?: 0)) {
             noticeMessage = getString(R.string.baker_notice_message_update_pool)
         } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_POOL) {
             noticeMessage = getString(R.string.baker_notice_message_update_pool)

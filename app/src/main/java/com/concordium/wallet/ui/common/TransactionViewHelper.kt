@@ -80,7 +80,6 @@ object TransactionViewHelper {
             amountTextView.visibility = View.GONE
         }
 
-
         fun showCostLineWithAmounts() {
             // Subtotal and cost
             if (ta.subtotal != null && ta.cost != null) {
@@ -119,10 +118,9 @@ object TransactionViewHelper {
                 costTextView.visibility = View.GONE
                 amountTextView.visibility = View.GONE
             }
-
         }
 
-        //Clear first
+        // Clear first
         totalTextView.text = ""
 
         // Public balance
@@ -136,9 +134,9 @@ object TransactionViewHelper {
                     setTotalView(ta.getTotalAmountForRegular())
                     showCostLineWithAmounts()
                 } else
-                // encryptedTransfer
-                //    if origin is self => show as simpleTransfer, but show subtotal/cost row as "Shielded transaction fee
-                //    else => do NOT show
+                    // encryptedTransfer
+                    //    if origin is self => show as simpleTransfer, but show subtotal/cost row as "Shielded transaction fee
+                    //    else => do NOT show
                     if (ta.isEncryptedTransfer()) {
                         setTotalView(ta.getTotalAmountForRegular())
                         if (ta.isOriginSelf()) {
@@ -153,19 +151,18 @@ object TransactionViewHelper {
             }
             // local (unfinalized) transactions
             else {
-
                 // simpleTransfer (handle as before)
                 // transferToSecret (as simpleTransfer)
                 if (ta.isSimpleTransfer() || ta.isTransferToSecret()) {
                     setTotalView(ta.getTotalAmountForRegular())
                     showCostLineWithAmounts()
                 } else
-                // transferToPublic (show only the cost as total, no subtotal or fee on second row - clarified with Concordium)
+                    // transferToPublic (show only the cost as total, no subtotal or fee on second row - clarified with Concordium)
                     if (ta.isTransferToPublic()) {
                         setTotalView(ta.getTotalAmountForRegular())
                         hideCostLine()
                     } else
-                    // encryptedTransfer (show only the cost as total, subtotal/cost row should be "Shielded transaction fee")
+                        // encryptedTransfer (show only the cost as total, subtotal/cost row should be "Shielded transaction fee")
                         if (ta.isEncryptedTransfer()) {
                             setTotalView(ta.getTotalAmountForRegular())
                             showTransactionFeeText()
@@ -180,13 +177,13 @@ object TransactionViewHelper {
                 if (ta.isSimpleTransfer()) {
                     // left empty intentionally (filtered out)
                 } else
-                // transferToSecret (only one row - show the subtotal with minus)
-                // transferToPublic (only one row - show the subtotal with minus)
+                    // transferToSecret (only one row - show the subtotal with minus)
+                    // transferToPublic (only one row - show the subtotal with minus)
                     if (ta.isTransferToSecret() || ta.isTransferToPublic()) {
                         setTotalView(ta.getTotalAmountForShielded())
                         hideCostLine()
                     } else
-                    // encryptedTransfer (decrypted value of encrypted amount)
+                        // encryptedTransfer (decrypted value of encrypted amount)
                         if (ta.isEncryptedTransfer()) {
                             ta.encrypted?.encryptedAmount?.let {
                                 var amount = accountUpdater.lookupMappedAmount(it)
@@ -209,19 +206,18 @@ object TransactionViewHelper {
                 if (ta.isSimpleTransfer() || ta.isTransferToSecret()) {
                     // left empty intentionally (filtered out)
                 } else
-                // transferToPublic - show the amount with minus
+                    // transferToPublic - show the amount with minus
                     if (ta.isTransferToPublic()) {
                         setTotalView(ta.getTotalAmountForShielded())
                         hideCostLine()
                     } else
-                    // encryptedTransfer -  we know the amount because it is outgoing. We show it with minus. When getting the submission status, we save the association between the known amount and the encryptedValue we get from the submission status, as clarified with Ales from Concordium
+                        // encryptedTransfer -  we know the amount because it is outgoing. We show it with minus. When getting the submission status, we save the association between the known amount and the encryptedValue we get from the submission status, as clarified with Ales from Concordium
                         if (ta.isEncryptedTransfer()) {
                             setTotalView(ta.getTotalAmountForShielded())
                             hideCostLine()
                         }
             }
         }
-
 
         // Alert image
         if (ta.transactionStatus == TransactionStatus.ABSENT ||

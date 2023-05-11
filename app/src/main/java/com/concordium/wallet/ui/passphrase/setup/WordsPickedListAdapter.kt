@@ -37,7 +37,10 @@ class WordsPickedListAdapter(private val context: Context, private val arrayList
 
         val rootLayoutParams = holder.binding.root.layoutParams
         rootLayoutParams.height =
-            if (position == WORD_COUNT + OFFSET) 0 else UnitConvertUtil.convertDpToPixel(50f)
+            if (position == WORD_COUNT + OFFSET)
+                0
+            else
+                UnitConvertUtil.convertDpToPixel(50f)
         holder.binding.root.layoutParams = rootLayoutParams
 
         arrayList[position]?.let {

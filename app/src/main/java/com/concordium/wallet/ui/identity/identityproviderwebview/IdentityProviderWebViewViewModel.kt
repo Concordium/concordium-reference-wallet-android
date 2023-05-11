@@ -105,9 +105,7 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
         val idObjectRequest = gson.toJson(IdentityRequest(identityCreationData.idObjectRequest))
         val baseUrl = identityCreationData.identityProvider.metadata.issuanceStart
         val delimiter = if (baseUrl.contains('?')) "&" else "?"
-        return if (BuildConfig.DEBUG && BuildConfig.ENV_NAME == "prod_testnet" && baseUrl.lowercase()
-                .contains("notabene")
-        )
+        return if (BuildConfig.DEBUG && BuildConfig.ENV_NAME == "prod_testnet" && baseUrl.lowercase().contains("notabene"))
             "${baseUrl}${delimiter}response_type=code&redirect_uri=$CALLBACK_URL&scope=identity&state=$idObjectRequest&test_flow=1"
         else
             "${baseUrl}${delimiter}response_type=code&redirect_uri=$CALLBACK_URL&scope=identity&state=$idObjectRequest"

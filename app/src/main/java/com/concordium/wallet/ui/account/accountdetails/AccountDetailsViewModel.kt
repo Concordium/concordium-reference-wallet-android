@@ -214,8 +214,9 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             submissionId,
             TransactionStatus.UNKNOWN,
             TransactionOutcome.UNKNOWN,
-            TransactionType.TRANSFERTOPUBLIC,   //Not really an outgoing public transfer,
-            //but amount is negative so it is listed as incoming positive
+            // Not really an outgoing public transfer,
+            // but amount is negative so it is listed as incoming positive.
+            TransactionType.TRANSFERTOPUBLIC,
             null,
             0,
             null
@@ -265,7 +266,10 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         accountUpdater.setUpdateListener(object : AccountUpdater.UpdateListener {
             override fun onDone(totalBalances: TotalBalancesData) {
                 _totalBalanceLiveData.value = Pair(
-                    if (isShielded) account.totalShieldedBalance else account.totalUnshieldedBalance,
+                    if (isShielded)
+                        account.totalShieldedBalance
+                    else
+                        account.totalUnshieldedBalance,
                     totalBalances.totalContainsEncrypted
                 )
                 getLocalTransfers()
@@ -308,10 +312,10 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
             transactionMappingHelper = TransactionMappingHelper(account, recipientList)
             val transferList = transferRepository.getAllByAccountId(account.id)
             for (transfer in transferList) {
-                if (transfer.transactionType == TransactionType.LOCAL_DELEGATION) hasPendingDelegationTransactions =
-                    true
-                if (transfer.transactionType == TransactionType.LOCAL_BAKER) hasPendingBakingTransactions =
-                    true
+                if (transfer.transactionType == TransactionType.LOCAL_DELEGATION)
+                    hasPendingDelegationTransactions = true
+                if (transfer.transactionType == TransactionType.LOCAL_BAKER)
+                    hasPendingBakingTransactions = true
                 val transaction = transfer.toTransaction()
                 transactionMappingHelper.addTitlesToTransaction(
                     transaction,
@@ -492,12 +496,10 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 accountUpdater.decryptEncryptedAmounts(secretKey, account)
                 accountUpdater.decryptAllUndecryptedAmounts(secretKey)
                 accountUpdater.updateForAccount(account)
+            } else if (transaction == null) {
+                decryptTransactionListUnencryptedAmounts(secretKey)
             } else {
-                if (transaction == null) {
-                    decryptTransactionListUnencryptedAmounts(secretKey)
-                } else {
-                    decryptTransactionUnencryptedAmounts(secretKey, transaction)
-                }
+                decryptTransactionUnencryptedAmounts(secretKey, transaction)
             }
             _totalBalanceLiveData.value = Pair(account.totalShieldedBalance, false)
             _waitingLiveData.value = false
@@ -517,7 +519,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         object : CountDownTimer(Long.MAX_VALUE, BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC * 1000) {
             private var first = true
             override fun onTick(millisUntilFinished: Long) {
-                if (first) { //ignore first tick
+                if (first) { // ignore first tick
                     first = false
                     return
                 }
@@ -545,9 +547,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         GlobalScope.launch(Dispatchers.IO) {
             transaction?.let {
                 if (it.encrypted != null) {
-
                     if (it.encrypted.encryptedAmount != null && accountUpdater.lookupMappedAmount(it.encrypted.encryptedAmount) == null) {
-
                         if (it.encrypted.newSelfEncryptedAmount != null && it.details?.inputEncryptedAmount != null) {
                             var newSelfAmount = 0L
                             var inputAmount = 0L
@@ -599,7 +599,6 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                         }
                     }
                 }
-
             }
         }
     }

@@ -73,8 +73,7 @@ class WalletConnectActivity : BaseActivity() {
             }
         } else {
             if (intent?.hasExtra(ACCOUNT) == true)
-                viewModel.walletConnectData.account =
-                    intent?.getSerializable(ACCOUNT, Account::class.java)
+                viewModel.walletConnectData.account = intent?.getSerializable(ACCOUNT, Account::class.java)
             viewModel.walletConnectData.wcUri = intent?.getStringExtra(WC_URI) ?: ""
             println("LC -> From Camera = ${viewModel.walletConnectData.wcUri}")
         }

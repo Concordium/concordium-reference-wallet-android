@@ -62,7 +62,6 @@ abstract class GenericFlowActivity(private val titleId: Int) : BaseActivity() {
     }
 
     private fun initViews() {
-
         binding.pager.adapter = ScreenSlidePagerAdapter(this)
 
         TabLayoutMediator(binding.pagersTabLayout, binding.pager)

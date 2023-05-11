@@ -137,8 +137,8 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun metadataUrlHasChanged(): Boolean {
-        return if (bakerDelegationData.type == REGISTER_BAKER) (bakerDelegationData.metadataUrl?.length
-            ?: 0) > 0
+        return if (bakerDelegationData.type == REGISTER_BAKER)
+                (bakerDelegationData.metadataUrl?.length ?: 0) > 0
         else bakerDelegationData.metadataUrl != bakerDelegationData.oldMetadataUrl
     }
 
@@ -147,8 +147,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun isUpdateDecreaseAmount(): Boolean {
-        return (bakerDelegationData.isUpdateBaker() || isUpdatingDelegation()) && (bakerDelegationData.oldStakedAmount
-            ?: 0) > (bakerDelegationData.amount ?: 0)
+        return (bakerDelegationData.isUpdateBaker() || isUpdatingDelegation()) && (bakerDelegationData.oldStakedAmount ?: 0) > (bakerDelegationData.amount ?: 0)
     }
 
     fun poolHasChanged(): Boolean {
@@ -156,9 +155,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             return true
         if (bakerDelegationData.isBakerPool && bakerDelegationData.oldDelegationIsBaker != null && bakerDelegationData.oldDelegationIsBaker == false)
             return true
-        if (bakerDelegationData.isBakerPool && bakerDelegationData.oldDelegationIsBaker == true && bakerDelegationData.poolId != (bakerDelegationData.oldDelegationTargetPoolId?.toString()
-                ?: "")
-        )
+        if (bakerDelegationData.isBakerPool && bakerDelegationData.oldDelegationIsBaker == true && bakerDelegationData.poolId != (bakerDelegationData.oldDelegationTargetPoolId?.toString() ?: ""))
             return true
         return false
     }
@@ -546,17 +543,34 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             null
 
         val openStatus =
-            if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER || bakerDelegationData.type == UPDATE_BAKER_STAKE) null else if (openStatusHasChanged()) bakerDelegationData.bakerPoolInfo?.openStatus else null
+            if (bakerDelegationData.type == UPDATE_BAKER_KEYS || bakerDelegationData.type == REMOVE_BAKER || bakerDelegationData.type == UPDATE_BAKER_STAKE)
+                null
+            else if (openStatusHasChanged())
+                bakerDelegationData.bakerPoolInfo?.openStatus
+            else
+                null
 
         val bakerKeys =
-            if (bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.bakerKeys
+            if (bakerDelegationData.type == REMOVE_BAKER)
+                null
+            else
+                bakerDelegationData.bakerKeys
 
         val transactionFeeCommission =
-            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.transactionCommissionRange?.max else null
+            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER)
+                bakerDelegationData.chainParameters?.transactionCommissionRange?.max
+            else
+                null
         val bakingRewardCommission =
-            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.bakingCommissionRange?.max else null
+            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER)
+                bakerDelegationData.chainParameters?.bakingCommissionRange?.max
+            else
+                null
         val finalizationRewardCommission =
-            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.finalizationCommissionRange?.max else null
+            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER)
+                bakerDelegationData.chainParameters?.finalizationCommissionRange?.max
+            else
+                null
 
         val transferInput = CreateTransferInput(
             from,
@@ -785,9 +799,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     fun bakerKeysJson(): String? {
         _bakerKeysLiveData.value?.let { bakerKeys ->
             bakerKeys.bakerId = bakerDelegationData.account?.accountIndex
-            return if (bakerKeys.toString()
-                    .isNotEmpty()
-            ) App.appCore.gson.toJson(bakerKeys) else null
+            return if (bakerKeys.toString().isNotEmpty())
+                App.appCore.gson.toJson(bakerKeys)
+            else null
         }
         return null
     }

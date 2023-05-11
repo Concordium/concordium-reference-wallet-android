@@ -30,13 +30,7 @@ open class Preferences {
         sharedPreferences =
             if (authPreferences.getBoolean(SHARED_PREFERENCES_ARE_ENCRYPTED, false)) {
                 initializeEncryptedSharedPreferences(context, preferenceName)
-            } else if (migrateWorkingPreferencesSuccess(
-                    context,
-                    preferenceName,
-                    preferenceMode,
-                    authPreferences
-                )
-            ) {
+            } else if (migrateWorkingPreferencesSuccess(context, preferenceName, preferenceMode, authPreferences)) {
                 initializeEncryptedSharedPreferences(context, preferenceName)
             } else {
                 getSharedPreferences(context, preferenceName, preferenceMode)

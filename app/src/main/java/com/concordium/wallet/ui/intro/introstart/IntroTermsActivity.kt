@@ -66,15 +66,11 @@ class IntroTermsActivity : BaseActivity() {
         appSettings?.let {
             when (it.status) {
                 AppSettings.APP_VERSION_STATUS_WARNING -> it.url?.let { url ->
-                    showAppUpdateWarning(
-                        url
-                    )
+                    showAppUpdateWarning(url)
                 }
 
                 AppSettings.APP_VERSION_STATUS_NEEDS_UPDATE -> it.url?.let { url ->
-                    showAppUpdateNeedsUpdate(
-                        url
-                    )
+                    showAppUpdateNeedsUpdate(url)
                 }
 
                 else -> {}
@@ -125,9 +121,10 @@ class IntroTermsActivity : BaseActivity() {
     private fun gotoStart() {
         App.appCore.session.setTermsHashed(App.appContext.getString(R.string.terms_text).hashCode())
         finish()
-        val intent = if (App.appCore.session.hasSetupPassword) Intent(
-            this,
-            AuthLoginActivity::class.java
+        val intent = if (App.appCore.session.hasSetupPassword)
+            Intent(
+                this,
+                AuthLoginActivity::class.java
         ) else Intent(this, IntroStartActivity::class.java)
         startActivity(intent)
     }

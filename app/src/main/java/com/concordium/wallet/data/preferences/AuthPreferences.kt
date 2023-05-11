@@ -19,8 +19,7 @@ class AuthPreferences(val context: Context) :
         const val PREFKEY_PASSWORD_ENCRYPTION_SALT = "PREFKEY_PASSWORD_ENCRYPTION_SALT"
         const val PREFKEY_PASSWORD_ENCRYPTION_INITVECTOR = "PREFKEY_PASSWORD_ENCRYPTION_INITVECTOR"
         const val PREFKEY_ENCRYPTED_PASSWORD = "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY"
-        const val PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR =
-            "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR"
+        const val PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR = "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR"
         const val PREFKEY_BIOMETRIC_KEY = "PREFKEY_BIOMETRIC_KEY"
         const val PREFKEY_TERMS_HASHED = "PREFKEY_TERMS_HASHED"
         const val PREFKEY_SHIELDING_ENABLED_ = "PREFKEY_SHIELDING_ENABLED_"
@@ -153,8 +152,8 @@ class AuthPreferences(val context: Context) :
 
     suspend fun getSeedPhrase(password: String): String {
         getString(SEED_PHRASE_ENCRYPTED)?.let { seedEncrypted ->
-            return App.appCore.getOriginalAuthenticationManager()
-                .decryptInBackground(password, seedEncrypted) ?: return ""
+            return App.appCore.getOriginalAuthenticationManager().decryptInBackground(password, seedEncrypted)
+                ?: return ""
         }
         return ""
     }

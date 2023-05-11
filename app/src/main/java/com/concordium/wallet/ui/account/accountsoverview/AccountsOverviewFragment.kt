@@ -191,15 +191,11 @@ class AccountsOverviewFragment : BaseFragment(),
         appSettings?.let {
             when (appSettings.status) {
                 AppSettings.APP_VERSION_STATUS_WARNING -> it.url?.let { url ->
-                    showAppUpdateWarning(
-                        url
-                    )
+                    showAppUpdateWarning(url)
                 }
 
                 AppSettings.APP_VERSION_STATUS_NEEDS_UPDATE -> it.url?.let { url ->
-                    showAppUpdateNeedsUpdate(
-                        url
-                    )
+                    showAppUpdateNeedsUpdate(url)
                 }
 
                 else -> {}
@@ -251,8 +247,8 @@ class AccountsOverviewFragment : BaseFragment(),
         if (App.appCore.closingPoolsChecked)
             return
 
-        App.appCore.closingPoolsChecked =
-            true // avoid calling this more than once for each app cold launch
+        // Avoid calling this more than once for each app cold launch.
+        App.appCore.closingPoolsChecked = true
 
         val poolIds = accountList.mapNotNull { accountWithIdentity ->
             accountWithIdentity.account.accountDelegation?.delegationTarget?.bakerId?.toString()
@@ -276,9 +272,8 @@ class AccountsOverviewFragment : BaseFragment(),
                     val builder = AlertDialog.Builder(context)
                     builder.setTitle(R.string.accounts_overview_closing_pools_notice_title)
                     builder.setMessage(
-                        getString(R.string.accounts_overview_closing_pools_notice_message).plus(
-                            affectedAccounts
-                        )
+                        getString(R.string.accounts_overview_closing_pools_notice_message)
+                            .plus(affectedAccounts)
                     )
                     builder.setPositiveButton(getString(R.string.accounts_overview_closing_pools_notice_ok)) { dialog, _ ->
                         dialog.dismiss()
@@ -293,16 +288,15 @@ class AccountsOverviewFragment : BaseFragment(),
 
     private fun checkForUnencrypted(accountList: List<AccountWithIdentity>) {
         accountList.forEach {
-
             val hasUnencryptedTransactions =
                 it.account.finalizedEncryptedBalance?.incomingAmounts?.isNotEmpty()
-            if ((hasUnencryptedTransactions != null && hasUnencryptedTransactions == true)
+            if (hasUnencryptedTransactions != null
+                && hasUnencryptedTransactions
                 && it.account.transactionStatus == TransactionStatus.FINALIZED
                 && !App.appCore.session.isShieldedWarningDismissed(it.account.address)
                 && !App.appCore.session.isShieldingEnabled(it.account.address)
                 && encryptedWarningDialog == null
             ) {
-
                 val builder = AlertDialog.Builder(context)
                 builder.setTitle(getString(R.string.account_details_shielded_warning_title))
                 builder.setMessage(

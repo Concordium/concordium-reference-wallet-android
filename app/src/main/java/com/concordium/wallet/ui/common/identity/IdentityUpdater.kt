@@ -53,7 +53,10 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
                     val identityTokenContainer =
                         gson.fromJson(resp, IdentityTokenContainer::class.java)
                     val newStatus =
-                        if (BuildConfig.FAIL_IDENTITY_CREATION) IdentityStatus.ERROR else identityTokenContainer.status
+                        if (BuildConfig.FAIL_IDENTITY_CREATION)
+                            IdentityStatus.ERROR
+                        else
+                            identityTokenContainer.status
                     if (newStatus != IdentityStatus.PENDING) {
                         identity.status = identityTokenContainer.status
                         identity.detail = identityTokenContainer.detail

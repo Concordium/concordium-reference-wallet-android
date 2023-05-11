@@ -86,19 +86,19 @@ class StakeAmountInputValidator(
 
     private fun checkBalance(amount: String, fee: Long?): StakeError {
         if (balance == null || atDisposal == null) return StakeError.UNKNOWN
-        if (amount.toLong() + (fee ?: 0) > balance || (fee
-                ?: 0) > atDisposal
-        ) return StakeError.NOT_ENOUGH_FUND
+        if (amount.toLong() + (fee ?: 0) > balance || (fee ?: 0) > atDisposal)
+            return StakeError.NOT_ENOUGH_FUND
         return StakeError.OK
     }
 
     private fun checkPoolLimit(amount: String): StakeError {
         if (currentPool?.toLongOrNull() != null && poolLimit?.toLongOrNull() != null) {
             val prev =
-                if (oldPoolId == newPoolId?.toLongOrNull()) previouslyStakedInPool else "0" // only use previouslyStakedInPool if pool is the same
-            if (amount.toLong() + currentPool.toLong() - (prev?.toLong()
-                    ?: 0) > poolLimit.toLong()
-            ) {
+                if (oldPoolId == newPoolId?.toLongOrNull())
+                    previouslyStakedInPool
+                else
+                    "0" // only use previouslyStakedInPool if pool is the same
+            if (amount.toLong() + currentPool.toLong() - (prev?.toLong() ?: 0) > poolLimit.toLong()) {
                 return StakeError.POOL_LIMIT_REACHED
             }
         }
@@ -111,10 +111,11 @@ class StakeAmountInputValidator(
             if ((oldPoolId == null && !newPoolId.isNullOrEmpty()) || (oldPoolId != null && newPoolId != null && oldPoolId.toString() != newPoolId)) {
                 if (currentPool?.toLongOrNull() != null && poolLimit?.toLongOrNull() != null) {
                     val prev =
-                        if (oldPoolId == newPoolId.toLongOrNull()) previouslyStakedInPool else "0" // only use previouslyStakedInPool if pool is the same
-                    if (amount.toLong() + currentPool.toLong() - (prev?.toLong()
-                            ?: 0) > poolLimit.toLong()
-                    ) {
+                        if (oldPoolId == newPoolId.toLongOrNull())
+                            previouslyStakedInPool
+                        else
+                            "0" // only use previouslyStakedInPool if pool is the same
+                    if (amount.toLong() + currentPool.toLong() - (prev?.toLong() ?: 0) > poolLimit.toLong()) {
                         return StakeError.POOL_LIMIT_REACHED_COOLDOWN
                     }
                 }

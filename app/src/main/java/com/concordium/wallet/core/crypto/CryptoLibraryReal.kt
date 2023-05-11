@@ -114,13 +114,8 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             CryptoLibrary.PUBLIC_TO_SEC_TRANSFER -> return create_pub_to_sec_transfer(input)
             CryptoLibrary.SEC_TO_PUBLIC_TRANSFER -> return create_sec_to_pub_transfer(input)
             CryptoLibrary.ENCRYPTED_TRANSFER -> return create_encrypted_transfer(input)
-            CryptoLibrary.CONFIGURE_DELEGATION_TRANSACTION -> return create_configure_delegation_transaction(
-                input
-            )
-
-            CryptoLibrary.CONFIGURE_BAKING_TRANSACTION -> return create_configure_baker_transaction(
-                input
-            )
+            CryptoLibrary.CONFIGURE_DELEGATION_TRANSACTION -> return create_configure_delegation_transaction(input)
+            CryptoLibrary.CONFIGURE_BAKING_TRANSACTION -> return create_configure_baker_transaction(input)
         }
         return create_transfer(input)
     }

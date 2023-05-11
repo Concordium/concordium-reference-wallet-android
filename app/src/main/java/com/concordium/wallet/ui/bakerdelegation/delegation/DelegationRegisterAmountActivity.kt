@@ -184,8 +184,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         }
         if (viewModel.bakerDelegationData.type == UPDATE_DELEGATION) {
             viewModel.bakerDelegationData.oldStakedAmount =
-                viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLong()
-                    ?: 0
+                viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0
             binding.amountDesc.text =
                 getString(R.string.delegation_update_delegation_amount_enter_amount)
             binding.amount.setText(viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.let {
@@ -203,7 +202,8 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
 
         val stakeAmountInputValidator = getStakeAmountInputValidator()
         val stakeError = stakeAmountInputValidator.validate(
-            CurrencyUtil.toGTUValue(binding.amount.text.toString())?.toString(), validateFee
+            CurrencyUtil.toGTUValue(binding.amount.text.toString())?.toString(),
+            validateFee
         )
         if (stakeError != StakeAmountInputValidator.StakeError.OK) {
             binding.amountError.text = stakeAmountInputValidator.getErrorText(this, stakeError)
@@ -216,8 +216,8 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             when {
                 !hasChanges() -> showNoChange()
                 amountToStake == 0L -> showNewAmountZero()
-                amountToStake < (viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLongOrNull()
-                    ?: 0) -> showReduceWarning()
+                amountToStake < (viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLongOrNull() ?: 0)
+                    -> showReduceWarning()
 
                 moreThan95Percent(amountToStake) -> show95PercentWarning()
                 else -> continueToConfirmation()
@@ -232,8 +232,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
 
     private fun hasChanges(): Boolean {
         return !((getAmountToStake() == viewModel.bakerDelegationData.oldStakedAmount &&
-                viewModel.getPoolId() == (viewModel.bakerDelegationData.oldDelegationTargetPoolId?.toString()
-            ?: "") &&
+                viewModel.getPoolId() == (viewModel.bakerDelegationData.oldDelegationTargetPoolId?.toString() ?: "") &&
                 viewModel.bakerDelegationData.restake == viewModel.bakerDelegationData.oldRestake &&
                 viewModel.bakerDelegationData.isBakerPool == viewModel.bakerDelegationData.oldDelegationIsBaker))
     }

@@ -34,10 +34,10 @@ class AboutActivity : BaseActivity() {
             emailIntent.type = "text/plain"
             emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(url))
             try {
-                //start email intent
+                // Start email intent
                 startActivity(Intent.createChooser(emailIntent, ""))
             } catch (e: Exception) {
-                //Left empty on purpose
+                // Left empty on purpose
             }
         }
 

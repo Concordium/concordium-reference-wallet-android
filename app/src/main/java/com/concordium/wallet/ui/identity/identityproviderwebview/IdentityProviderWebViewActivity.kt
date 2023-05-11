@@ -37,19 +37,13 @@ class IdentityProviderWebViewActivity : BaseActivity() {
         const val SHOW_FOR_FIRST_IDENTITY = "SHOW_FOR_FIRST_IDENTITY"
         const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_DATAWEREAVAILABLE = 1 // data were available
         const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_VALIDCALLBACKURI = 2 // valid callback uri
-        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_NOIDENTITYDATA =
-            3 // identityCreationData was not null
-        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_MODELSINITIALISED =
-            4 // models initialised correctly
-        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_INCORRECTCALLBACKURI =
-            5 // incorrect callback URL
-        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_CODEURISET =
-            6 // code_uri is set in callback uri
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_NOIDENTITYDATA = 3 // identityCreationData was not null
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_MODELSINITIALISED = 4 // models initialised correctly
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_INCORRECTCALLBACKURI = 5 // incorrect callback URL
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_CODEURISET = 6 // code_uri is set in callback uri
         const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_TOKENSET = 7 // token is set in callback uri
-        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_ERRORSET =
-            8 // error is set (given other errors)
-        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_NOTHINGSET =
-            9 // nothing is set in the callback uri
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_ERRORSET = 8 // error is set (given other errors)
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_NOTHINGSET = 9 // nothing is set in the callback uri
     }
 
     // Have to keep this intent data in case the Activity is force killed while on the IdentityProvider website
@@ -66,7 +60,8 @@ class IdentityProviderWebViewActivity : BaseActivity() {
 
         fun setIdentityCreationData(data: IdentityCreationData?) {
             setString(
-                KEY_IDENTITY_CREATION_DATA, if (data == null) {
+                KEY_IDENTITY_CREATION_DATA,
+                if (data == null) {
                     null
                 } else {
                     Gson().toJson(data)

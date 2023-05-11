@@ -100,8 +100,7 @@ class TransactionDetailsActivity : BaseActivity() {
 
         val onClickListener = object : TransactionDetailsEntryView.OnCopyClickListener {
             override fun onCopyClicked(title: String, value: String) {
-                val clipboard: ClipboardManager =
-                    getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                val clipboard: ClipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 val clip = ClipData.newPlainText(title, value)
                 clipboard.setPrimaryClip(clip)
                 popup.showSnackbar(

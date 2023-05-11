@@ -23,9 +23,7 @@ class AuthSetupBiometricsViewModel(application: Application) : AndroidViewModel(
     val finishScreenLiveData: LiveData<Event<Boolean>>
         get() = _finishScreenLiveData
 
-
     fun initialize() {
-
         val generated = App.appCore.getCurrentAuthenticationManager().generateBiometricsSecretKey()
         if (!generated) {
             _errorLiveData.value = Event(R.string.app_error_keystore)

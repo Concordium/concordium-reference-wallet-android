@@ -453,8 +453,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
         val allTransfers = transferRepository.getAllByAccountId(account.id)
         val unfinalisedTransfers = allTransfers.filter {
-            it.transactionStatus != TransactionStatus.FINALIZED && (it.nonce?.nonce
-                ?: -1) >= lastNounceToInclude
+            it.transactionStatus != TransactionStatus.FINALIZED && (it.nonce?.nonce ?: -1) >= lastNounceToInclude
         }
 
         val aggEncryptedAmount = if (unfinalisedTransfers.isNotEmpty()) {
@@ -704,9 +703,10 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
                 cost = it
             }
             var amount =
-                ((if (isShielded) account.totalShieldedBalance else (account.getAtDisposalWithoutStakedOrScheduled(
-                    account.totalUnshieldedBalance
-                ) - cost)))
+                if (isShielded)
+                    account.totalShieldedBalance
+                else
+                    account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) - cost
             if (amount < 0) {
                 amount = 0
             }

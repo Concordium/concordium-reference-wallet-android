@@ -31,8 +31,9 @@ class NullableTypeAdapterFactory : TypeAdapterFactory {
             return null
         }
         val kotlinClass: KClass<Any> = Reflection.createKotlinClass(type.rawType)
-        val notNullableFields =
-            kotlinClass.memberProperties.filter { !it.returnType.isMarkedNullable }
+        val notNullableFields = kotlinClass.memberProperties.filter {
+            !it.returnType.isMarkedNullable
+        }
 
         return object : TypeAdapter<T>() {
 

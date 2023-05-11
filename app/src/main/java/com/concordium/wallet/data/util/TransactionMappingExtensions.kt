@@ -52,23 +52,6 @@ fun Transfer.toTransaction() = Transaction(
     toAddressTitle = "",
     submissionId = submissionId,
     origin = TransactionOrigin(TransactionOriginType.Self, null),
-    details = TransactionDetails(
-        transactionType,
-        "",
-        TransactionOutcome.UNKNOWN,
-        "",
-        null,
-        null,
-        null,
-        null,
-        null,
-        memo,
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-    ),
+    details = TransactionDetails(transactionType, "", TransactionOutcome.UNKNOWN, "", null, null, null, null, null, memo, null, null, null, null, null, null),
     encrypted = null
 )

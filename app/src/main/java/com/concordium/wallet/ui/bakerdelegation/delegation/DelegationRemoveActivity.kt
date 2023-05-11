@@ -94,8 +94,7 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity() {
         binding.submitDelegationFinish.visibility = View.VISIBLE
         binding.includeTransactionSubmittedHeader.transactionSubmitted.visibility = View.VISIBLE
         viewModel.bakerDelegationData.submissionId?.let {
-            binding.includeTransactionSubmittedNo.transactionSubmittedDivider.visibility =
-                View.VISIBLE
+            binding.includeTransactionSubmittedNo.transactionSubmittedDivider.visibility = View.VISIBLE
             binding.includeTransactionSubmittedNo.transactionSubmittedId.visibility = View.VISIBLE
             binding.includeTransactionSubmittedNo.transactionSubmittedId.text = it
         }
