@@ -68,6 +68,7 @@ class TermsAndConditionsFragment :
             padlockShieldImg.setImageResource(R.drawable.ic_padlock_shield)
             titleText.text = getString(R.string.terms_and_conditions_title)
             descriptionText.text = getString(R.string.terms_and_conditions_description)
+            confirmButton.text = getString(R.string.terms_and_conditions_create_password)
 
             Linkify.addLinks(
                 approveTermsText,
@@ -86,6 +87,7 @@ class TermsAndConditionsFragment :
             padlockShieldImg.setImageResource(R.drawable.ic_terms_and_conditions)
             titleText.text = getString(R.string.terms_and_conditions_title_update)
             descriptionText.text = getString(R.string.terms_and_conditions_description_update)
+            confirmButton.text = getString(R.string.terms_and_conditions_create_password_update)
 
             Linkify.addLinks(
                 approveTermsText,
