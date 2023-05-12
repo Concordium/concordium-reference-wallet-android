@@ -1,12 +1,18 @@
 package com.concordium.wallet
 
 import android.content.Context
+import com.concordium.wallet.onboarding.ui.di.AppModule
+import com.concordium.wallet.onboarding.ui.di.OnboardingModule
 import com.concordium.wallet.util.Log
+import com.walletconnect.android.BuildConfig
 import com.walletconnect.android.Core
 import com.walletconnect.android.CoreClient
 import com.walletconnect.android.relay.ConnectionType
 import com.walletconnect.sign.client.Sign
 import com.walletconnect.sign.client.SignClient
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.GlobalContext.startKoin
 import org.matomo.sdk.TrackerBuilder
 import org.matomo.sdk.extra.MatomoApplication
 
@@ -35,6 +41,22 @@ class App : MatomoApplication() {
         appContext = this
         appCore = AppCore(this.applicationContext)
         initWalletConnect()
+        initKoin()
+    }
+
+    private fun initKoin() {
+        val modules = AppModule()
+        startKoin {
+            androidLogger()
+            androidContext(this@App)
+            modules(
+                modules.configModule,
+                modules.sharedPreferencesModule,
+                modules.remoteModule,
+                modules.apiModule,
+            )
+            modules(OnboardingModule.modules)
+        }
     }
 
     private fun initWalletConnect() {

@@ -14,11 +14,7 @@ import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
 import com.concordium.wallet.data.cryptolib.IdRequestAndPrivateDataOutputV1
-import com.concordium.wallet.data.model.GlobalParams
-import com.concordium.wallet.data.model.GlobalParamsWrapper
-import com.concordium.wallet.data.model.IdentityCreationData
-import com.concordium.wallet.data.model.IdentityProvider
-import com.concordium.wallet.data.model.RawJson
+import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
@@ -117,8 +113,7 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
 
     fun getCipherForBiometrics(): Cipher? {
         return try {
-            val cipher =
-                App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
+            val cipher = App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
             if (cipher == null) {
                 _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
             }
@@ -136,8 +131,7 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
 
     fun checkLogin(cipher: Cipher) = viewModelScope.launch {
         _waitingLiveData.value = true
-        val password =
-            App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
+        val password = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
         if (password != null) {
             encryptAndContinue(password)
         } else {
@@ -167,20 +161,11 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         }
 
         val net = AppConfig.net
-        tempData.identityIndex =
-            identityRepository.nextIdentityIndex(identityProvider.ipInfo.ipIdentity)
-        tempData.identityName =
-            identityRepository.nextIdentityName(getApplication<Application?>().getString(R.string.view_identity_identity))
+        tempData.identityIndex = identityRepository.nextIdentityIndex(identityProvider.ipInfo.ipIdentity)
+        tempData.identityName = identityRepository.nextIdentityName(getApplication<Application>().getString(R.string.view_identity_identity))
         val seed = AuthPreferences(getApplication()).getSeedPhrase(password)
 
-        val output = App.appCore.cryptoLibrary.createIdRequestAndPrivateDataV1(
-            identityProvider.ipInfo,
-            identityProvider.arsInfos,
-            global,
-            seed,
-            net,
-            tempData.identityIndex
-        )
+        val output = App.appCore.cryptoLibrary.createIdRequestAndPrivateDataV1(identityProvider.ipInfo, identityProvider.arsInfos, global, seed, net, tempData.identityIndex)
         return if (output != null) {
             output
         } else {

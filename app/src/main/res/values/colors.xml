@@ -40,6 +40,10 @@
     <color name="background_edit_text_grey">#FBFBFB</color>
 
     <color name="background_release">#D9EFFC</color>
-    <!-- Other -->
+
+    <!--    Redesign Colors-->
+    <color name="text_black_redesign">#181817</color>
+    <color name="button_disabled_background">#A6A6A6</color>
+    <color name="loading_background">#7AFFFFFF</color>
 
 </resources>

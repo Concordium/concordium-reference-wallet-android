@@ -289,7 +289,8 @@ android {
         jvmTarget = '1.8'
     }
     buildFeatures {
-        viewBinding = true
+        viewBinding true
+        dataBinding true
     }
     packagingOptions {
         resources {
@@ -317,6 +318,8 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.biometric:biometric:1.1.0'
     implementation 'androidx.test:core-ktx:1.5.0'
+    implementation "androidx.constraintlayout:constraintlayout:2.2.0-alpha09"
+    implementation 'androidx.databinding:databinding-runtime:8.0.0'
 
     // Lifecycles
     def lifecycle_version = "2.5.1"
@@ -345,7 +348,8 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-scalars:2.6.2'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.9.0'
+    implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
 
     implementation 'com.google.iot.cbor:cbor:0.01.02'
 
@@ -378,4 +382,19 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.10")
 
     implementation "androidx.security:security-crypto:1.0.0"
+
+    // Koin is simple Dependency injection framework.
+    // This dependency will help separate architectural layers and ease testing with mock objects.
+    def koin_version = "3.4.0"
+    implementation "io.insert-koin:koin-android:$koin_version"
+    implementation "io.insert-koin:koin-androidx-workmanager:$koin_version"
+    implementation "io.insert-koin:koin-androidx-navigation:$koin_version"
+
+    // Added standard Jetpack Compose Navigation. This will ease navigation management.
+    def nav_version = "2.5.3"
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
+    androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
+    implementation "androidx.navigation:navigation-compose:$nav_version"
 }
