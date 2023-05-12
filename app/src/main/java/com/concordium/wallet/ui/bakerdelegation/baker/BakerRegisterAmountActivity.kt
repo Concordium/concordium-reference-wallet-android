@@ -54,8 +54,8 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity() 
         binding.bakerAmount.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount ?: "0", true)
 
         viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<Long?, Int?>> {
-            override fun onChanged(response: Pair<Long?, Int?>?) {
-                response?.second?.let { requestId ->
+            override fun onChanged(response: Pair<Long?, Int?>) {
+                response.second?.let { requestId ->
                     when (requestId) {
                         SINGLE_FEE -> {
                             singleFee = response.first

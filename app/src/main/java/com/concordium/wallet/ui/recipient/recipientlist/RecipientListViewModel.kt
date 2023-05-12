@@ -18,7 +18,7 @@ class RecipientListViewModel(application: Application) : AndroidViewModel(applic
 
     private val allRecipientsLiveData: LiveData<List<Recipient>>
     val recipientListLiveData: LiveData<List<Recipient>>
-        get() = Transformations.switchMap(allRecipientsLiveData) { allRecipients ->
+        get() = allRecipientsLiveData.switchMap { allRecipients ->
             val filteredRecipientsLiveData = MutableLiveData<List<Recipient>>()
             val recipientsToShowLiveData = when {
                 selectRecipientMode -> {

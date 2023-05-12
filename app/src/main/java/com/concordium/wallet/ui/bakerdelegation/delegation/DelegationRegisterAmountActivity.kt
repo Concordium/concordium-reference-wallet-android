@@ -108,21 +108,20 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         binding.amount.isEnabled = false
         showWaiting(binding.includeProgress.progressLayout, true)
 
-        viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<Long?, Int?>> {
-            override fun onChanged(response: Pair<Long?, Int?>?) {
-                response?.first?.let {
-                    validateFee = it
-                    showWaiting(binding.includeProgress.progressLayout, false)
-                    binding.poolEstimatedTransactionFee.visibility = View.VISIBLE
-                    binding.poolEstimatedTransactionFee.text = getString(
-                        R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(validateFee ?: 0)
-                    )
-                    binding.poolRegistrationContinue.isEnabled = true
-                    if (!viewModel.isInCoolDown())
-                        binding.amount.isEnabled = true
-                }
+        viewModel.transactionFeeLiveData.observe(this) { response ->
+            response?.first?.let {
+                validateFee = it
+                showWaiting(binding.includeProgress.progressLayout, false)
+                binding.poolEstimatedTransactionFee.visibility = View.VISIBLE
+                binding.poolEstimatedTransactionFee.text = getString(
+                    R.string.delegation_register_delegation_amount_estimated_transaction_fee,
+                    CurrencyUtil.formatGTU(validateFee ?: 0)
+                )
+                binding.poolRegistrationContinue.isEnabled = true
+                if (!viewModel.isInCoolDown())
+                    binding.amount.isEnabled = true
             }
-        })
+        }
 
         loadTransactionFee()
 

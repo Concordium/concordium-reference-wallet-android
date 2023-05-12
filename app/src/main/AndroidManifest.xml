@@ -56,6 +56,11 @@
             android:enabled="true"
             android:exported="false" />
         <activity
+            android:name=".onboarding.ui.OnboardingActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"></activity>
+        <activity
             android:name=".ui.common.failed.FailedActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
