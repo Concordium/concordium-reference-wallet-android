@@ -115,7 +115,7 @@ class RecoverWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl()
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> PassPhraseRecoverExplainFragment()
-                1 -> PassPhraseRecoverInputFragment.newInstance(viewModel)
+                1 -> PassPhraseRecoverInputFragment()
                 2 -> PassPhraseRecoverSuccessFragment()
                 else -> Fragment()
             }

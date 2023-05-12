@@ -17,13 +17,14 @@ import com.concordium.wallet.databinding.FragmentPassPhraseRecoverInputBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.passphrase.common.WordsPickedBaseListAdapter
 import com.concordium.wallet.util.KeyboardUtil
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import java.util.Timer
 import kotlin.concurrent.schedule
 
 class PassPhraseRecoverInputFragment : Fragment() {
     private var _binding: FragmentPassPhraseRecoverInputBinding? = null
     private val binding get() = _binding!!
-    private lateinit var _viewModel: PassPhraseRecoverViewModel
+    private val viewModel: PassPhraseRecoverViewModel by activityViewModel()
 
     private lateinit var arrayAdapter: WordsPickedRecoverListAdapter
     private var snapTimer: Timer? = null
@@ -32,12 +33,6 @@ class PassPhraseRecoverInputFragment : Fragment() {
 
     companion object {
         private val WORD_COUNT = Mnemonics.WordCount.COUNT_24.count
-
-        @JvmStatic
-        fun newInstance(viewModel: PassPhraseRecoverViewModel) =
-            PassPhraseRecoverInputFragment().apply {
-                _viewModel = viewModel
-            }
     }
 
     override fun onCreateView(
@@ -51,7 +46,7 @@ class PassPhraseRecoverInputFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _viewModel.loadAllWords()
+        viewModel.loadAllWords()
         initViews()
         initObservers()
     }
@@ -76,7 +71,7 @@ class PassPhraseRecoverInputFragment : Fragment() {
     }
 
     private fun initObservers() {
-        _viewModel.validate.observe(viewLifecycleOwner) { success ->
+        viewModel.validate.observe(viewLifecycleOwner) { success ->
             if (!success)
                 binding.tvError.visibility = View.VISIBLE
             else
@@ -90,14 +85,14 @@ class PassPhraseRecoverInputFragment : Fragment() {
         setSuggestionsVisible(false)
 
         for (i in 0 until WordsPickedBaseListAdapter.OFFSET) {
-            _viewModel.wordsPicked[i] = WordsPickedBaseListAdapter.BLANK
+            viewModel.wordsPicked[i] = WordsPickedBaseListAdapter.BLANK
         }
 
-        for (i in _viewModel.wordsPicked.size - 1 downTo _viewModel.wordsPicked.size - WordsPickedBaseListAdapter.OFFSET - 1) {
-            _viewModel.wordsPicked[i] = WordsPickedBaseListAdapter.BLANK
+        for (i in viewModel.wordsPicked.size - 1 downTo viewModel.wordsPicked.size - WordsPickedBaseListAdapter.OFFSET - 1) {
+            viewModel.wordsPicked[i] = WordsPickedBaseListAdapter.BLANK
         }
 
-        arrayAdapter = WordsPickedRecoverListAdapter(requireContext(), _viewModel.wordsPicked)
+        arrayAdapter = WordsPickedRecoverListAdapter(requireContext(), viewModel.wordsPicked)
 
         arrayAdapter.setWordPickedClickListener { position ->
             arrayAdapter.currentPosition = position
@@ -115,13 +110,13 @@ class PassPhraseRecoverInputFragment : Fragment() {
 
     private fun initButtons() {
         binding.btnClearAll.setOnClickListener {
-            _viewModel.clearWordsPicked()
+            viewModel.clearWordsPicked()
             initViews()
             arrayAdapter.notifyDataSetChanged()
         }
         binding.btnClearBelow.setOnClickListener {
-            for (i in arrayAdapter.currentPosition + 1 until _viewModel.wordsPicked.size - 3) {
-                _viewModel.wordsPicked[i] = null
+            for (i in arrayAdapter.currentPosition + 1 until viewModel.wordsPicked.size - 3) {
+                viewModel.wordsPicked[i] = null
             }
             arrayAdapter.notifyDataSetChanged()
         }
@@ -146,7 +141,7 @@ class PassPhraseRecoverInputFragment : Fragment() {
         setSuggestionsVisible(false)
         if (text.length <= 1)
             return
-        val filtered = _viewModel.allWords.filter { it.startsWith(text) }
+        val filtered = viewModel.allWords.filter { it.startsWith(text) }
         if (filtered.isNotEmpty()) {
             binding.tvSuggest1.text = filtered[0]
             binding.tvSuggest1.visibility = View.VISIBLE
@@ -231,10 +226,10 @@ class PassPhraseRecoverInputFragment : Fragment() {
             return
 
         if (arrayAdapter.currentPosition < WORD_COUNT + WordsPickedBaseListAdapter.OFFSET) {
-            _viewModel.wordsPicked[arrayAdapter.currentPosition] = tvSuggestion.text.toString()
+            viewModel.wordsPicked[arrayAdapter.currentPosition] = tvSuggestion.text.toString()
             setSuggestionsVisible(false)
             moveDown()
-            _viewModel.validateInputCode()
+            viewModel.validateInputCode()
         }
     }
 
