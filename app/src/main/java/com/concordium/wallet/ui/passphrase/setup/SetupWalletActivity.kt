@@ -117,8 +117,8 @@ class SetupWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> PassPhraseExplainFragment()
-                1 -> PassPhraseRevealedFragment.newInstance(viewModel)
-                2 -> PassPhraseInputFragment.newInstance(viewModel)
+                1 -> PassPhraseRevealedFragment()
+                2 -> PassPhraseInputFragment()
                 3 -> PassPhraseSuccessFragment()
                 else -> Fragment()
             }
