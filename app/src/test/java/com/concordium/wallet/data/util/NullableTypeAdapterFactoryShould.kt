@@ -23,13 +23,12 @@ class NullableTypeAdapterFactoryShould {
         .create()
 
     @Test
-    fun returnObjectWhenDataIsValid() {
-        val validJsonString = "{" +
+    fun returnObjectWhenDataIsValid(){
+        val validJsonString ="{" +
                 "\"type\": \"test type\"," +
                 "\"sender\": \"test sender\"}"
 
-        val validObject =
-            TestObject(type = "test type", sender = "test sender", nullableValue = null)
+        val validObject = TestObject(type = "test type", sender = "test sender", nullableValue = null)
 
         val testObject = gson.fromJson(validJsonString, TestObject::class.java)
 
@@ -40,7 +39,7 @@ class NullableTypeAdapterFactoryShould {
 
     @Test
     fun throwErrorWhenNonNullValueIsNotPresentInInput() {
-        val invalidJsonString = "{" +
+        val invalidJsonString ="{" +
                 "\"type\": \"test type\",}"
 
         Assert.assertThrows(JsonParseException::class.java) {
@@ -50,7 +49,7 @@ class NullableTypeAdapterFactoryShould {
 
     @Test
     fun throwErrorWhenNonNullValueIsNull() {
-        val invalidJsonString = "{" +
+        val invalidJsonString ="{" +
                 "\"type\": \"test type\"," +
                 "\"sender\": null }"
 
@@ -60,9 +59,9 @@ class NullableTypeAdapterFactoryShould {
     }
 
     @Test
-    fun throwErrorWhenGsonWithoutTheAdapterWillNot() {
-        val invalidJsonString = "{" +
-                "\"type\": \"test type\"," +
+    fun throwErrorWhenGsonWithoutTheAdapterWillNot(){
+        val invalidJsonString ="{" +
+        "\"type\": \"test type\"," +
                 "\"sender\": null }"
 
         Assert.assertThrows(JsonParseException::class.java) {

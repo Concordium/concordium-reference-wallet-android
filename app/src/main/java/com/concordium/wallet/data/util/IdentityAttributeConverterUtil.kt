@@ -3,7 +3,7 @@ package com.concordium.wallet.data.util
 import android.content.Context
 import com.concordium.wallet.R
 import com.concordium.wallet.util.DateTimeUtil
-import java.util.Locale
+import java.util.*
 
 object IdentityAttributeConverterUtil {
 

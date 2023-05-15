@@ -67,7 +67,7 @@
                         style="@style/TextView.ErrorSmall"
                         android:layout_marginLeft="5dp"
                         android:layout_marginTop="0dp"
-                        android:layout_marginRight="5dp" />
+                        android:layout_marginRight="5dp"/>
 
                     <TextView
                         android:id="@+id/error_seed_textview"
@@ -78,7 +78,7 @@
                         android:autoLink="email"
                         android:visibility="gone"
                         tools:visibility="visible"
-                        android:text="@string/auth_login_seed_error_message" />
+                        android:text="@string/auth_login_seed_error_message"/>
 
                 </LinearLayout>
 
@@ -96,9 +96,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 
-        <include
-            layout="@layout/progress"
-            android:id="@+id/include_progress" />
+        <include layout="@layout/progress" android:id="@+id/include_progress" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

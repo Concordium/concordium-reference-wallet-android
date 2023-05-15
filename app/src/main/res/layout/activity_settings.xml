@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout"
     style="@style/Layout.Root">
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -26,71 +25,58 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar_layout">
-
             <LinearLayout
                 android:id="@+id/identities"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height"
                 android:background="@drawable/list_item"
                 android:orientation="horizontal">
-
                 <TextView
                     style="@style/TextView.MoreMenuItem"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
                     android:text="@string/more_overview_identities" />
             </LinearLayout>
-
             <View style="@style/Divider" />
-
             <LinearLayout
                 android:id="@+id/address_book_layout"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height"
                 android:background="@drawable/list_item"
                 android:orientation="horizontal">
-
                 <TextView
                     style="@style/TextView.MoreMenuItem"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
                     android:text="@string/more_overview_item_address_book" />
             </LinearLayout>
-
             <View style="@style/Divider" />
-
             <LinearLayout
                 android:id="@+id/alter_layout"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height"
                 android:background="@drawable/list_item"
                 android:orientation="horizontal">
-
                 <TextView
                     style="@style/TextView.MoreMenuItem"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
                     android:text="@string/more_overview_item_alter_password" />
             </LinearLayout>
-
             <View style="@style/Divider" />
-
             <LinearLayout
                 android:id="@+id/recover_layout"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height"
                 android:background="@drawable/list_item"
                 android:orientation="horizontal">
-
                 <TextView
                     style="@style/TextView.MoreMenuItem"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
                     android:text="@string/more_overview_item_recover" />
             </LinearLayout>
-
             <View style="@style/Divider" />
-
             <LinearLayout
                 android:id="@+id/view_seed_phrase_layout"
                 android:layout_width="match_parent"
@@ -114,38 +100,31 @@
                 android:layout_height="@dimen/list_item_height"
                 android:background="@drawable/list_item"
                 android:orientation="horizontal">
-
                 <TextView
                     style="@style/TextView.MoreMenuItem"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
                     android:text="@string/more_overview_item_about" />
             </LinearLayout>
-
             <View style="@style/Divider" />
-
             <LinearLayout
                 android:id="@+id/wallet_connect_layout"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height"
                 android:background="@drawable/list_item"
                 android:orientation="horizontal">
-
                 <TextView
                     style="@style/TextView.MoreMenuItem"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
                     android:text="@string/more_overview_item_wallet_connect" />
             </LinearLayout>
-
             <View style="@style/Divider" />
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/dev_layout"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height"
                 android:background="@drawable/list_item">
-
                 <TextView
                     style="@style/TextView.MoreMenuItem"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
@@ -153,7 +132,6 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-
                 <View
                     style="@style/Divider"
                     app:layout_constraintBottom_toBottomOf="parent"

@@ -8,7 +8,7 @@ import android.view.animation.AnimationUtils
 import com.concordium.wallet.R
 
 
-class MaxShakeTextInputEditText : com.google.android.material.textfield.TextInputEditText {
+class MaxShakeTextInputEditText: com.google.android.material.textfield.TextInputEditText {
 
     constructor (context: Context) : super(context) {
         init(null)
@@ -34,11 +34,9 @@ class MaxShakeTextInputEditText : com.google.android.material.textfield.TextInpu
 
         var maxLength = Integer.MAX_VALUE
         if (attrs != null) {
-            val ta =
-                context.obtainStyledAttributes(attrs, R.styleable.MaxShakeTextInputEditText, 0, 0)
+            val ta = context.obtainStyledAttributes(attrs, R.styleable.MaxShakeTextInputEditText, 0, 0)
             try {
-                maxLength =
-                    ta.getInt(R.styleable.MaxShakeTextInputEditText_maxLength, Integer.MAX_VALUE)
+                maxLength = ta.getInt(R.styleable.MaxShakeTextInputEditText_maxLength, Integer.MAX_VALUE)
             } finally {
                 ta.recycle()
             }

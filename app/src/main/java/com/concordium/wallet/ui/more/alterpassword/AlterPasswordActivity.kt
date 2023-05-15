@@ -24,11 +24,7 @@ class AlterPasswordActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAlterpasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(
-            binding.toolbarLayout.toolbar,
-            binding.toolbarLayout.toolbarTitle,
-            R.string.alterpassword_title
-        )
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.alterpassword_title)
 
         viewModel.initialize()
 
@@ -57,11 +53,9 @@ class AlterPasswordActivity : BaseActivity() {
                     }
                 })
             } else {
-                Toast.makeText(
-                    this,
+                Toast.makeText(this,
                     getString(R.string.alterpassword_non_finalised_items),
-                    Toast.LENGTH_LONG
-                ).show()
+                    Toast.LENGTH_LONG).show()
             }
         }
 
@@ -77,46 +71,30 @@ class AlterPasswordActivity : BaseActivity() {
             }
         })
 
-        viewModel.doneInitialAuthenticationLiveData.observe(
-            this,
-            object : EventObserver<Boolean>() {
-                override fun onUnhandledEvent(value: Boolean) {
-                    val intent = Intent(baseContext, AuthSetupActivity::class.java)
-                    intent.putExtra(AuthSetupActivity.CONTINUE_INITIAL_SETUP, false)
-                    getResultAuthReset.launch(intent)
-                }
-            })
+        viewModel.doneInitialAuthenticationLiveData.observe(this, object : EventObserver<Boolean>() {
+            override fun onUnhandledEvent(value: Boolean) {
+                val intent = Intent(baseContext, AuthSetupActivity::class.java)
+                intent.putExtra(AuthSetupActivity.CONTINUE_INITIAL_SETUP, false)
+                getResultAuthReset.launch(intent)
+            }
+        })
 
-        viewModel.errorInitialAuthenticationLiveData.observe(
-            this,
-            object : EventObserver<Boolean>() {
-                override fun onUnhandledEvent(value: Boolean) {
-                    Toast.makeText(
-                        baseContext,
-                        getString(R.string.change_password_initial_error),
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            })
+        viewModel.errorInitialAuthenticationLiveData.observe(this, object : EventObserver<Boolean>() {
+            override fun onUnhandledEvent(value: Boolean) {
+                Toast.makeText(baseContext, getString(R.string.change_password_initial_error), Toast.LENGTH_LONG).show()
+            }
+        })
 
         viewModel.doneFinalChangePasswordLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
-                Toast.makeText(
-                    baseContext,
-                    getString(R.string.change_password_successfully_changed),
-                    Toast.LENGTH_LONG
-                ).show()
+                Toast.makeText(baseContext, getString(R.string.change_password_successfully_changed), Toast.LENGTH_LONG).show()
                 finish()
             }
         })
 
         viewModel.errorFinalChangePasswordLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
-                Toast.makeText(
-                    baseContext,
-                    getString(R.string.change_password_final_error),
-                    Toast.LENGTH_LONG
-                ).show()
+                Toast.makeText(baseContext, getString(R.string.change_password_final_error), Toast.LENGTH_LONG).show()
             }
         })
     }

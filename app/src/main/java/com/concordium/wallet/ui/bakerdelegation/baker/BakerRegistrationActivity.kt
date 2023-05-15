@@ -18,11 +18,7 @@ class BakerRegistrationActivity : BaseDelegationBakerActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityBakerRegistrationBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(
-            binding.toolbarLayout.toolbar,
-            binding.toolbarLayout.toolbarTitle,
-            R.string.baker_registration_title
-        )
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.baker_registration_title)
         initViews()
     }
 
@@ -34,18 +30,14 @@ class BakerRegistrationActivity : BaseDelegationBakerActivity() {
                 override fun onItemClicked() {
                     viewModel.selectOpenStatus(BakerPoolInfo(OPEN_STATUS_OPEN_FOR_ALL))
                 }
-            },
-            viewModel.bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL || viewModel.bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == null
-        )
+            }, viewModel.bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == OPEN_STATUS_OPEN_FOR_ALL || viewModel.bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == null)
         binding.bakerOptions.addControl(
             getString(R.string.baker_registration_close),
             object : SegmentedControlView.OnItemClickListener {
                 override fun onItemClicked() {
                     viewModel.selectOpenStatus(BakerPoolInfo(OPEN_STATUS_CLOSED_FOR_ALL))
                 }
-            },
-            viewModel.bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_ALL
-        )
+            }, viewModel.bakerDelegationData.bakerPoolStatus?.poolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_ALL)
 
         binding.bakerRegistrationContinue.setOnClickListener {
             onContinueClicked()
@@ -53,15 +45,11 @@ class BakerRegistrationActivity : BaseDelegationBakerActivity() {
     }
 
     private fun onContinueClicked() {
-        val intent =
-            if (viewModel.bakerDelegationData.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_ALL)
-                Intent(this, BakerRegistrationCloseActivity::class.java)
-            else
-                Intent(this, BakerRegistrationOpenActivity::class.java)
-        intent.putExtra(
-            DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
-            viewModel.bakerDelegationData
-        )
+        val intent = if (viewModel.bakerDelegationData.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_ALL)
+            Intent(this, BakerRegistrationCloseActivity::class.java)
+        else
+            Intent(this, BakerRegistrationOpenActivity::class.java)
+        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 

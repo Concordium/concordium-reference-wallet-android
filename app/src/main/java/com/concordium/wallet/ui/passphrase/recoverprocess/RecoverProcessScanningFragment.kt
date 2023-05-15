@@ -16,11 +16,7 @@ class RecoverProcessScanningFragment : RecoverProcessBaseFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(
-            viewModel: RecoverProcessViewModel,
-            recoverProcessData: RecoverProcessData,
-            password: String
-        ) = RecoverProcessScanningFragment().apply {
+        fun newInstance(viewModel: RecoverProcessViewModel, recoverProcessData: RecoverProcessData, password: String) = RecoverProcessScanningFragment().apply {
             arguments = Bundle().apply {
                 putSerializable(RECOVER_PROCESS_DATA, recoverProcessData)
             }
@@ -29,11 +25,7 @@ class RecoverProcessScanningFragment : RecoverProcessBaseFragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentRecoverProcessScanningBinding.inflate(inflater, container, false)
         initObservers()
         return binding.root
@@ -41,10 +33,7 @@ class RecoverProcessScanningFragment : RecoverProcessBaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        _viewModel.recoverIdentitiesAndAccounts(
-            _password,
-            getString(R.string.pass_phrase_recover_process_identity_name_prefix)
-        )
+        _viewModel.recoverIdentitiesAndAccounts(_password, getString(R.string.pass_phrase_recover_process_identity_name_prefix))
     }
 
     override fun onDestroyView() {

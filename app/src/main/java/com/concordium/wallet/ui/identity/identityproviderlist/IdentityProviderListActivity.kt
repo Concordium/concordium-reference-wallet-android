@@ -42,17 +42,9 @@ class IdentityProviderListActivity : BaseActivity() {
         showForFirstIdentity = intent.extras?.getBoolean(SHOW_FOR_FIRST_IDENTITY, false) ?: false
 
         if (showForFirstIdentity) {
-            setupActionBar(
-                binding.toolbarLayout.toolbar,
-                binding.toolbarLayout.toolbarTitle,
-                R.string.identity_provider_list_first_title
-            )
+            setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_list_first_title)
         } else {
-            setupActionBar(
-                binding.toolbarLayout.toolbar,
-                binding.toolbarLayout.toolbarTitle,
-                R.string.identity_provider_list_title
-            )
+            setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_list_title)
         }
 
         initializeViewModel()
@@ -122,8 +114,7 @@ class IdentityProviderListActivity : BaseActivity() {
     }
 
     private fun setItemClickAdapter() {
-        identityProviderAdapter.setOnItemClickListener(object :
-            IdentityProviderAdapter.OnItemClickListener {
+        identityProviderAdapter.setOnItemClickListener(object : IdentityProviderAdapter.OnItemClickListener {
             override fun onItemClicked(item: IdentityProvider) {
                 viewModel.selectedIdentityVerificationItem(item)
             }
@@ -137,10 +128,7 @@ class IdentityProviderListActivity : BaseActivity() {
     private fun gotoIdentityProviderWebView() {
         viewModel.getIdentityCreationData()?.let { identityCreationData ->
             val intent = Intent(this, IdentityProviderWebViewActivity::class.java)
-            intent.putExtra(
-                IdentityProviderWebViewActivity.EXTRA_IDENTITY_CREATION_DATA,
-                identityCreationData
-            )
+            intent.putExtra(IdentityProviderWebViewActivity.EXTRA_IDENTITY_CREATION_DATA, identityCreationData)
             if (showForFirstIdentity)
                 intent.putExtra(IdentityProviderWebViewActivity.SHOW_FOR_FIRST_IDENTITY, true)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

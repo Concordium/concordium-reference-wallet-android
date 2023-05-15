@@ -10,11 +10,9 @@ class BakerRegistrationIntroFlow :
     BaseDelegationBakerFlowActivity(R.string.baker_intro_flow_title) {
 
     override fun getTitles(): IntArray {
-        return intArrayOf(
-            R.string.baker_intro_subtitle1,
+        return intArrayOf(R.string.baker_intro_subtitle1,
             R.string.baker_intro_subtitle2,
-            R.string.baker_intro_subtitle3
-        )
+            R.string.baker_intro_subtitle3)
     }
 
     override fun gotoContinue() {
@@ -24,6 +22,6 @@ class BakerRegistrationIntroFlow :
     }
 
     override fun getLink(position: Int): String {
-        return "file:///android_asset/baker_intro_flow_en_" + (position + 1) + ".html"
+        return "file:///android_asset/baker_intro_flow_en_"+(position+1)+".html"
     }
 }

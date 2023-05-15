@@ -26,11 +26,7 @@ class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl(
         binding = ActivityRecoverProcessBinding.inflate(layoutInflater)
         setContentView(binding.root)
         showForFirstRecovery = intent.extras?.getBoolean(SHOW_FOR_FIRST_RECOVERY, true) ?: true
-        setupActionBar(
-            binding.toolbarLayout.toolbar,
-            binding.toolbarLayout.toolbarTitle,
-            R.string.pass_phrase_recover_process_title
-        )
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.pass_phrase_recover_process_title)
         if (showForFirstRecovery)
             hideActionBarBack()
         initializeViewModel()
@@ -95,19 +91,14 @@ class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl(
     }
 
     private fun finishScanningView() {
-        supportFragmentManager.beginTransaction().add(
-            R.id.fragment_container,
-            RecoverProcessFinishedFragment.newInstance(viewModel.recoverProcessData),
-            null
-        ).commit()
+        supportFragmentManager.beginTransaction().add(R.id.fragment_container, RecoverProcessFinishedFragment.newInstance(viewModel.recoverProcessData), null).commit()
         binding.continueButton.visibility = View.VISIBLE
         if (viewModel.recoverProcessData.noResponseFrom.size > 0) {
             binding.tryAgainButton.visibility = View.VISIBLE
             binding.continueButton.text = getString(R.string.pass_phrase_recover_process_continue)
         } else {
             binding.tryAgainButton.visibility = View.GONE
-            binding.continueButton.text =
-                getString(R.string.pass_phrase_recover_process_continue_to_wallet)
+            binding.continueButton.text = getString(R.string.pass_phrase_recover_process_continue_to_wallet)
         }
     }
 
@@ -123,15 +114,7 @@ class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl(
     }
 
     private fun scanningView(password: String) {
-        supportFragmentManager.beginTransaction().add(
-            R.id.fragment_container,
-            RecoverProcessScanningFragment.newInstance(
-                viewModel,
-                viewModel.recoverProcessData,
-                password
-            ),
-            null
-        ).commit()
+        supportFragmentManager.beginTransaction().add(R.id.fragment_container, RecoverProcessScanningFragment.newInstance(viewModel, viewModel.recoverProcessData, password), null).commit()
         binding.continueButton.visibility = View.GONE
         binding.tryAgainButton.visibility = View.GONE
     }

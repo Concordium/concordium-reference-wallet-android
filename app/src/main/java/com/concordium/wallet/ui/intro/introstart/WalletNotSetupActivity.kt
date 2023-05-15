@@ -16,11 +16,7 @@ class WalletNotSetupActivity : BaseActivity() {
     }
 
     private fun initViews() {
-        setupActionBar(
-            binding.toolbarLayout.toolbar,
-            binding.toolbarLayout.toolbarTitle,
-            R.string.wallet_connect_wallet_setup_title
-        )
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.wallet_connect_wallet_setup_title)
         hideActionBarBack()
         binding.complete.setOnClickListener {
             finish()

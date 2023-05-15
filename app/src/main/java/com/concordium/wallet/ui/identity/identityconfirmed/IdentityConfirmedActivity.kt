@@ -20,8 +20,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class IdentityConfirmedActivity : BaseAccountActivity(),
-    IdentityStatusDelegate by IdentityStatusDelegateImpl() {
+class IdentityConfirmedActivity : BaseAccountActivity(), IdentityStatusDelegate by IdentityStatusDelegateImpl() {
     private lateinit var binding: ActivityIdentityConfirmedBinding
     private lateinit var viewModel: IdentityConfirmedViewModel
     private var showForFirstIdentity = false
@@ -44,24 +43,12 @@ class IdentityConfirmedActivity : BaseAccountActivity(),
         showForCreateAccount = intent.extras?.getBoolean(SHOW_FOR_CREATE_ACCOUNT, false) ?: false
 
         if (showForFirstIdentity)
-            setupActionBar(
-                binding.toolbarLayout.toolbar,
-                binding.toolbarLayout.toolbarTitle,
-                R.string.identity_confirmed_title
-            )
+            setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_confirmed_title)
         else {
             if (showForCreateAccount)
-                setupActionBar(
-                    binding.toolbarLayout.toolbar,
-                    binding.toolbarLayout.toolbarTitle,
-                    R.string.identity_confirmed_create_new_account
-                )
+                setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_confirmed_create_new_account)
             else
-                setupActionBar(
-                    binding.toolbarLayout.toolbar,
-                    binding.toolbarLayout.toolbarTitle,
-                    R.string.identity_provider_list_title
-                )
+                setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_list_title)
         }
 
         hideActionBarBack()
@@ -126,7 +113,8 @@ class IdentityConfirmedActivity : BaseAccountActivity(),
             if (showForFirstIdentity) {
                 binding.progressLine.setFilledDots(4)
                 showSubmitAccount()
-            } else {
+            }
+            else {
                 gotoAccountsOverview()
             }
         }
@@ -198,8 +186,7 @@ class IdentityConfirmedActivity : BaseAccountActivity(),
 
     private fun showSubmitAccount() {
         CoroutineScope(Dispatchers.IO).launch {
-            val identityRepository =
-                IdentityRepository(WalletDatabase.getDatabase(application).identityDao())
+            val identityRepository = IdentityRepository(WalletDatabase.getDatabase(application).identityDao())
             identity?.let {
                 identity = identityRepository.findById(it.id)
             }
@@ -213,17 +200,13 @@ class IdentityConfirmedActivity : BaseAccountActivity(),
                     binding.rlAccount.visibility = View.VISIBLE
                     if (showForCreateAccount) {
                         setActionBarTitle(R.string.identity_confirmed_create_new_account)
-                        binding.infoTextview.text = getString(
-                            R.string.identity_confirmed_submit_new_account_for_identity,
-                            it.name
-                        )
-                    } else {
-                        setActionBarTitle(R.string.identity_confirmed_confirm_account_submission_toolbar)
-                        binding.infoTextview.text =
-                            getString(R.string.identity_confirmed_confirm_account_submission_text)
+                        binding.infoTextview.text = getString(R.string.identity_confirmed_submit_new_account_for_identity, it.name)
                     }
-                    binding.tvHeader.text =
-                        getString(R.string.identity_confirmed_confirm_account_submission_title)
+                    else {
+                        setActionBarTitle(R.string.identity_confirmed_confirm_account_submission_toolbar)
+                        binding.infoTextview.text = getString(R.string.identity_confirmed_confirm_account_submission_text)
+                    }
+                    binding.tvHeader.text = getString(R.string.identity_confirmed_confirm_account_submission_title)
                 }
             }
         }

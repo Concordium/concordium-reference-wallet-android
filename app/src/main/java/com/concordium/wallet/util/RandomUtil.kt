@@ -1,7 +1,6 @@
 package com.concordium.wallet.util
 
-import java.util.Date
-import java.util.Random
+import java.util.*
 
 object RandomUtil {
 

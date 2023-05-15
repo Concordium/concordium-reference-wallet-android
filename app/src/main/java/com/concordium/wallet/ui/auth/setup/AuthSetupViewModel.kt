@@ -48,7 +48,7 @@ class AuthSetupViewModel(application: Application) : AndroidViewModel(applicatio
             if (BiometricsUtil.isBiometricsAvailable()) {
                 _gotoBiometricsSetupLiveData.value = Event(true)
             } else {
-                if (continueFlow) { // if we continue flow (setting up account and identity) we are at the end of the line and we clear stored password
+                if(continueFlow){ // if we continue flow (setting up account and identity) we are at the end of the line and we clear stored password
                     session.hasFinishedSetupPassword()
                 }
                 _finishScreenLiveData.value = Event(true)

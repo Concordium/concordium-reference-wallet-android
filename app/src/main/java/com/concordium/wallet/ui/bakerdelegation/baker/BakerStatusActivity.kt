@@ -30,10 +30,7 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title) {
         binding.statusButtonBottom.text = getString(R.string.baker_status_update_baker_settings)
 
         if (viewModel.bakerDelegationData.isTransactionInProgress) {
-            addWaitingForTransaction(
-                R.string.baker_status_baker_waiting_title,
-                R.string.baker_status_baker_waiting
-            )
+            addWaitingForTransaction(R.string.baker_status_baker_waiting_title, R.string.baker_status_baker_waiting)
             return
         }
 
@@ -52,53 +49,24 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title) {
         setContentTitle(R.string.baker_status_baker_registered_title)
 
         addContent(R.string.baker_status_baker_account, account.name + "\n\n" + account.address)
-        addContent(
-            R.string.baker_status_baker_stake,
-            CurrencyUtil.formatGTU(accountBaker.stakedAmount, true)
-        )
+        addContent(R.string.baker_status_baker_stake, CurrencyUtil.formatGTU(accountBaker.stakedAmount, true))
         addContent(R.string.baker_status_baker_id, accountBaker.bakerId.toString())
 
-        if (accountBaker.restakeEarnings) addContent(
-            R.string.baker_status_baker_rewards_will_be,
-            getString(R.string.baker_status_baker_added_to_stake)
-        )
-        else addContent(
-            R.string.baker_status_baker_rewards_will_be,
-            getString(R.string.baker_status_baker_at_disposal)
-        )
+        if (accountBaker.restakeEarnings) addContent(R.string.baker_status_baker_rewards_will_be, getString(R.string.baker_status_baker_added_to_stake))
+        else addContent(R.string.baker_status_baker_rewards_will_be, getString(R.string.baker_status_baker_at_disposal))
 
         when (accountBaker.bakerPoolInfo.openStatus) {
-            BakerPoolInfo.OPEN_STATUS_OPEN_FOR_ALL -> addContent(
-                R.string.baker_status_baker_delegation_pool_status,
-                getString(R.string.baker_status_baker_delegation_pool_status_open)
-            )
-
-            BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW -> addContent(
-                R.string.baker_status_baker_delegation_pool_status,
-                getString(R.string.baker_status_baker_delegation_pool_status_closed_for_new)
-            )
-
-            else -> addContent(
-                R.string.baker_status_baker_delegation_pool_status,
-                getString(R.string.baker_status_baker_delegation_pool_status_closed)
-            )
+            BakerPoolInfo.OPEN_STATUS_OPEN_FOR_ALL -> addContent(R.string.baker_status_baker_delegation_pool_status, getString(R.string.baker_status_baker_delegation_pool_status_open))
+            BakerPoolInfo.OPEN_STATUS_CLOSED_FOR_NEW -> addContent(R.string.baker_status_baker_delegation_pool_status, getString(R.string.baker_status_baker_delegation_pool_status_closed_for_new))
+            else -> addContent(R.string.baker_status_baker_delegation_pool_status, getString(R.string.baker_status_baker_delegation_pool_status_closed))
         }
 
         if (!accountBaker.bakerPoolInfo.metadataUrl.isNullOrBlank()) {
-            addContent(
-                R.string.baker_status_baker_metadata_url,
-                accountBaker.bakerPoolInfo.metadataUrl
-            )
+            addContent(R.string.baker_status_baker_metadata_url, accountBaker.bakerPoolInfo.metadataUrl)
         }
 
         accountBaker.pendingChange?.let { pendingChange ->
-            addPendingChange(
-                pendingChange,
-                R.string.baker_status_baker_effective_time,
-                R.string.baker_status_baker_take_effect_on,
-                R.string.baker_status_baker_effective_remove,
-                R.string.baker_status_baker_stake_lowered_to
-            )
+            addPendingChange(pendingChange, R.string.baker_status_baker_effective_time, R.string.baker_status_baker_take_effect_on, R.string.baker_status_baker_effective_remove, R.string.baker_status_baker_stake_lowered_to)
         }
 
         binding.statusButtonBottom.setOnClickListener {

@@ -14,23 +14,15 @@ class WalletConnectMessageSignedFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(viewModel: WalletConnectViewModel) =
-            WalletConnectMessageSignedFragment().apply {
-                arguments = Bundle().apply {
-                    putSerializable(
-                        WalletConnectViewModel.WALLET_CONNECT_DATA,
-                        viewModel.walletConnectData
-                    )
-                }
-                _viewModel = viewModel
+        fun newInstance(viewModel: WalletConnectViewModel) = WalletConnectMessageSignedFragment().apply {
+            arguments = Bundle().apply {
+                putSerializable(WalletConnectViewModel.WALLET_CONNECT_DATA, viewModel.walletConnectData)
             }
+            _viewModel = viewModel
+        }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentWalletConnectMessageSignedBinding.inflate(inflater, container, false)
         return binding.root
     }

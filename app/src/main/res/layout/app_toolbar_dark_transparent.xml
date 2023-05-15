@@ -13,7 +13,6 @@
         android:background="@null"
         android:theme="@style/AppTheme.DarkActionbar"
         app:popupTheme="@style/AppTheme.PopupOverlay">
-
         <TextView
             android:id="@+id/toolbar_title"
             android:layout_width="match_parent"

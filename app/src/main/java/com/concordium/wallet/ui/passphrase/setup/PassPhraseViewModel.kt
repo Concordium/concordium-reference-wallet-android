@@ -38,8 +38,7 @@ class PassPhraseViewModel(
     val reveal = MutableLiveData<Boolean>()
 
     fun generateMnemonicCode() {
-        val mnemonicCode: Mnemonics.MnemonicCode =
-            Mnemonics.MnemonicCode(Mnemonics.WordCount.COUNT_24)
+        val mnemonicCode: Mnemonics.MnemonicCode = Mnemonics.MnemonicCode(Mnemonics.WordCount.COUNT_24)
         if (BuildConfig.DEBUG)
             println("LC -> ${mnemonicCode.words.joinToString(" ") { String(it) }}")
         mnemonicCodeToConfirm = mnemonicCode.words.toList()

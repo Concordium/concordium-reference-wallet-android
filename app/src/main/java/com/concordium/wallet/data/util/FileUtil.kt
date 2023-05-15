@@ -12,12 +12,11 @@ object FileUtil {
     /**
      * @exception FileNotFoundException
      */
-    suspend fun saveFile(context: Context, filename: String, content: String) =
-        withContext(Dispatchers.IO) {
-            context.openFileOutput(filename, Context.MODE_PRIVATE).use {
-                it.write(content.toByteArray())
-            }
+    suspend fun saveFile(context: Context, filename: String, content: String) = withContext(Dispatchers.IO){
+        context.openFileOutput(filename, Context.MODE_PRIVATE).use {
+            it.write(content.toByteArray())
         }
+    }
 
     suspend fun writeFile(destinationUri: Uri, destinationFileName: String, fileContent: String) {
         withContext(Dispatchers.IO) {

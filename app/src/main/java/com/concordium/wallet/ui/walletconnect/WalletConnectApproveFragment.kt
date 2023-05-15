@@ -30,11 +30,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentWalletConnectApproveBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -43,9 +39,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initObservers()
-        if (_viewModel.binder?.getSessionTopic()
-                ?.isNotEmpty() == false && savedInstanceState == null
-        ) {
+        if (_viewModel.binder?.getSessionTopic()?.isNotEmpty() == false && savedInstanceState == null) {
             _viewModel.waiting.postValue(true)
             _viewModel.approveSession()
         }
@@ -78,13 +72,9 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
                 binding.header1.visibility = View.GONE
                 binding.header2.text = getString(R.string.wallet_connect_connecting_is_connected_to)
                 binding.waitForActions.visibility = View.VISIBLE
-                (activity as BaseActivity).setActionBarTitle(
-                    getString(
-                        R.string.wallet_connect_session_with,
-                        _viewModel.sessionName()
-                    )
-                )
-            } else {
+                (activity as BaseActivity).setActionBarTitle(getString(R.string.wallet_connect_session_with, _viewModel.sessionName()))
+            }
+            else {
                 if (didConnectBefore) {
                     showConnectionLost()
                 } else {
@@ -107,7 +97,6 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         timeoutTimer = object : CountDownTimer(15000, 1000) {
             override fun onTick(millisecondFinished: Long) {
             }
-
             override fun onFinish() {
                 if (!didConnectBefore)
                     showTryApproveAgain()
@@ -127,7 +116,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
         builder.setPositiveButton(getString(R.string.wallet_connect_approve_try_again_try_again)) { _, _ ->
             _viewModel.approveSession()
         }
-        builder.setNegativeButton(getString(R.string.wallet_connect_approve_try_again_later)) { dialog, _ ->
+        builder.setNegativeButton(getString(R.string.wallet_connect_approve_try_again_later)) {dialog, _ ->
             dialog.dismiss()
             gotoMain()
         }
@@ -137,12 +126,7 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
     private fun showDisconnectWarning() {
         val builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.wallet_connect_disconnect_warning_title)
-        builder.setMessage(
-            getString(
-                R.string.wallet_connect_disconnect_warning_message,
-                _viewModel.sessionName()
-            )
-        )
+        builder.setMessage(getString(R.string.wallet_connect_disconnect_warning_message, _viewModel.sessionName()))
         builder.setPositiveButton(getString(R.string.wallet_connect_disconnect_warning_button_disconnect)) { _, _ ->
             gotoMain()
         }

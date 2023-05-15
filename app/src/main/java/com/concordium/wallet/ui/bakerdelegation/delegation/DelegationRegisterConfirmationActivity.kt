@@ -22,11 +22,7 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDelegationRegistrationConfirmationBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(
-            binding.toolbarLayout.toolbar,
-            binding.toolbarLayout.toolbarTitle,
-            R.string.delegation_register_delegation_title
-        )
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.delegation_register_delegation_title)
         initViews()
     }
 
@@ -48,29 +44,18 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity() {
     }
 
     private fun updateViews() {
-        val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(
-            viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0
-        )
+        val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0)
 
         if (viewModel.isUpdatingDelegation()) {
             setActionBarTitle(R.string.delegation_update_delegation_title)
-            binding.delegationTransactionTitle.text =
-                getString(R.string.delegation_update_delegation_transaction_title)
+            binding.delegationTransactionTitle.text = getString(R.string.delegation_update_delegation_transaction_title)
         }
 
         if (viewModel.bakerDelegationData.type == REGISTER_DELEGATION) {
-            binding.gracePeriod.text = resources.getQuantityString(
-                R.plurals.delegation_register_delegation_confirmation_desc,
-                gracePeriod,
-                gracePeriod
-            )
+            binding.gracePeriod.text = resources.getQuantityString(R.plurals.delegation_register_delegation_confirmation_desc, gracePeriod, gracePeriod)
         } else if (viewModel.bakerDelegationData.type == UPDATE_DELEGATION) {
             if (viewModel.isLoweringDelegation()) {
-                binding.gracePeriod.text = resources.getQuantityString(
-                    R.plurals.delegation_register_delegation_confirmation_desc_update,
-                    gracePeriod,
-                    gracePeriod
-                )
+                binding.gracePeriod.text = resources.getQuantityString(R.plurals.delegation_register_delegation_confirmation_desc_update, gracePeriod, gracePeriod)
             }
         }
 
@@ -82,17 +67,10 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity() {
             showNotice()
         }
 
-        binding.accountToDelegateFrom.text =
-            (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n")
-                .plus(viewModel.bakerDelegationData.account?.address ?: "")
-        binding.delegationAmountConfirmation.text =
-            CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
-        binding.targetPool.text =
-            if (viewModel.bakerDelegationData.isLPool) getString(R.string.delegation_register_delegation_passive_long) else viewModel.bakerDelegationData.poolId
-        binding.rewardsWillBe.text =
-            if (viewModel.bakerDelegationData.restake) getString(R.string.delegation_status_added_to_delegation_amount) else getString(
-                R.string.delegation_status_at_disposal
-            )
+        binding.accountToDelegateFrom.text = (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n").plus(viewModel.bakerDelegationData.account?.address ?: "")
+        binding.delegationAmountConfirmation.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
+        binding.targetPool.text = if (viewModel.bakerDelegationData.isLPool) getString(R.string.delegation_register_delegation_passive_long) else viewModel.bakerDelegationData.poolId
+        binding.rewardsWillBe.text = if (viewModel.bakerDelegationData.restake) getString(R.string.delegation_status_added_to_delegation_amount) else getString(R.string.delegation_status_at_disposal)
 
         if (!viewModel.stakedAmountHasChanged()) {
             binding.delegationAmountConfirmationTitle.visibility = View.GONE
@@ -107,10 +85,7 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity() {
             binding.rewardsWillBe.visibility = View.GONE
         }
 
-        initializeTransactionFeeLiveData(
-            binding.includeProgress.progressLayout,
-            binding.estimatedTransactionFee
-        )
+        initializeTransactionFeeLiveData(binding.includeProgress.progressLayout, binding.estimatedTransactionFee)
         initializeShowAuthenticationLiveData()
         initializeWaitingLiveData(binding.includeProgress.progressLayout)
 
@@ -127,12 +102,7 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.delegation_register_delegation_failed_title)
         val messageFromWalletProxy = getString(value)
-        builder.setMessage(
-            getString(
-                R.string.delegation_register_delegation_failed_message,
-                messageFromWalletProxy
-            )
-        )
+        builder.setMessage(getString(R.string.delegation_register_delegation_failed_message, messageFromWalletProxy))
         builder.setPositiveButton(getString(R.string.delegation_register_delegation_failed_try_again)) { dialog, _ ->
             dialog.dismiss()
             onContinueClicked()
@@ -151,8 +121,7 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity() {
         binding.submitDelegationFinish.visibility = View.VISIBLE
         binding.includeTransactionSubmittedHeader.transactionSubmitted.visibility = View.VISIBLE
         viewModel.bakerDelegationData.submissionId?.let {
-            binding.includeTransactionSubmittedNo.transactionSubmittedDivider.visibility =
-                View.VISIBLE
+            binding.includeTransactionSubmittedNo.transactionSubmittedDivider.visibility = View.VISIBLE
             binding.includeTransactionSubmittedNo.transactionSubmittedId.visibility = View.VISIBLE
             binding.includeTransactionSubmittedNo.transactionSubmittedId.text = it
         }
@@ -175,31 +144,15 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity() {
             }
             when (viewModel.bakerDelegationData.type) {
                 UPDATE_DELEGATION -> {
-                    if ((viewModel.bakerDelegationData.amount
-                            ?: 0) < (viewModel.bakerDelegationData.oldStakedAmount ?: 0)
-                    ) {
-                        builder.setMessage(
-                            resources.getQuantityString(
-                                R.plurals.delegation_notice_message_decrease,
-                                gracePeriod,
-                                gracePeriod
-                            )
-                        )
+                    if ((viewModel.bakerDelegationData.amount ?: 0) < (viewModel.bakerDelegationData.oldStakedAmount ?: 0)) {
+                        builder.setMessage(resources.getQuantityString(R.plurals.delegation_notice_message_decrease, gracePeriod, gracePeriod))
                     } else {
                         builder.setMessage(getString(R.string.delegation_notice_message))
                     }
                 }
-
                 REMOVE_DELEGATION -> {
-                    builder.setMessage(
-                        resources.getQuantityString(
-                            R.plurals.delegation_notice_message_remove,
-                            gracePeriod,
-                            gracePeriod
-                        )
-                    )
+                    builder.setMessage(resources.getQuantityString(R.plurals.delegation_notice_message_remove, gracePeriod, gracePeriod))
                 }
-
                 else -> {
                     builder.setMessage(getString(R.string.delegation_notice_message))
                 }

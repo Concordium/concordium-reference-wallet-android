@@ -41,11 +41,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         super.onCreate(savedInstanceState)
         binding = ActivityAccountDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(
-            binding.toolbarLayout.toolbar,
-            binding.toolbarLayout.toolbarTitle,
-            R.string.account_details_title
-        )
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.account_details_title)
         val account = intent.getSerializable(EXTRA_ACCOUNT, Account::class.java)
         val isShielded = intent.extras!!.getBoolean(EXTRA_SHIELDED)
         val continueToShieldIntro = intent.extras!!.getBoolean(EXTRA_CONTINUE_TO_SHIELD_INTRO)
@@ -165,21 +161,14 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun initTopContent() {
-        setActionBarTitle(
-            getString(
-                if (viewModel.isShielded) R.string.account_details_title_shielded_balance else R.string.account_details_title_regular_balance,
-                viewModel.account.getAccountName()
-            )
-        )
+        setActionBarTitle(getString(if(viewModel.isShielded) R.string.account_details_title_shielded_balance else R.string.account_details_title_regular_balance, viewModel.account.getAccountName()))
         when (viewModel.account.transactionStatus) {
             TransactionStatus.ABSENT -> {
                 setErrorMode()
             }
-
             TransactionStatus.FINALIZED -> {
                 setFinalizedMode()
             }
-
             TransactionStatus.COMMITTED -> setPendingMode()
             TransactionStatus.RECEIVED -> setPendingMode()
             else -> {
@@ -200,58 +189,39 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
             viewModel.isShielded = true
             initViews()
         }
-        binding.accountTotalDetailsDisposalText.text =
-            if (viewModel.isShielded) resources.getString(
-                R.string.account_shielded_total_details_disposal,
-                viewModel.account.name
-            ) else resources.getString(R.string.account_total_details_disposal)
+        binding.accountTotalDetailsDisposalText.text = if(viewModel.isShielded) resources.getString(R.string.account_shielded_total_details_disposal, viewModel.account.name) else resources.getString(R.string.account_total_details_disposal)
     }
 
     private fun updateShieldEnabledUI() {
-        binding.toggleContainer.visibility =
-            if (viewModel.shieldingEnabledLiveData.value == true) View.VISIBLE else View.GONE
+        binding.toggleContainer.visibility = if (viewModel.shieldingEnabledLiveData.value == true) View.VISIBLE else View.GONE
         binding.toggleBalance.isSelected = !viewModel.isShielded
         binding.toggleShielded.isSelected = viewModel.isShielded
-        binding.shieldedIcon.visibility =
-            if (viewModel.shieldingEnabledLiveData.value == true && viewModel.isShielded) View.VISIBLE else View.GONE
+        binding.shieldedIcon.visibility = if (viewModel.shieldingEnabledLiveData.value == true && viewModel.isShielded) View.VISIBLE else View.GONE
         updateButtonsSlider()
     }
 
     private fun setFinalizedMode() {
         binding.buttonsSlider.setEnableButtons(!viewModel.account.readOnly)
         binding.accountDetailsLayout.visibility = View.VISIBLE
-        binding.readonlyDesc.visibility =
-            if (viewModel.account.readOnly) View.VISIBLE else View.GONE
+        binding.readonlyDesc.visibility = if (viewModel.account.readOnly) View.VISIBLE else View.GONE
         binding.accountsOverviewTotalDetailsBakerContainer.visibility = View.GONE
         binding.accountsOverviewTotalDetailsStakedContainer.visibility = View.GONE
         if (viewModel.isShielded) {
             binding.accountsOverviewTotalDetailsDisposalContainer.visibility = View.GONE
-        } else {
+        }
+        else {
             binding.accountsOverviewTotalDetailsDisposalContainer.visibility = View.VISIBLE
             if (viewModel.account.isBaking()) {
                 binding.accountsOverviewTotalDetailsBakerContainer.visibility = View.VISIBLE
-                binding.accountsOverviewTotalTitleBaker.text = getString(
-                    R.string.account_details_stake_with_baker,
-                    viewModel.account.accountBaker?.bakerId?.toString() ?: ""
-                )
-                binding.accountsOverviewTotalDetailsBaker.text = CurrencyUtil.formatGTU(
-                    viewModel.account.accountBaker?.stakedAmount ?: "0",
-                    true
-                )
+                binding.accountsOverviewTotalTitleBaker.text = getString(R.string.account_details_stake_with_baker, viewModel.account.accountBaker?.bakerId?.toString() ?: "")
+                binding.accountsOverviewTotalDetailsBaker.text = CurrencyUtil.formatGTU(viewModel.account.accountBaker?.stakedAmount ?: "0", true)
             } else if (viewModel.account.isDelegating()) {
                 binding.accountsOverviewTotalDetailsStakedContainer.visibility = View.VISIBLE
                 if (viewModel.account.accountDelegation?.delegationTarget?.delegateType == DelegationTarget.TYPE_DELEGATE_TO_L_POOL)
-                    binding.accountsOverviewTotalTitleStaked.text =
-                        getString(R.string.account_details_delegation_with_passive_pool)
+                    binding.accountsOverviewTotalTitleStaked.text = getString(R.string.account_details_delegation_with_passive_pool)
                 else
-                    binding.accountsOverviewTotalTitleStaked.text = getString(
-                        R.string.account_details_delegation_with_baker_pool,
-                        viewModel.account.accountDelegation?.delegationTarget?.bakerId ?: ""
-                    )
-                binding.accountsOverviewTotalDetailsStaked.text = CurrencyUtil.formatGTU(
-                    viewModel.account.accountDelegation?.stakedAmount ?: "",
-                    true
-                )
+                    binding.accountsOverviewTotalTitleStaked.text = getString(R.string.account_details_delegation_with_baker_pool, viewModel.account.accountDelegation?.delegationTarget?.bakerId ?: "")
+                binding.accountsOverviewTotalDetailsStaked.text = CurrencyUtil.formatGTU(viewModel.account.accountDelegation?.stakedAmount ?: "", true)
             }
         }
     }
@@ -292,9 +262,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
 
     private fun showTotalBalance(totalBalance: Long) {
         binding.balanceTextview.text = CurrencyUtil.formatGTU(totalBalance)
-        binding.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(
-            viewModel.account.getAtDisposalWithoutStakedOrScheduled(totalBalance), true
-        )
+        binding.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(viewModel.account.getAtDisposalWithoutStakedOrScheduled(totalBalance), true)
     }
 
     private fun onSendFundsClicked() {
@@ -308,10 +276,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         val intent = Intent(this, SendFundsActivity::class.java)
         intent.putExtra(SendFundsActivity.EXTRA_SHIELDED, viewModel.isShielded)
         intent.putExtra(SendFundsActivity.EXTRA_ACCOUNT, viewModel.account)
-        intent.putExtra(
-            SendFundsActivity.EXTRA_RECIPIENT,
-            Recipient(viewModel.account.id, viewModel.account.name, viewModel.account.address)
-        )
+        intent.putExtra(SendFundsActivity.EXTRA_RECIPIENT, Recipient(viewModel.account.id, viewModel.account.name, viewModel.account.address))
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         startActivity(intent)
     }
@@ -357,12 +322,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         }
         if ((viewModel.shieldingEnabledLiveData.value == true && !viewModel.isShielded) || viewModel.shieldingEnabledLiveData.value == false) {
             binding.buttonsSlider.addButton(R.drawable.ic_earn) {
-                gotoEarn(
-                    this,
-                    viewModel.account,
-                    viewModel.hasPendingDelegationTransactions,
-                    viewModel.hasPendingBakingTransactions
-                )
+                gotoEarn(this, viewModel.account, viewModel.hasPendingDelegationTransactions, viewModel.hasPendingBakingTransactions)
             }
         }
         binding.buttonsSlider.addButton(R.drawable.ic_scan) {
@@ -390,10 +350,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         intent.putExtra(AccountSettingsActivity.EXTRA_ACCOUNT, viewModel.account)
         intent.putExtra(AccountSettingsActivity.EXTRA_SHIELDED, viewModel.isShielded)
         if (continueToShieldIntro)
-            intent.putExtra(
-                AccountSettingsActivity.EXTRA_CONTINUE_TO_SHIELD_INTRO,
-                viewModel.isShielded
-            )
+            intent.putExtra(AccountSettingsActivity.EXTRA_CONTINUE_TO_SHIELD_INTRO, viewModel.isShielded)
         startActivity(intent)
     }
 }

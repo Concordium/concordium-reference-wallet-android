@@ -28,11 +28,7 @@ class SendFundsConfirmedActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySendFundsConfirmedBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(
-            binding.toolbarLayout.toolbar,
-            binding.toolbarLayout.toolbarTitle,
-            R.string.send_funds_confirmed_title
-        )
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.send_funds_confirmed_title)
 
         val transfer = intent.extras!!.getSerializable(EXTRA_TRANSFER) as Transfer
         val recipient = intent.extras!!.getSerializable(EXTRA_RECIPIENT) as Recipient
@@ -69,9 +65,10 @@ class SendFundsConfirmedActivity : BaseActivity() {
                 CurrencyUtil.formatGTU(viewModel.transfer.cost)
             )
 
-        if (viewModel.transfer.memo.isNullOrEmpty()) {
+        if(viewModel.transfer.memo.isNullOrEmpty()){
             binding.memoConfirmationTextview.visibility = View.GONE
-        } else {
+        }
+        else{
             binding.memoConfirmationTextview.visibility = View.VISIBLE
             binding.memoConfirmationTextview.text = getString(
                 R.string.send_funds_confirmation_memo,

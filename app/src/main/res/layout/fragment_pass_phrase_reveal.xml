@@ -3,24 +3,20 @@
     style="@style/Layout.Root"
     android:fillViewport="true"
     android:orientation="vertical">
-
     <LinearLayout
         android:orientation="vertical"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
-
         <TextView
             style="@style/TextView.Standard"
             android:text="@string/pass_phrase_hidden_please_write"
             android:gravity="center"
             android:layout_gravity="center" />
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_weight="1">
-
             <GridView
                 android:id="@+id/gvReveal"
                 android:orientation="vertical"
@@ -32,7 +28,6 @@
                 android:paddingVertical="12dp"
                 android:nestedScrollingEnabled="true"
                 android:numColumns="2" />
-
             <LinearLayout
                 android:id="@+id/llTapToReveal"
                 android:layout_width="match_parent"
@@ -40,23 +35,13 @@
                 android:layout_centerInParent="true"
                 android:background="@drawable/bg_border_gray"
                 android:orientation="vertical">
-
-                <View
-                    android:layout_height="0dp"
-                    android:layout_width="match_parent"
-                    android:layout_weight="0.1" />
-
+                <View android:layout_height="0dp" android:layout_width="match_parent" android:layout_weight="0.1" />
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="0.5"
                     android:orientation="horizontal">
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.3" />
-
+                    <View android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="0.3" />
                     <androidx.appcompat.widget.AppCompatImageView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
@@ -64,13 +49,8 @@
                         android:scaleType="fitCenter"
                         android:tint="#181817"
                         android:src="@drawable/ic_read_only" />
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.3" />
+                    <View android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="0.3" />
                 </LinearLayout>
-
                 <TextView
                     style="@style/TextView.Mono"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -81,7 +61,6 @@
                     android:gravity="center_horizontal|top" />
             </LinearLayout>
         </RelativeLayout>
-
         <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/cbConfirm"
             android:layout_width="match_parent"

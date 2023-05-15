@@ -22,8 +22,7 @@ class AccountDetailsIdentityFragment : BaseFragment() {
     //region Lifecycle
     //************************************************************
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         _binding = FragmentAccountDetailsIdentityBinding.inflate(inflater, container, false)
@@ -59,9 +58,10 @@ class AccountDetailsIdentityFragment : BaseFragment() {
     }
 
     private fun initIdentityAttributeList(providerName: String) {
-        if (viewModel.account.revealedAttributes.isEmpty()) {
+        if(viewModel.account.revealedAttributes.isEmpty()){
             binding.noIdentityDataTextview.visibility = View.VISIBLE
-        } else {
+        }
+        else{
             binding.noIdentityDataTextview.visibility = View.GONE
         }
 

@@ -19,28 +19,19 @@ open class Preferences {
     interface Listener {
         fun onChange()
     }
-
-    companion object {
-        const val SHARED_PREFERENCES_ARE_ENCRYPTED = "encrypted_shared_preference"
+    companion object{
+        const val SHARED_PREFERENCES_ARE_ENCRYPTED ="encrypted_shared_preference"
     }
 
     constructor(context: Context, preferenceName: String, preferenceMode: Int) {
-        val authPreferences =
-            initializeEncryptedSharedPreferences(context, SharedPreferencesKeys.PREF_FILE_AUTH.key)
-        sharedPreferences =
-            if (authPreferences.getBoolean(SHARED_PREFERENCES_ARE_ENCRYPTED, false)) {
-                initializeEncryptedSharedPreferences(context, preferenceName)
-            } else if (migrateWorkingPreferencesSuccess(
-                    context,
-                    preferenceName,
-                    preferenceMode,
-                    authPreferences
-                )
-            ) {
-                initializeEncryptedSharedPreferences(context, preferenceName)
-            } else {
-                getSharedPreferences(context, preferenceName, preferenceMode)
-            }
+        val authPreferences = initializeEncryptedSharedPreferences(context, SharedPreferencesKeys.PREF_FILE_AUTH.key)
+        sharedPreferences = if(authPreferences.getBoolean(SHARED_PREFERENCES_ARE_ENCRYPTED, false)){
+            initializeEncryptedSharedPreferences(context, preferenceName)
+        }else if(migrateWorkingPreferencesSuccess(context, preferenceName, preferenceMode, authPreferences)){
+            initializeEncryptedSharedPreferences(context, preferenceName)
+        }else{
+            getSharedPreferences(context, preferenceName, preferenceMode)
+        }
     }
 
     /**
@@ -54,12 +45,11 @@ open class Preferences {
         preferenceName: String,
         preferenceMode: Int
     ): SharedPreferences {
-        val unEncryptedSharedPreferences =
-            context.getSharedPreferences(preferenceName, preferenceMode)
+        val unEncryptedSharedPreferences = context.getSharedPreferences(preferenceName, preferenceMode)
 
-        return if (unEncryptedSharedPreferences.all.isEmpty()) {
+        return if(unEncryptedSharedPreferences.all.isEmpty()) {
             initializeEncryptedSharedPreferences(context, preferenceName)
-        } else {
+        }else{
             unEncryptedSharedPreferences
         }
     }
@@ -74,24 +64,23 @@ open class Preferences {
         mContext: Context,
         preferenceName: String,
         preferenceMode: Int,
-        authPreferences: SharedPreferences
-    ): Boolean {
+        authPreferences: SharedPreferences): Boolean{
         var allPreferencesAreMigrated = true
         var continueWithEncryptedSharedPreference = true
 
-        for (prefName in SharedPreferencesKeys.values()) {
-            if (!migrateSinglePreferences(mContext, prefName.key, preferenceMode)) {
+        for(prefName in SharedPreferencesKeys.values()){
+            if(!migrateSinglePreferences(mContext, prefName.key, preferenceMode)){
                 allPreferencesAreMigrated = false
 
-                if (prefName.key == preferenceName) {
+                if(prefName.key == preferenceName) {
                     continueWithEncryptedSharedPreference = false
                 }
             }
         }
-        if (allPreferencesAreMigrated) {
+        if(allPreferencesAreMigrated){
             authPreferences.edit().putBoolean(SHARED_PREFERENCES_ARE_ENCRYPTED, true).commit()
         }
-        return continueWithEncryptedSharedPreference
+        return  continueWithEncryptedSharedPreference
     }
 
     /**
@@ -107,20 +96,19 @@ open class Preferences {
     ): Boolean {
         val unencryptedPreference = mContext.getSharedPreferences(preferenceName, preferenceMode)
         var migrationIsSuccessful = true
-        if (unencryptedPreference.all.isNotEmpty()) {
-            val encryptedSharedPreferences =
-                initializeEncryptedSharedPreferences(mContext, preferenceName)
+        if(unencryptedPreference.all.isNotEmpty()){
+            val encryptedSharedPreferences = initializeEncryptedSharedPreferences(mContext, preferenceName)
 
             for (entry in unencryptedPreference.all.entries) {
                 val key = entry.key
                 val value: Any? = entry.value
-                if (!encryptedSharedPreferences.set(key, value)) {
+                if(!encryptedSharedPreferences.set(key, value)){
                     migrationIsSuccessful = false
                 }
             }
 
-            if (migrationIsSuccessful) {
-                if (!unencryptedPreference.edit().clear().commit()) {
+            if(migrationIsSuccessful){
+                if(!unencryptedPreference.edit().clear().commit()){
                     migrationIsSuccessful = false
                 }
             }
@@ -152,9 +140,8 @@ open class Preferences {
         context: Context,
         preferenceName: String
     ): SharedPreferences {
-        val masterKey =
-            MasterKey.Builder(context).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build()
-        val encryptedPreferenceName = preferenceName + "_ENCRYPTED"
+        val masterKey = MasterKey.Builder(context).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build()
+        val encryptedPreferenceName = preferenceName +"_ENCRYPTED"
         return EncryptedSharedPreferences.create(
             context,
             encryptedPreferenceName,
@@ -165,9 +152,9 @@ open class Preferences {
     }
 
     // registerOnSharedPreferenceChangeListener doesn't work
-    fun triggerChangeEvent(key: String) {
+    fun triggerChangeEvent(key: String){
         for ((listener, value) in changeListeners) {
-            if (value == key) {
+            if(value == key){
                 listener.onChange()
             }
         }
@@ -179,7 +166,7 @@ open class Preferences {
         editor.commit()
     }
 
-    fun removeListener(listener: Listener) {
+    fun removeListener(listener: Listener){
         changeListeners.remove(listener)
     }
 
@@ -201,7 +188,7 @@ open class Preferences {
         } else {
             editor.putString(key, value)
         }
-        return editor.commit()
+       return editor.commit()
     }
 
     protected fun getString(key: String, def: String): String {

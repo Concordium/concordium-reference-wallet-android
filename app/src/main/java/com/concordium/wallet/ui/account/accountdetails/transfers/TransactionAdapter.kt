@@ -29,12 +29,10 @@ class TransactionAdapter(
     var isShieldedAccount: Boolean = false
     private var onItemClickListener: OnItemClickListener? = null
 
-    inner class ItemViewHolder(val binding: ItemTransactionBinding) :
-        RecyclerView.ViewHolder(binding.root)
+    inner class ItemViewHolder(val binding: ItemTransactionBinding): RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateItemViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val binding =
-            ItemTransactionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemTransactionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ItemViewHolder(binding)
     }
 
@@ -136,8 +134,7 @@ class TransactionAdapter(
     }
 
     // Header
-    inner class HeaderViewHolder(val binding: ItemHeaderBinding) :
-        RecyclerView.ViewHolder(binding.root)
+    inner class HeaderViewHolder(val binding: ItemHeaderBinding): RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateHeaderViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
         val binding = ItemHeaderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -152,12 +149,10 @@ class TransactionAdapter(
     }
 
     // Footer
-    inner class FooterViewHolder(val binding: ItemFooterProgressBinding) :
-        RecyclerView.ViewHolder(binding.root)
+    inner class FooterViewHolder(val binding: ItemFooterProgressBinding): RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateFooterViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
-        val binding =
-            ItemFooterProgressBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemFooterProgressBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return FooterViewHolder(binding)
     }
 

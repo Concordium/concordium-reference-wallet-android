@@ -13,9 +13,10 @@ data class Recipient(
     var address: String
 ) : Serializable {
     fun displayName(): String {
-        if (name.isNullOrEmpty()) {
+        if(name.isNullOrEmpty()){
             return address
-        } else {
+        }
+        else{
             return name
         }
     }

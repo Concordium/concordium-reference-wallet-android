@@ -50,10 +50,8 @@ class IdentityUpdater(val application: Application, private val viewModelScope: 
                 try {
                     val resp = URL(identity.codeUri).readText()
                     Log.d("Identity poll response: $resp")
-                    val identityTokenContainer =
-                        gson.fromJson(resp, IdentityTokenContainer::class.java)
-                    val newStatus =
-                        if (BuildConfig.FAIL_IDENTITY_CREATION) IdentityStatus.ERROR else identityTokenContainer.status
+                    val identityTokenContainer = gson.fromJson(resp, IdentityTokenContainer::class.java)
+                    val newStatus = if (BuildConfig.FAIL_IDENTITY_CREATION) IdentityStatus.ERROR else identityTokenContainer.status
                     if (newStatus != IdentityStatus.PENDING) {
                         identity.status = identityTokenContainer.status
                         identity.detail = identityTokenContainer.detail

@@ -24,6 +24,7 @@ class AuthSetupBiometricsViewModel(application: Application) : AndroidViewModel(
         get() = _finishScreenLiveData
 
 
+
     fun initialize() {
 
         val generated = App.appCore.getCurrentAuthenticationManager().generateBiometricsSecretKey()
@@ -34,8 +35,7 @@ class AuthSetupBiometricsViewModel(application: Application) : AndroidViewModel(
 
     fun getCipherForBiometrics(): Cipher? {
         try {
-            val cipher =
-                App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForEncryption()
+            val cipher = App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForEncryption()
             if (cipher == null) {
                 _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
             }
@@ -49,8 +49,7 @@ class AuthSetupBiometricsViewModel(application: Application) : AndroidViewModel(
     fun setupBiometricWithPassword(cipher: Cipher) {
         val password = session.tempPassword
         if (password != null) {
-            val setupDone =
-                App.appCore.getCurrentAuthenticationManager().setupBiometrics(password, cipher)
+            val setupDone = App.appCore.getCurrentAuthenticationManager().setupBiometrics(password, cipher)
             if (setupDone) {
                 _finishScreenLiveData.value = Event(true)
             } else {

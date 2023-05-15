@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -14,14 +15,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/text_black"
-        tools:text="12-12-2020 13:40" />
+        tools:text="12-12-2020 13:40"/>
 
     <LinearLayout
         android:id="@+id/identifier_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/date"
-        android:orientation="vertical"></LinearLayout>
+        android:orientation="vertical">
+    </LinearLayout>
 
     <TextView
         android:id="@+id/amount"
@@ -30,5 +32,5 @@
         android:textColor="@color/text_black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="G123.0004" />
+        tools:text="G123.0004"/>
 </RelativeLayout>

@@ -2,7 +2,7 @@ package com.concordium.wallet.data.backend
 
 import okhttp3.Interceptor
 import okhttp3.Response
-import java.util.Locale
+import java.util.*
 
 class ModifyHeaderInterceptor : Interceptor {
     companion object {

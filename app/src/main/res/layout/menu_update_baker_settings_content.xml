@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -16,7 +17,6 @@
         style="@style/Layout.CardView"
         android:layout_marginBottom="10dp"
         android:background="@color/theme_white">
-
         <TextView
             android:id="@+id/menu_item_update_baker_stake"
             android:layout_width="match_parent"
@@ -35,7 +35,6 @@
         style="@style/Layout.CardView"
         android:layout_marginBottom="10dp"
         android:background="@color/theme_white">
-
         <TextView
             android:id="@+id/menu_item_update_pool_settings"
             android:layout_width="match_parent"
@@ -54,7 +53,6 @@
         style="@style/Layout.CardView"
         android:layout_marginBottom="10dp"
         android:background="@color/theme_white">
-
         <TextView
             android:id="@+id/menu_item_update_baker_keys"
             android:layout_width="match_parent"
@@ -72,7 +70,6 @@
         android:layout_height="wrap_content"
         style="@style/Layout.CardView"
         android:background="@color/theme_white">
-
         <TextView
             android:id="@+id/menu_item_stop_baking"
             android:layout_width="match_parent"

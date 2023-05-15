@@ -46,21 +46,14 @@ class DateTimeUtilInstrumentedTest {
                 assertEquals("Jan 1, 2021", DateTimeUtil.convertLongDate("20210101"))
                 assertEquals("May 1, 2021", DateTimeUtil.convertLongDate("20210501"))
 
-                assertEquals(
-                    "*******",
-                    DateTimeUtil.convertLongDate("*******")
-                ) // leave time as is if unparsable
+                assertEquals("*******", DateTimeUtil.convertLongDate("*******")) // leave time as is if unparsable
 
                 assertEquals("Jan 2021", DateTimeUtil.convertShortDate("202101"))
                 assertEquals("May 2021", DateTimeUtil.convertShortDate("202105"))
 
-                assertEquals(
-                    "*******",
-                    DateTimeUtil.convertShortDate("*******")
-                ) // leave time as is if unparsable
+                assertEquals("*******", DateTimeUtil.convertShortDate("*******")) // leave time as is if unparsable
 
             }
-
             "DK" -> {
                 Log.d("Format test: DK")
                 // Danish
@@ -73,21 +66,14 @@ class DateTimeUtilInstrumentedTest {
                 assertEquals("1. jan. 2021", DateTimeUtil.convertLongDate("20210101"))
                 assertEquals("1. maj 2021", DateTimeUtil.convertLongDate("20210501"))
 
-                assertEquals(
-                    "*******",
-                    DateTimeUtil.convertLongDate("*******")
-                ) // leave time as is if unparsable
+                assertEquals("*******", DateTimeUtil.convertLongDate("*******")) // leave time as is if unparsable
 
                 assertEquals("jan. 2021", DateTimeUtil.convertShortDate("202101"))
                 assertEquals("maj 2021", DateTimeUtil.convertShortDate("202105"))
 
-                assertEquals(
-                    "*******",
-                    DateTimeUtil.convertShortDate("*******")
-                ) // leave time as is if unparsable
+                assertEquals("*******", DateTimeUtil.convertShortDate("*******")) // leave time as is if unparsable
 
             }
-
             else -> {
                 Log.d("Format test: No matching language/country")
             }

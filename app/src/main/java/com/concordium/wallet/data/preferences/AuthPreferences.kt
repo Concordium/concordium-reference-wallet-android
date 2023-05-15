@@ -19,8 +19,7 @@ class AuthPreferences(val context: Context) :
         const val PREFKEY_PASSWORD_ENCRYPTION_SALT = "PREFKEY_PASSWORD_ENCRYPTION_SALT"
         const val PREFKEY_PASSWORD_ENCRYPTION_INITVECTOR = "PREFKEY_PASSWORD_ENCRYPTION_INITVECTOR"
         const val PREFKEY_ENCRYPTED_PASSWORD = "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY"
-        const val PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR =
-            "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR"
+        const val PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR = "PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR"
         const val PREFKEY_BIOMETRIC_KEY = "PREFKEY_BIOMETRIC_KEY"
         const val PREFKEY_TERMS_HASHED = "PREFKEY_TERMS_HASHED"
         const val PREFKEY_SHIELDING_ENABLED_ = "PREFKEY_SHIELDING_ENABLED_"
@@ -39,67 +38,67 @@ class AuthPreferences(val context: Context) :
     }
 
     fun setUsePasscode(appendix: String, value: Boolean) {
-        setBoolean(PREFKEY_USE_PASSCODE + appendix, value)
+        setBoolean(PREFKEY_USE_PASSCODE+appendix, value)
     }
 
     fun getUsePasscode(appendix: String): Boolean {
-        return getBoolean(PREFKEY_USE_PASSCODE + appendix)
+        return getBoolean(PREFKEY_USE_PASSCODE+appendix)
     }
 
     fun setUseBiometrics(appendix: String, value: Boolean) {
-        setBoolean(PREFKEY_USE_BIOMETRICS + appendix, value)
+        setBoolean(PREFKEY_USE_BIOMETRICS+appendix, value)
     }
 
     fun getUseBiometrics(appendix: String): Boolean {
-        return getBoolean(PREFKEY_USE_BIOMETRICS + appendix)
+        return getBoolean(PREFKEY_USE_BIOMETRICS+appendix)
     }
 
     fun setPasswordCheck(appendix: String, value: String) {
-        setString(PREFKEY_PASSWORD_CHECK + appendix, value)
+        setString(PREFKEY_PASSWORD_CHECK+appendix, value)
     }
 
     fun getPasswordCheck(appendix: String): String? {
-        return getString(PREFKEY_PASSWORD_CHECK + appendix)
+        return getString(PREFKEY_PASSWORD_CHECK+appendix)
     }
 
     fun setPasswordCheckEncrypted(appendix: String, value: String) {
-        setString(PREFKEY_PASSWORD_CHECK_ENCRYPTED + appendix, value)
+        setString(PREFKEY_PASSWORD_CHECK_ENCRYPTED+appendix, value)
     }
 
     fun getPasswordCheckEncrypted(appendix: String): String {
-        return getString(PREFKEY_PASSWORD_CHECK_ENCRYPTED + appendix, "")
+        return getString(PREFKEY_PASSWORD_CHECK_ENCRYPTED+appendix, "")
     }
 
     fun setPasswordEncryptionSalt(appendix: String, value: String) {
-        setString(PREFKEY_PASSWORD_ENCRYPTION_SALT + appendix, value)
+        setString(PREFKEY_PASSWORD_ENCRYPTION_SALT+appendix, value)
     }
 
     fun getPasswordEncryptionSalt(appendix: String): String {
-        return getString(PREFKEY_PASSWORD_ENCRYPTION_SALT + appendix, "")
+        return getString(PREFKEY_PASSWORD_ENCRYPTION_SALT+appendix, "")
     }
 
     fun setPasswordEncryptionInitVector(appendix: String, value: String) {
-        setString(PREFKEY_PASSWORD_ENCRYPTION_INITVECTOR + appendix, value)
+        setString(PREFKEY_PASSWORD_ENCRYPTION_INITVECTOR+appendix, value)
     }
 
     fun getPasswordEncryptionInitVector(appendix: String): String {
-        return getString(PREFKEY_PASSWORD_ENCRYPTION_INITVECTOR + appendix, "")
+        return getString(PREFKEY_PASSWORD_ENCRYPTION_INITVECTOR+appendix, "")
     }
 
     fun setEncryptedPassword(appendix: String, value: String) {
-        setString(PREFKEY_ENCRYPTED_PASSWORD + appendix, value)
+        setString(PREFKEY_ENCRYPTED_PASSWORD+appendix, value)
     }
 
     fun getEncryptedPassword(appendix: String): String {
-        return getString(PREFKEY_ENCRYPTED_PASSWORD + appendix, "")
+        return getString(PREFKEY_ENCRYPTED_PASSWORD+appendix, "")
     }
 
     fun setEncryptedPasswordDerivedKeyInitVector(appendix: String, value: String) {
-        setString(PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR + appendix, value)
+        setString(PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR+appendix, value)
     }
 
     fun getBiometricsKeyEncryptionInitVector(appendix: String): String {
-        return getString(PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR + appendix, "")
+        return getString(PREFKEY_ENCRYPTED_PASSWORD_DERIVED_KEY_INITVECTOR+appendix, "")
     }
 
     fun getAuthKeyName(): String {
@@ -119,54 +118,52 @@ class AuthPreferences(val context: Context) :
     }
 
     fun isShieldingEnabled(accountAddress: String): Boolean {
-        return getBoolean(PREFKEY_SHIELDING_ENABLED_ + accountAddress, false)
+        return getBoolean(PREFKEY_SHIELDING_ENABLED_+accountAddress, false)
     }
 
     fun setShieldingEnabled(accountAddress: String, value: Boolean) {
-        return setBoolean(PREFKEY_SHIELDING_ENABLED_ + accountAddress, value)
+        return setBoolean(PREFKEY_SHIELDING_ENABLED_+accountAddress, value)
     }
 
     fun isShieldedWarningDismissed(accountAddress: String): Boolean {
-        return getBoolean(PREFKEY_SHIELDED_WARNING_DISMISSED_ + accountAddress, false)
+        return getBoolean(PREFKEY_SHIELDED_WARNING_DISMISSED_+accountAddress, false)
     }
 
     fun setShieldedWarningDismissed(accountAddress: String, value: Boolean) {
-        return setBoolean(PREFKEY_SHIELDED_WARNING_DISMISSED_ + accountAddress, value)
+        return setBoolean(PREFKEY_SHIELDED_WARNING_DISMISSED_+accountAddress, value)
     }
 
     fun setIdentityPendingWarningAcknowledged(id: Int) {
-        return setBoolean(PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED + id, true)
+        return setBoolean(PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED+id, true)
     }
 
     fun isIdentityPendingWarningAcknowledged(id: Int): Boolean {
-        return getBoolean(PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED + id, false)
+        return getBoolean(PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED+id, false)
     }
 
     suspend fun tryToSetEncryptedSeedPhrase(value: String, password: String): Boolean {
         val seed = Mnemonics.MnemonicCode(value).toSeed()
         val seedEncoded = seed.toHex()
-        val encryptedSeed =
-            App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, seedEncoded)
-                ?: return false
-        return setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed)
+        val encryptedSeed = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, seedEncoded)
+            ?: return false
+       return setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed)
     }
 
     suspend fun getSeedPhrase(password: String): String {
-        getString(SEED_PHRASE_ENCRYPTED)?.let { seedEncrypted ->
+        getString(SEED_PHRASE_ENCRYPTED)?.let {seedEncrypted ->
             return App.appCore.getOriginalAuthenticationManager()
-                .decryptInBackground(password, seedEncrypted) ?: return ""
+                .decryptInBackground(password, seedEncrypted)?: return ""
         }
         return ""
     }
 
     suspend fun getSeedPhrase(decryptKey: SecretKey): String? {
-        getString(SEED_PHRASE_ENCRYPTED)?.let { seedEncrypted ->
+        getString(SEED_PHRASE_ENCRYPTED)?.let {seedEncrypted ->
             return App.appCore.getOriginalAuthenticationManager()
                 .decryptInBackground(decryptKey, seedEncrypted)
         }
         return null
     }
-
     /**
      * Check if the old unencrypted seed is present
      *
@@ -182,15 +179,14 @@ class AuthPreferences(val context: Context) :
      *
      * **true** if the seed is successfully encrypted, the encrypted seed is successfully saved,
      * the decrypted and unencrypted seeds match and the old seed is successfully deleted.
-     */
+    */
     suspend fun checkAndTryToEncryptSeed(password: String): Boolean {
         val seedUnencrypted = getString(SEED_PHRASE) ?: return true
 
         //Unencrypted seed is present, encrypt it, save it and delete the old.
-        val encryptedSeed = App.appCore.getCurrentAuthenticationManager()
-            .encryptInBackground(password, seedUnencrypted) ?: return false
+        val encryptedSeed = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, seedUnencrypted) ?: return false
         setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed).let { saveSuccess ->
-            if (saveSuccess) {
+            if(saveSuccess) {
                 val decryptedSeed = getSeedPhrase(password)
                 return decryptedSeed == seedUnencrypted && setStringWithResult(SEED_PHRASE, null)
             }

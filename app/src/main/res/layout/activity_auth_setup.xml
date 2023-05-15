@@ -45,20 +45,17 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_chainStyle="spread_inside">
-
                     <TextView
                         android:id="@+id/instruction_textview"
                         style="@style/TextView.InfoMedium"
                         android:layout_width="match_parent"
                         android:gravity="center_horizontal"
                         android:text="@string/auth_setup_info" />
-
                     <com.concordium.wallet.uicore.view.PasscodeView
                         android:id="@+id/passcode_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="40dp" />
-
                     <TextView
                         android:id="@+id/error_textview"
                         style="@style/TextView.ErrorSmall"

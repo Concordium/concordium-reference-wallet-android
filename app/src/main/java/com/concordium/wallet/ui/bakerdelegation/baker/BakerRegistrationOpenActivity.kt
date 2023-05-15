@@ -21,26 +21,20 @@ class BakerRegistrationOpenActivity : BaseDelegationBakerActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityBakerRegistrationOpenBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(
-            binding.toolbarLayout.toolbar,
-            binding.toolbarLayout.toolbarTitle,
-            R.string.baker_registration_open_title
-        )
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.baker_registration_open_title)
         initViews()
     }
 
     override fun initViews() {
         super.initViews()
 
-        viewModel.bakerDelegationData.oldMetadataUrl =
-            viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.metadataUrl
+        viewModel.bakerDelegationData.oldMetadataUrl = viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.metadataUrl
 
         if (viewModel.bakerDelegationData.type == UPDATE_BAKER_POOL) {
             setActionBarTitle(R.string.baker_update_pool_settings_title)
             binding.openUrlExplain.setText(R.string.baker_update_pool_settings_open_url_explain)
             viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.metadataUrl?.let {
-                binding.currentUrl.text =
-                    getString(R.string.baker_update_pool_settings_current_url, it)
+                binding.currentUrl.text = getString(R.string.baker_update_pool_settings_current_url, it)
                 binding.currentUrl.visibility = View.VISIBLE
                 binding.openUrl.setText(it)
             }
@@ -61,8 +55,7 @@ class BakerRegistrationOpenActivity : BaseDelegationBakerActivity() {
     private fun validate() {
         var gotoNextPage = false
         if (viewModel.bakerDelegationData.oldMetadataUrl != viewModel.bakerDelegationData.metadataUrl ||
-            viewModel.bakerDelegationData.oldOpenStatus != viewModel.bakerDelegationData.bakerPoolInfo?.openStatus
-        )
+            viewModel.bakerDelegationData.oldOpenStatus != viewModel.bakerDelegationData.bakerPoolInfo?.openStatus)
             gotoNextPage = true
 
         if (gotoNextPage) gotoNextPage()
@@ -76,10 +69,7 @@ class BakerRegistrationOpenActivity : BaseDelegationBakerActivity() {
             Intent(this, BakerRegistrationCloseActivity::class.java)
         }
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
-        intent.putExtra(
-            DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
-            viewModel.bakerDelegationData
-        )
+        intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
 

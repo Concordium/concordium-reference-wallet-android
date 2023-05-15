@@ -32,10 +32,7 @@ object CurrencyUtil {
             // The string is at least 7 chars - insert separator in front of the last 6
             strBuilder.insert(strBuilder.length - 6, separator)
         }
-        while (strBuilder.substring(strBuilder.indexOf(separator)).length > 3 && strBuilder.endsWith(
-                "0"
-            )
-        ) {
+        while(strBuilder.substring(strBuilder.indexOf(separator)).length > 3 && strBuilder.endsWith("0")){
             strBuilder.delete(strBuilder.length - 1, strBuilder.length)
         }
 
@@ -60,9 +57,10 @@ object CurrencyUtil {
             return null
         }
         val decimalSeparatorIndex = str.indexOf(separator)
-        if (decimalSeparatorIndex == -1) {
+        if(decimalSeparatorIndex == -1){
             return stringValue.toLong()
-        } else {
+        }
+        else{
             return stringValue.substring(0, decimalSeparatorIndex).toLong()
         }
     }

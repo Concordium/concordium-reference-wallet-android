@@ -24,7 +24,7 @@ class AuthenticationManager(private val biometricKeyName: String) {
             val initVector = cipher.iv
             val encrypted = cipher.doFinal(password.toByteArray())
             val encodedEncryptedPassword = Base64.encodeToString(encrypted, Base64.DEFAULT)
-            authPreferences.setEncryptedPassword(biometricKeyName, encodedEncryptedPassword)
+            authPreferences.setEncryptedPassword(biometricKeyName,encodedEncryptedPassword)
             authPreferences.setEncryptedPasswordDerivedKeyInitVector(
                 biometricKeyName,
                 Base64.encodeToString(
@@ -41,7 +41,6 @@ class AuthenticationManager(private val biometricKeyName: String) {
                     Log.e("Failed to encrypt the data with the generated key. ${e.message}")
                     return false
                 }
-
                 else -> throw e
             }
         }
@@ -73,12 +72,13 @@ class AuthenticationManager(private val biometricKeyName: String) {
                 biometricKeyName,
                 Base64.decode(initVector, Base64.DEFAULT)
             )
-            if (cipher == null) {
+            if(cipher == null) {
                 authPreferences.setUseBiometrics(biometricKeyName, false)
             }
             return cipher
-        } catch (e: KeystoreEncryptionException) {
-            authPreferences.setUseBiometrics(biometricKeyName, false)
+        }
+        catch (e:KeystoreEncryptionException){
+            authPreferences.setUseBiometrics(biometricKeyName,false)
             throw e
         }
     }
@@ -109,8 +109,7 @@ class AuthenticationManager(private val biometricKeyName: String) {
     fun checkPassword(password: String): Boolean {
         val encodedSalt = authPreferences.getPasswordEncryptionSalt(biometricKeyName)
         val encodedIV = authPreferences.getPasswordEncryptionInitVector(biometricKeyName)
-        val encodedPasswordCheckEncrypted =
-            authPreferences.getPasswordCheckEncrypted(biometricKeyName)
+        val encodedPasswordCheckEncrypted = authPreferences.getPasswordCheckEncrypted(biometricKeyName)
         val salt = Base64.decode(encodedSalt, Base64.DEFAULT)
         val iv = Base64.decode(encodedIV, Base64.DEFAULT)
         val passwordCheckEncrypted = Base64.decode(encodedPasswordCheckEncrypted, Base64.DEFAULT)
@@ -125,10 +124,9 @@ class AuthenticationManager(private val biometricKeyName: String) {
         }
     }
 
-    suspend fun checkPasswordInBackground(password: String): Boolean =
-        withContext(Dispatchers.Default) {
-            return@withContext checkPassword(password)
-        }
+    suspend fun checkPasswordInBackground(password: String): Boolean = withContext(Dispatchers.Default) {
+        return@withContext checkPassword(password)
+    }
 
     suspend fun checkPasswordInBackground(cipher: Cipher): String? =
         withContext(Dispatchers.Default) {
@@ -152,7 +150,6 @@ class AuthenticationManager(private val biometricKeyName: String) {
                         Log.e("Failed to decrypt the data with the generated key. ${e.message}")
                         return@withContext null
                     }
-
                     else -> throw e
                 }
             }
@@ -183,55 +180,50 @@ class AuthenticationManager(private val biometricKeyName: String) {
             // Derive password key and decrypt
             val toBeDecryptedByteArray = Base64.decode(encodedToBeDecrypted, Base64.DEFAULT)
             try {
-                return@withContext EncryptionHelper.decrypt(
-                    password,
+                return@withContext EncryptionHelper.decrypt(password,
                     salt,
                     iv,
-                    toBeDecryptedByteArray
-                )
+                    toBeDecryptedByteArray)
             } catch (e: EncryptionException) {
                 return@withContext null
             }
         }
 
-    suspend fun derivePasswordKeyInBackground(password: String): SecretKey? =
-        withContext(Dispatchers.Default) {
-            val encodedSalt = authPreferences.getPasswordEncryptionSalt(biometricKeyName)
-            val salt = Base64.decode(encodedSalt, Base64.DEFAULT)
-            // Derive password key
-            try {
-                return@withContext EncryptionHelper.generateKey(password, salt)
-            } catch (e: EncryptionException) {
-                return@withContext null
-            }
+    suspend fun derivePasswordKeyInBackground(password: String): SecretKey? = withContext(Dispatchers.Default) {
+        val encodedSalt = authPreferences.getPasswordEncryptionSalt(biometricKeyName)
+        val salt = Base64.decode(encodedSalt, Base64.DEFAULT)
+        // Derive password key
+        try {
+            return@withContext EncryptionHelper.generateKey(password, salt)
+        } catch (e: EncryptionException) {
+            return@withContext null
         }
+    }
 
-    suspend fun encryptInBackground(key: SecretKey, toBeEncrypted: String): String? =
-        withContext(Dispatchers.Default) {
-            val encodedIV = authPreferences.getPasswordEncryptionInitVector(biometricKeyName)
-            val iv = Base64.decode(encodedIV, Base64.DEFAULT)
+    suspend fun encryptInBackground(key: SecretKey, toBeEncrypted: String): String? = withContext(Dispatchers.Default) {
+        val encodedIV = authPreferences.getPasswordEncryptionInitVector(biometricKeyName)
+        val iv = Base64.decode(encodedIV, Base64.DEFAULT)
 
-            // Derive password key and encrypt
-            try {
-                return@withContext EncryptionHelper.encrypt(key, iv, toBeEncrypted)
-            } catch (e: EncryptionException) {
-                return@withContext null
-            }
+        // Derive password key and encrypt
+        try {
+            return@withContext EncryptionHelper.encrypt(key, iv, toBeEncrypted)
+        } catch (e: EncryptionException) {
+            return@withContext null
         }
+    }
 
-    suspend fun decryptInBackground(key: SecretKey, encodedToBeDecrypted: String): String? =
-        withContext(Dispatchers.Default) {
-            val encodedIV = authPreferences.getPasswordEncryptionInitVector(biometricKeyName)
-            val iv = Base64.decode(encodedIV, Base64.DEFAULT)
+    suspend fun decryptInBackground(key: SecretKey, encodedToBeDecrypted: String): String? = withContext(Dispatchers.Default) {
+        val encodedIV = authPreferences.getPasswordEncryptionInitVector(biometricKeyName)
+        val iv = Base64.decode(encodedIV, Base64.DEFAULT)
 
-            // Derive password key and decrypt
-            val toBeDecryptedByteArray = Base64.decode(encodedToBeDecrypted, Base64.DEFAULT)
-            try {
-                return@withContext EncryptionHelper.decrypt(key, iv, toBeDecryptedByteArray)
-            } catch (e: EncryptionException) {
-                return@withContext null
-            }
+        // Derive password key and decrypt
+        val toBeDecryptedByteArray = Base64.decode(encodedToBeDecrypted, Base64.DEFAULT)
+        try {
+            return@withContext EncryptionHelper.decrypt(key, iv, toBeDecryptedByteArray)
+        } catch (e: EncryptionException) {
+            return@withContext null
         }
+    }
 
     fun usePasscode(): Boolean {
         return authPreferences.getUsePasscode(biometricKeyName)
@@ -251,7 +243,7 @@ class AuthenticationManager(private val biometricKeyName: String) {
 
     // If the secret key cannot be found, we no longer want to try and authenticate with biometric auth.
     fun verifyValidBiometricKeyStore() {
-        if (KeystoreHelper().getSecretKey(biometricKeyName) == null) {
+        if(KeystoreHelper().getSecretKey(biometricKeyName) == null){
             authPreferences.setUseBiometrics(biometricKeyName, false)
         }
     }

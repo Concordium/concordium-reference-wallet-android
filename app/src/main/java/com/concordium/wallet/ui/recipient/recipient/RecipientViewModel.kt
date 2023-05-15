@@ -88,8 +88,7 @@ class RecipientViewModel(application: Application) : AndroidViewModel(applicatio
     private fun saveRecipient(recipient: Recipient) = viewModelScope.launch {
         if (editRecipientMode) {
             recipientRepository.update(recipient)
-            val accountRepository =
-                AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+            val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
             val existingAccount = accountRepository.findByAddress(recipient.address)
             if (existingAccount != null) {
                 existingAccount.name = recipient.name

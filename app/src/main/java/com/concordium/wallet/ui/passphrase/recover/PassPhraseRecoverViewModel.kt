@@ -14,7 +14,7 @@ import com.concordium.wallet.ui.passphrase.common.WordsPickedBaseListAdapter
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toHex
 import kotlinx.coroutines.launch
-import java.util.Locale
+import java.util.*
 
 class PassPhraseRecoverViewModel(
     application: Application,
@@ -47,7 +47,7 @@ class PassPhraseRecoverViewModel(
         wordsPicked = arrayOfNulls(wordsPicked.size)
     }
 
-    fun setPredefinedPhraseForTesting(password: String) = viewModelScope.launch {
+    fun setPredefinedPhraseForTesting(password: String) = viewModelScope.launch  {
         if (BuildConfig.DEBUG) {
             //AuthPreferences(getApplication()).setSeedPhrase("health smoke abandon middle outer method meadow sorry whale random cupboard thank album exclude idle month exit quarter shell portion eternal legal rent tonight") // testnet CBW-320
             val saveSuccess = AuthPreferences(getApplication()).tryToSetEncryptedSeedPhrase(

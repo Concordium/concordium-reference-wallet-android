@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/Layout.Root">
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -11,7 +10,6 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/disconnect">
-
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/status_imageview"
             android:layout_width="110dp"
@@ -20,7 +18,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
         <TextView
             android:id="@+id/header_1"
             style="@style/TextView.Standard"
@@ -30,7 +27,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/status_imageview" />
-
         <TextView
             android:id="@+id/account_name"
             style="@style/TextView.Standard.Bold"
@@ -40,7 +36,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/header_1" />
-
         <TextView
             android:id="@+id/header_2"
             style="@style/TextView.Standard"
@@ -50,7 +45,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/account_name" />
-
         <TextView
             android:id="@+id/service_name"
             style="@style/TextView.Standard.Bold"
@@ -60,7 +54,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/header_2" />
-
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/wait_for_actions"
             android:layout_width="wrap_content"
@@ -72,12 +65,10 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/service_name">
-
             <TextView
                 style="@style/TextView.Standard"
                 android:gravity="center_vertical"
                 android:text="@string/wallet_connect_connecting_waiting_for_actions" />
-
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="17dp"
                 android:layout_height="17dp"
@@ -86,7 +77,6 @@
                 android:src="@drawable/ic_pending" />
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
     <Button
         android:id="@+id/disconnect"
         style="@style/Button.Standard.Danger"

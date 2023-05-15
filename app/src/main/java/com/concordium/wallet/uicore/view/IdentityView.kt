@@ -36,11 +36,7 @@ class IdentityView : CardView {
         init(attrs)
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         init(attrs)
     }
 
@@ -56,12 +52,7 @@ class IdentityView : CardView {
     fun enableChangeNameOption(identity: Identity) {
         binding.nameTextview.compoundDrawablePadding = 20
         val drawable = AppCompatResources.getDrawable(context, R.drawable.ic_edit)
-        binding.nameTextview.setCompoundDrawablesRelativeWithIntrinsicBounds(
-            null,
-            null,
-            drawable,
-            null
-        )
+        binding.nameTextview.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, drawable, null)
         binding.nameTextview.setOnClickListener {
             onChangeNameClickListener?.onChangeNameClicked(identity)
         }
@@ -82,18 +73,16 @@ class IdentityView : CardView {
             }
         )
 
-        val drawableResource =
-            if (identity.status == IdentityStatus.DONE || identity.status == IdentityStatus.PENDING) R.drawable.bg_cardview_border else R.drawable.bg_cardview_error_border
+        val drawableResource = if (identity.status == IdentityStatus.DONE || identity.status == IdentityStatus.PENDING) R.drawable.bg_cardview_border else R.drawable.bg_cardview_error_border
         foreground = AppCompatResources.getDrawable(context, drawableResource)
         isEnabled = identity.status != IdentityStatus.PENDING
 
         nameTextView.text = identity.name
 
         val identityObject = identity.identityObject
-        if (identityObject != null && !TextUtils.isEmpty(identityObject.attributeList.validTo)) {
+        if(identityObject != null && !TextUtils.isEmpty(identityObject.attributeList.validTo)) {
             val expireDate = DateTimeUtil.convertShortDate(identityObject.attributeList.validTo)
-            expiresTextView.text =
-                context.getString(R.string.view_identity_attributes_expiry_data, expireDate)
+            expiresTextView.text = context.getString(R.string.view_identity_attributes_expiry_data, expireDate)
         } else {
             expiresTextView.text = ""
         }

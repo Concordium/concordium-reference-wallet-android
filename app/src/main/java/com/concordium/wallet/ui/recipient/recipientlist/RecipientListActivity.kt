@@ -36,11 +36,7 @@ class RecipientListActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityRecipientListBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(
-            binding.toolbarLayout.toolbar,
-            binding.toolbarLayout.toolbarTitle,
-            R.string.recipient_list_default_title
-        )
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.recipient_list_default_title)
 
         val selectRecipientMode = intent.getBooleanExtra(EXTRA_SELECT_RECIPIENT_MODE, false)
         val isShielded = intent.getBooleanExtra(EXTRA_SHIELDED, false)
@@ -62,7 +58,6 @@ class RecipientListActivity : BaseActivity() {
                 onBackPressed()
                 return true
             }
-
             R.id.add_item_menu -> {
                 gotoNewRecipient()
             }

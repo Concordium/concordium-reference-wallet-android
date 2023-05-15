@@ -22,7 +22,7 @@ data class BakerDelegationData(
     var isTransactionInProgress: Boolean = false,
     var bakerKeys: BakerKeys? = null,
     var type: String
-) : Serializable {
+    ) : Serializable {
 
     var transferSubmissionStatus: TransferSubmissionStatus? = null
     var submissionId: String? = null

@@ -10,10 +10,8 @@ class DelegationRemoveIntroFlowActivity :
     BaseDelegationBakerFlowActivity(R.string.delegation_intro_flow_title) {
 
     override fun getTitles(): IntArray {
-        return intArrayOf(
-            R.string.delegation_remove_subtitle1,
-            R.string.delegation_remove_subtitle2
-        )
+        return intArrayOf(R.string.delegation_remove_subtitle1,
+            R.string.delegation_remove_subtitle2)
     }
 
     override fun gotoContinue() {
@@ -23,6 +21,6 @@ class DelegationRemoveIntroFlowActivity :
     }
 
     override fun getLink(position: Int): String {
-        return "file:///android_asset/delegation_remove_flow_en_" + (position + 1) + ".html"
+        return "file:///android_asset/delegation_remove_flow_en_"+(position+1)+".html"
     }
 }

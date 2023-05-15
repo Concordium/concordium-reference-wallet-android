@@ -16,84 +16,74 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true" />
 
-        <LinearLayout
-            style="@style/Layout.Card"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
-            android:layout_marginBottom="@dimen/activity_horizontal_margin"
-            android:layout_below="@+id/toolbar_layout">
-
             <LinearLayout
+                style="@style/Layout.Card"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/account_release_schedule_inner_list_padding_sides"
-                android:paddingRight="@dimen/account_release_schedule_inner_list_padding_sides"
-                android:paddingTop="@dimen/account_release_schedule_inner_list_padding_top_bottom"
-                android:paddingBottom="@dimen/account_release_schedule_inner_list_padding_top_bottom"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/theme_component"
-                    android:textSize="15sp"
-                    android:text="@string/account_release_schedule_locked_amount" />
-
-                <TextView
-                    android:id="@+id/account_release_schedule_locked_amount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="15sp"
-                    android:textColor="@color/text_black"
-                    android:layout_gravity="right"
-                    android:gravity="right"
-                    android:text="G23.333" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rounded_bottom_semi_transparent"
-                android:paddingHorizontal="@dimen/account_release_schedule_inner_list_padding_sides"
-                android:paddingVertical="2dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/TextView.BlueTiny"
-                    android:text="@string/account_release_schedule_release_date" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    style="@style/TextView.BlueTiny"
-                    android:layout_gravity="right"
-                    android:gravity="right"
-                    android:text="@string/account_release_schedule_amount" />
-            </LinearLayout>
-
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_horizontal_margin"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_marginBottom="@dimen/activity_horizontal_margin"
+                android:layout_below="@+id/toolbar_layout">
                 <LinearLayout
-                    android:id="@+id/account_release_schedule_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:divider="@color/theme_divider"
-                    android:showDividers="middle"
-                    android:orientation="vertical" />
-            </ScrollView>
-        </LinearLayout>
+                    android:paddingLeft="@dimen/account_release_schedule_inner_list_padding_sides"
+                    android:paddingRight="@dimen/account_release_schedule_inner_list_padding_sides"
+                    android:paddingTop="@dimen/account_release_schedule_inner_list_padding_top_bottom"
+                    android:paddingBottom="@dimen/account_release_schedule_inner_list_padding_top_bottom"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/theme_component"
+                        android:textSize="15sp"
+                        android:text="@string/account_release_schedule_locked_amount" />
+                    <TextView
+                        android:id="@+id/account_release_schedule_locked_amount"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:textColor="@color/text_black"
+                        android:layout_gravity="right"
+                        android:gravity="right"
+                        android:text="G23.333" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_bottom_semi_transparent"
+                    android:paddingHorizontal="@dimen/account_release_schedule_inner_list_padding_sides"
+                    android:paddingVertical="2dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/TextView.BlueTiny"
+                        android:text="@string/account_release_schedule_release_date" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/TextView.BlueTiny"
+                        android:layout_gravity="right"
+                        android:gravity="right"
+                        android:text="@string/account_release_schedule_amount" />
+                </LinearLayout>
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <LinearLayout
+                        android:id="@+id/account_release_schedule_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:divider="@color/theme_divider"
+                        android:showDividers="middle"
+                        android:orientation="vertical"/>
+                </ScrollView>
+            </LinearLayout>
 
-        <include
-            layout="@layout/progress"
-            android:id="@+id/include_progress" />
+        <include layout="@layout/progress" android:id="@+id/include_progress" />
 
     </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

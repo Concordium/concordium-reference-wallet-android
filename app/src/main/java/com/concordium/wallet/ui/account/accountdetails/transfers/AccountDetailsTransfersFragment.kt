@@ -52,8 +52,7 @@ class AccountDetailsTransfersFragment : Fragment() {
     }
 
     private fun initializeViewModel() {
-        accountDetailsViewModel = ViewModelProvider(
-            requireActivity(),
+        accountDetailsViewModel = ViewModelProvider(requireActivity(),
             ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
         )[AccountDetailsViewModel::class.java]
 
@@ -64,14 +63,14 @@ class AccountDetailsTransfersFragment : Fragment() {
         accountDetailsViewModel.transferListLiveData.observe(this, Observer { transferList ->
             transferList?.let {
                 transactionAdapter.setIsShielded(accountDetailsViewModel.isShielded)
-
+                
                 val filteredList = transferList.filterIndexed { index, currentItem ->
-                    var result = true
-                    if (currentItem.getItemType() == AdapterItem.ItemType.Header)
-                        result = showHeader(transferList, index)
-                    else if (currentItem.getItemType() == AdapterItem.ItemType.Item)
-                        result = showItem(currentItem)
-                    result
+                        var result = true
+                        if (currentItem.getItemType() == AdapterItem.ItemType.Header)
+                            result = showHeader(transferList, index)
+                        else if (currentItem.getItemType() == AdapterItem.ItemType.Item)
+                            result = showItem(currentItem)
+                        result
                 }
 
                 if (filteredList.isNotEmpty()) {
@@ -131,13 +130,13 @@ class AccountDetailsTransfersFragment : Fragment() {
                             result = false
                         }
                     }
-                } else {
+                }
+                else {
                     if (transaction.details != null) {
                         if (transaction.details.type != TransactionType.TRANSFERTOENCRYPTED &&
                             transaction.details.type != TransactionType.TRANSFERTOPUBLIC &&
                             transaction.details.type != TransactionType.ENCRYPTEDAMOUNTTRANSFER &&
-                            transaction.details.type != TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO
-                        ) {
+                            transaction.details.type != TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO) {
                             result = false
                         }
                     }
@@ -164,14 +163,8 @@ class AccountDetailsTransfersFragment : Fragment() {
             accountDetailsViewModel.requestGTUDrop()
         }
 
-        transactionAdapter = TransactionAdapter(
-            requireContext(),
-            accountDetailsViewModel.viewModelScope,
-            AccountUpdater(requireActivity().application, accountDetailsViewModel.viewModelScope),
-            mutableListOf()
-        )
-        transactionAdapter.setOnDecryptListener(object :
-            TransactionAdapter.OnDecryptClickListenerInterface {
+        transactionAdapter = TransactionAdapter(requireContext(), accountDetailsViewModel.viewModelScope, AccountUpdater(requireActivity().application, accountDetailsViewModel.viewModelScope), mutableListOf())
+        transactionAdapter.setOnDecryptListener(object : TransactionAdapter.OnDecryptClickListenerInterface {
             override fun onDecrypt(ta: Transaction) {
                 accountDetailsViewModel.selectTransactionForDecryption(ta)
 
@@ -192,15 +185,9 @@ class AccountDetailsTransfersFragment : Fragment() {
             TransactionAdapter.OnItemClickListener {
             override fun onItemClicked(item: Transaction) {
                 val intent = Intent(activity, TransactionDetailsActivity::class.java)
-                intent.putExtra(
-                    TransactionDetailsActivity.EXTRA_ACCOUNT,
-                    accountDetailsViewModel.account
-                )
+                intent.putExtra(TransactionDetailsActivity.EXTRA_ACCOUNT, accountDetailsViewModel.account)
                 intent.putExtra(TransactionDetailsActivity.EXTRA_TRANSACTION, item)
-                intent.putExtra(
-                    TransactionDetailsActivity.EXTRA_ISSHIELDED,
-                    accountDetailsViewModel.isShielded
-                )
+                intent.putExtra(TransactionDetailsActivity.EXTRA_ISSHIELDED, accountDetailsViewModel.isShielded)
                 startActivity(intent)
             }
         })

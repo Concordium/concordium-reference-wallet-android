@@ -21,11 +21,7 @@ class AuthSetupRepeatActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthSetupBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(
-            binding.toolbarLayout.toolbar,
-            binding.toolbarLayout.toolbarTitle,
-            R.string.auth_setup_repeat_title
-        )
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.auth_setup_repeat_title)
 
         initializeViewModel()
         viewModel.initialize()

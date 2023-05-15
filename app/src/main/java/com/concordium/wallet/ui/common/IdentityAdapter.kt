@@ -12,14 +12,12 @@ class IdentityAdapter : RecyclerView.Adapter<IdentityAdapter.ItemViewHolder>() {
     private var data: List<Identity> = emptyList()
     private var onItemClickListener: OnItemClickListener? = null
 
-    inner class ItemViewHolder(val binding: ItemIdentityBinding) :
-        RecyclerView.ViewHolder(binding.root)
+    inner class ItemViewHolder(val binding: ItemIdentityBinding): RecyclerView.ViewHolder(binding.root)
 
     override fun getItemCount() = data.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val binding =
-            ItemIdentityBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemIdentityBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ItemViewHolder(binding)
     }
 

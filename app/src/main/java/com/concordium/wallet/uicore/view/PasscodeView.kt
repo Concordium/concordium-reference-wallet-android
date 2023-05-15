@@ -39,11 +39,7 @@ class PasscodeView : ConstraintLayout {
         init(attrs)
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
         init(attrs)
     }
 
@@ -84,7 +80,6 @@ class PasscodeView : ConstraintLayout {
                     passcodeListener?.onDone()
                     true
                 }
-
                 else -> false
             }
         }

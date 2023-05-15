@@ -63,7 +63,7 @@ interface AccountDao {
         for (account in accounts) {
             // finalized state is final and cannot be changed
             val accountFromDB = findById(account.id)
-            if (accountFromDB != null && accountFromDB.transactionStatus == TransactionStatus.FINALIZED) {
+            if(accountFromDB != null && accountFromDB.transactionStatus == TransactionStatus.FINALIZED){
                 account.transactionStatus = TransactionStatus.FINALIZED
             }
             update(account)

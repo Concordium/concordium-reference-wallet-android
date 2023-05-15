@@ -12,11 +12,7 @@ import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
-import com.concordium.wallet.data.cryptolib.CreateTransferOutput
-import com.concordium.wallet.data.cryptolib.ParameterToJsonInput
-import com.concordium.wallet.data.cryptolib.SignMessageInput
-import com.concordium.wallet.data.cryptolib.StorageAccountData
+import com.concordium.wallet.data.cryptolib.*
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.SubmissionData
@@ -31,6 +27,8 @@ import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.prettyPrint
+import com.google.gson.ExclusionStrategy
+import com.google.gson.FieldAttributes
 import com.google.gson.Gson
 import com.walletconnect.sign.client.Sign
 import kotlinx.coroutines.CoroutineScope

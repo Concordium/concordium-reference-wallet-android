@@ -1,22 +1,7 @@
 package com.concordium.wallet.core.crypto
 
 import com.concordium.wallet.App
-import com.concordium.wallet.data.cryptolib.AccountKeysAndRandomnessInput
-import com.concordium.wallet.data.cryptolib.AccountKeysAndRandomnessOutput
-import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
-import com.concordium.wallet.data.cryptolib.CreateAccountTransactionOutput
-import com.concordium.wallet.data.cryptolib.CreateCredentialInputV1
-import com.concordium.wallet.data.cryptolib.CreateCredentialOutputV1
-import com.concordium.wallet.data.cryptolib.CreateTransferInput
-import com.concordium.wallet.data.cryptolib.CreateTransferOutput
-import com.concordium.wallet.data.cryptolib.DecryptAmountInput
-import com.concordium.wallet.data.cryptolib.GenerateRecoveryRequestInput
-import com.concordium.wallet.data.cryptolib.IdRequestAndPrivateDataOutputV1
-import com.concordium.wallet.data.cryptolib.IdentityKeysAndRandomnessInput
-import com.concordium.wallet.data.cryptolib.IdentityKeysAndRandomnessOutput
-import com.concordium.wallet.data.cryptolib.ParameterToJsonInput
-import com.concordium.wallet.data.cryptolib.SignMessageInput
-import com.concordium.wallet.data.cryptolib.SignMessageOutput
+import com.concordium.wallet.data.cryptolib.*
 import com.concordium.wallet.data.model.ArsInfo
 import com.concordium.wallet.data.model.BakerKeys
 import com.concordium.wallet.data.model.GlobalParams
@@ -43,10 +28,7 @@ class CryptoLibraryMock(val gson: Gson) : CryptoLibrary {
         return gson.fromJson(output, CreateCredentialOutputV1::class.java)
     }
 
-    override suspend fun createTransfer(
-        createTransferInput: CreateTransferInput,
-        type: Int
-    ): CreateTransferOutput? {
+    override suspend fun createTransfer(createTransferInput: CreateTransferInput, type: Int): CreateTransferOutput? {
         val output = AssetUtil.loadFromAsset(App.appContext, "3.2.2.RX-lib_create_transfer.json")
         return gson.fromJson(output, CreateTransferOutput::class.java)
     }

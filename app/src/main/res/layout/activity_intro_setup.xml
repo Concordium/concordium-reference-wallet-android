@@ -19,12 +19,10 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
             <LinearLayout
                 android:id="@+id/llSetup"
                 android:layout_width="match_parent"
@@ -38,23 +36,19 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
-
                 <TextView
                     style="@style/TextView.BlueHeader"
                     android:layout_gravity="center_horizontal"
                     android:gravity="center"
                     android:text="@string/intro_setup_header" />
-
                 <TextView
                     style="@style/TextView.Standard.Bold"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="@string/intro_setup_info_1" />
-
                 <TextView
                     style="@style/TextView.Standard"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="@string/intro_setup_info_2" />
-
                 <Button
                     android:id="@+id/setupWallet"
                     style="@style/Button.Standard.Intro"
@@ -62,7 +56,6 @@
                     android:layout_marginVertical="@dimen/activity_vertical_margin"
                     android:text="@string/intro_setup_wallet" />
             </LinearLayout>
-
             <LinearLayout
                 android:id="@+id/llRecover"
                 android:layout_width="match_parent"
@@ -74,16 +67,13 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@id/llSetup">
-
                 <TextView
                     style="@style/TextView.Standard.Bold"
                     android:text="@string/intro_recover_info_1" />
-
                 <TextView
                     style="@style/TextView.Standard"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="@string/intro_recover_info_2" />
-
                 <Button
                     android:id="@+id/recoverWallet"
                     style="@style/Button.Standard.Intro"

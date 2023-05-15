@@ -27,14 +27,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
                 <CheckBox
                     android:id="@+id/filter_show_rewards"
                     style="@style/CheckBox.Standard"
                     android:layout_marginLeft="@dimen/screen_horizontal_margin_checkbox"
                     tools:checked="false"
                     tools:text="" />
-
                 <TextView
                     style="@style/TextView.ListItemHeader"
                     android:layout_width="match_parent"
@@ -48,14 +46,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
                 <CheckBox
                     android:id="@+id/filter_show_finalizations_rewards"
                     style="@style/CheckBox.Standard"
                     android:layout_marginLeft="@dimen/screen_horizontal_margin_checkbox"
                     tools:checked="false"
                     tools:text="" />
-
                 <TextView
                     style="@style/TextView.ListItemHeader"
                     android:layout_width="match_parent"

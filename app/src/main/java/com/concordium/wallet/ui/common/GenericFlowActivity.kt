@@ -48,7 +48,8 @@ abstract class GenericFlowActivity(private val titleId: Int) : BaseActivity() {
     override fun onBackPressed() {
         if (ignoreBackPress) {
             // Ignore back press
-        } else {
+        }
+        else {
             super.onBackPressed()
         }
     }
@@ -63,10 +64,10 @@ abstract class GenericFlowActivity(private val titleId: Int) : BaseActivity() {
 
     private fun initViews() {
 
-        binding.pager.adapter = ScreenSlidePagerAdapter(this)
+        binding.pager.adapter =  ScreenSlidePagerAdapter(this)
 
         TabLayoutMediator(binding.pagersTabLayout, binding.pager)
-        { _, _ -> }.attach()
+        { _, _ ->}.attach()
 
         binding.createIdentIntroBack.setOnClickListener {
             binding.pager.setCurrentItem(binding.pager.currentItem - 1, true)
@@ -74,10 +75,10 @@ abstract class GenericFlowActivity(private val titleId: Int) : BaseActivity() {
         binding.createIdentIntroNext.setOnClickListener {
             binding.pager.setCurrentItem(binding.pager.currentItem + 1, true)
         }
-        binding.createIdentIntroContinue.setOnClickListener {
+        binding.createIdentIntroContinue.setOnClickListener{
             gotoContinue()
         }
-        binding.createIdentIntroSkip.setOnClickListener {
+        binding.createIdentIntroSkip.setOnClickListener{
             gotoContinue()
         }
 
@@ -126,8 +127,7 @@ abstract class GenericFlowActivity(private val titleId: Int) : BaseActivity() {
 
     private fun updateButtons() {
         setBackButtonDrawableArrow(ContextCompat.getColor(applicationContext, R.color.text_white))
-        binding.createIdentIntroBack.background =
-            AppCompatResources.getDrawable(this, R.drawable.button_standard)
+        binding.createIdentIntroBack.background = AppCompatResources.getDrawable(this, R.drawable.button_standard)
         binding.createIdentIntroBack.setTextColor(ContextCompat.getColor(this, R.color.text_white))
         if (binding.pager.currentItem == 0 && getMaxPages() == 1) {
             binding.createIdentIntroSkip.visibility = View.GONE
@@ -144,52 +144,35 @@ abstract class GenericFlowActivity(private val titleId: Int) : BaseActivity() {
             binding.createIdentIntroContinue.visibility = View.GONE
             binding.createIdentIntroBack.visibility = View.GONE
             binding.createIdentIntroNext.visibility = View.VISIBLE
-        } else if (binding.pager.currentItem > 0 && binding.pager.currentItem < getMaxPages() - 1) {
+        } else if (binding.pager.currentItem > 0 && binding.pager.currentItem < getMaxPages() -1) {
             binding.createIdentIntroSkip.visibility = View.GONE
             binding.createIdentIntroContinue.visibility = View.GONE
             binding.createIdentIntroBack.visibility = View.VISIBLE
             binding.createIdentIntroNext.visibility = View.VISIBLE
-        } else if (binding.pager.currentItem == getMaxPages() - 1) {
+        } else if (binding.pager.currentItem == getMaxPages() -1) {
             binding.createIdentIntroSkip.visibility = View.GONE
             binding.createIdentIntroContinue.visibility = View.VISIBLE
             binding.createIdentIntroBack.visibility = View.VISIBLE
-            setBackButtonDrawableArrow(
-                ContextCompat.getColor(
-                    applicationContext,
-                    R.color.text_grey
-                )
-            )
-            binding.createIdentIntroBack.background =
-                AppCompatResources.getDrawable(this, R.drawable.button_standard_white)
-            binding.createIdentIntroBack.setTextColor(
-                ContextCompat.getColor(
-                    this,
-                    R.color.text_grey
-                )
-            )
+            setBackButtonDrawableArrow(ContextCompat.getColor(applicationContext, R.color.text_grey))
+            binding.createIdentIntroBack.background = AppCompatResources.getDrawable(this, R.drawable.button_standard_white)
+            binding.createIdentIntroBack.setTextColor(ContextCompat.getColor(this, R.color.text_grey))
             binding.createIdentIntroNext.visibility = View.GONE
         }
     }
 
     private fun setBackButtonDrawableArrow(color: Int) {
         ContextCompat.getDrawable(this, R.drawable.ic_button_back)?.apply {
-            DrawableCompat.wrap(this).apply {
+            DrawableCompat.wrap(this).apply{
                 setTint(color)
                 setTintMode(PorterDuff.Mode.SRC_IN)
-                binding.createIdentIntroBack.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                    this,
-                    null,
-                    null,
-                    null
-                )
+                binding.createIdentIntroBack.setCompoundDrawablesRelativeWithIntrinsicBounds(this, null, null, null)
             }
         }
     }
 
     private inner class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
         override fun getItemCount(): Int = getMaxPages()
-        override fun createFragment(position: Int): Fragment =
-            WebViewPageFragment(getLink(position), getPageTitle(position))
+        override fun createFragment(position: Int): Fragment = WebViewPageFragment(getLink(position), getPageTitle(position))
     }
 
     //endregion

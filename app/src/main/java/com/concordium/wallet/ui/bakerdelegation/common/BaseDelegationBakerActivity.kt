@@ -42,17 +42,12 @@ abstract class BaseDelegationBakerActivity : BaseActivity() {
         })
     }
 
-    protected fun initializeTransactionFeeLiveData(
-        progressLayout: View,
-        estimatedTransactionFee: TextView
-    ) {
+    protected fun initializeTransactionFeeLiveData(progressLayout: View, estimatedTransactionFee: TextView) {
         viewModel.transactionFeeLiveData.observe(this) { response ->
             response?.first?.let {
                 estimatedTransactionFee.text =
-                    getString(
-                        R.string.delegation_register_delegation_amount_estimated_transaction_fee,
-                        CurrencyUtil.formatGTU(it)
-                    )
+                    getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee,
+                        CurrencyUtil.formatGTU(it))
                 showWaiting(progressLayout, false)
             }
         }
@@ -63,19 +58,16 @@ abstract class BaseDelegationBakerActivity : BaseActivity() {
         viewModel.showAuthenticationLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
-                    showAuthentication(authenticateText(), object : AuthenticationCallback {
-                        override fun getCipherForBiometrics(): Cipher? {
+                    showAuthentication(authenticateText(), object : AuthenticationCallback{
+                        override fun getCipherForBiometrics() : Cipher?{
                             return viewModel.getCipherForBiometrics()
                         }
-
                         override fun onCorrectPassword(password: String) {
                             viewModel.continueWithPassword(password)
                         }
-
                         override fun onCipher(cipher: Cipher) {
                             viewModel.checkLogin(cipher)
                         }
-
                         override fun onCancelled() {
                         }
                     })
@@ -113,5 +105,5 @@ abstract class BaseDelegationBakerActivity : BaseActivity() {
         builder.create().show()
     }
 
-    protected open fun initViews() {}
+    protected open fun initViews() { }
 }

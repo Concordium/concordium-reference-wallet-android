@@ -24,7 +24,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvHeader">
-
         <ListView
             android:id="@+id/listView"
             android:layout_width="0dp"
@@ -36,7 +35,6 @@
             android:footerDividersEnabled="false"
             android:scrollbars="none"
             android:background="@android:color/transparent" />
-
         <ImageView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -47,13 +45,11 @@
             android:scaleType="fitXY"
             android:layout_gravity="center_vertical"
             tools:ignore="ContentDescription" />
-
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="255dp"
             android:layout_weight="0.45"
             android:orientation="vertical">
-
             <TextView
                 android:id="@+id/tvSuggest1"
                 android:layout_width="match_parent"
@@ -62,7 +58,6 @@
                 tools:text="reflect"
                 android:background="@drawable/suggestion_selector"
                 android:gravity="center" />
-
             <TextView
                 android:id="@+id/tvSuggest2"
                 android:layout_width="match_parent"
@@ -72,7 +67,6 @@
                 style="@style/TextView.Mono"
                 tools:text="mosquito"
                 android:gravity="center" />
-
             <TextView
                 android:id="@+id/tvSuggest3"
                 android:layout_width="match_parent"
@@ -82,7 +76,6 @@
                 style="@style/TextView.Mono"
                 tools:text="fan"
                 android:gravity="center" />
-
             <TextView
                 android:id="@+id/tvSuggest4"
                 android:layout_width="match_parent"

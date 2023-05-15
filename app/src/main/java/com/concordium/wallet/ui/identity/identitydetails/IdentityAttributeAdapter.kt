@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.concordium.wallet.data.util.IdentityAttributeConverterUtil
 import com.concordium.wallet.databinding.ItemIdentityAttributeBinding
-import java.util.SortedMap
+import java.util.*
 
 class IdentityAttributeAdapter(private var data: SortedMap<String, String>) :
     RecyclerView.Adapter<IdentityAttributeAdapter.ItemViewHolder>() {
@@ -15,8 +15,7 @@ class IdentityAttributeAdapter(private var data: SortedMap<String, String>) :
     override fun getItemCount() = data.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-        val binding =
-            ItemIdentityAttributeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemIdentityAttributeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ItemViewHolder(binding)
     }
 
@@ -34,6 +33,5 @@ class IdentityAttributeAdapter(private var data: SortedMap<String, String>) :
         }
     }
 
-    inner class ItemViewHolder(val binding: ItemIdentityAttributeBinding) :
-        RecyclerView.ViewHolder(binding.root)
+    inner class ItemViewHolder(val binding: ItemIdentityAttributeBinding): RecyclerView.ViewHolder(binding.root)
 }

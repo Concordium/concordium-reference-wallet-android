@@ -17,11 +17,7 @@ class AboutActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAboutBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(
-            binding.toolbarLayout.toolbar,
-            binding.toolbarLayout.toolbarTitle,
-            R.string.about_title
-        )
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.about_title)
 
         binding.aboutContactText.handleUrlClicks { url ->
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
@@ -36,7 +32,8 @@ class AboutActivity : BaseActivity() {
             try {
                 //start email intent
                 startActivity(Intent.createChooser(emailIntent, ""))
-            } catch (e: Exception) {
+            }
+            catch (e: Exception){
                 //Left empty on purpose
             }
         }

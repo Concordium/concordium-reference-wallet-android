@@ -115,7 +115,7 @@ class ScanQRActivity : BaseActivity(), Dialogs.DialogFragmentListener {
         binding.cameraPreview.let {
             try {
                 binding.cameraPreview.release()
-            } catch (e: Exception) {
+            } catch (e: Exception){
                 Log.e("Failed releasing camera: $e")
             }
         }
@@ -147,17 +147,9 @@ class ScanQRActivity : BaseActivity(), Dialogs.DialogFragmentListener {
 
     private fun initializeViews() {
         if (qrMode == QR_MODE_CONCORDIUM_ACCOUNT)
-            setupActionBar(
-                binding.toolbarLayout.toolbar,
-                binding.toolbarLayout.toolbarTitle,
-                R.string.scan_qr_title
-            )
+            setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.scan_qr_title)
         else if (qrMode == QR_MODE_WALLET_CONNECT)
-            setupActionBar(
-                binding.toolbarLayout.toolbar,
-                binding.toolbarLayout.toolbarTitle,
-                R.string.scan_qr_title_wc
-            )
+            setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.scan_qr_title_wc)
     }
 
     //endregion
@@ -230,11 +222,7 @@ class ScanQRActivity : BaseActivity(), Dialogs.DialogFragmentListener {
         )
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String?>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == RequestCodes.REQUEST_PERMISSION_CAMERA) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

@@ -31,10 +31,7 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
     })
 }
 
-fun AlertDialog.Builder.setEditText(
-    context: Context,
-    editText: AppCompatEditText
-): AlertDialog.Builder {
+fun AlertDialog.Builder.setEditText(context: Context, editText: AppCompatEditText): AlertDialog.Builder {
     val container = FrameLayout(context)
     container.addView(editText)
     val containerParams = FrameLayout.LayoutParams(

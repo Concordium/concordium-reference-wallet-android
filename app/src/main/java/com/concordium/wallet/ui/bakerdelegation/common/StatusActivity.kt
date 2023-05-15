@@ -57,7 +57,7 @@ abstract class StatusActivity(private val titleId: Int) : BaseActivity() {
         )[DelegationBakerViewModel::class.java]
     }
 
-    fun setContentTitle(res: Int) {
+    fun setContentTitle(res: Int){
         binding.statusTitle.text = getString(res)
     }
 
@@ -69,15 +69,16 @@ abstract class StatusActivity(private val titleId: Int) : BaseActivity() {
         binding.statusEmpty.visibility = View.GONE
         binding.statusListContainer.visibility = View.VISIBLE
 
-        val delegationBakerStatusBinding =
-            DelegationBakerStatusContentItemBinding.inflate(layoutInflater)
+        val delegationBakerStatusBinding = DelegationBakerStatusContentItemBinding.inflate(layoutInflater)
 
-        if (title.isNotEmpty()) {
+        if (title.isNotEmpty())
+        {
             delegationBakerStatusBinding.statusItemTitle.text = title
             titleTextColor?.let {
                 delegationBakerStatusBinding.statusItemTitle.setTextColor(getColor(it))
             }
-        } else
+        }
+        else
             delegationBakerStatusBinding.statusItemTitle.visibility = View.GONE
 
         if (text.isNotEmpty())
@@ -88,26 +89,20 @@ abstract class StatusActivity(private val titleId: Int) : BaseActivity() {
         binding.statusListContainer.addView(delegationBakerStatusBinding.root)
     }
 
-    fun setEmptyState(text: String) {
+    fun setEmptyState(text: String){
         binding.statusEmpty.text = text
         binding.statusEmpty.visibility = View.VISIBLE
         binding.statusListContainer.visibility = View.GONE
     }
 
-    fun clearState() {
+    fun clearState(){
         binding.statusEmpty.text = ""
         binding.statusListContainer.removeAllViews()
         binding.statusButtonTop.isEnabled = true
         binding.statusButtonBottom.isEnabled = true
     }
 
-    protected fun addPendingChange(
-        pendingChange: PendingChange,
-        dateStringId: Int,
-        takeEffectOnStringId: Int,
-        removeStakeStringId: Int,
-        reduceStakeStringId: Int
-    ) {
+    protected fun addPendingChange(pendingChange: PendingChange, dateStringId: Int, takeEffectOnStringId: Int, removeStakeStringId: Int, reduceStakeStringId: Int) {
         pendingChange.estimatedChangeTime?.let { estimatedChangeTime ->
             val prefix = estimatedChangeTime.toDate()?.formatTo("yyyy-MM-dd")
             val postfix = estimatedChangeTime.toDate()?.formatTo("HH:mm")
@@ -118,10 +113,7 @@ abstract class StatusActivity(private val titleId: Int) : BaseActivity() {
                 addContent(getString(removeStakeStringId), "")
             } else if (pendingChange.change == "ReduceStake") {
                 pendingChange.newStake?.let { newStake ->
-                    addContent(
-                        getString(reduceStakeStringId),
-                        CurrencyUtil.formatGTU(newStake, true)
-                    )
+                    addContent(getString(reduceStakeStringId), CurrencyUtil.formatGTU(newStake, true))
                 }
             }
         }

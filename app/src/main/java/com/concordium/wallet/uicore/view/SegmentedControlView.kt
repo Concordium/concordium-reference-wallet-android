@@ -10,8 +10,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.databinding.ViewSegmentedControlBinding
 
 class SegmentedControlView : LinearLayout {
-    private val binding =
-        ViewSegmentedControlBinding.inflate(LayoutInflater.from(context), this, true)
+    private val binding = ViewSegmentedControlBinding.inflate(LayoutInflater.from(context), this, true)
 
     private lateinit var rootLayout: LinearLayout
 
@@ -47,17 +46,12 @@ class SegmentedControlView : LinearLayout {
         }
     }
 
-    fun clearAll() {
+    fun clearAll(){
         rootLayout.removeAllViews()
     }
 
-    fun addControl(
-        title: String,
-        clickListener: OnItemClickListener?,
-        initiallySelected: Boolean
-    ): View {
-        val view =
-            LayoutInflater.from(context).inflate(R.layout.segmented_text_item, null) as Button
+    fun addControl(title: String, clickListener: OnItemClickListener?, initiallySelected: Boolean): View {
+        val view = LayoutInflater.from(context).inflate(R.layout.segmented_text_item, null) as Button
         view.text = title
         val param = LayoutParams(0, LayoutParams.MATCH_PARENT)
         param.weight = 1f
@@ -71,7 +65,7 @@ class SegmentedControlView : LinearLayout {
         return view
     }
 
-    fun selectItem(item: Button) {
+    fun selectItem(item: Button){
         for (i in 0 until rootLayout.childCount) {
             val child = rootLayout.getChildAt(i) as Button
             child.isSelected = false

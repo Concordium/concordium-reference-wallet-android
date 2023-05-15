@@ -48,11 +48,7 @@ class SendFundsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySendFundsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(
-            binding.toolbarLayout.toolbar,
-            binding.toolbarLayout.toolbarTitle,
-            R.string.send_funds_title
-        )
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.send_funds_title)
 
         val account = intent.extras!!.getSerializable(EXTRA_ACCOUNT) as Account
         val isShielded = intent.extras!!.getBoolean(EXTRA_SHIELDED)
@@ -69,31 +65,32 @@ class SendFundsActivity : BaseActivity() {
         handleMemo(intent)
     }
 
-    private fun handleRecipientIntent(intent: Intent?) {
+    private fun handleRecipientIntent(intent: Intent?){
         val recipient = intent?.getSerializableExtra(EXTRA_RECIPIENT) as? Recipient
         handleRecipient(recipient)
     }
 
-    fun handleRecipient(recipient: Recipient?) {
+    fun handleRecipient(recipient: Recipient?){
         recipient?.let {
             viewModel.selectedRecipient = recipient
             updateConfirmButton()
-            if (viewModel.account.id == recipient.id) {
-                setActionBarTitle(if (viewModel.isShielded) R.string.send_funds_unshield_title else R.string.send_funds_shield_title)
+            if(viewModel.account.id == recipient.id){
+                setActionBarTitle(if(viewModel.isShielded) R.string.send_funds_unshield_title else R.string.send_funds_shield_title)
                 if (!viewModel.isShielded)
                     binding.sendAll.visibility = View.GONE
             }
         }
     }
 
-    private fun handleMemo(intent: Intent?) {
+    private fun handleMemo(intent: Intent?){
         intent?.let {
-            if (it.hasExtra(EXTRA_MEMO)) {
+            if(it.hasExtra(EXTRA_MEMO)){
                 val memo = it.getStringExtra(EXTRA_MEMO)
-                if (memo != null && memo.isNotEmpty()) {
+                if(memo != null && memo.isNotEmpty()){
                     viewModel.setMemo(CBORUtil.encodeCBOR(memo))
                     setMemoText(memo)
-                } else {
+                }
+                else{
                     viewModel.setMemo(null)
                     setMemoText("")
                 }
@@ -101,11 +98,12 @@ class SendFundsActivity : BaseActivity() {
         }
     }
 
-    private fun setMemoText(txt: String) {
-        if (txt.isNotEmpty()) {
+    private fun setMemoText(txt: String){
+        if(txt.isNotEmpty()){
             binding.memoTextview.text = txt
             binding.memoClear.visibility = View.VISIBLE
-        } else {
+        }
+        else{
             binding.memoTextview.text = getString(R.string.send_funds_optional_add_memo)
             binding.memoClear.visibility = View.INVISIBLE
         }
@@ -140,18 +138,15 @@ class SendFundsActivity : BaseActivity() {
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
                     showAuthentication(createConfirmString(), object : AuthenticationCallback {
-                        override fun getCipherForBiometrics(): Cipher? {
+                        override fun getCipherForBiometrics() : Cipher?{
                             return viewModel.getCipherForBiometrics()
                         }
-
                         override fun onCorrectPassword(password: String) {
                             viewModel.continueWithPassword(password)
                         }
-
                         override fun onCipher(cipher: Cipher) {
                             viewModel.checkLogin(cipher)
                         }
-
                         override fun onCancelled() {
                         }
                     })
@@ -183,8 +178,7 @@ class SendFundsActivity : BaseActivity() {
                 updateConfirmButton()
             }
         }
-        viewModel.recipientLiveData.observe(
-            this
+        viewModel.recipientLiveData.observe(this
         ) { value -> showRecipient(value) }
     }
 
@@ -212,7 +206,6 @@ class SendFundsActivity : BaseActivity() {
                     }
                     true
                 }
-
                 else -> false
             }
         }
@@ -220,27 +213,26 @@ class SendFundsActivity : BaseActivity() {
             override fun afterTextChanged(editable: Editable) {
                 val address = editable.toString().trim()
                 if (viewModel.selectedRecipient == null) {
-                    handleRecipient(Recipient(0, "", address))
+                    handleRecipient(Recipient(0,"", address))
                 }
                 if (address != viewModel.selectedRecipient?.address) {
-                    handleRecipient(Recipient(0, "", address))
+                    handleRecipient(Recipient(0,"", address))
                 }
             }
-
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
         })
 
-        if (viewModel.isTransferToSameAccount()) {
+        if(viewModel.isTransferToSameAccount()){
             binding.memoContainer.visibility = View.GONE
-        } else {
+        }
+        else{
             binding.memoContainer.visibility = View.VISIBLE
 
             binding.memoContainer.setOnClickListener {
-                if (viewModel.showMemoWarning()) {
+                if(viewModel.showMemoWarning()){
                     val builder = AlertDialog.Builder(this)
                     builder.setTitle(getString(R.string.transaction_memo_warning_title))
                     builder.setMessage(getString(R.string.transaction_memo_warning_text))
@@ -253,7 +245,8 @@ class SendFundsActivity : BaseActivity() {
                     }
                     builder.setCancelable(true)
                     builder.create().show()
-                } else {
+                }
+                else{
                     gotoEnterMemo()
                 }
             }
@@ -295,32 +288,22 @@ class SendFundsActivity : BaseActivity() {
         }
 
         if (viewModel.isShielded) {
-            binding.balanceTotalText.text =
-                getString(R.string.accounts_overview_balance_at_disposal)
-            binding.atDisposalTotalText.text =
-                getString(R.string.accounts_overview_shielded_balance)
-            binding.balanceTotalTextview.text = CurrencyUtil.formatGTU(
-                viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance),
-                withGStroke = true
-            )
-            binding.atDisposalTotalTextview.text =
-                CurrencyUtil.formatGTU(viewModel.account.totalShieldedBalance, withGStroke = true)
-        } else {
+            binding.balanceTotalText.text = getString(R.string.accounts_overview_balance_at_disposal)
+            binding.atDisposalTotalText.text = getString(R.string.accounts_overview_shielded_balance)
+            binding.balanceTotalTextview.text = CurrencyUtil.formatGTU(viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance), withGStroke = true)
+            binding.atDisposalTotalTextview.text = CurrencyUtil.formatGTU(viewModel.account.totalShieldedBalance, withGStroke = true)
+        }
+        else {
             binding.balanceTotalText.text = getString(R.string.accounts_overview_account_total)
             binding.atDisposalTotalText.text = getString(R.string.accounts_overview_at_disposal)
-            binding.balanceTotalTextview.text =
-                CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance, withGStroke = true)
-            binding.atDisposalTotalTextview.text = CurrencyUtil.formatGTU(
-                viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance),
-                withGStroke = true
-            )
+            binding.balanceTotalTextview.text = CurrencyUtil.formatGTU(viewModel.account.totalUnshieldedBalance, withGStroke = true)
+            binding.atDisposalTotalTextview.text = CurrencyUtil.formatGTU(viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance), withGStroke = true)
         }
     }
 
     private fun check95PercentWarning() {
         val amountValue = CurrencyUtil.toGTUValue(binding.amountEdittext.text.toString())
-        val atDisposal =
-            viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance)
+        val atDisposal = viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance)
         if (amountValue != null) {
             if (amountValue > atDisposal * 0.95) {
                 val builder = AlertDialog.Builder(this)
@@ -329,7 +312,8 @@ class SendFundsActivity : BaseActivity() {
                 builder.setPositiveButton(getString(R.string.send_funds_more_than_95_continue)) { _, _ -> sendFunds() }
                 builder.setNegativeButton(getString(R.string.send_funds_more_than_95_new_stake)) { dialog, _ -> dialog.dismiss() }
                 builder.create().show()
-            } else
+            }
+            else
                 sendFunds()
         }
     }
@@ -344,7 +328,7 @@ class SendFundsActivity : BaseActivity() {
     //************************************************************
 
     private fun showWaiting(waiting: Boolean) {
-        binding.includeProgress.progressLayout.visibility = if (waiting) View.VISIBLE else View.GONE
+        binding.includeProgress.progressLayout.visibility = if(waiting) View.VISIBLE else View.GONE
         // Update button enabled state, because it is dependant on waiting state
         updateConfirmButton()
     }
@@ -365,7 +349,7 @@ class SendFundsActivity : BaseActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.getStringExtra(ScanQRActivity.EXTRA_BARCODE)?.let { barcode ->
-                    handleRecipient(Recipient(0, "", barcode))
+                    handleRecipient(Recipient(0,"", barcode))
                 }
             }
         }
@@ -409,7 +393,7 @@ class SendFundsActivity : BaseActivity() {
         startActivity(intent)
     }
 
-    private fun updateRecipientEditText(text: String) {
+    private fun updateRecipientEditText(text: String){
         //Only update if they are not identical - else it triggers a refocus and moves cursor
         if (binding.sendFundsPasteRecipient.text.toString() != text) {
             binding.sendFundsPasteRecipient.setText(text)
@@ -421,8 +405,8 @@ class SendFundsActivity : BaseActivity() {
             updateRecipientEditText("")
             binding.confirmButton.setText(R.string.send_funds_confirm)
         } else {
-            if (viewModel.isShielded) {
-                if (viewModel.isTransferToSameAccount()) {
+            if(viewModel.isShielded){
+                if(viewModel.isTransferToSameAccount()){
                     binding.recipientContainer.visibility = View.GONE
                     binding.confirmButton.setText(R.string.send_funds_confirm_unshield)
                 } else {
@@ -430,7 +414,7 @@ class SendFundsActivity : BaseActivity() {
                     binding.confirmButton.setText(R.string.send_funds_confirm_send_shielded)
                 }
             } else {
-                if (viewModel.isTransferToSameAccount()) {
+                if(viewModel.isTransferToSameAccount()){
                     binding.recipientContainer.visibility = View.GONE
                     binding.confirmButton.setText(R.string.send_funds_confirm_shield)
                 } else {
@@ -444,12 +428,12 @@ class SendFundsActivity : BaseActivity() {
     private fun isWaiting(): Boolean {
         var waiting = false
         viewModel.waitingLiveData.value?.let {
-            if (it) {
+            if(it){
                 waiting = true
             }
         }
         viewModel.waitingReceiverAccountPublicKeyLiveData.value?.let {
-            if (it) {
+            if(it){
                 waiting = true
             }
         }
@@ -462,10 +446,9 @@ class SendFundsActivity : BaseActivity() {
     }
 
     private fun enableConfirm(): Boolean {
-        val hasSufficientFunds =
-            viewModel.hasSufficientFunds(binding.amountEdittext.text.toString())
+        val hasSufficientFunds = viewModel.hasSufficientFunds(binding.amountEdittext.text.toString())
         binding.errorTextview.visibility = if (hasSufficientFunds) View.INVISIBLE else View.VISIBLE
-        val enable = if (isWaiting()) false else {
+        val enable = if(isWaiting()) false else {
             (binding.amountEdittext.text.isNotEmpty()
                     && viewModel.selectedRecipient != null
                     && viewModel.transactionFeeLiveData.value != null
@@ -482,8 +465,7 @@ class SendFundsActivity : BaseActivity() {
             binding.amountEdittext.hint = "0"
             binding.amountEdittext.gravity = Gravity.CENTER
         } else {
-            binding.amountEdittext.hint =
-                "0${DecimalFormatSymbols.getInstance().decimalSeparator}00"
+            binding.amountEdittext.hint = "0${DecimalFormatSymbols.getInstance().decimalSeparator}00"
             binding.amountEdittext.gravity = Gravity.NO_GRAVITY
         }
     }
@@ -499,45 +481,19 @@ class SendFundsActivity : BaseActivity() {
         val amountString = CurrencyUtil.formatGTU(amount, withGStroke = true)
         val costString = CurrencyUtil.formatGTU(cost, withGStroke = true)
 
-        val memoText = if (viewModel.getClearTextMemo()
-                .isNullOrEmpty()
-        ) "" else getString(R.string.send_funds_confirmation_memo, viewModel.getClearTextMemo())
+        val memoText = if(viewModel.getClearTextMemo().isNullOrEmpty()) "" else getString(R.string.send_funds_confirmation_memo, viewModel.getClearTextMemo())
 
-        return if (viewModel.isShielded) {
-            if (viewModel.isTransferToSameAccount()) {
-                getString(
-                    R.string.send_funds_confirmation_unshield,
-                    amountString,
-                    recipient.displayName(),
-                    costString,
-                    memoText
-                )
+        return if(viewModel.isShielded){
+            if(viewModel.isTransferToSameAccount()){
+                getString(R.string.send_funds_confirmation_unshield, amountString, recipient.displayName(), costString, memoText)
             } else {
-                getString(
-                    R.string.send_funds_confirmation_send_shielded,
-                    amountString,
-                    recipient.displayName(),
-                    costString,
-                    memoText
-                )
+                getString(R.string.send_funds_confirmation_send_shielded, amountString, recipient.displayName(), costString, memoText)
             }
         } else {
-            if (viewModel.isTransferToSameAccount()) {
-                getString(
-                    R.string.send_funds_confirmation_shield,
-                    amountString,
-                    recipient.displayName(),
-                    costString,
-                    memoText
-                )
+            if(viewModel.isTransferToSameAccount()){
+                getString(R.string.send_funds_confirmation_shield, amountString, recipient.displayName(), costString, memoText)
             } else {
-                getString(
-                    R.string.send_funds_confirmation,
-                    amountString,
-                    recipient.displayName(),
-                    costString,
-                    memoText
-                )
+                getString(R.string.send_funds_confirmation, amountString, recipient.displayName(), costString, memoText)
             }
         }
     }

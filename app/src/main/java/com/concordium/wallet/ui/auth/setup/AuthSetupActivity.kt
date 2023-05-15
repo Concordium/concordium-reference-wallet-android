@@ -33,11 +33,7 @@ class AuthSetupActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthSetupBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(
-            binding.toolbarLayout.toolbar,
-            binding.toolbarLayout.toolbarTitle,
-            R.string.auth_setup_title
-        )
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.auth_setup_title)
 
         continueFlow = intent.getBooleanExtra(CONTINUE_INITIAL_SETUP, true)
 
@@ -53,7 +49,7 @@ class AuthSetupActivity : BaseActivity() {
     private fun finishSuccess() {
         setResult(Activity.RESULT_OK)
         finish()
-        if (continueFlow) {
+        if(continueFlow){
             gotoIntroSetup()
         }
     }
@@ -126,7 +122,7 @@ class AuthSetupActivity : BaseActivity() {
     private val getResultAuthSetupBiometrics =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
-                if (continueFlow) {
+                if(continueFlow) {
                     viewModel.hasFinishedSetupPassword()
                 }
                 finishSuccess()
@@ -156,7 +152,7 @@ class AuthSetupActivity : BaseActivity() {
     private val getResultAuthSetupFullPassword =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
-                if (continueFlow) {
+                if(continueFlow) {
                     viewModel.hasFinishedSetupPassword()
                 }
                 finishSuccess()

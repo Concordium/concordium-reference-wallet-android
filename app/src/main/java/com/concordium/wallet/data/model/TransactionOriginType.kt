@@ -5,13 +5,10 @@ import com.google.gson.annotations.SerializedName
 enum class TransactionOriginType(val code: Int) {
     @SerializedName("self")
     Self(0),
-
     @SerializedName("account")
     Account(1),
-
     @SerializedName("reward")
     Reward(2),
-
     @SerializedName("none")
     None(3),
 

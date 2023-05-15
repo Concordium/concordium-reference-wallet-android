@@ -46,7 +46,7 @@ class ParamsDeserializer : JsonDeserializer<Params?> {
         if (schemaElement.isJsonObject) {
             return try {
                 val schema: Schema = context.deserialize(schemaElement, Schema::class.java)
-                if (schema.type == null || schema.value == null) {
+                if(schema.type == null || schema.value == null){
                     return null
                 }
                 return schema

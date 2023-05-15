@@ -13,7 +13,7 @@ import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemAccountBinding
 
-class AccountItemView(context: Context, attrs: AttributeSet?) : LinearLayout(context, attrs) {
+class AccountItemView(context: Context, attrs: AttributeSet?): LinearLayout(context, attrs) {
 
     private val binding = ItemAccountBinding.inflate(LayoutInflater.from(context), this, true)
 
@@ -34,51 +34,27 @@ class AccountItemView(context: Context, attrs: AttributeSet?) : LinearLayout(con
     }
 
     fun setAccount(account: Account) {
-        binding.totalTextview.text =
-            CurrencyUtil.formatGTU(account.totalUnshieldedBalance, withGStroke = true)
-        binding.balanceAtDisposalTextview.text = CurrencyUtil.formatGTU(
-            account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance),
-            withGStroke = true
-        )
+        binding.totalTextview.text = CurrencyUtil.formatGTU(account.totalUnshieldedBalance, withGStroke = true)
+        binding.balanceAtDisposalTextview.text = CurrencyUtil.formatGTU(account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance), withGStroke = true)
 
-        val accountPending =
-            account.transactionStatus == TransactionStatus.COMMITTED || account.transactionStatus == TransactionStatus.RECEIVED
+        val accountPending = account.transactionStatus == TransactionStatus.COMMITTED || account.transactionStatus == TransactionStatus.RECEIVED
 
-        binding.buttonArea.visibility =
-            if (accountPending || account.readOnly || hideExpandBar) View.GONE else View.VISIBLE
-        binding.rootCardContent.setBackgroundColor(
-            if (account.readOnly) resources.getColor(
-                R.color.theme_component_background_disabled,
-                null
-            ) else resources.getColor(R.color.theme_white, null)
-        )
+        binding.buttonArea.visibility = if(accountPending || account.readOnly || hideExpandBar) View.GONE else View.VISIBLE
+        binding.rootCardContent.setBackgroundColor(if(account.readOnly) resources.getColor(R.color.theme_component_background_disabled, null) else resources.getColor(R.color.theme_white, null))
 
         this.isEnabled = !account.readOnly
     }
 
     fun setAccount(accountWithIdentity: AccountWithIdentity) {
         this.accountWithIdentity = accountWithIdentity
-        binding.totalTextview.text = CurrencyUtil.formatGTU(
-            accountWithIdentity.account.totalUnshieldedBalance,
-            withGStroke = true
-        )
-        binding.balanceAtDisposalTextview.text = CurrencyUtil.formatGTU(
-            accountWithIdentity.account.getAtDisposalWithoutStakedOrScheduled(accountWithIdentity.account.totalUnshieldedBalance),
-            withGStroke = true
-        )
+        binding.totalTextview.text = CurrencyUtil.formatGTU(accountWithIdentity.account.totalUnshieldedBalance, withGStroke = true)
+        binding.balanceAtDisposalTextview.text = CurrencyUtil.formatGTU(accountWithIdentity.account.getAtDisposalWithoutStakedOrScheduled(accountWithIdentity.account.totalUnshieldedBalance), withGStroke = true)
         binding.accountNameArea.setData(accountWithIdentity)
 
-        val accountPending =
-            accountWithIdentity.account.transactionStatus == TransactionStatus.COMMITTED || accountWithIdentity.account.transactionStatus == TransactionStatus.RECEIVED
+        val accountPending = accountWithIdentity.account.transactionStatus == TransactionStatus.COMMITTED || accountWithIdentity.account.transactionStatus == TransactionStatus.RECEIVED
 
-        binding.buttonArea.visibility =
-            if (accountPending || accountWithIdentity.account.readOnly || hideExpandBar) View.GONE else View.VISIBLE
-        binding.rootCardContent.setBackgroundColor(
-            if (accountWithIdentity.account.readOnly) resources.getColor(
-                R.color.theme_component_background_disabled,
-                null
-            ) else resources.getColor(R.color.theme_white, null)
-        )
+        binding.buttonArea.visibility = if(accountPending || accountWithIdentity.account.readOnly || hideExpandBar) View.GONE else View.VISIBLE
+        binding.rootCardContent.setBackgroundColor(if(accountWithIdentity.account.readOnly) resources.getColor(R.color.theme_component_background_disabled, null) else resources.getColor(R.color.theme_white, null))
 
         this.isEnabled = !accountWithIdentity.account.readOnly
     }

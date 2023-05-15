@@ -112,11 +112,9 @@ class BakerRegistrationCloseActivity : BaseDelegationBakerActivity() {
                     bakerKeysJson
                 )
 
-                val file =
-                    File(App.appContext.getFileStreamPath(DelegationBakerViewModel.FILE_NAME_BAKER_KEYS).absolutePath)
+                val file = File(App.appContext.getFileStreamPath(DelegationBakerViewModel.FILE_NAME_BAKER_KEYS).absolutePath)
                 if (file.exists()) {
-                    val uri =
-                        FileProvider.getUriForFile(App.appContext, BuildConfig.APPLICATION_ID, file)
+                    val uri = FileProvider.getUriForFile(App.appContext, BuildConfig.APPLICATION_ID, file)
                     shareFile(getResultShare, uri)
                 } else {
                     Log.d("File DOESN'T EXIST")

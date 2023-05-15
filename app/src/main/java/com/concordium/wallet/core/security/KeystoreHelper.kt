@@ -5,13 +5,7 @@ import android.security.keystore.KeyPermanentlyInvalidatedException
 import android.security.keystore.KeyProperties
 import com.concordium.wallet.util.Log
 import java.io.IOException
-import java.security.InvalidAlgorithmParameterException
-import java.security.InvalidKeyException
-import java.security.KeyStore
-import java.security.KeyStoreException
-import java.security.NoSuchAlgorithmException
-import java.security.NoSuchProviderException
-import java.security.UnrecoverableKeyException
+import java.security.*
 import java.security.cert.CertificateException
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -53,7 +47,6 @@ class KeystoreHelper {
                     Log.d("Failed to generate secret key", e)
                     throw KeystoreEncryptionException("Failed to generate secret key", e)
                 }
-
                 else -> throw e
             }
         }
@@ -67,12 +60,12 @@ class KeystoreHelper {
 
     fun getSecretKey(keyName: String): SecretKey? {
         val keyStore = KeyStore.getInstance(ANDROID_KEY_STORE)
-        if (keyStore == null) {
+        if(keyStore == null){
             return null
         }
         keyStore.load(null)
         val key = keyStore.getKey(keyName, null)
-        if (key == null) {
+        if(key == null){
             return null
         }
         return key as SecretKey
@@ -97,7 +90,6 @@ class KeystoreHelper {
                     Log.d("Failed to init Cipher", e)
                     throw KeystoreEncryptionException("Failed to init Cipher", e)
                 }
-
                 else -> throw e
             }
         }
@@ -124,7 +116,6 @@ class KeystoreHelper {
                     Log.d("Failed to init Cipher", e)
                     throw KeystoreEncryptionException("Failed to init Cipher", e)
                 }
-
                 else -> throw e
             }
         }

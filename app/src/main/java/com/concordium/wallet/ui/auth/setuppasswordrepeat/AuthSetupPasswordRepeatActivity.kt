@@ -20,11 +20,7 @@ class AuthSetupPasswordRepeatActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthSetupPasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(
-            binding.toolbarLayout.toolbar,
-            binding.toolbarLayout.toolbarTitle,
-            R.string.auth_setup_password_repeat_title
-        )
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.auth_setup_password_repeat_title)
 
         initializeViewModel()
         viewModel.initialize()
@@ -62,7 +58,6 @@ class AuthSetupPasswordRepeatActivity : BaseActivity() {
                     onConfirmClicked()
                     true
                 }
-
                 else -> false
             }
         }

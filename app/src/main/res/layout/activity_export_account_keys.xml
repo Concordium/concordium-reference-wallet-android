@@ -4,11 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout"
     style="@style/Layout.Root">
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <include
             android:id="@+id/toolbar_layout"
             layout="@layout/app_toolbar"
@@ -17,7 +15,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
@@ -29,7 +26,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/toolbar_layout" />
-
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/hidden"
             android:layout_width="match_parent"
@@ -42,14 +38,12 @@
             tools:visibility="gone"
             android:orientation="vertical"
             android:background="@drawable/bg_border_gray">
-
             <TextView
                 style="@style/TextView.Mono"
                 android:layout_marginTop="@dimen/activity_vertical_margin_extended"
                 android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                 android:gravity="center"
                 android:text="@string/export_account_keys_reveal_explain" />
-
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
@@ -57,7 +51,6 @@
                 android:scaleType="fitCenter"
                 android:tint="#181817"
                 android:src="@drawable/ic_read_only" />
-
             <TextView
                 android:id="@+id/text_tap"
                 style="@style/TextView.Mono"
@@ -66,7 +59,6 @@
                 android:gravity="center"
                 android:text="@string/export_account_keys_tap" />
         </androidx.appcompat.widget.LinearLayoutCompat>
-
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/revealed"
             android:layout_width="match_parent"
@@ -80,14 +72,12 @@
             android:visibility="gone"
             android:orientation="vertical"
             android:background="@drawable/bg_border_gray">
-
             <TextView
                 style="@style/TextView.Mono"
                 android:layout_marginTop="@dimen/activity_vertical_margin_extended"
                 android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                 android:gravity="center"
                 android:text="@string/export_account_keys_reveal_explain" />
-
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/copy"
                 android:layout_width="match_parent"
@@ -98,7 +88,6 @@
                 android:gravity="center_horizontal"
                 android:background="@drawable/bg_cardview_border"
                 android:orientation="horizontal">
-
                 <TextView
                     android:id="@+id/key"
                     style="@style/TextView.Mono"
@@ -106,7 +95,6 @@
                     android:layout_weight="1"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
                     tools:text="38de26cd4f5dc52d66e88f32db1183e413fcf84e96ad28c300329dc686480b9b" />
-
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="20dp"
                     android:layout_height="20dp"
@@ -114,7 +102,6 @@
                     android:src="@drawable/ic_icon_copy"
                     android:layout_gravity="center_vertical" />
             </androidx.appcompat.widget.LinearLayoutCompat>
-
             <Button
                 android:id="@+id/export_to_file"
                 style="@style/Button.Standard.Intro"
@@ -125,7 +112,6 @@
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:text="@string/export_account_keys_to_file" />
         </androidx.appcompat.widget.LinearLayoutCompat>
-
         <Button
             android:id="@+id/done"
             style="@style/Button.Standard.Intro"

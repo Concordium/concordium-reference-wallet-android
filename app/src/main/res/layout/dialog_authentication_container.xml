@@ -7,10 +7,7 @@
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-
-        <include
-            layout="@layout/dialog_authentication_content"
-            android:id="@+id/include_dialog_authentication_content" />
+        <include layout="@layout/dialog_authentication_content" android:id="@+id/include_dialog_authentication_content" />
     </FrameLayout>
 
     <LinearLayout

@@ -10,4 +10,4 @@ data class BakerKeys(
     val electionVerifyKey: String,
     val signatureSignKey: String,
     val signatureVerifyKey: String
-) : Serializable
+): Serializable

@@ -39,11 +39,7 @@ class TransactionDetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTransactionDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(
-            binding.toolbarLayout.toolbar,
-            binding.toolbarLayout.toolbarTitle,
-            R.string.transaction_details_title
-        )
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.transaction_details_title)
 
         val account = intent.extras!!.getSerializable(EXTRA_ACCOUNT) as Account
         val transaction = intent.extras!!.getSerializable(EXTRA_TRANSACTION) as Transaction
@@ -100,14 +96,10 @@ class TransactionDetailsActivity : BaseActivity() {
 
         val onClickListener = object : TransactionDetailsEntryView.OnCopyClickListener {
             override fun onCopyClicked(title: String, value: String) {
-                val clipboard: ClipboardManager =
-                    getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                val clipboard: ClipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 val clip = ClipData.newPlainText(title, value)
                 clipboard.setPrimaryClip(clip)
-                popup.showSnackbar(
-                    binding.rootLayout,
-                    getString(R.string.transaction_details_value_copied, title)
-                )
+                popup.showSnackbar(binding.rootLayout, getString(R.string.transaction_details_value_copied, title))
             }
         }
         binding.fromAddressLayout.enableCopy(onClickListener)
@@ -247,16 +239,10 @@ class TransactionDetailsActivity : BaseActivity() {
     private fun showBlockHashes(ta: Transaction) {
         if (ta.transactionStatus == TransactionStatus.RECEIVED) {
             binding.blockHashLayout.visibility = View.VISIBLE
-            binding.blockHashLayout.setValue(
-                getString(R.string.transaction_details_block_hash_submitted),
-                true
-            )
+            binding.blockHashLayout.setValue(getString(R.string.transaction_details_block_hash_submitted), true)
         } else if (ta.transactionStatus == TransactionStatus.ABSENT) {
             binding.blockHashLayout.visibility = View.VISIBLE
-            binding.blockHashLayout.setValue(
-                getString(R.string.transaction_details_block_hash_failed),
-                true
-            )
+            binding.blockHashLayout.setValue(getString(R.string.transaction_details_block_hash_failed), true)
         } else {
             val blockHashes = ta.blockHashes
             if (blockHashes != null && blockHashes.isNotEmpty()) {

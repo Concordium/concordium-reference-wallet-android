@@ -21,8 +21,7 @@ class BakerUpdateIntroFlow :
             R.string.baker_update_intro_subtitle2,
             R.string.baker_update_intro_subtitle3,
             R.string.baker_update_intro_subtitle4,
-            R.string.baker_update_intro_subtitle5
-        )
+            R.string.baker_update_intro_subtitle5)
     }
 
     override fun gotoContinue() {
@@ -37,7 +36,7 @@ class BakerUpdateIntroFlow :
     }
 
     override fun getLink(position: Int): String {
-        return "file:///android_asset/baker_update_intro_flow_en_" + (position + 1) + ".html"
+        return "file:///android_asset/baker_update_intro_flow_en_"+(position+1)+".html"
     }
 
     private fun gotoUpdateBakerStake() {

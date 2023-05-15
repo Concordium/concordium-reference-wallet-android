@@ -47,7 +47,6 @@ object EncryptionHelper {
                     Log.d("Failed creating encryption data", e)
                     throw EncryptionException(e)
                 }
-
                 else -> throw e
             }
         }
@@ -93,7 +92,6 @@ object EncryptionHelper {
                     Log.d("Failed to create key", e)
                     throw EncryptionException(e)
                 }
-
                 else -> throw e
             }
         }
@@ -130,7 +128,6 @@ object EncryptionHelper {
                     Log.d("Failed to encrypt data", e)
                     throw EncryptionException(e)
                 }
-
                 else -> throw e
             }
         }
@@ -164,7 +161,6 @@ object EncryptionHelper {
                     Log.d("Failed to decrypt data", e)
                     throw EncryptionException(e)
                 }
-
                 else -> throw e
             }
         }

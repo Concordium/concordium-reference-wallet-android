@@ -14,16 +14,7 @@ import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
-import com.concordium.wallet.data.model.AttributeList
-import com.concordium.wallet.data.model.IdentityContainer
-import com.concordium.wallet.data.model.IdentityCreationData
-import com.concordium.wallet.data.model.IdentityObject
-import com.concordium.wallet.data.model.IdentityRequest
-import com.concordium.wallet.data.model.IdentityStatus
-import com.concordium.wallet.data.model.PreIdentityContainer
-import com.concordium.wallet.data.model.PreIdentityObject
-import com.concordium.wallet.data.model.PubInfoForIp
-import com.concordium.wallet.data.model.RawJson
+import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
@@ -105,9 +96,7 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
         val idObjectRequest = gson.toJson(IdentityRequest(identityCreationData.idObjectRequest))
         val baseUrl = identityCreationData.identityProvider.metadata.issuanceStart
         val delimiter = if (baseUrl.contains('?')) "&" else "?"
-        return if (BuildConfig.DEBUG && BuildConfig.ENV_NAME == "prod_testnet" && baseUrl.lowercase()
-                .contains("notabene")
-        )
+        return if (BuildConfig.DEBUG && BuildConfig.ENV_NAME == "prod_testnet" && baseUrl.lowercase().contains("notabene"))
             "${baseUrl}${delimiter}response_type=code&redirect_uri=$CALLBACK_URL&scope=identity&state=$idObjectRequest&test_flow=1"
         else
             "${baseUrl}${delimiter}response_type=code&redirect_uri=$CALLBACK_URL&scope=identity&state=$idObjectRequest"
@@ -135,10 +124,7 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
     }
 
     fun parseIdentityAndSavePending(callbackUri: String) {
-        val idObjectRequest = gson.fromJson(
-            identityCreationData.idObjectRequest.json,
-            PreIdentityContainer::class.java
-        )
+        val idObjectRequest = gson.fromJson(identityCreationData.idObjectRequest.json, PreIdentityContainer::class.java)
         val pubInfoForIP = PubInfoForIp("", RawJson("{}"), "")
         val preIdentityObject =
             PreIdentityObject(
@@ -175,8 +161,7 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
     }
 
     fun parseIdentityError(errorContent: String) {
-        val error: Map<String, Any> =
-            gson.fromJson(errorContent, object : TypeToken<Map<String, Any>>() {}.type)
+        val error: Map<String, Any> = gson.fromJson(errorContent, object : TypeToken<Map<String, Any>>() {}.type)
         val map = error["error"] as Map<*, *>
         val event = Event(map["detail"].toString())
         if (map["code"]!! == "USER_CANCEL") {

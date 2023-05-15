@@ -30,11 +30,7 @@ class EarnInfoActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityEarnInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(
-            binding.toolbarLayout.toolbar,
-            binding.toolbarLayout.toolbarTitle,
-            R.string.earn_title
-        )
+        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.earn_title)
         account = intent.extras?.getSerializable(EXTRA_ACCOUNT_DATA) as Account
         initViews()
         initializeViewModel()
@@ -47,19 +43,13 @@ class EarnInfoActivity : BaseActivity() {
         binding.btnBaker.setOnClickListener {
             val intent = Intent(this, BakerRegistrationIntroFlow::class.java)
             intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
-            intent.putExtra(
-                DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
-                BakerDelegationData(account, type = ProxyRepository.REGISTER_BAKER)
-            )
+            intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, BakerDelegationData(account, type = ProxyRepository.REGISTER_BAKER))
             startActivityForResultAndHistoryCheck(intent)
         }
         binding.btnDelegation.setOnClickListener {
             val intent = Intent(this, DelegationCreateIntroFlowActivity::class.java)
             intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
-            intent.putExtra(
-                DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
-                BakerDelegationData(account, type = ProxyRepository.REGISTER_DELEGATION)
-            )
+            intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, BakerDelegationData(account, type = ProxyRepository.REGISTER_DELEGATION))
             startActivityForResultAndHistoryCheck(intent)
         }
     }
@@ -68,8 +58,7 @@ class EarnInfoActivity : BaseActivity() {
         viewModel.chainParameters.observe(this) { chainParameters ->
             chainParameters?.let {
                 val minimum = CurrencyUtil.formatGTU(chainParameters.minimumEquityCapital, true)
-                binding.tvBakerDescription.text =
-                    getString(R.string.earn_baker_description, minimum)
+                binding.tvBakerDescription.text = getString(R.string.earn_baker_description, minimum)
                 showWaiting(false)
                 binding.scrollViewInfo.visibility = View.VISIBLE
             }

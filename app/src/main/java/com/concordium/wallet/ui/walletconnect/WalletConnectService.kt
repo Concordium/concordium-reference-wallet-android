@@ -66,8 +66,7 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
                     Params::class.java,
                     ParamsDeserializer()
                 )
-                return jsonBuilder.create()
-                    .fromJson(sessionRequest?.request?.params, Params::class.java)
+                return jsonBuilder.create().fromJson(sessionRequest?.request?.params, Params::class.java)
             } catch (ex: Exception) {
                 println("LC -> getSessionRequestParams ERROR ${throwableRemoveLineBreaks(ex)}")
                 null

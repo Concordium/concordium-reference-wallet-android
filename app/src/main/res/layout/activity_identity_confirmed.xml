@@ -38,12 +38,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_weight="0.36" />
-
+                    <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="0.36" />
                     <com.concordium.wallet.uicore.ProgressLine
                         android:id="@+id/progressLine"
                         android:layout_width="0dp"
@@ -52,11 +47,7 @@
                         android:layout_marginTop="@dimen/activity_vertical_margin"
                         app:numberOfDots="4"
                         app:filledDots="3" />
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_weight="0.36" />
+                    <View android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="0.36" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -65,7 +56,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/activity_vertical_margin"
                     android:orientation="vertical">
-
                     <TextView
                         android:id="@+id/tvHeader"
                         style="@style/TextView.BlueHeader"
@@ -73,7 +63,6 @@
                         android:gravity="center_horizontal"
                         android:layout_gravity="center_horizontal"
                         android:text="@string/identity_confirmed_header" />
-
                     <TextView
                         android:id="@+id/info_textview"
                         style="@style/TextView.Standard"
@@ -81,7 +70,6 @@
                         android:layout_marginTop="@dimen/activity_vertical_margin"
                         android:gravity="start"
                         tools:text="@string/identity_confirmed_info" />
-
                     <com.concordium.wallet.uicore.view.IdentityView
                         android:id="@+id/identity_view"
                         android:layout_width="match_parent"
@@ -89,13 +77,11 @@
                         style="@style/Layout.CardView"
                         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                         android:layout_marginTop="@dimen/activity_vertical_margin" />
-
                     <RelativeLayout
                         android:id="@+id/rlAccount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/activity_vertical_margin">
-
                         <com.concordium.wallet.ui.account.accountsoverview.AccountItemView
                             android:id="@+id/account_view"
                             android:layout_width="match_parent"
@@ -124,9 +110,7 @@
             </LinearLayout>
         </ScrollView>
 
-        <include
-            layout="@layout/progress"
-            android:id="@+id/include_progress" />
+        <include layout="@layout/progress" android:id="@+id/include_progress" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

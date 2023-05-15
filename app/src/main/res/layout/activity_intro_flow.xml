@@ -5,111 +5,103 @@
     android:id="@+id/root_layout"
     style="@style/Layout.Root">
 
-    <include
-        android:id="@+id/toolbar_layout"
-        layout="@layout/app_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineVertical36"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintGuide_percent="0.36"
-        android:orientation="vertical" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineVertical64"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintGuide_percent="0.64"
-        android:orientation="vertical" />
-
-    <com.concordium.wallet.uicore.ProgressLine
-        android:id="@+id/progressLine"
-        android:layout_width="0dp"
-        android:layout_height="7dp"
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        app:layout_constraintStart_toStartOf="@+id/guidelineVertical36"
-        app:layout_constraintEnd_toEndOf="@+id/guidelineVertical64"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_layout"
-        app:numberOfDots="4"
-        app:filledDots="2" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressLine"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="@dimen/activity_vertical_margin">
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/pager"
+        <include
+            android:id="@+id/toolbar_layout"
+            layout="@layout/app_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/pagers_tab_layout"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true" />
 
-        <View
-            android:layout_width="200dp"
-            android:layout_height="2dp"
-            android:layout_centerInParent="true"
-            android:layout_above="@+id/pagers_tab_layout"
-            android:background="@color/theme_light_blue" />
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/pagers_tab_layout"
-            android:layout_width="match_parent"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineVertical36"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/button_container"
-            app:tabBackground="@drawable/tab_pager_selector"
-            app:tabGravity="center"
-            app:tabIndicatorHeight="0dp"
-            android:layout_gravity="bottom" />
+            app:layout_constraintGuide_percent="0.36"
+            android:orientation="vertical" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineVertical64"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.64"
+            android:orientation="vertical" />
+
+        <com.concordium.wallet.uicore.ProgressLine
+            android:id="@+id/progressLine"
+            android:layout_width="0dp"
+            android:layout_height="7dp"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:layout_constraintStart_toStartOf="@+id/guidelineVertical36"
+            app:layout_constraintEnd_toEndOf="@+id/guidelineVertical64"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_layout"
+            app:numberOfDots="4"
+            app:filledDots="2" />
 
         <RelativeLayout
-            android:id="@+id/button_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/create_ident_intro_skip"
-                style="@style/WhiteButton"
-                android:text="@string/shielding_intro_skip"
-                tools:visibility="gone" />
-
-            <Button
-                android:id="@+id/create_ident_intro_back"
-                style="@style/Button.Standard.Intro"
-                tools:visibility="visible"
-                android:text="@string/shielding_intro_back" />
-
-            <Button
-                android:id="@+id/create_ident_intro_next"
-                style="@style/Button.Standard.Intro"
-                android:layout_alignParentEnd="true"
-                android:drawableEnd="@drawable/ic_button_next"
-                android:drawableTint="@color/text_white"
-                android:text="@string/shielding_intro_next" />
-
-            <Button
-                android:id="@+id/create_ident_intro_continue"
-                style="@style/Button.Standard.Intro"
-                tools:visibility="gone"
-                android:layout_alignParentEnd="true"
-                android:text="@string/shielding_intro_continue" />
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/progressLine"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="@dimen/activity_vertical_margin">
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/pagers_tab_layout"
+                android:layout_alignParentTop="true" />
+            <View
+                android:layout_width="200dp"
+                android:layout_height="2dp"
+                android:layout_centerInParent="true"
+                android:layout_above="@+id/pagers_tab_layout"
+                android:background="@color/theme_light_blue" />
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/pagers_tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/button_container"
+                app:tabBackground="@drawable/tab_pager_selector"
+                app:tabGravity="center"
+                app:tabIndicatorHeight="0dp"
+                android:layout_gravity="bottom"/>
+            <RelativeLayout
+                android:id="@+id/button_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/create_ident_intro_skip"
+                    style="@style/WhiteButton"
+                    android:text="@string/shielding_intro_skip"
+                    tools:visibility="gone" />
+                <Button
+                    android:id="@+id/create_ident_intro_back"
+                    style="@style/Button.Standard.Intro"
+                    tools:visibility="visible"
+                    android:text="@string/shielding_intro_back" />
+                <Button
+                    android:id="@+id/create_ident_intro_next"
+                    style="@style/Button.Standard.Intro"
+                    android:layout_alignParentEnd="true"
+                    android:drawableEnd="@drawable/ic_button_next"
+                    android:drawableTint="@color/text_white"
+                    android:text="@string/shielding_intro_next" />
+                <Button
+                    android:id="@+id/create_ident_intro_continue"
+                    style="@style/Button.Standard.Intro"
+                    tools:visibility="gone"
+                    android:layout_alignParentEnd="true"
+                    android:text="@string/shielding_intro_continue"/>
+            </RelativeLayout>
         </RelativeLayout>
-    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

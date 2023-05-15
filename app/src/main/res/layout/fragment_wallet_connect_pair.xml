@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/Layout.Root">
-
     <TextView
         android:id="@+id/header_1"
         style="@style/TextView.Standard"
@@ -13,7 +12,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
         android:id="@+id/account_name"
         style="@style/TextView.Standard.Bold"
@@ -23,7 +21,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_1" />
-
     <TextView
         android:id="@+id/header_2"
         style="@style/TextView.Standard"
@@ -33,7 +30,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/account_name" />
-
     <TextView
         android:id="@+id/service_name"
         style="@style/TextView.Standard.Bold"
@@ -43,7 +39,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_2" />
-
     <TextView
         android:id="@+id/header_3"
         style="@style/TextView.Standard"
@@ -53,7 +48,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/service_name" />
-
     <TextView
         android:id="@+id/service_permissions"
         style="@style/TextView.Standard"
@@ -63,7 +57,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_3" />
-
     <TextView
         android:id="@+id/do_you_want_to_open"
         style="@style/TextView.Standard"
@@ -74,7 +67,6 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/service_permissions"
         app:layout_constraintBottom_toTopOf="@+id/buttons" />
-
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/progress_container"
         android:layout_width="match_parent"
@@ -85,7 +77,6 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/service_permissions"
         app:layout_constraintBottom_toTopOf="@+id/buttons">
-
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -93,7 +84,6 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/header_4" />
-
         <TextView
             style="@style/TextView.Standard"
             android:layout_marginTop="@dimen/activity_vertical_margin"
@@ -104,7 +94,6 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/progress" />
     </androidx.appcompat.widget.LinearLayoutCompat>
-
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/buttons"
         android:layout_width="match_parent"
@@ -115,14 +104,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
-
         <Button
             android:id="@+id/decline"
             style="@style/Button.Standard.Intro"
             android:layout_width="0dp"
             android:layout_weight="0.5"
             android:text="@string/wallet_connect_connect_session_decline" />
-
         <Button
             android:id="@+id/connect"
             style="@style/Button.Standard.Intro"

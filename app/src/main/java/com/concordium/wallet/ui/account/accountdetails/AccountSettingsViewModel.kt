@@ -25,10 +25,8 @@ class AccountSettingsViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun changeAccountName(name: String) {
-        val accountRepository =
-            AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
-        val recipientRepository =
-            RecipientRepository(WalletDatabase.getDatabase(getApplication()).recipientDao())
+        val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+        val recipientRepository = RecipientRepository(WalletDatabase.getDatabase(getApplication()).recipientDao())
         viewModelScope.launch {
             account.name = name
             accountRepository.update(account)
