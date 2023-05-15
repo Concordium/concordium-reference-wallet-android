@@ -3,6 +3,7 @@ package com.concordium.wallet
 import android.content.Context
 import com.concordium.wallet.onboarding.ui.di.AppModule
 import com.concordium.wallet.onboarding.ui.di.OnboardingModule
+import com.concordium.wallet.onboarding.ui.di.PassPhraseModule
 import com.concordium.wallet.util.Log
 import com.walletconnect.android.BuildConfig
 import com.walletconnect.android.Core
@@ -56,6 +57,7 @@ class App : MatomoApplication() {
                 modules.apiModule,
             )
             modules(OnboardingModule.modules)
+            modules(PassPhraseModule.modules)
         }
     }
 

@@ -16,7 +16,7 @@ import java.io.Serializable
 class PassPhraseViewModel(
     application: Application,
     private val authenticationRepository: AuthenticationRepository
-) : AndroidViewModel(application), Serializable {
+) : AndroidViewModel(application) {
     var mnemonicCodeToConfirm = listOf<CharArray>()
     var wordsPicked = arrayOfNulls<String>(WORD_COUNT + (WordsPickedBaseListAdapter.OFFSET * 2) + 1)
 

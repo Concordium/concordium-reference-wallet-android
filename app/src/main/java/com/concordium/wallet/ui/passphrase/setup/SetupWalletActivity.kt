@@ -6,7 +6,6 @@ import android.view.View
 import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.concordium.wallet.BuildConfig
@@ -17,10 +16,11 @@ import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.identity.identitycreate.IdentityIntroFlow
 import com.concordium.wallet.util.KeyboardUtil
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SetupWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
     private lateinit var binding: ActivitySetupWalletBinding
-    private lateinit var viewModel: PassPhraseViewModel
+    private val viewModel: PassPhraseViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +32,6 @@ class SetupWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
             binding.toolbarLayout.toolbarTitle,
             R.string.pass_phrase_title
         )
-        initializeViewModel()
         initViews()
         initObservers()
 
@@ -47,13 +46,6 @@ class SetupWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
     override fun onBackPressed() {
         if (binding.pager.currentItem != 3)
             super.onBackPressed()
-    }
-
-    private fun initializeViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[PassPhraseViewModel::class.java]
     }
 
     private fun initViews() {

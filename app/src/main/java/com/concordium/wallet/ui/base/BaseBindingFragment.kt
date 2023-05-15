@@ -30,14 +30,6 @@ abstract class BaseBindingFragment<BINDING : ViewDataBinding> : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.i("${javaClass.simpleName} created")
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (findNavController().popBackStack().not()) {
-                    activity?.finish()
-                }
-            }
-        }
-        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
     @CallSuper

@@ -1007,4 +1007,9 @@
     <string name="terms_and_conditions_approve">I have read and agree to the terms and conditions.</string>
     <string name="terms_and_conditions_approve_pattern">terms and conditions.</string>
     <string name="unexpected_error">Unexpected error occurred, please restart the application</string>
+
+    <string name="view_seed_phrase">View secret recovery phrase</string>
+    <string name="export_seed_phrase_title">Secret recovery phrase</string>
+    <string name="export_seed_phrase_done">Done</string>
+    <string name="export_seed_phrase_error">Error while loading seed Phrase</string>
 </resources>
