@@ -11,12 +11,11 @@ import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.repository.AuthenticationRepository
 import com.concordium.wallet.ui.passphrase.common.WordsPickedBaseListAdapter
 import kotlinx.coroutines.launch
-import java.io.Serializable
 
 class PassPhraseViewModel(
     application: Application,
     private val authenticationRepository: AuthenticationRepository
-) : AndroidViewModel(application), Serializable {
+) : AndroidViewModel(application) {
     var mnemonicCodeToConfirm = listOf<CharArray>()
     var wordsPicked = arrayOfNulls<String>(WORD_COUNT + (WordsPickedBaseListAdapter.OFFSET * 2) + 1)
 

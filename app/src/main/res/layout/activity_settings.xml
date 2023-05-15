@@ -92,6 +92,23 @@
             <View style="@style/Divider" />
 
             <LinearLayout
+                android:id="@+id/view_seed_phrase_layout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/list_item_height"
+                android:background="@drawable/list_item"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/TextView.MoreMenuItem"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:text="@string/view_seed_phrase" />
+            </LinearLayout>
+
+            <View style="@style/Divider" />
+
+            <LinearLayout
                 android:id="@+id/about_layout"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height"
