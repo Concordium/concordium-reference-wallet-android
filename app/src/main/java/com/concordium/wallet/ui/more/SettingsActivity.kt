@@ -22,8 +22,8 @@ import com.concordium.wallet.ui.more.about.AboutActivity
 import com.concordium.wallet.ui.more.alterpassword.AlterPasswordActivity
 import com.concordium.wallet.ui.more.dev.DevActivity
 import com.concordium.wallet.ui.passphrase.recover.ExportPassPhraseViewModel
-import com.concordium.wallet.ui.passphrase.recover.ExportSeedPhraseState
 import com.concordium.wallet.ui.passphrase.recover.ExportSeedPhraseActivity
+import com.concordium.wallet.ui.passphrase.recover.ExportSeedPhraseState
 import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessActivity
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
 import kotlinx.coroutines.launch
@@ -43,7 +43,11 @@ class SettingsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.more_overview_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.more_overview_title
+        )
         initViews()
 
         setUpViewModel()
@@ -53,11 +57,9 @@ class SettingsActivity : BaseActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 passPhraseViewModel.state.collect { state ->
-                    when (state) {
-                        is ExportSeedPhraseState.Success ->
-                            binding.viewSeedPhraseLayout.visibility = View.VISIBLE
-
-                        else -> Unit
+                    if (state is ExportSeedPhraseState.Success) {
+                        binding.viewSeedPhraseLayout.visibility =
+                            View.VISIBLE
                     }
                 }
             }
@@ -133,11 +135,17 @@ class SettingsActivity : BaseActivity() {
         }
     }
 
-    private fun restartApp () {
+    private fun restartApp() {
         try {
             val intent = Intent(applicationContext, MainActivity::class.java)
-            val pendingIntent = PendingIntent.getActivity(applicationContext,9999, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT)
-            val alarmManager = applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val pendingIntent = PendingIntent.getActivity(
+                applicationContext,
+                9999,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+            )
+            val alarmManager =
+                applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             alarmManager[AlarmManager.RTC, System.currentTimeMillis() + 100] = pendingIntent
             exitProcess(0)
         } catch (ex: Exception) {

@@ -86,17 +86,11 @@ class ExportPassPhraseFragment : BaseBindingFragment<FragmentExportPassPhraseRev
         private val context: Context,
         private val items: List<String>
     ) : BaseAdapter() {
-        override fun getCount(): Int {
-            return items.size
-        }
+        override fun getCount(): Int = items.size
 
-        override fun getItem(position: Int): Any? {
-            return null
-        }
+        override fun getItem(position: Int): Any? = null
 
-        override fun getItemId(position: Int): Long {
-            return 0
-        }
+        override fun getItemId(position: Int): Long = 0
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             val view: View
