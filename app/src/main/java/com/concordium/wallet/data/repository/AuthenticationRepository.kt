@@ -6,10 +6,10 @@ class AuthenticationRepository(
     private val sharedPreferences: SharedPreferencesDataSource
 ) {
     fun saveSeedPhase(seedPhase: String) = runCatching {
-        sharedPreferences.seedPhase = seedPhase
+        sharedPreferences.seedPhrase = seedPhase
     }
 
     fun getSeedPhase() = runCatching {
-        sharedPreferences.seedPhase
+        sharedPreferences.seedPhrase
     }
 }

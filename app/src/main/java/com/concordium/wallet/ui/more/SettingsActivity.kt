@@ -57,11 +57,9 @@ class SettingsActivity : BaseActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 passPhraseViewModel.state.collect { state ->
-                    when (state) {
-                        is ExportSeedPhraseState.Success ->
-                            binding.viewSeedPhraseLayout.visibility = View.VISIBLE
-
-                        else -> Unit
+                    if (state is ExportSeedPhraseState.Success) {
+                        binding.viewSeedPhraseLayout.visibility =
+                            View.VISIBLE
                     }
                 }
             }

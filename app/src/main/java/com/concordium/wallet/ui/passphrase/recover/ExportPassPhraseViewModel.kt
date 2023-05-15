@@ -23,7 +23,7 @@ class ExportPassPhraseViewModel(
             authenticationRepository.getSeedPhase().onSuccess { result ->
                 _state.update {
                     when {
-                        result.isNullOrBlank() -> ExportSeedPhraseState.Error(Throwable("No seed phrase found"))
+                        result.isNullOrBlank() -> ExportSeedPhraseState.Error(IllegalStateException("No seed phrase found"))
                         else -> ExportSeedPhraseState.Success(result.split(String.SPACE))
                     }
                 }
