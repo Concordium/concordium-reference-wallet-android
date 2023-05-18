@@ -11,7 +11,7 @@ import java.util.regex.Pattern
 
 object CurrencyUtil {
     private val separator: Char = DecimalFormatSymbols.getInstance().decimalSeparator
-    private val patternGTU: Pattern = Pattern.compile("^-?[0-9]*[${separator}]?[0-9]{0,6}\$")
+    private val patternGTU: Pattern = Pattern.compile("^-?[0-9]*[${separator}]?[0-9]{0,77}\$")
     private var gStroke: String? = null
 
     fun formatGTU(value: String, withGStroke: Boolean = false, decimals: Int = 6): String =
@@ -113,7 +113,7 @@ object CurrencyUtil {
             return null
         }
         val decimalSeparatorIndex = str.indexOf(separator)
-        // Ensure that there are 6 decimals
+        // Ensure that there is the required number of decimals.
         if (decimalSeparatorIndex == -1) {
             str = "$str${separator}" + String(CharArray(decimals) { '0' })
         } else {
