@@ -13,6 +13,7 @@ import com.concordium.wallet.databinding.ActivityDelegationRegistrationConfirmat
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.util.UnitConvertUtil
+import java.math.BigDecimal
 
 class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity() {
     private var receiptMode = false
@@ -68,7 +69,7 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity() {
         }
 
         binding.accountToDelegateFrom.text = (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n").plus(viewModel.bakerDelegationData.account?.address ?: "")
-        binding.delegationAmountConfirmation.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
+        binding.delegationAmountConfirmation.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: BigDecimal.ZERO, true)
         binding.targetPool.text = if (viewModel.bakerDelegationData.isLPool) getString(R.string.delegation_register_delegation_passive_long) else viewModel.bakerDelegationData.poolId
         binding.rewardsWillBe.text = if (viewModel.bakerDelegationData.restake) getString(R.string.delegation_status_added_to_delegation_amount) else getString(R.string.delegation_status_at_disposal)
 
@@ -144,7 +145,7 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity() {
             }
             when (viewModel.bakerDelegationData.type) {
                 UPDATE_DELEGATION -> {
-                    if ((viewModel.bakerDelegationData.amount ?: 0) < (viewModel.bakerDelegationData.oldStakedAmount ?: 0)) {
+                    if ((viewModel.bakerDelegationData.amount ?: BigDecimal.ZERO) < (viewModel.bakerDelegationData.oldStakedAmount ?: BigDecimal.ZERO)) {
                         builder.setMessage(resources.getQuantityString(R.plurals.delegation_notice_message_decrease, gracePeriod, gracePeriod))
                     } else {
                         builder.setMessage(getString(R.string.delegation_notice_message))

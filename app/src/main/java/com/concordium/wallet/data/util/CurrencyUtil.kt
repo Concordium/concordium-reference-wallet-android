@@ -118,9 +118,9 @@ object CurrencyUtil {
         val decimalSeparatorIndex = str.indexOf(separator)
         // Ensure that there are 6 decimals
         if (decimalSeparatorIndex == -1) {
-            str = "$str${separator}000000"
+            str = "$str${separator}" + String(CharArray(decimals) { '0' })
         } else {
-            val missingZeros = 6 - ((str.length - 1) - decimalSeparatorIndex)
+            val missingZeros = decimals - ((str.length - 1) - decimalSeparatorIndex)
             for (i in 1..missingZeros) {
                 str += "0"
             }

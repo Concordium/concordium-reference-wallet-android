@@ -410,7 +410,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             return
 
         tokens.filter { !it.isCCDToken }.groupBy { it.contractIndex }.forEach { group ->
-            val commaSeparated = group.value.joinToString(",") { it.token }
+            val groupTokens = group.value
+            val commaSeparated = groupTokens.joinToString(",") { it.token }
             viewModelScope.launch {
                 proxyRepository.getCIS2TokenBalance(group.key,
                     tokenData.subIndex,
@@ -418,7 +419,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     commaSeparated,
                     success = { cis2TokensBalances ->
                         cis2TokensBalances.forEach { cis2TokenBalance ->
-                            tokens.firstOrNull { it.token == cis2TokenBalance.tokenId }?.totalBalance =
+                            groupTokens.firstOrNull { it.token == cis2TokenBalance.tokenId }?.totalBalance =
                                 cis2TokenBalance.balance.toBigDecimal()
                         }
                         tokenBalances.postValue(true)

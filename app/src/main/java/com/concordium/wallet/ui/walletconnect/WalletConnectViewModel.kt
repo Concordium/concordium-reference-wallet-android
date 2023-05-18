@@ -27,8 +27,7 @@ import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.prettyPrint
-import com.google.gson.ExclusionStrategy
-import com.google.gson.FieldAttributes
+import com.concordium.wallet.util.toBigDecimal
 import com.google.gson.Gson
 import com.walletconnect.sign.client.Sign
 import kotlinx.coroutines.CoroutineScope
@@ -153,7 +152,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     fun loadTransactionFee() {
         binder?.getSessionRequestParams()?.parsePayload()?.let { payload ->
             proxyRepository.getTransferCost(type = "update",
-                amount = payload.amount.toLong(),
+                amount = payload.amount.toBigDecimal(),
                 sender = walletConnectData.account!!.address,
                 contractIndex = payload.address.index,
                 contractSubindex = payload.address.subIndex,
