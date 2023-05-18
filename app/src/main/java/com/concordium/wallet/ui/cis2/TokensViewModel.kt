@@ -219,7 +219,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                                 tokenData.contractIndex,
                                 selectedToken.token,
                                 account.address,
-                                selectedToken.tokenMetadata?.unique ?: false,
+                                !(selectedToken.tokenMetadata?.unique ?: false),
                                 selectedToken.tokenMetadata,
                                 tokenData.contractName
                             )
@@ -305,7 +305,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                                     tokenData.contractIndex,
                                     selectedToken.token,
                                     account.address,
-                                    selectedToken.tokenMetadata?.unique ?: false,
+                                    !(selectedToken.tokenMetadata?.unique ?: false),
                                     selectedToken.tokenMetadata,
                                     tokenData.contractName
                                 )
