@@ -5,7 +5,6 @@ import android.os.Build
 import android.os.Bundle
 import java.io.Serializable
 import java.math.BigDecimal
-import java.math.RoundingMode
 
 fun ByteArray.toHex() = joinToString("") {
     Integer.toUnsignedString(java.lang.Byte.toUnsignedInt(it), 16).padStart(2, '0')
@@ -50,15 +49,6 @@ fun String?.toBigDecimal(defaultValue: BigDecimal = BigDecimal.ZERO): BigDecimal
     } catch (e: NumberFormatException) {
         defaultValue
     }
-
-/**
- * Scales the value rounding it down, which is a must-do for balances, amounts, etc.
- *
- * @return a [BigDecimal] whose scale is the specified [scale]
- */
-fun BigDecimal.scaleAmount(scale: Int): BigDecimal =
-    setScale(scale, RoundingMode.DOWN)
-        .stripTrailingZerosFixed()
 
 /**
  * @return a result of [BigDecimal.stripTrailingZeros], but with the zero value Java 7 issue fix.
