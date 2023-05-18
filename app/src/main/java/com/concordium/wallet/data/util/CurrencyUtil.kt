@@ -17,7 +17,7 @@ object CurrencyUtil {
     fun formatGTU(value: String, withGStroke: Boolean = false, decimals: Int = 6): String =
         formatGTU(value.toBigDecimal(), withGStroke, decimals)
 
-    fun formatGTU(value: Long, token: Token?): String {
+    fun formatGTU(value: BigDecimal, token: Token?): String {
         var decimals = 6
         var withGStroke = true
         token?.let {

@@ -40,7 +40,7 @@ class SendTokenReceiptActivity : BaseActivity() {
 
     private fun initViews() {
         binding.sender.text = viewModel.sendTokenData.account?.name.plus("\n\n").plus(viewModel.sendTokenData.account?.address)
-        binding.amount.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.amount, false)
+        binding.amount.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.amount, viewModel.sendTokenData.token)
         binding.receiver.text = viewModel.sendTokenData.receiver
         viewModel.sendTokenData.receiverName?.let {
             binding.receiverName.visibility = View.VISIBLE
