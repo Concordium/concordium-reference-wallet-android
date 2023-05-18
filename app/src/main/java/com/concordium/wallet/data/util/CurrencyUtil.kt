@@ -3,6 +3,9 @@ package com.concordium.wallet.data.util
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.util.toBigDecimal
+import com.concordium.wallet.util.toPlainStringStripped
+import java.math.BigDecimal
 import java.text.DecimalFormatSymbols
 import java.util.regex.Pattern
 
@@ -11,10 +14,8 @@ object CurrencyUtil {
     private val patternGTU: Pattern = Pattern.compile("^-?[0-9]*[${separator}]?[0-9]{0,6}\$")
     private var gStroke: String? = null
 
-    fun formatGTU(value: String, withGStroke: Boolean = false, decimals: Int = 6): String {
-        val valueLong = value.toLong()
-        return formatGTU(valueLong, withGStroke, decimals)
-    }
+    fun formatGTU(value: String, withGStroke: Boolean = false, decimals: Int = 6): String =
+        formatGTU(value.toBigDecimal(), withGStroke, decimals)
 
     fun formatGTU(value: Long, token: Token?): String {
         var decimals = 6
@@ -32,7 +33,10 @@ object CurrencyUtil {
         this.gStroke = gStroke
     }
 
-    fun formatGTU(value: Long, withGStroke: Boolean = false, decimals: Int = 6): String {
+    fun formatGTU(value: Long, withGStroke: Boolean = false, decimals: Int = 6): String=
+        formatGTU(value.toBigDecimal(), withGStroke, decimals)
+
+    fun formatGTU(value: BigDecimal, withGStroke: Boolean = false, decimals: Int = 6): String {
         if(withGStroke && gStroke == null){
             gStroke = App.appContext.getString(R.string.app_gstroke)
         }
@@ -42,8 +46,12 @@ object CurrencyUtil {
             return value.toString()
         }
 
-        val isNegative = value < 0
-        val str = if (isNegative) value.toString().replace("-", "") else value.toString()
+        val isNegative = value.signum() < 0
+        val str =
+            if (isNegative)
+                value.toPlainStringStripped().replace("-", "")
+            else
+                value.toPlainStringStripped()
         val strBuilder = StringBuilder(str)
         if (strBuilder.length <= decimals - 1) {
             // Add zeroes in front of the value until there are four chars
@@ -89,7 +97,7 @@ object CurrencyUtil {
         }
     }
 
-    fun toGTUValue(stringValue: String, token: Token?): Long? {
+    fun toGTUValue(stringValue: String, token: Token?): BigDecimal? {
         var decimals = 6
         token?.let {
             it.tokenMetadata?.let { tokenMetadata ->
@@ -99,7 +107,7 @@ object CurrencyUtil {
         return toGTUValue(stringValue, decimals)
     }
 
-    fun toGTUValue(stringValue: String, decimals: Int = 6): Long? {
+    fun toGTUValue(stringValue: String, decimals: Int = 6): BigDecimal? {
         var str = stringValue.replace("Ͼ", "")
         if (str.isEmpty()) {
             return null
@@ -119,7 +127,7 @@ object CurrencyUtil {
         }
         // Remove the separator to get the value (because there are four decimals)
         val noDecimalSeparatorString = str.replace("$separator", "")
-        return noDecimalSeparatorString.toLongOrNull()
+        return noDecimalSeparatorString.toBigDecimal()
     }
 
     private fun checkGTUString(stringValue: String): Boolean {

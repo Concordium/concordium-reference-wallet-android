@@ -31,6 +31,7 @@ import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
 import com.concordium.wallet.util.KeyboardUtil
 import com.concordium.wallet.util.UnitConvertUtil
 import com.concordium.wallet.util.getSerializable
+import java.math.BigDecimal
 
 class SendTokenActivity : BaseActivity() {
     private lateinit var binding: ActivitySendTokenBinding
@@ -90,7 +91,7 @@ class SendTokenActivity : BaseActivity() {
             binding.contractAddressError.visibility = View.VISIBLE
         } else {
             binding.send.isEnabled = false
-            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(binding.amount.text.toString(), viewModel.sendTokenData.token) ?: 0
+            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(binding.amount.text.toString(), viewModel.sendTokenData.token) ?: BigDecimal.ZERO
             viewModel.sendTokenData.receiver = receiver
             binding.receiverName.let {
                 if(it.visibility == View.VISIBLE){
@@ -112,7 +113,7 @@ class SendTokenActivity : BaseActivity() {
 
     private fun initializeAmount() {
         binding.amount.addTextChangedListener {
-            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(it.toString(), viewModel.sendTokenData.token) ?: 0
+            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(it.toString(), viewModel.sendTokenData.token) ?: BigDecimal.ZERO
             viewModel.loadTransactionFee()
             enableSend()
         }
@@ -141,8 +142,8 @@ class SendTokenActivity : BaseActivity() {
                 if (!token.isCCDToken)
                     decimals = token.tokenMetadata?.decimals?: 0
             }
-            binding.amount.setText(CurrencyUtil.formatGTU(viewModel.sendTokenData.max ?: 0, false, decimals))
-            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(it.toString(), viewModel.sendTokenData.token) ?: 0
+            binding.amount.setText(CurrencyUtil.formatGTU(viewModel.sendTokenData.max ?: BigDecimal.ZERO, false, decimals))
+            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(it.toString(), viewModel.sendTokenData.token) ?: BigDecimal.ZERO
             enableSend()
         }
     }

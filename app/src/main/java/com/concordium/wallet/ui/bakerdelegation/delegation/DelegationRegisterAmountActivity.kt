@@ -15,6 +15,8 @@ import com.concordium.wallet.databinding.ActivityDelegationRegistrationAmountBin
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
+import com.concordium.wallet.util.toBigDecimal
+import java.math.BigDecimal
 
 class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity() {
     private lateinit var binding: ActivityDelegationRegistrationAmountBinding
@@ -108,14 +110,14 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         binding.amount.isEnabled = false
         showWaiting(binding.includeProgress.progressLayout, true)
 
-        viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<Long?, Int?>> {
-            override fun onChanged(response: Pair<Long?, Int?>?) {
+        viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<BigDecimal?, Int?>> {
+            override fun onChanged(response: Pair<BigDecimal?, Int?>?) {
                 response?.first?.let {
                     validateFee = it
                     showWaiting(binding.includeProgress.progressLayout, false)
                     binding.poolEstimatedTransactionFee.visibility = View.VISIBLE
                     binding.poolEstimatedTransactionFee.text = getString(
-                        R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(validateFee ?: 0)
+                        R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(validateFee ?: BigDecimal.ZERO)
                     )
                     binding.poolRegistrationContinue.isEnabled = true
                     if (!viewModel.isInCoolDown())
@@ -152,8 +154,8 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         return StakeAmountInputValidator(
             if (viewModel.isUpdatingDelegation()) "0" else "1",
             null,
-            (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0),
-            viewModel.bakerDelegationData.account?.getAtDisposal(),
+            (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0).toBigDecimal(),
+            viewModel.bakerDelegationData.account?.getAtDisposal()?.toBigDecimal(),
             viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,
             viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapitalCap,
             viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount,
@@ -172,7 +174,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             binding.amount.isEnabled = false
         }
         if (viewModel.bakerDelegationData.type == UPDATE_DELEGATION) {
-            viewModel.bakerDelegationData.oldStakedAmount = viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLong() ?: 0
+            viewModel.bakerDelegationData.oldStakedAmount = viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount.toBigDecimal()
             binding.amountDesc.text = getString(R.string.delegation_update_delegation_amount_enter_amount)
             binding.amount.setText(viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.let { CurrencyUtil.formatGTU(it,false) })
         }
@@ -194,8 +196,8 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         if (viewModel.isUpdatingDelegation()) {
             when {
                 !hasChanges() -> showNoChange()
-                amountToStake == 0L -> showNewAmountZero()
-                amountToStake < (viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.toLongOrNull() ?: 0) -> showReduceWarning()
+                amountToStake.signum() == 0 -> showNewAmountZero()
+                amountToStake < (viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount.toBigDecimal()) -> showReduceWarning()
                 moreThan95Percent(amountToStake) -> show95PercentWarning()
                 else -> continueToConfirmation()
             }
@@ -214,8 +216,8 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
                 viewModel.bakerDelegationData.isBakerPool == viewModel.bakerDelegationData.oldDelegationIsBaker))
     }
 
-    private fun getAmountToStake(): Long {
-        return CurrencyUtil.toGTUValue(binding.amount.text.toString()) ?: 0
+    private fun getAmountToStake(): BigDecimal {
+        return CurrencyUtil.toGTUValue(binding.amount.text.toString()) ?: BigDecimal.ZERO
     }
 
     private fun showNewAmountZero() {

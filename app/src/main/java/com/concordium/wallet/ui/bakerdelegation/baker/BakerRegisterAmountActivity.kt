@@ -16,11 +16,13 @@ import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.common.GenericFlowActivity
+import com.concordium.wallet.util.toBigDecimal
+import java.math.BigDecimal
 
 class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity() {
-    private var minFee: Long? = null
-    private var maxFee: Long? = null
-    private var singleFee: Long? = null
+    private var minFee: BigDecimal? = null
+    private var maxFee: BigDecimal? = null
+    private var singleFee: BigDecimal? = null
 
     companion object {
         private const val RANGE_MIN_FEE = 1
@@ -44,7 +46,7 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity() 
 
         if (viewModel.bakerDelegationData.isUpdateBaker()) {
             setActionBarTitle(R.string.baker_registration_update_amount_title)
-            viewModel.bakerDelegationData.oldStakedAmount = viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount?.toLong()
+            viewModel.bakerDelegationData.oldStakedAmount = viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount?.toBigDecimal()
             viewModel.bakerDelegationData.oldRestake = viewModel.bakerDelegationData.account?.accountBaker?.restakeEarnings
             binding.amount.setText(CurrencyUtil.formatGTU(viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount ?: "0", true))
             binding.amountDesc.text = getString(R.string.baker_update_enter_new_stake)
@@ -53,8 +55,8 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity() 
         binding.balanceAmount.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.account?.finalizedBalance ?: 0, true)
         binding.bakerAmount.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount ?: "0", true)
 
-        viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<Long?, Int?>> {
-            override fun onChanged(response: Pair<Long?, Int?>?) {
+        viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<BigDecimal?, Int?>> {
+            override fun onChanged(response: Pair<BigDecimal?, Int?>?) {
                 response?.second?.let { requestId ->
                     when (requestId) {
                         SINGLE_FEE -> {
@@ -69,11 +71,11 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity() 
                     }
                     singleFee?.let {
                         binding.poolEstimatedTransactionFee.visibility = View.VISIBLE
-                        binding.poolEstimatedTransactionFee.text = getString(R.string.baker_registration_update_amount_estimated_transaction_fee_single, CurrencyUtil.formatGTU(singleFee ?: 0))
+                        binding.poolEstimatedTransactionFee.text = getString(R.string.baker_registration_update_amount_estimated_transaction_fee_single, CurrencyUtil.formatGTU(singleFee ?: BigDecimal.ZERO))
                     } ?: run {
                         if (minFee != null && maxFee != null) {
                             binding.poolEstimatedTransactionFee.visibility = View.VISIBLE
-                            binding.poolEstimatedTransactionFee.text = getString(R.string.baker_registration_update_amount_estimated_transaction_fee_range, CurrencyUtil.formatGTU(minFee ?: 0), CurrencyUtil.formatGTU(maxFee ?: 0))
+                            binding.poolEstimatedTransactionFee.text = getString(R.string.baker_registration_update_amount_estimated_transaction_fee_range, CurrencyUtil.formatGTU(minFee ?: BigDecimal.ZERO), CurrencyUtil.formatGTU(maxFee ?: BigDecimal.ZERO))
                         }
                     }
                 }
@@ -145,8 +147,8 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity() 
         return StakeAmountInputValidator(
             viewModel.bakerDelegationData.chainParameters?.minimumEquityCapital,
             viewModel.getStakeInputMax(),
-            (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0),
-            viewModel.bakerDelegationData.account?.getAtDisposal(),
+            (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0).toBigDecimal(),
+            viewModel.bakerDelegationData.account?.getAtDisposal()?.toBigDecimal(),
             viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,
             null,
             viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount,
@@ -194,8 +196,8 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity() 
         }
     }
 
-    private fun getAmountToStake(): Long {
-        return CurrencyUtil.toGTUValue(binding.amount.text.toString()) ?: 0
+    private fun getAmountToStake(): BigDecimal {
+        return CurrencyUtil.toGTUValue(binding.amount.text.toString()) ?: BigDecimal.ZERO
     }
 
     private fun show95PercentWarning() {

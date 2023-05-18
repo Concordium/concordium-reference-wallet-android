@@ -20,7 +20,10 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.cis2.*
+import com.concordium.wallet.ui.cis2.SendTokenActivity
+import com.concordium.wallet.ui.cis2.TokenDetailsActivity
+import com.concordium.wallet.ui.cis2.TokensFragment
+import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.ui.cis2.lookfornew.LookForNewTokensFragment
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
@@ -441,10 +444,10 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
                     "",
                     "",
                     true,
-                    viewModelAccountDetails.account.totalUnshieldedBalance,
+                    viewModelAccountDetails.account.totalUnshieldedBalance.toBigDecimal(),
                     viewModelAccountDetails.account.getAtDisposalWithoutStakedOrScheduled(
                         viewModelAccountDetails.account.totalUnshieldedBalance
-                    ),
+                    ).toBigDecimal(),
                     "",
                     "CCD"
                 )

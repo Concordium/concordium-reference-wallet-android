@@ -5,10 +5,12 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.uicore.view.AmountEditText
 import com.concordium.wallet.uicore.view.SegmentedControlView
+import com.concordium.wallet.util.toPlainStringStripped
+import java.math.BigDecimal
 import java.text.DecimalFormatSymbols
 
 abstract class BaseDelegationBakerRegisterAmountActivity : BaseDelegationBakerActivity() {
-    protected var validateFee: Long? = null
+    protected var validateFee: BigDecimal? = null
     protected var baseDelegationBakerRegisterAmountListener: BaseDelegationBakerRegisterAmountListener? = null
 
     interface BaseDelegationBakerRegisterAmountListener {
@@ -42,8 +44,8 @@ abstract class BaseDelegationBakerRegisterAmountActivity : BaseDelegationBakerAc
             }, !initiallyReStake)
     }
 
-    protected fun moreThan95Percent(amountToStake: Long): Boolean {
-        return amountToStake > (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0) * 0.95
+    protected fun moreThan95Percent(amountToStake: BigDecimal): Boolean {
+        return amountToStake > (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0).toBigDecimal() * BigDecimal(0.95)
     }
 
     protected fun validateAmountInput(amount: AmountEditText, amountError: TextView) {
@@ -54,7 +56,7 @@ abstract class BaseDelegationBakerRegisterAmountActivity : BaseDelegationBakerAc
         setAmountHint(amount)
         if (amount.text.toString().isNotBlank() && amount.text.toString() != "Ͼ") {
             val stakeAmountInputValidator = getStakeAmountInputValidator()
-            val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toString(), validateFee)
+            val stakeError = stakeAmountInputValidator.validate(CurrencyUtil.toGTUValue(amount.text.toString())?.toPlainStringStripped(), validateFee)
             if (stakeError != StakeAmountInputValidator.StakeError.OK) {
                 amountError.text = stakeAmountInputValidator.getErrorText(this, stakeError)
                 showError(stakeError)

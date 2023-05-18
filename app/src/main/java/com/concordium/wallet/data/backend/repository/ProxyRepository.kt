@@ -5,6 +5,8 @@ import com.concordium.wallet.core.backend.BackendCallback
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.model.*
+import com.concordium.wallet.util.toPlainStringStripped
+import java.math.BigDecimal
 
 class ProxyRepository {
     private val backend = App.appCore.getProxyBackend()
@@ -181,7 +183,7 @@ class ProxyRepository {
 
     fun getTransferCost(type: String,
                         memoSize: Int? = null,
-                        amount: Long? = null,
+                        amount: BigDecimal? = null,
                         restake: Boolean? = null,
                         lPool: Boolean? = null,
                         targetChange: Boolean? = null,
@@ -197,7 +199,7 @@ class ProxyRepository {
                         failure: ((Throwable) -> Unit)?): BackendRequest<TransferCost> {
         val lPoolArg = if (lPool == true) "lPool" else null
         val targetArg = if (targetChange == true) "target" else null
-        val call = backend.transferCost(type, memoSize, amount, restake, lPoolArg, targetArg, metadataSize, openStatus, sender, contractIndex, contractSubindex, receiveName, parameter, executionNRGBuffer)
+        val call = backend.transferCost(type, memoSize, amount?.toPlainStringStripped(), restake, lPoolArg, targetArg, metadataSize, openStatus, sender, contractIndex, contractSubindex, receiveName, parameter, executionNRGBuffer)
         call.enqueue(object : BackendCallback<TransferCost>() {
             override fun onResponseData(response: TransferCost) {
                 success(response)

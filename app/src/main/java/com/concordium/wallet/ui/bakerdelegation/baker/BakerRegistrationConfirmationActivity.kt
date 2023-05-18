@@ -15,6 +15,8 @@ import com.concordium.wallet.databinding.ActivityBakerRegistrationConfirmationBi
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.util.UnitConvertUtil
+import com.concordium.wallet.util.toBigDecimal
+import java.math.BigDecimal
 
 class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
     private var receiptMode = false
@@ -46,8 +48,8 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
     }
 
     private fun loadFee() {
-        viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<Long?, Int?>> {
-            override fun onChanged(response: Pair<Long?, Int?>?) {
+        viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<BigDecimal?, Int?>> {
+            override fun onChanged(response: Pair<BigDecimal?, Int?>?) {
                 response?.first?.let {
                     showWaiting(binding.includeProgress.progressLayout, false)
                     updateViews()
@@ -69,7 +71,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
                 updateViewsRegisterBaker()
             }
             UPDATE_BAKER_KEYS -> {
-                viewModel.bakerDelegationData.amount = viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount?.toLong() ?: 0
+                viewModel.bakerDelegationData.amount = viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount.toBigDecimal()
                 updateViewsUpdateBakerKeys()
             }
             UPDATE_BAKER_POOL -> {
@@ -149,7 +151,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
         if (viewModel.stakedAmountHasChanged()) {
             binding.delegationAmountConfirmationTitle.visibility = View.VISIBLE
             binding.bakerAmountConfirmation.visibility = View.VISIBLE
-            binding.bakerAmountConfirmation.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
+            binding.bakerAmountConfirmation.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: BigDecimal.ZERO, true)
         }
     }
 
@@ -191,7 +193,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
     }
 
     private fun onContinueClicked() {
-        if (viewModel.atDisposal() < (viewModel.bakerDelegationData.cost ?: 0)) {
+        if (viewModel.atDisposal() < (viewModel.bakerDelegationData.cost ?: BigDecimal.ZERO)) {
             showNotEnoughFunds()
             return
         }
@@ -218,12 +220,12 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
 
         var noticeMessage = getString(R.string.baker_notice_message)
 
-        if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount ?: 0) < (viewModel.bakerDelegationData.amount ?: 0)) {
+        if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount ?: BigDecimal.ZERO) < (viewModel.bakerDelegationData.amount ?: BigDecimal.ZERO)) {
             noticeMessage = getString(R.string.baker_notice_message_update_increase)
-        }  else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount ?: 0) > (viewModel.bakerDelegationData.amount ?: 0)) {
+        }  else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount ?: BigDecimal.ZERO) > (viewModel.bakerDelegationData.amount ?: BigDecimal.ZERO)) {
             val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0)
             noticeMessage = resources.getQuantityString(R.plurals.baker_notice_message_update_decrease, gracePeriod, gracePeriod)
-        } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount ?: 0) == (viewModel.bakerDelegationData.amount ?: 0)) {
+        } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount ?:  BigDecimal.ZERO) == (viewModel.bakerDelegationData.amount ?: BigDecimal.ZERO)) {
             noticeMessage = getString(R.string.baker_notice_message_update_pool)
         } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_POOL) {
             noticeMessage = getString(R.string.baker_notice_message_update_pool)

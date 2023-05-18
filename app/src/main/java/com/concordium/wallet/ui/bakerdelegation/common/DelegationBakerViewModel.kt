@@ -37,8 +37,11 @@ import com.concordium.wallet.data.util.FileUtil
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.equalsArithmetically
+import com.concordium.wallet.util.toBigDecimal
 import kotlinx.coroutines.*
 import java.io.File
+import java.math.BigDecimal
 import java.util.*
 import javax.crypto.Cipher
 
@@ -84,8 +87,8 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     val showDetailedLiveData: LiveData<Event<Boolean>>
         get() = _showDetailedLiveData
 
-    private val _transactionFeeLiveData = MutableLiveData<Pair<Long?, Int?>>()
-    val transactionFeeLiveData: LiveData<Pair<Long?, Int?>>
+    private val _transactionFeeLiveData = MutableLiveData<Pair<BigDecimal?, Int?>>()
+    val transactionFeeLiveData: LiveData<Pair<BigDecimal?, Int?>>
         get() = _transactionFeeLiveData
 
     private val _showAuthenticationLiveData = MutableLiveData<Event<Boolean>>()
@@ -118,7 +121,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun stakedAmountHasChanged(): Boolean {
-        return bakerDelegationData.amount != bakerDelegationData.oldStakedAmount
+        return !bakerDelegationData.amount.equalsArithmetically(bakerDelegationData.oldStakedAmount)
     }
 
     fun metadataUrlHasChanged(): Boolean {
@@ -131,7 +134,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun isUpdateDecreaseAmount(): Boolean {
-        return (bakerDelegationData.isUpdateBaker() || isUpdatingDelegation()) && (bakerDelegationData.oldStakedAmount ?: 0) > (bakerDelegationData.amount ?: 0)
+        return (bakerDelegationData.isUpdateBaker() || isUpdatingDelegation()) && (bakerDelegationData.oldStakedAmount ?: BigDecimal.ZERO) > (bakerDelegationData.amount ?: BigDecimal.ZERO)
     }
 
     fun poolHasChanged(): Boolean {
@@ -163,7 +166,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     fun isLoweringDelegation(): Boolean {
         bakerDelegationData.amount?.let { amount ->
-            if (amount < (bakerDelegationData.oldStakedAmount ?: 0))
+            if (amount < (bakerDelegationData.oldStakedAmount ?: BigDecimal.ZERO))
                 return true
         }
         return false
@@ -173,15 +176,15 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return bakerDelegationData.account?.accountDelegation?.pendingChange != null || bakerDelegationData.account?.accountBaker?.pendingChange != null
     }
 
-    fun atDisposal(): Long {
-        var staked: Long = 0
+    fun atDisposal(): BigDecimal {
+        var staked: BigDecimal = BigDecimal.ZERO
         bakerDelegationData.account?.accountDelegation?.let {
-            staked = it.stakedAmount.toLong()
+            staked = it.stakedAmount.toBigDecimal()
         }
         bakerDelegationData.account?.accountBaker?.let {
-            staked = it.stakedAmount.toLong()
+            staked = it.stakedAmount.toBigDecimal()
         }
-        return (bakerDelegationData.account?.finalizedBalance ?: 0) - staked
+        return (bakerDelegationData.account?.finalizedBalance ?: 0).toBigDecimal() - staked
     }
 
     fun selectBakerPool() {
@@ -310,7 +313,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             openStatus = openStatus,
             success = {
                 bakerDelegationData.energy = it.energy
-                bakerDelegationData.cost = it.cost.toLong()
+                bakerDelegationData.cost = it.cost.toBigDecimal()
                 if (notifyObservers)
                     _transactionFeeLiveData.value = Pair(bakerDelegationData.cost, requestId)
             },
@@ -667,7 +670,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             0,
             accountId,
             cost,
-            0,
+            BigDecimal.ZERO,
             fromAddress,
             fromAddress,
             expiry,

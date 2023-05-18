@@ -2,6 +2,7 @@ package com.concordium.wallet.data.model
 
 import com.concordium.wallet.CBORUtil
 import java.io.Serializable
+import java.math.BigDecimal
 import java.util.*
 
 
@@ -9,9 +10,9 @@ data class Transaction(
     val source: TransactionSource,
     val timeStamp: Date,
     var title: String = "",
-    val subtotal: Long?,
-    val cost: Long?,
-    val total: Long,
+    val subtotal: BigDecimal?,
+    val cost: BigDecimal?,
+    val total: BigDecimal,
     var transactionStatus: TransactionStatus,
     var outcome: TransactionOutcome,
     var blockHashes: List<String>?,
@@ -65,18 +66,18 @@ data class Transaction(
     }
 
 
-    fun getTotalAmountForRegular(): Long {
+    fun getTotalAmountForRegular(): BigDecimal {
         if (transactionStatus == TransactionStatus.ABSENT) {
-            return 0
+            return BigDecimal.ZERO
         } else if (outcome == TransactionOutcome.Reject) {
-            return if (cost == null) 0 else -cost
+            return if (cost == null) BigDecimal.ZERO else -cost
         }
         return total
     }
 
-    fun getTotalAmountForShielded() : Long {
+    fun getTotalAmountForShielded() : BigDecimal {
         if(subtotal == null)
-            return 0
+            return BigDecimal.ZERO
         else{
             return -subtotal
         }

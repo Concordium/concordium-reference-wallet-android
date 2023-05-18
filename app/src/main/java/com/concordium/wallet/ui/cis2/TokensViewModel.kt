@@ -19,10 +19,12 @@ import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.toBigDecimal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.Serializable
+import java.math.BigDecimal
 
 data class TokenData(
     var account: Account? = null,
@@ -96,8 +98,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     it.contractIndex,
                     tokenData.subIndex,
                     false,
-                    0,
-                    0,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
                     it.contractName,
                     it.tokenMetadata?.symbol ?: ""
                 )
@@ -338,8 +340,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             "",
             "",
             true,
-            account?.totalBalance ?: 0,
-            atDisposal,
+            account?.totalBalance?.toBigDecimal() ?: BigDecimal.ZERO,
+            atDisposal.toBigDecimal(),
             "",
             "CCD"
         )
@@ -417,7 +419,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     success = { cis2TokensBalances ->
                         cis2TokensBalances.forEach { cis2TokenBalance ->
                             tokens.firstOrNull { it.token == cis2TokenBalance.tokenId }?.totalBalance =
-                                cis2TokenBalance.balance.toLong()
+                                cis2TokenBalance.balance.toBigDecimal()
                         }
                         tokenBalances.postValue(true)
                     },

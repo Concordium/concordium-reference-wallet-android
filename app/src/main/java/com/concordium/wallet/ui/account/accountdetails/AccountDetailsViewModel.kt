@@ -38,6 +38,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
+import java.math.BigDecimal
 import java.util.*
 import javax.crypto.Cipher
 
@@ -198,8 +199,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         val transfer = Transfer(
             0,
             account.id,
-            -2000000000,
-            0,
+            (-2000000000).toBigDecimal(),
+            BigDecimal.ZERO,
             "",
             account.address,
             expiry,
