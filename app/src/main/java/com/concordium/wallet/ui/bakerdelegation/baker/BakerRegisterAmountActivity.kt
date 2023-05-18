@@ -52,7 +52,7 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity() 
             binding.amountDesc.text = getString(R.string.baker_update_enter_new_stake)
         }
 
-        binding.balanceAmount.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.account?.finalizedBalance ?: 0, true)
+        binding.balanceAmount.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.account?.finalizedBalance ?: BigDecimal.ZERO, true)
         binding.bakerAmount.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount ?: "0", true)
 
         viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<BigDecimal?, Int?>> {
@@ -147,8 +147,8 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity() 
         return StakeAmountInputValidator(
             viewModel.bakerDelegationData.chainParameters?.minimumEquityCapital,
             viewModel.getStakeInputMax(),
-            (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0).toBigDecimal(),
-            viewModel.bakerDelegationData.account?.getAtDisposal()?.toBigDecimal(),
+            viewModel.bakerDelegationData.account?.finalizedBalance ?: BigDecimal.ZERO,
+            viewModel.bakerDelegationData.account?.getAtDisposal(),
             viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,
             null,
             viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount,

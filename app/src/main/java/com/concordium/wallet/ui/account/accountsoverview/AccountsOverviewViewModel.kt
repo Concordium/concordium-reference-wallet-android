@@ -24,6 +24,7 @@ import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 
 class AccountsOverviewViewModel(application: Application) : AndroidViewModel(application) {
     private val _waitingLiveData = MutableLiveData<Boolean>()
@@ -165,7 +166,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             if (identityCount == 0) {
                 _stateLiveData.value = State.NO_IDENTITIES
                 // Set balance, because we know it will be 0
-                _totalBalanceLiveData.value = TotalBalancesData(0L, 0L, 0L, false)
+                _totalBalanceLiveData.value = TotalBalancesData(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, false)
                 if(notifyWaitingLiveData){
                     _waitingLiveData.value = false
                 }
@@ -174,7 +175,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                 if (accountCount == 0) {
                     _stateLiveData.value = State.NO_ACCOUNTS
                     // Set balance, because we know it will be 0
-                    _totalBalanceLiveData.value = TotalBalancesData(0L, 0L, 0L, false)
+                    _totalBalanceLiveData.value = TotalBalancesData(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, false)
                     if(notifyWaitingLiveData){
                         _waitingLiveData.value = false
                     }

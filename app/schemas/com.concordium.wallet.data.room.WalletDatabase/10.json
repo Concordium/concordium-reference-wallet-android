@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 10,
-    "identityHash": "e1b39bdc2eeca179cffeb4bf3dbe9b43",
+    "identityHash": "ff4fbf1b8780c9e9550de36149adac8a",
     "entities": [
       {
         "tableName": "identity_table",
@@ -85,7 +85,7 @@
       },
       {
         "tableName": "account_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `identity_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `address` TEXT NOT NULL, `submission_id` TEXT NOT NULL, `transaction_status` INTEGER NOT NULL, `encrypted_account_data` TEXT NOT NULL, `revealed_attributes` TEXT NOT NULL, `credential` TEXT, `finalized_balance` INTEGER NOT NULL, `current_balance` INTEGER NOT NULL, `total_balance` INTEGER NOT NULL, `total_unshielded_balance` INTEGER NOT NULL, `total_shielded_balance` INTEGER NOT NULL, `finalized_encrypted_balance` TEXT, `current_encrypted_balance` TEXT, `current_balance_status` INTEGER NOT NULL, `total_staked` INTEGER NOT NULL, `total_at_disposal` INTEGER NOT NULL, `read_only` INTEGER NOT NULL, `finalized_account_release_schedule` TEXT, `baker_id` INTEGER, `account_delegation` TEXT, `account_baker` TEXT, `accountIndex` INTEGER, `cred_number` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `identity_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `address` TEXT NOT NULL, `submission_id` TEXT NOT NULL, `transaction_status` INTEGER NOT NULL, `encrypted_account_data` TEXT NOT NULL, `revealed_attributes` TEXT NOT NULL, `credential` TEXT, `finalized_balance` TEXT NOT NULL, `current_balance` TEXT NOT NULL, `total_balance` TEXT NOT NULL, `total_unshielded_balance` TEXT NOT NULL, `total_shielded_balance` TEXT NOT NULL, `finalized_encrypted_balance` TEXT, `current_encrypted_balance` TEXT, `current_balance_status` INTEGER NOT NULL, `total_staked` TEXT NOT NULL, `total_at_disposal` TEXT NOT NULL, `read_only` INTEGER NOT NULL, `finalized_account_release_schedule` TEXT, `baker_id` INTEGER, `account_delegation` TEXT, `account_baker` TEXT, `accountIndex` INTEGER, `cred_number` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -144,31 +144,31 @@
           {
             "fieldPath": "finalizedBalance",
             "columnName": "finalized_balance",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "currentBalance",
             "columnName": "current_balance",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "totalBalance",
             "columnName": "total_balance",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "totalUnshieldedBalance",
             "columnName": "total_unshielded_balance",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "totalShieldedBalance",
             "columnName": "total_shielded_balance",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -192,13 +192,13 @@
           {
             "fieldPath": "totalStaked",
             "columnName": "total_staked",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "totalAtDisposal",
             "columnName": "total_at_disposal",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -547,7 +547,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e1b39bdc2eeca179cffeb4bf3dbe9b43')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ff4fbf1b8780c9e9550de36149adac8a')"
     ]
   }
 }

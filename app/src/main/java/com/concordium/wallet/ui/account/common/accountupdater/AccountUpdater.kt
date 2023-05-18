@@ -319,8 +319,8 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                 for (request in accountBalanceRequestListCloned) {
                     Log.d("AccountBalance Loop item start")
                     val accountBalance = request.deferred.await()
-                    request.account.finalizedBalance = accountBalance.finalizedBalance?.getAmount() ?: 0
-                    request.account.currentBalance = accountBalance.currentBalance?.getAmount() ?: 0
+                    request.account.finalizedBalance = accountBalance.finalizedBalance?.getAmount() ?: BigDecimal.ZERO
+                    request.account.currentBalance = accountBalance.currentBalance?.getAmount() ?: BigDecimal.ZERO
                     request.account.accountIndex = accountBalance.finalizedBalance?.accountIndex
 
                     request.account.accountDelegation = accountBalance.currentBalance?.accountDelegation
@@ -330,11 +330,11 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     accountBalance.finalizedBalance?.let {
 
                         if(it.accountBaker != null && it.accountBaker.stakedAmount != null){
-                            it.accountBaker.stakedAmount.toLong()
+                            it.accountBaker.stakedAmount.toBigDecimal()
                                 .let { request.account.totalStaked = it }
                         }
                         else{
-                            request.account.totalStaked = 0
+                            request.account.totalStaked = BigDecimal.ZERO
                         }
 
                         if(it.accountBaker != null && it.accountBaker.bakerId != null){
@@ -381,9 +381,9 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
     }
 
     private suspend fun calculateTotalBalances(): TotalBalancesData {
-        var totalBalanceForAllAccounts = 0L
-        var totalAtDisposalWithoutStakedOrScheduledForAllAccounts = 0L
-        var totalStakedForAllAccounts = 0L
+        var totalBalanceForAllAccounts = BigDecimal.ZERO
+        var totalAtDisposalWithoutStakedOrScheduledForAllAccounts = BigDecimal.ZERO
+        var totalStakedForAllAccounts = BigDecimal.ZERO
         var totalContainsEncrypted = false
 
         for (account in accountList) {
@@ -394,7 +394,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
             var accountShieldedBalance: BigDecimal = BigDecimal.ZERO
 
             //Calculate unshielded
-            var accountUnshieldedBalance: BigDecimal = account.finalizedBalance.toBigDecimal()
+            var accountUnshieldedBalance: BigDecimal = account.finalizedBalance
 
             for (transfer in transferList) {
 
@@ -450,9 +450,9 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
             }
 
             //Calculate totals for account
-            account.totalBalance = (accountUnshieldedBalance + accountShieldedBalance).longValueExact()
-            account.totalUnshieldedBalance = accountUnshieldedBalance.longValueExact()
-            account.totalShieldedBalance = accountShieldedBalance.longValueExact()
+            account.totalBalance = accountUnshieldedBalance + accountShieldedBalance
+            account.totalUnshieldedBalance = accountUnshieldedBalance
+            account.totalShieldedBalance = accountShieldedBalance
             account.encryptedBalanceStatus = containsEncrypted
 
             //Calculate totals for all accounts

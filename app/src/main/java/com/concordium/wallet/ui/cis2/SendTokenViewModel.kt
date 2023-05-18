@@ -192,7 +192,6 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         var atDisposal: BigDecimal = BigDecimal.ZERO
         sendTokenData.account?.let { account ->
             atDisposal = account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
-                .toBigDecimal()
         }
 
         return if (sendTokenData.token!!.isCCDToken) {
@@ -211,7 +210,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 sendTokenData.fee = it.cost.toBigDecimal()
                 sendTokenData.account?.let { account ->
                     sendTokenData.max =
-                        account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance).toBigDecimal() -
+                        account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) -
                                 (sendTokenData.fee ?: BigDecimal.ZERO)
                 }
                 waiting.postValue(false)
@@ -256,8 +255,8 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     private suspend fun getCCDDefaultToken(accountAddress: String): Token {
         val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
         val account = accountRepository.findByAddress(accountAddress)
-        val atDisposal = account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) ?: 0
-        return Token("", "CCD", "", null, false, "", "",true, (account?.totalBalance ?: 0).toBigDecimal(), atDisposal.toBigDecimal(), "", "CCD")
+        val atDisposal = account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) ?: BigDecimal.ZERO
+        return Token("", "CCD", "", null, false, "", "",true, (account?.totalBalance ?: BigDecimal.ZERO), atDisposal, "", "CCD")
     }
 
     fun getCipherForBiometrics(): Cipher? {

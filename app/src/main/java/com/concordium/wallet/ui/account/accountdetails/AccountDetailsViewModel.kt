@@ -110,8 +110,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     val identityLiveData: MutableLiveData<Identity?>
         get() = _identityLiveData
 
-    private var _totalBalanceLiveData = MutableLiveData<Pair<Long, Boolean>>()
-    val totalBalanceLiveData: LiveData<Pair<Long, Boolean>>
+    private var _totalBalanceLiveData = MutableLiveData<Pair<BigDecimal, Boolean>>()
+    val totalBalanceLiveData: LiveData<Pair<BigDecimal, Boolean>>
         get() = _totalBalanceLiveData
 
     private var _selectedTransactionForDecrytionLiveData = MutableLiveData<Transaction>()
@@ -245,7 +245,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 EventBus.getDefault().post(BakerDelegationData(account, isTransactionInProgress = hasPendingDelegationTransactions || hasPendingBakingTransactions , type = type))
             }
         } else {
-            _totalBalanceLiveData.value = Pair(0, false)
+            _totalBalanceLiveData.value = Pair(BigDecimal.ZERO, false)
         }
     }
 

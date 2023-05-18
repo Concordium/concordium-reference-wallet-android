@@ -330,7 +330,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
         val account = accountRepository.findByAddress(accountAddress)
         val atDisposal =
-            account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) ?: 0
+            account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) ?: BigDecimal.ZERO
         return Token(
             "",
             "CCD",
@@ -340,8 +340,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             "",
             "",
             true,
-            account?.totalBalance?.toBigDecimal() ?: BigDecimal.ZERO,
-            atDisposal.toBigDecimal(),
+            account?.totalBalance ?: BigDecimal.ZERO,
+            atDisposal,
             "",
             "CCD"
         )

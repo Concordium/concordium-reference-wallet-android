@@ -4,9 +4,10 @@ import androidx.room.*
 import com.concordium.wallet.App
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.typeconverter.AccountTypeConverters
+import com.concordium.wallet.util.toBigDecimal
 import com.google.gson.JsonObject
 import java.io.Serializable
-import kotlin.math.max
+import java.math.BigDecimal
 
 @Entity(tableName = "account_table", indices = [Index(value = ["address"], unique = true)])
 @TypeConverters(AccountTypeConverters::class)
@@ -36,19 +37,19 @@ data class Account(
     var credential: CredentialWrapper?,
 
     @ColumnInfo(name = "finalized_balance")
-    var finalizedBalance: Long = 0,
+    var finalizedBalance: BigDecimal = BigDecimal.ZERO,
 
     @ColumnInfo(name = "current_balance")
-    var currentBalance: Long = 0,
+    var currentBalance: BigDecimal = BigDecimal.ZERO,
 
     @ColumnInfo(name = "total_balance")
-    var totalBalance: Long = 0,
+    var totalBalance: BigDecimal = BigDecimal.ZERO,
 
     @ColumnInfo(name = "total_unshielded_balance")
-    var totalUnshieldedBalance: Long = 0,
+    var totalUnshieldedBalance: BigDecimal = BigDecimal.ZERO,
 
     @ColumnInfo(name = "total_shielded_balance")
-    var totalShieldedBalance: Long = 0,
+    var totalShieldedBalance: BigDecimal = BigDecimal.ZERO,
 
     @ColumnInfo(name = "finalized_encrypted_balance")
     var finalizedEncryptedBalance: AccountEncryptedAmount?,
@@ -60,10 +61,10 @@ data class Account(
     var encryptedBalanceStatus: ShieldedAccountEncryptionStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
 
     @ColumnInfo(name = "total_staked")
-    var totalStaked: Long = 0,
+    var totalStaked: BigDecimal = BigDecimal.ZERO,
 
     @ColumnInfo(name = "total_at_disposal")
-    var totalAtDisposal: Long = 0,
+    var totalAtDisposal: BigDecimal = BigDecimal.ZERO,
 
     @ColumnInfo(name = "read_only")
     var readOnly: Boolean = false,
@@ -126,21 +127,22 @@ data class Account(
         return accountDelegation != null
     }
 
-    fun getAtDisposalWithoutStakedOrScheduled(totalBalance: Long): Long {
-        val stakedAmount: Long = accountDelegation?.stakedAmount?.toLong() ?: accountBaker?.stakedAmount?.toLong() ?: 0
-        val scheduledTotal: Long = finalizedAccountReleaseSchedule?.total?.toLong() ?: 0
-        val subtract = if (stakedAmount in 1..scheduledTotal)
+    fun getAtDisposalWithoutStakedOrScheduled(totalBalance: BigDecimal): BigDecimal {
+        val stakedAmount: BigDecimal = accountDelegation?.stakedAmount?.toBigDecimal()
+            ?: accountBaker?.stakedAmount?.toBigDecimal() ?: BigDecimal.ZERO
+        val scheduledTotal: BigDecimal = finalizedAccountReleaseSchedule?.total.toBigDecimal()
+        val subtract: BigDecimal = if (stakedAmount in BigDecimal.ONE..scheduledTotal)
             scheduledTotal
-        else if (stakedAmount > 0 && stakedAmount > scheduledTotal)
+        else if (stakedAmount.signum() > 0 && stakedAmount > scheduledTotal)
             stakedAmount
-        else if (stakedAmount == 0L && scheduledTotal > 0)
+        else if (stakedAmount.signum() == 0 && scheduledTotal.signum() > 0)
             scheduledTotal
         else
-            0
-        return max(totalBalance - subtract, 0)
+            BigDecimal.ZERO
+        return BigDecimal.ZERO.max(totalBalance - subtract)
     }
 
-    fun getAtDisposal(): Long {
-        return finalizedBalance - (finalizedAccountReleaseSchedule?.total?.toLong() ?: 0)
+    fun getAtDisposal(): BigDecimal {
+        return finalizedBalance - finalizedAccountReleaseSchedule?.total.toBigDecimal()
     }
 }

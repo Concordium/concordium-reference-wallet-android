@@ -89,7 +89,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             onContinueClicked()
         }
 
-        binding.balanceAmount.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.account?.finalizedBalance ?: 0, true)
+        binding.balanceAmount.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.account?.finalizedBalance ?: BigDecimal.ZERO, true)
         binding.delegationAmount.text = CurrencyUtil.formatGTU(0, true)
         viewModel.bakerDelegationData.account?.let { account ->
             account.accountDelegation?.let { accountDelegation ->
@@ -154,8 +154,8 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         return StakeAmountInputValidator(
             if (viewModel.isUpdatingDelegation()) "0" else "1",
             null,
-            (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0).toBigDecimal(),
-            viewModel.bakerDelegationData.account?.getAtDisposal()?.toBigDecimal(),
+            viewModel.bakerDelegationData.account?.finalizedBalance ?: BigDecimal.ZERO,
+            viewModel.bakerDelegationData.account?.getAtDisposal(),
             viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,
             viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapitalCap,
             viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount,

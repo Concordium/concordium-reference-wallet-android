@@ -184,7 +184,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         bakerDelegationData.account?.accountBaker?.let {
             staked = it.stakedAmount.toBigDecimal()
         }
-        return (bakerDelegationData.account?.finalizedBalance ?: 0).toBigDecimal() - staked
+        return (bakerDelegationData.account?.finalizedBalance ?: BigDecimal.ZERO) - staked
     }
 
     fun selectBakerPool() {

@@ -23,7 +23,7 @@ import com.concordium.wallet.data.room.*
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.passphrase.recoverprocess.retrofit.IdentityProviderApiInstance
 import com.concordium.wallet.util.DateTimeUtil
-import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.toBigDecimal
 import com.google.gson.JsonArray
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +31,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.Serializable
+import java.math.BigDecimal
 
 data class RecoverProcessData(
     var identitiesWithAccounts: List<IdentityWithAccounts> = mutableListOf(),
@@ -256,16 +257,16 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                     encryptedAccountData = encryptedAccountData,
                     revealedAttributes = listOf(),
                     credential = createCredentialOutput.credential,
-                    finalizedBalance = accountBalance.finalizedBalance.accountAmount.toLong(),
-                    currentBalance = accountBalance.currentBalance?.accountAmount?.toLong() ?: 0,
-                    totalBalance = 0,
-                    totalUnshieldedBalance = accountBalance.finalizedBalance.accountAmount.toLong(),
-                    totalShieldedBalance = 0,
+                    finalizedBalance = accountBalance.finalizedBalance.accountAmount.toBigDecimal(),
+                    currentBalance = accountBalance.currentBalance?.accountAmount.toBigDecimal(),
+                    totalBalance = BigDecimal.ZERO,
+                    totalUnshieldedBalance = accountBalance.finalizedBalance.accountAmount.toBigDecimal(),
+                    totalShieldedBalance = BigDecimal.ZERO,
                     finalizedEncryptedBalance = accountBalance.finalizedBalance.accountEncryptedAmount,
                     currentEncryptedBalance = accountBalance.currentBalance?.accountEncryptedAmount,
                     encryptedBalanceStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
-                    totalStaked = if (accountBalance.finalizedBalance.accountBaker != null) accountBalance.finalizedBalance.accountBaker.stakedAmount.toLong() else 0,
-                    totalAtDisposal = 0,
+                    totalStaked = accountBalance.finalizedBalance.accountBaker?.stakedAmount.toBigDecimal(),
+                    totalAtDisposal = BigDecimal.ZERO,
                     readOnly = false,
                     finalizedAccountReleaseSchedule = accountBalance.finalizedBalance.accountReleaseSchedule,
                     bakerId = accountBalance.finalizedBalance.accountBaker?.bakerId?.toLong(),

@@ -171,14 +171,14 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     }
 
     fun hasEnoughFunds(): Boolean {
-        val amount = binder?.getSessionRequestParams()?.parsePayload()?.amount
-        val fee = walletConnectData.cost
+        val amount = binder?.getSessionRequestParams()?.parsePayload()?.amount?.toBigDecimal()
+        val fee = walletConnectData.cost?.toBigDecimal()
         if (amount != null && fee != null) {
             walletConnectData.account?.totalUnshieldedBalance?.let { totalUnshieldedBalance ->
                 walletConnectData.account?.getAtDisposalWithoutStakedOrScheduled(
                     totalUnshieldedBalance
                 )?.let { atDisposal ->
-                    if (atDisposal >= amount.toLong() + fee.toLong())
+                    if (atDisposal >= amount + fee)
                         return true
                 }
             }

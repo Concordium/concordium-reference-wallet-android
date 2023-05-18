@@ -218,17 +218,16 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         }
 
         val totalUnshieldedAtDisposal = account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
-            .toBigDecimal()
 
         if (isShielded) {
             if (isTransferToSameAccount()) {
                 //SEC_TO_PUBLIC_TRANSFER
-                if (amountValue > account.totalShieldedBalance.toBigDecimal() || cost > totalUnshieldedAtDisposal) {
+                if (amountValue > account.totalShieldedBalance || cost > totalUnshieldedAtDisposal) {
                     return false
                 }
             } else {
                 //ENCRYPTED_TRANSFER
-                if (amountValue > account.totalShieldedBalance.toBigDecimal() || cost > totalUnshieldedAtDisposal) {
+                if (amountValue > account.totalShieldedBalance || cost > totalUnshieldedAtDisposal) {
                     return false
                 }
             }
@@ -686,7 +685,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
                 cost = it
             }
             var amount: BigDecimal =
-                ((if (isShielded) account.totalShieldedBalance.toBigDecimal() else (account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance).toBigDecimal() - cost)) )
+                ((if (isShielded) account.totalShieldedBalance else (account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) - cost)) )
             if (amount.signum() < 0) {
                 amount = BigDecimal.ZERO
             }

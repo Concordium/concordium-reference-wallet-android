@@ -64,7 +64,7 @@ class SendTokenActivity : BaseActivity() {
     private fun initViews() {
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.cis_send_funds)
         binding.amount.setText(CurrencyUtil.formatGTU(0, false))
-        binding.atDisposal.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.account?.getAtDisposalWithoutStakedOrScheduled(viewModel.sendTokenData.account?.totalUnshieldedBalance ?: 0) ?: 0, true)
+        binding.atDisposal.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.account?.getAtDisposalWithoutStakedOrScheduled(viewModel.sendTokenData.account?.totalUnshieldedBalance ?: BigDecimal.ZERO) ?: BigDecimal.ZERO, true)
         initializeAmount()
         initializeMax()
         initializeMemo()

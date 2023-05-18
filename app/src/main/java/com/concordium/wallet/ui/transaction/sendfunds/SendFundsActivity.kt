@@ -290,7 +290,7 @@ class SendFundsActivity : BaseActivity() {
 
     private fun check95PercentWarning() {
         val amountValue = CurrencyUtil.toGTUValue(binding.amountEdittext.text.toString())
-        val atDisposal = viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance).toBigDecimal()
+        val atDisposal = viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance)
         if (amountValue != null) {
             if (amountValue > atDisposal * BigDecimal(0.95)) {
                 val builder = AlertDialog.Builder(this)

@@ -32,6 +32,7 @@ import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.ui.walletconnect.WalletConnectActivity
 import com.concordium.wallet.uicore.afterMeasured
 import com.concordium.wallet.util.getSerializable
+import java.math.BigDecimal
 import javax.crypto.Cipher
 
 class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl() {
@@ -424,7 +425,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         popup.showSnackbar(binding.rootLayout, stringRes)
     }
 
-    private fun showTotalBalance(totalBalance: Long) {
+    private fun showTotalBalance(totalBalance: BigDecimal) {
         binding.balanceTextview.text = CurrencyUtil.formatGTU(totalBalance, true)
         binding.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(
             viewModelAccountDetails.account.getAtDisposalWithoutStakedOrScheduled(totalBalance),
@@ -444,10 +445,10 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
                     "",
                     "",
                     true,
-                    viewModelAccountDetails.account.totalUnshieldedBalance.toBigDecimal(),
+                    viewModelAccountDetails.account.totalUnshieldedBalance,
                     viewModelAccountDetails.account.getAtDisposalWithoutStakedOrScheduled(
                         viewModelAccountDetails.account.totalUnshieldedBalance
-                    ).toBigDecimal(),
+                    ),
                     "",
                     "CCD"
                 )
