@@ -195,9 +195,9 @@ class OfflineMockInterceptor : Interceptor {
                 "013c6d2dd67affd6f39b9a7b255d244055b53d68fe8b0add4839a20e911d04cb",
                 timeStamp.toDouble(),
                 "84bf1e2ef8d3af3063cdb681932990f71ddb3949655f55307a266e5d687b414f",
-                (-10000).toBigDecimal(),
-                59.toBigDecimal(),
-                (-10059).toBigDecimal(),
+                (-10000).toBigInteger(),
+                59.toBigInteger(),
+                (-10059).toBigInteger(),
                 59,
                 details,
                 null

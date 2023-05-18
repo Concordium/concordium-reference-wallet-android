@@ -23,22 +23,25 @@ import com.concordium.wallet.data.walletconnect.ContractAddress
 import com.concordium.wallet.data.walletconnect.Payload
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
-import com.concordium.wallet.util.*
+import com.concordium.wallet.util.DateTimeUtil
+import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.toBigInteger
+import com.concordium.wallet.util.toHex
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.Serializable
-import java.math.BigDecimal
+import java.math.BigInteger
 import javax.crypto.Cipher
 
 data class SendTokenData(
     var token: Token? = null,
     var account: Account? = null,
-    var amount: BigDecimal = BigDecimal.ZERO,
+    var amount: BigInteger = BigInteger.ZERO,
     var receiver: String = "",
     var receiverName: String? = null,
-    var fee: BigDecimal? = null,
-    var max: BigDecimal? = null,
+    var fee: BigInteger? = null,
+    var max: BigInteger? = null,
     var memo: String? = null,
     var energy: Long? = null,
     var accountNonce: AccountNonce? = null,
@@ -70,7 +73,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val transactionReady: MutableLiveData<String> by lazy { MutableLiveData<String>() }
-    val feeReady: MutableLiveData<BigDecimal> by lazy { MutableLiveData<BigDecimal>() }
+    val feeReady: MutableLiveData<BigInteger> by lazy { MutableLiveData<BigInteger>() }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 
@@ -96,7 +99,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 val accountContracts = accountContractRepository.find(account.address)
                 accountContracts.forEach { accountContract ->
                     val tokens = contractTokensRepository.getTokens(accountAddress, accountContract.contractIndex)
-                    tokensFound.addAll(tokens.map { Token(it.tokenId, it.tokenId, "", it.tokenMetadata, false, it.contractIndex, "0",false, BigDecimal.ZERO, BigDecimal.ZERO, it.contractName, it.tokenMetadata?.symbol ?: "") })
+                    tokensFound.addAll(tokens.map { Token(it.tokenId, it.tokenId, "", it.tokenMetadata, false, it.contractIndex, "0",false, BigInteger.ZERO, BigInteger.ZERO, it.contractName, it.tokenMetadata?.symbol ?: "") })
                 }
             }
             waiting.postValue(false)
@@ -189,15 +192,15 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         if (sendTokenData.token == null)
             return false
 
-        var atDisposal: BigDecimal = BigDecimal.ZERO
+        var atDisposal: BigInteger = BigInteger.ZERO
         sendTokenData.account?.let { account ->
             atDisposal = account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
         }
 
         return if (sendTokenData.token!!.isCCDToken) {
-            atDisposal >= sendTokenData.amount + (sendTokenData.fee ?: BigDecimal.ZERO)
+            atDisposal >= sendTokenData.amount + (sendTokenData.fee ?: BigInteger.ZERO)
         } else {
-            atDisposal >= (sendTokenData.fee ?: BigDecimal.ZERO) && sendTokenData.token!!.totalBalance >= sendTokenData.amount
+            atDisposal >= (sendTokenData.fee ?: BigInteger.ZERO) && sendTokenData.token!!.totalBalance >= sendTokenData.amount
         }
     }
 
@@ -207,11 +210,11 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             memoSize = if (sendTokenData.memo == null) null else sendTokenData.memo!!.length / 2,
             success = {
                 sendTokenData.energy = it.energy
-                sendTokenData.fee = it.cost.toBigDecimal()
+                sendTokenData.fee = it.cost.toBigInteger()
                 sendTokenData.account?.let { account ->
                     sendTokenData.max =
                         account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) -
-                                (sendTokenData.fee ?: BigDecimal.ZERO)
+                                (sendTokenData.fee ?: BigInteger.ZERO)
                 }
                 waiting.postValue(false)
                 feeReady.postValue(sendTokenData.fee)
@@ -232,7 +235,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         proxyRepository.getTransferCost(
             type = ProxyRepository.UPDATE,
             memoSize = null,
-            amount = BigDecimal.ZERO,
+            amount = BigInteger.ZERO,
             sender = sendTokenData.account!!.address,
             contractIndex = sendTokenData.token!!.contractIndex.toInt(),
             contractSubindex = 0,
@@ -240,7 +243,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             parameter = serializeTokenTransferParametersOutput.parameter,
             success = {
                 sendTokenData.energy = it.energy
-                sendTokenData.fee = it.cost.toBigDecimal()
+                sendTokenData.fee = it.cost.toBigInteger()
                 sendTokenData.max = sendTokenData.token!!.totalBalance
                 waiting.postValue(false)
                 feeReady.postValue(sendTokenData.fee)
@@ -255,8 +258,8 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     private suspend fun getCCDDefaultToken(accountAddress: String): Token {
         val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
         val account = accountRepository.findByAddress(accountAddress)
-        val atDisposal = account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) ?: BigDecimal.ZERO
-        return Token("", "CCD", "", null, false, "", "",true, (account?.totalBalance ?: BigDecimal.ZERO), atDisposal, "", "CCD")
+        val atDisposal = account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) ?: BigInteger.ZERO
+        return Token("", "CCD", "", null, false, "", "",true, (account?.totalBalance ?: BigInteger.ZERO), atDisposal, "", "CCD")
     }
 
     fun getCipherForBiometrics(): Cipher? {
@@ -382,7 +385,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                         oldDecryptedAmount?.let {
                             accountUpdater.saveDecryptedAmount(
                                 newEncryptedAmount,
-                                (it.toBigDecimal() + amount).toPlainStringStripped()
+                                (it.toBigInteger() + amount).toString()
                             )
                         }
                     }
@@ -497,9 +500,9 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         }
 
         val aggAmount = sendTokenData.accountBalance?.finalizedBalance?.let { accountBalanceInfo ->
-            var agg: BigDecimal = accountUpdater.lookupMappedAmount(accountBalanceInfo.accountEncryptedAmount.selfAmount)?.toBigDecimal() ?: BigDecimal.ZERO
+            var agg: BigInteger = accountUpdater.lookupMappedAmount(accountBalanceInfo.accountEncryptedAmount.selfAmount)?.toBigInteger() ?: BigInteger.ZERO
             accountBalanceInfo.accountEncryptedAmount.incomingAmounts.forEach { incomingAmount ->
-                agg += accountUpdater.lookupMappedAmount(incomingAmount)?.toBigDecimal() ?: BigDecimal.ZERO
+                agg += accountUpdater.lookupMappedAmount(incomingAmount)?.toBigInteger() ?: BigInteger.ZERO
             }
             unfinalisedTransfers.forEach { transfer ->
                 agg -= transfer.amount

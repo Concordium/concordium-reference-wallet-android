@@ -1,10 +1,10 @@
 package com.concordium.wallet.ui.account.common.accountupdater
 
-import java.math.BigDecimal
+import java.math.BigInteger
 
 data class TotalBalancesData(
-    val totalBalanceForAllAccounts: BigDecimal,
-    val totalAtDisposalForAllAccounts: BigDecimal,
-    val totalStakedForAllAccounts: BigDecimal,
+    val totalBalanceForAllAccounts: BigInteger,
+    val totalAtDisposalForAllAccounts: BigInteger,
+    val totalStakedForAllAccounts: BigInteger,
     val totalContainsEncrypted: Boolean
 )

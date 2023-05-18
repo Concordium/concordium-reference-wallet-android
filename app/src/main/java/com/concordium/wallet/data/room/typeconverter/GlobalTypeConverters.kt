@@ -5,9 +5,8 @@ import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
 import com.concordium.wallet.data.model.TransactionOriginType
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.util.toBigDecimal
-import com.concordium.wallet.util.toPlainStringStripped
-import java.math.BigDecimal
+import com.concordium.wallet.util.toBigInteger
+import java.math.BigInteger
 
 class GlobalTypeConverters {
 
@@ -74,12 +73,12 @@ class GlobalTypeConverters {
     }
 
     @TypeConverter
-    fun bigDecimalToString(value: BigDecimal?): String? {
-        return value?.toPlainStringStripped()
+    fun bigIntegerToString(value: BigInteger?): String? {
+        return value?.toString()
     }
 
     @TypeConverter
-    fun stringToBigDecimal(value: String?): BigDecimal? {
-        return value?.toBigDecimal()
+    fun stringToBigInteger(value: String?): BigInteger? {
+        return value?.toBigInteger()
     }
 }

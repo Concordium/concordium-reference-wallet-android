@@ -38,7 +38,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
-import java.math.BigDecimal
+import java.math.BigInteger
 import java.util.*
 import javax.crypto.Cipher
 
@@ -110,8 +110,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     val identityLiveData: MutableLiveData<Identity?>
         get() = _identityLiveData
 
-    private var _totalBalanceLiveData = MutableLiveData<Pair<BigDecimal, Boolean>>()
-    val totalBalanceLiveData: LiveData<Pair<BigDecimal, Boolean>>
+    private var _totalBalanceLiveData = MutableLiveData<Pair<BigInteger, Boolean>>()
+    val totalBalanceLiveData: LiveData<Pair<BigInteger, Boolean>>
         get() = _totalBalanceLiveData
 
     private var _selectedTransactionForDecrytionLiveData = MutableLiveData<Transaction>()
@@ -199,8 +199,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         val transfer = Transfer(
             0,
             account.id,
-            (-2000000000).toBigDecimal(),
-            BigDecimal.ZERO,
+            (-2000000000).toBigInteger(),
+            BigInteger.ZERO,
             "",
             account.address,
             expiry,
@@ -245,7 +245,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 EventBus.getDefault().post(BakerDelegationData(account, isTransactionInProgress = hasPendingDelegationTransactions || hasPendingBakingTransactions , type = type))
             }
         } else {
-            _totalBalanceLiveData.value = Pair(BigDecimal.ZERO, false)
+            _totalBalanceLiveData.value = Pair(BigInteger.ZERO, false)
         }
     }
 

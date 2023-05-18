@@ -11,8 +11,8 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.util.DateTimeUtil
-import com.concordium.wallet.util.toBigDecimal
-import java.math.BigDecimal
+import com.concordium.wallet.util.toBigInteger
+import java.math.BigInteger
 
 object TransactionViewHelper {
     suspend fun show(
@@ -50,7 +50,7 @@ object TransactionViewHelper {
             DateTimeUtil.formatTimeAsLocal(ta.timeStamp)
         }
 
-        fun setTotalView(total: BigDecimal){
+        fun setTotalView(total: BigInteger){
             totalTextView.text = CurrencyUtil.formatGTU(total, withGStroke = true)
             if (total.signum() > 0) {
                 totalTextView.setTextColor(colorGreen)
@@ -195,7 +195,7 @@ object TransactionViewHelper {
                 // encryptedTransfer (decrypted value of encrypted amount)
                 if(ta.isEncryptedTransfer()) {
                     ta.encrypted?.encryptedAmount?.let {
-                        val amount = accountUpdater.lookupMappedAmount(it)?.toBigDecimal()
+                        val amount = accountUpdater.lookupMappedAmount(it)?.toBigInteger()
                         if(amount != null){
                             setTotalView(if(ta.isOriginSelf()) -amount else amount)
                         }

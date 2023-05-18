@@ -31,7 +31,7 @@ import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.google.gson.JsonArray
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
+import java.math.BigInteger
 import javax.crypto.Cipher
 
 open class NewAccountViewModel(application: Application) : AndroidViewModel(application) {
@@ -293,16 +293,16 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
             encryptedAccountData,
             revealedAttributeList.map { IdentityAttribute(it.name, it.value) },
             credential,
-            BigDecimal.ZERO,
-            BigDecimal.ZERO,
-            BigDecimal.ZERO,
-            BigDecimal.ZERO,
-            BigDecimal.ZERO,
+            BigInteger.ZERO,
+            BigInteger.ZERO,
+            BigInteger.ZERO,
+            BigInteger.ZERO,
+            BigInteger.ZERO,
             null,
             null,
             ShieldedAccountEncryptionStatus.ENCRYPTED,
-            BigDecimal.ZERO,
-            BigDecimal.ZERO,
+            BigInteger.ZERO,
+            BigInteger.ZERO,
             false,
             null,
             null,

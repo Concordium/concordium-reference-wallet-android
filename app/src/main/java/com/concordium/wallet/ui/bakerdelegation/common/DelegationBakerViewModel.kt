@@ -37,11 +37,10 @@ import com.concordium.wallet.data.util.FileUtil
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
-import com.concordium.wallet.util.equalsArithmetically
-import com.concordium.wallet.util.toBigDecimal
+import com.concordium.wallet.util.toBigInteger
 import kotlinx.coroutines.*
 import java.io.File
-import java.math.BigDecimal
+import java.math.BigInteger
 import java.util.*
 import javax.crypto.Cipher
 
@@ -87,8 +86,8 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     val showDetailedLiveData: LiveData<Event<Boolean>>
         get() = _showDetailedLiveData
 
-    private val _transactionFeeLiveData = MutableLiveData<Pair<BigDecimal?, Int?>>()
-    val transactionFeeLiveData: LiveData<Pair<BigDecimal?, Int?>>
+    private val _transactionFeeLiveData = MutableLiveData<Pair<BigInteger?, Int?>>()
+    val transactionFeeLiveData: LiveData<Pair<BigInteger?, Int?>>
         get() = _transactionFeeLiveData
 
     private val _showAuthenticationLiveData = MutableLiveData<Event<Boolean>>()
@@ -121,7 +120,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun stakedAmountHasChanged(): Boolean {
-        return !bakerDelegationData.amount.equalsArithmetically(bakerDelegationData.oldStakedAmount)
+        return bakerDelegationData.amount != bakerDelegationData.oldStakedAmount
     }
 
     fun metadataUrlHasChanged(): Boolean {
@@ -134,7 +133,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun isUpdateDecreaseAmount(): Boolean {
-        return (bakerDelegationData.isUpdateBaker() || isUpdatingDelegation()) && (bakerDelegationData.oldStakedAmount ?: BigDecimal.ZERO) > (bakerDelegationData.amount ?: BigDecimal.ZERO)
+        return (bakerDelegationData.isUpdateBaker() || isUpdatingDelegation()) && (bakerDelegationData.oldStakedAmount ?: BigInteger.ZERO) > (bakerDelegationData.amount ?: BigInteger.ZERO)
     }
 
     fun poolHasChanged(): Boolean {
@@ -166,7 +165,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     fun isLoweringDelegation(): Boolean {
         bakerDelegationData.amount?.let { amount ->
-            if (amount < (bakerDelegationData.oldStakedAmount ?: BigDecimal.ZERO))
+            if (amount < (bakerDelegationData.oldStakedAmount ?: BigInteger.ZERO))
                 return true
         }
         return false
@@ -176,15 +175,15 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return bakerDelegationData.account?.accountDelegation?.pendingChange != null || bakerDelegationData.account?.accountBaker?.pendingChange != null
     }
 
-    fun atDisposal(): BigDecimal {
-        var staked: BigDecimal = BigDecimal.ZERO
+    fun atDisposal(): BigInteger {
+        var staked: BigInteger = BigInteger.ZERO
         bakerDelegationData.account?.accountDelegation?.let {
-            staked = it.stakedAmount.toBigDecimal()
+            staked = it.stakedAmount.toBigInteger()
         }
         bakerDelegationData.account?.accountBaker?.let {
-            staked = it.stakedAmount.toBigDecimal()
+            staked = it.stakedAmount.toBigInteger()
         }
-        return (bakerDelegationData.account?.finalizedBalance ?: BigDecimal.ZERO) - staked
+        return (bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO) - staked
     }
 
     fun selectBakerPool() {
@@ -227,7 +226,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
                 }
             }
         }
-        return max?.div(100)?.toBigDecimal()?.toLong().toString()
+        return max?.div(100)?.toBigInteger()?.toLong().toString()
     }
 
     fun validatePoolId() {
@@ -313,7 +312,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             openStatus = openStatus,
             success = {
                 bakerDelegationData.energy = it.energy
-                bakerDelegationData.cost = it.cost.toBigDecimal()
+                bakerDelegationData.cost = it.cost.toBigInteger()
                 if (notifyObservers)
                     _transactionFeeLiveData.value = Pair(bakerDelegationData.cost, requestId)
             },
@@ -670,7 +669,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             0,
             accountId,
             cost,
-            BigDecimal.ZERO,
+            BigInteger.ZERO,
             fromAddress,
             fromAddress,
             expiry,

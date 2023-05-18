@@ -32,7 +32,7 @@ import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.ui.walletconnect.WalletConnectActivity
 import com.concordium.wallet.uicore.afterMeasured
 import com.concordium.wallet.util.getSerializable
-import java.math.BigDecimal
+import java.math.BigInteger
 import javax.crypto.Cipher
 
 class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl() {
@@ -425,7 +425,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         popup.showSnackbar(binding.rootLayout, stringRes)
     }
 
-    private fun showTotalBalance(totalBalance: BigDecimal) {
+    private fun showTotalBalance(totalBalance: BigInteger) {
         binding.balanceTextview.text = CurrencyUtil.formatGTU(totalBalance, true)
         binding.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(
             viewModelAccountDetails.account.getAtDisposalWithoutStakedOrScheduled(totalBalance),

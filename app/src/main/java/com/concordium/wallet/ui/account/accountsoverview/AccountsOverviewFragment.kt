@@ -31,7 +31,7 @@ import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
-import java.math.BigDecimal
+import java.math.BigInteger
 
 class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by IdentityStatusDelegateImpl(), EarnDelegate by EarnDelegateImpl() {
     private var _binding: FragmentAccountsOverviewBinding? = null
@@ -453,13 +453,13 @@ class AccountsOverviewFragment : BaseFragment(), IdentityStatusDelegate by Ident
         binding.createAccountButton.visibility = state
     }
 
-    private fun showTotalBalance(totalBalance: BigDecimal) {
+    private fun showTotalBalance(totalBalance: BigInteger) {
         binding.totalBalanceTextview.text = CurrencyUtil.formatGTU(totalBalance)
     }
-    private fun showDisposalBalance(atDisposal: BigDecimal) {
+    private fun showDisposalBalance(atDisposal: BigInteger) {
         binding.accountsOverviewTotalDetailsDisposal.text = CurrencyUtil.formatGTU(atDisposal, true)
     }
-    private fun showStakedBalance(totalBalance: BigDecimal) {
+    private fun showStakedBalance(totalBalance: BigInteger) {
         binding.accountsOverviewTotalDetailsStaked.text = CurrencyUtil.formatGTU(totalBalance, true)
     }
 

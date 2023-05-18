@@ -4,10 +4,10 @@ import androidx.room.*
 import com.concordium.wallet.App
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.typeconverter.AccountTypeConverters
-import com.concordium.wallet.util.toBigDecimal
+import com.concordium.wallet.util.toBigInteger
 import com.google.gson.JsonObject
 import java.io.Serializable
-import java.math.BigDecimal
+import java.math.BigInteger
 
 @Entity(tableName = "account_table", indices = [Index(value = ["address"], unique = true)])
 @TypeConverters(AccountTypeConverters::class)
@@ -37,19 +37,19 @@ data class Account(
     var credential: CredentialWrapper?,
 
     @ColumnInfo(name = "finalized_balance")
-    var finalizedBalance: BigDecimal = BigDecimal.ZERO,
+    var finalizedBalance: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "current_balance")
-    var currentBalance: BigDecimal = BigDecimal.ZERO,
+    var currentBalance: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "total_balance")
-    var totalBalance: BigDecimal = BigDecimal.ZERO,
+    var totalBalance: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "total_unshielded_balance")
-    var totalUnshieldedBalance: BigDecimal = BigDecimal.ZERO,
+    var totalUnshieldedBalance: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "total_shielded_balance")
-    var totalShieldedBalance: BigDecimal = BigDecimal.ZERO,
+    var totalShieldedBalance: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "finalized_encrypted_balance")
     var finalizedEncryptedBalance: AccountEncryptedAmount?,
@@ -61,10 +61,10 @@ data class Account(
     var encryptedBalanceStatus: ShieldedAccountEncryptionStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
 
     @ColumnInfo(name = "total_staked")
-    var totalStaked: BigDecimal = BigDecimal.ZERO,
+    var totalStaked: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "total_at_disposal")
-    var totalAtDisposal: BigDecimal = BigDecimal.ZERO,
+    var totalAtDisposal: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "read_only")
     var readOnly: Boolean = false,
@@ -127,22 +127,22 @@ data class Account(
         return accountDelegation != null
     }
 
-    fun getAtDisposalWithoutStakedOrScheduled(totalBalance: BigDecimal): BigDecimal {
-        val stakedAmount: BigDecimal = accountDelegation?.stakedAmount?.toBigDecimal()
-            ?: accountBaker?.stakedAmount?.toBigDecimal() ?: BigDecimal.ZERO
-        val scheduledTotal: BigDecimal = finalizedAccountReleaseSchedule?.total.toBigDecimal()
-        val subtract: BigDecimal = if (stakedAmount in BigDecimal.ONE..scheduledTotal)
+    fun getAtDisposalWithoutStakedOrScheduled(totalBalance: BigInteger): BigInteger {
+        val stakedAmount: BigInteger = accountDelegation?.stakedAmount?.toBigInteger()
+            ?: accountBaker?.stakedAmount?.toBigInteger() ?: BigInteger.ZERO
+        val scheduledTotal: BigInteger = finalizedAccountReleaseSchedule?.total.toBigInteger()
+        val subtract: BigInteger = if (stakedAmount in BigInteger.ONE..scheduledTotal)
             scheduledTotal
         else if (stakedAmount.signum() > 0 && stakedAmount > scheduledTotal)
             stakedAmount
         else if (stakedAmount.signum() == 0 && scheduledTotal.signum() > 0)
             scheduledTotal
         else
-            BigDecimal.ZERO
-        return BigDecimal.ZERO.max(totalBalance - subtract)
+            BigInteger.ZERO
+        return BigInteger.ZERO.max(totalBalance - subtract)
     }
 
-    fun getAtDisposal(): BigDecimal {
-        return finalizedBalance - finalizedAccountReleaseSchedule?.total.toBigDecimal()
+    fun getAtDisposal(): BigInteger {
+        return finalizedBalance - finalizedAccountReleaseSchedule?.total.toBigInteger()
     }
 }

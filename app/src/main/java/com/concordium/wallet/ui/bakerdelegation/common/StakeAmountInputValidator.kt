@@ -3,14 +3,14 @@ package com.concordium.wallet.ui.bakerdelegation.common
 import android.content.Context
 import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
-import com.concordium.wallet.util.toBigDecimal
-import java.math.BigDecimal
+import com.concordium.wallet.util.toBigInteger
+import java.math.BigInteger
 
 class StakeAmountInputValidator(
     private val minimumValue: String?,
     private val maximumValue: String?,
-    private val balance: BigDecimal?,
-    private val atDisposal: BigDecimal?,
+    private val balance: BigInteger?,
+    private val atDisposal: BigInteger?,
     private val currentPool: String?,
     private val poolLimit: String?,
     private val previouslyStakedInPool: String?,
@@ -22,7 +22,7 @@ class StakeAmountInputValidator(
         OK, NOT_ENOUGH_FUND, MINIMUM, MAXIMUM, POOL_LIMIT_REACHED, POOL_LIMIT_REACHED_COOLDOWN, UNKNOWN
     }
 
-    fun validate(amount: String?, fee: BigDecimal?): StakeError {
+    fun validate(amount: String?, fee: BigInteger?): StakeError {
 
         if (amount == null) return StakeError.MINIMUM
 
@@ -78,9 +78,9 @@ class StakeAmountInputValidator(
         return StakeError.OK
     }
 
-    private fun checkBalance(amount: String, fee: BigDecimal?): StakeError {
+    private fun checkBalance(amount: String, fee: BigInteger?): StakeError {
         if (balance == null || atDisposal == null) return StakeError.UNKNOWN
-        if (amount.toBigDecimal() + (fee ?: BigDecimal.ZERO) > balance || (fee ?: BigDecimal.ZERO) > atDisposal) return StakeError.NOT_ENOUGH_FUND
+        if (amount.toBigInteger() + (fee ?: BigInteger.ZERO) > balance || (fee ?: BigInteger.ZERO) > atDisposal) return StakeError.NOT_ENOUGH_FUND
         return StakeError.OK
     }
 

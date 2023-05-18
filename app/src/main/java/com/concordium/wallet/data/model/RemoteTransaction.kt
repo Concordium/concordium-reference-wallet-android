@@ -1,6 +1,6 @@
 package com.concordium.wallet.data.model
 
-import java.math.BigDecimal
+import java.math.BigInteger
 
 data class RemoteTransaction(
     val id: Int,
@@ -8,9 +8,9 @@ data class RemoteTransaction(
     val blockHash: String,
     val blockTime: Double,
     val transactionHash: String?,
-    val subtotal: BigDecimal?,
-    val cost: BigDecimal?,
-    val total: BigDecimal,
+    val subtotal: BigInteger?,
+    val cost: BigInteger?,
+    val total: BigInteger,
     val energy: Long?,
     val details: TransactionDetails,
     val encrypted: TransactionEncrypted?

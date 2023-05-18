@@ -10,7 +10,7 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.typeconverter.TransactionTypeConverters
 import java.io.Serializable
-import java.math.BigDecimal
+import java.math.BigInteger
 
 
 @Entity(tableName = "transfer_table")
@@ -20,8 +20,8 @@ data class Transfer(
     val id: Int,
     @ColumnInfo(name = "account_id")
     val accountId: Int,
-    val amount: BigDecimal,
-    var cost: BigDecimal,
+    val amount: BigInteger,
+    var cost: BigInteger,
     @ColumnInfo(name = "from_address")
     var fromAddress: String,
     @ColumnInfo(name = "to_address")
