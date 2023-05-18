@@ -37,13 +37,14 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.Serializable
+import java.math.BigDecimal
 import javax.crypto.Cipher
 
 data class WalletConnectData(
     var account: Account? = null,
     var wcUri: String? = null,
     var energy: Long? = null,
-    var cost: Long? = null,
+    var cost: BigDecimal? = null,
     var isTransaction: Boolean = true
 ) : Serializable
 
@@ -67,7 +68,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val connectStatus: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val serviceName: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val permissions: MutableLiveData<List<String>> by lazy { MutableLiveData<List<String>>() }
-    val transactionFee: MutableLiveData<Long> by lazy { MutableLiveData<Long>() }
+    val transactionFee: MutableLiveData<BigDecimal> by lazy { MutableLiveData<BigDecimal>() }
     val messagedSignedOkay: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val messageSignedSuccess: MutableLiveData<String> by lazy { MutableLiveData<String>() }
@@ -160,7 +161,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                 parameter = payload.message,
                 success = {
                     walletConnectData.energy = it.energy
-                    walletConnectData.cost = it.cost.toLong()
+                    walletConnectData.cost = it.cost.toBigDecimal()
                     transactionFee.postValue(walletConnectData.cost)
                 },
                 failure = {
@@ -172,7 +173,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     fun hasEnoughFunds(): Boolean {
         val amount = binder?.getSessionRequestParams()?.parsePayload()?.amount?.toBigDecimal()
-        val fee = walletConnectData.cost?.toBigDecimal()
+        val fee = walletConnectData.cost
         if (amount != null && fee != null) {
             walletConnectData.account?.totalUnshieldedBalance?.let { totalUnshieldedBalance ->
                 walletConnectData.account?.getAtDisposalWithoutStakedOrScheduled(

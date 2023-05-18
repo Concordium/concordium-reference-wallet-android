@@ -63,7 +63,7 @@ class SendTokenActivity : BaseActivity() {
 
     private fun initViews() {
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.cis_send_funds)
-        binding.amount.setText(CurrencyUtil.formatGTU(0, false))
+        binding.amount.setText(CurrencyUtil.formatGTU(BigDecimal.ZERO, false))
         binding.atDisposal.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.account?.getAtDisposalWithoutStakedOrScheduled(viewModel.sendTokenData.account?.totalUnshieldedBalance ?: BigDecimal.ZERO) ?: BigDecimal.ZERO, true)
         initializeAmount()
         initializeMax()
@@ -315,7 +315,7 @@ class SendTokenActivity : BaseActivity() {
                         .into(binding.searchToken.tokenIcon)
                 }
             }
-            binding.amount.setText(CurrencyUtil.formatGTU(0, false))
+            binding.amount.setText(CurrencyUtil.formatGTU(BigDecimal.ZERO, false))
             viewModel.loadTransactionFee()
         }
 

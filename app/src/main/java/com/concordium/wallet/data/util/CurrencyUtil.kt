@@ -33,9 +33,6 @@ object CurrencyUtil {
         this.gStroke = gStroke
     }
 
-    fun formatGTU(value: Long, withGStroke: Boolean = false, decimals: Int = 6): String=
-        formatGTU(value.toBigDecimal(), withGStroke, decimals)
-
     fun formatGTU(value: BigDecimal, withGStroke: Boolean = false, decimals: Int = 6): String {
         if(withGStroke && gStroke == null){
             gStroke = App.appContext.getString(R.string.app_gstroke)
