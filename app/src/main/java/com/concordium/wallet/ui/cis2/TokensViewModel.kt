@@ -113,7 +113,10 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
         allowToLoadMore = false
 
-        lookForTokens.postValue(TOKENS_NOT_LOADED)
+        if (from == null) {
+            tokens.clear()
+            lookForTokens.postValue(TOKENS_NOT_LOADED)
+        }
 
         CoroutineScope(Dispatchers.IO).launch {
             val contractTokensRepository = ContractTokensRepository(
