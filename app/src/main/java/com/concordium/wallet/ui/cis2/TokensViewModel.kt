@@ -460,6 +460,16 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    fun onFindTokensDialogDismissed() {
+        resetLookForTokens()
+    }
+
+    private fun resetLookForTokens() {
+        tokens.clear()
+        tokenData.contractIndex = ""
+        lookForTokens.value = TOKENS_OK
+    }
+
     private fun handleBackendError(throwable: Throwable) {
         Log.e("Backend request failed", throwable)
         errorInt.postValue(BackendErrorHandler.getExceptionStringRes(throwable))

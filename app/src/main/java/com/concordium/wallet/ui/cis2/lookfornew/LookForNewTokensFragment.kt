@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.cis2.lookfornew
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -47,6 +48,11 @@ class LookForNewTokensFragment : BaseBottomSheetDialogFragment() {
         _binding = null
     }
 
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        _viewModel.onFindTokensDialogDismissed()
+    }
+
     private fun initViews() {
         binding.viewPager.adapter = LookForNewTokensAdapter(requireActivity())
         binding.viewPager.isUserInputEnabled = false
@@ -54,11 +60,11 @@ class LookForNewTokensFragment : BaseBottomSheetDialogFragment() {
     }
 
     private fun initObservers() {
-        _viewModel.lookForTokens.observe(this) {
+        _viewModel.lookForTokens.observe(viewLifecycleOwner) {
             if (_viewModel.tokens.isNotEmpty() && binding.viewPager.currentItem == 0)
                 binding.viewPager.currentItem++
         }
-        _viewModel.stepPageBy.observe(this) {
+        _viewModel.stepPageBy.observe(viewLifecycleOwner) {
             if (binding.viewPager.currentItem + it >= 0 && binding.viewPager.currentItem + it < (binding.viewPager.adapter?.itemCount ?: 0)) {
                 binding.viewPager.currentItem = binding.viewPager.currentItem + it
             }
