@@ -35,6 +35,7 @@ data class TokenData(
 class TokensViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
         const val TOKEN_DATA = "TOKEN_DATA"
+        const val TOKENS_NOT_LOADED = -1
         const val TOKENS_OK = 0
         const val TOKENS_EMPTY = 1
         const val TOKENS_ERROR = 2
@@ -50,7 +51,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val chooseTokenInfo: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     private val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
-    val lookForTokens: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    val lookForTokens: MutableLiveData<Int> by lazy { MutableLiveData<Int>(TOKENS_NOT_LOADED) }
     val updateWithSelectedTokensDone: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val stepPageBy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val tokenDetails: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
@@ -112,7 +113,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
         allowToLoadMore = false
 
-        lookForTokens.postValue(TOKENS_OK)
+        lookForTokens.postValue(TOKENS_NOT_LOADED)
 
         CoroutineScope(Dispatchers.IO).launch {
             val contractTokensRepository = ContractTokensRepository(
@@ -465,9 +466,9 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private fun resetLookForTokens() {
-        tokens.clear()
         tokenData.contractIndex = ""
-        lookForTokens.value = TOKENS_OK
+        stepPageBy.value = 0
+        lookForTokens.value = TOKENS_NOT_LOADED
     }
 
     private fun handleBackendError(throwable: Throwable) {

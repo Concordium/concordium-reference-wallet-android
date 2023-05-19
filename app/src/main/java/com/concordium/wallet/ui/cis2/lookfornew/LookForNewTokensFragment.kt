@@ -61,8 +61,12 @@ class LookForNewTokensFragment : BaseBottomSheetDialogFragment() {
 
     private fun initObservers() {
         _viewModel.lookForTokens.observe(viewLifecycleOwner) {
-            if (_viewModel.tokens.isNotEmpty() && binding.viewPager.currentItem == 0)
+            if (it != TokensViewModel.TOKENS_NOT_LOADED
+                && _viewModel.tokens.isNotEmpty()
+                && binding.viewPager.currentItem == 0
+            ) {
                 binding.viewPager.currentItem++
+            }
         }
         _viewModel.stepPageBy.observe(viewLifecycleOwner) {
             if (binding.viewPager.currentItem + it >= 0 && binding.viewPager.currentItem + it < (binding.viewPager.adapter?.itemCount ?: 0)) {
