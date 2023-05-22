@@ -42,7 +42,7 @@ fun <T : Serializable?> Bundle.getSerializableFromBundle(key: String, m_class: C
  */
 fun String?.toBigInteger(defaultValue: BigInteger = BigInteger.ZERO): BigInteger =
     try {
-        if (this.isNullOrBlank())
+       if (isNullOrBlank())
             defaultValue
         else
             BigInteger(this)
