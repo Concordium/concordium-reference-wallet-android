@@ -11,6 +11,7 @@ import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenAddBinding
 import com.concordium.wallet.util.UnitConvertUtil
+import com.walletconnect.util.Empty
 
 class TokensAddAdapter(
     private val context: Context,
@@ -60,7 +61,7 @@ class TokensAddAdapter(
             holder.binding.tokenIcon.setImageResource(R.drawable.ic_token_no_image)
         }
 
-        holder.binding.title.text = tokenMetadata?.name ?: ""
+        holder.binding.title.text = tokenMetadata?.name ?: String.Empty
 
         val tokenBalance = CurrencyUtil.formatGTU(
             token.totalBalance,

@@ -19,6 +19,7 @@ import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
+import com.walletconnect.util.Empty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -469,7 +470,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private fun resetLookForTokens() {
-        tokenData.contractIndex = ""
+        tokenData.contractIndex = String.Empty
         stepPageBy.value = 0
         lookForTokens.value = TOKENS_NOT_LOADED
     }
