@@ -11,6 +11,9 @@ import com.concordium.wallet.data.model.AccountSubmissionStatus
 import com.concordium.wallet.data.model.AccountTransactions
 import com.concordium.wallet.data.model.AppSettings
 import com.concordium.wallet.data.model.BakerPoolStatus
+import com.concordium.wallet.data.model.CIS2Tokens
+import com.concordium.wallet.data.model.CIS2TokensBalances
+import com.concordium.wallet.data.model.CIS2TokensMetadata
 import com.concordium.wallet.data.model.ChainParameters
 import com.concordium.wallet.data.model.CredentialWrapper
 import com.concordium.wallet.data.model.GlobalParamsWrapper

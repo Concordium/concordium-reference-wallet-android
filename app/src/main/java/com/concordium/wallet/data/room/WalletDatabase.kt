@@ -3,6 +3,8 @@ package com.concordium.wallet.data.room
 import android.content.Context
 import androidx.room.AutoMigration
 import androidx.room.*
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.concordium.wallet.data.room.WalletDatabase.Companion.VERSION_NUMBER
 import com.concordium.wallet.data.room.typeconverter.GlobalTypeConverters
 

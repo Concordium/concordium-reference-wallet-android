@@ -15,6 +15,8 @@ import com.concordium.wallet.data.cryptolib.IdRequestAndPrivateDataOutputV1
 import com.concordium.wallet.data.cryptolib.IdentityKeysAndRandomnessInput
 import com.concordium.wallet.data.cryptolib.IdentityKeysAndRandomnessOutput
 import com.concordium.wallet.data.cryptolib.ParameterToJsonInput
+import com.concordium.wallet.data.cryptolib.SerializeTokenTransferParametersInput
+import com.concordium.wallet.data.cryptolib.SerializeTokenTransferParametersOutput
 import com.concordium.wallet.data.cryptolib.SignMessageInput
 import com.concordium.wallet.data.cryptolib.SignMessageOutput
 import com.concordium.wallet.data.model.ArsInfo
