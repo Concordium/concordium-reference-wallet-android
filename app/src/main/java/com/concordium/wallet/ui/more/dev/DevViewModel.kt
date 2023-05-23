@@ -56,9 +56,13 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
             ""
         )
         val arsInfos = HashMap<String, ArsInfo>()
-        arsInfos["1"] = ArsInfo(1, "", ArDescription("","", ""))
+        arsInfos["1"] = ArsInfo(1, "", ArDescription("", "", ""))
         val identityProvider =
-            IdentityProvider(identityProviderInfo, arsInfos, IdentityProviderMetaData("", "", "", ""))
+            IdentityProvider(
+                identityProviderInfo,
+                arsInfos,
+                IdentityProviderMetaData("", "", "", "")
+            )
         val pubInfoForIP = PubInfoForIp("", RawJson("{}"), "")
         val preIdentityObject =
             PreIdentityObject(
@@ -72,7 +76,8 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 preIdentityObject,
                 RawJson("{}")
             )
-        val identity = Identity(0, "identity name", "", "","", identityProvider, identityObject, 0, 0)
+        val identity =
+            Identity(0, "identity name", "", "", "", identityProvider, identityObject, 0, 0)
         identityRepository.insert(identity)
     }
 
@@ -97,7 +102,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 TransactionStatus.FINALIZED,
                 "",
                 revealedAttributes,
-                CredentialWrapper(credential,0),
+                CredentialWrapper(credential, 0),
                 BigInteger.ZERO,
                 BigInteger.ZERO,
                 BigInteger.ZERO,
@@ -127,7 +132,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 TransactionStatus.COMMITTED,
                 "",
                 revealedAttributes,
-                CredentialWrapper(credential,0),
+                CredentialWrapper(credential, 0),
                 BigInteger.ZERO,
                 BigInteger.ZERO,
                 BigInteger.ZERO,
@@ -135,7 +140,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 BigInteger.ZERO,
                 null,
                 null,
-                        ShieldedAccountEncryptionStatus.ENCRYPTED,
+                ShieldedAccountEncryptionStatus.ENCRYPTED,
                 BigInteger.ZERO,
                 BigInteger.ZERO,
                 false,
@@ -157,7 +162,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 TransactionStatus.RECEIVED,
                 "",
                 revealedAttributes,
-                CredentialWrapper(credential,0),
+                CredentialWrapper(credential, 0),
                 BigInteger.ZERO,
                 BigInteger.ZERO,
                 BigInteger.ZERO,
@@ -187,7 +192,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 TransactionStatus.ABSENT,
                 "",
                 revealedAttributes,
-                CredentialWrapper(credential,0),
+                CredentialWrapper(credential, 0),
                 BigInteger.ZERO,
                 BigInteger.ZERO,
                 BigInteger.ZERO,
@@ -195,7 +200,7 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 BigInteger.ZERO,
                 null,
                 null,
-                        ShieldedAccountEncryptionStatus.ENCRYPTED,
+                ShieldedAccountEncryptionStatus.ENCRYPTED,
                 BigInteger.ZERO,
                 BigInteger.ZERO,
                 false,

@@ -33,7 +33,11 @@ class AuthSetupPasswordActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthSetupPasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.auth_setup_password_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.auth_setup_password_title
+        )
 
         continueFlow = intent.getBooleanExtra(AuthSetupActivity.CONTINUE_INITIAL_SETUP, true)
 
@@ -94,6 +98,7 @@ class AuthSetupPasswordActivity : BaseActivity() {
                     }
                     true
                 }
+
                 else -> false
             }
         }
@@ -118,7 +123,7 @@ class AuthSetupPasswordActivity : BaseActivity() {
     private val getResultAuthSetupBiometrics =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
-                if(continueFlow){
+                if (continueFlow) {
                     viewModel.hasFinishedSetupPassword()
                 }
                 setResult(Activity.RESULT_OK)

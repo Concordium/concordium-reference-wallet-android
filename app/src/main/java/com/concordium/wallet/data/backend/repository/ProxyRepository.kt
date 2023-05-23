@@ -37,6 +37,7 @@ class ProxyRepository {
             override fun onResponseData(response: SubmissionData) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -48,7 +49,8 @@ class ProxyRepository {
         )
     }
 
-    suspend fun getAccountSubmissionStatusSuspended(submissionId: String) = backend.accountSubmissionStatusSuspended(submissionId)
+    suspend fun getAccountSubmissionStatusSuspended(submissionId: String) =
+        backend.accountSubmissionStatusSuspended(submissionId)
 
     fun getAppSettings(
         version: Int,
@@ -83,6 +85,7 @@ class ProxyRepository {
             override fun onResponseData(response: BakerPoolStatus) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -104,6 +107,7 @@ class ProxyRepository {
             override fun onResponseData(response: AccountSubmissionStatus) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -125,6 +129,7 @@ class ProxyRepository {
             override fun onResponseData(response: AccountNonce) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -146,6 +151,7 @@ class ProxyRepository {
             override fun onResponseData(response: SubmissionData) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -157,7 +163,8 @@ class ProxyRepository {
         )
     }
 
-    suspend fun getTransferSubmissionStatusSuspended(submissionId: String) = backend.transferSubmissionStatusSuspended(submissionId)
+    suspend fun getTransferSubmissionStatusSuspended(submissionId: String) =
+        backend.transferSubmissionStatusSuspended(submissionId)
 
     fun getTransferSubmissionStatus(
         submissionId: String,
@@ -169,6 +176,7 @@ class ProxyRepository {
             override fun onResponseData(response: TransferSubmissionStatus) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -180,29 +188,47 @@ class ProxyRepository {
         )
     }
 
-    fun getTransferCost(type: String,
-                        memoSize: Int? = null,
-                        amount: BigInteger? = null,
-                        restake: Boolean? = null,
-                        lPool: Boolean? = null,
-                        targetChange: Boolean? = null,
-                        metadataSize: Int? = null,
-                        openStatus: String? = null,
-                        sender: String? = null,
-                        contractIndex: Int? = null,
-                        contractSubindex: Int? = null,
-                        receiveName: String? = null,
-                        parameter: String? = null,
-                        executionNRGBuffer: Int? = null,
-                        success: (TransferCost) -> Unit,
-                        failure: ((Throwable) -> Unit)?): BackendRequest<TransferCost> {
+    fun getTransferCost(
+        type: String,
+        memoSize: Int? = null,
+        amount: BigInteger? = null,
+        restake: Boolean? = null,
+        lPool: Boolean? = null,
+        targetChange: Boolean? = null,
+        metadataSize: Int? = null,
+        openStatus: String? = null,
+        sender: String? = null,
+        contractIndex: Int? = null,
+        contractSubindex: Int? = null,
+        receiveName: String? = null,
+        parameter: String? = null,
+        executionNRGBuffer: Int? = null,
+        success: (TransferCost) -> Unit,
+        failure: ((Throwable) -> Unit)?
+    ): BackendRequest<TransferCost> {
         val lPoolArg = if (lPool == true) "lPool" else null
         val targetArg = if (targetChange == true) "target" else null
-        val call = backend.transferCost(type, memoSize, amount?.toString(), restake, lPoolArg, targetArg, metadataSize, openStatus, sender, contractIndex, contractSubindex, receiveName, parameter, executionNRGBuffer)
+        val call = backend.transferCost(
+            type,
+            memoSize,
+            amount?.toString(),
+            restake,
+            lPoolArg,
+            targetArg,
+            metadataSize,
+            openStatus,
+            sender,
+            contractIndex,
+            contractSubindex,
+            receiveName,
+            parameter,
+            executionNRGBuffer
+        )
         call.enqueue(object : BackendCallback<TransferCost>() {
             override fun onResponseData(response: TransferCost) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -214,12 +240,16 @@ class ProxyRepository {
         )
     }
 
-    fun getChainParameters(success: (ChainParameters) -> Unit, failure: ((Throwable) -> Unit)?): BackendRequest<ChainParameters> {
+    fun getChainParameters(
+        success: (ChainParameters) -> Unit,
+        failure: ((Throwable) -> Unit)?
+    ): BackendRequest<ChainParameters> {
         val call = backend.chainParameters()
         call.enqueue(object : BackendCallback<ChainParameters>() {
             override fun onResponseData(response: ChainParameters) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -237,7 +267,8 @@ class ProxyRepository {
 
     suspend fun getBakerPoolSuspended(poolId: String) = backend.bakerPoolSuspended(poolId)
 
-    suspend fun getAccountBalanceSuspended(accountAddress: String) = backend.accountBalanceSuspended(accountAddress)
+    suspend fun getAccountBalanceSuspended(accountAddress: String) =
+        backend.accountBalanceSuspended(accountAddress)
 
     fun getAccountBalance(
         accountAddress: String,
@@ -249,6 +280,7 @@ class ProxyRepository {
             override fun onResponseData(response: AccountBalance) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -274,6 +306,7 @@ class ProxyRepository {
             override fun onResponseData(response: AccountTransactions) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -295,6 +328,7 @@ class ProxyRepository {
             override fun onResponseData(response: SubmissionData) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -315,6 +349,7 @@ class ProxyRepository {
             override fun onResponseData(response: GlobalParamsWrapper) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -336,6 +371,7 @@ class ProxyRepository {
             override fun onResponseData(response: AccountKeyData) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -360,6 +396,7 @@ class ProxyRepository {
             override fun onResponseData(response: CIS2Tokens) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -383,6 +420,7 @@ class ProxyRepository {
             override fun onResponseData(response: CIS2TokensMetadata) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -407,6 +445,7 @@ class ProxyRepository {
             override fun onResponseData(response: CIS2TokensBalances) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }

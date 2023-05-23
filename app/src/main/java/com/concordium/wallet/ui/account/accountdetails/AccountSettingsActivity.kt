@@ -32,10 +32,16 @@ class AccountSettingsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAccountSettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.account_settings_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.account_settings_title
+        )
         initializeViewModel()
-        viewModel.initialize(intent.getSerializable(EXTRA_ACCOUNT, Account::class.java),
-            intent.getBooleanExtra(EXTRA_SHIELDED, false))
+        viewModel.initialize(
+            intent.getSerializable(EXTRA_ACCOUNT, Account::class.java),
+            intent.getBooleanExtra(EXTRA_SHIELDED, false)
+        )
         initViews()
         initObservers()
         val continueToShieldIntro = intent.extras!!.getBoolean(EXTRA_CONTINUE_TO_SHIELD_INTRO)
@@ -84,14 +90,20 @@ class AccountSettingsActivity : BaseActivity() {
             showChangeNameDialog()
         }
 
-        binding.showShielded.visibility = if (viewModel.shieldingEnabledLiveData.value == true || viewModel.account.readOnly) View.GONE else View.VISIBLE
-        binding.dividerShowShielded.visibility = if (viewModel.shieldingEnabledLiveData.value == true || viewModel.account.readOnly) View.GONE else View.VISIBLE
-        binding.hideShielded.visibility = if (viewModel.shieldingEnabledLiveData.value == true && !viewModel.account.readOnly) View.VISIBLE else View.GONE
-        binding.dividerHideShielded.visibility = if (viewModel.shieldingEnabledLiveData.value == true && !viewModel.account.readOnly) View.VISIBLE else View.GONE
+        binding.showShielded.visibility =
+            if (viewModel.shieldingEnabledLiveData.value == true || viewModel.account.readOnly) View.GONE else View.VISIBLE
+        binding.dividerShowShielded.visibility =
+            if (viewModel.shieldingEnabledLiveData.value == true || viewModel.account.readOnly) View.GONE else View.VISIBLE
+        binding.hideShielded.visibility =
+            if (viewModel.shieldingEnabledLiveData.value == true && !viewModel.account.readOnly) View.VISIBLE else View.GONE
+        binding.dividerHideShielded.visibility =
+            if (viewModel.shieldingEnabledLiveData.value == true && !viewModel.account.readOnly) View.VISIBLE else View.GONE
         binding.transferFilter.visibility = if (viewModel.isShielded) View.GONE else View.VISIBLE
-        binding.dividerTransferFilter.visibility = if (viewModel.isShielded) View.GONE else View.VISIBLE
+        binding.dividerTransferFilter.visibility =
+            if (viewModel.isShielded) View.GONE else View.VISIBLE
         binding.releaseSchedule.visibility = if (viewModel.isShielded) View.GONE else View.VISIBLE
-        binding.dividerReleaseSchedule.visibility = if (viewModel.isShielded) View.GONE else View.VISIBLE
+        binding.dividerReleaseSchedule.visibility =
+            if (viewModel.isShielded) View.GONE else View.VISIBLE
     }
 
     private fun gotoTransferFilters(account: Account) {
@@ -144,7 +156,10 @@ class AccountSettingsActivity : BaseActivity() {
     private val getResultEnableShielding =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
-                it.data?.getBooleanExtra(ShieldingIntroActivity.EXTRA_RESULT_SHIELDING_ENABLED, false)?.let { enabled ->
+                it.data?.getBooleanExtra(
+                    ShieldingIntroActivity.EXTRA_RESULT_SHIELDING_ENABLED,
+                    false
+                )?.let { enabled ->
                     if (enabled) {
                         viewModel.enableShielded()
                         viewModel.isShielded = true

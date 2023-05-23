@@ -26,6 +26,6 @@ class BakerRemoveIntroFlow :
     }
 
     override fun getLink(position: Int): String {
-        return "file:///android_asset/baker_remove_intro_flow_en_"+(position+1)+".html"
+        return "file:///android_asset/baker_remove_intro_flow_en_" + (position + 1) + ".html"
     }
 }

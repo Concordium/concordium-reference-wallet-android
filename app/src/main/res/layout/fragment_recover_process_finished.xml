@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/Layout.Root">
+
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/result_icon"
         android:layout_width="110dp"
@@ -11,6 +12,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/header_textview"
         style="@style/TextView.BlueHeader"
@@ -20,6 +22,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/result_icon" />
+
     <TextView
         android:id="@+id/partial_textview"
         style="@style/TextView.Standard"
@@ -29,6 +32,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_textview" />
+
     <TextView
         android:id="@+id/provider_names"
         style="@style/TextView.Standard"
@@ -38,6 +42,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/partial_textview" />
+
     <TextView
         android:id="@+id/subtitle_textview"
         style="@style/TextView.Standard"
@@ -47,6 +52,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/provider_names" />
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/identities_accounts"
         android:layout_width="match_parent"

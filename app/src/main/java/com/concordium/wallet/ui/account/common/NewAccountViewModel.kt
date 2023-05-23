@@ -20,7 +20,14 @@ import com.concordium.wallet.data.backend.repository.IdentityProviderRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.CreateCredentialInputV1
 import com.concordium.wallet.data.cryptolib.StorageAccountData
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.AccountSubmissionStatus
+import com.concordium.wallet.data.model.CredentialWrapper
+import com.concordium.wallet.data.model.GlobalParams
+import com.concordium.wallet.data.model.GlobalParamsWrapper
+import com.concordium.wallet.data.model.IdentityAttribute
+import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
+import com.concordium.wallet.data.model.SubmissionData
+import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
@@ -141,7 +148,8 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
 
     fun getCipherForBiometrics(): Cipher? {
         return try {
-            val cipher = App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
+            val cipher =
+                App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
             if (cipher == null) {
                 _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
                 _waitingLiveData.value = false
@@ -161,7 +169,8 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
 
     fun checkLogin(cipher: Cipher) = viewModelScope.launch {
         _waitingLiveData.value = true
-        val password = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
+        val password =
+            App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
         if (password != null) {
             decryptAndContinue(password)
         } else {
@@ -222,9 +231,17 @@ open class NewAccountViewModel(application: Application) : AndroidViewModel(appl
             _waitingLiveData.value = false
         } else {
             tempData.accountAddress = output.accountAddress
-            val jsonToBeEncrypted = gson.toJson(StorageAccountData(output.accountAddress, output.accountKeys, output.encryptionSecretKey, output.commitmentsRandomness))
+            val jsonToBeEncrypted = gson.toJson(
+                StorageAccountData(
+                    output.accountAddress,
+                    output.accountKeys,
+                    output.encryptionSecretKey,
+                    output.commitmentsRandomness
+                )
+            )
 
-            val storageAccountDataEncrypted = App.appCore.getCurrentAuthenticationManager().encryptInBackground(password, jsonToBeEncrypted)
+            val storageAccountDataEncrypted = App.appCore.getCurrentAuthenticationManager()
+                .encryptInBackground(password, jsonToBeEncrypted)
             if (storageAccountDataEncrypted != null) {
                 tempData.encryptedAccountData = storageAccountDataEncrypted
                 tempData.credential = output.credential

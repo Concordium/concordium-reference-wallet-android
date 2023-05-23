@@ -14,7 +14,10 @@ import com.concordium.wallet.ui.passphrase.common.WordsPickedBaseListAdapter
 import com.concordium.wallet.ui.passphrase.setup.PassPhraseViewModel
 import com.concordium.wallet.util.UnitConvertUtil
 
-class WordsPickedRecoverListAdapter(private val context: Context, private val arrayList: Array<String?>) : WordsPickedBaseListAdapter(arrayList) {
+class WordsPickedRecoverListAdapter(
+    private val context: Context,
+    private val arrayList: Array<String?>
+) : WordsPickedBaseListAdapter(arrayList) {
     private var onTextChangeListener: OnTextChangeListener? = null
 
     fun interface OnTextChangeListener {
@@ -26,7 +29,11 @@ class WordsPickedRecoverListAdapter(private val context: Context, private val ar
         val binding: ListItemWordsPickedRecoverBinding
 
         if (convertView == null) {
-            binding = ListItemWordsPickedRecoverBinding.inflate(LayoutInflater.from(context), parent, false)
+            binding = ListItemWordsPickedRecoverBinding.inflate(
+                LayoutInflater.from(context),
+                parent,
+                false
+            )
             holder = ViewHolder(binding)
             val layoutParams = holder.binding.tvPosition.layoutParams
             layoutParams.width = widestPositionText
@@ -40,7 +47,10 @@ class WordsPickedRecoverListAdapter(private val context: Context, private val ar
         holder.binding.root.visibility = View.VISIBLE
 
         val rootLayoutParams = holder.binding.root.layoutParams
-        rootLayoutParams.height = if (position == PassPhraseViewModel.WORD_COUNT + OFFSET) 0 else  UnitConvertUtil.convertDpToPixel(50f)
+        rootLayoutParams.height =
+            if (position == PassPhraseViewModel.WORD_COUNT + OFFSET) 0 else UnitConvertUtil.convertDpToPixel(
+                50f
+            )
         holder.binding.root.layoutParams = rootLayoutParams
 
         arrayList[position]?.let {
@@ -49,41 +59,89 @@ class WordsPickedRecoverListAdapter(private val context: Context, private val ar
             } else {
                 holder.binding.etTitle.setText(it)
                 holder.binding.tvTitle.text = it
-                holder.binding.tvPosition.setTextColor(ContextCompat.getColor(context, R.color.theme_white))
-                holder.binding.etTitle.setTextColor(ContextCompat.getColor(context, R.color.theme_white))
-                holder.binding.tvTitle.setTextColor(ContextCompat.getColor(context, R.color.theme_white))
+                holder.binding.tvPosition.setTextColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.theme_white
+                    )
+                )
+                holder.binding.etTitle.setTextColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.theme_white
+                    )
+                )
+                holder.binding.tvTitle.setTextColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.theme_white
+                    )
+                )
                 holder.binding.rlBorder.elevation = 0f
                 when (position) {
                     currentPosition -> {
-                        holder.binding.rlBorder.background = AppCompatResources.getDrawable(context, R.drawable.rounded_blue)
+                        holder.binding.rlBorder.background =
+                            AppCompatResources.getDrawable(context, R.drawable.rounded_blue)
                         holder.binding.rlBorder.elevation = 5f
                     }
-                    2 -> holder.binding.rlBorder.background = AppCompatResources.getDrawable(context, R.drawable.rounded_top_blue)
-                    25 -> holder.binding.rlBorder.background = AppCompatResources.getDrawable(context, R.drawable.rounded_bottom_blue)
+
+                    2 -> holder.binding.rlBorder.background =
+                        AppCompatResources.getDrawable(context, R.drawable.rounded_top_blue)
+
+                    25 -> holder.binding.rlBorder.background =
+                        AppCompatResources.getDrawable(context, R.drawable.rounded_bottom_blue)
+
                     else -> {
                         if (position - 1 == currentPosition)
-                            holder.binding.rlBorder.background = AppCompatResources.getDrawable(context, R.drawable.rectangle_blue)
+                            holder.binding.rlBorder.background =
+                                AppCompatResources.getDrawable(context, R.drawable.rectangle_blue)
                         else
-                            holder.binding.rlBorder.background = AppCompatResources.getDrawable(context, R.drawable.rectangle_top_blue)
+                            holder.binding.rlBorder.background = AppCompatResources.getDrawable(
+                                context,
+                                R.drawable.rectangle_top_blue
+                            )
                     }
                 }
             }
         } ?: run {
             holder.binding.etTitle.setText("")
             holder.binding.tvTitle.text = ""
-            holder.binding.tvPosition.setTextColor(ContextCompat.getColor(context, R.color.theme_black))
-            holder.binding.etTitle.setTextColor(ContextCompat.getColor(context, R.color.theme_black))
-            holder.binding.tvTitle.setTextColor(ContextCompat.getColor(context, R.color.theme_black))
-            holder.binding.rlBorder.background = AppCompatResources.getDrawable(context, R.drawable.rounded_white_blue_border)
+            holder.binding.tvPosition.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.theme_black
+                )
+            )
+            holder.binding.etTitle.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.theme_black
+                )
+            )
+            holder.binding.tvTitle.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.theme_black
+                )
+            )
+            holder.binding.rlBorder.background =
+                AppCompatResources.getDrawable(context, R.drawable.rounded_white_blue_border)
             holder.binding.rlBorder.elevation = 0f
             when (position) {
                 currentPosition -> {
-                    holder.binding.rlBorder.background = AppCompatResources.getDrawable(context, R.drawable.rounded_white)
+                    holder.binding.rlBorder.background =
+                        AppCompatResources.getDrawable(context, R.drawable.rounded_white)
                     holder.binding.rlBorder.elevation = 5f
                 }
-                2 -> holder.binding.rlBorder.background = AppCompatResources.getDrawable(context, R.drawable.rounded_top_transparent)
-                25 -> holder.binding.rlBorder.background = AppCompatResources.getDrawable(context, R.drawable.rounded_bottom_transparent)
-                else -> holder.binding.rlBorder.background = AppCompatResources.getDrawable(context, R.drawable.rectangle_start_end_border)
+
+                2 -> holder.binding.rlBorder.background =
+                    AppCompatResources.getDrawable(context, R.drawable.rounded_top_transparent)
+
+                25 -> holder.binding.rlBorder.background =
+                    AppCompatResources.getDrawable(context, R.drawable.rounded_bottom_transparent)
+
+                else -> holder.binding.rlBorder.background =
+                    AppCompatResources.getDrawable(context, R.drawable.rectangle_start_end_border)
             }
         }
 

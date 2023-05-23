@@ -25,6 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fillViewport="true">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -35,6 +36,7 @@
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:orientation="vertical">
+
                         <TextView
                             style="@style/TextView.Standard.Small"
                             android:layout_width="wrap_content"
@@ -43,22 +45,26 @@
                             android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
                             android:gravity="center"
                             android:text="@string/delegation_register_delegation_amount_current_amount" />
+
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/activity_vertical_margin"
                             android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
                             android:orientation="vertical">
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:orientation="horizontal">
+
                                 <TextView
                                     android:id="@+id/account_balance"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Large"
                                     android:text="@string/delegation_register_delegation_amount_balance" />
+
                                 <TextView
                                     android:id="@+id/balance_amount"
                                     android:layout_width="0dp"
@@ -68,15 +74,18 @@
                                     android:gravity="right"
                                     tools:text="[132.955]" />
                             </LinearLayout>
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:orientation="horizontal">
+
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Large"
                                     android:text="@string/baker_registration_amount_current_stake_title" />
+
                                 <TextView
                                     android:id="@+id/baker_amount"
                                     android:layout_width="0dp"
@@ -95,6 +104,7 @@
                             android:orientation="vertical"
                             android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
                             android:layout_marginHorizontal="20dp">
+
                             <TextView
                                 android:id="@+id/amount_desc"
                                 style="@style/TextView.Small"
@@ -103,11 +113,13 @@
                                 android:layout_gravity="center"
                                 android:gravity="center"
                                 android:text="@string/baker_registration_amount_enter_stake_title" />
+
                             <RelativeLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
                                 android:gravity="center">
+
                                 <com.concordium.wallet.uicore.view.AmountEditText
                                     android:id="@+id/amount"
                                     style="@style/EditText.Card.Flat"
@@ -118,6 +130,7 @@
                                     android:textAlignment="center"
                                     android:textSize="24sp"
                                     tools:text="Ͼ100.34432354" />
+
                                 <TextView
                                     android:id="@+id/amount_locked"
                                     android:layout_width="match_parent"
@@ -132,6 +145,7 @@
                                     android:textColor="@color/text_grey"
                                     android:text="@string/delegation_register_delegation_amount_locked" />
                             </RelativeLayout>
+
                             <TextView
                                 android:id="@+id/amount_error"
                                 style="@style/TextView.Standard.Error"
@@ -168,6 +182,7 @@
                             android:text="@string/baker_registration_amount_explain" />
 
                     </LinearLayout>
+
                     <com.concordium.wallet.uicore.view.SegmentedControlView
                         android:id="@+id/restake_options"
                         android:layout_width="307dp"
@@ -185,6 +200,7 @@
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
                         android:orientation="horizontal">
+
                         <Button
                             android:id="@+id/baker_registration_continue"
                             style="@style/Button.Standard"
@@ -195,7 +211,10 @@
                 </LinearLayout>
             </ScrollView>
 
-            <include layout="@layout/progress" android:id="@+id/include_progress" tools:visibility="gone"/>
+            <include
+                layout="@layout/progress"
+                android:id="@+id/include_progress"
+                tools:visibility="gone" />
 
         </RelativeLayout>
     </RelativeLayout>

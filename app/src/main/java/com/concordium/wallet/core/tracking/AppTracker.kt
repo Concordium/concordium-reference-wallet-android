@@ -12,8 +12,10 @@ class AppTracker(private val tracker: Tracker) {
         const val NETWORK_VERSION_VARIABLE_INDEX = 2
     }
 
-    fun trackVersionAndNetwork(){
-        TrackHelper.track().screen("/mainactivity").title("Home").dimension(APP_VERSION_VARIABLE_INDEX, appVersion).with(tracker)
-        TrackHelper.track().screen("/mainactivity").title("Home").dimension(NETWORK_VERSION_VARIABLE_INDEX, net).with(tracker)
+    fun trackVersionAndNetwork() {
+        TrackHelper.track().screen("/mainactivity").title("Home")
+            .dimension(APP_VERSION_VARIABLE_INDEX, appVersion).with(tracker)
+        TrackHelper.track().screen("/mainactivity").title("Home")
+            .dimension(NETWORK_VERSION_VARIABLE_INDEX, net).with(tracker)
     }
 }

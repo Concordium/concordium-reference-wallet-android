@@ -5,7 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class PinnedHeaderItemDecoration(val listener: PinnedHeaderListener) : RecyclerView.ItemDecoration() {
+class PinnedHeaderItemDecoration(val listener: PinnedHeaderListener) :
+    RecyclerView.ItemDecoration() {
     private var headerHeight: Int = 0
 
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {

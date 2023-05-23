@@ -43,7 +43,10 @@ interface IdentityDao {
     suspend fun findByIdentityProvider(identityProviderId: Int): List<Identity>
 
     @Query("SELECT * FROM identity_table WHERE identity_provider_id = :identityProviderId AND identity_index = :identityIndex")
-    suspend fun findByIdentityProviderAndIndex(identityProviderId: Int, identityIndex: Int): Identity?
+    suspend fun findByIdentityProviderAndIndex(
+        identityProviderId: Int,
+        identityIndex: Int
+    ): Identity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg identity: Identity): List<Long>

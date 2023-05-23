@@ -26,7 +26,11 @@ class PassPhraseRevealedFragment : PassPhraseBaseFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentPassPhraseRevealBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -64,7 +68,10 @@ class PassPhraseRevealedFragment : PassPhraseBaseFragment() {
             })
     }
 
-    class WordsAdapter internal constructor(private val context: Context, private val items: List<CharArray>) : BaseAdapter() {
+    class WordsAdapter internal constructor(
+        private val context: Context,
+        private val items: List<CharArray>
+    ) : BaseAdapter() {
         override fun getCount(): Int {
             return items.size
         }
@@ -82,7 +89,8 @@ class PassPhraseRevealedFragment : PassPhraseBaseFragment() {
             val holder: ViewHolder
 
             if (convertView == null) {
-                view = LayoutInflater.from(context).inflate(R.layout.item_passphrase_word, parent, false)
+                view = LayoutInflater.from(context)
+                    .inflate(R.layout.item_passphrase_word, parent, false)
                 holder = ViewHolder()
                 holder.contentView = view
                 holder.tvPosition = view.findViewById(R.id.tvPosition)

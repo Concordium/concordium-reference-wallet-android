@@ -25,15 +25,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:fillViewport="true">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:orientation="vertical">
+
                         <TextView
                             style="@style/TextView.Standard"
                             android:layout_width="wrap_content"
@@ -43,6 +46,7 @@
                             android:layout_marginBottom="@dimen/activity_content_margin"
                             android:gravity="center"
                             android:text="@string/baker_update_pool_settings_explain" />
+
                         <TextView
                             android:id="@+id/pool_settings_current_status"
                             style="@style/TextView.Mono"
@@ -53,6 +57,7 @@
                             android:layout_marginBottom="@dimen/activity_receipt_item_vertical_margin"
                             android:gravity="center"
                             tools:text="@string/baker_update_pool_settings_current_status_open" />
+
                         <com.concordium.wallet.uicore.view.SegmentedControlView
                             android:id="@+id/pool_options"
                             android:layout_width="307dp"
@@ -61,6 +66,7 @@
                             android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
                             android:layout_gravity="center" />
                     </LinearLayout>
+
                     <RelativeLayout
                         android:id="@+id/button_container"
                         android:layout_width="match_parent"
@@ -70,6 +76,7 @@
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
                         android:orientation="horizontal">
+
                         <Button
                             android:id="@+id/update_pool_settings_continue"
                             style="@style/Button.Standard"

@@ -65,7 +65,11 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val preferences: SendFundsPreferences
         get() {
-            return SendFundsPreferences(getApplication(), SharedPreferencesKeys.PREF_SEND_FUNDS.key, Context.MODE_PRIVATE)
+            return SendFundsPreferences(
+                getApplication(),
+                SharedPreferencesKeys.PREF_SEND_FUNDS.key,
+                Context.MODE_PRIVATE
+            )
         }
 
     private val gson = App.appCore.gson
@@ -220,7 +224,8 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             return true
         }
 
-        val totalUnshieldedAtDisposal = account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
+        val totalUnshieldedAtDisposal =
+            account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
 
         if (isShielded) {
             if (isTransferToSameAccount()) {
@@ -367,7 +372,8 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             calculateInputEncryptedAmount(),
             null,
             null,
-            null)
+            null
+        )
 
         var transactionType =
             if (isShielded) {
@@ -439,11 +445,13 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
         val allTransfers = transferRepository.getAllByAccountId(account.id)
         val unfinalisedTransfers = allTransfers.filter {
-            it.transactionStatus != TransactionStatus.FINALIZED && (it.nonce?.nonce ?: -1) >= lastNounceToInclude
+            it.transactionStatus != TransactionStatus.FINALIZED && (it.nonce?.nonce
+                ?: -1) >= lastNounceToInclude
         }
 
         val aggEncryptedAmount = if (unfinalisedTransfers.isNotEmpty()) {
-            val lastTransaction = unfinalisedTransfers.maxWithOrNull { a, b -> a.id.compareTo(b.id) }
+            val lastTransaction =
+                unfinalisedTransfers.maxWithOrNull { a, b -> a.id.compareTo(b.id) }
             if (lastTransaction != null) {
                 tempData.accountBalance?.finalizedBalance?.let {
                     val incomingAmounts = it.accountEncryptedAmount.incomingAmounts.filter {
@@ -475,7 +483,8 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
         val aggAmount = tempData.accountBalance?.finalizedBalance?.let {
             var agg =
-                accountUpdater.lookupMappedAmount(it.accountEncryptedAmount.selfAmount)?.toBigInteger()
+                accountUpdater.lookupMappedAmount(it.accountEncryptedAmount.selfAmount)
+                    ?.toBigInteger()
                     ?: BigInteger.ZERO
             it.accountEncryptedAmount.incomingAmounts.forEach {
                 agg += accountUpdater.lookupMappedAmount(it)?.toBigInteger() ?: BigInteger.ZERO
@@ -688,7 +697,9 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
                 cost = it
             }
             var amount: BigInteger =
-                ((if (isShielded) account.totalShieldedBalance else (account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) - cost)) )
+                ((if (isShielded) account.totalShieldedBalance else (account.getAtDisposalWithoutStakedOrScheduled(
+                    account.totalUnshieldedBalance
+                ) - cost)))
             if (amount.signum() < 0) {
                 amount = BigInteger.ZERO
             }

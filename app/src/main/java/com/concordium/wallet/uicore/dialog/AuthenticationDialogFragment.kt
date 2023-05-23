@@ -33,7 +33,8 @@ class AuthenticationDialogFragment : DialogFragment(), TextView.OnEditorActionLi
         setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Material_Light_Dialog)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = DialogAuthenticationContainerBinding.inflate(inflater, container, false)
         dialog?.setTitle(getString(R.string.auth_dialog_password_title))
@@ -44,13 +45,21 @@ class AuthenticationDialogFragment : DialogFragment(), TextView.OnEditorActionLi
         super.onViewCreated(view, savedInstanceState)
 
         val alternativeString = arguments?.getString(EXTRA_ALTERNATIVE_TEXT)
-        if(alternativeString != null) {
+        if (alternativeString != null) {
             binding.includeDialogAuthenticationContent.passwordDescription.text = alternativeString
         } else {
-            binding.includeDialogAuthenticationContent.passwordDescription.setText(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_dialog_passcode_description else R.string.auth_dialog_password_description)
+            binding.includeDialogAuthenticationContent.passwordDescription.setText(
+                if (App.appCore.getCurrentAuthenticationManager()
+                        .usePasscode()
+                ) R.string.auth_dialog_passcode_description else R.string.auth_dialog_password_description
+            )
         }
 
-        binding.includeDialogAuthenticationContent.passwordEdittext.setHint(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_dialog_passcode else R.string.auth_dialog_password)
+        binding.includeDialogAuthenticationContent.passwordEdittext.setHint(
+            if (App.appCore.getCurrentAuthenticationManager()
+                    .usePasscode()
+            ) R.string.auth_dialog_passcode else R.string.auth_dialog_password
+        )
         if (App.appCore.getCurrentAuthenticationManager().usePasscode()) {
             binding.includeDialogAuthenticationContent.passwordEdittext.inputType =
                 InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
@@ -79,14 +88,19 @@ class AuthenticationDialogFragment : DialogFragment(), TextView.OnEditorActionLi
     }
 
     private fun verifyPassword() {
-        val passwordIsValid = App.appCore.getCurrentAuthenticationManager().checkPassword(binding.includeDialogAuthenticationContent.passwordEdittext.text.toString())
+        val passwordIsValid = App.appCore.getCurrentAuthenticationManager()
+            .checkPassword(binding.includeDialogAuthenticationContent.passwordEdittext.text.toString())
         if (passwordIsValid) {
             callback?.onCorrectPassword(binding.includeDialogAuthenticationContent.passwordEdittext.text.toString())
             binding.includeDialogAuthenticationContent.passwordEdittext.setText("")
             dismiss()
         } else {
             binding.includeDialogAuthenticationContent.passwordEdittext.setText("")
-            binding.includeDialogAuthenticationContent.passwordError.setText(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_dialog_passcode_error else R.string.auth_dialog_password_error)
+            binding.includeDialogAuthenticationContent.passwordError.setText(
+                if (App.appCore.getCurrentAuthenticationManager()
+                        .usePasscode()
+                ) R.string.auth_dialog_passcode_error else R.string.auth_dialog_password_error
+            )
         }
     }
 

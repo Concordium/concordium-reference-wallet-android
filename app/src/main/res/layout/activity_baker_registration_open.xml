@@ -25,16 +25,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:fillViewport="true">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                         android:orientation="vertical">
+
                         <TextView
                             android:id="@+id/open_url_explain"
                             style="@style/TextView.Standard"
@@ -43,6 +46,7 @@
                             android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
                             android:gravity="center"
                             android:text="@string/baker_registration_open_explain" />
+
                         <TextView
                             android:id="@+id/current_url"
                             style="@style/TextView.Mono"
@@ -55,6 +59,7 @@
                             android:gravity="center"
                             tools:visibility="visible"
                             tools:text="@string/baker_update_pool_settings_current_url" />
+
                         <EditText
                             android:id="@+id/open_url"
                             android:layout_width="match_parent"
@@ -67,6 +72,7 @@
                             android:inputType="textUri"
                             android:hint="@string/baker_registration_open_url_hint" />
                     </LinearLayout>
+
                     <RelativeLayout
                         android:id="@+id/button_container"
                         android:layout_width="match_parent"
@@ -76,6 +82,7 @@
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
                         android:orientation="horizontal">
+
                         <Button
                             android:id="@+id/baker_registration_open_continue"
                             style="@style/Button.Standard"

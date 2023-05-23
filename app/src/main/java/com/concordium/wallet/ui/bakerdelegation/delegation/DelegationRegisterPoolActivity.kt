@@ -29,7 +29,11 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDelegationRegistrationPoolBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.delegation_register_delegation_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.delegation_register_delegation_title
+        )
         initViews()
     }
 
@@ -68,24 +72,29 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity() {
                     updateVisibilities()
                 }
             },
-            viewModel.isBakerPool() || (!viewModel.isBakerPool() && !viewModel.isLPool()))
-            lPoolControl = binding.poolOptions.addControl(getString(R.string.delegation_register_delegation_passive), object: SegmentedControlView.OnItemClickListener {
-                override fun onItemClicked(){
+            viewModel.isBakerPool() || (!viewModel.isBakerPool() && !viewModel.isLPool())
+        )
+        lPoolControl = binding.poolOptions.addControl(
+            getString(R.string.delegation_register_delegation_passive),
+            object : SegmentedControlView.OnItemClickListener {
+                override fun onItemClicked() {
                     viewModel.selectLPool()
                     updateVisibilities()
                 }
-            }, viewModel.isLPool())
+            },
+            viewModel.isLPool()
+        )
 
         binding.poolId.setText(viewModel.getPoolId())
         binding.poolId.setOnEditorActionListener { _, actionId, _ ->
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    KeyboardUtil.hideKeyboard(this)
-                    onContinueClicked()
-                    @Suppress("UNUSED_EXPRESSION")
-                    true
-                }
-                false
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                KeyboardUtil.hideKeyboard(this)
+                onContinueClicked()
+                @Suppress("UNUSED_EXPRESSION")
+                true
             }
+            false
+        }
 
         binding.poolRegistrationContinue.setOnClickListener {
             onContinueClicked()
@@ -124,9 +133,11 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity() {
             AMOUNT_TOO_LARGE_FOR_POOL -> {
                 showDelegationAmountTooLargeNotice()
             }
+
             AMOUNT_TOO_LARGE_FOR_POOL_COOLDOWN -> {
                 showDetailedPage()
             }
+
             else -> {
                 binding.poolIdError.text = getString(value)
                 showError()
@@ -137,33 +148,48 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity() {
     private fun updateContent() {
         if (viewModel.bakerDelegationData.type == UPDATE_DELEGATION) {
             setActionBarTitle(R.string.delegation_update_delegation_title)
-            viewModel.bakerDelegationData.oldRestake = viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings
+            viewModel.bakerDelegationData.oldRestake =
+                viewModel.bakerDelegationData.account?.accountDelegation?.restakeEarnings
             viewModel.bakerDelegationData.oldDelegationIsBaker = viewModel.isBakerPool()
-            viewModel.bakerDelegationData.oldDelegationTargetPoolId = viewModel.bakerDelegationData.account?.accountDelegation?.delegationTarget?.bakerId
+            viewModel.bakerDelegationData.oldDelegationTargetPoolId =
+                viewModel.bakerDelegationData.account?.accountDelegation?.delegationTarget?.bakerId
             if (viewModel.isBakerPool()) {
                 viewModel.selectBakerPool()
-                binding.existingPoolId.text = getString(R.string.delegation_update_delegation_pool_id_baker, getExistingPoolIdText())
+                binding.existingPoolId.text = getString(
+                    R.string.delegation_update_delegation_pool_id_baker,
+                    getExistingPoolIdText()
+                )
             } else {
                 viewModel.selectLPool()
-                binding.existingPoolId.text = getString(R.string.delegation_update_delegation_pool_id__passive)
+                binding.existingPoolId.text =
+                    getString(R.string.delegation_update_delegation_pool_id__passive)
             }
         }
     }
 
     private fun updateVisibilities() {
-        binding.poolId.hint = if (viewModel.bakerDelegationData.oldDelegationTargetPoolId == null) getString(R.string.delegation_register_delegation_pool_id_hint) else getString(R.string.delegation_register_delegation_pool_id_hint_update)
-        binding.poolId.visibility = if (viewModel.bakerDelegationData.isLPool) View.GONE else View.VISIBLE
-        if (viewModel.bakerDelegationData.isLPool) binding.poolDesc.setText(R.string.delegation_register_delegation_desc_passive) else binding.poolDesc.setText(R.string.delegation_register_delegation_desc)
+        binding.poolId.hint =
+            if (viewModel.bakerDelegationData.oldDelegationTargetPoolId == null) getString(R.string.delegation_register_delegation_pool_id_hint) else getString(
+                R.string.delegation_register_delegation_pool_id_hint_update
+            )
+        binding.poolId.visibility =
+            if (viewModel.bakerDelegationData.isLPool) View.GONE else View.VISIBLE
+        if (viewModel.bakerDelegationData.isLPool) binding.poolDesc.setText(R.string.delegation_register_delegation_desc_passive) else binding.poolDesc.setText(
+            R.string.delegation_register_delegation_desc
+        )
         binding.poolDesc.handleUrlClicks { url ->
             val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
             ContextCompat.startActivity(this, browserIntent, null)
         }
-        binding.poolRegistrationContinue.isEnabled = getExistingPoolIdText().isNotEmpty() || viewModel.bakerDelegationData.isLPool || binding.poolId.text.isNotEmpty()
+        binding.poolRegistrationContinue.isEnabled =
+            getExistingPoolIdText().isNotEmpty() || viewModel.bakerDelegationData.isLPool || binding.poolId.text.isNotEmpty()
         hideError()
     }
 
     private fun onContinueClicked() {
-        if (viewModel.isBakerPool() && viewModel.getPoolId().isEmpty() && getExistingPoolIdText().isNotEmpty())
+        if (viewModel.isBakerPool() && viewModel.getPoolId()
+                .isEmpty() && getExistingPoolIdText().isNotEmpty()
+        )
             viewModel.setPoolID(getExistingPoolIdText())
         viewModel.validatePoolId()
     }

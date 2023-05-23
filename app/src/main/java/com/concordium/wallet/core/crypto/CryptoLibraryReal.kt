@@ -1,7 +1,45 @@
 package com.concordium.wallet.core.crypto
 
-import com.concordium.mobile_wallet_lib.*
-import com.concordium.wallet.data.cryptolib.*
+import com.concordium.mobile_wallet_lib.ReturnValue
+import com.concordium.mobile_wallet_lib.check_account_address
+import com.concordium.mobile_wallet_lib.combine_encrypted_amounts
+import com.concordium.mobile_wallet_lib.create_account_transaction
+import com.concordium.mobile_wallet_lib.create_configure_baker_transaction
+import com.concordium.mobile_wallet_lib.create_configure_delegation_transaction
+import com.concordium.mobile_wallet_lib.create_credential_v1
+import com.concordium.mobile_wallet_lib.create_encrypted_transfer
+import com.concordium.mobile_wallet_lib.create_id_request_and_private_data_v1
+import com.concordium.mobile_wallet_lib.create_pub_to_sec_transfer
+import com.concordium.mobile_wallet_lib.create_sec_to_pub_transfer
+import com.concordium.mobile_wallet_lib.create_transfer
+import com.concordium.mobile_wallet_lib.decrypt_encrypted_amount
+import com.concordium.mobile_wallet_lib.generate_baker_keys
+import com.concordium.mobile_wallet_lib.generate_recovery_request
+import com.concordium.mobile_wallet_lib.get_account_keys_and_randomness
+import com.concordium.mobile_wallet_lib.get_identity_keys_and_randomness
+import com.concordium.mobile_wallet_lib.loadWalletLib
+import com.concordium.mobile_wallet_lib.parameter_to_json
+import com.concordium.mobile_wallet_lib.serialize_token_transfer_parameters
+import com.concordium.mobile_wallet_lib.sign_message
+import com.concordium.wallet.data.cryptolib.AccountKeysAndRandomnessInput
+import com.concordium.wallet.data.cryptolib.AccountKeysAndRandomnessOutput
+import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
+import com.concordium.wallet.data.cryptolib.CreateAccountTransactionOutput
+import com.concordium.wallet.data.cryptolib.CreateCredentialInputV1
+import com.concordium.wallet.data.cryptolib.CreateCredentialOutputV1
+import com.concordium.wallet.data.cryptolib.CreateTransferInput
+import com.concordium.wallet.data.cryptolib.CreateTransferOutput
+import com.concordium.wallet.data.cryptolib.DecryptAmountInput
+import com.concordium.wallet.data.cryptolib.GenerateRecoveryRequestInput
+import com.concordium.wallet.data.cryptolib.IdRequestAndPrivateDataInputV1
+import com.concordium.wallet.data.cryptolib.IdRequestAndPrivateDataOutputV1
+import com.concordium.wallet.data.cryptolib.IdentityKeysAndRandomnessInput
+import com.concordium.wallet.data.cryptolib.IdentityKeysAndRandomnessOutput
+import com.concordium.wallet.data.cryptolib.ParameterToJsonInput
+import com.concordium.wallet.data.cryptolib.SerializeTokenTransferParametersInput
+import com.concordium.wallet.data.cryptolib.SerializeTokenTransferParametersOutput
+import com.concordium.wallet.data.cryptolib.SignMessageInput
+import com.concordium.wallet.data.cryptolib.SignMessageOutput
 import com.concordium.wallet.data.model.ArsInfo
 import com.concordium.wallet.data.model.BakerKeys
 import com.concordium.wallet.data.model.GlobalParams
@@ -19,14 +57,23 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
         seed: String, net: String, identityIndex: Int
     ): IdRequestAndPrivateDataOutputV1? =
         withContext(Dispatchers.Default) {
-            val inputObj = IdRequestAndPrivateDataInputV1(identityProviderInfo, global, arsInfo, seed, net, identityIndex)
+            val inputObj = IdRequestAndPrivateDataInputV1(
+                identityProviderInfo,
+                global,
+                arsInfo,
+                seed,
+                net,
+                identityIndex
+            )
             val input = gson.toJson(inputObj)
             loadWalletLib()
             val result = create_id_request_and_private_data_v1(input)
             Log.d("Output (Code ${result.result}): ${result.output}")
             if (result.result == CryptoLibrary.SUCCESS) {
-                return@withContext gson.fromJson(result.output,
-                    IdRequestAndPrivateDataOutputV1::class.java)
+                return@withContext gson.fromJson(
+                    result.output,
+                    IdRequestAndPrivateDataOutputV1::class.java
+                )
             }
             Log.e("CryptoLib failed")
             return@withContext null
@@ -39,14 +86,19 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             val result = create_credential_v1(input)
             Log.d("Output (Code ${result.result}): ${result.output}")
             if (result.result == CryptoLibrary.SUCCESS) {
-                return@withContext gson.fromJson(result.output,
-                    CreateCredentialOutputV1::class.java)
+                return@withContext gson.fromJson(
+                    result.output,
+                    CreateCredentialOutputV1::class.java
+                )
             }
             Log.e("CryptoLib failed")
             return@withContext null
         }
 
-    override suspend fun createTransfer(createTransferInput: CreateTransferInput, type: Int): CreateTransferOutput? =
+    override suspend fun createTransfer(
+        createTransferInput: CreateTransferInput,
+        type: Int
+    ): CreateTransferOutput? =
         withContext(Dispatchers.Default) {
             val input = gson.toJson(createTransferInput)
             Log.d("Input: $input")
@@ -65,8 +117,13 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             CryptoLibrary.PUBLIC_TO_SEC_TRANSFER -> return create_pub_to_sec_transfer(input)
             CryptoLibrary.SEC_TO_PUBLIC_TRANSFER -> return create_sec_to_pub_transfer(input)
             CryptoLibrary.ENCRYPTED_TRANSFER -> return create_encrypted_transfer(input)
-            CryptoLibrary.CONFIGURE_DELEGATION_TRANSACTION -> return create_configure_delegation_transaction(input)
-            CryptoLibrary.CONFIGURE_BAKING_TRANSACTION -> return create_configure_baker_transaction(input)
+            CryptoLibrary.CONFIGURE_DELEGATION_TRANSACTION -> return create_configure_delegation_transaction(
+                input
+            )
+
+            CryptoLibrary.CONFIGURE_BAKING_TRANSACTION -> return create_configure_baker_transaction(
+                input
+            )
         }
         return create_transfer(input)
     }
@@ -87,7 +144,8 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
 
     override fun combineEncryptedAmounts(selfAmount: String, incomingAmounts: String): String {
         loadWalletLib()
-        val result = combine_encrypted_amounts(gson.toJson(selfAmount), gson.toJson(incomingAmounts))
+        val result =
+            combine_encrypted_amounts(gson.toJson(selfAmount), gson.toJson(incomingAmounts))
         return gson.fromJson(result.output, String::class.java)
     }
 
@@ -128,7 +186,10 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             val result = get_identity_keys_and_randomness(input)
             Log.d("Output (Code ${result.result}): ${result.output}")
             if (result.result == CryptoLibrary.SUCCESS) {
-                return@withContext gson.fromJson(result.output, IdentityKeysAndRandomnessOutput::class.java)
+                return@withContext gson.fromJson(
+                    result.output,
+                    IdentityKeysAndRandomnessOutput::class.java
+                )
             }
             Log.e("CryptoLib failed")
             return@withContext null
@@ -141,7 +202,10 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             val result = get_account_keys_and_randomness(input)
             Log.d("Output (Code ${result.result}): ${result.output}")
             if (result.result == CryptoLibrary.SUCCESS) {
-                return@withContext gson.fromJson(result.output, AccountKeysAndRandomnessOutput::class.java)
+                return@withContext gson.fromJson(
+                    result.output,
+                    AccountKeysAndRandomnessOutput::class.java
+                )
             }
             Log.e("CryptoLib failed")
             return@withContext null
@@ -154,7 +218,10 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             val result = create_account_transaction(input)
             Log.d("Output (Code ${result.result}): ${result.output}")
             if (result.result == CryptoLibrary.SUCCESS) {
-                return@withContext gson.fromJson(result.output, CreateAccountTransactionOutput::class.java)
+                return@withContext gson.fromJson(
+                    result.output,
+                    CreateAccountTransactionOutput::class.java
+                )
             }
             Log.e("CryptoLib failed")
             return@withContext null

@@ -51,7 +51,10 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
         binding.statusButtonBottom.text = getString(R.string.delegation_status_update)
 
         if (viewModel.bakerDelegationData.isTransactionInProgress) {
-            addWaitingForTransaction(R.string.delegation_status_waiting_to_finalize_title, R.string.delegation_status_waiting_to_finalize)
+            addWaitingForTransaction(
+                R.string.delegation_status_waiting_to_finalize_title,
+                R.string.delegation_status_waiting_to_finalize
+            )
             return
         }
 
@@ -69,18 +72,43 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
         binding.statusIcon.setImageResource(R.drawable.ic_big_logo_ok)
         setContentTitle(R.string.delegation_status_content_registered_title)
 
-        addContent(R.string.delegation_status_content_delegating_account, account.name + "\n\n" + account.address)
-        addContent(R.string.delegation_status_content_delegation_amount, CurrencyUtil.formatGTU(accountDelegation.stakedAmount, true))
+        addContent(
+            R.string.delegation_status_content_delegating_account,
+            account.name + "\n\n" + account.address
+        )
+        addContent(
+            R.string.delegation_status_content_delegation_amount,
+            CurrencyUtil.formatGTU(accountDelegation.stakedAmount, true)
+        )
 
-        if (accountDelegation.delegationTarget.delegateType == DelegationTarget.TYPE_DELEGATE_TO_BAKER) addContent(R.string.delegation_status_content_target_pool, accountDelegation.delegationTarget.bakerId.toString())
-        else addContent(R.string.delegation_status_content_target_pool, getString(R.string.delegation_register_delegation_passive_long))
+        if (accountDelegation.delegationTarget.delegateType == DelegationTarget.TYPE_DELEGATE_TO_BAKER) addContent(
+            R.string.delegation_status_content_target_pool,
+            accountDelegation.delegationTarget.bakerId.toString()
+        )
+        else addContent(
+            R.string.delegation_status_content_target_pool,
+            getString(R.string.delegation_register_delegation_passive_long)
+        )
 
-        if (accountDelegation.restakeEarnings) addContent(R.string.delegation_status_content_rewards_will_be, getString(R.string.delegation_status_added_to_delegation_amount))
-        else addContent(R.string.delegation_status_content_rewards_will_be, getString(R.string.delegation_status_at_disposal))
+        if (accountDelegation.restakeEarnings) addContent(
+            R.string.delegation_status_content_rewards_will_be,
+            getString(R.string.delegation_status_added_to_delegation_amount)
+        )
+        else addContent(
+            R.string.delegation_status_content_rewards_will_be,
+            getString(R.string.delegation_status_at_disposal)
+        )
 
         viewModel.bakerDelegationData.account?.accountDelegation?.pendingChange?.let { pendingChange ->
-            addPendingChange(pendingChange, R.string.delegation_status_effective_time, R.string.delegation_status_content_take_effect_on, R.string.delegation_status_content_delegation_will_be_stopped, R.string.delegation_status_new_amount)
-            binding.statusButtonTop.isEnabled = pendingChange.change == PendingChange.CHANGE_NO_CHANGE
+            addPendingChange(
+                pendingChange,
+                R.string.delegation_status_effective_time,
+                R.string.delegation_status_content_take_effect_on,
+                R.string.delegation_status_content_delegation_will_be_stopped,
+                R.string.delegation_status_new_amount
+            )
+            binding.statusButtonTop.isEnabled =
+                pendingChange.change == PendingChange.CHANGE_NO_CHANGE
         }
 
         binding.statusButtonTop.visibility = View.VISIBLE
@@ -105,7 +133,7 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
         }
     }
 
-    private fun continueToDelete(){
+    private fun continueToDelete() {
         val intent = Intent(this, DelegationRemoveIntroFlowActivity::class.java)
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         viewModel.bakerDelegationData.type = REMOVE_DELEGATION

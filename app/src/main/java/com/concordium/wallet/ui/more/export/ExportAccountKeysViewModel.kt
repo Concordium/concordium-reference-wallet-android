@@ -11,7 +11,12 @@ import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.cryptolib.StorageAccountData
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.AccountData
+import com.concordium.wallet.data.model.AccountDataKeys
+import com.concordium.wallet.data.model.AccountKeys
+import com.concordium.wallet.data.model.Credentials
+import com.concordium.wallet.data.model.ExportAccountKeys
+import com.concordium.wallet.data.model.Value
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.FileUtil
 import com.google.gson.Gson
@@ -30,7 +35,14 @@ class ExportAccountKeysViewModel(application: Application) : AndroidViewModel(ap
             val accountKeys = AccountKeys(accountDataKeys, account.credential?.getThreshold() ?: 1)
             val credentials = Credentials(account.credential?.getCredId() ?: "")
             val value = Value(accountKeys, credentials, account.address)
-            val fileContent = Gson().toJson(ExportAccountKeys("concordium-browser-wallet-account", account.credential?.v ?: 0, BuildConfig.ENV_NAME, value))
+            val fileContent = Gson().toJson(
+                ExportAccountKeys(
+                    "concordium-browser-wallet-account",
+                    account.credential?.v ?: 0,
+                    BuildConfig.ENV_NAME,
+                    value
+                )
+            )
             FileUtil.writeFile(destinationUri, "${account.address}.export", fileContent)
             textResourceInt.postValue(R.string.export_account_keys_file_exported)
         }
@@ -55,7 +67,8 @@ class ExportAccountKeysViewModel(application: Application) : AndroidViewModel(ap
     }
 
     fun checkLogin(cipher: Cipher) = viewModelScope.launch {
-        val password = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
+        val password =
+            App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
         if (password != null) {
             decryptAndContinue(password)
         } else {
@@ -69,9 +82,11 @@ class ExportAccountKeysViewModel(application: Application) : AndroidViewModel(ap
             textResourceInt.postValue(R.string.app_error_general)
             return
         }
-        val decryptedJson = App.appCore.getCurrentAuthenticationManager().decryptInBackground(password, storageAccountDataEncrypted)
+        val decryptedJson = App.appCore.getCurrentAuthenticationManager()
+            .decryptInBackground(password, storageAccountDataEncrypted)
         if (decryptedJson != null) {
-            val credentialsOutput = App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
+            val credentialsOutput =
+                App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
             accountData.postValue(credentialsOutput.accountKeys)
         } else {
             textResourceInt.postValue(R.string.app_error_encryption)

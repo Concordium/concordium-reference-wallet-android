@@ -3,13 +3,13 @@ package com.concordium.wallet.data.model
 import java.io.Serializable
 
 data class PayDayStatus(
-        val finalizationLive: Boolean,
-        val effectiveStake: String,
-        val transactionFeesEarned: Long,
-        val bakerEquityCapital: String,
-        val lotteryPower: Double,
-        val blocksBaked: Long,
-        val delegatedCapital: String
+    val finalizationLive: Boolean,
+    val effectiveStake: String,
+    val transactionFeesEarned: Long,
+    val bakerEquityCapital: String,
+    val lotteryPower: Double,
+    val blocksBaked: Long,
+    val delegatedCapital: String
 ) : Serializable
 
 /*

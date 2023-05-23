@@ -24,7 +24,11 @@ class AuthSetupBiometricsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthSetupBiometricsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.auth_setup_biometrics_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.auth_setup_biometrics_title
+        )
 
         initializeViewModel()
         viewModel.initialize()

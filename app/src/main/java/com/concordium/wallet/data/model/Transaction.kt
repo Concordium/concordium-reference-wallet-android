@@ -29,7 +29,7 @@ data class Transaction(
     val encrypted: TransactionEncrypted?
 ) : Serializable {
 
-    fun isSameAccount() : Boolean {
+    fun isSameAccount(): Boolean {
         return fromAddress == toAddress
     }
 
@@ -75,10 +75,10 @@ data class Transaction(
         return total
     }
 
-    fun getTotalAmountForShielded() : BigInteger {
-        if(subtotal == null)
+    fun getTotalAmountForShielded(): BigInteger {
+        if (subtotal == null)
             return BigInteger.ZERO
-        else{
+        else {
             return -subtotal
         }
     }
@@ -91,11 +91,11 @@ data class Transaction(
         return details?.type == TransactionType.FINALIZATIONREWARD && isReward()
     }
 
-    fun getDecryptedMemo(): String{
+    fun getDecryptedMemo(): String {
         return details?.memo?.let { return CBORUtil.decodeHexAndCBOR(it) } ?: ""
     }
 
-    fun hasMemo(): Boolean{
+    fun hasMemo(): Boolean {
         return details != null && details.memo != null && details.memo.length > 0
     }
 }

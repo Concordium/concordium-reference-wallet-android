@@ -22,14 +22,16 @@ class AppCore(val context: Context) {
 
     val gson: Gson = initializeGson()
     val proxyBackendConfig = ProxyBackendConfig(context, gson)
-    val cryptoLibrary: CryptoLibrary = if (BuildConfig.USE_LIB_MOCK) CryptoLibraryMock(gson) else CryptoLibraryReal(gson)
+    val cryptoLibrary: CryptoLibrary =
+        if (BuildConfig.USE_LIB_MOCK) CryptoLibraryMock(gson) else CryptoLibraryReal(gson)
     val session: Session = Session(App.appContext)
     var closingPoolsChecked = false
     var cookies: List<Cookie> = emptyList()
     var appSettingsForceUpdateChecked = false
     var newIdentities = mutableMapOf<Int, Identity>()
 
-    private val authenticationManagerGeneric: AuthenticationManager = AuthenticationManager(session.getBiometricAuthKeyName())
+    private val authenticationManagerGeneric: AuthenticationManager =
+        AuthenticationManager(session.getBiometricAuthKeyName())
     private var authenticationManagerReset: AuthenticationManager = authenticationManagerGeneric
     private var authenticationManager: AuthenticationManager = authenticationManagerGeneric
     private var resetBiometricKeyNameAppendix: String = ""
@@ -49,26 +51,26 @@ class AppCore(val context: Context) {
         return gsonBuilder.create()
     }
 
-    fun getOriginalAuthenticationManager() : AuthenticationManager {
+    fun getOriginalAuthenticationManager(): AuthenticationManager {
         return authenticationManagerReset
     }
 
-    fun getCurrentAuthenticationManager() : AuthenticationManager {
+    fun getCurrentAuthenticationManager(): AuthenticationManager {
         return authenticationManager
     }
 
-    fun startResetAuthFlow(){
+    fun startResetAuthFlow() {
         resetBiometricKeyNameAppendix = System.currentTimeMillis().toString()
         authenticationManagerReset = AuthenticationManager(resetBiometricKeyNameAppendix)
         authenticationManager = authenticationManagerReset
     }
 
-    fun finalizeResetAuthFlow(){
+    fun finalizeResetAuthFlow() {
         session.setBiometricAuthKeyName(resetBiometricKeyNameAppendix)
         session.hasFinishedSetupPassword()
     }
 
-    fun cancelResetAuthFlow(){
+    fun cancelResetAuthFlow() {
         authenticationManagerReset = authenticationManagerGeneric
         authenticationManager = authenticationManagerReset
         session.hasFinishedSetupPassword()

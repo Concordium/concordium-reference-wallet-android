@@ -1066,4 +1066,15 @@
     <string name="cis_search_balance">Your balance: %1$s</string>
 
     <string name="wallet_connect_transaction_parsing_error">Error parsing the request!</string>
+
+    <string name="terms_and_conditions_title">Before you begin</string>
+    <string name="terms_and_conditions_title_update">Updated terms and conditions</string>
+    <string name="terms_and_conditions_description">Before you start using the Concordium Mobile Wallet, you have to set up a passcode and optionally biometrics.\n\nIt is very important to keep your passcode safe, because it is the only way to access your accounts. Concordium is not be able to change your passcode or help you unlock your wallet if you lose your passcode.</string>
+    <string name="terms_and_conditions_description_update">The terms and conditions have been updated. Please review the terms and conditions before continuing.</string>
+
+    <string name="terms_and_conditions_create_password">Create password</string>
+    <string name="terms_and_conditions_create_password_update">Continue</string>
+    <string name="terms_and_conditions_approve">I have read and agree to the terms and conditions.</string>
+    <string name="terms_and_conditions_approve_pattern">terms and conditions.</string>
+    <string name="unexpected_error">Unexpected error occurred, please restart the application</string>
 </resources>

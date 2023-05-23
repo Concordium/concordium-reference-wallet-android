@@ -5,61 +5,20 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Process
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.AppSettings
-import com.concordium.wallet.databinding.ActivityIntroTermsBinding
-import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseActivity
 
 class IntroTermsActivity : BaseActivity() {
-    private lateinit var binding: ActivityIntroTermsBinding
-    private lateinit var viewModel: IntroTermsViewModel
     private var forceUpdateDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityIntroTermsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        initViews()
-        initializeViewModel()
-        viewModel.checkForExistingWallet()
+        setContentView(R.layout.activity_intro_terms)
     }
 
     override fun onBackPressed() {
-    }
-
-    private fun initializeViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[IntroTermsViewModel::class.java]
-
-        viewModel.hasExistingWalletLiveData.observe(this, Observer { hasExistingWallet ->
-            if (!hasExistingWallet && !App.appCore.appSettingsForceUpdateChecked)
-                viewModel.loadAppSettings()
-            else
-                binding.confirmButton.isEnabled = true
-        })
-
-        viewModel.appSettingsLiveData.observe(this, Observer { appSettings ->
-            checkAppSettings(appSettings)
-            binding.confirmButton.isEnabled = true
-        })
-    }
-
-    private fun initViews() {
-        binding.confirmButton.isEnabled = false
-        binding.confirmButton.setOnClickListener {
-            gotoStart()
-        }
-
-        val html = getString(R.string.terms_text)
-        binding.infoWebview.isVerticalScrollBarEnabled = false
-        binding.infoWebview.loadData(html, "text/html", "UTF-8")
     }
 
     private fun checkAppSettings(appSettings: AppSettings?) {
@@ -110,13 +69,6 @@ class IntroTermsActivity : BaseActivity() {
         if (url.isNotBlank())
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         Process.killProcess(Process.myPid())
-    }
-
-    private fun gotoStart() {
-        App.appCore.session.setTermsHashed(App.appContext.getString(R.string.terms_text).hashCode())
-        finish()
-        val intent = if(App.appCore.session.hasSetupPassword) Intent(this, AuthLoginActivity::class.java) else Intent(this, IntroStartActivity::class.java)
-        startActivity(intent)
     }
 
     override fun loggedOut() {

@@ -473,6 +473,7 @@
         <item name="android:background">@drawable/slider_button</item>
         <item name="android:clickable">true</item>
     </style>
+
     <style name="ButtonsSliderButtonArrow">
         <item name="android:scaleType">fitCenter</item>
         <item name="android:background">@drawable/slider_button_arrow</item>
@@ -535,6 +536,38 @@
     <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/white</item>
+    </style>
+
+    <!--..........................New Redesign...........................-->
+
+    <style name="TextView.RedesignHeader">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_black_redesign</item>
+    </style>
+
+    <style name="TextView.RedesignBody">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/text_black_redesign</item>
+    </style>
+
+
+    <style name="Button.ButtonRedesign">
+        <item name="android:layout_height">50dp</item>
+        <item name="android:background">@drawable/button_standard_redesign</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:textColor">@color/text_white</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+
+    <style name="Switch" parent="TextAppearance.AppCompat.Widget.Switch">
+        <item name="colorAccent">@color/theme_accent</item>
     </style>
 
 </resources>

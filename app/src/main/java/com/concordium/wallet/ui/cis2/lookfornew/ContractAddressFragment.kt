@@ -94,6 +94,7 @@ class ContractAddressFragment : TokensBaseFragment() {
 
     private fun showOrHideError(result: Int) {
         when (result) {
+            TokensViewModel.TOKENS_NOT_LOADED,
             TokensViewModel.TOKENS_OK -> {
                 binding.error.visibility = View.GONE
                 binding.contractAddress.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_blue))

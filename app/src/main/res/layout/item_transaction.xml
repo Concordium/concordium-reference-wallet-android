@@ -45,6 +45,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_toLeftOf="@+id/total_textview"
                 tools:text="JohnDoelooooooooooooooooooooooo12345678" />
+
             <TextView
                 android:id="@+id/total_textview"
                 style="@style/TextView.ListItemHeader"
@@ -92,6 +93,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_alignParentEnd="true">
+
                 <TextView
                     android:id="@+id/amount_textview"
                     style="@style/TextView.ListItemSubHeader"
@@ -141,7 +143,6 @@
         android:id="@+id/divider"
         style="@style/Divider"
         android:layout_width="match_parent"
-        android:layout_below="@+id/main_container"
-        />
+        android:layout_below="@+id/main_container" />
 
 </RelativeLayout>
