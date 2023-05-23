@@ -11,18 +11,37 @@ import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.DecryptAmountInput
-import com.concordium.wallet.data.model.*
-import com.concordium.wallet.data.room.*
+import com.concordium.wallet.data.model.AccountBalance
+import com.concordium.wallet.data.model.AccountEncryptedAmount
+import com.concordium.wallet.data.model.AccountSubmissionStatus
+import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
+import com.concordium.wallet.data.model.TransactionOutcome
+import com.concordium.wallet.data.model.TransactionStatus
+import com.concordium.wallet.data.model.TransactionType
+import com.concordium.wallet.data.model.TransferSubmissionStatus
+import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.EncryptedAmount
+import com.concordium.wallet.data.room.Recipient
+import com.concordium.wallet.data.room.Transfer
+import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PerformanceUtil
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import retrofit2.HttpException
 
 class AccountUpdater(val application: Application, private val viewModelScope: CoroutineScope) {
 
     companion object {
-        const val DEFAULT_EMPTY_ENCRYPTED_AMOUNT = "c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+        const val DEFAULT_EMPTY_ENCRYPTED_AMOUNT =
+            "c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
     }
 
     data class AccountSubmissionStatusRequestData(
@@ -156,11 +175,14 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         Log.d("start")
         supervisorScope {
             try {
-                val accountListCloned = accountList.toMutableList() // prevent ConcurrentModificationException
+                val accountListCloned =
+                    accountList.toMutableList() // prevent ConcurrentModificationException
                 for (account in accountListCloned) {
                     if ((account.transactionStatus == TransactionStatus.COMMITTED
                                 || account.transactionStatus == TransactionStatus.RECEIVED
-                                || account.transactionStatus == TransactionStatus.UNKNOWN) && !TextUtils.isEmpty(account.submissionId)
+                                || account.transactionStatus == TransactionStatus.UNKNOWN) && !TextUtils.isEmpty(
+                            account.submissionId
+                        )
                     ) {
                         val deferred = async {
                             proxyRepository.getAccountSubmissionStatusSuspended(account.submissionId)
@@ -173,18 +195,25 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     }
                 }
 
-                val accountSubmissionStatusRequestListCloned = accountSubmissionStatusRequestList.toMutableList() // prevent ConcurrentModificationException
+                val accountSubmissionStatusRequestListCloned =
+                    accountSubmissionStatusRequestList.toMutableList() // prevent ConcurrentModificationException
                 for (request in accountSubmissionStatusRequestListCloned) {
                     Log.d("AccountSubmissionStatus Loop item start")
                     val submissionStatus = request.deferred.await()
 
                     //If we change state to finalized we save it in address book
-                    if(request.account.transactionStatus != submissionStatus.status && submissionStatus.status == TransactionStatus.FINALIZED){
+                    if (request.account.transactionStatus != submissionStatus.status && submissionStatus.status == TransactionStatus.FINALIZED) {
                         viewModelScope.launch(Dispatchers.Default) {
 
 
                             updateListener?.onNewAccountFinalized(request.account.name)
-                            recipientRepository.insert(Recipient(0, request.account.name, request.account.address))
+                            recipientRepository.insert(
+                                Recipient(
+                                    0,
+                                    request.account.name,
+                                    request.account.address
+                                )
+                            )
                         }
                     }
 
@@ -242,16 +271,21 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                 for (request in transferSubmissionStatusRequestList) {
                     try {
                         val submissionStatus = request.deferred.await()
-                        updateEncryptedAmount(submissionStatus, request.transfer.submissionId, request.transfer.amount.toString())
+                        updateEncryptedAmount(
+                            submissionStatus,
+                            request.transfer.submissionId,
+                            request.transfer.amount.toString()
+                        )
 
                         request.transfer.transactionStatus = submissionStatus.status
-                        request.transfer.outcome = submissionStatus.outcome ?: TransactionOutcome.UNKNOWN
+                        request.transfer.outcome =
+                            submissionStatus.outcome ?: TransactionOutcome.UNKNOWN
                         if (submissionStatus.cost != null) {
                             request.transfer.cost = submissionStatus.cost
                         }
 
                         //IF GTU Drop we set cost to 0
-                        if (submissionStatus.status == TransactionStatus.COMMITTED && submissionStatus.sender != request.transfer.fromAddress){
+                        if (submissionStatus.status == TransactionStatus.COMMITTED && submissionStatus.sender != request.transfer.fromAddress) {
                             request.transfer.cost = 0
                         }
 
@@ -270,14 +304,23 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         Log.d("end")
     }
 
-    fun updateEncryptedAmount(submissionStatus: TransferSubmissionStatus, submissionId: String, amount: String?) {
+    fun updateEncryptedAmount(
+        submissionStatus: TransferSubmissionStatus,
+        submissionId: String,
+        amount: String?
+    ) {
         viewModelScope.launch {
-            if(submissionStatus.encryptedAmount != null){
+            if (submissionStatus.encryptedAmount != null) {
                 val amount = lookupMappedAmount(submissionId)
-                saveDecryptedAmount(submissionStatus.encryptedAmount, amount) // for safe keeping as we do not have outgoing decrypted amount
-            }
-            else{
-                saveDecryptedAmount(submissionId, amount) // for safe keeping as we do not have outgoing decrypted amount
+                saveDecryptedAmount(
+                    submissionStatus.encryptedAmount,
+                    amount
+                ) // for safe keeping as we do not have outgoing decrypted amount
+            } else {
+                saveDecryptedAmount(
+                    submissionId,
+                    amount
+                ) // for safe keeping as we do not have outgoing decrypted amount
             }
         }
     }
@@ -313,43 +356,48 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     }
                 }
 
-                val accountBalanceRequestListCloned = accountBalanceRequestList.toMutableList() // prevent ConcurrentModificationException
+                val accountBalanceRequestListCloned =
+                    accountBalanceRequestList.toMutableList() // prevent ConcurrentModificationException
                 for (request in accountBalanceRequestListCloned) {
                     Log.d("AccountBalance Loop item start")
                     val accountBalance = request.deferred.await()
-                    request.account.finalizedBalance = accountBalance.finalizedBalance?.getAmount() ?: 0
+                    request.account.finalizedBalance =
+                        accountBalance.finalizedBalance?.getAmount() ?: 0
                     request.account.currentBalance = accountBalance.currentBalance?.getAmount() ?: 0
                     request.account.accountIndex = accountBalance.finalizedBalance?.accountIndex
 
-                    request.account.accountDelegation = accountBalance.currentBalance?.accountDelegation
+                    request.account.accountDelegation =
+                        accountBalance.currentBalance?.accountDelegation
                     request.account.accountBaker = accountBalance.currentBalance?.accountBaker
 
-                    request.account.finalizedAccountReleaseSchedule = accountBalance.finalizedBalance?.accountReleaseSchedule
+                    request.account.finalizedAccountReleaseSchedule =
+                        accountBalance.finalizedBalance?.accountReleaseSchedule
                     accountBalance.finalizedBalance?.let {
 
-                        if(it.accountBaker != null && it.accountBaker.stakedAmount != null){
+                        if (it.accountBaker != null && it.accountBaker.stakedAmount != null) {
                             it.accountBaker.stakedAmount.toLong()
                                 .let { request.account.totalStaked = it }
-                        }
-                        else{
+                        } else {
                             request.account.totalStaked = 0
                         }
 
-                        if(it.accountBaker != null && it.accountBaker.bakerId != null){
+                        if (it.accountBaker != null && it.accountBaker.bakerId != null) {
                             it.accountBaker.bakerId.toLong().let { request.account.bakerId = it }
-                        }
-                        else{
+                        } else {
                             request.account.bakerId = null
                         }
                     }
 
-                    if(areValuesDecrypted(request.account.finalizedEncryptedBalance)){
-                        request.account.encryptedBalanceStatus = ShieldedAccountEncryptionStatus.DECRYPTED
-                        request.account.finalizedEncryptedBalance = accountBalance.finalizedBalance?.getEncryptedAmount()
-                        request.account.currentEncryptedBalance = accountBalance.currentBalance?.getEncryptedAmount()
-                    }
-                    else{
-                        request.account.encryptedBalanceStatus = ShieldedAccountEncryptionStatus.ENCRYPTED
+                    if (areValuesDecrypted(request.account.finalizedEncryptedBalance)) {
+                        request.account.encryptedBalanceStatus =
+                            ShieldedAccountEncryptionStatus.DECRYPTED
+                        request.account.finalizedEncryptedBalance =
+                            accountBalance.finalizedBalance?.getEncryptedAmount()
+                        request.account.currentEncryptedBalance =
+                            accountBalance.currentBalance?.getEncryptedAmount()
+                    } else {
+                        request.account.encryptedBalanceStatus =
+                            ShieldedAccountEncryptionStatus.ENCRYPTED
                     }
 
                     Log.d("AccountBalance Loop item end - ${request.account.submissionId} ${accountBalance.currentBalance}")
@@ -363,13 +411,13 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
     }
 
     private suspend fun areValuesDecrypted(finalizedEncryptedBalance: AccountEncryptedAmount?): Boolean {
-        if(finalizedEncryptedBalance != null){
+        if (finalizedEncryptedBalance != null) {
             val selfAmountDecrypted = lookupMappedAmount(finalizedEncryptedBalance.selfAmount)
-            if(selfAmountDecrypted == null){
+            if (selfAmountDecrypted == null) {
                 return false
             }
             finalizedEncryptedBalance.incomingAmounts.forEach {
-                if(lookupMappedAmount(it) == null){
+                if (lookupMappedAmount(it) == null) {
                     return false
                 }
             }
@@ -403,21 +451,21 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     if (transfer.outcome != TransactionOutcome.Reject) {
 
                         //Unshielding
-                        if(transfer.transactionType == TransactionType.TRANSFER){
+                        if (transfer.transactionType == TransactionType.TRANSFER) {
                             accountUnshieldedBalance += transfer.amount
                             accountShieldedBalance -= transfer.amount
                         }
                         //Shielding
-                        if(transfer.transactionType == TransactionType.TRANSFERTOENCRYPTED){
+                        if (transfer.transactionType == TransactionType.TRANSFERTOENCRYPTED) {
                             accountUnshieldedBalance -= transfer.amount
                             accountShieldedBalance += transfer.amount
                         }
                         //Plain transfer to other account
-                        if(transfer.transactionType == TransactionType.TRANSFERTOPUBLIC){
+                        if (transfer.transactionType == TransactionType.TRANSFERTOPUBLIC) {
                             accountUnshieldedBalance -= transfer.amount
                         }
                         //Encrypted transfer to other account
-                        if(transfer.transactionType == TransactionType.ENCRYPTEDAMOUNTTRANSFER){
+                        if (transfer.transactionType == TransactionType.ENCRYPTEDAMOUNTTRANSFER) {
                             accountShieldedBalance -= transfer.amount
                         }
                     }
@@ -428,19 +476,17 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
             //Calculate shielded
             account.finalizedEncryptedBalance?.let {
                 val amount = lookupMappedAmount(it.selfAmount)
-                if(amount != null){
+                if (amount != null) {
                     accountShieldedBalance += amount.toLong()
-                }
-                else{
+                } else {
                     containsEncrypted = ShieldedAccountEncryptionStatus.ENCRYPTED
                 }
                 it.incomingAmounts.forEach {
                     val amount = lookupMappedAmount(it)
-                    if(amount != null){
+                    if (amount != null) {
                         accountShieldedBalance += amount.toLong()
-                    }
-                    else{
-                        if(containsEncrypted != ShieldedAccountEncryptionStatus.ENCRYPTED){
+                    } else {
+                        if (containsEncrypted != ShieldedAccountEncryptionStatus.ENCRYPTED) {
                             containsEncrypted = ShieldedAccountEncryptionStatus.PARTIALLYDECRYPTED
                         }
                     }
@@ -455,17 +501,24 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
 
             //Calculate totals for all accounts
             totalBalanceForAllAccounts += account.totalUnshieldedBalance
-            if(!account.readOnly){
-                totalAtDisposalWithoutStakedOrScheduledForAllAccounts += account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
+            if (!account.readOnly) {
+                totalAtDisposalWithoutStakedOrScheduledForAllAccounts += account.getAtDisposalWithoutStakedOrScheduled(
+                    account.totalUnshieldedBalance
+                )
                 totalStakedForAllAccounts += account.totalStaked
             }
 
-            if(containsEncrypted != ShieldedAccountEncryptionStatus.DECRYPTED){
+            if (containsEncrypted != ShieldedAccountEncryptionStatus.DECRYPTED) {
                 totalContainsEncrypted = true
             }
 
         }
-        return TotalBalancesData(totalBalanceForAllAccounts, totalAtDisposalWithoutStakedOrScheduledForAllAccounts, totalStakedForAllAccounts, totalContainsEncrypted)
+        return TotalBalancesData(
+            totalBalanceForAllAccounts,
+            totalAtDisposalWithoutStakedOrScheduledForAllAccounts,
+            totalStakedForAllAccounts,
+            totalContainsEncrypted
+        )
     }
 
     private suspend fun saveAccounts() {
@@ -493,28 +546,33 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
 
     suspend fun decryptEncryptedAmounts(key: String, account: Account) {
         account.finalizedEncryptedBalance?.let {
-            decryptAndSaveAmount(key,it.selfAmount)
+            decryptAndSaveAmount(key, it.selfAmount)
             it.incomingAmounts.forEach {
                 decryptAndSaveAmount(key, it)
             }
         }
     }
 
-    suspend fun decryptAndSaveAmount(key: String, encryptedAmount: String):String? {
-        val output = App.appCore.cryptoLibrary.decryptEncryptedAmount(DecryptAmountInput(encryptedAmount,key))
+    suspend fun decryptAndSaveAmount(key: String, encryptedAmount: String): String? {
+        val output = App.appCore.cryptoLibrary.decryptEncryptedAmount(
+            DecryptAmountInput(
+                encryptedAmount,
+                key
+            )
+        )
         output?.let {
-            if(lookupMappedAmount(encryptedAmount) == null){
-                saveDecryptedAmount(encryptedAmount,it)
+            if (lookupMappedAmount(encryptedAmount) == null) {
+                saveDecryptedAmount(encryptedAmount, it)
             }
         }
         return output
     }
 
-    suspend fun lookupMappedAmount(key: String):String? {
-        if(DEFAULT_EMPTY_ENCRYPTED_AMOUNT.equals(key)){
+    suspend fun lookupMappedAmount(key: String): String? {
+        if (DEFAULT_EMPTY_ENCRYPTED_AMOUNT.equals(key)) {
             return 0.toString()
         }
-        val result = encryptedAmountRepository.findByAddress(key)?.amount?:null
+        val result = encryptedAmountRepository.findByAddress(key)?.amount ?: null
 
         return result
     }
@@ -527,7 +585,12 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         val list = encryptedAmountRepository.findAllUndecrypted()
         list.forEach {
             val secretAmount = it.encryptedkey
-            val output = App.appCore.cryptoLibrary.decryptEncryptedAmount(DecryptAmountInput(secretAmount,secretPrivateKey))
+            val output = App.appCore.cryptoLibrary.decryptEncryptedAmount(
+                DecryptAmountInput(
+                    secretAmount,
+                    secretPrivateKey
+                )
+            )
             output?.let {
                 saveDecryptedAmount(secretAmount, output)
             }

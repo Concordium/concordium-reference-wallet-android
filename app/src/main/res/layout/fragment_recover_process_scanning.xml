@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/Layout.Root">
+
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/pending_imageview"
         android:layout_width="110dp"
@@ -11,6 +12,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/header_textview"
         style="@style/TextView.BlueHeader"
@@ -20,6 +22,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pending_imageview" />
+
     <TextView
         android:id="@+id/description_textview"
         style="@style/TextView.Standard.Light"
@@ -29,6 +32,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/header_textview" />
+
     <TextView
         android:id="@+id/progress_identities_text"
         style="@style/TextView.Standard.Light"
@@ -38,6 +42,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/description_textview" />
+
     <ProgressBar
         android:id="@+id/progress_identities"
         style="?android:attr/progressBarStyleHorizontal"
@@ -52,6 +57,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progress_identities_text" />
+
     <TextView
         android:id="@+id/progress_accounts_text"
         style="@style/TextView.Standard.Light"
@@ -61,6 +67,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progress_identities" />
+
     <ProgressBar
         android:id="@+id/progress_accounts"
         style="?android:attr/progressBarStyleHorizontal"

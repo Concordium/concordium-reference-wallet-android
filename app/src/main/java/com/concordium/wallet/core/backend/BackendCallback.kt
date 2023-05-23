@@ -17,7 +17,7 @@ abstract class BackendCallback<T> : Callback<T> {
             // Parse errorBody to error object
             try {
                 val error = ErrorParser.parseError(response)
-                if(error != null) {
+                if (error != null) {
                     onFailure(BackendErrorException(error))
                     return
                 }

@@ -6,5 +6,6 @@ import retrofit2.http.GET
 import retrofit2.http.Url
 
 interface IdentityProviderApi {
-    @GET suspend fun recover(@Url url: String?): Response<RecoverResponse>
+    @GET
+    suspend fun recover(@Url url: String?): Response<RecoverResponse>
 }

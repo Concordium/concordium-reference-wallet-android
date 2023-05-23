@@ -59,7 +59,8 @@ class TransferDaoUnitTest {
             TransactionType.TRANSFER,
             null,
             0,
-            null)
+            null
+        )
 
         runBlocking { transferDao.insert(transfer) }
         val listLiveData = transferDao.getAllAsLiveData()
@@ -103,6 +104,7 @@ class TransferDaoUnitTest {
             TransactionType.TRANSFER,
             null,
             0,
-            null)
+            null
+        )
     }
 }

@@ -1,6 +1,6 @@
 package com.concordium.wallet.data.walletconnect
 
-data class Schema (
+data class Schema(
     val type: String?,
     val value: String?
 )

@@ -23,7 +23,7 @@ import com.concordium.wallet.ui.common.failed.FailedActivity
 import com.concordium.wallet.ui.common.failed.FailedViewModel
 import com.concordium.wallet.ui.identity.identityconfirmed.IdentityConfirmedActivity
 import com.google.gson.Gson
-import java.util.*
+import java.util.BitSet
 
 class IdentityProviderWebViewActivity : BaseActivity() {
     private lateinit var binding: ActivityIdentityProviderWebviewBinding
@@ -37,13 +37,19 @@ class IdentityProviderWebViewActivity : BaseActivity() {
         const val SHOW_FOR_FIRST_IDENTITY = "SHOW_FOR_FIRST_IDENTITY"
         const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_DATAWEREAVAILABLE = 1 // data were available
         const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_VALIDCALLBACKURI = 2 // valid callback uri
-        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_NOIDENTITYDATA = 3 // identityCreationData was not null
-        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_MODELSINITIALISED = 4 // models initialised correctly
-        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_INCORRECTCALLBACKURI = 5 // incorrect callback URL
-        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_CODEURISET = 6 // code_uri is set in callback uri
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_NOIDENTITYDATA =
+            3 // identityCreationData was not null
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_MODELSINITIALISED =
+            4 // models initialised correctly
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_INCORRECTCALLBACKURI =
+            5 // incorrect callback URL
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_CODEURISET =
+            6 // code_uri is set in callback uri
         const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_TOKENSET = 7 // token is set in callback uri
-        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_ERRORSET = 8 // error is set (given other errors)
-        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_NOTHINGSET = 9 // nothing is set in the callback uri
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_ERRORSET =
+            8 // error is set (given other errors)
+        const val IDENTITY_CALLBACK_ERROR_BIT_INDEX_NOTHINGSET =
+            9 // nothing is set in the callback uri
     }
 
     // Have to keep this intent data in case the Activity is force killed while on the IdentityProvider website
@@ -57,12 +63,21 @@ class IdentityProviderWebViewActivity : BaseActivity() {
                 Gson().fromJson(json, IdentityCreationData::class.java)
             }
         }
+
         fun setIdentityCreationData(data: IdentityCreationData?) {
-            setString(KEY_IDENTITY_CREATION_DATA, if(data == null){ null } else { Gson().toJson(data) })
+            setString(
+                KEY_IDENTITY_CREATION_DATA, if (data == null) {
+                    null
+                } else {
+                    Gson().toJson(data)
+                }
+            )
         }
+
         fun getShowForFirstIdentityFromCallback(): Boolean {
             return getBoolean(SHOW_FOR_FIRST_IDENTITY, false)
         }
+
         fun setShowForFirstIdentityFromCallback(isFirst: Boolean) {
             setBoolean(SHOW_FOR_FIRST_IDENTITY, isFirst)
         }
@@ -70,7 +85,11 @@ class IdentityProviderWebViewActivity : BaseActivity() {
 
     private val preferences: IdentityDataPreferences
         get() {
-            return IdentityDataPreferences(application, SharedPreferencesKeys.KEY_IDENTITY_CREATION_DATA.key, Context.MODE_PRIVATE)
+            return IdentityDataPreferences(
+                application,
+                SharedPreferencesKeys.KEY_IDENTITY_CREATION_DATA.key,
+                Context.MODE_PRIVATE
+            )
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,9 +101,14 @@ class IdentityProviderWebViewActivity : BaseActivity() {
         preferences.setShowForFirstIdentityFromCallback(false)
 
         if (!showForFirstIdentity)
-            showForFirstIdentity = intent.extras?.getBoolean(SHOW_FOR_FIRST_IDENTITY, false) ?: false
+            showForFirstIdentity =
+                intent.extras?.getBoolean(SHOW_FOR_FIRST_IDENTITY, false) ?: false
 
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identity_provider_webview_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.identity_provider_webview_title
+        )
 
         var handled = false
 
@@ -111,7 +135,8 @@ class IdentityProviderWebViewActivity : BaseActivity() {
         }
         if (!handled) {
             // Initial case, where we come from the previous page
-            val tempData = intent.extras!!.getSerializable(EXTRA_IDENTITY_CREATION_DATA) as IdentityCreationData?
+            val tempData =
+                intent.extras!!.getSerializable(EXTRA_IDENTITY_CREATION_DATA) as IdentityCreationData?
             if (tempData != null) {
                 preferences.setIdentityCreationData(tempData)
                 handled = true

@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/Layout.Root">
+
     <TextView
         android:id="@+id/tvHeader"
         style="@style/TextView.Standard"
@@ -11,6 +12,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.appcompat.widget.AppCompatImageView
         style="@style/Image"
         android:src="@drawable/ic_big_logo_ok"

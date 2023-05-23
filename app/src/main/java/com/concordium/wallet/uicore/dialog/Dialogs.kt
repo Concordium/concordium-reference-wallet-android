@@ -15,14 +15,20 @@ class Dialogs {
         const val DISMISSED = 3
     }
 
-    fun showOkDialog(activity: AppCompatActivity, requestCode: Int, titleId: Int, messageId: Int, positive: Int? = null) {
+    fun showOkDialog(
+        activity: AppCompatActivity,
+        requestCode: Int,
+        titleId: Int,
+        messageId: Int,
+        positive: Int? = null
+    ) {
         val resources = App.appContext.resources
         showOkDialog(
             activity,
             requestCode,
             resources.getString(titleId),
             resources.getString(messageId),
-            if(positive != null) resources.getString(positive) else null
+            if (positive != null) resources.getString(positive) else null
         )
     }
 
@@ -33,7 +39,8 @@ class Dialogs {
         message: String,
         positive: String? = null
     ) {
-        val fragment = CustomDialogFragment.createOkDialog(activity, requestCode, title, message, positive)
+        val fragment =
+            CustomDialogFragment.createOkDialog(activity, requestCode, title, message, positive)
         fragment.show(activity.supportFragmentManager, CustomDialogFragment.TAG)
     }
 }

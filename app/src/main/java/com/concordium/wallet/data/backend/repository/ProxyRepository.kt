@@ -4,7 +4,19 @@ import com.concordium.wallet.App
 import com.concordium.wallet.core.backend.BackendCallback
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.AccountBalance
+import com.concordium.wallet.data.model.AccountKeyData
+import com.concordium.wallet.data.model.AccountNonce
+import com.concordium.wallet.data.model.AccountSubmissionStatus
+import com.concordium.wallet.data.model.AccountTransactions
+import com.concordium.wallet.data.model.AppSettings
+import com.concordium.wallet.data.model.BakerPoolStatus
+import com.concordium.wallet.data.model.ChainParameters
+import com.concordium.wallet.data.model.CredentialWrapper
+import com.concordium.wallet.data.model.GlobalParamsWrapper
+import com.concordium.wallet.data.model.SubmissionData
+import com.concordium.wallet.data.model.TransferCost
+import com.concordium.wallet.data.model.TransferSubmissionStatus
 
 class ProxyRepository {
     private val backend = App.appCore.getProxyBackend()
@@ -36,6 +48,7 @@ class ProxyRepository {
             override fun onResponseData(response: SubmissionData) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -47,7 +60,8 @@ class ProxyRepository {
         )
     }
 
-    suspend fun getAccountSubmissionStatusSuspended(submissionId: String) = backend.accountSubmissionStatusSuspended(submissionId)
+    suspend fun getAccountSubmissionStatusSuspended(submissionId: String) =
+        backend.accountSubmissionStatusSuspended(submissionId)
 
     fun getAppSettings(
         version: Int,
@@ -82,6 +96,7 @@ class ProxyRepository {
             override fun onResponseData(response: BakerPoolStatus) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -103,6 +118,7 @@ class ProxyRepository {
             override fun onResponseData(response: AccountSubmissionStatus) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -124,6 +140,7 @@ class ProxyRepository {
             override fun onResponseData(response: AccountNonce) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -145,6 +162,7 @@ class ProxyRepository {
             override fun onResponseData(response: SubmissionData) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -156,7 +174,8 @@ class ProxyRepository {
         )
     }
 
-    suspend fun getTransferSubmissionStatusSuspended(submissionId: String) = backend.transferSubmissionStatusSuspended(submissionId)
+    suspend fun getTransferSubmissionStatusSuspended(submissionId: String) =
+        backend.transferSubmissionStatusSuspended(submissionId)
 
     fun getTransferSubmissionStatus(
         submissionId: String,
@@ -168,6 +187,7 @@ class ProxyRepository {
             override fun onResponseData(response: TransferSubmissionStatus) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -179,22 +199,24 @@ class ProxyRepository {
         )
     }
 
-    fun getTransferCost(type: String,
-                        memoSize: Int? = null,
-                        amount: Long? = null,
-                        restake: Boolean? = null,
-                        lPool: Boolean? = null,
-                        targetChange: Boolean? = null,
-                        metadataSize: Int? = null,
-                        openStatus: String? = null,
-                        sender: String? = null,
-                        contractIndex: Int? = null,
-                        contractSubindex: Int? = null,
-                        receiveName: String? = null,
-                        parameter: String? = null,
-                        executionNRGBuffer: Int? = null,
-                        success: (TransferCost) -> Unit,
-                        failure: ((Throwable) -> Unit)?): BackendRequest<TransferCost> {
+    fun getTransferCost(
+        type: String,
+        memoSize: Int? = null,
+        amount: Long? = null,
+        restake: Boolean? = null,
+        lPool: Boolean? = null,
+        targetChange: Boolean? = null,
+        metadataSize: Int? = null,
+        openStatus: String? = null,
+        sender: String? = null,
+        contractIndex: Int? = null,
+        contractSubindex: Int? = null,
+        receiveName: String? = null,
+        parameter: String? = null,
+        executionNRGBuffer: Int? = null,
+        success: (TransferCost) -> Unit,
+        failure: ((Throwable) -> Unit)?
+    ): BackendRequest<TransferCost> {
         val lPoolArg = if (lPool == true) "lPool" else null
         val targetArg = if (targetChange == true) "target" else null
         val call = backend.transferCost(type, memoSize, amount, restake, lPoolArg, targetArg, metadataSize, openStatus, sender, contractIndex, contractSubindex, receiveName, parameter, executionNRGBuffer)
@@ -202,6 +224,7 @@ class ProxyRepository {
             override fun onResponseData(response: TransferCost) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -213,12 +236,16 @@ class ProxyRepository {
         )
     }
 
-    fun getChainParameters(success: (ChainParameters) -> Unit, failure: ((Throwable) -> Unit)?): BackendRequest<ChainParameters> {
+    fun getChainParameters(
+        success: (ChainParameters) -> Unit,
+        failure: ((Throwable) -> Unit)?
+    ): BackendRequest<ChainParameters> {
         val call = backend.chainParameters()
         call.enqueue(object : BackendCallback<ChainParameters>() {
             override fun onResponseData(response: ChainParameters) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -236,7 +263,8 @@ class ProxyRepository {
 
     suspend fun getBakerPoolSuspended(poolId: String) = backend.bakerPoolSuspended(poolId)
 
-    suspend fun getAccountBalanceSuspended(accountAddress: String) = backend.accountBalanceSuspended(accountAddress)
+    suspend fun getAccountBalanceSuspended(accountAddress: String) =
+        backend.accountBalanceSuspended(accountAddress)
 
     fun getAccountBalance(
         accountAddress: String,
@@ -248,6 +276,7 @@ class ProxyRepository {
             override fun onResponseData(response: AccountBalance) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -273,6 +302,7 @@ class ProxyRepository {
             override fun onResponseData(response: AccountTransactions) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -294,6 +324,7 @@ class ProxyRepository {
             override fun onResponseData(response: SubmissionData) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -314,6 +345,7 @@ class ProxyRepository {
             override fun onResponseData(response: GlobalParamsWrapper) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -335,6 +367,7 @@ class ProxyRepository {
             override fun onResponseData(response: AccountKeyData) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }

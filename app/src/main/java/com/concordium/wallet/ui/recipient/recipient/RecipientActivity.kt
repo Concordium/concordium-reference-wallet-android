@@ -33,7 +33,11 @@ class RecipientActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityRecipientBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.recipient_new_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.recipient_new_title
+        )
 
         val recipient = intent.getSerializableExtra(EXTRA_RECIPIENT) as Recipient?
         val selectRecipientMode = intent.getBooleanExtra(EXTRA_SELECT_RECIPIENT_MODE, false)

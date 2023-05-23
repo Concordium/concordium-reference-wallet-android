@@ -18,8 +18,8 @@ class ExportChooseMethodFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
         AlertDialog.Builder(requireContext())
             .setMessage(getString(R.string.export_method_question))
-            .setNegativeButton(getString(R.string.export_method_another_app)) { _,_ -> callback?.onAnotherApp() }
-            .setPositiveButton(getString(R.string.export_method_local_storage)) { _,_ -> callback?.onLocalStorage() }
+            .setNegativeButton(getString(R.string.export_method_another_app)) { _, _ -> callback?.onAnotherApp() }
+            .setPositiveButton(getString(R.string.export_method_local_storage)) { _, _ -> callback?.onLocalStorage() }
             .create()
 
     fun setCallback(callback: Callback) {

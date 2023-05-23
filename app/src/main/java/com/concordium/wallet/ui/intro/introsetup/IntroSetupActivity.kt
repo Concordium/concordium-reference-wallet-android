@@ -17,7 +17,11 @@ class IntroSetupActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityIntroSetupBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.intro_setup_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.intro_setup_title
+        )
         initializeViewModel()
         viewModel.initialize()
         initViews()
@@ -28,7 +32,10 @@ class IntroSetupActivity : BaseActivity() {
     }
 
     private fun initializeViewModel() {
-        viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))[IntroSetupViewModel::class.java]
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        )[IntroSetupViewModel::class.java]
     }
 
     private fun initViews() {

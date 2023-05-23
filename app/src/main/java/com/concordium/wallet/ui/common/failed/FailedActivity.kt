@@ -28,7 +28,11 @@ class FailedActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityFailedBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.failed_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.failed_title
+        )
 
         val source = intent.extras!!.getSerializable(EXTRA_SOURCE) as FailedViewModel.Source
         val error = intent.extras!!.getSerializable(EXTRA_ERROR) as BackendError?
@@ -61,10 +65,12 @@ class FailedActivity : BaseActivity() {
                 setActionBarTitle(R.string.identity_confirmed_title)
                 binding.errorTitleTextview.setText(R.string.identity_confirmed_failed)
             }
+
             FailedViewModel.Source.Account -> {
                 setActionBarTitle(R.string.new_account_confirmed_title)
                 binding.errorTitleTextview.setText(R.string.new_account_confirmed_failed)
             }
+
             FailedViewModel.Source.Transfer -> {
                 setActionBarTitle(R.string.send_funds_title)
                 binding.errorTitleTextview.setText(R.string.send_funds_confirmed_failed)
@@ -76,15 +82,15 @@ class FailedActivity : BaseActivity() {
                 if (viewModel.source == FailedViewModel.Source.Account && backendError.error == 1) {
                     binding.errorTextview.setText(R.string.new_account_confirmed_failed_recover_error_text)
                     binding.infoTextview.setText(R.string.new_account_confirmed_failed_recover_info_text)
-                    binding.confirmButton.text = getString(R.string.new_account_confirmed_failed_recover_button)
+                    binding.confirmButton.text =
+                        getString(R.string.new_account_confirmed_failed_recover_button)
                 } else {
                     binding.errorTextview.setText(backendError.errorMessage)
                 }
-            }
-            else
-            BackendErrorHandler.getExceptionStringResOrNull(backendError)?.let { stringRes ->
-                binding.errorTextview.setText(stringRes)
-            }
+            } else
+                BackendErrorHandler.getExceptionStringResOrNull(backendError)?.let { stringRes ->
+                    binding.errorTextview.setText(stringRes)
+                }
         }
 
         binding.confirmButton.setOnClickListener {
@@ -105,6 +111,7 @@ class FailedActivity : BaseActivity() {
                 intent.putExtra(MainActivity.EXTRA_SHOW_IDENTITIES, true)
                 startActivity(intent)
             }
+
             FailedViewModel.Source.Account -> {
                 val errorCode: Int = viewModel.error?.error ?: -9999
                 if (errorCode == 1) {
@@ -117,6 +124,7 @@ class FailedActivity : BaseActivity() {
                     startActivity(intent)
                 }
             }
+
             FailedViewModel.Source.Transfer -> {
                 val intent = Intent(this, AccountDetailsActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)

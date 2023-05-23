@@ -15,12 +15,14 @@
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:duplicateParentState="true"
         android:layout_marginBottom="20dp">
+
         <LinearLayout
             android:id="@+id/root_card_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:duplicateParentState="true"
             android:orientation="vertical">
+
             <com.concordium.wallet.ui.account.accountsoverview.AccountItemNameAreaView
                 android:id="@+id/account_name_area"
                 android:layout_width="match_parent"
@@ -40,6 +42,7 @@
                 android:layout_marginBottom="@dimen/account_card_margin_vertical"
                 android:duplicateParentState="true"
                 android:orientation="horizontal">
+
                 <TextView
                     android:id="@+id/account_amount_title_area"
                     style="@style/TextView.ListItemValue"
@@ -55,11 +58,13 @@
                     android:gravity="right"
                     android:duplicateParentState="true"
                     android:orientation="horizontal">
+
                     <TextView
                         android:id="@+id/total_textview"
                         style="@style/TextView.ListItemValue"
                         android:duplicateParentState="true"
                         tools:text="123.2322" />
+
                     <TextView
                         style="@style/TextView.ListItemValue"
                         android:layout_marginLeft="4dp"
@@ -67,6 +72,7 @@
                         android:duplicateParentState="true"
                         android:visibility="gone"
                         android:text="+" />
+
                     <ImageView
                         style="@style/Image"
                         android:layout_width="11dp"
@@ -87,12 +93,14 @@
                 android:layout_marginBottom="10dp"
                 android:duplicateParentState="true"
                 android:orientation="horizontal">
+
                 <TextView
                     style="@style/TextView.ListItemValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:duplicateParentState="true"
                     android:text="@string/accounts_overview_at_disposal" />
+
                 <TextView
                     android:id="@+id/balance_at_disposal_textview"
                     style="@style/TextView.ListItemValue"
@@ -107,20 +115,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/account_card_action_send"
                     style="@style/ActionCardButtonSmall"
                     android:src="@drawable/ic_path" />
+
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/account_card_action_receive"
                     style="@style/ActionCardButtonSmall"
                     android:layout_marginStart="1dp"
                     android:src="@drawable/ic_icon_qr" />
+
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/account_card_action_earn"
                     style="@style/ActionCardButtonSmall"
                     android:layout_marginStart="1dp"
                     android:src="@drawable/ic_earn" />
+
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/account_card_action_more"
                     style="@style/ActionCardButtonSmall"

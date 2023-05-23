@@ -25,7 +25,11 @@ class RecoverWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl()
         super.onCreate(savedInstanceState)
         binding = ActivityRecoverWalletBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.pass_phrase_recover_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.pass_phrase_recover_title
+        )
         initializeViewModel()
         initViews()
         initObservers()
@@ -35,7 +39,7 @@ class RecoverWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl()
             binding.toolbarLayout.toolbarTitle.setOnClickListener {
                 showAuthentication(this) { password ->
                     password?.let {
-                            viewModel.setPredefinedPhraseForTesting(it)
+                        viewModel.setPredefinedPhraseForTesting(it)
                     }
                 }
             }
@@ -85,22 +89,23 @@ class RecoverWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl()
     }
 
     private fun initObservers() {
-        viewModel.seed.observe(this){seed ->
-                showAuthentication(this) { password ->
-                    password?.let {
-                            viewModel.setSeedPhrase(seed, password)
-                    }
+        viewModel.seed.observe(this) { seed ->
+            showAuthentication(this) { password ->
+                password?.let {
+                    viewModel.setSeedPhrase(seed, password)
                 }
+            }
         }
-        viewModel.saveSeed.observe(this){saveSuccess->
-            if(saveSuccess){
+        viewModel.saveSeed.observe(this) { saveSuccess ->
+            if (saveSuccess) {
                 binding.pager.currentItem++
-            }else{
+            } else {
                 KeyboardUtil.hideKeyboard(this)
                 showError(R.string.auth_login_seed_error)
             }
         }
     }
+
     private fun showError(stringRes: Int) {
         popup.showSnackbar(binding.root, stringRes)
     }

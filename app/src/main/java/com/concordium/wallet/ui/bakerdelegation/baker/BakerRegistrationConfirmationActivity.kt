@@ -46,15 +46,16 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
     }
 
     private fun loadFee() {
-        viewModel.transactionFeeLiveData.observe(this, object : Observer<Pair<Long?, Int?>> {
-            override fun onChanged(response: Pair<Long?, Int?>?) {
-                response?.first?.let {
-                    showWaiting(binding.includeProgress.progressLayout, false)
-                    updateViews()
-                    binding.estimatedTransactionFee.text = getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(it))
-                }
+        viewModel.transactionFeeLiveData.observe(this) { response ->
+            response?.first?.let {
+                showWaiting(binding.includeProgress.progressLayout, false)
+                updateViews()
+                binding.estimatedTransactionFee.text = getString(
+                    R.string.delegation_register_delegation_amount_estimated_transaction_fee,
+                    CurrencyUtil.formatGTU(it)
+                )
             }
-        })
+        }
         viewModel.loadTransactionFee(true)
     }
 

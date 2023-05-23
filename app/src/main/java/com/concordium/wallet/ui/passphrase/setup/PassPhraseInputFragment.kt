@@ -36,7 +36,11 @@ class PassPhraseInputFragment : PassPhraseBaseFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentPassPhraseInputBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -144,7 +148,13 @@ class PassPhraseInputFragment : PassPhraseBaseFragment() {
             override fun onScrollStateChanged(view: AbsListView, scrollState: Int) {
                 listViewScrollState = scrollState
             }
-            override fun onScroll(view: AbsListView, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {
+
+            override fun onScroll(
+                view: AbsListView,
+                firstVisibleItem: Int,
+                visibleItemCount: Int,
+                totalItemCount: Int
+            ) {
                 val changeTo = firstVisibleItem + 2
                 if (changeTo != arrayAdapter.currentPosition && listViewHasFocus) {
                     if (arrayAdapter.currentPosition != changeTo) {
@@ -171,7 +181,11 @@ class PassPhraseInputFragment : PassPhraseBaseFragment() {
             snapTimer?.schedule(50) {
                 activity?.runOnUiThread {
                     if (listViewScrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-                        binding.listView.smoothScrollToPositionFromTop(arrayAdapter.currentPosition - WordsPickedBaseListAdapter.OFFSET, 0, 100)
+                        binding.listView.smoothScrollToPositionFromTop(
+                            arrayAdapter.currentPosition - WordsPickedBaseListAdapter.OFFSET,
+                            0,
+                            100
+                        )
                         removeSnapTimer()
                     } else {
                         removeSnapTimer()
@@ -210,7 +224,10 @@ class PassPhraseInputFragment : PassPhraseBaseFragment() {
         if (!isEditing) {
             if (arrayAdapter.currentPosition <= WORD_COUNT)
                 arrayAdapter.currentPosition++
-            binding.listView.smoothScrollToPositionFromTop(arrayAdapter.currentPosition - WordsPickedBaseListAdapter.OFFSET, 0)
+            binding.listView.smoothScrollToPositionFromTop(
+                arrayAdapter.currentPosition - WordsPickedBaseListAdapter.OFFSET,
+                0
+            )
         }
     }
 
@@ -256,7 +273,8 @@ class PassPhraseInputFragment : PassPhraseBaseFragment() {
             val threeRandoms = getThreeRandom(i)
             for (j in 0..3) {
                 if (j != place)
-                    suggestion[j] = viewModel.mnemonicCodeToConfirm[threeRandoms[threeRandomsIndex++]]
+                    suggestion[j] =
+                        viewModel.mnemonicCodeToConfirm[threeRandoms[threeRandomsIndex++]]
             }
             allSuggestions[i] = suggestion
         }
@@ -266,7 +284,7 @@ class PassPhraseInputFragment : PassPhraseBaseFragment() {
         val size = 3
         val s = HashSet<Int>(size)
         while (s.size < size) {
-            val random = Random(System.nanoTime()).nextInt(0,24)
+            val random = Random(System.nanoTime()).nextInt(0, 24)
             if (random != butNot)
                 s += random
         }

@@ -20,7 +20,7 @@ object DateTimeUtil {
      */
     fun convertLongDate(time: String): String {
         val date = parseLongDate(time)
-        if(date == null){
+        if (date == null) {
             return time
         }
         return formatDateAsLocalMedium(date)
@@ -32,7 +32,7 @@ object DateTimeUtil {
      */
     fun convertShortDate(time: String): String {
         val date = parseShortDate(time)
-        if(date == null){
+        if (date == null) {
             return time
         }
         return formatDateAsLocalMediumWithoutDay(date)
@@ -70,8 +70,7 @@ object DateTimeUtil {
             date.clear()
             date.set(year.toInt(), month.toInt() - 1, day.toInt())
             return date.time
-        }
-        catch(e:Exception){
+        } catch (e: Exception) {
             return null
         }
     }
@@ -88,8 +87,7 @@ object DateTimeUtil {
             date.clear()
             date.set(year.toInt(), month.toInt() - 1, 1)
             return date.time
-        }
-        catch(e:Exception){
+        } catch (e: Exception) {
             return null
         }
     }
@@ -111,7 +109,7 @@ object DateTimeUtil {
 
     fun formatDateAsLocalMedium(date: Date?): String {
         // 15. jun. 2018    Jun 15, 2018
-        if(date == null){
+        if (date == null) {
             return ""
         }
         return DateFormat.getMediumDateFormat(App.appContext).format(date)
@@ -119,7 +117,7 @@ object DateTimeUtil {
 
     fun formatDateAsLocalMediumWithoutDay(date: Date?): String {
         // jun. 2018    Jun 2018
-        if(date == null){
+        if (date == null) {
             return ""
         }
         val pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), "MMMyyyy")
@@ -129,7 +127,7 @@ object DateTimeUtil {
 
     fun formatTimeAsLocal(date: Date?): String {
         // 14.50            2:50 PM
-        if(date == null){
+        if (date == null) {
             return ""
         }
         return DateFormat.getTimeFormat(App.appContext).format(date)
@@ -137,7 +135,7 @@ object DateTimeUtil {
 
     fun formatDateAsLocalMediumWithTime(date: Date?): String {
         // 15. jun. 2018  14.50    Jun 15, 2018 2:50 PM
-        if(date == null){
+        if (date == null) {
             return ""
         }
         val dateString = DateFormat.getMediumDateFormat(App.appContext).format(date)
@@ -147,7 +145,7 @@ object DateTimeUtil {
 
     fun formatDateAsLocalMediumWithAltTexts(date: Date?): String {
         // 15. jun. 2018    Jun 15, 2018
-        if(date == null){
+        if (date == null) {
             return ""
         }
         if (isToday(date)) {
@@ -158,10 +156,14 @@ object DateTimeUtil {
         return DateFormat.getMediumDateFormat(App.appContext).format(date)
     }
 
-    fun String.toDate(dateFormat: String = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timeZone: TimeZone = TimeZone.getTimeZone("UTC")): Date? {
+    fun String.toDate(
+        dateFormat: String = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+        timeZone: TimeZone = TimeZone.getTimeZone("UTC")
+    ): Date? {
         var df = dateFormat
         if (this.isNotEmpty() && !this.contains("."))
-            df = "yyyy-MM-dd'T'HH:mm:ss'Z'" // needed if wallet-proxy doesn't send milliseconds with timestamps.
+            df =
+                "yyyy-MM-dd'T'HH:mm:ss'Z'" // needed if wallet-proxy doesn't send milliseconds with timestamps.
         val parser = SimpleDateFormat(df, Locale.getDefault())
         parser.timeZone = timeZone
         return parser.parse(this)
