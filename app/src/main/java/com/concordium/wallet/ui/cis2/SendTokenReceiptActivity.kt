@@ -89,7 +89,12 @@ class SendTokenReceiptActivity : BaseActivity() {
         }
 
         viewModel.feeReady.observe(this) { fee ->
-            binding.fee.text = getString(R.string.cis_estimated_fee, CurrencyUtil.formatGTU(fee, true))
+            // Null value means the fee is outdated.
+            binding.fee.text =
+                if (fee != null)
+                    getString(R.string.cis_estimated_fee, CurrencyUtil.formatGTU(fee, true))
+                else
+                    ""
         }
 
         viewModel.showAuthentication.observe(this) {

@@ -73,7 +73,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val transactionReady: MutableLiveData<String> by lazy { MutableLiveData<String>() }
-    val feeReady: MutableLiveData<BigInteger> by lazy { MutableLiveData<BigInteger>() }
+    val feeReady: MutableLiveData<BigInteger?> by lazy { MutableLiveData<BigInteger?>() }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 
@@ -84,6 +84,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             sendTokenData.token = token
             sendTokenData.max = if (token.isCCDToken) null else token.totalBalance
             sendTokenData.fee = null
+            feeReady.value = null
         }
     }
 
