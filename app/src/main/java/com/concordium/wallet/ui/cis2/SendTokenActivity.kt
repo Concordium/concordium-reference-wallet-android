@@ -91,7 +91,6 @@ class SendTokenActivity : BaseActivity() {
             binding.contractAddressError.visibility = View.VISIBLE
         } else {
             binding.send.isEnabled = false
-            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(binding.amount.text.toString(), viewModel.sendTokenData.token) ?: BigInteger.ZERO
             viewModel.sendTokenData.receiver = receiver
             binding.receiverName.let {
                 if(it.visibility == View.VISIBLE){
@@ -118,7 +117,7 @@ class SendTokenActivity : BaseActivity() {
             enableSend()
         }
         binding.amount.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && (binding.amount.text.toString().replace(".", "").replace(",", "").toInt() == 0))
+            if (hasFocus && viewModel.sendTokenData.amount.signum() == 0)
                 binding.amount.setText("")
         }
         binding.amount.setOnEditorActionListener { _, actionId, _ ->
@@ -143,17 +142,13 @@ class SendTokenActivity : BaseActivity() {
                     decimals = token.tokenMetadata?.decimals?: 0
             }
             binding.amount.setText(CurrencyUtil.formatGTU(viewModel.sendTokenData.max ?: BigInteger.ZERO, false, decimals))
-            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(it.toString(), viewModel.sendTokenData.token) ?: BigInteger.ZERO
             enableSend()
         }
     }
 
     private fun enableSend(): Boolean {
-        val amountText = binding.amount.text.toString().replace(",", "").replace(".", "").trim()
-        if (amountText.isEmpty())
-            binding.send.isEnabled = false
-        else
-            binding.send.isEnabled = (amountText.toLong() > 0) && viewModel.hasEnoughFunds()
+        binding.send.isEnabled =
+            viewModel.sendTokenData.amount.signum() > 0 && viewModel.hasEnoughFunds()
         return binding.send.isEnabled
     }
 
