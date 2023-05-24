@@ -316,6 +316,7 @@ class SendTokenActivity : BaseActivity() {
                 }
             }
             binding.amount.setText(CurrencyUtil.formatGTU(BigInteger.ZERO, false))
+            binding.amount.decimals = token.tokenMetadata?.decimals ?: 6
             viewModel.loadTransactionFee()
         }
 

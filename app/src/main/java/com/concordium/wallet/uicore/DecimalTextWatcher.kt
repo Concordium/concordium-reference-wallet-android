@@ -4,7 +4,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import java.text.DecimalFormatSymbols
 
-class DecimalTextWatcher(private val maxNumberOfDecimals: Int = 1) : TextWatcher {
+class DecimalTextWatcher(val maxNumberOfDecimals: Int = 1) : TextWatcher {
     private val separator: Char = DecimalFormatSymbols.getInstance().decimalSeparator
 
     override fun beforeTextChanged(
