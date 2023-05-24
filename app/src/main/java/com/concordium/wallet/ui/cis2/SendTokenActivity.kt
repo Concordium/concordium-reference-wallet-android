@@ -50,9 +50,8 @@ class SendTokenActivity : BaseActivity() {
         binding = ActivitySendTokenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel.sendTokenData.account = intent.getSerializable(ACCOUNT, Account::class.java)
-        viewModel.sendTokenData.token = intent.getSerializable(TOKEN, Token::class.java)
+        viewModel.chooseToken.postValue(intent.getSerializable(TOKEN, Token::class.java))
         initObservers()
-        updateWithToken(viewModel.sendTokenData.token)
         initViews()
     }
 
@@ -134,7 +133,6 @@ class SendTokenActivity : BaseActivity() {
     }
 
     private fun initializeMax() {
-        binding.max.isEnabled = false
         binding.max.setOnClickListener {
             var decimals = 6
             viewModel.sendTokenData.token?.let { token ->
@@ -148,7 +146,9 @@ class SendTokenActivity : BaseActivity() {
 
     private fun enableSend(): Boolean {
         binding.send.isEnabled =
-            viewModel.sendTokenData.amount.signum() > 0 && viewModel.hasEnoughFunds()
+            viewModel.sendTokenData.amount.signum() > 0
+                    && viewModel.sendTokenData.fee != null
+                    && viewModel.hasEnoughFunds()
         return binding.send.isEnabled
     }
 
@@ -292,7 +292,6 @@ class SendTokenActivity : BaseActivity() {
         viewModel.chooseToken.observe(this) { token ->
             searchTokenBottomSheet?.dismiss()
             searchTokenBottomSheet = null
-            viewModel.sendTokenData.token = token
             binding.balanceTitle.text = getString(R.string.cis_token_balance, token.symbol).trim()
             val decimals: Int = if (token.isCCDToken) 6 else token.tokenMetadata?.decimals ?: 0
             binding.balance.text = CurrencyUtil.formatGTU(token.totalBalance, token.isCCDToken, decimals)
@@ -312,6 +311,8 @@ class SendTokenActivity : BaseActivity() {
             }
             binding.amount.setText(CurrencyUtil.formatGTU(BigInteger.ZERO, false))
             binding.amount.decimals = token.tokenMetadata?.decimals ?: 6
+            // For non-CCD tokens Max is always available.
+            binding.max.isEnabled = !token.isCCDToken
             viewModel.loadTransactionFee()
         }
 
@@ -339,21 +340,10 @@ class SendTokenActivity : BaseActivity() {
                 binding.atDisposalTitle.setTextColor(getColor(R.color.text_black))
                 binding.atDisposal.setTextColor(getColor(R.color.text_black))
             }
+            enableSend()
         }
         viewModel.errorInt.observe(this) {
             Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun updateWithToken(token: Token?) {
-        token?.let {
-            binding.balanceTitle.text = getString(R.string.cis_token_balance, it.symbol).trim()
-            val decimals: Int = if (token.isCCDToken) 6 else token.tokenMetadata?.decimals ?: 0
-            binding.balance.text = CurrencyUtil.formatGTU(it.totalBalance, it.isCCDToken, decimals)
-            binding.searchToken.tokenShortName.text = it.symbol
-            it.tokenMetadata?.thumbnail?.url?.let { url ->
-                Glide.with(this).load(url).into(binding.searchToken.tokenIcon)
-            }
         }
     }
 

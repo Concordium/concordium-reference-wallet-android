@@ -79,6 +79,12 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
 
     init {
         transferRepository = TransferRepository(WalletDatabase.getDatabase(application).transferDao())
+
+        chooseToken.observeForever { token ->
+            sendTokenData.token = token
+            sendTokenData.max = if (token.isCCDToken) null else token.totalBalance
+            sendTokenData.fee = null
+        }
     }
 
     fun dispose() {
@@ -244,7 +250,6 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             success = {
                 sendTokenData.energy = it.energy
                 sendTokenData.fee = it.cost.toBigInteger()
-                sendTokenData.max = sendTokenData.token!!.totalBalance
                 waiting.postValue(false)
                 feeReady.postValue(sendTokenData.fee)
             },
