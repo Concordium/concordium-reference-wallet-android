@@ -17,22 +17,13 @@ import com.concordium.wallet.data.cryptolib.CreateCredentialInputV1
 import com.concordium.wallet.data.cryptolib.CreateCredentialOutputV1
 import com.concordium.wallet.data.cryptolib.GenerateRecoveryRequestInput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
-import com.concordium.wallet.data.model.GlobalParamsWrapper
-import com.concordium.wallet.data.model.IdentityObject
-import com.concordium.wallet.data.model.IdentityProvider
-import com.concordium.wallet.data.model.IdentityStatus
-import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
-import com.concordium.wallet.data.model.TransactionStatus
+import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.preferences.AuthPreferences
-import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.Identity
-import com.concordium.wallet.data.room.IdentityDao
-import com.concordium.wallet.data.room.IdentityWithAccounts
-import com.concordium.wallet.data.room.Recipient
-import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.data.room.*
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.passphrase.recoverprocess.retrofit.IdentityProviderApiInstance
 import com.concordium.wallet.util.DateTimeUtil
+import com.concordium.wallet.util.toBigInteger
 import com.google.gson.JsonArray
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,6 +31,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.Serializable
+import java.math.BigInteger
 
 data class RecoverProcessData(
     var identitiesWithAccounts: List<IdentityWithAccounts> = mutableListOf(),
@@ -293,16 +285,16 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                     encryptedAccountData = encryptedAccountData,
                     revealedAttributes = listOf(),
                     credential = createCredentialOutput.credential,
-                    finalizedBalance = accountBalance.finalizedBalance.accountAmount.toLong(),
-                    currentBalance = accountBalance.currentBalance?.accountAmount?.toLong() ?: 0,
-                    totalBalance = 0,
-                    totalUnshieldedBalance = accountBalance.finalizedBalance.accountAmount.toLong(),
-                    totalShieldedBalance = 0,
+                    finalizedBalance = accountBalance.finalizedBalance.accountAmount.toBigInteger(),
+                    currentBalance = accountBalance.currentBalance?.accountAmount.toBigInteger(),
+                    totalBalance = BigInteger.ZERO,
+                    totalUnshieldedBalance = accountBalance.finalizedBalance.accountAmount.toBigInteger(),
+                    totalShieldedBalance = BigInteger.ZERO,
                     finalizedEncryptedBalance = accountBalance.finalizedBalance.accountEncryptedAmount,
                     currentEncryptedBalance = accountBalance.currentBalance?.accountEncryptedAmount,
                     encryptedBalanceStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
-                    totalStaked = if (accountBalance.finalizedBalance.accountBaker != null) accountBalance.finalizedBalance.accountBaker.stakedAmount.toLong() else 0,
-                    totalAtDisposal = 0,
+                    totalStaked = accountBalance.finalizedBalance.accountBaker?.stakedAmount.toBigInteger(),
+                    totalAtDisposal = BigInteger.ZERO,
                     readOnly = false,
                     finalizedAccountReleaseSchedule = accountBalance.finalizedBalance.accountReleaseSchedule,
                     bakerId = accountBalance.finalizedBalance.accountBaker?.bakerId?.toLong(),

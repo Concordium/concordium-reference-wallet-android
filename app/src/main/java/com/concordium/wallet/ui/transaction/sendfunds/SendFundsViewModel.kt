@@ -22,17 +22,7 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.CreateTransferInput
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
-import com.concordium.wallet.data.model.AccountBalance
-import com.concordium.wallet.data.model.AccountData
-import com.concordium.wallet.data.model.AccountNonce
-import com.concordium.wallet.data.model.GlobalParams
-import com.concordium.wallet.data.model.GlobalParamsWrapper
-import com.concordium.wallet.data.model.InputEncryptedAmount
-import com.concordium.wallet.data.model.SubmissionData
-import com.concordium.wallet.data.model.TransactionOutcome
-import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.model.TransactionType
-import com.concordium.wallet.data.model.TransferSubmissionStatus
+import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.preferences.SharedPreferencesKeys
 import com.concordium.wallet.data.room.Account
@@ -44,9 +34,11 @@ import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.toBigInteger
 import com.concordium.wallet.util.toHex
 import kotlinx.coroutines.launch
-import java.util.Date
+import java.math.BigInteger
+import java.util.*
 import javax.crypto.Cipher
 
 class SendFundsViewModel(application: Application) : AndroidViewModel(application) {
@@ -125,8 +117,8 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
     val gotoFailedLiveData: LiveData<Event<Pair<Boolean, BackendError?>>>
         get() = _gotoFailedLiveData
 
-    private val _transactionFeeLiveData = MutableLiveData<Long>()
-    val transactionFeeLiveData: LiveData<Long>
+    private val _transactionFeeLiveData = MutableLiveData<BigInteger>()
+    val transactionFeeLiveData: LiveData<BigInteger>
         get() = _transactionFeeLiveData
 
     private val _waitingReceiverAccountPublicKeyLiveData = MutableLiveData<Boolean>()
@@ -137,14 +129,14 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
     val recipientLiveData: MutableLiveData<Recipient?>
         get() = _recipientLiveData
 
-    private val _sendAllAmountLiveData = MutableLiveData<Long>()
-    val sendAllAmountLiveData: LiveData<Long>
+    private val _sendAllAmountLiveData = MutableLiveData<BigInteger>()
+    val sendAllAmountLiveData: LiveData<BigInteger>
         get() = _sendAllAmountLiveData
 
     private class TempData {
         var accountNonce: AccountNonce? = null
         var toAddress: String? = null
-        var amount: Long? = null
+        var amount: BigInteger? = null
         var energy: Long? = null
         var submissionId: String? = null
         var transferSubmissionStatus: TransferSubmissionStatus? = null
@@ -208,7 +200,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             memoSize = if (tempData.memo == null) null else tempData.memo!!.length / 2, //div by 2 because hex takes up twice the length
             success = {
                 tempData.energy = it.energy
-                _transactionFeeLiveData.value = it.cost.toLong()
+                _transactionFeeLiveData.value = it.cost.toBigInteger()
                 updateSendAllAmount()
             },
             failure = {
@@ -221,7 +213,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         return account.address == selectedRecipient?.address
     }
 
-    fun getAmount(): Long? {
+    fun getAmount(): BigInteger? {
         return tempData.amount
     }
 
@@ -420,7 +412,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
                         oldDecryptedAmount?.let {
                             accountUpdater.saveDecryptedAmount(
                                 newEncryptedAmount,
-                                (it.toLong() + amount).toString()
+                                (it.toBigInteger() + amount).toString()
                             )
                         }
                     }
@@ -491,10 +483,11 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
         val aggAmount = tempData.accountBalance?.finalizedBalance?.let {
             var agg =
-                accountUpdater.lookupMappedAmount(it.accountEncryptedAmount.selfAmount)?.toLong()
-                    ?: 0
+                accountUpdater.lookupMappedAmount(it.accountEncryptedAmount.selfAmount)
+                    ?.toBigInteger()
+                    ?: BigInteger.ZERO
             it.accountEncryptedAmount.incomingAmounts.forEach {
-                agg += accountUpdater.lookupMappedAmount(it)?.toLong() ?: 0
+                agg += accountUpdater.lookupMappedAmount(it)?.toBigInteger() ?: BigInteger.ZERO
             }
             unfinalisedTransfers.forEach {
                 agg -= it.amount
@@ -699,16 +692,16 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun updateSendAllAmount() {
         if (sendAll) {
-            var cost = 0L
+            var cost = BigInteger.ZERO
             _transactionFeeLiveData.value?.let {
                 cost = it
             }
-            var amount =
+            var amount: BigInteger =
                 ((if (isShielded) account.totalShieldedBalance else (account.getAtDisposalWithoutStakedOrScheduled(
                     account.totalUnshieldedBalance
                 ) - cost)))
-            if (amount < 0) {
-                amount = 0
+            if (amount.signum() < 0) {
+                amount = BigInteger.ZERO
             }
             _sendAllAmountLiveData.value = amount
         }

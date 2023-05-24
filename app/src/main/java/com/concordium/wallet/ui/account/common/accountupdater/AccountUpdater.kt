@@ -27,6 +27,8 @@ import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PerformanceUtil
+import com.concordium.wallet.util.toBigInteger
+import kotlinx.coroutines.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -36,6 +38,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import retrofit2.HttpException
+import java.math.BigInteger
 
 class AccountUpdater(val application: Application, private val viewModelScope: CoroutineScope) {
 
@@ -286,7 +289,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
 
                         //IF GTU Drop we set cost to 0
                         if (submissionStatus.status == TransactionStatus.COMMITTED && submissionStatus.sender != request.transfer.fromAddress) {
-                            request.transfer.cost = 0
+                            request.transfer.cost = BigInteger.ZERO
                         }
 
                         Log.d("TransferSubmissionStatus Loop item end - ${request.transfer.submissionId} ${submissionStatus.status}")
@@ -362,8 +365,9 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     Log.d("AccountBalance Loop item start")
                     val accountBalance = request.deferred.await()
                     request.account.finalizedBalance =
-                        accountBalance.finalizedBalance?.getAmount() ?: 0
-                    request.account.currentBalance = accountBalance.currentBalance?.getAmount() ?: 0
+                        accountBalance.finalizedBalance?.getAmount() ?: BigInteger.ZERO
+                    request.account.currentBalance =
+                        accountBalance.currentBalance?.getAmount() ?: BigInteger.ZERO
                     request.account.accountIndex = accountBalance.finalizedBalance?.accountIndex
 
                     request.account.accountDelegation =
@@ -375,10 +379,10 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                     accountBalance.finalizedBalance?.let {
 
                         if (it.accountBaker != null && it.accountBaker.stakedAmount != null) {
-                            it.accountBaker.stakedAmount.toLong()
+                            it.accountBaker.stakedAmount.toBigInteger()
                                 .let { request.account.totalStaked = it }
                         } else {
-                            request.account.totalStaked = 0
+                            request.account.totalStaked = BigInteger.ZERO
                         }
 
                         if (it.accountBaker != null && it.accountBaker.bakerId != null) {
@@ -427,9 +431,9 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
     }
 
     private suspend fun calculateTotalBalances(): TotalBalancesData {
-        var totalBalanceForAllAccounts = 0L
-        var totalAtDisposalWithoutStakedOrScheduledForAllAccounts = 0L
-        var totalStakedForAllAccounts = 0L
+        var totalBalanceForAllAccounts = BigInteger.ZERO
+        var totalAtDisposalWithoutStakedOrScheduledForAllAccounts = BigInteger.ZERO
+        var totalStakedForAllAccounts = BigInteger.ZERO
         var totalContainsEncrypted = false
 
         for (account in accountList) {
@@ -437,10 +441,10 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
 
             var containsEncrypted = ShieldedAccountEncryptionStatus.DECRYPTED
 
-            var accountShieldedBalance = 0L
+            var accountShieldedBalance: BigInteger = BigInteger.ZERO
 
             //Calculate unshielded
-            var accountUnshieldedBalance = account.finalizedBalance
+            var accountUnshieldedBalance: BigInteger = account.finalizedBalance
 
             for (transfer in transferList) {
 
@@ -477,17 +481,18 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
             account.finalizedEncryptedBalance?.let {
                 val amount = lookupMappedAmount(it.selfAmount)
                 if (amount != null) {
-                    accountShieldedBalance += amount.toLong()
+                    accountShieldedBalance += amount.toBigInteger()
                 } else {
                     containsEncrypted = ShieldedAccountEncryptionStatus.ENCRYPTED
                 }
                 it.incomingAmounts.forEach {
                     val amount = lookupMappedAmount(it)
                     if (amount != null) {
-                        accountShieldedBalance += amount.toLong()
+                        accountShieldedBalance += amount.toBigInteger()
                     } else {
                         if (containsEncrypted != ShieldedAccountEncryptionStatus.ENCRYPTED) {
-                            containsEncrypted = ShieldedAccountEncryptionStatus.PARTIALLYDECRYPTED
+                            containsEncrypted =
+                                ShieldedAccountEncryptionStatus.PARTIALLYDECRYPTED
                         }
                     }
                 }
@@ -572,7 +577,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         if (DEFAULT_EMPTY_ENCRYPTED_AMOUNT.equals(key)) {
             return 0.toString()
         }
-        val result = encryptedAmountRepository.findByAddress(key)?.amount ?: null
+        val result = encryptedAmountRepository.findByAddress(key)?.amount
 
         return result
     }

@@ -13,6 +13,7 @@ import com.concordium.wallet.databinding.ActivityDelegationRegistrationConfirmat
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.util.UnitConvertUtil
+import java.math.BigInteger
 
 class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity() {
     private var receiptMode = false
@@ -83,10 +84,10 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity() {
         }
 
         binding.accountToDelegateFrom.text =
-            (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n")
-                .plus(viewModel.bakerDelegationData.account?.address ?: "")
+            (viewModel.bakerDelegationData.account?.name ?: "")
+                .plus("\n\n").plus(viewModel.bakerDelegationData.account?.address ?: "")
         binding.delegationAmountConfirmation.text =
-            CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
+            CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: BigInteger.ZERO, true)
         binding.targetPool.text =
             if (viewModel.bakerDelegationData.isLPool) getString(R.string.delegation_register_delegation_passive_long) else viewModel.bakerDelegationData.poolId
         binding.rewardsWillBe.text =
@@ -176,7 +177,8 @@ class DelegationRegisterConfirmationActivity : BaseDelegationBakerActivity() {
             when (viewModel.bakerDelegationData.type) {
                 UPDATE_DELEGATION -> {
                     if ((viewModel.bakerDelegationData.amount
-                            ?: 0) < (viewModel.bakerDelegationData.oldStakedAmount ?: 0)
+                            ?: BigInteger.ZERO) < (viewModel.bakerDelegationData.oldStakedAmount
+                            ?: BigInteger.ZERO)
                     ) {
                         builder.setMessage(
                             resources.getQuantityString(

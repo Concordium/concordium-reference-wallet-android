@@ -5,10 +5,12 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.uicore.view.AmountEditText
 import com.concordium.wallet.uicore.view.SegmentedControlView
+import java.math.BigDecimal
+import java.math.BigInteger
 import java.text.DecimalFormatSymbols
 
 abstract class BaseDelegationBakerRegisterAmountActivity : BaseDelegationBakerActivity() {
-    protected var validateFee: Long? = null
+    protected var validateFee: BigInteger? = null
     protected var baseDelegationBakerRegisterAmountListener: BaseDelegationBakerRegisterAmountListener? =
         null
 
@@ -45,8 +47,8 @@ abstract class BaseDelegationBakerRegisterAmountActivity : BaseDelegationBakerAc
         )
     }
 
-    protected fun moreThan95Percent(amountToStake: Long): Boolean {
-        return amountToStake > (viewModel.bakerDelegationData.account?.finalizedBalance ?: 0) * 0.95
+    protected fun moreThan95Percent(amountToStake: BigInteger): Boolean {
+        return amountToStake.toBigDecimal() > (viewModel.bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO).toBigDecimal() * BigDecimal(0.95)
     }
 
     protected fun validateAmountInput(amount: AmountEditText, amountError: TextView) {

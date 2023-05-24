@@ -7,6 +7,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.getOrAwaitValue
+import com.concordium.wallet.util.toBigInteger
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -15,6 +16,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
+import java.math.BigInteger
 
 @RunWith(AndroidJUnit4::class)
 class AccountDaoUnitTest {
@@ -55,16 +57,16 @@ class AccountDaoUnitTest {
             "",
             revealedAttributes,
             CredentialWrapper(RawJson("{}"), 1),
-            0,
-            0,
-            0,
-            0,
-            0,
+            "115792089237316195423570985008687907853269984665640564039457584007913129639935".toBigInteger(),
+            BigInteger.ZERO,
+            BigInteger.ZERO,
+            BigInteger.ZERO,
+            BigInteger.ZERO,
             null,
             null,
             ShieldedAccountEncryptionStatus.ENCRYPTED,
-            0,
-            0,
+            BigInteger.ZERO,
+            BigInteger.ZERO,
             false,
             null,
             null,
@@ -79,5 +81,6 @@ class AccountDaoUnitTest {
         assertEquals(1, list.size)
         assertEquals(account.name, list[0].name)
         assertEquals(2, list[0].revealedAttributes.size)
+        assertEquals(account.finalizedBalance, list[0].finalizedBalance)
     }
 }

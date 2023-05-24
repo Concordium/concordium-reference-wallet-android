@@ -10,29 +10,10 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.RecipientRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.OfflineMockInterceptor
-import com.concordium.wallet.data.model.ArDescription
-import com.concordium.wallet.data.model.ArsInfo
-import com.concordium.wallet.data.model.AttributeList
-import com.concordium.wallet.data.model.CredentialWrapper
-import com.concordium.wallet.data.model.IdentityAttribute
-import com.concordium.wallet.data.model.IdentityObject
-import com.concordium.wallet.data.model.IdentityProvider
-import com.concordium.wallet.data.model.IdentityProviderDescription
-import com.concordium.wallet.data.model.IdentityProviderInfo
-import com.concordium.wallet.data.model.IdentityProviderMetaData
-import com.concordium.wallet.data.model.PreIdentityObject
-import com.concordium.wallet.data.model.PubInfoForIp
-import com.concordium.wallet.data.model.RawJson
-import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
-import com.concordium.wallet.data.model.TransactionOutcome
-import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.model.TransactionType
-import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.Identity
-import com.concordium.wallet.data.room.Recipient
-import com.concordium.wallet.data.room.Transfer
-import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.room.*
 import kotlinx.coroutines.launch
+import java.math.BigInteger
 
 class DevViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -122,16 +103,16 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 "",
                 revealedAttributes,
                 CredentialWrapper(credential, 0),
-                0,
-                0,
-                0,
-                0,
-                0,
+                BigInteger.ZERO,
+                BigInteger.ZERO,
+                BigInteger.ZERO,
+                BigInteger.ZERO,
+                BigInteger.ZERO,
                 null,
                 null,
                 ShieldedAccountEncryptionStatus.ENCRYPTED,
-                0,
-                0,
+                BigInteger.ZERO,
+                BigInteger.ZERO,
                 false,
                 null,
                 null,
@@ -152,16 +133,16 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 "",
                 revealedAttributes,
                 CredentialWrapper(credential, 0),
-                0,
-                0,
-                0,
-                0,
-                0,
+                BigInteger.ZERO,
+                BigInteger.ZERO,
+                BigInteger.ZERO,
+                BigInteger.ZERO,
+                BigInteger.ZERO,
                 null,
                 null,
                 ShieldedAccountEncryptionStatus.ENCRYPTED,
-                0,
-                0,
+                BigInteger.ZERO,
+                BigInteger.ZERO,
                 false,
                 null,
                 null,
@@ -182,16 +163,16 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 "",
                 revealedAttributes,
                 CredentialWrapper(credential, 0),
-                0,
-                0,
-                0,
-                0,
-                0,
+                BigInteger.ZERO,
+                BigInteger.ZERO,
+                BigInteger.ZERO,
+                BigInteger.ZERO,
+                BigInteger.ZERO,
                 null,
                 null,
                 ShieldedAccountEncryptionStatus.ENCRYPTED,
-                0,
-                0,
+                BigInteger.ZERO,
+                BigInteger.ZERO,
                 false,
                 null,
                 null,
@@ -212,16 +193,16 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 "",
                 revealedAttributes,
                 CredentialWrapper(credential, 0),
-                0,
-                0,
-                0,
-                0,
-                0,
+                BigInteger.ZERO,
+                BigInteger.ZERO,
+                BigInteger.ZERO,
+                BigInteger.ZERO,
+                BigInteger.ZERO,
                 null,
                 null,
                 ShieldedAccountEncryptionStatus.ENCRYPTED,
-                0,
-                0,
+                BigInteger.ZERO,
+                BigInteger.ZERO,
                 false,
                 null,
                 null,
@@ -246,8 +227,8 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
             Transfer(
                 0,
                 accountId,
-                1000,
-                59,
+                1000.toBigInteger(),
+                59.toBigInteger(),
                 "address01",
                 "address02",
                 1903773385,
@@ -266,8 +247,8 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
             Transfer(
                 0,
                 accountId,
-                2000,
-                59,
+                2000.toBigInteger(),
+                59.toBigInteger(),
                 "address01",
                 "address02_not_in_recipientlist",
                 1903773385,
@@ -286,8 +267,8 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
             Transfer(
                 0,
                 accountId,
-                3000,
-                59,
+                3000.toBigInteger(),
+                59.toBigInteger(),
                 "address01",
                 "address02",
                 1903773385,
@@ -306,8 +287,8 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
             Transfer(
                 0,
                 accountId,
-                4000,
-                59,
+                4000.toBigInteger(),
+                59.toBigInteger(),
                 "address01",
                 "address02",
                 1903773385,
@@ -327,8 +308,8 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
             Transfer(
                 0,
                 accountId,
-                5000,
-                59,
+                5000.toBigInteger(),
+                59.toBigInteger(),
                 "address01",
                 "address02",
                 1903773385,
@@ -347,8 +328,8 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
             Transfer(
                 0,
                 accountId,
-                6000,
-                59,
+                6000.toBigInteger(),
+                59.toBigInteger(),
                 "address01",
                 "address02",
                 1903773385,
@@ -368,8 +349,8 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
             Transfer(
                 0,
                 accountId,
-                7000,
-                59,
+                7000.toBigInteger(),
+                59.toBigInteger(),
                 "address01",
                 "address02",
                 1903773385,
@@ -392,8 +373,8 @@ class DevViewModel(application: Application) : AndroidViewModel(application) {
                 Transfer(
                     0,
                     accountId,
-                    1000,
-                    59,
+                    1000.toBigInteger(),
+                    59.toBigInteger(),
                     "address01",
                     "Local",
                     1903773385,

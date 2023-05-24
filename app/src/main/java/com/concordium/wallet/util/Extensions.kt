@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import java.io.Serializable
+import java.math.BigInteger
 
 fun ByteArray.toHex() = joinToString("") {
     Integer.toUnsignedString(java.lang.Byte.toUnsignedInt(it), 16).padStart(2, '0')
@@ -34,3 +35,17 @@ fun <T : Serializable?> Bundle.getSerializableFromBundle(key: String, m_class: C
         this.getSerializable(key) as T
     }
 }
+
+/**
+ * Allows to safely parse [BigInteger] from [String] with default value (0 by default)
+ * @return parsed value or [defaultValue] if it can't be parsed
+ */
+fun String?.toBigInteger(defaultValue: BigInteger = BigInteger.ZERO): BigInteger =
+    try {
+       if (isNullOrBlank())
+            defaultValue
+        else
+            BigInteger(this)
+    } catch (e: NumberFormatException) {
+        defaultValue
+    }

@@ -11,6 +11,8 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.util.DateTimeUtil
+import com.concordium.wallet.util.toBigInteger
+import java.math.BigInteger
 
 object TransactionViewHelper {
     suspend fun show(
@@ -48,9 +50,9 @@ object TransactionViewHelper {
             DateTimeUtil.formatTimeAsLocal(ta.timeStamp)
         }
 
-        fun setTotalView(total: Long) {
+        fun setTotalView(total: BigInteger) {
             totalTextView.text = CurrencyUtil.formatGTU(total, withGStroke = true)
-            if (total > 0) {
+            if (total.signum() > 0) {
                 totalTextView.setTextColor(colorGreen)
             } else {
                 totalTextView.setTextColor(colorBlack)
@@ -189,75 +191,73 @@ object TransactionViewHelper {
                     // encryptedTransfer (decrypted value of encrypted amount)
                         if (ta.isEncryptedTransfer()) {
                             ta.encrypted?.encryptedAmount?.let {
-                                var amount = accountUpdater.lookupMappedAmount(it)
+                                val amount = accountUpdater.lookupMappedAmount(it)?.toBigInteger()
                                 if (amount != null) {
-                                    setTotalView(if (ta.isOriginSelf()) -amount.toLong() else amount.toLong())
+                                    setTotalView(if (ta.isOriginSelf()) -amount else amount)
                                 } else {
                                     showDecryptedValueOfEncryptedAmount()
                                     lockImageView.setOnClickListener {
                                         decryptCallback?.onDecrypt()
                                     }
+                                    hideCostLine()
                                 }
                             }
-                            hideCostLine()
+                        }
+                        // local (unfinalized) transactions
+                        else {
+                            // simpleTransfer - NOT shown
+                            // transferToSecret - NOT shown
+                            if (ta.isSimpleTransfer() || ta.isTransferToSecret()) {
+                                // left empty intentionally (filtered out)
+                            } else
+                            // transferToPublic - show the amount with minus
+                                if (ta.isTransferToPublic()) {
+                                    setTotalView(ta.getTotalAmountForShielded())
+                                    hideCostLine()
+                                } else
+                                // encryptedTransfer -  we know the amount because it is outgoing. We show it with minus. When getting the submission status, we save the association between the known amount and the encryptedValue we get from the submission status, as clarified with Ales from Concordium
+                                    if (ta.isEncryptedTransfer()) {
+                                        setTotalView(ta.getTotalAmountForShielded())
+                                        hideCostLine()
+                                    }
                         }
             }
-            // local (unfinalized) transactions
-            else {
-                // simpleTransfer - NOT shown
-                // transferToSecret - NOT shown
-                if (ta.isSimpleTransfer() || ta.isTransferToSecret()) {
-                    // left empty intentionally (filtered out)
-                } else
-                // transferToPublic - show the amount with minus
-                    if (ta.isTransferToPublic()) {
-                        setTotalView(ta.getTotalAmountForShielded())
-                        hideCostLine()
-                    } else
-                    // encryptedTransfer -  we know the amount because it is outgoing. We show it with minus. When getting the submission status, we save the association between the known amount and the encryptedValue we get from the submission status, as clarified with Ales from Concordium
-                        if (ta.isEncryptedTransfer()) {
-                            setTotalView(ta.getTotalAmountForShielded())
-                            hideCostLine()
-                        }
+
+
+            // Alert image
+            if (ta.transactionStatus == TransactionStatus.ABSENT ||
+                (ta.transactionStatus == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Reject) ||
+                (ta.transactionStatus == TransactionStatus.FINALIZED && ta.outcome == TransactionOutcome.Reject)
+            ) {
+                alertImageView.visibility = View.VISIBLE
+                titleTextView.setTextColor(colorGrey)
+            } else {
+                alertImageView.visibility = View.GONE
+                titleTextView.setTextColor(colorBlack)
             }
-        }
 
-
-        // Alert image
-        if (ta.transactionStatus == TransactionStatus.ABSENT ||
-            (ta.transactionStatus == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Reject) ||
-            (ta.transactionStatus == TransactionStatus.FINALIZED && ta.outcome == TransactionOutcome.Reject)
-        ) {
-            alertImageView.visibility = View.VISIBLE
-            titleTextView.setTextColor(colorGrey)
-        } else {
-            alertImageView.visibility = View.GONE
-            titleTextView.setTextColor(colorBlack)
-        }
-
-        // Status image
-        if (ta.transactionStatus == TransactionStatus.RECEIVED ||
-            (ta.transactionStatus == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Ambiguous)
-        ) {
-            statusImageView.setImageDrawable(
-                ContextCompat.getDrawable(statusImageView.context, R.drawable.ic_time)
-            )
-        } else if (ta.transactionStatus == TransactionStatus.COMMITTED) {
-            statusImageView.setImageDrawable(
-                ContextCompat.getDrawable(statusImageView.context, R.drawable.ic_ok)
-            )
-        } else if (ta.transactionStatus == TransactionStatus.FINALIZED) {
-            statusImageView.setImageDrawable(
-                ContextCompat.getDrawable(statusImageView.context, R.drawable.ic_ok_x2)
-            )
-        } else {
-            statusImageView.setImageDrawable(null)
+            // Status image
+            if (ta.transactionStatus == TransactionStatus.RECEIVED ||
+                (ta.transactionStatus == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Ambiguous)
+            ) {
+                statusImageView.setImageDrawable(
+                    ContextCompat.getDrawable(statusImageView.context, R.drawable.ic_time)
+                )
+            } else if (ta.transactionStatus == TransactionStatus.COMMITTED) {
+                statusImageView.setImageDrawable(
+                    ContextCompat.getDrawable(statusImageView.context, R.drawable.ic_ok)
+                )
+            } else if (ta.transactionStatus == TransactionStatus.FINALIZED) {
+                statusImageView.setImageDrawable(
+                    ContextCompat.getDrawable(statusImageView.context, R.drawable.ic_ok_x2)
+                )
+            } else {
+                statusImageView.setImageDrawable(null)
+            }
         }
     }
 
     interface OnClickListenerInterface {
         fun onDecrypt()
     }
-
-
 }

@@ -31,6 +31,7 @@ import com.concordium.wallet.ui.transaction.sendfunds.AddMemoActivity
 import com.concordium.wallet.util.KeyboardUtil
 import com.concordium.wallet.util.UnitConvertUtil
 import com.concordium.wallet.util.getSerializable
+import java.math.BigInteger
 
 class SendTokenActivity : BaseActivity() {
     private lateinit var binding: ActivitySendTokenBinding
@@ -62,8 +63,8 @@ class SendTokenActivity : BaseActivity() {
 
     private fun initViews() {
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.cis_send_funds)
-        binding.amount.setText(CurrencyUtil.formatGTU(0, false))
-        binding.atDisposal.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.account?.getAtDisposalWithoutStakedOrScheduled(viewModel.sendTokenData.account?.totalUnshieldedBalance ?: 0) ?: 0, true)
+        binding.amount.setText(CurrencyUtil.formatGTU(BigInteger.ZERO, false))
+        binding.atDisposal.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.account?.getAtDisposalWithoutStakedOrScheduled(viewModel.sendTokenData.account?.totalUnshieldedBalance ?: BigInteger.ZERO) ?: BigInteger.ZERO, true)
         initializeAmount()
         initializeMax()
         initializeMemo()
@@ -90,7 +91,7 @@ class SendTokenActivity : BaseActivity() {
             binding.contractAddressError.visibility = View.VISIBLE
         } else {
             binding.send.isEnabled = false
-            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(binding.amount.text.toString(), viewModel.sendTokenData.token) ?: 0
+            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(binding.amount.text.toString(), viewModel.sendTokenData.token) ?: BigInteger.ZERO
             viewModel.sendTokenData.receiver = receiver
             binding.receiverName.let {
                 if(it.visibility == View.VISIBLE){
@@ -112,7 +113,7 @@ class SendTokenActivity : BaseActivity() {
 
     private fun initializeAmount() {
         binding.amount.addTextChangedListener {
-            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(it.toString(), viewModel.sendTokenData.token) ?: 0
+            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(it.toString(), viewModel.sendTokenData.token) ?: BigInteger.ZERO
             viewModel.loadTransactionFee()
             enableSend()
         }
@@ -141,8 +142,8 @@ class SendTokenActivity : BaseActivity() {
                 if (!token.isCCDToken)
                     decimals = token.tokenMetadata?.decimals?: 0
             }
-            binding.amount.setText(CurrencyUtil.formatGTU(viewModel.sendTokenData.max ?: 0, false, decimals))
-            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(it.toString(), viewModel.sendTokenData.token) ?: 0
+            binding.amount.setText(CurrencyUtil.formatGTU(viewModel.sendTokenData.max ?: BigInteger.ZERO, false, decimals))
+            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(it.toString(), viewModel.sendTokenData.token) ?: BigInteger.ZERO
             enableSend()
         }
     }
@@ -314,7 +315,7 @@ class SendTokenActivity : BaseActivity() {
                         .into(binding.searchToken.tokenIcon)
                 }
             }
-            binding.amount.setText(CurrencyUtil.formatGTU(0, false))
+            binding.amount.setText(CurrencyUtil.formatGTU(BigInteger.ZERO, false))
             viewModel.loadTransactionFee()
         }
 

@@ -22,7 +22,8 @@ import com.concordium.wallet.data.room.typeconverter.GlobalTypeConverters
     exportSchema = true,
     autoMigrations = [
         AutoMigration(from = 7, to = 8),
-        AutoMigration(from = 8, to = 9)
+        AutoMigration(from = 8, to = 9),
+        AutoMigration(from = 9, to = 10),
     ]
 )
 @TypeConverters(GlobalTypeConverters::class)
@@ -37,8 +38,7 @@ abstract class WalletDatabase : RoomDatabase() {
     abstract fun contractTokenDao(): ContractTokenDao
 
     companion object {
-
-        const val VERSION_NUMBER = 9
+        const val VERSION_NUMBER = 10
 
         val MIGRATION_3_4: Migration = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {

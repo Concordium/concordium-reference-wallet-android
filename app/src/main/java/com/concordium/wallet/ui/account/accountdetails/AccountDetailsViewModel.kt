@@ -20,12 +20,7 @@ import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.DecryptAmountInput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
-import com.concordium.wallet.data.model.BakerDelegationData
-import com.concordium.wallet.data.model.RemoteTransaction
-import com.concordium.wallet.data.model.Transaction
-import com.concordium.wallet.data.model.TransactionOutcome
-import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.model.TransactionType
+import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Transfer
@@ -43,7 +38,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
-import java.util.Date
+import java.math.BigInteger
+import java.util.*
 import javax.crypto.Cipher
 
 class AccountDetailsViewModel(application: Application) : AndroidViewModel(application) {
@@ -114,8 +110,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
     val identityLiveData: MutableLiveData<Identity?>
         get() = _identityLiveData
 
-    private var _totalBalanceLiveData = MutableLiveData<Pair<Long, Boolean>>()
-    val totalBalanceLiveData: LiveData<Pair<Long, Boolean>>
+    private var _totalBalanceLiveData = MutableLiveData<Pair<BigInteger, Boolean>>()
+    val totalBalanceLiveData: LiveData<Pair<BigInteger, Boolean>>
         get() = _totalBalanceLiveData
 
     private var _selectedTransactionForDecrytionLiveData = MutableLiveData<Transaction>()
@@ -204,8 +200,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         val transfer = Transfer(
             0,
             account.id,
-            -2000000000,
-            0,
+            (-2000000000).toBigInteger(),
+            BigInteger.ZERO,
             "",
             account.address,
             expiry,
@@ -257,7 +253,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 )
             }
         } else {
-            _totalBalanceLiveData.value = Pair(0, false)
+            _totalBalanceLiveData.value = Pair(BigInteger.ZERO, false)
         }
     }
 

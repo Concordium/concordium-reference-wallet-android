@@ -18,6 +18,7 @@ import com.concordium.wallet.databinding.AccountReleaseScheduleItemBinding
 import com.concordium.wallet.databinding.AccountReleaseScheduleTransactionItemBinding
 import com.concordium.wallet.databinding.ActivityAccountReleaseScheduleBinding
 import com.concordium.wallet.ui.base.BaseActivity
+import com.concordium.wallet.util.toBigInteger
 import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
@@ -95,7 +96,8 @@ class AccountReleaseScheduleActivity : BaseActivity() {
         viewModel.scheduledReleasesLiveData.observe(this, Observer<List<Schedule>> { list ->
 
             binding.accountReleaseScheduleLockedAmount.text = CurrencyUtil.formatGTU(
-                viewModel.account.finalizedAccountReleaseSchedule?.total?.toLong() ?: 0, true
+                viewModel.account.finalizedAccountReleaseSchedule?.total.toBigInteger(),
+                true
             )
 
             binding.accountReleaseScheduleList.removeAllViews()
@@ -131,7 +133,7 @@ class AccountReleaseScheduleActivity : BaseActivity() {
                     }
                 }
 
-                view.amount.text = CurrencyUtil.formatGTU(release.amount.toLong(), true)
+                view.amount.text = CurrencyUtil.formatGTU(release.amount.toBigInteger(), true)
                 binding.accountReleaseScheduleList.addView(view.root)
             }
         })

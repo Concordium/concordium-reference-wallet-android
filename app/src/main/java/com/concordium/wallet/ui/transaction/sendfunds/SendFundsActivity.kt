@@ -28,6 +28,8 @@ import com.concordium.wallet.ui.transaction.sendfundsconfirmed.SendFundsConfirme
 import com.concordium.wallet.uicore.afterTextChanged
 import com.concordium.wallet.util.KeyboardUtil
 import com.concordium.wallet.util.getSerializable
+import java.math.BigDecimal
+import java.math.BigInteger
 import java.text.DecimalFormatSymbols
 import javax.crypto.Cipher
 
@@ -291,7 +293,7 @@ class SendFundsActivity : BaseActivity() {
         val amountValue = CurrencyUtil.toGTUValue(binding.amountEdittext.text.toString())
         val atDisposal = viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance)
         if (amountValue != null) {
-            if (amountValue > atDisposal * 0.95) {
+            if (amountValue.toBigDecimal() > atDisposal.toBigDecimal() * BigDecimal(0.95)) {
                 val builder = AlertDialog.Builder(this)
                 builder.setTitle(R.string.send_funds_more_than_95_title)
                 builder.setMessage(getString(R.string.send_funds_more_than_95_message))
@@ -449,7 +451,7 @@ class SendFundsActivity : BaseActivity() {
                     && viewModel.selectedRecipient != null
                     && viewModel.transactionFeeLiveData.value != null
                     && hasSufficientFunds
-                    && (CurrencyUtil.toGTUValue(binding.amountEdittext.text.toString()) ?: 0) > 0)
+                    && (CurrencyUtil.toGTUValue(binding.amountEdittext.text.toString()) ?: BigInteger.ZERO).signum() > 0)
         }
         return enable
     }

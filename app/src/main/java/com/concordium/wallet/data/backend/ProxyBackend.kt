@@ -45,7 +45,7 @@ interface ProxyBackend {
     fun transferCost(
         @Query("type") type: String? = null,
         @Query("memoSize") memoSize: Int? = null,
-        @Query("amount") amount: Long? = null,
+        @Query("amount") amount: String? = null,
         @Query("restake") restake: Boolean? = null,
         @Query("lPool") lPool: String? = null,
         @Query("target") target: String? = null,

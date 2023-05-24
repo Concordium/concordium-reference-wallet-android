@@ -19,11 +19,13 @@ import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.toBigInteger
 import com.walletconnect.util.Empty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.Serializable
+import java.math.BigInteger
 
 data class TokenData(
     var account: Account? = null,
@@ -98,8 +100,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     it.contractIndex,
                     tokenData.subIndex,
                     false,
-                    0,
-                    0,
+                    BigInteger.ZERO,
+                    BigInteger.ZERO,
                     it.contractName,
                     it.tokenMetadata?.symbol ?: ""
                 )
@@ -231,9 +233,11 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                         )
                         anyChanges = true
                     }
-                    if(existingContractToken != null && !selectedToken.isSelected){
-                        deleteSingleToken(account.address, tokenData.contractIndex,
-                            selectedToken.token)
+                    if (existingContractToken != null && !selectedToken.isSelected) {
+                        deleteSingleToken(
+                            account.address, tokenData.contractIndex,
+                            selectedToken.token
+                        )
                         anyChanges = true
                     }
                 }
@@ -333,7 +337,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
         val account = accountRepository.findByAddress(accountAddress)
         val atDisposal =
-            account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) ?: 0
+            account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
+                ?: BigInteger.ZERO
         return Token(
             "",
             "CCD",
@@ -343,7 +348,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             "",
             "",
             true,
-            account?.totalBalance ?: 0,
+            account?.totalBalance ?: BigInteger.ZERO,
             atDisposal,
             "",
             "CCD"
@@ -423,7 +428,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     success = { cis2TokensBalances ->
                         cis2TokensBalances.forEach { cis2TokenBalance ->
                             groupTokens.firstOrNull { it.token == cis2TokenBalance.tokenId }?.totalBalance =
-                                cis2TokenBalance.balance.toLong()
+                                cis2TokenBalance.balance.toBigInteger()
                         }
                         tokenBalances.postValue(true)
                     },
