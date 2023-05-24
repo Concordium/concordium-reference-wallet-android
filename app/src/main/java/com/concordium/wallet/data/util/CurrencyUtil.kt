@@ -80,21 +80,6 @@ object CurrencyUtil {
         return strBuilder.toString().removeSuffix(separator.toString())
     }
 
-    fun getWholePart(stringValue: String): Long? {
-        if (stringValue.isEmpty()) {
-            return null
-        }
-        if (!checkGTUString(stringValue)) {
-            return null
-        }
-        val decimalSeparatorIndex = stringValue.indexOf(separator)
-        return if (decimalSeparatorIndex == -1) {
-            stringValue.toLong()
-        } else {
-            stringValue.substring(0, decimalSeparatorIndex).toLong()
-        }
-    }
-
     fun toGTUValue(stringValue: String, token: Token?): BigInteger? {
         var decimals = 6
         token?.let {
