@@ -106,18 +106,19 @@
                     android:imeOptions="actionDone"
                     android:gravity="center_vertical"
                     tools:text="123.45" />
-                <TextView
+
+                <Button
                     android:id="@+id/max"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/rounded_blue"
-                    android:paddingVertical="6dp"
-                    android:paddingHorizontal="14dp"
+                    style="@style/Button.Standard.Intro"
                     android:layout_gravity="center_vertical"
-                    style="@style/TextView.Small"
-                    android:textColor="@color/text_white"
                     android:layout_marginEnd="@dimen/activity_horizontal_margin_half"
-                    android:text="@string/cis_max" />
+                    android:fontFamily="sans-serif"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:paddingHorizontal="14dp"
+                    android:paddingVertical="6dp"
+                    android:text="@string/cis_max"
+                    android:textSize="14sp" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.cardview.widget.CardView
