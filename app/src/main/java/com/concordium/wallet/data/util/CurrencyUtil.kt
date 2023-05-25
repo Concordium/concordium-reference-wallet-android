@@ -9,7 +9,13 @@ import java.text.DecimalFormatSymbols
 import java.util.regex.Pattern
 
 object CurrencyUtil {
-    val MAX_AMOUNT = "115792089237316195423570985008687907853269984665640564039457584007913129639935".toBigInteger()
+    /**
+     * The maximum possible amount in Concordium,
+     * which is the maximum value of an unsigned 256-bit integer.
+     */
+    val MAX_AMOUNT =
+        "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+            .toBigInteger()
 
     private val separator: Char = DecimalFormatSymbols.getInstance().decimalSeparator
     private val patternGTU: Pattern = Pattern.compile("^-?[0-9]*[${separator}]?[0-9]{0,77}\$")
@@ -30,12 +36,12 @@ object CurrencyUtil {
         return formatGTU(value, withGStroke, decimals)
     }
 
-    fun setGstroke(gStroke: String){
+    fun setGstroke(gStroke: String) {
         this.gStroke = gStroke
     }
 
     fun formatGTU(value: BigInteger, withGStroke: Boolean = false, decimals: Int = 6): String {
-        if(withGStroke && gStroke == null){
+        if (withGStroke && gStroke == null) {
             gStroke = App.appContext.getString(R.string.app_gstroke)
         }
         if (decimals <= 0) {
@@ -63,7 +69,9 @@ object CurrencyUtil {
             // The string is at least decimals chars - insert separator in front of the last decimals
             strBuilder.insert(strBuilder.length - decimals, separator)
         }
-        while(strBuilder.substring(strBuilder.indexOf(separator)).length > 3 && strBuilder.endsWith("0")) {
+        while (strBuilder.substring(strBuilder.indexOf(separator)).length > 3
+            && strBuilder.endsWith("0")
+        ) {
             strBuilder.delete(strBuilder.length - 1, strBuilder.length)
         }
 
