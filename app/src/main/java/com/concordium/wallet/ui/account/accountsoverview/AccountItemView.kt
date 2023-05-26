@@ -48,10 +48,7 @@ class AccountItemView(context: Context, attrs: AttributeSet?) : LinearLayout(con
             if (accountPending || account.readOnly || hideExpandBar) View.GONE else View.VISIBLE
         binding.rootCardContent.setBackgroundColor(
             if (account.readOnly)
-                resources.getColor(
-                    R.color.theme_component_background_disabled,
-                    null
-                )
+                resources.getColor(R.color.theme_component_background_disabled, null)
             else
                 resources.getColor(R.color.theme_white, null)
         )
@@ -78,10 +75,7 @@ class AccountItemView(context: Context, attrs: AttributeSet?) : LinearLayout(con
             if (accountPending || accountWithIdentity.account.readOnly || hideExpandBar) View.GONE else View.VISIBLE
         binding.rootCardContent.setBackgroundColor(
             if (accountWithIdentity.account.readOnly)
-                resources.getColor(
-                    R.color.theme_component_background_disabled,
-                    null
-                )
+                resources.getColor(R.color.theme_component_background_disabled, null)
             else
                 resources.getColor(R.color.theme_white, null)
         )
