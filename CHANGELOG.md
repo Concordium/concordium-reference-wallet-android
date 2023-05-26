@@ -9,15 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   Added CHANGELOG.md
--   Added new functionality for saving seed phrase in-app so that it can be used for recovery.
+- Added CHANGELOG.md
+
+- Added new functionality for saving seed phrase in-app so that it can be used for recovery.
 
 ### Changed
 
--   Changed Terms and Conditions screen to new UI.
+- Changed Terms and Conditions screen to new UI.
 
 ## [1.1.7]
 
 ### Added
 
--   Initial implementation.
+- Initial implementation.
