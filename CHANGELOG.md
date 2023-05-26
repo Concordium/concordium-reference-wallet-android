@@ -10,7 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added CHANGELOG.md
-- Added new functionality for saving seed phrase in-app so that it can be used for recovery.
 - Identity view: Display raw "document type" when no localized string is matched
 
 ### Changed
