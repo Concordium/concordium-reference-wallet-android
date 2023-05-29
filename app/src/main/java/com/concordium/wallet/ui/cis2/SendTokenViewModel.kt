@@ -15,8 +15,21 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.cryptolib.*
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
+import com.concordium.wallet.data.cryptolib.CreateTransferInput
+import com.concordium.wallet.data.cryptolib.CreateTransferOutput
+import com.concordium.wallet.data.cryptolib.SerializeTokenTransferParametersInput
+import com.concordium.wallet.data.cryptolib.SerializeTokenTransferParametersOutput
+import com.concordium.wallet.data.cryptolib.StorageAccountData
+import com.concordium.wallet.data.model.AccountBalance
+import com.concordium.wallet.data.model.AccountData
+import com.concordium.wallet.data.model.AccountNonce
+import com.concordium.wallet.data.model.GlobalParams
+import com.concordium.wallet.data.model.GlobalParamsWrapper
+import com.concordium.wallet.data.model.InputEncryptedAmount
+import com.concordium.wallet.data.model.SubmissionData
+import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.walletconnect.ContractAddress
@@ -84,6 +97,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             sendTokenData.token = token
             sendTokenData.max = if (token.isCCDToken) null else token.totalBalance
             sendTokenData.fee = null
+            sendTokenData.amount = BigInteger.ZERO
             feeReady.value = null
         }
     }
