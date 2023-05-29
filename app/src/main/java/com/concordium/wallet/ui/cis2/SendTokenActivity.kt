@@ -297,11 +297,9 @@ class SendTokenActivity : BaseActivity() {
             binding.amount.decimals = token.tokenMetadata?.decimals ?: 6
             // For non-CCD tokens Max is always available.
             binding.max.isEnabled = !token.isCCDToken
-            viewModel.loadTransactionFee()
 
             if (!token.isCCDToken) {
                 binding.memoContainer.visibility = View.GONE
-                clearMemo()
             } else {
                 binding.memoContainer.visibility = View.VISIBLE
                 binding.memo.setOnClickListener {
@@ -311,6 +309,8 @@ class SendTokenActivity : BaseActivity() {
                     clearMemo()
                 }
             }
+            // This also initiates fee loading.
+            clearMemo()
         }
 
         viewModel.feeReady.observe(this) { fee ->
