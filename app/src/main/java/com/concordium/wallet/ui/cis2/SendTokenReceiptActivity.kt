@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import com.concordium.wallet.CBORUtil
 import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivitySendTokenReceiptBinding
@@ -67,6 +68,16 @@ class SendTokenReceiptActivity : BaseActivity() {
             else {
                 binding.tokenTitle.visibility = View.GONE
                 binding.token.visibility = View.GONE
+            }
+        }
+        viewModel.sendTokenData.memo.let { encodedMemo ->
+            if (encodedMemo != null) {
+                binding.memoTitle.visibility = View.VISIBLE
+                binding.memo.visibility = View.VISIBLE
+                binding.memo.text = CBORUtil.decodeHexAndCBOR(encodedMemo)
+            } else {
+                binding.memoTitle.visibility = View.GONE
+                binding.memo.visibility = View.GONE
             }
         }
     }

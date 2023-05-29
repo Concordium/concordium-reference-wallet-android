@@ -66,7 +66,6 @@ class SendTokenActivity : BaseActivity() {
         binding.atDisposal.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.account?.getAtDisposalWithoutStakedOrScheduled(viewModel.sendTokenData.account?.totalUnshieldedBalance ?: BigInteger.ZERO) ?: BigInteger.ZERO, true)
         initializeAmount()
         initializeMax()
-        initializeMemo()
         initializeReceiver()
         initializeAddressBook()
         initializeScanQrCode()
@@ -152,23 +151,6 @@ class SendTokenActivity : BaseActivity() {
         return binding.send.isEnabled
     }
 
-    private fun initializeMemo() {
-        viewModel.sendTokenData.token?.let {
-            if (!it.isCCDToken) {
-                binding.memoContainer.visibility = View.GONE
-            } else {
-                binding.memo.setOnClickListener {
-                    addMemo()
-                }
-                binding.memoClear.setOnClickListener {
-                    binding.memo.text = getString(R.string.cis_optional_add_memo)
-                    binding.memoClear.visibility = View.GONE
-                    viewModel.sendTokenData.memo = null
-                }
-            }
-        }
-    }
-
     private fun initializeReceiver() {
         binding.receiver.setOnClickListener {
             val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -211,7 +193,6 @@ class SendTokenActivity : BaseActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.getStringExtra(AddMemoActivity.EXTRA_MEMO)?.let { memo ->
-                    binding.memoClear.visibility = View.VISIBLE
                     handleMemo(memo)
                 }
             }
@@ -242,6 +223,9 @@ class SendTokenActivity : BaseActivity() {
             }
         }
 
+    private fun clearMemo() =
+        handleMemo("")
+
     private fun handleMemo(memo: String) {
         if (memo.isNotEmpty()) {
             viewModel.setMemo(CBORUtil.encodeCBOR(memo))
@@ -258,7 +242,7 @@ class SendTokenActivity : BaseActivity() {
             binding.memoClear.visibility = View.VISIBLE
         } else {
             binding.memo.text = getString(R.string.send_funds_optional_add_memo)
-            binding.memoClear.visibility = View.INVISIBLE
+            binding.memoClear.visibility = View.GONE
         }
     }
 
@@ -314,6 +298,19 @@ class SendTokenActivity : BaseActivity() {
             // For non-CCD tokens Max is always available.
             binding.max.isEnabled = !token.isCCDToken
             viewModel.loadTransactionFee()
+
+            if (!token.isCCDToken) {
+                binding.memoContainer.visibility = View.GONE
+                clearMemo()
+            } else {
+                binding.memoContainer.visibility = View.VISIBLE
+                binding.memo.setOnClickListener {
+                    addMemo()
+                }
+                binding.memoClear.setOnClickListener {
+                    clearMemo()
+                }
+            }
         }
 
         viewModel.feeReady.observe(this) { fee ->
