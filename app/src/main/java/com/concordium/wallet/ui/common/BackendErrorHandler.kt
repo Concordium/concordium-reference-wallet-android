@@ -44,6 +44,9 @@ object BackendErrorHandler {
             0 -> {
                 R.string.app_error_backend_internal_server
             }
+            1->{
+                R.string.delegation_register_delegation_amount_insufficient_error
+            }
 
             else -> {
                 Log.e(
