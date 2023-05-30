@@ -21,6 +21,7 @@ class IdentityProviderRepository {
             override fun onResponseData(response: ArrayList<IdentityProvider>) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -41,6 +42,7 @@ class IdentityProviderRepository {
             override fun onResponseData(response: GlobalParamsWrapper) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }
@@ -67,6 +69,7 @@ class IdentityProviderRepository {
             override fun onResponseData(response: IdentityContainer) {
                 success(response)
             }
+
             override fun onFailure(t: Throwable) {
                 failure?.invoke(t)
             }

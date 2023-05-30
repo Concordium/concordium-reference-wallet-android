@@ -19,15 +19,19 @@ object BackendErrorHandler {
                 // Default situation when no internet connection
                 return R.string.app_error_backend_unknown_host_exception
             }
+
             is ConnectException -> {
                 return R.string.app_error_backend_connect_exception
             }
+
             is SocketTimeoutException -> {
                 return R.string.app_error_backend_unknown_sockettimeout_exception
             }
+
             is BackendErrorException -> {
                 return getExceptionStringRes(e)
             }
+
             else -> {
                 Log.e("Exception from backend communication", e)
                 return R.string.app_error_backend_unknown2
@@ -40,8 +44,12 @@ object BackendErrorHandler {
             0 -> {
                 R.string.app_error_backend_internal_server
             }
+
             else -> {
-                Log.e("Exception from backend communication - unknown error code", backendErrorException)
+                Log.e(
+                    "Exception from backend communication - unknown error code",
+                    backendErrorException
+                )
                 R.string.app_error_backend_unknown_error_code
             }
         }
@@ -52,6 +60,7 @@ object BackendErrorHandler {
             0 -> {
                 R.string.app_error_backend_internal_server
             }
+
             else -> {
                 null
             }

@@ -44,8 +44,11 @@ class IdentityProviderPolicyWebviewActivity : BaseActivity() {
     }
 
     fun initViews() {
-        binding.webview.webViewClient = object: WebViewClient(){
-            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+        binding.webview.webViewClient = object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(
+                view: WebView?,
+                request: WebResourceRequest?
+            ): Boolean {
                 view?.loadUrl(request?.url.toString())
                 return false
             }

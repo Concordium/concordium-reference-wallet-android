@@ -10,6 +10,7 @@ import com.concordium.wallet.databinding.ActivityDelegationRemoveBinding
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.util.UnitConvertUtil
+import java.math.BigInteger
 
 class DelegationRemoveActivity : BaseDelegationBakerActivity() {
     private lateinit var binding: ActivityDelegationRemoveBinding
@@ -19,7 +20,11 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDelegationRemoveBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.delegation_remove_delegation_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.delegation_remove_delegation_title
+        )
         initViews()
     }
 
@@ -29,7 +34,9 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity() {
     }
 
     override fun initViews() {
-        binding.accountToRemoveDelegateFrom.text = (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n").plus(viewModel.bakerDelegationData.account?.address ?: "")
+        binding.accountToRemoveDelegateFrom.text =
+            (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n")
+                .plus(viewModel.bakerDelegationData.account?.address ?: "")
         binding.estimatedTransactionFee.text = ""
 
         binding.submitDelegationTransaction.setOnClickListener {
@@ -41,7 +48,10 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity() {
         }
 
         initializeWaitingLiveData(binding.includeProgress.progressLayout)
-        initializeTransactionFeeLiveData(binding.includeProgress.progressLayout, binding.estimatedTransactionFee)
+        initializeTransactionFeeLiveData(
+            binding.includeProgress.progressLayout,
+            binding.estimatedTransactionFee
+        )
         initializeShowAuthenticationLiveData()
 
         viewModel.transactionSuccessLiveData.observe(this, Observer<Boolean> { waiting ->
@@ -60,7 +70,7 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity() {
     }
 
     private fun validate() {
-        if (viewModel.atDisposal() < (viewModel.bakerDelegationData.cost ?: 0)) {
+        if (viewModel.atDisposal() < (viewModel.bakerDelegationData.cost ?: BigInteger.ZERO)) {
             showNotEnoughFunds()
         } else {
             if (viewModel.bakerDelegationData.isBakerPool) {
@@ -68,7 +78,7 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity() {
                     viewModel.setPoolID(it.toString())
                 }
             }
-            viewModel.bakerDelegationData.amount = 0
+            viewModel.bakerDelegationData.amount = BigInteger.ZERO
             viewModel.prepareTransaction()
         }
     }
@@ -85,7 +95,8 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity() {
         binding.submitDelegationFinish.visibility = View.VISIBLE
         binding.includeTransactionSubmittedHeader.transactionSubmitted.visibility = View.VISIBLE
         viewModel.bakerDelegationData.submissionId?.let {
-            binding.includeTransactionSubmittedNo.transactionSubmittedDivider.visibility = View.VISIBLE
+            binding.includeTransactionSubmittedNo.transactionSubmittedDivider.visibility =
+                View.VISIBLE
             binding.includeTransactionSubmittedNo.transactionSubmittedId.visibility = View.VISIBLE
             binding.includeTransactionSubmittedNo.transactionSubmittedId.text = it
         }
@@ -94,8 +105,16 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity() {
     private fun showNotice() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.delegation_notice_title)
-        val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0)
-        builder.setMessage(resources.getQuantityString(R.plurals.delegation_notice_message_remove, gracePeriod, gracePeriod))
+        val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(
+            viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0
+        )
+        builder.setMessage(
+            resources.getQuantityString(
+                R.plurals.delegation_notice_message_remove,
+                gracePeriod,
+                gracePeriod
+            )
+        )
         builder.setPositiveButton(getString(R.string.delegation_notice_ok)) { dialog, _ ->
             dialog.dismiss()
             finishUntilClass(AccountDetailsActivity::class.java.canonicalName)

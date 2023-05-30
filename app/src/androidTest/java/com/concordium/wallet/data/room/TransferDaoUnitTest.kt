@@ -46,8 +46,8 @@ class TransferDaoUnitTest {
         val transfer = Transfer(
             1,
             1,
-            100,
-            20,
+            100.toBigInteger(),
+            20.toBigInteger(),
             "0",
             "0",
             1901176193,
@@ -59,7 +59,8 @@ class TransferDaoUnitTest {
             TransactionType.TRANSFER,
             null,
             0,
-            null)
+            null
+        )
 
         runBlocking { transferDao.insert(transfer) }
         val listLiveData = transferDao.getAllAsLiveData()
@@ -90,8 +91,8 @@ class TransferDaoUnitTest {
         return Transfer(
             0,
             1,
-            100,
-            20,
+            100.toBigInteger(),
+            20.toBigInteger(),
             "0",
             "0",
             1901176193,
@@ -103,6 +104,7 @@ class TransferDaoUnitTest {
             TransactionType.TRANSFER,
             null,
             0,
-            null)
+            null
+        )
     }
 }

@@ -14,16 +14,25 @@ class WalletConnectTransactionSubmittedFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(viewModel: WalletConnectViewModel) = WalletConnectTransactionSubmittedFragment().apply {
-            arguments = Bundle().apply {
-                putSerializable(WalletConnectViewModel.WALLET_CONNECT_DATA, viewModel.walletConnectData)
+        fun newInstance(viewModel: WalletConnectViewModel) =
+            WalletConnectTransactionSubmittedFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable(
+                        WalletConnectViewModel.WALLET_CONNECT_DATA,
+                        viewModel.walletConnectData
+                    )
+                }
+                _viewModel = viewModel
             }
-            _viewModel = viewModel
-        }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentWalletConnectTransactionSubmittedBinding.inflate(inflater, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding =
+            FragmentWalletConnectTransactionSubmittedBinding.inflate(inflater, container, false)
         return binding.root
     }
 

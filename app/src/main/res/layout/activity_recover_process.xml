@@ -20,6 +20,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_layout"
         app:layout_constraintBottom_toTopOf="@+id/nothing_to_recover_buttons">
+
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
@@ -39,6 +40,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
+
         <Button
             android:id="@+id/tryAgainButton"
             style="@style/Button.Standard.Intro"
@@ -47,6 +49,7 @@
             android:visibility="gone"
             tools:visibility="visible"
             android:text="@string/pass_phrase_recover_process_try_again" />
+
         <Button
             android:id="@+id/continueButton"
             style="@style/Button.Standard.Intro"

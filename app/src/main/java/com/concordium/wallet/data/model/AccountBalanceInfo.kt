@@ -1,6 +1,7 @@
 package com.concordium.wallet.data.model
 
 import java.io.Serializable
+import java.math.BigInteger
 
 data class AccountBalanceInfo(
     val accountAmount: String,
@@ -12,8 +13,8 @@ data class AccountBalanceInfo(
     val accountIndex: Int
 ) : Serializable {
 
-    fun getAmount(): Long {
-        return accountAmount.toLong()
+    fun getAmount(): BigInteger {
+        return accountAmount.toBigInteger()
     }
 
     fun getEncryptedAmount(): AccountEncryptedAmount {

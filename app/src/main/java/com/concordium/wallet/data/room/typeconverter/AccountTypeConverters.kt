@@ -2,7 +2,12 @@ package com.concordium.wallet.data.room.typeconverter
 
 import androidx.room.TypeConverter
 import com.concordium.wallet.App
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.AccountBaker
+import com.concordium.wallet.data.model.AccountDelegation
+import com.concordium.wallet.data.model.AccountEncryptedAmount
+import com.concordium.wallet.data.model.AccountReleaseSchedule
+import com.concordium.wallet.data.model.CredentialWrapper
+import com.concordium.wallet.data.model.IdentityAttribute
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 
@@ -23,7 +28,7 @@ class AccountTypeConverters {
 
     @TypeConverter
     fun jsonToAccountDelegation(value: String?): AccountDelegation? {
-        if(value == null){
+        if (value == null) {
             return null
         }
         val gson = App.appCore.gson
@@ -32,7 +37,7 @@ class AccountTypeConverters {
 
     @TypeConverter
     fun accountDelegationToJson(delegation: AccountDelegation?): String? {
-        if(delegation == null){
+        if (delegation == null) {
             return null
         }
         val gson = App.appCore.gson
@@ -41,7 +46,7 @@ class AccountTypeConverters {
 
     @TypeConverter
     fun jsonToAccountBaker(value: String?): AccountBaker? {
-        if(value == null){
+        if (value == null) {
             return null
         }
         val gson = App.appCore.gson
@@ -50,7 +55,7 @@ class AccountTypeConverters {
 
     @TypeConverter
     fun accountBakerToJson(baker: AccountBaker?): String? {
-        if(baker == null){
+        if (baker == null) {
             return null
         }
         val gson = App.appCore.gson
@@ -59,7 +64,7 @@ class AccountTypeConverters {
 
     @TypeConverter
     fun jsonToCredentialWrapper(value: String?): CredentialWrapper? {
-        if(value == null){
+        if (value == null) {
             return null
         }
         val gson = App.appCore.gson
@@ -68,7 +73,7 @@ class AccountTypeConverters {
 
     @TypeConverter
     fun credentialWrapperToJson(credential: CredentialWrapper?): String? {
-        if(credential == null){
+        if (credential == null) {
             return null
         }
         val gson = App.appCore.gson

@@ -18,14 +18,19 @@ class RecoverProcessFinishedFragment : RecoverProcessBaseFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(recoverProcessData: RecoverProcessData) = RecoverProcessFinishedFragment().apply {
-            arguments = Bundle().apply {
-                putSerializable(RECOVER_PROCESS_DATA, recoverProcessData)
+        fun newInstance(recoverProcessData: RecoverProcessData) =
+            RecoverProcessFinishedFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable(RECOVER_PROCESS_DATA, recoverProcessData)
+                }
             }
-        }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentRecoverProcessFinishedBinding.inflate(inflater, container, false)
         initViews()
         return binding.root
@@ -38,25 +43,37 @@ class RecoverProcessFinishedFragment : RecoverProcessBaseFragment() {
 
     private fun initViews() {
         if (recoverProcessData.noResponseFrom.size > 0) {
-            binding.resultIcon.setImageDrawable(context?.let { ContextCompat.getDrawable(it, R.drawable.ic_logo_icon_error) })
+            binding.resultIcon.setImageDrawable(context?.let {
+                ContextCompat.getDrawable(
+                    it,
+                    R.drawable.ic_logo_icon_error
+                )
+            })
             binding.partialTextview.visibility = View.VISIBLE
             binding.providerNames.visibility = View.VISIBLE
             binding.providerNames.text = recoverProcessData.noResponseFrom.joinToString("\n") { it }
             binding.headerTextview.text = getString(R.string.pass_phrase_recover_process_partial)
-        }
-        else {
-            binding.resultIcon.setImageDrawable(context?.let { ContextCompat.getDrawable(it, R.drawable.ic_big_logo_ok) })
+        } else {
+            binding.resultIcon.setImageDrawable(context?.let {
+                ContextCompat.getDrawable(
+                    it,
+                    R.drawable.ic_big_logo_ok
+                )
+            })
             binding.partialTextview.visibility = View.GONE
             binding.providerNames.visibility = View.GONE
             binding.headerTextview.text = getString(R.string.pass_phrase_recover_process_finished)
             if (recoverProcessData.identitiesWithAccounts.isNotEmpty())
-                binding.subtitleTextview.text = getString(R.string.pass_phrase_recover_process_recovered)
+                binding.subtitleTextview.text =
+                    getString(R.string.pass_phrase_recover_process_recovered)
             else
-                binding.subtitleTextview.text = getString(R.string.pass_phrase_recover_process_nothing_new)
+                binding.subtitleTextview.text =
+                    getString(R.string.pass_phrase_recover_process_nothing_new)
         }
 
         recoverProcessData.identitiesWithAccounts.forEach { identityWithAccounts ->
-            val itemIdentityWithAccounts = ItemIdentityWithAccountsBinding.inflate(LayoutInflater.from(context), null, false)
+            val itemIdentityWithAccounts =
+                ItemIdentityWithAccountsBinding.inflate(LayoutInflater.from(context), null, false)
             itemIdentityWithAccounts.identityName.text = identityWithAccounts.identity.name
             identityWithAccounts.accounts.forEach { account ->
                 val accountTextView = TextView(context)

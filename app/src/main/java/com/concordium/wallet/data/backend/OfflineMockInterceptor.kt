@@ -3,7 +3,13 @@ package com.concordium.wallet.data.backend
 import android.net.UrlQuerySanitizer
 import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.AccountTransactions
+import com.concordium.wallet.data.model.RemoteTransaction
+import com.concordium.wallet.data.model.TransactionDetails
+import com.concordium.wallet.data.model.TransactionOrigin
+import com.concordium.wallet.data.model.TransactionOriginType
+import com.concordium.wallet.data.model.TransactionOutcome
+import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.util.AssetUtil
 import com.concordium.wallet.util.Log
 import okhttp3.Interceptor
@@ -183,9 +189,10 @@ class OfflineMockInterceptor : Interceptor {
             "",
             "",
             "",
-        0,
-        "",
-        "")
+            0,
+            "",
+            ""
+        )
 
         var timeStamp = transactionListBaselineTimestamp
         for (i in 1..count) {
@@ -195,9 +202,9 @@ class OfflineMockInterceptor : Interceptor {
                 "013c6d2dd67affd6f39b9a7b255d244055b53d68fe8b0add4839a20e911d04cb",
                 timeStamp.toDouble(),
                 "84bf1e2ef8d3af3063cdb681932990f71ddb3949655f55307a266e5d687b414f",
-                -10000,
-                59,
-                -10059,
+                (-10000).toBigInteger(),
+                59.toBigInteger(),
+                (-10059).toBigInteger(),
                 59,
                 details,
                 null

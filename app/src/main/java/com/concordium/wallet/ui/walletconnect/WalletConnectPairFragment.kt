@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.walletconnect
 
 import android.app.AlertDialog
-import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.LayoutInflater
@@ -9,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentWalletConnectPairBinding
-import com.concordium.wallet.ui.MainActivity
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.WALLET_CONNECT_DATA
 
 class WalletConnectPairFragment : WalletConnectBaseFragment() {
@@ -51,8 +49,9 @@ class WalletConnectPairFragment : WalletConnectBaseFragment() {
         countDownTimer = object : CountDownTimer(TIMER_VALUE, 1000) {
             override fun onTick(millisecondFinished: Long) {
             }
+
             override fun onFinish() {
-               showTimeOut()
+                showTimeOut()
             }
         }.start()
 
@@ -105,7 +104,7 @@ class WalletConnectPairFragment : WalletConnectBaseFragment() {
         builder.setTitle(R.string.wallet_connect_timeout_dialog_title)
         builder.setMessage(getString(R.string.wallet_connect_timeout_dialog_content))
 
-        builder.setNegativeButton(getString(R.string.wallet_connect_connection_lost_okay)) {dialog, _ ->
+        builder.setNegativeButton(getString(R.string.wallet_connect_connection_lost_okay)) { dialog, _ ->
             dialog.dismiss()
             binding.decline.isEnabled = false
             _viewModel.rejectSession()

@@ -40,7 +40,10 @@ class IdentityProviderApiInstance {
                     }
                 } else {
                     return if (response.errorBody() != null && response.code() == 404) {
-                        val errorResponse: RecoverErrorResponse = Gson().fromJson(response.errorBody()!!.charStream(), RecoverErrorResponse::class.java)
+                        val errorResponse: RecoverErrorResponse = Gson().fromJson(
+                            response.errorBody()!!.charStream(),
+                            RecoverErrorResponse::class.java
+                        )
                         Log.d("${errorResponse.code} ${errorResponse.message} on $url")
                         Pair(true, null)
                     } else {

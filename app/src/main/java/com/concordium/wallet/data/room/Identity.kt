@@ -6,7 +6,10 @@ import com.concordium.wallet.data.model.IdentityProvider
 import com.concordium.wallet.data.room.typeconverter.IdentityTypeConverters
 import java.io.Serializable
 
-@Entity(tableName = "identity_table", indices = [Index(value = ["identity_provider_id", "identity_index"], unique = true)])
+@Entity(
+    tableName = "identity_table",
+    indices = [Index(value = ["identity_provider_id", "identity_index"], unique = true)]
+)
 @TypeConverters(IdentityTypeConverters::class)
 data class Identity(
     @PrimaryKey(autoGenerate = true)

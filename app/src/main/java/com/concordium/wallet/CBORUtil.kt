@@ -22,15 +22,14 @@ class CBORUtil {
             val byteArray = txt.chunked(2)
                 .map { it.toInt(16).toByte() }
                 .toByteArray()
-            if(byteArray.isEmpty()){
+            if (byteArray.isEmpty()) {
                 return ""
             }
             try {
                 val cborObj = CborObject.createFromCborByteArray(byteArray)
                 return cborObj.toJavaObject() as String
-            }
-            catch (e: Exception){
-                Log.e("Error parsing CBOR: "+e)
+            } catch (e: Exception) {
+                Log.e("Error parsing CBOR: " + e)
                 return txt
             }
         }

@@ -87,7 +87,8 @@ class AlterPasswordViewModel(application: Application) :
 
     fun getCipherForBiometrics(): Cipher? {
         return try {
-            val cipher = App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
+            val cipher =
+                App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
             if (cipher == null) {
                 _errorLiveData.value = Event(R.string.app_error_keystore_key_invalidated)
             }
@@ -105,7 +106,8 @@ class AlterPasswordViewModel(application: Application) :
 
     fun checkLogin(cipher: Cipher) = viewModelScope.launch {
         _waitingLiveData.value = true
-        val password = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
+        val password =
+            App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
         if (password != null) {
             handleAuthPassword(password)
         } else {
@@ -116,7 +118,8 @@ class AlterPasswordViewModel(application: Application) :
 
     private suspend fun handleAuthPassword(password: String) {
         // Decrypt the private data
-        val key = App.appCore.getCurrentAuthenticationManager().derivePasswordKeyInBackground(password)
+        val key =
+            App.appCore.getCurrentAuthenticationManager().derivePasswordKeyInBackground(password)
         if (key == null) {
             _errorLiveData.value = Event(R.string.app_error_encryption)
             _waitingLiveData.value = false
@@ -127,12 +130,12 @@ class AlterPasswordViewModel(application: Application) :
 
     fun finishPasswordChange(newPassword: String) {
         viewModelScope.launch {
-            val newDecryptKey = App.appCore.getCurrentAuthenticationManager().derivePasswordKeyInBackground(newPassword)
+            val newDecryptKey = App.appCore.getCurrentAuthenticationManager()
+                .derivePasswordKeyInBackground(newPassword)
             if (newDecryptKey == null) {
                 _errorLiveData.value = Event(R.string.app_error_encryption)
                 _waitingLiveData.value = false
-            }
-            else{
+            } else {
                 encryptAndFinalize(newDecryptKey)
             }
         }
@@ -146,14 +149,16 @@ class AlterPasswordViewModel(application: Application) :
                 initialDecryptedIdentityList = ArrayList()
                 initialDecryptedIdentityList = identityRepository.getAllDone()
                 for (identity in initialDecryptedIdentityList) {
-                    val tmpInitialDecryptedAccountsList = accountRepository.getAllByIdentityId(identity.id)
+                    val tmpInitialDecryptedAccountsList =
+                        accountRepository.getAllByIdentityId(identity.id)
                     for (account in tmpInitialDecryptedAccountsList) {
                         if (account.encryptedAccountData.isNotEmpty()) {
-                            val accountDataDecrypted = App.appCore.getOriginalAuthenticationManager().decryptInBackground(decryptKey, account.encryptedAccountData)
-                            if(accountDataDecrypted != null && isJson(accountDataDecrypted)){
+                            val accountDataDecrypted =
+                                App.appCore.getOriginalAuthenticationManager()
+                                    .decryptInBackground(decryptKey, account.encryptedAccountData)
+                            if (accountDataDecrypted != null && isJson(accountDataDecrypted)) {
                                 account.encryptedAccountData = accountDataDecrypted
-                            }
-                            else{
+                            } else {
                                 allSuccess = false
                             }
                         }
@@ -168,20 +173,19 @@ class AlterPasswordViewModel(application: Application) :
 
             try {
                 decryptedSeed = AuthPreferences(getApplication()).getSeedPhrase(decryptKey)
-                if(decryptedSeed == null){
+                if (decryptedSeed == null) {
                     allSuccess = false
                 }
-            }catch (e: Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
                 allSuccess = false
             }
 
-            if(allSuccess){
+            if (allSuccess) {
                 App.appCore.startResetAuthFlow()
                 _doneInitialAuthenticationLiveData.value = Event(true)
                 _waitingLiveData.value = false
-            }
-            else{
+            } else {
                 _errorInitialAuthenticationLiveData.value = Event(true)
                 _waitingLiveData.value = false
             }
@@ -194,18 +198,21 @@ class AlterPasswordViewModel(application: Application) :
 
             var allSuccess = true
 
-            if(decryptedSeed != null){
+            if (decryptedSeed != null) {
                 try {
                     val seedPhraseEncrypted = App.appCore.getOriginalAuthenticationManager()
                         .encryptInBackground(encryptKey, decryptedSeed!!)
-                    if (seedPhraseEncrypted == null || !AuthPreferences(getApplication()).updateEncryptedSeedPhrase(seedPhraseEncrypted)) {
-                            allSuccess = false
+                    if (seedPhraseEncrypted == null || !AuthPreferences(getApplication()).updateEncryptedSeedPhrase(
+                            seedPhraseEncrypted
+                        )
+                    ) {
+                        allSuccess = false
                     }
                     decryptedSeed = null
-                }catch (e: Exception){
+                } catch (e: Exception) {
                     allSuccess = false
                 }
-            }else{
+            } else {
                 allSuccess = false
             }
 
@@ -213,12 +220,15 @@ class AlterPasswordViewModel(application: Application) :
                 try {
                     for (account in initialDecryptedAccountsList) {
                         if (account.encryptedAccountData.isNotEmpty()) {
-                            val accountDataEncrypted = App.appCore.getOriginalAuthenticationManager().encryptInBackground(encryptKey, account.encryptedAccountData)//Which is decrypted by now!
+                            val accountDataEncrypted =
+                                App.appCore.getOriginalAuthenticationManager().encryptInBackground(
+                                    encryptKey,
+                                    account.encryptedAccountData
+                                )//Which is decrypted by now!
                             if (accountDataEncrypted != null) {
                                 account.encryptedAccountData = accountDataEncrypted
                                 accountRepository.update(account)
-                            }
-                            else {
+                            } else {
                                 allSuccess = false
                             }
                         }
@@ -230,13 +240,12 @@ class AlterPasswordViewModel(application: Application) :
                     allSuccess = false
                 }
 
-                if(allSuccess){
+                if (allSuccess) {
                     App.appCore.finalizeResetAuthFlow()
                     viewModelScope.launch {
                         _doneFinalChangePasswordLiveData.value = Event(true)
                     }
-                }
-                else{
+                } else {
                     App.appCore.cancelResetAuthFlow()
                     _errorFinalChangePasswordLiveData.value = Event(true)
                     throw Exception()
@@ -256,6 +265,7 @@ class AlterPasswordViewModel(application: Application) :
     }
 
     fun checkAndStartPasscodeChange() = viewModelScope.launch {
-        _checkAccountsIdentitiesDoneLiveData.value = (identityRepository.getNonDoneCount() + accountRepository.getNonDoneCount()) == 0
+        _checkAccountsIdentitiesDoneLiveData.value =
+            (identityRepository.getNonDoneCount() + accountRepository.getNonDoneCount()) == 0
     }
 }

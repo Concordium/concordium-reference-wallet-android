@@ -19,4 +19,4 @@ data class TransactionDetails(
     val aggregatedIndex: Int?,
     val amountSubtracted: String?,
     val amountAdded: String?
-): Serializable
+) : Serializable

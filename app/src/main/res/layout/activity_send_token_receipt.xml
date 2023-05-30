@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    style="@style/Layout.Root">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/toolbar_layout"
+            layout="@layout/app_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbar_layout">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:paddingTop="@dimen/activity_content_margin"
+                    android:paddingHorizontal="@dimen/activity_content_margin">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/header"
+                            style="@style/TextView.Standard"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/cis_receipt_confirm"
+                            android:gravity="center" />
+
+                        <include layout="@layout/transaction_submitted_header"
+                            android:id="@+id/include_transaction_submitted_header" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
+                            android:background="@drawable/receipt_background_new"
+                            android:orientation="vertical">
+                            <TextView
+                                style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="@string/cis_transaction_send_tokens" />
+                            <View style="@style/Divider" />
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/activity_vertical_margin"
+                                android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
+                                android:orientation="vertical">
+                                <TextView
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/cis_sender" />
+                                <TextView
+                                    android:id="@+id/sender"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:text="Main\n\n3HJG...4HJ3" />
+                                <TextView
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/cis_amount" />
+                                <TextView
+                                    android:id="@+id/amount"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Large"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:text="2.00" />
+                                <TextView
+                                    android:id="@+id/token_title"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/cis_token" />
+                                <TextView
+                                    android:id="@+id/token"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:text="wCCD" />
+                                <TextView
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/cis_receiver" />
+                                <TextView
+                                    android:id="@+id/receiver_name"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:text="Nellie Patrick"
+                                    android:visibility="gone"
+                                    tools:visibility="visible"/>
+                                <TextView
+                                    android:id="@+id/receiver"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:text="14f36...7c33" />
+                                <TextView
+                                    android:id="@+id/memo_title"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/cis_memo" />
+                                <TextView
+                                    android:id="@+id/memo"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:text="An optional message" />
+                                <TextView
+                                    android:id="@+id/fee"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Gray"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:text="Estimated transaction fee:\nϾ 0.0059" />
+                            </LinearLayout>
+                            <include layout="@layout/transaction_submitted_no" android:id="@+id/include_transaction_submitted_no" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
+                        android:orientation="horizontal"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="@dimen/activity_vertical_margin">
+                        <Button
+                            android:id="@+id/send_funds"
+                            style="@style/Button.Standard"
+                            android:layout_width="match_parent"
+                            android:text="@string/cis_send_funds" />
+                        <Button
+                            android:id="@+id/finish"
+                            style="@style/Button.Standard"
+                            android:layout_width="match_parent"
+                            android:visibility="gone"
+                            android:text="@string/cis_finish" />
+                    </RelativeLayout>
+
+                </LinearLayout>
+            </ScrollView>
+
+        </RelativeLayout>
+
+        <include layout="@layout/progress"
+            android:id="@+id/include_progress"
+            tools:visibility="visible" />
+
+    </RelativeLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

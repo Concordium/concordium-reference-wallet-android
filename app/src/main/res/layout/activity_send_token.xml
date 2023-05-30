@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Layout.Root">
+
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/app_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_layout"
+        app:layout_constraintBottom_toTopOf="@+id/send"
+        android:orientation="vertical">
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:orientation="vertical">
+            <TextView
+                style="@style/TextView.XSmall.Light"
+                android:layout_width="match_parent"
+                android:text="@string/cis_currently_available_amounts" />
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/balance_title"
+                    style="@style/TextView.Mono"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="0"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    tools:text="CCD Balance:" />
+                <TextView
+                    android:id="@+id/balance"
+                    style="@style/TextView.Mono"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_gravity="end"
+                    android:textAlignment="textEnd"
+                    android:maxLines="1"
+                    tools:text="Ͼ123.45" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin_half"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/at_disposal_title"
+                    style="@style/TextView.Mono"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="0"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:text="@string/cis_at_disposal" />
+                <TextView
+                    android:id="@+id/at_disposal"
+                    style="@style/TextView.Mono"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_gravity="end"
+                    android:textAlignment="textEnd"
+                    android:maxLines="1"
+                    tools:text="Ͼ123.45" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <include
+                android:id="@+id/search_token"
+                layout="@layout/search_token_result" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:orientation="horizontal"
+                android:background="@drawable/rounded_transparent"
+                tools:showIn="@layout/activity_send_token">
+                <com.concordium.wallet.uicore.view.AmountEditText
+                    android:id="@+id/amount"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                    android:layout_height="match_parent"
+                    style="@style/TextView.BlueRegular.Mono"
+                    android:imeOptions="actionDone"
+                    android:gravity="center_vertical"
+                    tools:text="123.45" />
+
+                <Button
+                    android:id="@+id/max"
+                    style="@style/Button.Standard.Intro"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin_half"
+                    android:fontFamily="sans-serif"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:paddingHorizontal="14dp"
+                    android:paddingVertical="6dp"
+                    android:text="@string/cis_max"
+                    android:textSize="14sp" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                app:cardCornerRadius="@dimen/card_corner_radius"
+                app:cardElevation="0dp">
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_transparent"
+                    android:orientation="vertical">
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/receiver_name"
+                        style="@style/TextView.Standard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/activity_horizontal_margin"
+                        android:paddingTop="@dimen/activity_horizontal_margin"
+                        android:textColor="@color/text_blue"
+                        android:textColorHint="@color/text_blue"
+                        tools:text="Account Name"
+                        android:visibility="gone"
+                        android:gravity="center_horizontal"
+                        tools:visibility="visible"/>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/receiver"
+                        style="@style/TextView.Standard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/cis_paste_receiver_address"
+                        android:padding="@dimen/activity_horizontal_margin"
+                        android:textColor="@color/text_blue"
+                        android:textColorHint="@color/text_blue"
+                        android:gravity="center_horizontal" />
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/address_book"
+                            android:layout_width="0dp"
+                            android:layout_height="50dp"
+                            android:layout_weight="0.5"
+                            android:orientation="horizontal">
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="50dp"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/button_action_card"
+                                android:paddingVertical="@dimen/activity_vertical_margin"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/ic_lup"
+                                android:tint="@color/theme_white" />
+                            <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView.Standard.White"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/button_action_card"
+                                android:gravity="center_vertical"
+                                android:text="@string/cis_address_book" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/theme_white" />
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/scan_qr"
+                            android:layout_width="0dp"
+                            android:layout_height="50dp"
+                            android:layout_weight="0.5"
+                            android:orientation="horizontal">
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="50dp"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/button_action_card"
+                                android:paddingVertical="@dimen/activity_vertical_margin"
+                                android:scaleType="fitCenter"
+                                android:src="@drawable/ic_recipient_address_qr"
+                                android:tint="@color/theme_white" />
+                            <androidx.appcompat.widget.AppCompatTextView
+                                style="@style/TextView.Standard.White"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="@drawable/button_action_card"
+                                android:gravity="center_vertical"
+                                android:text="@string/cis_scan_qr" />
+                        </androidx.appcompat.widget.LinearLayoutCompat>
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/contract_address_error"
+                style="@style/TextView.ErrorTiny"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/activity_vertical_margin_half"
+                android:gravity="center"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:text="@string/send_funds_error_insufficient_funds" />
+
+            <LinearLayout
+                android:id="@+id/memo_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:minHeight="50dp"
+                android:background="@drawable/rounded_transparent"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/memo"
+                    style="@style/TextView.Standard"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:textColor="@color/text_blue"
+                    android:text="@string/cis_optional_add_memo" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/memo_clear"
+                    style="@style/Image"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                    android:src="@drawable/ic_close_cross" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fee_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/activity_vertical_margin"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/fee"
+                    style="@style/TextView.InfoSmall"
+                    android:layout_width="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    tools:text="@string/send_funds_fee_info" />
+                <TextView
+                    android:id="@+id/fee_error"
+                    style="@style/TextView.ErrorTiny"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/activity_vertical_margin_half"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:text="@string/send_funds_error_insufficient_funds" />
+            </LinearLayout>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/send"
+        style="@style/Button.Standard.Intro"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scrollView"
+        android:enabled="false"
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:layout_width="match_parent"
+        android:text="@string/cis_send_funds" />
+
+    <include layout="@layout/progress" android:id="@+id/include_progress" android:visibility="gone" tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

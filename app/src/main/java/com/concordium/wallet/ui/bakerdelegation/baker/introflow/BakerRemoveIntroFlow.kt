@@ -6,6 +6,7 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.R
 import com.concordium.wallet.ui.bakerdelegation.baker.BakerRegistrationConfirmationActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerFlowActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
+import java.math.BigInteger
 
 class BakerRemoveIntroFlow :
     BaseDelegationBakerFlowActivity(R.string.baker_remove_intro_flow_title) {
@@ -17,7 +18,7 @@ class BakerRemoveIntroFlow :
     override fun gotoContinue() {
         val intent = Intent(this, BakerRegistrationConfirmationActivity::class.java)
         bakerDelegationData?.type = REMOVE_BAKER
-        bakerDelegationData?.amount = 0
+        bakerDelegationData?.amount = BigInteger.ZERO
         bakerDelegationData?.metadataUrl = null
 
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, bakerDelegationData)
@@ -25,6 +26,6 @@ class BakerRemoveIntroFlow :
     }
 
     override fun getLink(position: Int): String {
-        return "file:///android_asset/baker_remove_intro_flow_en_"+(position+1)+".html"
+        return "file:///android_asset/baker_remove_intro_flow_en_" + (position + 1) + ".html"
     }
 }

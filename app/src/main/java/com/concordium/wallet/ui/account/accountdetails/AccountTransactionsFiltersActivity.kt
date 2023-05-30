@@ -26,7 +26,11 @@ class AccountTransactionsFiltersActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAccountTransactionFiltersBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.account_transaction_filters)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.account_transaction_filters
+        )
         mAccount = intent.extras!!.getSerializable(EXTRA_ACCOUNT) as Account
         initializeViewModel()
         initViews()
@@ -36,17 +40,17 @@ class AccountTransactionsFiltersActivity : BaseActivity() {
         super.onResume()
 
         binding.filterShowRewards.isChecked = session.getHasShowRewards(mAccount.id)
-        binding.filterShowFinalizationsRewards.isChecked = session.getHasShowFinalizationRewards(mAccount.id)
+        binding.filterShowFinalizationsRewards.isChecked =
+            session.getHasShowFinalizationRewards(mAccount.id)
         binding.filterShowFinalizationsRewards.isEnabled = binding.filterShowRewards.isChecked
 
         binding.filterShowRewards.setOnCheckedChangeListener { _, isChecked ->
             session.setHasShowRewards(mAccount.id, isChecked)
-            if(!isChecked){
+            if (!isChecked) {
                 binding.filterShowFinalizationsRewards.isEnabled = false
                 binding.filterShowFinalizationsRewards.isChecked = false
                 session.setHasShowFinalizationRewards(mAccount.id, false)
-            }
-            else{
+            } else {
                 binding.filterShowFinalizationsRewards.isEnabled = true
             }
         }

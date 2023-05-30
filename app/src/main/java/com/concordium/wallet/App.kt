@@ -16,7 +16,7 @@ import org.koin.core.context.GlobalContext.startKoin
 import org.matomo.sdk.TrackerBuilder
 import org.matomo.sdk.extra.MatomoApplication
 
-class App : MatomoApplication(){
+class App : MatomoApplication() {
 
     companion object {
         lateinit var appContext: Context
@@ -72,7 +72,12 @@ class App : MatomoApplication(){
             redirect = "kotlin-wallet-wc:/request"
         )
 
-        CoreClient.initialize(relayServerUrl = relayServerUrl, connectionType = ConnectionType.AUTOMATIC, application = this, metaData = appMetaData)
+        CoreClient.initialize(
+            relayServerUrl = relayServerUrl,
+            connectionType = ConnectionType.AUTOMATIC,
+            application = this,
+            metaData = appMetaData
+        )
         val initParams = Sign.Params.Init(core = CoreClient)
 
         SignClient.initialize(initParams) { modelError ->

@@ -15,15 +15,17 @@ object Log {
     fun d(msg: String) {
         if (silent) return
         val maxLogSize = 1000
-        if(msg.length <= maxLogSize){
+        if (msg.length <= maxLogSize) {
             android.util.Log.d(TAG, "[DEBUG]" + prefix() + DELIMITER + msg)
-        }
-        else {
+        } else {
             for (i in 0..msg.length / maxLogSize) {
                 val start = i * maxLogSize
                 var end = (i + 1) * maxLogSize
                 end = if (end > msg.length) msg.length else end
-                android.util.Log.d(TAG, "[DEBUG]" + prefix() + DELIMITER + msg.substring(start, end))
+                android.util.Log.d(
+                    TAG,
+                    "[DEBUG]" + prefix() + DELIMITER + msg.substring(start, end)
+                )
             }
         }
     }

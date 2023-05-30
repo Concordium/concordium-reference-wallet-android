@@ -2,6 +2,7 @@ package com.concordium.wallet.data.model
 
 import com.concordium.wallet.CBORUtil
 import java.io.Serializable
+import java.math.BigInteger
 import java.util.*
 
 
@@ -9,9 +10,9 @@ data class Transaction(
     val source: TransactionSource,
     val timeStamp: Date,
     var title: String = "",
-    val subtotal: Long?,
-    val cost: Long?,
-    val total: Long,
+    val subtotal: BigInteger?,
+    val cost: BigInteger?,
+    val total: BigInteger,
     var transactionStatus: TransactionStatus,
     var outcome: TransactionOutcome,
     var blockHashes: List<String>?,
@@ -28,7 +29,7 @@ data class Transaction(
     val encrypted: TransactionEncrypted?
 ) : Serializable {
 
-    fun isSameAccount() : Boolean {
+    fun isSameAccount(): Boolean {
         return fromAddress == toAddress
     }
 
@@ -65,19 +66,19 @@ data class Transaction(
     }
 
 
-    fun getTotalAmountForRegular(): Long {
+    fun getTotalAmountForRegular(): BigInteger {
         if (transactionStatus == TransactionStatus.ABSENT) {
-            return 0
+            return BigInteger.ZERO
         } else if (outcome == TransactionOutcome.Reject) {
-            return if (cost == null) 0 else -cost
+            return if (cost == null) BigInteger.ZERO else -cost
         }
         return total
     }
 
-    fun getTotalAmountForShielded() : Long {
-        if(subtotal == null)
-            return 0
-        else{
+    fun getTotalAmountForShielded(): BigInteger {
+        if (subtotal == null)
+            return BigInteger.ZERO
+        else {
             return -subtotal
         }
     }
@@ -90,11 +91,11 @@ data class Transaction(
         return details?.type == TransactionType.FINALIZATIONREWARD && isReward()
     }
 
-    fun getDecryptedMemo(): String{
+    fun getDecryptedMemo(): String {
         return details?.memo?.let { return CBORUtil.decodeHexAndCBOR(it) } ?: ""
     }
 
-    fun hasMemo(): Boolean{
+    fun hasMemo(): Boolean {
         return details != null && details.memo != null && details.memo.length > 0
     }
 }

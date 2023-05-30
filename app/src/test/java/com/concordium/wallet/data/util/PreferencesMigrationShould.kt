@@ -22,8 +22,11 @@ class PreferencesMigrationShould {
     private val context = ApplicationProvider.getApplicationContext<Context>()
 
     @Test
-    fun encryptAndClearOldPreferences(){
-        val unencryptedPreferences = context.getSharedPreferences(SharedPreferencesKeys.PREF_FILE_AUTH.key, Context.MODE_PRIVATE)
+    fun encryptAndClearOldPreferences() {
+        val unencryptedPreferences = context.getSharedPreferences(
+            SharedPreferencesKeys.PREF_FILE_AUTH.key,
+            Context.MODE_PRIVATE
+        )
         //Add values so that we can simulate update scenario
         unencryptedPreferences.edit()
             .putBoolean(AuthPreferences.PREFKEY_HAS_SETUP_USER, true)
@@ -32,8 +35,18 @@ class PreferencesMigrationShould {
 
         //Check to see that the values are saved
         Assert.assertFalse(unencryptedPreferences.all.isEmpty())
-        Assert.assertTrue(unencryptedPreferences.getBoolean(AuthPreferences.PREFKEY_HAS_SETUP_USER, false))
-        Assert.assertEquals(unencryptedPreferences.getString(AuthPreferences.PREFKEY_BIOMETRIC_KEY, ""), "test key")
+        Assert.assertTrue(
+            unencryptedPreferences.getBoolean(
+                AuthPreferences.PREFKEY_HAS_SETUP_USER,
+                false
+            )
+        )
+        Assert.assertEquals(
+            unencryptedPreferences.getString(
+                AuthPreferences.PREFKEY_BIOMETRIC_KEY,
+                ""
+            ), "test key"
+        )
 
         //Init the AuthPreferences
         val authPreferences = AuthPreferences(context)
@@ -47,7 +60,7 @@ class PreferencesMigrationShould {
     }
 
     @Test
-    fun useEncryptedSharedPreferencesForNewInstalls(){
+    fun useEncryptedSharedPreferencesForNewInstalls() {
         val authPreferences = AuthPreferences(context)
 
         authPreferences.setHasSetupUser(true)
@@ -55,7 +68,10 @@ class PreferencesMigrationShould {
         Assert.assertTrue(authPreferences.getHasSetupUser())
 
         //Check to see if the unencrypted shared preferences are empty
-        val unencryptedPreferences = context.getSharedPreferences(SharedPreferencesKeys.PREF_FILE_AUTH.key, Context.MODE_PRIVATE)
+        val unencryptedPreferences = context.getSharedPreferences(
+            SharedPreferencesKeys.PREF_FILE_AUTH.key,
+            Context.MODE_PRIVATE
+        )
         Assert.assertTrue(unencryptedPreferences.all.isEmpty())
     }
 }

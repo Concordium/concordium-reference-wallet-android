@@ -35,7 +35,7 @@ class TransactionMappingHelper(
 
 
     fun addTitlesToTransaction(transaction: Transaction, transfer: Transfer, ctx: Context) {
-        if (transaction.isDelegationTransfer()){
+        if (transaction.isDelegationTransfer()) {
             transaction.title = ctx.getString(R.string.account_delegation_pending)
         } else if (transaction.isBakerTransfer()) {
             transaction.title = ctx.getString(R.string.account_baking_pending)
@@ -79,6 +79,7 @@ class TransactionMappingHelper(
                 transaction.fromAddressTitle = account.name
                 transaction.toAddressTitle = recipientName ?: ""
             }
+
             else -> {
                 transaction.fromAddressTitle = recipientName ?: ""
                 transaction.toAddressTitle = account.name

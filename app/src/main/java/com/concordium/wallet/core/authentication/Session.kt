@@ -63,7 +63,7 @@ class Session(context: Context) {
     }
 
     fun resetLogoutTimeout() {
-        if(_isLoggedIn.value!!){
+        if (_isLoggedIn.value!!) {
             inactivityCountDownTimer.cancel()
             inactivityCountDownTimer.start()
         }
@@ -78,7 +78,7 @@ class Session(context: Context) {
             }
         }
 
-    fun getBiometricAuthKeyName() : String{
+    fun getBiometricAuthKeyName(): String {
         return authPreferences.getAuthKeyName()
     }
 
@@ -92,9 +92,6 @@ class Session(context: Context) {
 
     fun setTermsHashed(key: Int) {
         return authPreferences.setTermsHashed(key)
-    }
-
-    fun setAccountsBackedUp(value: Boolean) {
     }
 
     fun isIdentityPendingWarningAcknowledged(id: Int): Boolean {

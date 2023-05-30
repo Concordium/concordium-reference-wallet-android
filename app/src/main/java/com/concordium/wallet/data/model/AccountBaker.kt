@@ -2,7 +2,7 @@ package com.concordium.wallet.data.model
 
 import java.io.Serializable
 
-data class AccountBaker (
+data class AccountBaker(
     val restakeEarnings: Boolean,
     val bakerId: Int,
     val bakerPoolInfo: BakerPoolInfo,
@@ -11,4 +11,4 @@ data class AccountBaker (
     val bakerAggregationVerifyKey: String,
     val bakerElectionVerifyKey: String,
     val bakerSignatureVerifyKey: String
-): Serializable
+) : Serializable

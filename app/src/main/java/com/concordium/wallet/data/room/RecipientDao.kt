@@ -24,8 +24,11 @@ interface RecipientDao {
 
     @Transaction
     suspend fun insertUnique(recipient: Recipient) {
-        val existingRecipient = getRecipientByAddressAndName(recipient.name, recipient.address) //prevent adding multiple identical entries
-        if(existingRecipient == null){
+        val existingRecipient = getRecipientByAddressAndName(
+            recipient.name,
+            recipient.address
+        ) //prevent adding multiple identical entries
+        if (existingRecipient == null) {
             insert(recipient)
         }
     }

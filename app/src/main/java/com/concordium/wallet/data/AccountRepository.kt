@@ -7,7 +7,8 @@ import com.concordium.wallet.data.room.AccountDao
 import com.concordium.wallet.data.room.AccountWithIdentity
 
 class AccountRepository(private val accountDao: AccountDao) {
-    val allAccountsWithIdentity: LiveData<List<AccountWithIdentity>> = accountDao.getAllWithIdentityAsLiveData()
+    val allAccountsWithIdentity: LiveData<List<AccountWithIdentity>> =
+        accountDao.getAllWithIdentityAsLiveData()
 
     suspend fun getCount(): Int {
         return accountDao.getCount()

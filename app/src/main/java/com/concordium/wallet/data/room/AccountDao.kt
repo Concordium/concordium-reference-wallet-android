@@ -31,6 +31,7 @@ interface AccountDao {
     @Query("SELECT * FROM account_table WHERE finalized_encrypted_balance IS NOT NULL")
     suspend fun getAllDone(): List<Account>
 
+    @Transaction
     @Query("SELECT * FROM account_table WHERE finalized_encrypted_balance IS NOT NULL ORDER BY name ASC")
     suspend fun getAllDoneWithIdentity(): List<AccountWithIdentity>
 
@@ -63,7 +64,7 @@ interface AccountDao {
         for (account in accounts) {
             // finalized state is final and cannot be changed
             val accountFromDB = findById(account.id)
-            if(accountFromDB != null && accountFromDB.transactionStatus == TransactionStatus.FINALIZED){
+            if (accountFromDB != null && accountFromDB.transactionStatus == TransactionStatus.FINALIZED) {
                 account.transactionStatus = TransactionStatus.FINALIZED
             }
             update(account)

@@ -34,8 +34,10 @@ import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.toBigInteger
 import com.concordium.wallet.util.toHex
 import kotlinx.coroutines.launch
+import java.math.BigInteger
 import java.util.*
 import javax.crypto.Cipher
 
@@ -63,7 +65,11 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
     private val preferences: SendFundsPreferences
         get() {
-            return SendFundsPreferences(getApplication(), SharedPreferencesKeys.PREF_SEND_FUNDS.key, Context.MODE_PRIVATE)
+            return SendFundsPreferences(
+                getApplication(),
+                SharedPreferencesKeys.PREF_SEND_FUNDS.key,
+                Context.MODE_PRIVATE
+            )
         }
 
     private val gson = App.appCore.gson
@@ -111,8 +117,8 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
     val gotoFailedLiveData: LiveData<Event<Pair<Boolean, BackendError?>>>
         get() = _gotoFailedLiveData
 
-    private val _transactionFeeLiveData = MutableLiveData<Long>()
-    val transactionFeeLiveData: LiveData<Long>
+    private val _transactionFeeLiveData = MutableLiveData<BigInteger>()
+    val transactionFeeLiveData: LiveData<BigInteger>
         get() = _transactionFeeLiveData
 
     private val _waitingReceiverAccountPublicKeyLiveData = MutableLiveData<Boolean>()
@@ -123,14 +129,14 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
     val recipientLiveData: MutableLiveData<Recipient?>
         get() = _recipientLiveData
 
-    private val _sendAllAmountLiveData = MutableLiveData<Long>()
-    val sendAllAmountLiveData: LiveData<Long>
+    private val _sendAllAmountLiveData = MutableLiveData<BigInteger>()
+    val sendAllAmountLiveData: LiveData<BigInteger>
         get() = _sendAllAmountLiveData
 
     private class TempData {
         var accountNonce: AccountNonce? = null
         var toAddress: String? = null
-        var amount: Long? = null
+        var amount: BigInteger? = null
         var energy: Long? = null
         var submissionId: String? = null
         var transferSubmissionStatus: TransferSubmissionStatus? = null
@@ -194,7 +200,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             memoSize = if (tempData.memo == null) null else tempData.memo!!.length / 2, //div by 2 because hex takes up twice the length
             success = {
                 tempData.energy = it.energy
-                _transactionFeeLiveData.value = it.cost.toLong()
+                _transactionFeeLiveData.value = it.cost.toBigInteger()
                 updateSendAllAmount()
             },
             failure = {
@@ -207,7 +213,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         return account.address == selectedRecipient?.address
     }
 
-    fun getAmount(): Long? {
+    fun getAmount(): BigInteger? {
         return tempData.amount
     }
 
@@ -218,7 +224,8 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             return true
         }
 
-        val totalUnshieldedAtDisposal = account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
+        val totalUnshieldedAtDisposal =
+            account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
 
         if (isShielded) {
             if (isTransferToSameAccount()) {
@@ -365,7 +372,8 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             calculateInputEncryptedAmount(),
             null,
             null,
-            null)
+            null
+        )
 
         var transactionType =
             if (isShielded) {
@@ -404,7 +412,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
                         oldDecryptedAmount?.let {
                             accountUpdater.saveDecryptedAmount(
                                 newEncryptedAmount,
-                                (it.toLong() + amount).toString()
+                                (it.toBigInteger() + amount).toString()
                             )
                         }
                     }
@@ -437,11 +445,13 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
         val allTransfers = transferRepository.getAllByAccountId(account.id)
         val unfinalisedTransfers = allTransfers.filter {
-            it.transactionStatus != TransactionStatus.FINALIZED && (it.nonce?.nonce ?: -1) >= lastNounceToInclude
+            it.transactionStatus != TransactionStatus.FINALIZED && (it.nonce?.nonce
+                ?: -1) >= lastNounceToInclude
         }
 
         val aggEncryptedAmount = if (unfinalisedTransfers.isNotEmpty()) {
-            val lastTransaction = unfinalisedTransfers.maxWithOrNull { a, b -> a.id.compareTo(b.id) }
+            val lastTransaction =
+                unfinalisedTransfers.maxWithOrNull { a, b -> a.id.compareTo(b.id) }
             if (lastTransaction != null) {
                 tempData.accountBalance?.finalizedBalance?.let {
                     val incomingAmounts = it.accountEncryptedAmount.incomingAmounts.filter {
@@ -473,10 +483,11 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
         val aggAmount = tempData.accountBalance?.finalizedBalance?.let {
             var agg =
-                accountUpdater.lookupMappedAmount(it.accountEncryptedAmount.selfAmount)?.toLong()
-                    ?: 0
+                accountUpdater.lookupMappedAmount(it.accountEncryptedAmount.selfAmount)
+                    ?.toBigInteger()
+                    ?: BigInteger.ZERO
             it.accountEncryptedAmount.incomingAmounts.forEach {
-                agg += accountUpdater.lookupMappedAmount(it)?.toLong() ?: 0
+                agg += accountUpdater.lookupMappedAmount(it)?.toBigInteger() ?: BigInteger.ZERO
             }
             unfinalisedTransfers.forEach {
                 agg -= it.amount
@@ -681,14 +692,16 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun updateSendAllAmount() {
         if (sendAll) {
-            var cost = 0L
+            var cost = BigInteger.ZERO
             _transactionFeeLiveData.value?.let {
                 cost = it
             }
-            var amount =
-                ((if (isShielded) account.totalShieldedBalance else (account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) - cost)) )
-            if (amount < 0) {
-                amount = 0
+            var amount: BigInteger =
+                ((if (isShielded) account.totalShieldedBalance else (account.getAtDisposalWithoutStakedOrScheduled(
+                    account.totalUnshieldedBalance
+                ) - cost)))
+            if (amount.signum() < 0) {
+                amount = BigInteger.ZERO
             }
             _sendAllAmountLiveData.value = amount
         }

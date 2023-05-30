@@ -1,19 +1,30 @@
 package com.concordium.wallet.data.room
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room.AutoMigration
+import androidx.room.*
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.concordium.wallet.data.room.WalletDatabase.Companion.VERSION_NUMBER
 import com.concordium.wallet.data.room.typeconverter.GlobalTypeConverters
 
 @Database(
-    entities = arrayOf(Identity::class, Account::class, Transfer::class, Recipient::class, EncryptedAmount::class),
+    entities = arrayOf(
+        Identity::class,
+        Account::class,
+        Transfer::class,
+        Recipient::class,
+        EncryptedAmount::class,
+        AccountContract::class,
+        ContractToken::class
+    ),
     version = VERSION_NUMBER,
-    exportSchema = true
+    exportSchema = true,
+    autoMigrations = [
+        AutoMigration(from = 7, to = 8),
+        AutoMigration(from = 8, to = 9),
+        AutoMigration(from = 9, to = 10),
+    ]
 )
 @TypeConverters(GlobalTypeConverters::class)
 abstract class WalletDatabase : RoomDatabase() {
@@ -23,36 +34,45 @@ abstract class WalletDatabase : RoomDatabase() {
     abstract fun transferDao(): TransferDao
     abstract fun recipientDao(): RecipientDao
     abstract fun encryptedAmountDao(): EncryptedAmountDao
+    abstract fun accountContractDao(): AccountContractDao
+    abstract fun contractTokenDao(): ContractTokenDao
 
     companion object {
-
-        const val VERSION_NUMBER = 7
+        const val VERSION_NUMBER = 10
 
         val MIGRATION_3_4: Migration = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE transfer_table "
-                        + " ADD COLUMN memo TEXT")
+                database.execSQL(
+                    "ALTER TABLE transfer_table "
+                            + " ADD COLUMN memo TEXT"
+                )
             }
         }
 
         val MIGRATION_4_5: Migration = object : Migration(4, 5) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE account_table "
-                        + " ADD COLUMN account_delegation TEXT")
+                database.execSQL(
+                    "ALTER TABLE account_table "
+                            + " ADD COLUMN account_delegation TEXT"
+                )
             }
         }
 
         val MIGRATION_5_6: Migration = object : Migration(5, 6) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE account_table "
-                        + " ADD COLUMN account_baker TEXT")
+                database.execSQL(
+                    "ALTER TABLE account_table "
+                            + " ADD COLUMN account_baker TEXT"
+                )
             }
         }
 
         val MIGRATION_6_7: Migration = object : Migration(6, 7) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE account_table "
-                        + " ADD COLUMN accountIndex INTEGER")
+                database.execSQL(
+                    "ALTER TABLE account_table "
+                            + " ADD COLUMN accountIndex INTEGER"
+                )
             }
         }
 

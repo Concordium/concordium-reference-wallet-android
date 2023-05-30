@@ -11,12 +11,14 @@
     android:orientation="horizontal"
     android:layout_gravity="center_horizontal"
     tools:showIn="@layout/activity_delegation_registration_confirmation">
+
     <ImageView
         style="@style/Image"
         android:layout_width="@dimen/logo_size_small"
         android:layout_height="@dimen/logo_size_small"
         android:layout_gravity="center_vertical"
         android:src="@drawable/ic_logo_icon_pending" />
+
     <TextView
         style="@style/TextView.BlueHeader"
         android:layout_gravity="center_vertical"

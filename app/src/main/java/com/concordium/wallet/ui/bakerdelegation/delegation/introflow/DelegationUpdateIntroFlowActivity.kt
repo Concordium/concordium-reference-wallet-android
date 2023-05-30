@@ -10,9 +10,11 @@ class DelegationUpdateIntroFlowActivity :
     BaseDelegationBakerFlowActivity(R.string.delegation_intro_flow_title) {
 
     override fun getTitles(): IntArray {
-        return intArrayOf(R.string.delegation_update_subtitle1,
+        return intArrayOf(
+            R.string.delegation_update_subtitle1,
             R.string.delegation_update_subtitle2,
-            R.string.delegation_update_subtitle3)
+            R.string.delegation_update_subtitle3
+        )
     }
 
     override fun gotoContinue() {
@@ -22,6 +24,6 @@ class DelegationUpdateIntroFlowActivity :
     }
 
     override fun getLink(position: Int): String {
-        return "file:///android_asset/delegation_update_flow_en_"+(position+1)+".html"
+        return "file:///android_asset/delegation_update_flow_en_" + (position + 1) + ".html"
     }
 }

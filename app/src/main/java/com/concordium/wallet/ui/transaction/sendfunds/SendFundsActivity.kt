@@ -27,6 +27,9 @@ import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.transaction.sendfundsconfirmed.SendFundsConfirmedActivity
 import com.concordium.wallet.uicore.afterTextChanged
 import com.concordium.wallet.util.KeyboardUtil
+import com.concordium.wallet.util.getSerializable
+import java.math.BigDecimal
+import java.math.BigInteger
 import java.text.DecimalFormatSymbols
 import javax.crypto.Cipher
 
@@ -35,14 +38,10 @@ class SendFundsActivity : BaseActivity() {
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
         const val EXTRA_SHIELDED = "EXTRA_SHIELDED"
         const val EXTRA_RECIPIENT = "EXTRA_RECIPIENT"
-        const val EXTRA_MEMO = "EXTRA_MEMO"
     }
 
     private lateinit var binding: ActivitySendFundsBinding
     private lateinit var viewModel: SendFundsViewModel
-
-    //region Lifecycle
-    //************************************************************
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,24 +49,24 @@ class SendFundsActivity : BaseActivity() {
         setContentView(binding.root)
         setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.send_funds_title)
 
-        val account = intent.extras!!.getSerializable(EXTRA_ACCOUNT) as Account
+        val account = intent.getSerializable(EXTRA_ACCOUNT, Account::class.java)
         val isShielded = intent.extras!!.getBoolean(EXTRA_SHIELDED)
         initializeViewModel()
         viewModel.initialize(account, isShielded)
         handleRecipientIntent(intent)
-        handleMemo(intent)
         initViews()
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         handleRecipientIntent(intent)
-        handleMemo(intent)
     }
 
-    private fun handleRecipientIntent(intent: Intent?){
-        val recipient = intent?.getSerializableExtra(EXTRA_RECIPIENT) as? Recipient
-        handleRecipient(recipient)
+    private fun handleRecipientIntent(intent: Intent?) {
+        if (intent?.hasExtra(EXTRA_RECIPIENT) == true) {
+            val recipient = intent.getSerializable(EXTRA_RECIPIENT, Recipient::class.java)
+            handleRecipient(recipient)
+        }
     }
 
     fun handleRecipient(recipient: Recipient?){
@@ -82,37 +81,26 @@ class SendFundsActivity : BaseActivity() {
         }
     }
 
-    private fun handleMemo(intent: Intent?){
-        intent?.let {
-            if(it.hasExtra(EXTRA_MEMO)){
-                val memo = it.getStringExtra(EXTRA_MEMO)
-                if(memo != null && memo.isNotEmpty()){
-                    viewModel.setMemo(CBORUtil.encodeCBOR(memo))
-                    setMemoText(memo)
-                }
-                else{
-                    viewModel.setMemo(null)
-                    setMemoText("")
-                }
-            }
+    private fun handleMemo(memo: String?) {
+        if (memo != null && memo.isNotEmpty()) {
+            viewModel.setMemo(CBORUtil.encodeCBOR(memo))
+            setMemoText(memo)
+        } else {
+            viewModel.setMemo(null)
+            setMemoText("")
         }
     }
 
-    private fun setMemoText(txt: String){
-        if(txt.isNotEmpty()){
+    private fun setMemoText(txt: String) {
+        if (txt.isNotEmpty()) {
             binding.memoTextview.text = txt
             binding.memoClear.visibility = View.VISIBLE
         }
-        else{
+        else {
             binding.memoTextview.text = getString(R.string.send_funds_optional_add_memo)
             binding.memoClear.visibility = View.INVISIBLE
         }
     }
-
-    //endregion
-
-    //region Initialize
-    //************************************************************
 
     private fun initializeViewModel() {
         viewModel = ViewModelProvider(
@@ -246,7 +234,7 @@ class SendFundsActivity : BaseActivity() {
                     builder.setCancelable(true)
                     builder.create().show()
                 }
-                else{
+                else {
                     gotoEnterMemo()
                 }
             }
@@ -305,7 +293,7 @@ class SendFundsActivity : BaseActivity() {
         val amountValue = CurrencyUtil.toGTUValue(binding.amountEdittext.text.toString())
         val atDisposal = viewModel.account.getAtDisposalWithoutStakedOrScheduled(viewModel.account.totalUnshieldedBalance)
         if (amountValue != null) {
-            if (amountValue > atDisposal * 0.95) {
+            if (amountValue.toBigDecimal() > atDisposal.toBigDecimal() * BigDecimal(0.95)) {
                 val builder = AlertDialog.Builder(this)
                 builder.setTitle(R.string.send_funds_more_than_95_title)
                 builder.setMessage(getString(R.string.send_funds_more_than_95_message))
@@ -322,11 +310,6 @@ class SendFundsActivity : BaseActivity() {
         viewModel.sendFunds(binding.amountEdittext.text.toString())
     }
 
-    //endregion
-
-    //region Control/UI
-    //************************************************************
-
     private fun showWaiting(waiting: Boolean) {
         binding.includeProgress.progressLayout.visibility = if(waiting) View.VISIBLE else View.GONE
         // Update button enabled state, because it is dependant on waiting state
@@ -342,7 +325,22 @@ class SendFundsActivity : BaseActivity() {
         intent.putExtra(RecipientListActivity.EXTRA_SELECT_RECIPIENT_MODE, true)
         intent.putExtra(RecipientListActivity.EXTRA_SHIELDED, viewModel.isShielded)
         intent.putExtra(RecipientListActivity.EXTRA_ACCOUNT, viewModel.account)
-        startActivity(intent)
+        getResultRecipient.launch(intent)
+    }
+
+    private val getResultRecipient =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                it.data?.getSerializable(RecipientListActivity.EXTRA_RECIPIENT, Recipient::class.java)?.let { recipient ->
+                    handleRecipient(recipient)
+                }
+            }
+        }
+
+    private fun gotoScanBarCode() {
+        val intent = Intent(this, ScanQRActivity::class.java)
+        intent.putExtra(ScanQRActivity.QR_MODE, ScanQRActivity.QR_MODE_CONCORDIUM_ACCOUNT)
+        getResultScanQr.launch(intent)
     }
 
     private val getResultScanQr =
@@ -354,17 +352,17 @@ class SendFundsActivity : BaseActivity() {
             }
         }
 
-    private fun gotoScanBarCode() {
-        val intent = Intent(this, ScanQRActivity::class.java)
-        intent.putExtra(ScanQRActivity.QR_MODE, ScanQRActivity.QR_MODE_CONCORDIUM_ACCOUNT)
-        getResultScanQr.launch(intent)
+    private fun gotoEnterMemo() {
+        getResultMemo.launch(Intent(this, AddMemoActivity::class.java))
     }
 
-    private fun gotoEnterMemo() {
-        val intent = Intent(this, AddMemoActivity::class.java)
-        intent.putExtra(AddMemoActivity.EXTRA_MEMO, viewModel.getClearTextMemo())
-        startActivity(intent)
-    }
+    private val getResultMemo =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                val memo = it.data?.getStringExtra(AddMemoActivity.EXTRA_MEMO)
+                handleMemo(memo)
+            }
+        }
 
     private val getResultSendAmount =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -453,7 +451,7 @@ class SendFundsActivity : BaseActivity() {
                     && viewModel.selectedRecipient != null
                     && viewModel.transactionFeeLiveData.value != null
                     && hasSufficientFunds
-                    && (CurrencyUtil.toGTUValue(binding.amountEdittext.text.toString()) ?: 0) > 0)
+                    && (CurrencyUtil.toGTUValue(binding.amountEdittext.text.toString()) ?: BigInteger.ZERO).signum() > 0)
         }
         return enable
     }
@@ -497,5 +495,4 @@ class SendFundsActivity : BaseActivity() {
             }
         }
     }
-    //endregion
 }

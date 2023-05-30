@@ -5,6 +5,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.*
 
 /**
  * Instrumented test, which will execute on an Android device.
@@ -13,10 +14,16 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class ExampleInstrumentedTest {
+    @Suppress("KotlinConstantConditions")
     @Test
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.concordium.wallet." + BuildConfig.FLAVOR, appContext.packageName)
+        val expectedSuffix = when (BuildConfig.FLAVOR) {
+            "prodTestNet" -> "testnet"
+            "prodMainNet" -> "mainnet"
+            else -> BuildConfig.FLAVOR.lowercase(Locale.ENGLISH)
+        }
+        assertEquals("software.concordium.mobilewallet.seedphrase.$expectedSuffix", appContext.packageName)
     }
 }

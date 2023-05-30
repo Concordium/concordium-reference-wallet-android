@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/Layout.Root">
+
     <TextView
         android:id="@+id/identity_name"
         app:layout_constraintStart_toStartOf="parent"
@@ -12,6 +13,7 @@
         style="@style/TextView.Medium.Bold"
         android:layout_width="match_parent"
         tools:text="Identity 1" />
+
     <TextView
         android:id="@+id/accounts_title"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,6 +22,7 @@
         style="@style/TextView.Standard.Bold"
         android:layout_width="match_parent"
         android:text="@string/pass_phrase_recover_process_finished_accounts" />
+
     <LinearLayout
         android:id="@+id/accounts"
         android:layout_width="match_parent"

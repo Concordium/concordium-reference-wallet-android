@@ -42,14 +42,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     lateinit var onboardingRepository: OnboardingRepository
 
     init {
-        identityRepository = IdentityRepository(WalletDatabase.getDatabase(application).identityDao())
+        identityRepository =
+            IdentityRepository(WalletDatabase.getDatabase(application).identityDao())
     }
 
     fun initialize() {
         try {
             WalletDatabase.getDatabase(getApplication()).openHelper.readableDatabase?.version.toString()
-        }
-        catch(e: Exception){
+        } catch (e: Exception) {
             databaseVersionAllowed = false
         }
     }

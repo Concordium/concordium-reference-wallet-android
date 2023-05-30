@@ -126,7 +126,9 @@
 
         </ScrollView>
 
-        <include layout="@layout/progress" android:id="@+id/include_progress" />
+        <include
+            layout="@layout/progress"
+            android:id="@+id/include_progress" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

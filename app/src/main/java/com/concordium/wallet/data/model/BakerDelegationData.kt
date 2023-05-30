@@ -8,6 +8,7 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.U
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.UPDATE_BAKER_STAKE
 import com.concordium.wallet.data.room.Account
 import java.io.Serializable
+import java.math.BigInteger
 
 /**
  * Class used for collecting data from AccountDetails all the way to submission
@@ -22,24 +23,24 @@ data class BakerDelegationData(
     var isTransactionInProgress: Boolean = false,
     var bakerKeys: BakerKeys? = null,
     var type: String
-    ) : Serializable {
+) : Serializable {
 
     var transferSubmissionStatus: TransferSubmissionStatus? = null
     var submissionId: String? = null
     var energy: Long? = null
     var accountNonce: AccountNonce? = null
-    var amount: Long? = null
+    var amount: BigInteger? = null
     var chainParameters: ChainParameters? = null
     var bakerPoolStatus: BakerPoolStatus? = null
     var passiveDelegation: PassiveDelegation? = null
-    var cost: Long? = null
+    var cost: BigInteger? = null
     var metadataUrl: String? = null
 
     fun isUpdateBaker(): Boolean {
         return type == UPDATE_BAKER_STAKE || type == UPDATE_BAKER_POOL || type == UPDATE_BAKER_KEYS || type == CONFIGURE_BAKER
     }
 
-    var oldStakedAmount: Long? = null
+    var oldStakedAmount: BigInteger? = null
     var oldRestake: Boolean? = null
     var oldDelegationIsBaker: Boolean? = null
     var oldDelegationTargetPoolId: Long? = null

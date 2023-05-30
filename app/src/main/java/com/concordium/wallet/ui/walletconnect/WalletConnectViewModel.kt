@@ -27,8 +27,7 @@ import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PrettyPrint.prettyPrint
-import com.google.gson.ExclusionStrategy
-import com.google.gson.FieldAttributes
+import com.concordium.wallet.util.toBigInteger
 import com.google.gson.Gson
 import com.walletconnect.sign.client.Sign
 import kotlinx.coroutines.CoroutineScope
@@ -38,13 +37,14 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.Serializable
+import java.math.BigInteger
 import javax.crypto.Cipher
 
 data class WalletConnectData(
     var account: Account? = null,
     var wcUri: String? = null,
     var energy: Long? = null,
-    var cost: Long? = null,
+    var cost: BigInteger? = null,
     var isTransaction: Boolean = true
 ) : Serializable
 
@@ -68,7 +68,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val connectStatus: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val serviceName: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val permissions: MutableLiveData<List<String>> by lazy { MutableLiveData<List<String>>() }
-    val transactionFee: MutableLiveData<Long> by lazy { MutableLiveData<Long>() }
+    val transactionFee: MutableLiveData<BigInteger> by lazy { MutableLiveData<BigInteger>() }
     val messagedSignedOkay: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val messageSignedSuccess: MutableLiveData<String> by lazy { MutableLiveData<String>() }
@@ -153,7 +153,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     fun loadTransactionFee() {
         binder?.getSessionRequestParams()?.parsePayload()?.let { payload ->
             proxyRepository.getTransferCost(type = "update",
-                amount = payload.amount.toLong(),
+                amount = payload.amount.toBigInteger(),
                 sender = walletConnectData.account!!.address,
                 contractIndex = payload.address.index,
                 contractSubindex = payload.address.subIndex,
@@ -161,7 +161,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                 parameter = payload.message,
                 success = {
                     walletConnectData.energy = it.energy
-                    walletConnectData.cost = it.cost.toLong()
+                    walletConnectData.cost = it.cost.toBigInteger()
                     transactionFee.postValue(walletConnectData.cost)
                 },
                 failure = {
@@ -172,14 +172,14 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     }
 
     fun hasEnoughFunds(): Boolean {
-        val amount = binder?.getSessionRequestParams()?.parsePayload()?.amount
+        val amount = binder?.getSessionRequestParams()?.parsePayload()?.amount?.toBigInteger()
         val fee = walletConnectData.cost
         if (amount != null && fee != null) {
             walletConnectData.account?.totalUnshieldedBalance?.let { totalUnshieldedBalance ->
                 walletConnectData.account?.getAtDisposalWithoutStakedOrScheduled(
                     totalUnshieldedBalance
                 )?.let { atDisposal ->
-                    if (atDisposal >= amount.toLong() + fee.toLong())
+                    if (atDisposal >= amount + fee)
                         return true
                 }
             }

@@ -23,8 +23,11 @@ class IdentityProviderAdapter(
 
     private var onItemClickListener: OnItemClickListener? = null
 
-    inner class ItemViewHolder(val binding: ItemIdentityProviderBinding): RecyclerView.ViewHolder(binding.root)
-    inner class HeaderViewHolder(val binding: ItemIdentityProviderHeaderBinding): RecyclerView.ViewHolder(binding.root)
+    inner class ItemViewHolder(val binding: ItemIdentityProviderBinding) :
+        RecyclerView.ViewHolder(binding.root)
+
+    inner class HeaderViewHolder(val binding: ItemIdentityProviderHeaderBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
     override fun getItemCount() = data.size
 
@@ -36,14 +39,24 @@ class IdentityProviderAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             ItemType.Header.id -> {
-                val binding = ItemIdentityProviderHeaderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                val binding = ItemIdentityProviderHeaderBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
                 binding.progressLine.visibility = if (showProgressLine) View.VISIBLE else View.GONE
                 HeaderViewHolder(binding)
             }
+
             ItemType.Item.id -> {
-                val binding = ItemIdentityProviderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                val binding = ItemIdentityProviderBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
                 ItemViewHolder(binding)
             }
+
             else -> {
                 throw Exception("Invalid item view type")
             }
@@ -53,7 +66,12 @@ class IdentityProviderAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is HeaderViewHolder) {
             with(holder) {
-                binding.infoTextview.text = Html.fromHtml(context.getString(R.string.identity_create_identity_provider_info, identityName))
+                binding.infoTextview.text = Html.fromHtml(
+                    context.getString(
+                        R.string.identity_create_identity_provider_info,
+                        identityName
+                    )
+                )
                 binding.infoTextview.movementMethod = LinkMovementMethod.getInstance()
                 binding.infoTextview.linksClickable = true
             }

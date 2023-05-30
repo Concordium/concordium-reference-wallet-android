@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/title"
+        style="@style/TextView.Standard"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textAlignment="center"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/cis_select_tokens_title" />
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        android:background="@drawable/rounded_light_grey"
+        android:textColor="@color/text_black"
+        android:textColorHint="@color/text_black"
+        android:focusable="true"
+        app:iconifiedByDefault="false"
+        android:focusableInTouchMode="true"
+        style="@style/TextView.Mono"
+        android:layout_marginTop="@dimen/activity_horizontal_margin_double"
+        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+        app:queryHint="@string/cis_search" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tokens_found"
+        style="@style/Layout.Card"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/activity_vertical_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/search"
+        app:layout_constraintBottom_toTopOf="@+id/non_selected"
+        android:scrollbars="vertical" />
+    <TextView
+        android:id="@+id/non_selected"
+        style="@style/TextView.Standard.Error"
+        android:layout_marginVertical="@dimen/activity_vertical_margin_half"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:text="@string/cis_no_tokens_selected"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tokens_found"
+        app:layout_constraintBottom_toTopOf="@+id/button_container"
+        android:visibility="invisible"
+        tools:visibility="visible" />
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/button_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <Button
+            android:id="@+id/back"
+            style="@style/Button.Standard.Intro"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:text="@string/cis_back" />
+        <Button
+            android:id="@+id/update_with_tokens"
+            style="@style/Button.Standard.Intro"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:enabled="false"
+            tools:text="@string/cis_add_tokens" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.constraintlayout.widget.ConstraintLayout>

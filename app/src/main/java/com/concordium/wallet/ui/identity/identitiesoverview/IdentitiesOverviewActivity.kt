@@ -35,11 +35,18 @@ class IdentitiesOverviewActivity : BaseActivity() {
         showForCreateAccount = intent.extras?.getBoolean(SHOW_FOR_CREATE_ACCOUNT, false) ?: false
 
         if (showForCreateAccount) {
-            setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identities_overview_create_account_title)
+            setupActionBar(
+                binding.toolbarLayout.toolbar,
+                binding.toolbarLayout.toolbarTitle,
+                R.string.identities_overview_create_account_title
+            )
             binding.selectIdentityTitle.visibility = View.VISIBLE
-        }
-        else {
-            setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.identities_overview_title)
+        } else {
+            setupActionBar(
+                binding.toolbarLayout.toolbar,
+                binding.toolbarLayout.toolbarTitle,
+                R.string.identities_overview_title
+            )
         }
 
         initializeViewModel()

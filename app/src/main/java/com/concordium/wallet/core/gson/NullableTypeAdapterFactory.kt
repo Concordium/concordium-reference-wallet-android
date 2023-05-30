@@ -1,6 +1,9 @@
 package com.concordium.wallet.core.gson
 
-import com.google.gson.*
+import com.google.gson.Gson
+import com.google.gson.JsonParseException
+import com.google.gson.TypeAdapter
+import com.google.gson.TypeAdapterFactory
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
@@ -28,7 +31,8 @@ class NullableTypeAdapterFactory : TypeAdapterFactory {
             return null
         }
         val kotlinClass: KClass<Any> = Reflection.createKotlinClass(type.rawType)
-        val notNullableFields = kotlinClass.memberProperties.filter { !it.returnType.isMarkedNullable }
+        val notNullableFields =
+            kotlinClass.memberProperties.filter { !it.returnType.isMarkedNullable }
 
         return object : TypeAdapter<T>() {
 
@@ -40,7 +44,7 @@ class NullableTypeAdapterFactory : TypeAdapterFactory {
                 if (value != null) {
                     // Ensure none of its non-nullable fields were deserialized to null
                     notNullableFields.forEach {
-                        if(it.get(value) == null){
+                        if (it.get(value) == null) {
                             throw JsonParseException("Value of non-nullable member [${it.name}] cannot be null")
                         }
                     }

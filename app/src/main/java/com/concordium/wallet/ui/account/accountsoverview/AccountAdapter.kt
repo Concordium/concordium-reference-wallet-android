@@ -12,7 +12,10 @@ class AccountAdapter :
 
     class ItemViewHolder(val view: AccountItemView) : RecyclerView.ViewHolder(view) {
 
-        fun bind(item: AccountWithIdentity, onItemClickListener: AccountItemView.OnItemClickListener?) {
+        fun bind(
+            item: AccountWithIdentity,
+            onItemClickListener: AccountItemView.OnItemClickListener?
+        ) {
             view.setAccount(item)
             view.setOnItemClickListener(onItemClickListener)
         }

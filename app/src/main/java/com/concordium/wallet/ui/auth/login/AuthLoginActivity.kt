@@ -32,7 +32,11 @@ class AuthLoginActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.auth_login_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.auth_login_title
+        )
 
         initializeViewModel()
         viewModel.initialize()
@@ -119,6 +123,7 @@ class AuthLoginActivity : BaseActivity() {
                         onConfirmClicked()
                         true
                     }
+
                     else -> false
                 }
             }

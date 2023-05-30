@@ -12,7 +12,11 @@ class WebViewPageFragment(private val link: String, private val title: Int) : Fr
     private var _binding: FragmentWebviewShieldingSlidePageBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentWebviewShieldingSlidePageBinding.inflate(inflater, container, false)
         binding.webviewContent.loadUrl(link)
         binding.title.text = Html.fromHtml(resources.getString(title))
