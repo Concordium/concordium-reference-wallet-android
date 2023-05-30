@@ -18,6 +18,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.UnitConvertUtil
 import com.concordium.wallet.util.getSerializable
+import java.math.BigInteger
 
 class TokenDetailsActivity : BaseActivity() {
     private lateinit var binding: ActivityTokenDetailsBinding
@@ -74,14 +75,14 @@ class TokenDetailsActivity : BaseActivity() {
             showDeleteDialog()
         }
 
-        viewModel.tokenData.selectedToken?.let {token ->
+        viewModel.tokenData.selectedToken?.let { token ->
             setContractIndexAndSubIndex(token)
             setTokenId(token.token)
             setBalance(token)
-            token.tokenMetadata?.let {tokenMetadata ->
+            token.tokenMetadata?.let { tokenMetadata ->
                 setNameAndIcon(tokenMetadata)
                 setImage(tokenMetadata)
-                setOwnership(tokenMetadata)
+                setOwnership(tokenMetadata, token)
                 setDescription(tokenMetadata)
                 setTicker(tokenMetadata)
                 setDecimals(tokenMetadata)
@@ -119,7 +120,7 @@ class TokenDetailsActivity : BaseActivity() {
     private fun setTokenId(tokenId: String) {
         if (tokenId.isNotBlank()) {
             binding.includeAbout.tokenIdHolder.visibility = View.VISIBLE
-            binding.includeAbout.tokenId.text= tokenId
+            binding.includeAbout.tokenId.text = tokenId
         }
     }
 
@@ -130,9 +131,15 @@ class TokenDetailsActivity : BaseActivity() {
         }
     }
 
-    private fun setOwnership(tokenMetadata: TokenMetadata) {
+    private fun setOwnership(tokenMetadata: TokenMetadata, token: Token) {
         if (tokenMetadata.unique) {
             binding.includeAbout.ownershipHolder.visibility = View.VISIBLE
+            binding.includeAbout.ownership.text =
+                if (token.totalBalance != BigInteger.ZERO) {
+                    getString(R.string.cis_owned)
+                } else {
+                    getString(R.string.cis_not_owned)
+                }
         }
     }
 
@@ -162,7 +169,7 @@ class TokenDetailsActivity : BaseActivity() {
             if (token.subIndex.isNotBlank()) {
                 val combinedInfo = "${tokenIndex}, ${token.subIndex}"
                 binding.includeAbout.contractIndex.text = combinedInfo
-            }else{
+            } else {
                 binding.includeAbout.contractIndex.text = tokenIndex
             }
         }
