@@ -121,6 +121,18 @@
                                     android:layout_height="wrap_content"
                                     tools:text="14f36...7c33" />
                                 <TextView
+                                    android:id="@+id/memo_title"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/cis_memo" />
+                                <TextView
+                                    android:id="@+id/memo"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:text="An optional message" />
+                                <TextView
                                     android:id="@+id/fee"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Gray"
                                     android:layout_width="match_parent"

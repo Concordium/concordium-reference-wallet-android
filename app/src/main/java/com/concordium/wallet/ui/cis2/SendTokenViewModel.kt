@@ -15,8 +15,21 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.cryptolib.*
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
+import com.concordium.wallet.data.cryptolib.CreateTransferInput
+import com.concordium.wallet.data.cryptolib.CreateTransferOutput
+import com.concordium.wallet.data.cryptolib.SerializeTokenTransferParametersInput
+import com.concordium.wallet.data.cryptolib.SerializeTokenTransferParametersOutput
+import com.concordium.wallet.data.cryptolib.StorageAccountData
+import com.concordium.wallet.data.model.AccountBalance
+import com.concordium.wallet.data.model.AccountData
+import com.concordium.wallet.data.model.AccountNonce
+import com.concordium.wallet.data.model.GlobalParams
+import com.concordium.wallet.data.model.GlobalParamsWrapper
+import com.concordium.wallet.data.model.InputEncryptedAmount
+import com.concordium.wallet.data.model.SubmissionData
+import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.walletconnect.ContractAddress
@@ -73,12 +86,20 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val transactionReady: MutableLiveData<String> by lazy { MutableLiveData<String>() }
-    val feeReady: MutableLiveData<BigInteger> by lazy { MutableLiveData<BigInteger>() }
+    val feeReady: MutableLiveData<BigInteger?> by lazy { MutableLiveData<BigInteger?>() }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 
     init {
         transferRepository = TransferRepository(WalletDatabase.getDatabase(application).transferDao())
+
+        chooseToken.observeForever { token ->
+            sendTokenData.token = token
+            sendTokenData.max = if (token.isCCDToken) null else token.totalBalance
+            sendTokenData.fee = null
+            sendTokenData.amount = BigInteger.ZERO
+            feeReady.value = null
+        }
     }
 
     fun dispose() {
@@ -244,7 +265,6 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             success = {
                 sendTokenData.energy = it.energy
                 sendTokenData.fee = it.cost.toBigInteger()
-                sendTokenData.max = sendTokenData.token!!.totalBalance
                 waiting.postValue(false)
                 feeReady.postValue(sendTokenData.fee)
             },

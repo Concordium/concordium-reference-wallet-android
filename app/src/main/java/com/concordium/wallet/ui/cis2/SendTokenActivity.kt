@@ -50,9 +50,8 @@ class SendTokenActivity : BaseActivity() {
         binding = ActivitySendTokenBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel.sendTokenData.account = intent.getSerializable(ACCOUNT, Account::class.java)
-        viewModel.sendTokenData.token = intent.getSerializable(TOKEN, Token::class.java)
+        viewModel.chooseToken.postValue(intent.getSerializable(TOKEN, Token::class.java))
         initObservers()
-        updateWithToken(viewModel.sendTokenData.token)
         initViews()
     }
 
@@ -67,7 +66,6 @@ class SendTokenActivity : BaseActivity() {
         binding.atDisposal.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.account?.getAtDisposalWithoutStakedOrScheduled(viewModel.sendTokenData.account?.totalUnshieldedBalance ?: BigInteger.ZERO) ?: BigInteger.ZERO, true)
         initializeAmount()
         initializeMax()
-        initializeMemo()
         initializeReceiver()
         initializeAddressBook()
         initializeScanQrCode()
@@ -91,7 +89,6 @@ class SendTokenActivity : BaseActivity() {
             binding.contractAddressError.visibility = View.VISIBLE
         } else {
             binding.send.isEnabled = false
-            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(binding.amount.text.toString(), viewModel.sendTokenData.token) ?: BigInteger.ZERO
             viewModel.sendTokenData.receiver = receiver
             binding.receiverName.let {
                 if(it.visibility == View.VISIBLE){
@@ -118,7 +115,7 @@ class SendTokenActivity : BaseActivity() {
             enableSend()
         }
         binding.amount.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && (binding.amount.text.toString().replace(".", "").replace(",", "").toInt() == 0))
+            if (hasFocus && viewModel.sendTokenData.amount.signum() == 0)
                 binding.amount.setText("")
         }
         binding.amount.setOnEditorActionListener { _, actionId, _ ->
@@ -135,7 +132,6 @@ class SendTokenActivity : BaseActivity() {
     }
 
     private fun initializeMax() {
-        binding.max.isEnabled = false
         binding.max.setOnClickListener {
             var decimals = 6
             viewModel.sendTokenData.token?.let { token ->
@@ -143,35 +139,16 @@ class SendTokenActivity : BaseActivity() {
                     decimals = token.tokenMetadata?.decimals?: 0
             }
             binding.amount.setText(CurrencyUtil.formatGTU(viewModel.sendTokenData.max ?: BigInteger.ZERO, false, decimals))
-            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(it.toString(), viewModel.sendTokenData.token) ?: BigInteger.ZERO
             enableSend()
         }
     }
 
     private fun enableSend(): Boolean {
-        val amountText = binding.amount.text.toString().replace(",", "").replace(".", "").trim()
-        if (amountText.isEmpty())
-            binding.send.isEnabled = false
-        else
-            binding.send.isEnabled = (amountText.toLong() > 0) && viewModel.hasEnoughFunds()
+        binding.send.isEnabled =
+            viewModel.sendTokenData.amount.signum() > 0
+                    && viewModel.sendTokenData.fee != null
+                    && viewModel.hasEnoughFunds()
         return binding.send.isEnabled
-    }
-
-    private fun initializeMemo() {
-        viewModel.sendTokenData.token?.let {
-            if (!it.isCCDToken) {
-                binding.memoContainer.visibility = View.GONE
-            } else {
-                binding.memo.setOnClickListener {
-                    addMemo()
-                }
-                binding.memoClear.setOnClickListener {
-                    binding.memo.text = getString(R.string.cis_optional_add_memo)
-                    binding.memoClear.visibility = View.GONE
-                    viewModel.sendTokenData.memo = null
-                }
-            }
-        }
     }
 
     private fun initializeReceiver() {
@@ -216,7 +193,6 @@ class SendTokenActivity : BaseActivity() {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
                 it.data?.getStringExtra(AddMemoActivity.EXTRA_MEMO)?.let { memo ->
-                    binding.memoClear.visibility = View.VISIBLE
                     handleMemo(memo)
                 }
             }
@@ -247,6 +223,9 @@ class SendTokenActivity : BaseActivity() {
             }
         }
 
+    private fun clearMemo() =
+        handleMemo("")
+
     private fun handleMemo(memo: String) {
         if (memo.isNotEmpty()) {
             viewModel.setMemo(CBORUtil.encodeCBOR(memo))
@@ -263,7 +242,7 @@ class SendTokenActivity : BaseActivity() {
             binding.memoClear.visibility = View.VISIBLE
         } else {
             binding.memo.text = getString(R.string.send_funds_optional_add_memo)
-            binding.memoClear.visibility = View.INVISIBLE
+            binding.memoClear.visibility = View.GONE
         }
     }
 
@@ -297,7 +276,6 @@ class SendTokenActivity : BaseActivity() {
         viewModel.chooseToken.observe(this) { token ->
             searchTokenBottomSheet?.dismiss()
             searchTokenBottomSheet = null
-            viewModel.sendTokenData.token = token
             binding.balanceTitle.text = getString(R.string.cis_token_balance, token.symbol).trim()
             val decimals: Int = if (token.isCCDToken) 6 else token.tokenMetadata?.decimals ?: 0
             binding.balance.text = CurrencyUtil.formatGTU(token.totalBalance, token.isCCDToken, decimals)
@@ -316,11 +294,32 @@ class SendTokenActivity : BaseActivity() {
                 }
             }
             binding.amount.setText(CurrencyUtil.formatGTU(BigInteger.ZERO, false))
-            viewModel.loadTransactionFee()
+            binding.amount.decimals = token.tokenMetadata?.decimals ?: 6
+            // For non-CCD tokens Max is always available.
+            binding.max.isEnabled = !token.isCCDToken
+
+            if (!token.isCCDToken) {
+                binding.memoContainer.visibility = View.GONE
+            } else {
+                binding.memoContainer.visibility = View.VISIBLE
+                binding.memo.setOnClickListener {
+                    addMemo()
+                }
+                binding.memoClear.setOnClickListener {
+                    clearMemo()
+                }
+            }
+            // This also initiates fee loading.
+            clearMemo()
         }
 
         viewModel.feeReady.observe(this) { fee ->
-            binding.fee.text = getString(R.string.cis_estimated_fee, CurrencyUtil.formatGTU(fee, true))
+            // Null value means the fee is outdated.
+            binding.fee.text =
+                if (fee != null)
+                    getString(R.string.cis_estimated_fee, CurrencyUtil.formatGTU(fee, true))
+                else
+                    ""
             binding.max.isEnabled = true
             if (!viewModel.hasEnoughFunds()) {
                 binding.feeError.visibility = View.VISIBLE
@@ -343,21 +342,10 @@ class SendTokenActivity : BaseActivity() {
                 binding.atDisposalTitle.setTextColor(getColor(R.color.text_black))
                 binding.atDisposal.setTextColor(getColor(R.color.text_black))
             }
+            enableSend()
         }
         viewModel.errorInt.observe(this) {
             Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun updateWithToken(token: Token?) {
-        token?.let {
-            binding.balanceTitle.text = getString(R.string.cis_token_balance, it.symbol).trim()
-            val decimals: Int = if (token.isCCDToken) 6 else token.tokenMetadata?.decimals ?: 0
-            binding.balance.text = CurrencyUtil.formatGTU(it.totalBalance, it.isCCDToken, decimals)
-            binding.searchToken.tokenShortName.text = it.symbol
-            it.tokenMetadata?.thumbnail?.url?.let { url ->
-                Glide.with(this).load(url).into(binding.searchToken.tokenIcon)
-            }
         }
     }
 
