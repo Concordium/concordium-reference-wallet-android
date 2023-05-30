@@ -128,6 +128,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             val existingContractTokens =
                 contractTokensRepository.getTokens(accountAddress, tokenData.contractIndex)
             val existingTokens = existingContractTokens.map { it.tokenId }.toSet()
+
             proxyRepository.getCIS2Tokens(
                 tokenData.contractIndex,
                 tokenData.subIndex,
@@ -143,6 +144,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     }
                     tokens.addAll(cis2Tokens.tokens)
                     loadTokensMetadataUrls(cis2Tokens.tokens)
+                    loadTokensBalances()
                     if (cis2Tokens.tokens.isEmpty())
                         lookForTokens.postValue(TOKENS_EMPTY)
                     else
