@@ -54,15 +54,16 @@ class TokenDetailsFragment : TokensBaseFragment() {
             _viewModel.stepPage(-1)
         }
         _viewModel.chooseTokenInfo.observe(viewLifecycleOwner) { token ->
-            setContractIndexAndSubIndex(token)
             setTokenId(token.token)
             token.tokenMetadata?.let { tokenMetadata ->
                 setNameAndIcon(tokenMetadata)
                 setImage(tokenMetadata)
                 setOwnership(tokenMetadata)
                 setDescription(tokenMetadata)
-                setTicker(tokenMetadata)
+                setContractIndexAndSubIndex(token)
                 setDecimals(tokenMetadata)
+                setTicker(tokenMetadata)
+                //todo show metadata
             }
         }
     }
@@ -70,7 +71,7 @@ class TokenDetailsFragment : TokensBaseFragment() {
     private fun setTokenId(tokenId: String) {
         if (tokenId.isNotBlank()) {
             binding.details.tokenIdHolder.visibility = View.VISIBLE
-            binding.details.tokenId.text= tokenId
+            binding.details.tokenId.text = tokenId
         }
     }
 
@@ -88,22 +89,24 @@ class TokenDetailsFragment : TokensBaseFragment() {
     }
 
     private fun setNameAndIcon(tokenMetadata: TokenMetadata) {
-        val name = tokenMetadata.name
-        val thumbnail = tokenMetadata.thumbnail?.url
-        binding.details.nameAndIconHolder.visibility = View.VISIBLE
+        if (tokenMetadata.unique.not()) {
+            val name = tokenMetadata.name
+            val thumbnail = tokenMetadata.thumbnail?.url
+            binding.details.nameAndIconHolder.visibility = View.VISIBLE
 
-        if (!thumbnail.isNullOrBlank()) {
-            Glide.with(this)
-                .load(thumbnail)
-                .placeholder(R.drawable.ic_token_loading_image)
-                .override(iconSize)
-                .fitCenter()
-                .error(R.drawable.ic_token_no_image)
-                .into(binding.details.icon)
-        } else if (thumbnail == "none") {
-            binding.details.icon.setImageResource(R.drawable.ic_token_no_image)
+            if (!thumbnail.isNullOrBlank()) {
+                Glide.with(this)
+                    .load(thumbnail)
+                    .placeholder(R.drawable.ic_token_loading_image)
+                    .override(iconSize)
+                    .fitCenter()
+                    .error(R.drawable.ic_token_no_image)
+                    .into(binding.details.icon)
+            } else if (thumbnail == "none") {
+                binding.details.icon.setImageResource(R.drawable.ic_token_no_image)
+            }
+            binding.details.name.text = name
         }
-        binding.details.name.text = name
     }
 
     private fun setContractIndexAndSubIndex(token: Token) {
@@ -115,7 +118,7 @@ class TokenDetailsFragment : TokensBaseFragment() {
             if (token.subIndex.isNotBlank()) {
                 val combinedInfo = "${tokenIndex}, ${token.subIndex}"
                 binding.details.contractIndex.text = combinedInfo
-            }else{
+            } else {
                 binding.details.contractIndex.text = tokenIndex
             }
         }
@@ -143,7 +146,9 @@ class TokenDetailsFragment : TokensBaseFragment() {
     }
 
     private fun setDecimals(tokenMetadata: TokenMetadata) {
-        binding.details.decimalsHolder.visibility = View.VISIBLE
-        binding.details.decimals.text = tokenMetadata.decimals.toString()
+        if (tokenMetadata.unique.not()) {
+            binding.details.decimalsHolder.visibility = View.VISIBLE
+            binding.details.decimals.text = tokenMetadata.decimals.toString()
+        }
     }
 }
