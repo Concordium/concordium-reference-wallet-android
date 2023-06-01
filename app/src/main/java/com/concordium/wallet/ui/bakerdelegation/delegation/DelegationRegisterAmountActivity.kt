@@ -93,7 +93,9 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         }
 
         binding.balanceAmount.text = CurrencyUtil.formatGTU(
-            viewModel.bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO, true
+            viewModel.bakerDelegationData.account?.getAtDisposalWithoutStakedOrScheduled(
+                viewModel.bakerDelegationData.account?.totalUnshieldedBalance ?: BigInteger.ZERO
+            ) ?: BigInteger.ZERO, true
         )
         binding.delegationAmount.text = CurrencyUtil.formatGTU(BigInteger.ZERO, true)
         viewModel.bakerDelegationData.account?.let { account ->
