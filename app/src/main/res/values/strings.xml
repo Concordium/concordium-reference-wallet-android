@@ -1053,6 +1053,7 @@
     <string name="cis_contract_index">Contract index, subindex</string>
     <string name="cis_decimals">Decimals</string>
     <string name="cis_ownership">Ownership</string>
+    <string name="cis_owned">Owned</string>
     <string name="cis_not_owned">Not owned</string>
     <string name="cis_no_tokens_selected">You haven\'t selected any tokens.</string>
     <string name="cis_tokens_updated">Token list updated</string>
