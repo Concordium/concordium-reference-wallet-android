@@ -18,6 +18,8 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.UnitConvertUtil
 import com.concordium.wallet.util.getSerializable
+import com.google.gson.Gson
+import org.json.JSONObject
 import java.math.BigInteger
 
 class TokenDetailsActivity : BaseActivity() {
@@ -86,6 +88,7 @@ class TokenDetailsActivity : BaseActivity() {
                 setDescription(tokenMetadata)
                 setTicker(tokenMetadata)
                 setDecimals(tokenMetadata)
+                showMatadata(tokenMetadata)
             }
         }
     }
@@ -208,5 +211,15 @@ class TokenDetailsActivity : BaseActivity() {
 
     private fun showWaiting(waiting: Boolean) {
         binding.includeProgress.progressBar.visibility = if (waiting) View.VISIBLE else View.GONE
+    }
+
+    private fun showMatadata(tokenMetadata: TokenMetadata) {
+        binding.includeAbout.showRawMetadataHolder.setOnClickListener {
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage(JSONObject(Gson().toJson(tokenMetadata)).toString(4))
+            builder.setPositiveButton(getString(R.string.error_database_close)) { _, _ -> }
+            builder.setCancelable(true)
+            builder.create().show()
+        }
     }
 }
