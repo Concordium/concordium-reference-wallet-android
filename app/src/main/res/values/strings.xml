@@ -300,6 +300,7 @@
     <string name="delegation_register_delegation_amount_enter_amount">Enter the amount you want to delegate</string>
     <string name="delegation_update_delegation_amount_enter_amount">Optional: Enter new delegation amount</string>
     <string name="delegation_register_delegation_amount_locked">Amount locked</string>
+    <string name="delegation_register_delegation_amount_insufficient_error">Insufficient funds</string>
     <string name="delegation_register_delegation_amount_current_pool">Current pool:</string>
     <string name="delegation_register_delegation_amount_pool_pool">Pool limit:</string>
     <string name="delegation_register_delegation_amount_estimated_transaction_fee">Estimated transaction fee:\nϾ%1$s</string>
