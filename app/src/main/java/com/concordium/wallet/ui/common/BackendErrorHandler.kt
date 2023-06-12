@@ -44,7 +44,8 @@ object BackendErrorHandler {
             0 -> {
                 R.string.app_error_backend_internal_server
             }
-            1->{
+
+            1 -> {
                 R.string.backend_error_transaction_rejected
             }
 
