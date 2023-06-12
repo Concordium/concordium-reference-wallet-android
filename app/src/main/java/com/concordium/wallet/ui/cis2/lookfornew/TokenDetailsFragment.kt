@@ -12,6 +12,7 @@ import com.concordium.wallet.databinding.FragmentDialogTokenDetailsBinding
 import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.util.UnitConvertUtil
+import java.math.BigInteger
 
 class TokenDetailsFragment : TokensBaseFragment() {
     private var _binding: FragmentDialogTokenDetailsBinding? = null
@@ -59,7 +60,7 @@ class TokenDetailsFragment : TokensBaseFragment() {
             token.tokenMetadata?.let { tokenMetadata ->
                 setNameAndIcon(tokenMetadata)
                 setImage(tokenMetadata)
-                setOwnership(tokenMetadata)
+                setBalance(token, tokenMetadata)
                 setDescription(tokenMetadata)
                 setTicker(tokenMetadata)
                 setDecimals(tokenMetadata)
@@ -70,7 +71,7 @@ class TokenDetailsFragment : TokensBaseFragment() {
     private fun setTokenId(tokenId: String) {
         if (tokenId.isNotBlank()) {
             binding.details.tokenIdHolder.visibility = View.VISIBLE
-            binding.details.tokenId.text= tokenId
+            binding.details.tokenId.text = tokenId
         }
     }
 
@@ -81,9 +82,18 @@ class TokenDetailsFragment : TokensBaseFragment() {
         }
     }
 
-    private fun setOwnership(tokenMetadata: TokenMetadata) {
+    private fun setBalance(token: Token, tokenMetadata: TokenMetadata) {
         if (tokenMetadata.unique) {
+            binding.details.balanceHolder.visibility = View.GONE
             binding.details.ownershipHolder.visibility = View.VISIBLE
+            binding.details.ownership.text =                if (token.totalBalance != BigInteger.ZERO)
+                    getString(R.string.cis_owned)
+                else
+                    getString(R.string.cis_not_owned)
+        } else {
+            binding.details.ownershipHolder.visibility = View.GONE
+            binding.details.balanceHolder.visibility = View.VISIBLE
+            binding.details.balance.text = token.totalBalance.toString()
         }
     }
 
@@ -115,7 +125,7 @@ class TokenDetailsFragment : TokensBaseFragment() {
             if (token.subIndex.isNotBlank()) {
                 val combinedInfo = "${tokenIndex}, ${token.subIndex}"
                 binding.details.contractIndex.text = combinedInfo
-            }else{
+            } else {
                 binding.details.contractIndex.text = tokenIndex
             }
         }
