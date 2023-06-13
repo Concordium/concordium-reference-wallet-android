@@ -283,9 +283,9 @@ class SendTokenActivity : BaseActivity() {
             if (token.isCCDToken) {
                 Glide.with(this).load(R.drawable.ic_concordium_logo_no_text).into(binding.searchToken.tokenIcon)
             } else {
-                token.tokenMetadata?.thumbnail?.let { thumbnail ->
+                token.tokenMetadata?.thumbnail.let { thumbnail ->
                     Glide.with(this)
-                        .load(thumbnail.url)
+                        .load(thumbnail?.url)
                         .placeholder(R.drawable.ic_token_loading_image)
                         .override(iconSize)
                         .fitCenter()
