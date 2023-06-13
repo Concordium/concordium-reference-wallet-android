@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TokenMetadata
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentDialogTokenDetailsBinding
 import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
@@ -86,14 +87,15 @@ class TokenDetailsFragment : TokensBaseFragment() {
         if (tokenMetadata.unique) {
             binding.details.balanceHolder.visibility = View.GONE
             binding.details.ownershipHolder.visibility = View.VISIBLE
-            binding.details.ownership.text =                if (token.totalBalance != BigInteger.ZERO)
-                    getString(R.string.cis_owned)
-                else
-                    getString(R.string.cis_not_owned)
+            binding.details.ownership.text = if (token.totalBalance != BigInteger.ZERO)
+                getString(R.string.cis_owned)
+            else
+                getString(R.string.cis_not_owned)
         } else {
             binding.details.ownershipHolder.visibility = View.GONE
             binding.details.balanceHolder.visibility = View.VISIBLE
-            binding.details.balance.text = token.totalBalance.toString()
+            binding.details.balance.text =
+                CurrencyUtil.formatGTU(token.totalBalance, false, tokenMetadata.decimals)
         }
     }
 

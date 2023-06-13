@@ -78,11 +78,10 @@ class TokenDetailsActivity : BaseActivity() {
         viewModel.tokenData.selectedToken?.let { token ->
             setContractIndexAndSubIndex(token)
             setTokenId(token.token)
-            setBalance(token)
             token.tokenMetadata?.let { tokenMetadata ->
                 setNameAndIcon(tokenMetadata)
                 setImage(tokenMetadata)
-                setBalance(token, tokenMetadata)
+                setOwnership(token, tokenMetadata)
                 setDescription(tokenMetadata)
                 setTicker(tokenMetadata)
                 setDecimals(tokenMetadata)
@@ -112,11 +111,6 @@ class TokenDetailsActivity : BaseActivity() {
         builder.create().show()
     }
 
-    private fun setBalance(token: Token) {
-        binding.includeBalance.tokenAmount.text =
-            CurrencyUtil.formatGTU(token.totalBalance, false, token.tokenMetadata?.decimals ?: 0)
-    }
-
     private fun setTokenId(tokenId: String) {
         if (tokenId.isNotBlank()) {
             binding.includeAbout.tokenIdHolder.visibility = View.VISIBLE
@@ -131,18 +125,16 @@ class TokenDetailsActivity : BaseActivity() {
         }
     }
 
-    private fun setBalance(token: Token, tokenMetadata: TokenMetadata) {
+    private fun setOwnership(token: Token, tokenMetadata: TokenMetadata) {
+        binding.includeBalance.tokenAmount.text =
+            CurrencyUtil.formatGTU(token.totalBalance, false, token.tokenMetadata?.decimals ?: 0)
+        binding.includeAbout.balanceHolder.visibility = View.GONE
         if (tokenMetadata.unique) {
-            binding.includeAbout.balanceHolder.visibility = View.GONE
             binding.includeAbout.ownershipHolder.visibility = View.VISIBLE
             binding.includeAbout.ownership.text = if (token.totalBalance != BigInteger.ZERO)
                 getString(R.string.cis_owned)
             else
                 getString(R.string.cis_not_owned)
-        } else {
-            binding.includeAbout.ownershipHolder.visibility = View.GONE
-            binding.includeAbout.balanceHolder.visibility = View.VISIBLE
-            binding.includeAbout.balance.text = token.totalBalance.toString()
         }
     }
 
