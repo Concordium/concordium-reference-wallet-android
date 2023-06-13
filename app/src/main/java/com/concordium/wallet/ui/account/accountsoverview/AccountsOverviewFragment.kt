@@ -19,6 +19,7 @@ import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.util.TokenUtil
 import com.concordium.wallet.databinding.FragmentAccountsOverviewBinding
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
@@ -31,6 +32,7 @@ import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
+import com.concordium.wallet.ui.cis2.SendTokenActivity
 import java.math.BigInteger
 
 class AccountsOverviewFragment : BaseFragment(),
@@ -413,9 +415,9 @@ class AccountsOverviewFragment : BaseFragment(),
             }
 
             override fun onSendClicked(item: Account) {
-                val intent = Intent(activity, SendFundsActivity::class.java)
-                intent.putExtra(SendFundsActivity.EXTRA_SHIELDED, false)
-                intent.putExtra(SendFundsActivity.EXTRA_ACCOUNT, item)
+                val intent = Intent(activity, SendTokenActivity::class.java)
+                intent.putExtra(SendTokenActivity.ACCOUNT, item)
+                intent.putExtra(SendTokenActivity.TOKEN, TokenUtil.getCCDToken(item))
                 startActivity(intent)
             }
         })
