@@ -17,6 +17,7 @@ import com.concordium.wallet.data.room.AccountContract
 import com.concordium.wallet.data.room.ContractToken
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
+import com.concordium.wallet.ui.cis2.retrofit.IncorrectChecksumException
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toBigInteger
@@ -379,9 +380,11 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                 loadTokenMetadata(tokenData.contractIndex, tokenData.contractName, it)
             }
             return true
+        } catch (e: IncorrectChecksumException) {
+            lookForTokens.postValue(TOKENS_INVALID_CHECKSUM)
+            return false
         } catch (e: Throwable) {
             lookForTokens.postValue(TOKENS_METADATA_ERROR)
-            handleBackendError(e)
             return false
         }
     }
@@ -394,7 +397,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         if (cis2TokensMetadataItem.metadataURL.isBlank())
             return
         val index = tokens.indexOfFirst { it.token == cis2TokensMetadataItem.tokenId && it.contractIndex == contractIndex }
-        val metadata = MetadataApiInstance.safeMetadataCall(cis2TokensMetadataItem.metadataURL).getOrThrow()
+        val metadata = MetadataApiInstance.safeMetadataCall(cis2TokensMetadataItem.metadataURL, cis2TokensMetadataItem.metadataChecksum).getOrThrow()
         tokens[index].tokenMetadata = metadata
         tokens[index].contractIndex = contractIndex
         tokens[index].contractName = contractName
