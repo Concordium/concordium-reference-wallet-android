@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added CHANGELOG.md
 - Identity view: Display raw "document type" when no localized string is matched
 
+### Fixed
+
+- Fixed issue where owned tokens are not reflected in search result list and details screens
+
 ### Changed
 
 - Changed Terms and Conditions screen to new UI.
