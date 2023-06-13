@@ -12,6 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added CHANGELOG.md
 - Identity view: Display raw "document type" when no localized string is matched
 
+### Fixed
+
+- Fixed number of issues with 
+  1. Remove “Name and icon” header text for token name (to keep it aligned with BW).
+  2. Balance (for FT) section (header and values) is missing. Expected - For FT, “Balance” should be shown.
+  3. Align the different sections order with BW (to keep behavior uniform across wallets).
+  4. Metadata is missing for both FT and NFT. Expected - There’s should be a link “Show raw metadata” which should open token metadata in an overlay screen (check BW behavior).
+  5. NFT token details screen should not have Decimal section.
+  6. Token image size is very small, contents almost invisible.
+
 ### Changed
 
 - Changed Terms and Conditions screen to new UI.

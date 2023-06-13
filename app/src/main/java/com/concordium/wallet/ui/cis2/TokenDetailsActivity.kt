@@ -82,7 +82,6 @@ class TokenDetailsActivity : BaseActivity() {
             setTokenId(token.token)
             setBalance(token)
             token.tokenMetadata?.let { tokenMetadata ->
-                setNameAndIcon(tokenMetadata)
                 setImage(tokenMetadata)
                 setOwnership(tokenMetadata, token)
                 setDescription(tokenMetadata)
@@ -144,24 +143,6 @@ class TokenDetailsActivity : BaseActivity() {
                     getString(R.string.cis_not_owned)
                 }
         }
-    }
-
-    private fun setNameAndIcon(tokenMetadata: TokenMetadata) {
-        val name = tokenMetadata.name
-        val thumbnail = tokenMetadata.thumbnail?.url
-        binding.includeAbout.nameAndIconHolder.visibility = View.VISIBLE
-        if (!thumbnail.isNullOrBlank()) {
-            Glide.with(this)
-                .load(thumbnail)
-                .placeholder(R.drawable.ic_token_loading_image)
-                .override(iconSize)
-                .fitCenter()
-                .error(R.drawable.ic_token_no_image)
-                .into(binding.includeAbout.icon)
-        } else {
-            binding.includeAbout.icon.setImageResource(R.drawable.ic_token_no_image)
-        }
-        binding.includeAbout.name.text = name
     }
 
     private fun setContractIndexAndSubIndex(token: Token) {

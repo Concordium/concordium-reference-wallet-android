@@ -59,7 +59,7 @@ class TokenDetailsFragment : TokensBaseFragment() {
         _viewModel.chooseTokenInfo.observe(viewLifecycleOwner) { token ->
             setTokenId(token.token)
             token.tokenMetadata?.let { tokenMetadata ->
-                setNameAndIcon(tokenMetadata)
+                setName(tokenMetadata)
                 setImage(tokenMetadata)
                 setOwnership(tokenMetadata)
                 setDescription(tokenMetadata)
@@ -78,6 +78,11 @@ class TokenDetailsFragment : TokensBaseFragment() {
         }
     }
 
+    private fun setName(tokenMetadata: TokenMetadata) {
+        binding.details.nameAndIconHolder.visibility = View.VISIBLE
+        binding.details.name.text = tokenMetadata.name
+    }
+
     private fun setDescription(tokenMetadata: TokenMetadata) {
         if (tokenMetadata.description.isNotBlank()) {
             binding.details.descriptionHolder.visibility = View.VISIBLE
@@ -88,27 +93,6 @@ class TokenDetailsFragment : TokensBaseFragment() {
     private fun setOwnership(tokenMetadata: TokenMetadata) {
         if (tokenMetadata.unique) {
             binding.details.ownershipHolder.visibility = View.VISIBLE
-        }
-    }
-
-    private fun setNameAndIcon(tokenMetadata: TokenMetadata) {
-        if (tokenMetadata.unique.not()) {
-            val name = tokenMetadata.name
-            val thumbnail = tokenMetadata.thumbnail?.url
-            binding.details.nameAndIconHolder.visibility = View.VISIBLE
-
-            if (!thumbnail.isNullOrBlank()) {
-                Glide.with(this)
-                    .load(thumbnail)
-                    .placeholder(R.drawable.ic_token_loading_image)
-                    .override(iconSize)
-                    .fitCenter()
-                    .error(R.drawable.ic_token_no_image)
-                    .into(binding.details.icon)
-            } else if (thumbnail == "none") {
-                binding.details.icon.setImageResource(R.drawable.ic_token_no_image)
-            }
-            binding.details.name.text = name
         }
     }
 

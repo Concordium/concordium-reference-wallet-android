@@ -78,23 +78,10 @@
                         style="@style/TextView.Standard"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:paddingStart="@dimen/activity_horizontal_margin"
-                        app:layout_constraintBottom_toBottomOf="@id/icon"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/icon"
-                        app:layout_constraintTop_toTopOf="@id/icon"
-                        tools:text="Global Transaction Unit" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/icon"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:src="@drawable/ic_icon_qr"
-                        tools:tint="@color/theme_blue" />
+                        tools:text="Global Transaction Unit" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
