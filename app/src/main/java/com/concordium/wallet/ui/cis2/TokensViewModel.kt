@@ -24,6 +24,7 @@ import com.walletconnect.util.Empty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
 import java.io.Serializable
 import java.math.BigInteger
 
@@ -41,7 +42,9 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         const val TOKENS_NOT_LOADED = -1
         const val TOKENS_OK = 0
         const val TOKENS_EMPTY = 1
-        const val TOKENS_ERROR = 2
+        const val TOKENS_INVALID_INDEX = 2
+        const val TOKENS_METADATA_ERROR = 3
+        const val TOKENS_INVALID_CHECKSUM = 4
     }
 
     private var allowToLoadMore = true
@@ -143,16 +146,22 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                         token.subIndex = tokenData.subIndex
                     }
                     tokens.addAll(cis2Tokens.tokens)
-                    loadTokensMetadataUrls(cis2Tokens.tokens)
-                    loadTokensBalances()
-                    if (cis2Tokens.tokens.isEmpty())
+                    if (cis2Tokens.tokens.isEmpty()) {
                         lookForTokens.postValue(TOKENS_EMPTY)
-                    else
-                        lookForTokens.postValue(TOKENS_OK)
-                    allowToLoadMore = true
+                        allowToLoadMore = true
+                    } else {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val metadata = async { loadTokensMetadataUrls(cis2Tokens.tokens) }
+                            loadTokensBalances()
+                            val isSuccess = metadata.await()
+                            if (isSuccess)
+                                lookForTokens.postValue(TOKENS_OK)
+                            allowToLoadMore = true
+                        }
+                    }
                 },
                 failure = {
-                    lookForTokens.postValue(TOKENS_ERROR)
+                    lookForTokens.postValue(TOKENS_INVALID_INDEX)
                     handleBackendError(it)
                     allowToLoadMore = true
                 })
@@ -357,62 +366,39 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         )
     }
 
-    private fun loadTokensMetadataUrls(tokens: List<Token>) {
-        viewModelScope.launch {
-            val commaSeparated = tokens.joinToString(",") { it.token }
-            proxyRepository.getCIS2TokenMetadata(
-                tokenData.contractIndex,
-                tokenData.subIndex,
-                tokenIds = commaSeparated,
-                success = { cis2TokensMetadata ->
-                    tokenData.contractName = cis2TokensMetadata.contractName
-                    cis2TokensMetadata.metadata.forEach {
-                        loadTokenMetadata(tokenData.contractIndex, tokenData.contractName, it)
-                    }
-                },
-                failure = {
-                    handleBackendError(it)
-                })
+    private suspend fun loadTokensMetadataUrls(tokens: List<Token>): Boolean {
+        val commaSeparated = tokens.joinToString(",") { it.token }
+        try {
+            val cis2TokensMetadata =
+                proxyRepository.getCIS2TokenMetadataSuspended(
+                    tokenData.contractIndex,
+                    tokenData.subIndex,
+                    tokenIds = commaSeparated)
+            tokenData.contractName = cis2TokensMetadata.contractName
+            cis2TokensMetadata.metadata.forEach {
+                loadTokenMetadata(tokenData.contractIndex, tokenData.contractName, it)
+            }
+            return true
+        } catch (e: Throwable) {
+            lookForTokens.postValue(TOKENS_METADATA_ERROR)
+            handleBackendError(e)
+            return false
         }
     }
 
-    private fun loadTokenMetadata(
+    private suspend fun loadTokenMetadata(
         contractIndex: String,
         contractName: String,
         cis2TokensMetadataItem: CIS2TokensMetadataItem
     ) {
-        println("LC -> ${cis2TokensMetadataItem.metadataURL}")
         if (cis2TokensMetadataItem.metadataURL.isBlank())
             return
-        viewModelScope.launch {
-            val index =
-                tokens.indexOfFirst { it.token == cis2TokensMetadataItem.tokenId && it.contractIndex == contractIndex }
-            if (tokens.count() > index && index >= 0) {
-                val tokenMetadata =
-                    MetadataApiInstance.safeMetadataCall(cis2TokensMetadataItem.metadataURL)
-
-                if (tokenMetadata != null) {
-                    tokens[index].tokenMetadata = tokenMetadata
-                } else {
-                    tokens[index].tokenMetadata = TokenMetadata(
-                        -1,
-                        "",
-                        "",
-                        "",
-                        Thumbnail("none"),
-                        false,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null
-                    )
-                }
-                tokens[index].contractIndex = contractIndex
-                tokens[index].contractName = contractName
-                tokenDetails.postValue(true)
-            }
-        }
+        val index = tokens.indexOfFirst { it.token == cis2TokensMetadataItem.tokenId && it.contractIndex == contractIndex }
+        val metadata = MetadataApiInstance.safeMetadataCall(cis2TokensMetadataItem.metadataURL).getOrThrow()
+        tokens[index].tokenMetadata = metadata
+        tokens[index].contractIndex = contractIndex
+        tokens[index].contractName = contractName
+        tokenDetails.postValue(true)
     }
 
     fun loadTokensBalances() {

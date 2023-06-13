@@ -2,6 +2,8 @@ package com.concordium.wallet.ui.cis2.retrofit
 
 import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.core.backend.BackendError
+import com.concordium.wallet.core.backend.BackendErrorException
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -26,18 +28,19 @@ class MetadataApiInstance {
             retrofit.create(MetadataApi::class.java)
         }
 
-        suspend fun safeMetadataCall(url: String?): TokenMetadata? {
+        suspend fun safeMetadataCall(url: String?): Result<TokenMetadata> {
             try {
                 val response = api.metadata(url)
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        return it
+                        return Result.success(it)
                     }
                 }
+                return Result.failure(BackendErrorException(BackendError(response.code(), response.errorBody().toString())))
             } catch (t: Throwable) {
                 Log.d(Log.toString(t))
+                return Result.failure(t)
             }
-            return null
         }
     }
 }

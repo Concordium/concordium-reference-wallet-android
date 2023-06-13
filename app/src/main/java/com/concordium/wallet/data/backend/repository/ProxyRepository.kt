@@ -432,6 +432,12 @@ class ProxyRepository {
         )
     }
 
+    suspend fun getCIS2TokenMetadataSuspended(
+        index: String,
+        subIndex: String,
+        tokenIds: String,
+    ) = backend.cis2TokenMetadataSuspended(index, subIndex, tokenIds)
+
     fun getCIS2TokenBalance(
         index: String,
         subIndex: String,
