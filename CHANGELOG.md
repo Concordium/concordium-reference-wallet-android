@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added CHANGELOG.md
 - Identity view: Display raw "document type" when no localized string is matched
 
+### Fixed
+
+- Fix a crash when inputting a too large amount as the stake for delegation or baking.
+
 ### Changed
 
 - Changed Terms and Conditions screen to new UI.
