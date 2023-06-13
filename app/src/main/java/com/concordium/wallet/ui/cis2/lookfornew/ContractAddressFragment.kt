@@ -27,7 +27,11 @@ class ContractAddressFragment : TokensBaseFragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentDialogContractAddressBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -77,6 +81,8 @@ class ContractAddressFragment : TokensBaseFragment() {
         if (binding.contractAddress.text.isNotBlank()) {
             _viewModel.tokens.clear()
             _viewModel.lookForTokens(_viewModel.tokenData.account!!.address)
+        } else {
+            showWaiting(false)
         }
     }
 
@@ -97,15 +103,38 @@ class ContractAddressFragment : TokensBaseFragment() {
             TokensViewModel.TOKENS_NOT_LOADED,
             TokensViewModel.TOKENS_OK -> {
                 binding.error.visibility = View.GONE
-                binding.contractAddress.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_blue))
-                binding.contractAddress.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.text_blue))
-                binding.contractAddress.background = ContextCompat.getDrawable(requireContext(), R.drawable.rounded_light_grey)
+                binding.contractAddress.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.text_blue
+                    )
+                )
+                binding.contractAddress.setHintTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.text_blue
+                    )
+                )
+                binding.contractAddress.background =
+                    ContextCompat.getDrawable(requireContext(), R.drawable.rounded_light_grey)
             }
+
             else -> {
                 binding.error.visibility = View.VISIBLE
-                binding.contractAddress.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_pink))
-                binding.contractAddress.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.text_pink))
-                binding.contractAddress.background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_cardview_border_pink)
+                binding.contractAddress.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.text_pink
+                    )
+                )
+                binding.contractAddress.setHintTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.text_pink
+                    )
+                )
+                binding.contractAddress.background =
+                    ContextCompat.getDrawable(requireContext(), R.drawable.bg_cardview_border_pink)
                 if (result == TokensViewModel.TOKENS_EMPTY)
                     binding.error.text = getString(R.string.cis_find_tokens_none)
                 else
