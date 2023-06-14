@@ -9,10 +9,12 @@ import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TokenMetadata
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentDialogTokenDetailsBinding
 import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.util.UnitConvertUtil
+import java.math.BigInteger
 import com.google.gson.Gson
 import org.json.JSONObject
 
@@ -61,7 +63,7 @@ class TokenDetailsFragment : TokensBaseFragment() {
             token.tokenMetadata?.let { tokenMetadata ->
                 setName(tokenMetadata)
                 setImage(tokenMetadata)
-                setOwnership(tokenMetadata)
+                setBalance(token, tokenMetadata)
                 setDescription(tokenMetadata)
                 setContractIndexAndSubIndex(token)
                 setDecimals(tokenMetadata)
@@ -90,9 +92,19 @@ class TokenDetailsFragment : TokensBaseFragment() {
         }
     }
 
-    private fun setOwnership(tokenMetadata: TokenMetadata) {
+    private fun setBalance(token: Token, tokenMetadata: TokenMetadata) {
         if (tokenMetadata.unique) {
+            binding.details.balanceHolder.visibility = View.GONE
             binding.details.ownershipHolder.visibility = View.VISIBLE
+            binding.details.ownership.text = if (token.totalBalance != BigInteger.ZERO)
+                getString(R.string.cis_owned)
+            else
+                getString(R.string.cis_not_owned)
+        } else {
+            binding.details.ownershipHolder.visibility = View.GONE
+            binding.details.balanceHolder.visibility = View.VISIBLE
+            binding.details.balance.text =
+                CurrencyUtil.formatGTU(token.totalBalance, false, tokenMetadata.decimals)
         }
     }
 
