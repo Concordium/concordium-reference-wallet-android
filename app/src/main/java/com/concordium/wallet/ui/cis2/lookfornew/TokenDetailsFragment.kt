@@ -16,6 +16,7 @@ import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.util.UnitConvertUtil
 import java.math.BigInteger
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import org.json.JSONObject
 
 class TokenDetailsFragment : TokensBaseFragment() {
@@ -153,8 +154,12 @@ class TokenDetailsFragment : TokensBaseFragment() {
 
     private fun showMatadata(tokenMetadata: TokenMetadata) {
         binding.details.showRawMetadataHolder.setOnClickListener {
+            val gson = GsonBuilder()
+                .setPrettyPrinting()
+                .disableHtmlEscaping()
+                .create()
             val builder = AlertDialog.Builder(requireContext())
-            builder.setMessage(JSONObject(Gson().toJson(tokenMetadata)).toString(4))
+            builder.setMessage(gson.toJson(tokenMetadata))
             builder.setPositiveButton(getString(R.string.error_database_close)) { _, _ -> }
             builder.setCancelable(true)
             builder.create().show()
