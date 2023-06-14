@@ -1080,4 +1080,8 @@
     <string name="terms_and_conditions_approve">I have read and agree to the terms and conditions.</string>
     <string name="terms_and_conditions_approve_pattern">terms and conditions.</string>
     <string name="unexpected_error">Unexpected error occurred, please restart the application</string>
+
+    <string name="show_raw_metadata">Show raw metadata</string>
+
+    Show raw metadata
 </resources>
