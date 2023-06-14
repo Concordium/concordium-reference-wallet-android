@@ -7,7 +7,7 @@ object HashUtil {
     fun sha256(input: ByteArray): String {
         val md = MessageDigest.getInstance("SHA-256")
         val bytes = md.digest(input)
-        return EncodingUtil.toHexString(bytes)
+        return bytes.toHex()
     }
 
 }
