@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fix a crash when inputting a too large amount as the stake for delegation or baking.
+- Fix an issue where another tokens image was sometimes shown for tokens without an image.
 - Fixed number of issues with 
   1. Remove “Name and icon” header text for token name (to keep it aligned with BW).
   2. Balance (for FT) section (header and values) is missing. Expected - For FT, “Balance” should be shown.

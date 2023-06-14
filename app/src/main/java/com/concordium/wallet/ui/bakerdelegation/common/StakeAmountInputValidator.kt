@@ -70,7 +70,7 @@ class StakeAmountInputValidator(
     }
 
     private fun checkAmount(amount: String): StakeError {
-        if (amount.toLongOrNull() == null) StakeError.UNKNOWN
+        if (amount.toLongOrNull() == null) return StakeError.NOT_ENOUGH_FUND
         return StakeError.OK
     }
 
