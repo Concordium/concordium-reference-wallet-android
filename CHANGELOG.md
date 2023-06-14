@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   5. NFT token details screen should not have Decimal section.
   6. Token image size is very small, contents almost invisible.
 - Fixed issue where owned tokens are not reflected in search result list and details screens
+- When adding a new token the token details would in some cases show information from another token.
 
 ### Changed
 
