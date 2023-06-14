@@ -10,5 +10,5 @@ interface MetadataApi {
     /**
      * @param metadataChecksum is a special parameter only used by the interceptor to ensure the response body has that checksum
      */
-    @GET suspend fun metadata(@Url url: String?, @Query("metadataChecksum") metadataChecksum: String?): Response<TokenMetadata>
+    @GET suspend fun metadata(@Url url: String?, @Query(METADATA_CHECKSUM_FAKE_PARAMETER) metadataChecksum: String?): Response<TokenMetadata>
 }

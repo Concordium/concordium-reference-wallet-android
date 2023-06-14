@@ -22,14 +22,16 @@ fun sha256(input: ByteArray): String {
 
 class IncorrectChecksumException(): IOException("Body does not have specified checksum")
 
+internal const val METADATA_CHECKSUM_FAKE_PARAMETER = "INTERNAL_metadataChecksum"
+
 class MetadataApiInstance {
     companion object {
         private val retrofit by lazy {
             val client = OkHttpClient.Builder()
                 .addInterceptor({ chain ->
                                     val request = chain.request();
-                                    val checksum = request.url.queryParameter("metadataChecksum")
-                                    val url = request.url.newBuilder().removeAllQueryParameters("metadataChecksum").build();
+                                    val checksum = request.url.queryParameter(METADATA_CHECKSUM_FAKE_PARAMETER)
+                                    val url = request.url.newBuilder().removeAllQueryParameters(METADATA_CHECKSUM_FAKE_PARAMETER).build();
                                     val response = chain.proceed(request.newBuilder().url(url).build())
                                     if (checksum != null) {
                                         val rawBody = response.body
