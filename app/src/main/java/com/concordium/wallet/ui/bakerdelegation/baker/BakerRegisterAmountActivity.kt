@@ -179,7 +179,7 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity() 
             minimumValue = viewModel.bakerDelegationData.chainParameters?.minimumEquityCapital,
             maximumValue = viewModel.getStakeInputMax(),
             balance = viewModel.bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO,
-            atDisposal = viewModel.getAvalibleBalance(),
+            atDisposal = viewModel.atDisposal(),
             currentPool = viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,
             poolLimit = null,
             previouslyStakedInPool = viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount,

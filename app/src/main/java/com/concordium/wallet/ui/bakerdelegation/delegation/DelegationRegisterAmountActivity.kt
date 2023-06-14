@@ -159,7 +159,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             minimumValue = if (viewModel.isUpdatingDelegation()) "0" else "1",
             maximumValue = null,
             balance = viewModel.bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO,
-            atDisposal = viewModel.getAvalibleBalance(),
+            atDisposal = viewModel.atDisposal(),
             currentPool = viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,
             poolLimit = viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapitalCap,
             previouslyStakedInPool = viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount,
