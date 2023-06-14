@@ -69,7 +69,7 @@ class TokenDetailsFragment : TokensBaseFragment() {
                 setContractIndexAndSubIndex(token)
                 setDecimals(tokenMetadata)
                 setTicker(tokenMetadata)
-                showMatadata(tokenMetadata)
+                showMetadata(tokenMetadata)
             }
         }
     }
@@ -78,6 +78,9 @@ class TokenDetailsFragment : TokensBaseFragment() {
         if (tokenId.isNotBlank()) {
             binding.details.tokenIdHolder.visibility = View.VISIBLE
             binding.details.tokenId.text = tokenId
+        } else {
+            binding.details.tokenIdHolder.visibility = View.GONE
+            binding.details.tokenId.text = ""
         }
     }
 
@@ -90,6 +93,9 @@ class TokenDetailsFragment : TokensBaseFragment() {
         if (tokenMetadata.description.isNotBlank()) {
             binding.details.descriptionHolder.visibility = View.VISIBLE
             binding.details.description.text = tokenMetadata.description
+        } else {
+            binding.details.descriptionHolder.visibility = View.GONE
+            binding.details.description.text = ""
         }
     }
 
@@ -114,20 +120,21 @@ class TokenDetailsFragment : TokensBaseFragment() {
 
         if (tokenIndex.isNotBlank()) {
             binding.details.contractIndexHolder.visibility = View.VISIBLE
-            binding.details.contractIndex.text = token.contractIndex
             if (token.subIndex.isNotBlank()) {
                 val combinedInfo = "${tokenIndex}, ${token.subIndex}"
                 binding.details.contractIndex.text = combinedInfo
             } else {
                 binding.details.contractIndex.text = tokenIndex
             }
+        } else {
+            binding.details.contractIndexHolder.visibility = View.GONE
+            binding.details.contractIndex.text = ""
         }
     }
 
     private fun setImage(tokenMetadata: TokenMetadata) {
         if (!tokenMetadata.display?.url.isNullOrBlank()) {
             binding.details.imageHolder.visibility = View.VISIBLE
-
             Glide.with(this)
                 .load(tokenMetadata.display?.url)
                 .placeholder(R.drawable.ic_token_loading_image)
@@ -135,6 +142,9 @@ class TokenDetailsFragment : TokensBaseFragment() {
                 .fitCenter()
                 .error(R.drawable.ic_token_no_image)
                 .into(binding.details.image)
+        } else {
+            binding.details.imageHolder.visibility = View.GONE
+            binding.details.image.setImageResource(android.R.color.transparent)
         }
     }
 
@@ -142,6 +152,9 @@ class TokenDetailsFragment : TokensBaseFragment() {
         if (!tokenMetadata.symbol.isNullOrBlank()) {
             binding.details.tokenHolder.visibility = View.VISIBLE
             binding.details.token.text = tokenMetadata.symbol
+        } else {
+            binding.details.tokenHolder.visibility = View.GONE
+            binding.details.token.text = ""
         }
     }
 
@@ -149,10 +162,13 @@ class TokenDetailsFragment : TokensBaseFragment() {
         if (tokenMetadata.unique.not()) {
             binding.details.decimalsHolder.visibility = View.VISIBLE
             binding.details.decimals.text = tokenMetadata.decimals.toString()
+        } else {
+            binding.details.decimalsHolder.visibility = View.GONE
+            binding.details.decimals.text = ""
         }
     }
 
-    private fun showMatadata(tokenMetadata: TokenMetadata) {
+    private fun showMetadata(tokenMetadata: TokenMetadata) {
         binding.details.showRawMetadataHolder.setOnClickListener {
             val gson = GsonBuilder()
                 .setPrettyPrinting()
