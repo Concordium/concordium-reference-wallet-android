@@ -45,6 +45,10 @@ object BackendErrorHandler {
                 R.string.app_error_backend_internal_server
             }
 
+            1 -> {
+                R.string.backend_error_transaction_rejected
+            }
+
             else -> {
                 Log.e(
                     "Exception from backend communication - unknown error code",
