@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.cis2.lookfornew
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,8 @@ import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.util.UnitConvertUtil
 import java.math.BigInteger
+import com.google.gson.Gson
+import org.json.JSONObject
 
 class TokenDetailsFragment : TokensBaseFragment() {
     private var _binding: FragmentDialogTokenDetailsBinding? = null
@@ -56,15 +59,16 @@ class TokenDetailsFragment : TokensBaseFragment() {
             _viewModel.stepPage(-1)
         }
         _viewModel.chooseTokenInfo.observe(viewLifecycleOwner) { token ->
-            setContractIndexAndSubIndex(token)
             setTokenId(token.token)
             token.tokenMetadata?.let { tokenMetadata ->
-                setNameAndIcon(tokenMetadata)
+                setName(tokenMetadata)
                 setImage(tokenMetadata)
                 setBalance(token, tokenMetadata)
                 setDescription(tokenMetadata)
-                setTicker(tokenMetadata)
+                setContractIndexAndSubIndex(token)
                 setDecimals(tokenMetadata)
+                setTicker(tokenMetadata)
+                showMatadata(tokenMetadata)
             }
         }
     }
@@ -74,6 +78,11 @@ class TokenDetailsFragment : TokensBaseFragment() {
             binding.details.tokenIdHolder.visibility = View.VISIBLE
             binding.details.tokenId.text = tokenId
         }
+    }
+
+    private fun setName(tokenMetadata: TokenMetadata) {
+        binding.details.nameAndIconHolder.visibility = View.VISIBLE
+        binding.details.name.text = tokenMetadata.name
     }
 
     private fun setDescription(tokenMetadata: TokenMetadata) {
@@ -97,25 +106,6 @@ class TokenDetailsFragment : TokensBaseFragment() {
             binding.details.balance.text =
                 CurrencyUtil.formatGTU(token.totalBalance, false, tokenMetadata.decimals)
         }
-    }
-
-    private fun setNameAndIcon(tokenMetadata: TokenMetadata) {
-        val name = tokenMetadata.name
-        val thumbnail = tokenMetadata.thumbnail?.url
-        binding.details.nameAndIconHolder.visibility = View.VISIBLE
-
-        if (!thumbnail.isNullOrBlank()) {
-            Glide.with(this)
-                .load(thumbnail)
-                .placeholder(R.drawable.ic_token_loading_image)
-                .override(iconSize)
-                .fitCenter()
-                .error(R.drawable.ic_token_no_image)
-                .into(binding.details.icon)
-        } else if (thumbnail == "none") {
-            binding.details.icon.setImageResource(R.drawable.ic_token_no_image)
-        }
-        binding.details.name.text = name
     }
 
     private fun setContractIndexAndSubIndex(token: Token) {
@@ -155,7 +145,19 @@ class TokenDetailsFragment : TokensBaseFragment() {
     }
 
     private fun setDecimals(tokenMetadata: TokenMetadata) {
-        binding.details.decimalsHolder.visibility = View.VISIBLE
-        binding.details.decimals.text = tokenMetadata.decimals.toString()
+        if (tokenMetadata.unique.not()) {
+            binding.details.decimalsHolder.visibility = View.VISIBLE
+            binding.details.decimals.text = tokenMetadata.decimals.toString()
+        }
+    }
+
+    private fun showMatadata(tokenMetadata: TokenMetadata) {
+        binding.details.showRawMetadataHolder.setOnClickListener {
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setMessage(JSONObject(Gson().toJson(tokenMetadata)).toString(4))
+            builder.setPositiveButton(getString(R.string.error_database_close)) { _, _ -> }
+            builder.setCancelable(true)
+            builder.create().show()
+        }
     }
 }
