@@ -1056,6 +1056,7 @@
     <string name="cis_ownership">Ownership</string>
     <string name="cis_owned">Owned</string>
     <string name="cis_not_owned">Not owned</string>
+    <string name="cis_no_tokens_found">No tokens found.</string>
     <string name="cis_no_tokens_selected">You haven\'t selected any tokens.</string>
     <string name="cis_tokens_updated">Token list updated</string>
     <string name="cis_tokens_not_updated">No updates made to token list</string>
