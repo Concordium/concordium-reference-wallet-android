@@ -90,6 +90,8 @@ class SelectTokensFragment : TokensBaseFragment() {
                     it.token.uppercase() == currentFilter
                 }.toTypedArray()
 
+                binding.noTokensFound.visibility = if (tokensAddAdapter.dataSet.isEmpty()) View.VISIBLE else View.INVISIBLE
+
                 _viewModel.searchedTokens.clear()
                 _viewModel.searchedTokens.addAll(tokensAddAdapter.dataSet)
                 tokensAddAdapter.notifyDataSetChanged()
@@ -101,6 +103,7 @@ class SelectTokensFragment : TokensBaseFragment() {
                     tokensAddAdapter.dataSet = _viewModel.tokens.toTypedArray()
                     _viewModel.searchedTokens.clear()
                     tokensAddAdapter.notifyDataSetChanged()
+                    binding.noTokensFound.visibility = View.INVISIBLE
                 }
                 return false
             }
