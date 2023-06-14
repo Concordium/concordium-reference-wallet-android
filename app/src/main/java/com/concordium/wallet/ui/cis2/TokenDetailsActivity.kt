@@ -18,6 +18,8 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.UnitConvertUtil
 import com.concordium.wallet.util.getSerializable
+import com.google.gson.Gson
+import org.json.JSONObject
 import java.math.BigInteger
 
 class TokenDetailsActivity : BaseActivity() {
@@ -78,14 +80,13 @@ class TokenDetailsActivity : BaseActivity() {
         viewModel.tokenData.selectedToken?.let { token ->
             setContractIndexAndSubIndex(token)
             setTokenId(token.token)
-            setBalance(token)
             token.tokenMetadata?.let { tokenMetadata ->
-                setNameAndIcon(tokenMetadata)
                 setImage(tokenMetadata)
-                setOwnership(tokenMetadata, token)
+                setOwnership(token, tokenMetadata)
                 setDescription(tokenMetadata)
                 setTicker(tokenMetadata)
                 setDecimals(tokenMetadata)
+                showMatadata(tokenMetadata)
             }
         }
     }
@@ -112,11 +113,6 @@ class TokenDetailsActivity : BaseActivity() {
         builder.create().show()
     }
 
-    private fun setBalance(token: Token) {
-        binding.includeBalance.tokenAmount.text =
-            CurrencyUtil.formatGTU(token.totalBalance, false, token.tokenMetadata?.decimals ?: 0)
-    }
-
     private fun setTokenId(tokenId: String) {
         if (tokenId.isNotBlank()) {
             binding.includeAbout.tokenIdHolder.visibility = View.VISIBLE
@@ -131,34 +127,17 @@ class TokenDetailsActivity : BaseActivity() {
         }
     }
 
-    private fun setOwnership(tokenMetadata: TokenMetadata, token: Token) {
+    private fun setOwnership(token: Token, tokenMetadata: TokenMetadata) {
+        binding.includeBalance.tokenAmount.text =
+            CurrencyUtil.formatGTU(token.totalBalance, false, token.tokenMetadata?.decimals ?: 0)
+        binding.includeAbout.balanceHolder.visibility = View.GONE
         if (tokenMetadata.unique) {
             binding.includeAbout.ownershipHolder.visibility = View.VISIBLE
-            binding.includeAbout.ownership.text =
-                if (token.totalBalance != BigInteger.ZERO) {
-                    getString(R.string.cis_owned)
-                } else {
-                    getString(R.string.cis_not_owned)
-                }
+            binding.includeAbout.ownership.text = if (token.totalBalance != BigInteger.ZERO)
+                getString(R.string.cis_owned)
+            else
+                getString(R.string.cis_not_owned)
         }
-    }
-
-    private fun setNameAndIcon(tokenMetadata: TokenMetadata) {
-        val name = tokenMetadata.name
-        val thumbnail = tokenMetadata.thumbnail?.url
-        binding.includeAbout.nameAndIconHolder.visibility = View.VISIBLE
-        if (!thumbnail.isNullOrBlank()) {
-            Glide.with(this)
-                .load(thumbnail)
-                .placeholder(R.drawable.ic_token_loading_image)
-                .override(iconSize)
-                .fitCenter()
-                .error(R.drawable.ic_token_no_image)
-                .into(binding.includeAbout.icon)
-        } else {
-            binding.includeAbout.icon.setImageResource(R.drawable.ic_token_no_image)
-        }
-        binding.includeAbout.name.text = name
     }
 
     private fun setContractIndexAndSubIndex(token: Token) {
@@ -208,5 +187,15 @@ class TokenDetailsActivity : BaseActivity() {
 
     private fun showWaiting(waiting: Boolean) {
         binding.includeProgress.progressBar.visibility = if (waiting) View.VISIBLE else View.GONE
+    }
+
+    private fun showMatadata(tokenMetadata: TokenMetadata) {
+        binding.includeAbout.showRawMetadataHolder.setOnClickListener {
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage(JSONObject(Gson().toJson(tokenMetadata)).toString(4))
+            builder.setPositiveButton(getString(R.string.error_database_close)) { _, _ -> }
+            builder.setCancelable(true)
+            builder.create().show()
+        }
     }
 }
