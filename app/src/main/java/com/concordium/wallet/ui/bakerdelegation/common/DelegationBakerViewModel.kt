@@ -801,7 +801,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         Uri.parse("content://" + BuildConfig.PROVIDER_AUTHORITY + File.separator.toString() + FILE_NAME_BAKER_KEYS)
 
     fun getAvalibleBalance() = bakerDelegationData.account?.getAtDisposalWithoutStakedOrScheduled(
-        bakerDelegationData.account?.totalUnshieldedBalance ?: BigInteger.ZERO
+        bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO
     ) ?: BigInteger.ZERO
 
 }
