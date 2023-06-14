@@ -22,7 +22,7 @@ class StakeAmountInputValidator(
         OK, NOT_ENOUGH_FUND, MINIMUM, MAXIMUM, POOL_LIMIT_REACHED, POOL_LIMIT_REACHED_COOLDOWN, UNKNOWN
     }
 
-    fun validate(amount: String?, fee: BigInteger?): StakeError {
+    fun validate(amount: String?, estimatedFee: BigInteger?): StakeError {
 
         if (amount == null) return StakeError.MINIMUM
 
@@ -43,7 +43,7 @@ class StakeAmountInputValidator(
             if (check != StakeError.OK) return check
         }
 
-        check = checkBalance(amount, fee)
+        check = checkBalance(amount, estimatedFee)
         if (check != StakeError.OK) return check
 
         return StakeError.OK
@@ -86,12 +86,15 @@ class StakeAmountInputValidator(
         return StakeError.OK
     }
 
-    private fun checkBalance(amount: String, fee: BigInteger?): StakeError {
-        if (balance == null || atDisposal == null) return StakeError.UNKNOWN
-        if (amount.toBigInteger() + (fee ?: BigInteger.ZERO) > balance || (fee
-                ?: BigInteger.ZERO) > atDisposal
-        ) return StakeError.NOT_ENOUGH_FUND
-        return StakeError.OK
+    private fun checkBalance(amount: String, estimatedFee: BigInteger?): StakeError = when {
+        balance == null || atDisposal == null -> StakeError.UNKNOWN
+
+        balance < amount.toBigInteger() + (estimatedFee ?: BigInteger.ZERO) ->
+            StakeError.NOT_ENOUGH_FUND
+
+        (estimatedFee ?: BigInteger.ZERO) > atDisposal -> StakeError.NOT_ENOUGH_FUND
+
+        else -> StakeError.OK
     }
 
     private fun checkPoolLimit(amount: String): StakeError {

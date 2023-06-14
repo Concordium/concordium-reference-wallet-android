@@ -29,8 +29,19 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.U
 import com.concordium.wallet.data.cryptolib.CreateTransferInput
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.AccountData
+import com.concordium.wallet.data.model.AccountNonce
+import com.concordium.wallet.data.model.BakerDelegationData
+import com.concordium.wallet.data.model.BakerKeys
+import com.concordium.wallet.data.model.BakerPoolInfo
 import com.concordium.wallet.data.model.BakerPoolInfo.Companion.OPEN_STATUS_OPEN_FOR_ALL
+import com.concordium.wallet.data.model.BakerPoolStatus
+import com.concordium.wallet.data.model.DelegationTarget
+import com.concordium.wallet.data.model.SubmissionData
+import com.concordium.wallet.data.model.TransactionOutcome
+import com.concordium.wallet.data.model.TransactionStatus
+import com.concordium.wallet.data.model.TransactionType
+import com.concordium.wallet.data.model.TransferSubmissionStatus
 import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.util.FileUtil
@@ -38,10 +49,14 @@ import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toBigInteger
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.math.BigInteger
-import java.util.*
+import java.util.Date
 import javax.crypto.Cipher
 
 class DelegationBakerViewModel(application: Application) : AndroidViewModel(application) {
@@ -784,4 +799,9 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
 
     fun getTempFileWithPath(): Uri =
         Uri.parse("content://" + BuildConfig.PROVIDER_AUTHORITY + File.separator.toString() + FILE_NAME_BAKER_KEYS)
+
+    fun getAvailableBalance() = bakerDelegationData.account?.getAtDisposalWithoutStakedOrScheduled(
+        bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO
+    ) ?: BigInteger.ZERO
+
 }
