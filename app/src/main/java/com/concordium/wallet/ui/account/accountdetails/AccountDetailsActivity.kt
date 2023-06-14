@@ -433,11 +433,18 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         )
     }
 
-    private fun onSendFundsClicked() {
+    private fun onSendClicked() {
             val intent = Intent(this, SendTokenActivity::class.java)
             intent.putExtra(SendTokenActivity.ACCOUNT, viewModelAccountDetails.account)
             intent.putExtra(SendTokenActivity.TOKEN, TokenUtil.getCCDToken(viewModelAccountDetails.account))
             startActivity(intent)
+    }
+
+    private fun onSendShieldedClicked() {
+        val intent = Intent(this, SendFundsActivity::class.java)
+        intent.putExtra(SendFundsActivity.EXTRA_SHIELDED, true)
+        intent.putExtra(SendFundsActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
+        startActivity(intent)
     }
 
     private fun onShieldFundsClicked() {
@@ -486,7 +493,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
             binding.buttonsSlider.visibility = View.GONE
             binding.buttonsShielded.visibility = View.VISIBLE
             binding.sendShielded.setOnClickListener {
-                onSendFundsClicked()
+                onSendShieldedClicked()
             }
             binding.unshield.setOnClickListener {
                 onShieldFundsClicked()
@@ -504,7 +511,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
             showTokensView()
         }
         binding.buttonsSlider.addButton(R.drawable.ic_send, "3") {
-            onSendFundsClicked()
+            onSendClicked()
         }
         binding.buttonsSlider.addButton(R.drawable.ic_list, "4") {
             binding.buttonsSlider.setMarkerOn("4")

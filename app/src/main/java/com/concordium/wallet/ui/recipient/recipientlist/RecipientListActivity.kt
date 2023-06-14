@@ -17,6 +17,7 @@ import com.concordium.wallet.ui.recipient.recipient.RecipientActivity
 import com.concordium.wallet.uicore.recyclerview.touchlistener.RecyclerTouchListener
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.getSerializable
+import androidx.activity.result.contract.ActivityResultContracts
 
 class RecipientListActivity : BaseActivity() {
     companion object {
@@ -170,8 +171,21 @@ class RecipientListActivity : BaseActivity() {
             RecipientActivity.EXTRA_SELECT_RECIPIENT_MODE,
             viewModel.selectRecipientMode
         )
-        startActivity(intent)
+        getNewRecipient.launch(intent)
     }
+
+    private val getNewRecipient =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            // If we add a new recipient, finish this activity with that recipient as the chosen one
+            if (it.resultCode == Activity.RESULT_OK && it.data != null) {
+                it.data?.let({
+                                 val intent = Intent()
+                                intent.putExtras(it)
+                                setResult(Activity.RESULT_OK, intent)
+                                finish()
+                            })
+            }
+        }
 
     private fun gotoEditRecipient(recipient: Recipient) {
         val intent = Intent(this, RecipientActivity::class.java)

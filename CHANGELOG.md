@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Changed Terms and Conditions screen to new UI.
+- Transferring CCD on Public balance now always uses the new sendToken activity.
 
 ## [1.1.7]
 

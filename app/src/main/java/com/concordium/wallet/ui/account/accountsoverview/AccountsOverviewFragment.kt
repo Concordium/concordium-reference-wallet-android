@@ -31,7 +31,6 @@ import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
-import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.ui.cis2.SendTokenActivity
 import java.math.BigInteger
 

@@ -32,9 +32,9 @@ class RecipientViewModel(application: Application) : AndroidViewModel(applicatio
     private val _finishScreenLiveData = MutableLiveData<Event<Boolean>>()
     val finishScreenLiveData: LiveData<Event<Boolean>>
         get() = _finishScreenLiveData
-    private val _gotoBackToSendFundsLiveData = MutableLiveData<Event<Boolean>>()
-    val gotoBackToSendFundsLiveData: LiveData<Event<Boolean>>
-        get() = _gotoBackToSendFundsLiveData
+    private val _gotoBackToSendLiveData = MutableLiveData<Event<Boolean>>()
+    val gotoBackToSendLiveData: LiveData<Event<Boolean>>
+        get() = _gotoBackToSendLiveData
 
     init {
         val recipientDao = WalletDatabase.getDatabase(application).recipientDao()
@@ -99,7 +99,7 @@ class RecipientViewModel(application: Application) : AndroidViewModel(applicatio
             recipientRepository.insert(recipient)
         }
         if (selectRecipientMode) {
-            _gotoBackToSendFundsLiveData.value = Event(true)
+            _gotoBackToSendLiveData.value = Event(true)
         } else {
             _finishScreenLiveData.value = Event(true)
         }
