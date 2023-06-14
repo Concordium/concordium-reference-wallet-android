@@ -61,7 +61,7 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity() 
             binding.amountDesc.text = getString(R.string.baker_update_enter_new_stake)
         }
 
-        binding.balanceAmount.text = CurrencyUtil.formatGTU(viewModel.getAvalibleBalance(), true)
+        binding.balanceAmount.text = CurrencyUtil.formatGTU(viewModel.getAvailableBalance(), true)
         binding.bakerAmount.text = CurrencyUtil.formatGTU(
             viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount ?: "0",
             true

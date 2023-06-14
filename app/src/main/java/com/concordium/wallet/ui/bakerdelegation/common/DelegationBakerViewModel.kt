@@ -800,7 +800,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     fun getTempFileWithPath(): Uri =
         Uri.parse("content://" + BuildConfig.PROVIDER_AUTHORITY + File.separator.toString() + FILE_NAME_BAKER_KEYS)
 
-    fun getAvalibleBalance() = bakerDelegationData.account?.getAtDisposalWithoutStakedOrScheduled(
+    fun getAvailableBalance() = bakerDelegationData.account?.getAtDisposalWithoutStakedOrScheduled(
         bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO
     ) ?: BigInteger.ZERO
 
