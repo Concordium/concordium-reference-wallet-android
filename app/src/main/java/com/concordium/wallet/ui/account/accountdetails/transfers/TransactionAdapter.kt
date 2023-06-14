@@ -41,31 +41,31 @@ class TransactionAdapter(
     override fun onBindItemViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         with(holder as ItemViewHolder) {
             val transactionItem = items[position] as TransactionItem
-            val transaction = transactionItem.transaction as Transaction
-            scope.launch {
-                TransactionViewHelper.show(
-                    accountUpdater,
-                    transaction,
-                    binding.titleTextview,
-                    binding.subheaderTextview,
-                    binding.totalTextview,
-                    binding.costTextview,
-                    binding.memoTextview,
-                    binding.amountTextview,
-                    binding.alertImageview,
-                    binding.statusImageview,
-                    binding.lockImageview,
-                    isShieldedAccount,
-                    decryptCallback = object : OnClickListenerInterface {
-                        override fun onDecrypt() {
-                            decryptListener.onDecrypt(transaction)
-                        }
+                    val transaction = transactionItem.transaction as Transaction
+                    scope.launch {
+                        TransactionViewHelper.show(
+                            accountUpdater,
+                            transaction,
+                            binding.titleTextview,
+                            binding.subheaderTextview,
+                            binding.totalTextview,
+                            binding.costTextview,
+                            binding.memoTextview,
+                            binding.amountTextview,
+                            binding.alertImageview,
+                            binding.statusImageview,
+                            binding.lockImageview,
+                            isShieldedAccount,
+                            decryptCallback = object : OnClickListenerInterface {
+                                override fun onDecrypt() {
+                                    decryptListener.onDecrypt(transaction)
+                                }
+                            }
+                        )
                     }
-                )
-            }
 
-            if (onItemClickListener != null) {
-                binding.itemRootLayout.setOnClickListener {
+                    if (onItemClickListener != null) {
+                        binding.itemRootLayout.setOnClickListener {
                     onItemClickListener?.onItemClicked(transaction)
                 }
             }
