@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.cis2.lookfornew
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,10 +9,14 @@ import com.bumptech.glide.Glide
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TokenMetadata
+import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentDialogTokenDetailsBinding
 import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.util.UnitConvertUtil
+import java.math.BigInteger
+import com.google.gson.Gson
+import org.json.JSONObject
 
 class TokenDetailsFragment : TokensBaseFragment() {
     private var _binding: FragmentDialogTokenDetailsBinding? = null
@@ -54,15 +59,16 @@ class TokenDetailsFragment : TokensBaseFragment() {
             _viewModel.stepPage(-1)
         }
         _viewModel.chooseTokenInfo.observe(viewLifecycleOwner) { token ->
-            setContractIndexAndSubIndex(token)
             setTokenId(token.token)
             token.tokenMetadata?.let { tokenMetadata ->
-                setNameAndIcon(tokenMetadata)
+                setName(tokenMetadata)
                 setImage(tokenMetadata)
-                setOwnership(tokenMetadata)
+                setBalance(token, tokenMetadata)
                 setDescription(tokenMetadata)
-                setTicker(tokenMetadata)
+                setContractIndexAndSubIndex(token)
                 setDecimals(tokenMetadata)
+                setTicker(tokenMetadata)
+                showMetadata(tokenMetadata)
             }
         }
     }
@@ -70,40 +76,42 @@ class TokenDetailsFragment : TokensBaseFragment() {
     private fun setTokenId(tokenId: String) {
         if (tokenId.isNotBlank()) {
             binding.details.tokenIdHolder.visibility = View.VISIBLE
-            binding.details.tokenId.text= tokenId
+            binding.details.tokenId.text = tokenId
+        } else {
+            binding.details.tokenIdHolder.visibility = View.GONE
+            binding.details.tokenId.text = ""
         }
+    }
+
+    private fun setName(tokenMetadata: TokenMetadata) {
+        binding.details.nameAndIconHolder.visibility = View.VISIBLE
+        binding.details.name.text = tokenMetadata.name
     }
 
     private fun setDescription(tokenMetadata: TokenMetadata) {
         if (tokenMetadata.description.isNotBlank()) {
             binding.details.descriptionHolder.visibility = View.VISIBLE
             binding.details.description.text = tokenMetadata.description
+        } else {
+            binding.details.descriptionHolder.visibility = View.GONE
+            binding.details.description.text = ""
         }
     }
 
-    private fun setOwnership(tokenMetadata: TokenMetadata) {
+    private fun setBalance(token: Token, tokenMetadata: TokenMetadata) {
         if (tokenMetadata.unique) {
+            binding.details.balanceHolder.visibility = View.GONE
             binding.details.ownershipHolder.visibility = View.VISIBLE
+            binding.details.ownership.text = if (token.totalBalance != BigInteger.ZERO)
+                getString(R.string.cis_owned)
+            else
+                getString(R.string.cis_not_owned)
+        } else {
+            binding.details.ownershipHolder.visibility = View.GONE
+            binding.details.balanceHolder.visibility = View.VISIBLE
+            binding.details.balance.text =
+                CurrencyUtil.formatGTU(token.totalBalance, false, tokenMetadata.decimals)
         }
-    }
-
-    private fun setNameAndIcon(tokenMetadata: TokenMetadata) {
-        val name = tokenMetadata.name
-        val thumbnail = tokenMetadata.thumbnail?.url
-        binding.details.nameAndIconHolder.visibility = View.VISIBLE
-
-        if (!thumbnail.isNullOrBlank()) {
-            Glide.with(this)
-                .load(thumbnail)
-                .placeholder(R.drawable.ic_token_loading_image)
-                .override(iconSize)
-                .fitCenter()
-                .error(R.drawable.ic_token_no_image)
-                .into(binding.details.icon)
-        } else if (thumbnail == "none") {
-            binding.details.icon.setImageResource(R.drawable.ic_token_no_image)
-        }
-        binding.details.name.text = name
     }
 
     private fun setContractIndexAndSubIndex(token: Token) {
@@ -111,20 +119,21 @@ class TokenDetailsFragment : TokensBaseFragment() {
 
         if (tokenIndex.isNotBlank()) {
             binding.details.contractIndexHolder.visibility = View.VISIBLE
-            binding.details.contractIndex.text = token.contractIndex
             if (token.subIndex.isNotBlank()) {
                 val combinedInfo = "${tokenIndex}, ${token.subIndex}"
                 binding.details.contractIndex.text = combinedInfo
-            }else{
+            } else {
                 binding.details.contractIndex.text = tokenIndex
             }
+        } else {
+            binding.details.contractIndexHolder.visibility = View.GONE
+            binding.details.contractIndex.text = ""
         }
     }
 
     private fun setImage(tokenMetadata: TokenMetadata) {
         if (!tokenMetadata.display?.url.isNullOrBlank()) {
             binding.details.imageHolder.visibility = View.VISIBLE
-
             Glide.with(this)
                 .load(tokenMetadata.display?.url)
                 .placeholder(R.drawable.ic_token_loading_image)
@@ -132,6 +141,9 @@ class TokenDetailsFragment : TokensBaseFragment() {
                 .fitCenter()
                 .error(R.drawable.ic_token_no_image)
                 .into(binding.details.image)
+        } else {
+            binding.details.imageHolder.visibility = View.GONE
+            binding.details.image.setImageResource(android.R.color.transparent)
         }
     }
 
@@ -139,11 +151,29 @@ class TokenDetailsFragment : TokensBaseFragment() {
         if (!tokenMetadata.symbol.isNullOrBlank()) {
             binding.details.tokenHolder.visibility = View.VISIBLE
             binding.details.token.text = tokenMetadata.symbol
+        } else {
+            binding.details.tokenHolder.visibility = View.GONE
+            binding.details.token.text = ""
         }
     }
 
     private fun setDecimals(tokenMetadata: TokenMetadata) {
-        binding.details.decimalsHolder.visibility = View.VISIBLE
-        binding.details.decimals.text = tokenMetadata.decimals.toString()
+        if (tokenMetadata.unique.not()) {
+            binding.details.decimalsHolder.visibility = View.VISIBLE
+            binding.details.decimals.text = tokenMetadata.decimals.toString()
+        } else {
+            binding.details.decimalsHolder.visibility = View.GONE
+            binding.details.decimals.text = ""
+        }
+    }
+
+    private fun showMetadata(tokenMetadata: TokenMetadata) {
+        binding.details.showRawMetadataHolder.setOnClickListener {
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setMessage(JSONObject(Gson().toJson(tokenMetadata)).toString(4))
+            builder.setPositiveButton(getString(R.string.error_database_close)) { _, _ -> }
+            builder.setCancelable(true)
+            builder.create().show()
+        }
     }
 }

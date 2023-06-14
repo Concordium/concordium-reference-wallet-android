@@ -173,9 +173,7 @@ object TransactionViewHelper {
                             showTransactionFeeText()
                         }
             }
-        }
-        // Shielded balance
-        else {
+        } else {// Shielded balance
             // remote transactions
             if (ta.isRemoteTransaction()) {
                 // simpleTransfer - NOT shown
@@ -222,38 +220,38 @@ object TransactionViewHelper {
                                     }
                         }
             }
+        }
 
 
-            // Alert image
-            if (ta.transactionStatus == TransactionStatus.ABSENT ||
-                (ta.transactionStatus == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Reject) ||
-                (ta.transactionStatus == TransactionStatus.FINALIZED && ta.outcome == TransactionOutcome.Reject)
-            ) {
-                alertImageView.visibility = View.VISIBLE
-                titleTextView.setTextColor(colorGrey)
-            } else {
-                alertImageView.visibility = View.GONE
-                titleTextView.setTextColor(colorBlack)
-            }
+        // Alert image
+        if (ta.transactionStatus == TransactionStatus.ABSENT ||
+            (ta.transactionStatus == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Reject) ||
+            (ta.transactionStatus == TransactionStatus.FINALIZED && ta.outcome == TransactionOutcome.Reject)
+        ) {
+            alertImageView.visibility = View.VISIBLE
+            titleTextView.setTextColor(colorGrey)
+        } else {
+            alertImageView.visibility = View.GONE
+            titleTextView.setTextColor(colorBlack)
+        }
 
-            // Status image
-            if (ta.transactionStatus == TransactionStatus.RECEIVED ||
-                (ta.transactionStatus == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Ambiguous)
-            ) {
-                statusImageView.setImageDrawable(
-                    ContextCompat.getDrawable(statusImageView.context, R.drawable.ic_time)
-                )
-            } else if (ta.transactionStatus == TransactionStatus.COMMITTED) {
-                statusImageView.setImageDrawable(
-                    ContextCompat.getDrawable(statusImageView.context, R.drawable.ic_ok)
-                )
-            } else if (ta.transactionStatus == TransactionStatus.FINALIZED) {
-                statusImageView.setImageDrawable(
-                    ContextCompat.getDrawable(statusImageView.context, R.drawable.ic_ok_x2)
-                )
-            } else {
-                statusImageView.setImageDrawable(null)
-            }
+        // Status image
+        if (ta.transactionStatus == TransactionStatus.RECEIVED ||
+            (ta.transactionStatus == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Ambiguous)
+        ) {
+            statusImageView.setImageDrawable(
+                ContextCompat.getDrawable(statusImageView.context, R.drawable.ic_time)
+            )
+        } else if (ta.transactionStatus == TransactionStatus.COMMITTED) {
+            statusImageView.setImageDrawable(
+                ContextCompat.getDrawable(statusImageView.context, R.drawable.ic_ok)
+            )
+        } else if (ta.transactionStatus == TransactionStatus.FINALIZED) {
+            statusImageView.setImageDrawable(
+                ContextCompat.getDrawable(statusImageView.context, R.drawable.ic_ok_x2)
+            )
+        } else {
+            statusImageView.setImageDrawable(null)
         }
     }
 

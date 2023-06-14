@@ -32,8 +32,7 @@
         android:layout_marginTop="@dimen/activity_horizontal_margin_double"
         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
         app:queryHint="@string/cis_search" />
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tokens_found"
+    <androidx.cardview.widget.CardView
         style="@style/Layout.Card"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -43,7 +42,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search"
         app:layout_constraintBottom_toTopOf="@+id/non_selected"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"
+    >
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/tokens_found"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+        />
+        <TextView
+            android:id="@+id/no_tokens_found"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:text="@string/cis_no_tokens_found"
+            android:visibility="gone" />
+    </androidx.cardview.widget.CardView>
     <TextView
         android:id="@+id/non_selected"
         style="@style/TextView.Standard.Error"

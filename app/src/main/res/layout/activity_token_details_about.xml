@@ -41,29 +41,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+
+                android:paddingTop="@dimen/activity_horizontal_margin"
                 android:visibility="gone"
                 tools:visibility="visible">
 
-                <TextView
-                    android:id="@+id/image_title"
-                    style="@style/TextView.XSmall.Light"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-                    android:layout_marginTop="@dimen/activity_vertical_margin_half"
-                    android:text="@string/cis_image" />
-
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/image"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
                     android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                     android:layout_marginBottom="@dimen/activity_vertical_margin_half"
                     android:scaleType="fitCenter"
                     tools:src="@drawable/ic_icon_qr"
                     tools:tint="@color/theme_blue" />
 
-                <View style="@style/Divider" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -80,41 +72,22 @@
                     android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                     android:layout_marginVertical="@dimen/activity_vertical_margin_half">
 
-                    <TextView
-                        android:id="@+id/name_title"
-                        style="@style/TextView.XSmall.Light"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/cis_name_and_icon"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/name"
                         style="@style/TextView.Standard"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/name_title"
-                        app:layout_constraintEnd_toStartOf="@id/icon"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/name_title"
+                        app:layout_constraintTop_toTopOf="parent"
                         tools:text="Global Transaction Unit" />
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/icon"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:src="@drawable/ic_icon_qr"
-                        tools:tint="@color/theme_blue" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <View style="@style/Divider" />
             </androidx.appcompat.widget.LinearLayoutCompat>
+
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/ownership_holder"
                 android:layout_width="match_parent"
@@ -139,6 +112,34 @@
                     android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                     android:layout_marginBottom="@dimen/activity_vertical_margin_half"
                     android:text="@string/cis_not_owned" />
+
+                <View style="@style/Divider" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/balance_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TextView
+                    style="@style/TextView.XSmall.Light"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="@dimen/activity_vertical_margin_half"
+                    android:text="@string/account_details_toggle_balance" />
+
+                <TextView
+                    android:id="@+id/balance"
+                    style="@style/TextView.Standard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin_half"
+                    tools:text="2" />
 
                 <View style="@style/Divider" />
             </androidx.appcompat.widget.LinearLayoutCompat>
@@ -280,6 +281,24 @@
                     android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                     android:layout_marginBottom="@dimen/activity_vertical_margin_half"
                     tools:text="6" />
+
+                <View style="@style/Divider" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/show_raw_metadata_holder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/show_raw_metadata"
+                    style="@style/TextView.Standard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                    android:layout_marginVertical="@dimen/activity_vertical_margin_half"
+                    android:text="@string/show_raw_metadata" />
 
                 <View style="@style/Divider" />
             </androidx.appcompat.widget.LinearLayoutCompat>
