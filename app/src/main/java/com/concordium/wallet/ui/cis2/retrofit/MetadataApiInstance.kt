@@ -23,7 +23,7 @@ class MetadataApiInstance {
             val client = OkHttpClient.Builder()
                 .addInterceptor({ chain ->
                                     val request = chain.request();
-                                    // Extract the checksum parameter that we added to the url, so that we can verify the response body matches
+                                    // Extract the checksum parameter so that we can verify the response body matches
                                     // The parameter is added to the url in safeMetadataCall, so that we can access it in this interceptor, before the body is consumed by the parser.
                                     val checksum = request.url.queryParameter(METADATA_CHECKSUM_FAKE_PARAMETER)
                                     // Rebuild the url without the checksum parameter
@@ -31,7 +31,7 @@ class MetadataApiInstance {
                                     val response = chain.proceed(request.newBuilder().url(url).build())
                                     // If a checksum was supplied, then we verify that the body matches
                                     if (checksum != null) {
-                                        val rawBody = response.body
+                                        val rawBody = response.peekBody(Long.MAX_VALUE)
                                         if (rawBody != null) {
                                             val hash = HashUtil.sha256(rawBody.bytes())
                                             if (hash != checksum) {
