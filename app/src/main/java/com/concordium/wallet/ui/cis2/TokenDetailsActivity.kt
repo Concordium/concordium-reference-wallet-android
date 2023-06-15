@@ -19,6 +19,7 @@ import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.UnitConvertUtil
 import com.concordium.wallet.util.getSerializable
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import org.json.JSONObject
 import java.math.BigInteger
 
@@ -191,8 +192,12 @@ class TokenDetailsActivity : BaseActivity() {
 
     private fun showMatadata(tokenMetadata: TokenMetadata) {
         binding.includeAbout.showRawMetadataHolder.setOnClickListener {
+            val gson = GsonBuilder()
+                .setPrettyPrinting()
+                .disableHtmlEscaping()
+                .create()
             val builder = AlertDialog.Builder(this)
-            builder.setMessage(JSONObject(Gson().toJson(tokenMetadata)).toString(4))
+            builder.setMessage(gson.toJson(tokenMetadata))
             builder.setPositiveButton(getString(R.string.error_database_close)) { _, _ -> }
             builder.setCancelable(true)
             builder.create().show()
