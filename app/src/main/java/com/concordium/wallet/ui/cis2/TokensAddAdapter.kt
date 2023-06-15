@@ -66,7 +66,7 @@ class TokensAddAdapter(
         val tokenBalance = CurrencyUtil.formatGTU(
             token.totalBalance,
             false,
-            token.tokenMetadata?.decimals ?: 6
+            token.tokenMetadata?.decimals ?: 0
         )
 
         holder.binding.subTitle.text = context.getString(R.string.cis_search_balance, tokenBalance)

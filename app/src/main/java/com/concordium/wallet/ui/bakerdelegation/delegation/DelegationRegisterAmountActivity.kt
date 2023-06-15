@@ -92,9 +92,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             onContinueClicked()
         }
 
-        binding.balanceAmount.text = CurrencyUtil.formatGTU(
-            viewModel.bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO, true
-        )
+        binding.balanceAmount.text = CurrencyUtil.formatGTU(viewModel.getAvailableBalance(), true)
         binding.delegationAmount.text = CurrencyUtil.formatGTU(BigInteger.ZERO, true)
         viewModel.bakerDelegationData.account?.let { account ->
             account.accountDelegation?.let { accountDelegation ->
@@ -158,16 +156,16 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
 
     override fun getStakeAmountInputValidator(): StakeAmountInputValidator {
         return StakeAmountInputValidator(
-            if (viewModel.isUpdatingDelegation()) "0" else "1",
-            null,
-            viewModel.bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO,
-            viewModel.bakerDelegationData.account?.getAtDisposal(),
-            viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,
-            viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapitalCap,
-            viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount,
-            viewModel.isInCoolDown(),
-            viewModel.bakerDelegationData.account?.accountDelegation?.delegationTarget?.bakerId,
-            viewModel.bakerDelegationData.poolId
+            minimumValue = if (viewModel.isUpdatingDelegation()) "0" else "1",
+            maximumValue = null,
+            balance = viewModel.bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO,
+            atDisposal = viewModel.atDisposal(),
+            currentPool = viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,
+            poolLimit = viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapitalCap,
+            previouslyStakedInPool = viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount,
+            isInCoolDown = viewModel.isInCoolDown(),
+            oldPoolId = viewModel.bakerDelegationData.account?.accountDelegation?.delegationTarget?.bakerId,
+            newPoolId = viewModel.bakerDelegationData.poolId
         )
     }
 
@@ -200,7 +198,8 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
 
         val stakeAmountInputValidator = getStakeAmountInputValidator()
         val stakeError = stakeAmountInputValidator.validate(
-            CurrencyUtil.toGTUValue(binding.amount.text.toString())?.toString(), validateFee
+            CurrencyUtil.toGTUValue(binding.amount.text.toString())?.toString(),
+            validateFee
         )
         if (stakeError != StakeAmountInputValidator.StakeError.OK) {
             binding.amountError.text = stakeAmountInputValidator.getErrorText(this, stakeError)

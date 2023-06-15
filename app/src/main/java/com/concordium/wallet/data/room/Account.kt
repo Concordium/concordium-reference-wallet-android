@@ -144,8 +144,4 @@ data class Account(
             BigInteger.ZERO
         return BigInteger.ZERO.max(totalBalance - subtract)
     }
-
-    fun getAtDisposal(): BigInteger {
-        return finalizedBalance - finalizedAccountReleaseSchedule?.total.toBigInteger()
-    }
 }

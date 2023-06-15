@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.Observer
 import com.concordium.wallet.R
 import com.concordium.wallet.data.backend.repository.ProxyRepository.Companion.REGISTER_BAKER
 import com.concordium.wallet.data.util.CurrencyUtil
@@ -62,10 +61,7 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity() 
             binding.amountDesc.text = getString(R.string.baker_update_enter_new_stake)
         }
 
-        binding.balanceAmount.text = CurrencyUtil.formatGTU(
-            viewModel.bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO,
-            true
-        )
+        binding.balanceAmount.text = CurrencyUtil.formatGTU(viewModel.getAvailableBalance(), true)
         binding.bakerAmount.text = CurrencyUtil.formatGTU(
             viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount ?: "0",
             true
@@ -180,16 +176,16 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity() 
 
     override fun getStakeAmountInputValidator(): StakeAmountInputValidator {
         return StakeAmountInputValidator(
-            viewModel.bakerDelegationData.chainParameters?.minimumEquityCapital,
-            viewModel.getStakeInputMax(),
-            viewModel.bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO,
-            viewModel.bakerDelegationData.account?.getAtDisposal(),
-            viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,
-            null,
-            viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount,
-            viewModel.isInCoolDown(),
-            viewModel.bakerDelegationData.account?.accountDelegation?.delegationTarget?.bakerId,
-            viewModel.bakerDelegationData.poolId
+            minimumValue = viewModel.bakerDelegationData.chainParameters?.minimumEquityCapital,
+            maximumValue = viewModel.getStakeInputMax(),
+            balance = viewModel.bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO,
+            atDisposal = viewModel.atDisposal(),
+            currentPool = viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,
+            poolLimit = null,
+            previouslyStakedInPool = viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount,
+            isInCoolDown = viewModel.isInCoolDown(),
+            oldPoolId = viewModel.bakerDelegationData.account?.accountDelegation?.delegationTarget?.bakerId,
+            newPoolId = viewModel.bakerDelegationData.poolId
         )
     }
 
