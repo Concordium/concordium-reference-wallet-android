@@ -28,6 +28,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.async
 import java.io.Serializable
 import java.math.BigInteger
+import com.concordium.wallet.util.TokenUtil
 
 data class TokenData(
     var account: Account? = null,
@@ -351,20 +352,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         val atDisposal =
             account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
                 ?: BigInteger.ZERO
-        return Token(
-            "",
-            "CCD",
-            "",
-            null,
-            false,
-            "",
-            "",
-            true,
-            account?.totalBalance ?: BigInteger.ZERO,
-            atDisposal,
-            "",
-            "CCD"
-        )
+        return TokenUtil.getCCDToken(account)
     }
 
     private suspend fun loadTokensMetadataUrls(tokens: List<Token>): Boolean {

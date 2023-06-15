@@ -17,6 +17,7 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.util.TokenUtil
 import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
@@ -432,33 +433,18 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         )
     }
 
-    private fun onSendFundsClicked() {
-        if (binding.tokens.visibility == View.VISIBLE) {
+    private fun onSendClicked() {
             val intent = Intent(this, SendTokenActivity::class.java)
             intent.putExtra(SendTokenActivity.ACCOUNT, viewModelAccountDetails.account)
-            intent.putExtra(
-                SendTokenActivity.TOKEN, Token(
-                    "", "", "",
-                    null,
-                    false,
-                    "",
-                    "",
-                    true,
-                    viewModelAccountDetails.account.totalUnshieldedBalance,
-                    viewModelAccountDetails.account.getAtDisposalWithoutStakedOrScheduled(
-                        viewModelAccountDetails.account.totalUnshieldedBalance
-                    ),
-                    "",
-                    "CCD"
-                )
-            )
+            intent.putExtra(SendTokenActivity.TOKEN, TokenUtil.getCCDToken(viewModelAccountDetails.account))
             startActivity(intent)
-        } else {
-            val intent = Intent(this, SendFundsActivity::class.java)
-            intent.putExtra(SendFundsActivity.EXTRA_SHIELDED, viewModelAccountDetails.isShielded)
-            intent.putExtra(SendFundsActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
-            startActivity(intent)
-        }
+    }
+
+    private fun onSendShieldedClicked() {
+        val intent = Intent(this, SendFundsActivity::class.java)
+        intent.putExtra(SendFundsActivity.EXTRA_SHIELDED, true)
+        intent.putExtra(SendFundsActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
+        startActivity(intent)
     }
 
     private fun onShieldFundsClicked() {
@@ -507,7 +493,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
             binding.buttonsSlider.visibility = View.GONE
             binding.buttonsShielded.visibility = View.VISIBLE
             binding.sendShielded.setOnClickListener {
-                onSendFundsClicked()
+                onSendShieldedClicked()
             }
             binding.unshield.setOnClickListener {
                 onShieldFundsClicked()
@@ -525,7 +511,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
             showTokensView()
         }
         binding.buttonsSlider.addButton(R.drawable.ic_send, "3") {
-            onSendFundsClicked()
+            onSendClicked()
         }
         binding.buttonsSlider.addButton(R.drawable.ic_list, "4") {
             binding.buttonsSlider.setMarkerOn("4")
