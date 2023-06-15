@@ -61,7 +61,7 @@ class LookForNewTokensFragment : BaseBottomSheetDialogFragment() {
 
     private fun initObservers() {
         _viewModel.lookForTokens.observe(viewLifecycleOwner) {
-            if (it != TokensViewModel.TOKENS_NOT_LOADED
+            if (it == TokensViewModel.TOKENS_OK
                 && _viewModel.tokens.isNotEmpty()
                 && binding.viewPager.currentItem == 0
             ) {

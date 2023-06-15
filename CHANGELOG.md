@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix a crash when inputting a too large amount as the stake for delegation or baking.
+- Fix validation of token metadata when looking for new tokens.
 - Fix an issue where another tokens image was sometimes shown for tokens without an image.
 - Fix when searching for a token, the "no tokens found" display did not appear.
 - Fixed number of issues with 
