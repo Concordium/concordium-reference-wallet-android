@@ -57,7 +57,15 @@ class TokensAddAdapter(
                 .fitCenter()
                 .error(R.drawable.ic_token_no_image)
                 .into(holder.binding.tokenIcon)
-        } else {
+        } else if (tokenMetadata?.display?.url?.isNotEmpty() == true) {
+            Glide.with(context)
+                .load(tokenMetadata.display?.url)
+                .placeholder(R.drawable.ic_token_loading_image)
+                .override(iconSize)
+                .fitCenter()
+                .error(R.drawable.ic_token_no_image)
+                .into(holder.binding.tokenIcon)
+        }else {
             holder.binding.tokenIcon.setImageResource(R.drawable.ic_token_no_image)
         }
 

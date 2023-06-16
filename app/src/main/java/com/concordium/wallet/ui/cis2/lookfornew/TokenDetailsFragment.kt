@@ -14,10 +14,8 @@ import com.concordium.wallet.databinding.FragmentDialogTokenDetailsBinding
 import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.util.UnitConvertUtil
-import java.math.BigInteger
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import org.json.JSONObject
+import java.math.BigInteger
 
 class TokenDetailsFragment : TokensBaseFragment() {
     private var _binding: FragmentDialogTokenDetailsBinding? = null
@@ -133,8 +131,9 @@ class TokenDetailsFragment : TokensBaseFragment() {
     }
 
     private fun setImage(tokenMetadata: TokenMetadata) {
-        if (!tokenMetadata.display?.url.isNullOrBlank()) {
+        if (tokenMetadata.display?.url?.isNotEmpty() == true) {
             binding.details.imageHolder.visibility = View.VISIBLE
+            binding.details.icon.visibility = View.GONE
             Glide.with(this)
                 .load(tokenMetadata.display?.url)
                 .placeholder(R.drawable.ic_token_loading_image)
@@ -142,8 +141,19 @@ class TokenDetailsFragment : TokensBaseFragment() {
                 .fitCenter()
                 .error(R.drawable.ic_token_no_image)
                 .into(binding.details.image)
+        } else if (tokenMetadata.thumbnail?.url?.isNotEmpty() == true) {
+            binding.details.imageHolder.visibility = View.GONE
+            binding.details.icon.visibility = View.VISIBLE
+            Glide.with(this)
+                .load(tokenMetadata.thumbnail?.url)
+                .placeholder(R.drawable.ic_token_loading_image)
+                .override(iconSize)
+                .fitCenter()
+                .error(R.drawable.ic_token_no_image)
+                .into(binding.details.icon)
         } else {
             binding.details.imageHolder.visibility = View.GONE
+            binding.details.icon.visibility = View.GONE
             binding.details.image.setImageResource(android.R.color.transparent)
         }
     }
