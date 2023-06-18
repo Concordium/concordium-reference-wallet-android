@@ -176,8 +176,13 @@ class TokenDetailsActivity : BaseActivity() {
     }
 
     private fun setDecimals(tokenMetadata: TokenMetadata) {
-        binding.includeAbout.decimalsHolder.visibility = View.VISIBLE
-        binding.includeAbout.decimals.text = tokenMetadata.decimals.toString()
+        if (tokenMetadata.unique.not()) {
+            binding.includeAbout.decimalsHolder.visibility = View.VISIBLE
+            binding.includeAbout.decimals.text = tokenMetadata.decimals.toString()
+        } else {
+            binding.includeAbout.decimalsHolder.visibility = View.GONE
+            binding.includeAbout.decimals.text = ""
+        }
     }
 
     private fun initObservers() {
