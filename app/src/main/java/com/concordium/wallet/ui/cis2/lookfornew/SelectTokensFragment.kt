@@ -78,7 +78,10 @@ class SelectTokensFragment : TokensBaseFragment() {
                 val totalItemCount = layoutManager.itemCount
                 val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
                 if (_viewModel.tokens.size > 0 && visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount > 3) {
-                    _viewModel.lookForTokens(_viewModel.tokenData.account!!.address, from = _viewModel.tokens[_viewModel.tokens.size - 1].id)
+                    _viewModel.lookForTokens(
+                        _viewModel.tokenData.account!!.address,
+                        from = _viewModel.tokens[_viewModel.tokens.size - 1].id
+                    )
                 }
             }
         })
@@ -90,7 +93,8 @@ class SelectTokensFragment : TokensBaseFragment() {
                     it.token.uppercase() == currentFilter
                 }.toTypedArray()
 
-                binding.noTokensFound.visibility = if (tokensAddAdapter.dataSet.isEmpty()) View.VISIBLE else View.INVISIBLE
+                binding.noTokensFound.visibility =
+                    if (tokensAddAdapter.dataSet.isEmpty()) View.VISIBLE else View.INVISIBLE
 
                 _viewModel.searchedTokens.clear()
                 _viewModel.searchedTokens.addAll(tokensAddAdapter.dataSet)
@@ -145,13 +149,15 @@ class SelectTokensFragment : TokensBaseFragment() {
                 binding.updateWithTokens.text = getString(R.string.cis_update_tokens)
             else
                 binding.updateWithTokens.text = getString(R.string.cis_add_tokens)
-            binding.updateWithTokens.isEnabled = true
         }
         _viewModel.nonSelected.observe(viewLifecycleOwner) { nonSelected ->
             if (nonSelected)
                 binding.nonSelected.visibility = View.VISIBLE
             else
                 binding.nonSelected.visibility = View.INVISIBLE
+        }
+        _viewModel.selectedTokens.observe(viewLifecycleOwner) {
+            binding.updateWithTokens.isEnabled = it.isNotEmpty()
         }
     }
 }

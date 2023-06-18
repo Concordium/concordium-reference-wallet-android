@@ -55,6 +55,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     var tokens: MutableList<Token> = mutableListOf()
     var searchedTokens: MutableList<Token> = mutableListOf()
 
+    val selectedTokens: MutableLiveData<List<Token>> by lazy { MutableLiveData<List<Token>>() }
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val chooseTokenInfo: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
@@ -174,6 +175,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         tokens.firstOrNull { it.id == token.id }?.let {
             it.isSelected = it.isSelected == false
         }
+        selectedTokens.value = tokens.filter { it.isSelected }
     }
 
     fun hasExistingTokens() {
