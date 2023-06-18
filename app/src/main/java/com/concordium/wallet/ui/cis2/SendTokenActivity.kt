@@ -53,6 +53,7 @@ class SendTokenActivity : BaseActivity() {
         viewModel.chooseToken.postValue(intent.getSerializable(TOKEN, Token::class.java))
         initObservers()
         initViews()
+        enableSend()
     }
 
     override fun onDestroy() {
@@ -90,13 +91,6 @@ class SendTokenActivity : BaseActivity() {
         } else {
             binding.send.isEnabled = false
             viewModel.sendTokenData.receiver = receiver
-            binding.receiverName.let {
-                if(it.visibility == View.VISIBLE){
-                    viewModel.sendTokenData.receiverName = it.text?.toString()
-                }else{
-                    viewModel.sendTokenData.receiverName = null
-                }
-            }
             gotoReceipt()
         }
     }
@@ -148,6 +142,7 @@ class SendTokenActivity : BaseActivity() {
             viewModel.sendTokenData.amount.signum() > 0
                     && viewModel.sendTokenData.fee != null
                     && viewModel.hasEnoughFunds()
+                    && viewModel.sendTokenData.receiver.isNotEmpty()
         return binding.send.isEnabled
     }
 
@@ -203,10 +198,7 @@ class SendTokenActivity : BaseActivity() {
             if (result.resultCode == Activity.RESULT_OK) {
                 result.data?.getSerializable(RecipientListActivity.EXTRA_RECIPIENT, Recipient::class.java)?.let { recipient ->
                     binding.receiver.text = recipient.address
-                    binding.receiverName.let {view ->
-                        view.visibility = View.VISIBLE
-                        view.text = recipient.name
-                    }
+                    binding.receiverName.visibility = View.VISIBLE
                     receiverAddressSet()
                 }
             }

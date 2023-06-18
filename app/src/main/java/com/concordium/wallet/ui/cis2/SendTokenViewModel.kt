@@ -47,6 +47,7 @@ import java.io.Serializable
 import java.math.BigInteger
 import javax.crypto.Cipher
 
+@Suppress("SerialVersionUIDInSerializableClass")
 data class SendTokenData(
     var token: Token? = null,
     var account: Account? = null,
@@ -67,6 +68,7 @@ data class SendTokenData(
     var newSelfEncryptedAmount: String? = null
 ): Serializable
 
+@Suppress("SerialVersionUIDInSerializableClass")
 class SendTokenViewModel(application: Application) : AndroidViewModel(application), Serializable {
     companion object {
         const val SEND_TOKEN_DATA = "SEND_TOKEN_DATA"
