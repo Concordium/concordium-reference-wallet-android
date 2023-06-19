@@ -40,7 +40,6 @@ class LookForNewTokensFragment : BaseBottomSheetDialogFragment() {
 
     override fun onResume() {
         super.onResume()
-        binding.viewPager.currentItem = 0
     }
 
     override fun onDestroyView() {
