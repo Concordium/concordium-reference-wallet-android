@@ -28,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed issue where owned tokens are not reflected in search result list and details screens
 - When adding a new token the token details would in some cases show information from another token.
 - Fixed UI bug that showed decimal places for NFT tokens
+- Fixed issue where the token details screen would not show the correct token image.
+
 ### Changed
 
 - Changed Terms and Conditions screen to new UI.

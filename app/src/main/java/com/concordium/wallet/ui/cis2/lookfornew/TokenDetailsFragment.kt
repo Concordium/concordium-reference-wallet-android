@@ -131,30 +131,40 @@ class TokenDetailsFragment : TokensBaseFragment() {
     }
 
     private fun setImage(tokenMetadata: TokenMetadata) {
-        if (tokenMetadata.display?.url?.isNotEmpty() == true) {
-            binding.details.imageHolder.visibility = View.VISIBLE
-            binding.details.icon.visibility = View.GONE
-            Glide.with(this)
-                .load(tokenMetadata.display?.url)
-                .placeholder(R.drawable.ic_token_loading_image)
-                .override(iconSize)
-                .fitCenter()
-                .error(R.drawable.ic_token_no_image)
-                .into(binding.details.image)
-        } else if (tokenMetadata.thumbnail?.url?.isNotEmpty() == true) {
-            binding.details.imageHolder.visibility = View.GONE
-            binding.details.icon.visibility = View.VISIBLE
-            Glide.with(this)
-                .load(tokenMetadata.thumbnail?.url)
-                .placeholder(R.drawable.ic_token_loading_image)
-                .override(iconSize)
-                .fitCenter()
-                .error(R.drawable.ic_token_no_image)
-                .into(binding.details.icon)
-        } else {
-            binding.details.imageHolder.visibility = View.GONE
-            binding.details.icon.visibility = View.GONE
-            binding.details.image.setImageResource(android.R.color.transparent)
+        tokenMetadata.display?.url?.let {
+            if (it.isNotBlank()) {
+                binding.details.imageHolder.visibility = View.VISIBLE
+                Glide.with(this)
+                    .load(it)
+                    .placeholder(R.drawable.ic_token_loading_image)
+                    .override(iconSize)
+                    .fitCenter()
+                    .error(R.drawable.ic_token_no_image)
+                    .into(binding.details.image)
+            } else {
+                binding.details.apply {
+                    imageHolder.visibility = View.GONE
+                    image.setImageResource(android.R.color.transparent)
+                }
+            }
+        }
+
+        tokenMetadata.thumbnail?.url?.let {
+            if (it.isNotBlank()) {
+                binding.details.icon.visibility = View.VISIBLE
+                Glide.with(this)
+                    .load(it)
+                    .placeholder(R.drawable.ic_token_loading_image)
+                    .override(iconSize)
+                    .fitCenter()
+                    .error(R.drawable.ic_token_no_image)
+                    .into(binding.details.icon)
+            } else {
+                binding.details.apply {
+                    icon.visibility = View.GONE
+                    image.setImageResource(android.R.color.transparent)
+                }
+            }
         }
     }
 
