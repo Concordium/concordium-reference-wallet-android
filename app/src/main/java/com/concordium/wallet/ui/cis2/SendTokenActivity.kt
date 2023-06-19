@@ -132,7 +132,9 @@ class SendTokenActivity : BaseActivity() {
                 if (!token.isCCDToken)
                     decimals = token.tokenMetadata?.decimals?: 0
             }
-            binding.amount.setText(CurrencyUtil.formatGTU(viewModel.sendTokenData.max ?: BigInteger.ZERO, false, decimals))
+            // Ensure that max is not negative
+            val max = BigInteger.ZERO.max(viewModel.sendTokenData.max ?: BigInteger.ZERO)
+            binding.amount.setText(CurrencyUtil.formatGTU(max, false, decimals))
             enableSend()
         }
     }
