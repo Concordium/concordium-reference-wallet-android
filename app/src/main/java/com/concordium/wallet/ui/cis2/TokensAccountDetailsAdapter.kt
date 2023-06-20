@@ -12,6 +12,7 @@ import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenAccountDetailsBinding
 import com.concordium.wallet.util.UnitConvertUtil
+import java.math.BigInteger
 
 class TokensAccountDetailsAdapter(
     private val context: Context,
@@ -82,14 +83,28 @@ class TokensAccountDetailsAdapter(
                 } else {
                     holder.binding.tokenIcon.setImageResource(R.drawable.ic_token_no_image)
                 }
-                holder.binding.title.text = "${
-                    CurrencyUtil.formatGTU(
-                        token.totalBalance,
-                        false,
-                        token.tokenMetadata?.decimals ?: 6
-                    )
-                } ${token.symbol}"
+                if (token.tokenMetadata?.unique == true) {
+                    holder.binding.apply {
+                        subTitle.visibility = View.VISIBLE
+                        title.text = tokenMetadata.name
+                        subTitle.text = if (token.totalBalance > BigInteger.ZERO) {
+                            context.getString(R.string.cis_owned)
+                        } else {
+                            context.getString(R.string.cis_not_owned)
+                        }
+                    }
 
+                } else {
+                    holder.binding.subTitle.visibility = View.GONE
+                    holder.binding.title.text =
+                        "${
+                            CurrencyUtil.formatGTU(
+                                token.totalBalance,
+                                false,
+                                token.tokenMetadata?.decimals ?: 6
+                            )
+                        } ${token.symbol}"
+                }
             }
         }
 
