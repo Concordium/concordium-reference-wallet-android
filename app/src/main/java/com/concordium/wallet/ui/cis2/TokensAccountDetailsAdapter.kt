@@ -83,7 +83,7 @@ class TokensAccountDetailsAdapter(
                 } else {
                     holder.binding.tokenIcon.setImageResource(R.drawable.ic_token_no_image)
                 }
-                if (token.tokenMetadata?.unique == true) {
+                if (tokenMetadata.unique) {
                     holder.binding.apply {
                         subTitle.visibility = View.VISIBLE
                         title.text = tokenMetadata.name
