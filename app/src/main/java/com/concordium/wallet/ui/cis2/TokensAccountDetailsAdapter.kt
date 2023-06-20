@@ -70,6 +70,7 @@ class TokensAccountDetailsAdapter(
 
             Glide.with(context).load(R.drawable.ic_concordium_logo_no_text)
                 .into(holder.binding.tokenIcon)
+            holder.binding.subTitle.visibility = View.GONE
         } else {
             token.tokenMetadata?.let { tokenMetadata ->
                 if (tokenMetadata.thumbnail != null && !tokenMetadata.thumbnail.url.isNullOrBlank()) {
@@ -95,15 +96,18 @@ class TokensAccountDetailsAdapter(
                     }
 
                 } else {
-                    holder.binding.subTitle.visibility = View.GONE
-                    holder.binding.title.text =
-                        "${
-                            CurrencyUtil.formatGTU(
-                                token.totalBalance,
-                                false,
-                                token.tokenMetadata?.decimals ?: 6
-                            )
-                        } ${token.symbol}"
+                    holder.binding.apply {
+                        subTitle.visibility = View.VISIBLE
+                        title.text = tokenMetadata.name
+                        subTitle.text =
+                            "${
+                                CurrencyUtil.formatGTU(
+                                    token.totalBalance,
+                                    false,
+                                    token.tokenMetadata?.decimals ?: 6
+                                )
+                            } ${token.symbol}"
+                    }
                 }
             }
         }

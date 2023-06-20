@@ -32,12 +32,11 @@
             android:id="@+id/title"
             style="@style/TextView.ListItemHeader"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/activity_horizontal_margin_half"
-            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
-            android:gravity="center|end"
+            android:gravity="center|start"
             android:maxLines="2"
             android:singleLine="false"
             android:textAlignment="gravity"
@@ -45,8 +44,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/token_icon"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
             tools:text="simple NFT" />
-
 
         <TextView
             android:id="@+id/subTitle"
@@ -54,15 +53,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/activity_horizontal_margin_half"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_marginEnd="@dimen/activity_horizontal_margin"
-            android:gravity="end"
+            android:gravity="start"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/token_icon"
             app:layout_constraintTop_toBottomOf="@id/title"
-            tools:text="not owned" />
+            tools:text="not owned"
+            tools:visibility="visible"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
