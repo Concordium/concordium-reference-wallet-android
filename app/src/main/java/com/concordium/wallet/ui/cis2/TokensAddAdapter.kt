@@ -49,7 +49,7 @@ class TokensAddAdapter(
         val token = dataSet[position]
         val tokenMetadata = token.tokenMetadata
 
-        tokenMetadata?.let {
+        tokenMetadata?.apply {
             if (tokenMetadata.thumbnail?.url?.isNotBlank() == true) {
                 Glide.with(context)
                     .load(tokenMetadata.thumbnail.url)
@@ -59,9 +59,7 @@ class TokensAddAdapter(
                     .error(R.drawable.ic_token_no_image)
                     .into(holder.binding.tokenIcon)
 
-            }
-
-            if (tokenMetadata.display?.url?.isNotBlank() == true) {
+            } else if (tokenMetadata.display?.url?.isNotBlank() == true) {
                 Glide.with(context)
                     .load(tokenMetadata.display?.url)
                     .placeholder(R.drawable.ic_token_loading_image)

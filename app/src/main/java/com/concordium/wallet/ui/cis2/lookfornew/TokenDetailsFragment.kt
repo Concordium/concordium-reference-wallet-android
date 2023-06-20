@@ -162,7 +162,7 @@ class TokenDetailsFragment : TokensBaseFragment() {
             } else {
                 binding.details.apply {
                     icon.visibility = View.GONE
-                    image.setImageResource(android.R.color.transparent)
+                    icon.setImageResource(android.R.color.transparent)
                 }
             }
         }
