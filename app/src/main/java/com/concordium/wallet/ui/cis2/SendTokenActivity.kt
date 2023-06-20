@@ -164,9 +164,8 @@ class SendTokenActivity : BaseActivity() {
             val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             if (clipboard.hasPrimaryClip()) {
                 clipboard.primaryClipDescription?.let { clipDescription ->
-                    if (clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) || clipDescription.hasMimeType(
-                            ClipDescription.MIMETYPE_TEXT_HTML
-                        )
+                    if (clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) ||
+                        clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_HTML)
                     ) {
                         clipboard.primaryClip?.getItemAt(0)?.text?.let { text ->
                             showPopupPaste(text.toString())
