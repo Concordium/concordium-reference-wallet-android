@@ -60,19 +60,6 @@ class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
             override fun onCheckBoxClick(token: Token) {
             }
         })
-
-//        binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                tokensAccountDetailsAdapter.dataSet = _viewModel.tokens.value!!.filter { it.token.uppercase().contains(query?.uppercase() ?: "") }.toTypedArray()
-//                tokensAccountDetailsAdapter.notifyDataSetChanged()
-//                return false
-//            }
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                tokensAccountDetailsAdapter.dataSet = _viewModel.tokens.value!!.filter { it.token.uppercase().contains(newText?.uppercase() ?: "") }.toTypedArray()
-//                tokensAccountDetailsAdapter.notifyDataSetChanged()
-//                return false
-//            }
-//        })
     }
 
     private fun initObservers() {
