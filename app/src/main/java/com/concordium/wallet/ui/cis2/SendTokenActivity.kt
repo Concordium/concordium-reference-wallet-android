@@ -56,6 +56,11 @@ class SendTokenActivity : BaseActivity() {
         enableSend()
     }
 
+    override fun onResume() {
+        super.onResume()
+        enableSend()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         viewModel.dispose()
