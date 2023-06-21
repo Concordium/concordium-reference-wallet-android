@@ -28,12 +28,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed issue where owned tokens are not reflected in search result list and details screens
 - When adding a new token the token details would in some cases show information from another token.
 - Fixed UI bug that showed decimal places for NFT tokens
+- Fixed NFTs name missing on Collectibles and Send token screens
 - Fixed issue where the token details screen would not show the correct token image.
 
 ### Changed
 
 - Changed Terms and Conditions screen to new UI.
 - Transferring CCD on Public balance now always uses the new sendToken activity.
+- Removed the ability to search for tokens when selecting tokens to transfer.
 
 ## [1.1.7]
 

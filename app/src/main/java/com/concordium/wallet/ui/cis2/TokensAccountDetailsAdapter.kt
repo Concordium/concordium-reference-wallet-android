@@ -12,6 +12,7 @@ import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ItemTokenAccountDetailsBinding
 import com.concordium.wallet.util.UnitConvertUtil
+import java.math.BigInteger
 
 class TokensAccountDetailsAdapter(
     private val context: Context,
@@ -69,6 +70,7 @@ class TokensAccountDetailsAdapter(
 
             Glide.with(context).load(R.drawable.ic_concordium_logo_no_text)
                 .into(holder.binding.tokenIcon)
+            holder.binding.subTitle.visibility = View.GONE
         } else {
             token.tokenMetadata?.let { tokenMetadata ->
                 if (tokenMetadata.thumbnail != null && !tokenMetadata.thumbnail.url.isNullOrBlank()) {
@@ -82,14 +84,31 @@ class TokensAccountDetailsAdapter(
                 } else {
                     holder.binding.tokenIcon.setImageResource(R.drawable.ic_token_no_image)
                 }
-                holder.binding.title.text = "${
-                    CurrencyUtil.formatGTU(
-                        token.totalBalance,
-                        false,
-                        token.tokenMetadata?.decimals ?: 6
-                    )
-                } ${token.symbol}"
+                if (tokenMetadata.unique) {
+                    holder.binding.apply {
+                        subTitle.visibility = View.VISIBLE
+                        title.text = tokenMetadata.name
+                        subTitle.text = if (token.totalBalance > BigInteger.ZERO) {
+                            context.getString(R.string.cis_owned)
+                        } else {
+                            context.getString(R.string.cis_not_owned)
+                        }
+                    }
 
+                } else {
+                    holder.binding.apply {
+                        subTitle.visibility = View.VISIBLE
+                        title.text = tokenMetadata.name
+                        subTitle.text =
+                            "${
+                                CurrencyUtil.formatGTU(
+                                    token.totalBalance,
+                                    false,
+                                    token.tokenMetadata?.decimals ?: 6
+                                )
+                            } ${token.symbol}"
+                    }
+                }
             }
         }
 

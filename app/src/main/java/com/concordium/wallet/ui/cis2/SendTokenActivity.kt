@@ -62,9 +62,17 @@ class SendTokenActivity : BaseActivity() {
     }
 
     private fun initViews() {
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.cis_send_funds)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.cis_send_funds
+        )
         binding.amount.setText(CurrencyUtil.formatGTU(BigInteger.ZERO, false))
-        binding.atDisposal.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.account?.getAtDisposalWithoutStakedOrScheduled(viewModel.sendTokenData.account?.totalUnshieldedBalance ?: BigInteger.ZERO) ?: BigInteger.ZERO, true)
+        binding.atDisposal.text = CurrencyUtil.formatGTU(
+            viewModel.sendTokenData.account?.getAtDisposalWithoutStakedOrScheduled(
+                viewModel.sendTokenData.account?.totalUnshieldedBalance ?: BigInteger.ZERO
+            ) ?: BigInteger.ZERO, true
+        )
         initializeAmount()
         initializeMax()
         initializeReceiver()
@@ -104,7 +112,9 @@ class SendTokenActivity : BaseActivity() {
 
     private fun initializeAmount() {
         binding.amount.addTextChangedListener {
-            viewModel.sendTokenData.amount = CurrencyUtil.toGTUValue(it.toString(), viewModel.sendTokenData.token) ?: BigInteger.ZERO
+            viewModel.sendTokenData.amount =
+                CurrencyUtil.toGTUValue(it.toString(), viewModel.sendTokenData.token)
+                    ?: BigInteger.ZERO
             viewModel.loadTransactionFee()
             enableSend()
         }
@@ -120,6 +130,7 @@ class SendTokenActivity : BaseActivity() {
                         send()
                     true
                 }
+
                 else -> false
             }
         }
@@ -130,7 +141,7 @@ class SendTokenActivity : BaseActivity() {
             var decimals = 6
             viewModel.sendTokenData.token?.let { token ->
                 if (!token.isCCDToken)
-                    decimals = token.tokenMetadata?.decimals?: 0
+                    decimals = token.tokenMetadata?.decimals ?: 0
             }
             // Ensure that max is not negative
             val max = BigInteger.ZERO.max(viewModel.sendTokenData.max ?: BigInteger.ZERO)
@@ -153,8 +164,9 @@ class SendTokenActivity : BaseActivity() {
             val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             if (clipboard.hasPrimaryClip()) {
                 clipboard.primaryClipDescription?.let { clipDescription ->
-                    if (clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) || clipDescription.hasMimeType(
-                            ClipDescription.MIMETYPE_TEXT_HTML)) {
+                    if (clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) ||
+                        clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_HTML)
+                    ) {
                         clipboard.primaryClip?.getItemAt(0)?.text?.let { text ->
                             showPopupPaste(text.toString())
                         }
@@ -198,7 +210,10 @@ class SendTokenActivity : BaseActivity() {
     private val getResultRecipient =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                result.data?.getSerializable(RecipientListActivity.EXTRA_RECIPIENT, Recipient::class.java)?.let { recipient ->
+                result.data?.getSerializable(
+                    RecipientListActivity.EXTRA_RECIPIENT,
+                    Recipient::class.java
+                )?.let { recipient ->
                     binding.receiver.text = recipient.address
                     binding.receiverName.visibility = View.VISIBLE
                     receiverAddressSet()
@@ -272,10 +287,13 @@ class SendTokenActivity : BaseActivity() {
             searchTokenBottomSheet = null
             binding.balanceTitle.text = getString(R.string.cis_token_balance, token.symbol).trim()
             val decimals: Int = if (token.isCCDToken) 6 else token.tokenMetadata?.decimals ?: 0
-            binding.balance.text = CurrencyUtil.formatGTU(token.totalBalance, token.isCCDToken, decimals)
-            binding.searchToken.tokenShortName.text = token.symbol
+            binding.balance.text =
+                CurrencyUtil.formatGTU(token.totalBalance, token.isCCDToken, decimals)
+            binding.searchToken.tokenShortName.text =
+                token.symbol.ifBlank { token.tokenMetadata?.name }
             if (token.isCCDToken) {
-                Glide.with(this).load(R.drawable.ic_concordium_logo_no_text).into(binding.searchToken.tokenIcon)
+                Glide.with(this).load(R.drawable.ic_concordium_logo_no_text)
+                    .into(binding.searchToken.tokenIcon)
             } else {
                 token.tokenMetadata?.thumbnail.let { thumbnail ->
                     Glide.with(this)
@@ -328,8 +346,7 @@ class SendTokenActivity : BaseActivity() {
                     binding.atDisposalTitle.setTextColor(getColor(R.color.text_black))
                     binding.atDisposal.setTextColor(getColor(R.color.text_black))
                 }
-            }
-            else {
+            } else {
                 binding.feeError.visibility = View.GONE
                 binding.balanceTitle.setTextColor(getColor(R.color.text_black))
                 binding.balance.setTextColor(getColor(R.color.text_black))
