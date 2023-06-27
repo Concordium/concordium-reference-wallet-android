@@ -49,27 +49,37 @@ class TokensAddAdapter(
         val token = dataSet[position]
         val tokenMetadata = token.tokenMetadata
 
-        if (tokenMetadata?.thumbnail != null && !tokenMetadata.thumbnail.url.isNullOrBlank()) {
-            Glide.with(context)
-                .load(tokenMetadata.thumbnail.url)
-                .placeholder(R.drawable.ic_token_loading_image)
-                .override(iconSize)
-                .fitCenter()
-                .error(R.drawable.ic_token_no_image)
-                .into(holder.binding.tokenIcon)
-        } else {
-            holder.binding.tokenIcon.setImageResource(R.drawable.ic_token_no_image)
-        }
+        tokenMetadata?.apply {
+            if (tokenMetadata.thumbnail?.url?.isNotBlank() == true) {
+                Glide.with(context)
+                    .load(tokenMetadata.thumbnail.url)
+                    .placeholder(R.drawable.ic_token_loading_image)
+                    .override(iconSize)
+                    .fitCenter()
+                    .error(R.drawable.ic_token_no_image)
+                    .into(holder.binding.tokenIcon)
+
+            } else if (tokenMetadata.display?.url?.isNotBlank() == true) {
+                Glide.with(context)
+                    .load(tokenMetadata.display?.url)
+                    .placeholder(R.drawable.ic_token_loading_image)
+                    .override(iconSize)
+                    .fitCenter()
+                    .error(R.drawable.ic_token_no_image)
+                    .into(holder.binding.tokenIcon)
+            }
+        } ?: holder.binding.tokenIcon.setImageResource(R.drawable.ic_token_no_image)
 
         holder.binding.title.text = tokenMetadata?.name ?: String.Empty
 
         val tokenBalance = CurrencyUtil.formatGTU(
             token.totalBalance,
             false,
-            token.tokenMetadata?.decimals ?: 6
+            token.tokenMetadata?.decimals ?: 0
         )
 
-        holder.binding.subTitle.text = context.getString(R.string.cis_search_balance, tokenBalance)
+        holder.binding.subTitle.text =
+            context.getString(R.string.cis_search_balance, tokenBalance)
 
         if (showCheckBox) {
             holder.binding.selection.isChecked = token.isSelected

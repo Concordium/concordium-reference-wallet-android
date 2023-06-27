@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0]
+
+### Fixed
+
+- Fix incorrect text in the identity name dialog
+
 ### Added
 
 - Added CHANGELOG.md
@@ -15,7 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fix a crash when inputting a too large amount as the stake for delegation or baking.
+- Fix validation of token metadata when looking for new tokens.
 - Fix an issue where another tokens image was sometimes shown for tokens without an image.
+- Fix when searching for a token, the "no tokens found" display did not appear.
 - Fixed number of issues with 
   1. Remove “Name and icon” header text for token name (to keep it aligned with BW).
   2. Balance (for FT) section (header and values) is missing. Expected - For FT, “Balance” should be shown.
@@ -23,14 +31,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   4. Metadata is missing for both FT and NFT. Expected - There’s should be a link “Show raw metadata” which should open token metadata in an overlay screen (check BW behavior).
   5. NFT token details screen should not have Decimal section.
   6. Token image size is very small, contents almost invisible.
-- Fixed issue where owned tokens are not reflected in search result list and details screens
-- Fix incorrect text in the identity name dialog
+- Fixed issue where owned tokens are not reflected in search result list and details screens.
+- When adding a new token the token details would in some cases show information from another token.
+- Fixed UI bug that showed decimal places for NFT tokens.
+- Fixed NFTs name missing on Collectibles and Send token screens.
+- Fixed issue where the token details screen would not show the correct token image.
+- Fixed issue with greyed out send funds button after reopening the screen.
 
 ### Changed
 
 - Changed Terms and Conditions screen to new UI.
+- Transferring CCD on Public balance now always uses the new sendToken activity.
+- Removed the ability to search for tokens when selecting tokens to transfer.
 
-## [1.1.7]
+## [1.1.8]
 
 ### Added
 

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     style="@style/Layout.Root">
@@ -18,70 +17,78 @@
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_layout"
+        android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/send"
-        android:orientation="vertical">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_layout">
+
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_margin="@dimen/activity_horizontal_margin"
             android:orientation="vertical">
+
             <TextView
                 style="@style/TextView.XSmall.Light"
                 android:layout_width="match_parent"
                 android:text="@string/cis_currently_available_amounts" />
+
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:orientation="horizontal">
+
                 <TextView
                     android:id="@+id/balance_title"
                     style="@style/TextView.Mono"
-                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_weight="0"
-                    android:maxLines="1"
                     android:ellipsize="end"
+                    android:maxLines="1"
                     tools:text="CCD Balance:" />
+
                 <TextView
                     android:id="@+id/balance"
                     style="@style/TextView.Mono"
-                    android:layout_height="wrap_content"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="end"
-                    android:textAlignment="textEnd"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_weight="1"
                     android:maxLines="1"
+                    android:textAlignment="textEnd"
                     tools:text="Ͼ123.45" />
             </androidx.appcompat.widget.LinearLayoutCompat>
+
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_vertical_margin_half"
                 android:orientation="horizontal">
+
                 <TextView
                     android:id="@+id/at_disposal_title"
                     style="@style/TextView.Mono"
-                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_weight="0"
-                    android:maxLines="1"
                     android:ellipsize="end"
+                    android:maxLines="1"
                     android:text="@string/cis_at_disposal" />
+
                 <TextView
                     android:id="@+id/at_disposal"
                     style="@style/TextView.Mono"
-                    android:layout_height="wrap_content"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="end"
-                    android:textAlignment="textEnd"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_weight="1"
                     android:maxLines="1"
+                    android:textAlignment="textEnd"
                     tools:text="Ͼ123.45" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -93,18 +100,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:orientation="horizontal"
                 android:background="@drawable/rounded_transparent"
+                android:orientation="horizontal"
                 tools:showIn="@layout/activity_send_token">
+
                 <com.concordium.wallet.uicore.view.AmountEditText
                     android:id="@+id/amount"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-                    android:layout_height="match_parent"
                     style="@style/TextView.BlueRegular.Mono"
-                    android:imeOptions="actionDone"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                    android:layout_weight="1"
+                    android:background="@null"
                     android:gravity="center_vertical"
+                    android:imeOptions="actionDone"
                     tools:text="123.45" />
 
                 <Button
@@ -127,44 +136,50 @@
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 app:cardCornerRadius="@dimen/card_corner_radius"
                 app:cardElevation="0dp">
+
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rounded_transparent"
                     android:orientation="vertical">
+
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/receiver_name"
                         style="@style/TextView.Standard"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
                         android:paddingHorizontal="@dimen/activity_horizontal_margin"
                         android:paddingTop="@dimen/activity_horizontal_margin"
+                        android:text="@string/recipient_address"
                         android:textColor="@color/text_blue"
                         android:textColorHint="@color/text_blue"
-                        tools:text="Account Name"
                         android:visibility="gone"
-                        android:gravity="center_horizontal"
-                        tools:visibility="visible"/>
+                        tools:visibility="visible" />
+
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/receiver"
                         style="@style/TextView.Standard"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
                         android:hint="@string/cis_paste_receiver_address"
                         android:padding="@dimen/activity_horizontal_margin"
                         android:textColor="@color/text_blue"
-                        android:textColorHint="@color/text_blue"
-                        android:gravity="center_horizontal" />
+                        android:textColorHint="@color/text_blue" />
+
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
+
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:id="@+id/address_book"
                             android:layout_width="0dp"
                             android:layout_height="50dp"
                             android:layout_weight="0.5"
                             android:orientation="horizontal">
+
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:layout_width="50dp"
                                 android:layout_height="match_parent"
@@ -173,6 +188,7 @@
                                 android:scaleType="fitCenter"
                                 android:src="@drawable/ic_lup"
                                 android:tint="@color/theme_white" />
+
                             <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView.Standard.White"
                                 android:layout_width="0dp"
@@ -182,16 +198,19 @@
                                 android:gravity="center_vertical"
                                 android:text="@string/cis_address_book" />
                         </androidx.appcompat.widget.LinearLayoutCompat>
+
                         <View
                             android:layout_width="1dp"
                             android:layout_height="match_parent"
                             android:background="@color/theme_white" />
+
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:id="@+id/scan_qr"
                             android:layout_width="0dp"
                             android:layout_height="50dp"
                             android:layout_weight="0.5"
                             android:orientation="horizontal">
+
                             <androidx.appcompat.widget.AppCompatImageView
                                 android:layout_width="50dp"
                                 android:layout_height="match_parent"
@@ -200,6 +219,7 @@
                                 android:scaleType="fitCenter"
                                 android:src="@drawable/ic_recipient_address_qr"
                                 android:tint="@color/theme_white" />
+
                             <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView.Standard.White"
                                 android:layout_width="0dp"
@@ -219,18 +239,19 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/activity_vertical_margin_half"
                 android:gravity="center"
+                android:text="@string/send_funds_error_insufficient_funds"
                 android:visibility="gone"
-                tools:visibility="visible"
-                android:text="@string/send_funds_error_insufficient_funds" />
+                tools:visibility="visible" />
 
             <LinearLayout
                 android:id="@+id/memo_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:minHeight="50dp"
                 android:background="@drawable/rounded_transparent"
+                android:minHeight="50dp"
                 android:orientation="horizontal">
+
                 <TextView
                     android:id="@+id/memo"
                     style="@style/TextView.Standard"
@@ -240,18 +261,19 @@
                     android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                     android:layout_weight="1"
                     android:background="@null"
-                    android:gravity="center"
                     android:clickable="true"
-                    android:textColor="@color/text_blue"
-                    android:text="@string/cis_optional_add_memo" />
+                    android:gravity="center"
+                    android:text="@string/cis_optional_add_memo"
+                    android:textColor="@color/text_blue" />
+
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/memo_clear"
                     style="@style/Image"
-                    android:visibility="gone"
-                    tools:visibility="visible"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                    android:src="@drawable/ic_close_cross" />
+                    android:src="@drawable/ic_close_cross"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
             </LinearLayout>
 
             <LinearLayout
@@ -260,6 +282,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/activity_vertical_margin"
                 android:orientation="vertical">
+
                 <TextView
                     android:id="@+id/fee"
                     style="@style/TextView.InfoSmall"
@@ -267,15 +290,16 @@
                     android:layout_gravity="center"
                     android:gravity="center"
                     tools:text="@string/send_funds_fee_info" />
+
                 <TextView
                     android:id="@+id/fee_error"
                     style="@style/TextView.ErrorTiny"
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/activity_vertical_margin_half"
                     android:gravity="center"
+                    android:text="@string/send_funds_error_insufficient_funds"
                     android:visibility="gone"
-                    tools:visibility="visible"
-                    android:text="@string/send_funds_error_insufficient_funds" />
+                    tools:visibility="visible" />
             </LinearLayout>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
@@ -284,15 +308,19 @@
     <Button
         android:id="@+id/send"
         style="@style/Button.Standard.Intro"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scrollView"
-        android:enabled="false"
-        android:layout_margin="@dimen/activity_horizontal_margin"
         android:layout_width="match_parent"
-        android:text="@string/cis_send_funds" />
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:enabled="false"
+        android:text="@string/cis_send_funds"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scrollView" />
 
-    <include layout="@layout/progress" android:id="@+id/include_progress" android:visibility="gone" tools:visibility="visible" />
+    <include
+        android:id="@+id/include_progress"
+        layout="@layout/progress"
+        android:visibility="gone"
+        tools:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,6 +18,7 @@
     <string name="app_version">Version %1$s</string>
     <string name="app_version_about">%1$s</string>
     <string name="app_gstroke">Ͼ</string>
+    <string name="backend_error_transaction_rejected">Transaction rejected</string>
 
     <!-- Dialogs -->
     <string name="dialog_ok">Okay</string>
@@ -1021,7 +1022,9 @@
     <string name="cis_add_tokens">Add tokens</string>
     <string name="cis_update_tokens">Update tokens</string>
     <string name="cis_find_tokens_none">This contract has no tokens.</string>
-    <string name="cis_find_tokens_error">Invalid contract index</string>
+    <string name="cis_find_tokens_invalid_index">Invalid contract index</string>
+    <string name="cis_find_tokens_metadata_error">Unable to load metadata</string>
+    <string name="cis_find_tokens_invalid_checksum">Token metadata has an invalid checksum</string>
     <string name="cis_search">Search for token ID</string>
     <string name="cis_send_funds">Send funds</string>
     <string name="cis_currently_available_amounts">Currently available amounts:</string>
@@ -1057,6 +1060,7 @@
     <string name="cis_ownership">Ownership</string>
     <string name="cis_owned">Owned</string>
     <string name="cis_not_owned">Not owned</string>
+    <string name="cis_no_tokens_found">No tokens found.</string>
     <string name="cis_no_tokens_selected">You haven\'t selected any tokens.</string>
     <string name="cis_tokens_updated">Token list updated</string>
     <string name="cis_tokens_not_updated">No updates made to token list</string>

@@ -12,7 +12,6 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.databinding.ActivityAccountQrCodeBinding
 import com.concordium.wallet.ui.base.BaseActivity
-import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
@@ -39,7 +38,7 @@ class AccountQRCodeActivity : BaseActivity() {
             R.string.account_qr_code_title
         )
 
-        val account = intent.extras!!.getSerializable(SendFundsActivity.EXTRA_ACCOUNT) as Account
+        val account = intent.extras!!.getSerializable(EXTRA_ACCOUNT) as Account
         initializeViewModel()
         viewModel.initialize(account)
         initViews()
