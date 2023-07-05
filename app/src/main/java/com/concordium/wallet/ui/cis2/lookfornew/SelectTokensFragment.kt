@@ -14,6 +14,7 @@ import com.concordium.wallet.ui.cis2.TokensAddAdapter
 import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.ui.cis2.TokensViewModel.Companion.TOKEN_DATA
+import com.concordium.wallet.util.hideKeyboard
 
 class SelectTokensFragment : TokensBaseFragment() {
     private var _binding: FragmentDialogSelectTokensBinding? = null
@@ -78,7 +79,10 @@ class SelectTokensFragment : TokensBaseFragment() {
                 val totalItemCount = layoutManager.itemCount
                 val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
                 if (_viewModel.tokens.size > 0 && visibleItemCount + firstVisibleItemPosition >= totalItemCount && firstVisibleItemPosition >= 0 && totalItemCount > 3) {
-                    _viewModel.lookForTokens(_viewModel.tokenData.account!!.address, from = _viewModel.tokens[_viewModel.tokens.size - 1].id)
+                    _viewModel.lookForTokens(
+                        _viewModel.tokenData.account!!.address,
+                        from = _viewModel.tokens[_viewModel.tokens.size - 1].id
+                    )
                 }
             }
         })
@@ -90,7 +94,8 @@ class SelectTokensFragment : TokensBaseFragment() {
                     it.token.uppercase() == currentFilter
                 }.toTypedArray()
 
-                binding.noTokensFound.visibility = if (tokensAddAdapter.dataSet.isEmpty()) View.VISIBLE else View.INVISIBLE
+                binding.noTokensFound.visibility =
+                    if (tokensAddAdapter.dataSet.isEmpty()) View.VISIBLE else View.INVISIBLE
 
                 _viewModel.searchedTokens.clear()
                 _viewModel.searchedTokens.addAll(tokensAddAdapter.dataSet)
@@ -108,6 +113,10 @@ class SelectTokensFragment : TokensBaseFragment() {
                 return false
             }
         })
+
+        binding.search.setOnQueryTextFocusChangeListener  { _, hasFocus ->
+            if (hasFocus.not()) requireActivity().hideKeyboard(binding.search)
+        }
 
         tokensAddAdapter.setTokenClickListener(object : TokensAddAdapter.TokenClickListener {
             override fun onRowClick(token: Token) {
