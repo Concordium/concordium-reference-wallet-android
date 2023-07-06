@@ -17,7 +17,6 @@ import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
-import com.concordium.wallet.util.TokenUtil
 import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.base.BaseActivity
@@ -26,12 +25,14 @@ import com.concordium.wallet.ui.cis2.TokenDetailsActivity
 import com.concordium.wallet.ui.cis2.TokensFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.ui.cis2.lookfornew.LookForNewTokensFragment
+import com.concordium.wallet.ui.cis2.lookfornew.TokenSelectedDestination
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.ui.walletconnect.WalletConnectActivity
 import com.concordium.wallet.uicore.afterMeasured
+import com.concordium.wallet.util.TokenUtil
 import com.concordium.wallet.util.getSerializable
 import java.math.BigInteger
 import javax.crypto.Cipher
@@ -118,29 +119,55 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
             runOnUiThread {
                 lookForNewTokensFragment?.dismiss()
                 lookForNewTokensFragment = null
-                supportFragmentManager.beginTransaction().replace(
-                    R.id.tokens_fragment,
-                    TokensFragment.newInstance(
-                        viewModelTokens,
-                        viewModelAccountDetails.account.address,
-                        true
-                    ),
-                    null
-                ).commit()
                 if (anyChanges) {
                     Toast.makeText(this, R.string.cis_tokens_updated, Toast.LENGTH_SHORT).show()
-                    binding.markerFungible.visibility = View.VISIBLE
-                    binding.markerCollectibles.visibility = View.GONE
-                    binding.tabFungibleText.setTypeface(
-                        binding.tabFungibleText.typeface,
-                        Typeface.BOLD
-                    )
-                    binding.tabCollectiblesText.setTypeface(
-                        binding.tabCollectiblesText.typeface,
-                        Typeface.NORMAL
-                    )
+                    when (viewModelTokens.addTokenDestination.value) {
+                        TokenSelectedDestination.TOKEN -> {
+                            viewModelTokens.addTokenDestination.value =
+                                TokenSelectedDestination.NoChange
+                            onTabFungible()
+                        }
+
+                        TokenSelectedDestination.NFT -> {
+                            viewModelTokens.addTokenDestination.value =
+                                TokenSelectedDestination.NoChange
+                            onTabCollectibles()
+                        }
+
+                        else -> {
+                            supportFragmentManager.beginTransaction().replace(
+                                R.id.tokens_fragment,
+                                TokensFragment.newInstance(
+                                    viewModelTokens,
+                                    viewModelAccountDetails.account.address,
+                                    true
+                                ),
+                                null
+                            ).commit()
+
+                            binding.markerFungible.visibility = View.VISIBLE
+                            binding.markerCollectibles.visibility = View.GONE
+                            binding.tabFungibleText.setTypeface(
+                                binding.tabFungibleText.typeface,
+                                Typeface.BOLD
+                            )
+                            binding.tabCollectiblesText.setTypeface(
+                                binding.tabCollectiblesText.typeface,
+                                Typeface.NORMAL
+                            )
+                        }
+                    }
                 } else
-                    Toast.makeText(this, R.string.cis_tokens_not_updated, Toast.LENGTH_SHORT).show()
+                    supportFragmentManager.beginTransaction().replace(
+                        R.id.tokens_fragment,
+                        TokensFragment.newInstance(
+                            viewModelTokens,
+                            viewModelAccountDetails.account.address,
+                            true
+                        ),
+                        null
+                    ).commit()
+                Toast.makeText(this, R.string.cis_tokens_not_updated, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -243,44 +270,52 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
 
     private fun initTabsTokens() {
         binding.tabFungible.setOnClickListener {
-            binding.markerFungible.visibility = View.VISIBLE
-            binding.markerCollectibles.visibility = View.GONE
-            binding.tabFungibleText.setTypeface(binding.tabFungibleText.typeface, Typeface.BOLD)
-            binding.tabCollectiblesText.setTypeface(
-                binding.tabCollectiblesText.typeface,
-                Typeface.NORMAL
-            )
-            supportFragmentManager.beginTransaction().replace(
-                R.id.tokens_fragment,
-                TokensFragment.newInstance(
-                    viewModelTokens,
-                    viewModelAccountDetails.account.address,
-                    true
-                ),
-                null
-            ).commit()
+            onTabFungible()
         }
         binding.tabCollectibles.setOnClickListener {
-            binding.markerFungible.visibility = View.GONE
-            binding.markerCollectibles.visibility = View.VISIBLE
-            binding.tabFungibleText.setTypeface(binding.tabFungibleText.typeface, Typeface.NORMAL)
-            binding.tabCollectiblesText.setTypeface(
-                binding.tabCollectiblesText.typeface,
-                Typeface.BOLD
-            )
-            supportFragmentManager.beginTransaction().replace(
-                R.id.tokens_fragment,
-                TokensFragment.newInstance(
-                    viewModelTokens,
-                    viewModelAccountDetails.account.address,
-                    false
-                ),
-                null
-            ).commit()
+            onTabCollectibles()
         }
         binding.tabAddNew.setOnClickListener {
             showFindTokensDialog()
         }
+    }
+
+    private fun onTabFungible() {
+        binding.markerFungible.visibility = View.VISIBLE
+        binding.markerCollectibles.visibility = View.GONE
+        binding.tabFungibleText.setTypeface(binding.tabFungibleText.typeface, Typeface.BOLD)
+        binding.tabCollectiblesText.setTypeface(
+            binding.tabCollectiblesText.typeface,
+            Typeface.NORMAL
+        )
+        supportFragmentManager.beginTransaction().replace(
+            R.id.tokens_fragment,
+            TokensFragment.newInstance(
+                viewModelTokens,
+                viewModelAccountDetails.account.address,
+                true
+            ),
+            null
+        ).commit()
+    }
+
+    private fun onTabCollectibles() {
+        binding.markerFungible.visibility = View.GONE
+        binding.markerCollectibles.visibility = View.VISIBLE
+        binding.tabFungibleText.setTypeface(binding.tabFungibleText.typeface, Typeface.NORMAL)
+        binding.tabCollectiblesText.setTypeface(
+            binding.tabCollectiblesText.typeface,
+            Typeface.BOLD
+        )
+        supportFragmentManager.beginTransaction().replace(
+            R.id.tokens_fragment,
+            TokensFragment.newInstance(
+                viewModelTokens,
+                viewModelAccountDetails.account.address,
+                false
+            ),
+            null
+        ).commit()
     }
 
     private fun initTopContent() {
@@ -434,10 +469,13 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun onSendClicked() {
-            val intent = Intent(this, SendTokenActivity::class.java)
-            intent.putExtra(SendTokenActivity.ACCOUNT, viewModelAccountDetails.account)
-            intent.putExtra(SendTokenActivity.TOKEN, TokenUtil.getCCDToken(viewModelAccountDetails.account))
-            startActivity(intent)
+        val intent = Intent(this, SendTokenActivity::class.java)
+        intent.putExtra(SendTokenActivity.ACCOUNT, viewModelAccountDetails.account)
+        intent.putExtra(
+            SendTokenActivity.TOKEN,
+            TokenUtil.getCCDToken(viewModelAccountDetails.account)
+        )
+        startActivity(intent)
     }
 
     private fun onSendShieldedClicked() {

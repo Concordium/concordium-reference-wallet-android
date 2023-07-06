@@ -9,26 +9,25 @@ import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.CIS2TokensMetadataItem
-import com.concordium.wallet.data.model.Thumbnail
 import com.concordium.wallet.data.model.Token
-import com.concordium.wallet.data.model.TokenMetadata
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountContract
 import com.concordium.wallet.data.room.ContractToken
 import com.concordium.wallet.data.room.WalletDatabase
-import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
+import com.concordium.wallet.ui.cis2.lookfornew.TokenSelectedDestination
 import com.concordium.wallet.ui.cis2.retrofit.IncorrectChecksumException
+import com.concordium.wallet.ui.cis2.retrofit.MetadataApiInstance
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.TokenUtil
 import com.concordium.wallet.util.toBigInteger
 import com.walletconnect.util.Empty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import java.io.Serializable
 import java.math.BigInteger
-import com.concordium.wallet.util.TokenUtil
 
 data class TokenData(
     var account: Account? = null,
@@ -60,6 +59,11 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     private val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val lookForTokens: MutableLiveData<Int> by lazy { MutableLiveData<Int>(TOKENS_NOT_LOADED) }
+    val addTokenDestination: MutableLiveData<TokenSelectedDestination> by lazy {
+        MutableLiveData<TokenSelectedDestination>(
+            TokenSelectedDestination.NoChange
+        )
+    }
     val updateWithSelectedTokensDone: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val stepPageBy: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val tokenDetails: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
@@ -335,6 +339,21 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                             anyChanges = true
                         }
                     }
+
+                    val flowEndDestination = if (anyChanges) {
+                        val numberOfNFTSelected = selectedTokens.filter {
+                            it.tokenMetadata?.unique == true
+                        }.size
+
+                        when (numberOfNFTSelected) {
+                            selectedTokens.size -> TokenSelectedDestination.NFT
+                            0 -> TokenSelectedDestination.TOKEN
+                            else -> TokenSelectedDestination.MIXED
+                        }
+                    } else {
+                        TokenSelectedDestination.NoChange
+                    }
+                    addTokenDestination.postValue(flowEndDestination)
                     updateWithSelectedTokensDone.postValue(anyChanges)
                 }
             }
@@ -362,7 +381,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                 proxyRepository.getCIS2TokenMetadataSuspended(
                     tokenData.contractIndex,
                     tokenData.subIndex,
-                    tokenIds = commaSeparated)
+                    tokenIds = commaSeparated
+                )
             tokenData.contractName = cis2TokensMetadata.contractName
             cis2TokensMetadata.metadata.forEach {
                 loadTokenMetadata(tokenData.contractIndex, tokenData.contractName, it)
@@ -384,8 +404,12 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     ) {
         if (cis2TokensMetadataItem.metadataURL.isBlank())
             return
-        val index = tokens.indexOfFirst { it.token == cis2TokensMetadataItem.tokenId && it.contractIndex == contractIndex }
-        val metadata = MetadataApiInstance.safeMetadataCall(cis2TokensMetadataItem.metadataURL, cis2TokensMetadataItem.metadataChecksum).getOrThrow()
+        val index =
+            tokens.indexOfFirst { it.token == cis2TokensMetadataItem.tokenId && it.contractIndex == contractIndex }
+        val metadata = MetadataApiInstance.safeMetadataCall(
+            cis2TokensMetadataItem.metadataURL,
+            cis2TokensMetadataItem.metadataChecksum
+        ).getOrThrow()
         tokens[index].tokenMetadata = metadata
         tokens[index].contractIndex = contractIndex
         tokens[index].contractName = contractName

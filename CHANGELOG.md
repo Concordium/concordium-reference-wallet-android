@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- fixed end destination when exiting add/remove watched tokens.
+
+## [1.2.0]
+
 ### Added
 
 - Added CHANGELOG.md
