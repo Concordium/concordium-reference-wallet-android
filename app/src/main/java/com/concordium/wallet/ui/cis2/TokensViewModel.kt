@@ -305,7 +305,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     }
                     val existingContractTokens =
                         contractTokensRepository.getTokens(account.address, tokenData.contractIndex)
-                    val existingNotSelectedTokenIds = existingContractTokens.map { it.tokenId }
+                    val existingNotSelectedTokenIds = existingContractTokens.map { it.contractIndex }
                         .minus(selectedTokens.map { it.id }.toSet())
                     existingNotSelectedTokenIds.forEach { existingNotSelectedTokenId ->
                         contractTokensRepository.find(
@@ -322,7 +322,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                             contractTokensRepository.find(
                                 account.address,
                                 tokenData.contractIndex,
-                                selectedToken.id
+                                selectedToken.token
                             )
                         if (existingContractToken == null) {
                             contractTokensRepository.insert(
