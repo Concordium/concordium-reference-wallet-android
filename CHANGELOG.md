@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Removed the ability to select other tokens when transferring from TokenDetailsActivity
+
+## [1.20]
+
 ### Added
 
 - Added CHANGELOG.md
