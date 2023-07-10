@@ -66,6 +66,7 @@ class TokenDetailsActivity : BaseActivity() {
             val intent = Intent(this, SendTokenActivity::class.java)
             intent.putExtra(SendTokenActivity.ACCOUNT, viewModel.tokenData.account)
             intent.putExtra(SendTokenActivity.TOKEN, viewModel.tokenData.selectedToken)
+            intent.putExtra(SendTokenActivity.SEND_ONLY_SELECTED_TOKEN, true)
             startActivity(intent)
         }
         binding.includeButtons.receive.setOnClickListener {

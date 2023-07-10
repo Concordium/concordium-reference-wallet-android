@@ -31,6 +31,7 @@
         tools:text="DEF" />
 
     <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/search_icon"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:padding="12dp"

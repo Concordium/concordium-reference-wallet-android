@@ -66,7 +66,7 @@ data class SendTokenData(
     var globalParams: GlobalParams? = null,
     var accountBalance: AccountBalance? = null,
     var newSelfEncryptedAmount: String? = null
-): Serializable
+) : Serializable
 
 @Suppress("SerialVersionUIDInSerializableClass")
 class SendTokenViewModel(application: Application) : AndroidViewModel(application), Serializable {
@@ -92,8 +92,11 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 
+    var sendOnlySelectedToken: Boolean = false
+
     init {
-        transferRepository = TransferRepository(WalletDatabase.getDatabase(application).transferDao())
+        transferRepository =
+            TransferRepository(WalletDatabase.getDatabase(application).transferDao())
 
         chooseToken.observeForever { token ->
             sendTokenData.token = token
@@ -114,15 +117,37 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     fun loadTokens(accountAddress: String) {
         waiting.postValue(true)
         CoroutineScope(Dispatchers.IO).launch {
-            val accountContractRepository = AccountContractRepository(WalletDatabase.getDatabase(getApplication()).accountContractDao())
-            val contractTokensRepository = ContractTokensRepository(WalletDatabase.getDatabase(getApplication()).contractTokenDao())
+            val accountContractRepository = AccountContractRepository(
+                WalletDatabase.getDatabase(getApplication()).accountContractDao()
+            )
+            val contractTokensRepository = ContractTokensRepository(
+                WalletDatabase.getDatabase(getApplication()).contractTokenDao()
+            )
             val tokensFound = mutableListOf<Token>()
             tokensFound.add(getCCDDefaultToken(accountAddress))
             sendTokenData.account?.let { account ->
                 val accountContracts = accountContractRepository.find(account.address)
                 accountContracts.forEach { accountContract ->
-                    val tokens = contractTokensRepository.getTokens(accountAddress, accountContract.contractIndex)
-                    tokensFound.addAll(tokens.map { Token(it.tokenId, it.tokenId, "", it.tokenMetadata, false, it.contractIndex, "0",false, BigInteger.ZERO, BigInteger.ZERO, it.contractName, it.tokenMetadata?.symbol ?: "") })
+                    val tokens = contractTokensRepository.getTokens(
+                        accountAddress,
+                        accountContract.contractIndex
+                    )
+                    tokensFound.addAll(tokens.map {
+                        Token(
+                            it.tokenId,
+                            it.tokenId,
+                            "",
+                            it.tokenMetadata,
+                            false,
+                            it.contractIndex,
+                            "0",
+                            false,
+                            BigInteger.ZERO,
+                            BigInteger.ZERO,
+                            it.contractName,
+                            it.tokenMetadata?.symbol ?: ""
+                        )
+                    })
                 }
             }
             waiting.postValue(false)
@@ -200,8 +225,16 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         }
 
         viewModelScope.launch {
-            val serializeTokenTransferParametersInput = SerializeTokenTransferParametersInput(sendTokenData.token!!.token, sendTokenData.amount.toString(), sendTokenData.account!!.address, sendTokenData.receiver)
-            val serializeTokenTransferParametersOutput = App.appCore.cryptoLibrary.serializeTokenTransferParameters(serializeTokenTransferParametersInput)
+            val serializeTokenTransferParametersInput = SerializeTokenTransferParametersInput(
+                sendTokenData.token!!.token,
+                sendTokenData.amount.toString(),
+                sendTokenData.account!!.address,
+                sendTokenData.receiver
+            )
+            val serializeTokenTransferParametersOutput =
+                App.appCore.cryptoLibrary.serializeTokenTransferParameters(
+                    serializeTokenTransferParametersInput
+                )
             if (serializeTokenTransferParametersOutput == null) {
                 waiting.postValue(false)
                 errorInt.postValue(R.string.app_error_lib)
@@ -217,13 +250,15 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
 
         var atDisposal: BigInteger = BigInteger.ZERO
         sendTokenData.account?.let { account ->
-            atDisposal = account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
+            atDisposal =
+                account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
         }
 
         return if (sendTokenData.token!!.isCCDToken) {
             atDisposal >= sendTokenData.amount + (sendTokenData.fee ?: BigInteger.ZERO)
         } else {
-            atDisposal >= (sendTokenData.fee ?: BigInteger.ZERO) && sendTokenData.token!!.totalBalance >= sendTokenData.amount
+            atDisposal >= (sendTokenData.fee
+                ?: BigInteger.ZERO) && sendTokenData.token!!.totalBalance >= sendTokenData.amount
         }
     }
 
@@ -278,10 +313,26 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     private suspend fun getCCDDefaultToken(accountAddress: String): Token {
-        val accountRepository = AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
+        val accountRepository =
+            AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
         val account = accountRepository.findByAddress(accountAddress)
-        val atDisposal = account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) ?: BigInteger.ZERO
-        return Token("", "CCD", "", null, false, "", "",true, (account?.totalBalance ?: BigInteger.ZERO), atDisposal, "", "CCD")
+        val atDisposal =
+            account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
+                ?: BigInteger.ZERO
+        return Token(
+            "",
+            "CCD",
+            "",
+            null,
+            false,
+            "",
+            "",
+            true,
+            (account?.totalBalance ?: BigInteger.ZERO),
+            atDisposal,
+            "",
+            "CCD"
+        )
     }
 
     fun getCipherForBiometrics(): Cipher? {
@@ -305,7 +356,8 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun checkLogin(cipher: Cipher) = viewModelScope.launch {
         waiting.postValue(true)
-        val password = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
+        val password =
+            App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
         if (password != null) {
             decryptAndContinue(password)
         } else {
@@ -322,8 +374,10 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 waiting.postValue(false)
                 return
             }
-            val decryptedJson = App.appCore.getCurrentAuthenticationManager().decryptInBackground(password, storageAccountDataEncrypted)
-            val credentialsOutput = App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
+            val decryptedJson = App.appCore.getCurrentAuthenticationManager()
+                .decryptInBackground(password, storageAccountDataEncrypted)
+            val credentialsOutput =
+                App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
             if (decryptedJson != null) {
                 getAccountEncryptedKey(credentialsOutput)
             } else {
@@ -340,7 +394,10 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 sendTokenData.receiverPublicKey = it.accountEncryptionKey
                 if (sendTokenData.token!!.isCCDToken)
                     viewModelScope.launch {
-                        createTransactionCCD(credentialsOutput.accountKeys, credentialsOutput.encryptionSecretKey)
+                        createTransactionCCD(
+                            credentialsOutput.accountKeys,
+                            credentialsOutput.encryptionSecretKey
+                        )
                     }
                 else
                     createTransaction(credentialsOutput.accountKeys)
@@ -382,11 +439,13 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             calculateInputEncryptedAmount(),
             null,
             null,
-            null)
+            null
+        )
 
         sendTokenData.createTransferInput = transferInput
 
-        val output = App.appCore.cryptoLibrary.createTransfer(transferInput, CryptoLibrary.REGULAR_TRANSFER)
+        val output =
+            App.appCore.cryptoLibrary.createTransfer(transferInput, CryptoLibrary.REGULAR_TRANSFER)
 
         if (output == null) {
             errorInt.postValue(R.string.app_error_general)
@@ -442,18 +501,45 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
 
         viewModelScope.launch {
-            val serializeTokenTransferParametersInput = SerializeTokenTransferParametersInput(sendTokenData.token!!.token, sendTokenData.amount.toString(), sendTokenData.account!!.address, sendTokenData.receiver)
-            val serializeTokenTransferParametersOutput = App.appCore.cryptoLibrary.serializeTokenTransferParameters(serializeTokenTransferParametersInput)
+            val serializeTokenTransferParametersInput = SerializeTokenTransferParametersInput(
+                sendTokenData.token!!.token,
+                sendTokenData.amount.toString(),
+                sendTokenData.account!!.address,
+                sendTokenData.receiver
+            )
+            val serializeTokenTransferParametersOutput =
+                App.appCore.cryptoLibrary.serializeTokenTransferParameters(
+                    serializeTokenTransferParametersInput
+                )
             if (serializeTokenTransferParametersOutput == null) {
                 errorInt.postValue(R.string.app_error_lib)
             } else {
-                val payload = Payload(ContractAddress(sendTokenData.token!!.contractIndex.toInt(), 0), "0", sendTokenData.energy!!, serializeTokenTransferParametersOutput.parameter, sendTokenData.token!!.contractName + ".transfer")
-                val accountTransactionInput = CreateAccountTransactionInput(expiry.toInt(), sendTokenData.account!!.address, keys, sendTokenData.accountNonce!!.nonce, payload, "Update")
-                val accountTransactionOutput = App.appCore.cryptoLibrary.createAccountTransaction(accountTransactionInput)
+                val payload = Payload(
+                    ContractAddress(sendTokenData.token!!.contractIndex.toInt(), 0),
+                    "0",
+                    sendTokenData.energy!!,
+                    serializeTokenTransferParametersOutput.parameter,
+                    sendTokenData.token!!.contractName + ".transfer"
+                )
+                val accountTransactionInput = CreateAccountTransactionInput(
+                    expiry.toInt(),
+                    sendTokenData.account!!.address,
+                    keys,
+                    sendTokenData.accountNonce!!.nonce,
+                    payload,
+                    "Update"
+                )
+                val accountTransactionOutput =
+                    App.appCore.cryptoLibrary.createAccountTransaction(accountTransactionInput)
                 if (accountTransactionOutput == null) {
                     errorInt.postValue(R.string.app_error_lib)
                 } else {
-                    val createTransferOutput = CreateTransferOutput(accountTransactionOutput.signatures, "", "", accountTransactionOutput.transaction)
+                    val createTransferOutput = CreateTransferOutput(
+                        accountTransactionOutput.signatures,
+                        "",
+                        "",
+                        accountTransactionOutput.transaction
+                    )
                     submitTransaction(createTransferOutput)
                 }
             }
@@ -490,19 +576,25 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
 
         val allTransfers = transferRepository.getAllByAccountId(sendTokenData.account!!.id)
         val unfinalisedTransfers = allTransfers.filter {
-            it.transactionStatus != TransactionStatus.FINALIZED && (it.nonce?.nonce ?: -1) >= lastNounceToInclude
+            it.transactionStatus != TransactionStatus.FINALIZED && (it.nonce?.nonce
+                ?: -1) >= lastNounceToInclude
         }
 
         val aggEncryptedAmount = if (unfinalisedTransfers.isNotEmpty()) {
-            val lastTransaction = unfinalisedTransfers.maxWithOrNull { a, b -> a.id.compareTo(b.id) }
+            val lastTransaction =
+                unfinalisedTransfers.maxWithOrNull { a, b -> a.id.compareTo(b.id) }
             if (lastTransaction != null) {
                 sendTokenData.accountBalance?.finalizedBalance?.let { accountBalanceInfo ->
-                    val incomingAmounts = accountBalanceInfo.accountEncryptedAmount.incomingAmounts.filter { incomingAmount ->
-                        accountUpdater.lookupMappedAmount(incomingAmount) != null
-                    }
+                    val incomingAmounts =
+                        accountBalanceInfo.accountEncryptedAmount.incomingAmounts.filter { incomingAmount ->
+                            accountUpdater.lookupMappedAmount(incomingAmount) != null
+                        }
                     var agg = lastTransaction.newSelfEncryptedAmount ?: ""
                     for (i in lastTransaction.newStartIndex until accountBalanceInfo.accountEncryptedAmount.startIndex + incomingAmounts.count()) {
-                        agg = App.appCore.cryptoLibrary.combineEncryptedAmounts(agg, incomingAmounts[i]).toString()
+                        agg = App.appCore.cryptoLibrary.combineEncryptedAmounts(
+                            agg,
+                            incomingAmounts[i]
+                        ).toString()
                     }
                     agg
                 } ?: ""
@@ -514,7 +606,8 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 var agg = it.accountEncryptedAmount.selfAmount
                 it.accountEncryptedAmount.incomingAmounts.forEach { incomingAmount ->
                     if (accountUpdater.lookupMappedAmount(incomingAmount) != null) {
-                        agg = App.appCore.cryptoLibrary.combineEncryptedAmounts(agg, incomingAmount).toString()
+                        agg = App.appCore.cryptoLibrary.combineEncryptedAmounts(agg, incomingAmount)
+                            .toString()
                     }
                 }
                 agg
@@ -522,9 +615,12 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         }
 
         val aggAmount = sendTokenData.accountBalance?.finalizedBalance?.let { accountBalanceInfo ->
-            var agg: BigInteger = accountUpdater.lookupMappedAmount(accountBalanceInfo.accountEncryptedAmount.selfAmount)?.toBigInteger() ?: BigInteger.ZERO
+            var agg: BigInteger =
+                accountUpdater.lookupMappedAmount(accountBalanceInfo.accountEncryptedAmount.selfAmount)
+                    ?.toBigInteger() ?: BigInteger.ZERO
             accountBalanceInfo.accountEncryptedAmount.incomingAmounts.forEach { incomingAmount ->
-                agg += accountUpdater.lookupMappedAmount(incomingAmount)?.toBigInteger() ?: BigInteger.ZERO
+                agg += accountUpdater.lookupMappedAmount(incomingAmount)?.toBigInteger()
+                    ?: BigInteger.ZERO
             }
             unfinalisedTransfers.forEach { transfer ->
                 agg -= transfer.amount
