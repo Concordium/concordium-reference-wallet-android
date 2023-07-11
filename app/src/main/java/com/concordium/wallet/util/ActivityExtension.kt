@@ -7,8 +7,5 @@ import android.view.inputmethod.InputMethodManager
 
 fun Activity.hideKeyboard(view: View) {
     (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
-        .hideSoftInputFromWindow(
-            view.windowToken,
-            0
-        )
+        .hideSoftInputFromWindow(view.windowToken, 0)
 }
