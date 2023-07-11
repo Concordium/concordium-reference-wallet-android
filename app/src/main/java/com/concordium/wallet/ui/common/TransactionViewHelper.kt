@@ -26,7 +26,6 @@ object TransactionViewHelper {
         titleTextView: TextView,
         subHeaderTextView: TextView,
         totalTextView: TextView,
-//        costTextView: TextView,
         memoTextView: TextView,
         amountTextView: TextView,
         alertImageView: ImageView,
@@ -93,98 +92,33 @@ object TransactionViewHelper {
 
                 var cost = ta.cost
                 var costPrefix = ""
-                var amountColorSpan: SpannableString
-                var costColorSpan: SpannableString
-
                 val textBuilder = SpannableStringBuilder()
                 val amountText =
                     "${CurrencyUtil.formatGTU(ta.subtotal, withGStroke = true)} - "
-                val costText by lazy { "$costPrefix${
-                    CurrencyUtil.formatGTU(
-                        cost, withGStroke = true
-                    )
-                } ${amountTextView.context.getString(R.string.account_details_fee)}" }
+                val costText by lazy {
+                    "$costPrefix${
+                        CurrencyUtil.formatGTU(
+                            cost, withGStroke = true
+                        )
+                    } ${amountTextView.context.getString(R.string.account_details_fee)}"
+                }
 
                 if (ta.transactionStatus == TransactionStatus.RECEIVED ||
                     (ta.transactionStatus == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Ambiguous)
                 ) {
                     costPrefix = "~"
-                    amountColorSpan = SpannableString(amountText).apply {
-                        setSpan(
-                            ForegroundColorSpan(colorBlack),
-                            0,
-                            amountText.length,
-                            0
-                        )
-                    }
-                    costColorSpan = SpannableString(costText).apply {
-                        setSpan(
-                            ForegroundColorSpan(colorBlue),
-                            0,
-                            costText.length,
-                            0
-                        )
-                    }
-                    textBuilder.append(amountColorSpan)
-                    textBuilder.append(costColorSpan)
+                    textBuilder.append(getColorSpan(amountText, colorBlack))
+                    textBuilder.append(getColorSpan(costText, colorBlue))
                 } else if (ta.transactionStatus == TransactionStatus.ABSENT) {
                     costPrefix = "~"
-                    amountColorSpan = SpannableString(amountText).apply {
-                        setSpan(
-                            ForegroundColorSpan(colorGrey),
-                            0,
-                            amountText.length,
-                            0
-                        )
-                    }
-                    costColorSpan = SpannableString(costText).apply {
-                        setSpan(
-                            ForegroundColorSpan(colorGrey),
-                            0,
-                            costText.length,
-                            0
-                        )
-                    }
-                    textBuilder.append(amountColorSpan)
-                    textBuilder.append(costColorSpan)
+                    textBuilder.append(getColorSpan(amountText, colorGrey))
+                    textBuilder.append(getColorSpan(amountText, colorGrey))
                 } else if (ta.outcome == TransactionOutcome.Reject) {
-                    amountColorSpan = SpannableString(amountText).apply {
-                        setSpan(
-                            ForegroundColorSpan(colorGrey),
-                            0,
-                            amountText.length,
-                            0
-                        )
-                    }
-                    costColorSpan = SpannableString(costText).apply {
-                        setSpan(
-                            ForegroundColorSpan(colorBlack),
-                            0,
-                            costText.length,
-                            0
-                        )
-                    }
-                    textBuilder.append(amountColorSpan)
-                    textBuilder.append(costColorSpan)
+                    textBuilder.append(getColorSpan(amountText, colorGrey))
+                    textBuilder.append(getColorSpan(amountText, colorBlack))
                 } else {
-                    amountColorSpan = SpannableString(amountText).apply {
-                        setSpan(
-                            ForegroundColorSpan(colorBlack),
-                            0,
-                            amountText.length,
-                            0
-                        )
-                    }
-                    costColorSpan = SpannableString(costText).apply {
-                        setSpan(
-                            ForegroundColorSpan(colorBlack),
-                            0,
-                            costText.length,
-                            0
-                        )
-                    }
-                    textBuilder.append(amountColorSpan)
-                    textBuilder.append(costColorSpan)
+                    textBuilder.append(getColorSpan(amountText, colorBlack))
+                    textBuilder.append(getColorSpan(amountText, colorBlack))
                 }
 
                 amountTextView.setText(textBuilder, TextView.BufferType.SPANNABLE)
@@ -321,6 +255,17 @@ object TransactionViewHelper {
             )
         } else {
             statusImageView.setImageDrawable(null)
+        }
+    }
+
+    private fun getColorSpan(text: String, color: Int): SpannableString {
+        return SpannableString(text).apply {
+            setSpan(
+                ForegroundColorSpan(color),
+                0,
+                text.length,
+                0
+            )
         }
     }
 
