@@ -112,13 +112,13 @@ object TransactionViewHelper {
                 } else if (ta.transactionStatus == TransactionStatus.ABSENT) {
                     costPrefix = "~"
                     textBuilder.append(getColorSpan(amountText, colorGrey))
-                    textBuilder.append(getColorSpan(amountText, colorGrey))
+                    textBuilder.append(getColorSpan(costText, colorGrey))
                 } else if (ta.outcome == TransactionOutcome.Reject) {
                     textBuilder.append(getColorSpan(amountText, colorGrey))
-                    textBuilder.append(getColorSpan(amountText, colorBlack))
+                    textBuilder.append(getColorSpan(costText, colorBlack))
                 } else {
                     textBuilder.append(getColorSpan(amountText, colorBlack))
-                    textBuilder.append(getColorSpan(amountText, colorBlack))
+                    textBuilder.append(getColorSpan(costText, colorBlack))
                 }
 
                 amountTextView.setText(textBuilder, TextView.BufferType.SPANNABLE)
