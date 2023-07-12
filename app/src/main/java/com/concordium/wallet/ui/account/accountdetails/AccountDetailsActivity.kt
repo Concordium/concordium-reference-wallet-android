@@ -43,6 +43,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     private lateinit var viewModelTokens: TokensViewModel
     private var accountAddress = ""
     private var lookForNewTokensFragment: LookForNewTokensFragment? = null
+    private var selectedTabIndex: Int = 0
 
     companion object {
         const val EXTRA_ACCOUNT = "EXTRA_ACCOUNT"
@@ -133,10 +134,19 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
                             onTabCollectibles()
                         }
 
-                        else -> Unit
+                        else -> if (selectedTabIndex == 0) {
+                            onTabFungible()
+                        } else {
+                            onTabCollectibles()
+                        }
                     }
                     Toast.makeText(this, R.string.cis_tokens_updated, Toast.LENGTH_SHORT).show()
                 } else {
+                    if (selectedTabIndex == 0) {
+                        onTabFungible()
+                    } else {
+                        onTabCollectibles()
+                    }
                     Toast.makeText(this, R.string.cis_tokens_not_updated, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -252,6 +262,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun onTabFungible() {
+        selectedTabIndex = 0
         binding.markerFungible.visibility = View.VISIBLE
         binding.markerCollectibles.visibility = View.GONE
         binding.tabFungibleText.setTypeface(binding.tabFungibleText.typeface, Typeface.BOLD)
@@ -271,6 +282,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     }
 
     private fun onTabCollectibles() {
+        selectedTabIndex = 1
         binding.markerFungible.visibility = View.GONE
         binding.markerCollectibles.visibility = View.VISIBLE
         binding.tabFungibleText.setTypeface(binding.tabFungibleText.typeface, Typeface.NORMAL)
