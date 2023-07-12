@@ -289,6 +289,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                         accountContractRepository.delete(existingAccountContract)
                         anyChanges = true
                     }
+                    addTokenDestination.postValue(TokenSelectedDestination.MIXED)
                     updateWithSelectedTokensDone.postValue(anyChanges)
                 } else {
                     val accountContract =
@@ -303,10 +304,23 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                         )
                         anyChanges = true
                     }
+
                     val existingContractTokens =
                         contractTokensRepository.getTokens(account.address, tokenData.contractIndex)
-                    val existingNotSelectedTokenIds = existingContractTokens.map { it.contractIndex }
-                        .minus(selectedTokens.map { it.id }.toSet())
+                    val existingContractTokenIds = existingContractTokens.map { it.tokenId }
+                    val unselectedTokenIds =
+                        updatedTokens.filter { it.isSelected.not() }.map { it.token }
+                    when {
+                        existingContractTokenIds
+                            .any { unselectedTokenIds.contains(it) } -> anyChanges = true
+
+                        selectedTokens.map { it.token } != existingContractTokenIds ->
+                            anyChanges = true
+                    }
+
+                    val existingNotSelectedTokenIds =
+                        existingContractTokens.map { it.tokenId }
+                            .minus(selectedTokens.map { it.token }.toSet())
                     existingNotSelectedTokenIds.forEach { existingNotSelectedTokenId ->
                         contractTokensRepository.find(
                             account.address,
@@ -314,7 +328,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                             existingNotSelectedTokenId
                         )?.let { existingNotSelectedContractToken ->
                             contractTokensRepository.delete(existingNotSelectedContractToken)
-                            anyChanges = true
                         }
                     }
                     selectedTokens.forEach { selectedToken ->
@@ -336,7 +349,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                                     tokenData.contractName
                                 )
                             )
-                            anyChanges = true
                         }
                     }
 

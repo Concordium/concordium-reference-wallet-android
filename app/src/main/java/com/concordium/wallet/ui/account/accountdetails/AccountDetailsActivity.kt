@@ -120,7 +120,6 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
                 lookForNewTokensFragment?.dismiss()
                 lookForNewTokensFragment = null
                 if (anyChanges) {
-                    Toast.makeText(this, R.string.cis_tokens_updated, Toast.LENGTH_SHORT).show()
                     when (viewModelTokens.addTokenDestination.value) {
                         TokenSelectedDestination.TOKEN -> {
                             viewModelTokens.addTokenDestination.value =
@@ -134,40 +133,12 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
                             onTabCollectibles()
                         }
 
-                        else -> {
-                            supportFragmentManager.beginTransaction().replace(
-                                R.id.tokens_fragment,
-                                TokensFragment.newInstance(
-                                    viewModelTokens,
-                                    viewModelAccountDetails.account.address,
-                                    true
-                                ),
-                                null
-                            ).commit()
-
-                            binding.markerFungible.visibility = View.VISIBLE
-                            binding.markerCollectibles.visibility = View.GONE
-                            binding.tabFungibleText.setTypeface(
-                                binding.tabFungibleText.typeface,
-                                Typeface.BOLD
-                            )
-                            binding.tabCollectiblesText.setTypeface(
-                                binding.tabCollectiblesText.typeface,
-                                Typeface.NORMAL
-                            )
-                        }
+                        else -> Unit
                     }
-                } else
-                    supportFragmentManager.beginTransaction().replace(
-                        R.id.tokens_fragment,
-                        TokensFragment.newInstance(
-                            viewModelTokens,
-                            viewModelAccountDetails.account.address,
-                            true
-                        ),
-                        null
-                    ).commit()
-                Toast.makeText(this, R.string.cis_tokens_not_updated, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.cis_tokens_updated, Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, R.string.cis_tokens_not_updated, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
