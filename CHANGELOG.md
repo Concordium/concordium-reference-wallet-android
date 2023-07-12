@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - fixed item overlap issues with transaction details screen
 
+### Changed
+
+- Remove election difficulty from expected chain parameters. This does not
+  affect wallet functionality.
+
+
 ## [1.2.0]
 
 ### Added
