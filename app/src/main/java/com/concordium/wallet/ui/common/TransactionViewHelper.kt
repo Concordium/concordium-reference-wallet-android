@@ -1,5 +1,9 @@
 package com.concordium.wallet.ui.common
 
+import android.annotation.SuppressLint
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -14,6 +18,7 @@ import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.toBigInteger
 import java.math.BigInteger
 
+
 object TransactionViewHelper {
     suspend fun show(
         accountUpdater: AccountUpdater,
@@ -21,7 +26,6 @@ object TransactionViewHelper {
         titleTextView: TextView,
         subHeaderTextView: TextView,
         totalTextView: TextView,
-        costTextView: TextView,
         memoTextView: TextView,
         amountTextView: TextView,
         alertImageView: ImageView,
@@ -62,66 +66,65 @@ object TransactionViewHelper {
         }
 
         fun showTransactionFeeText() {
-            costTextView.visibility = View.VISIBLE
-            amountTextView.visibility = View.GONE
-            costTextView.text =
-                costTextView.context.getString(R.string.account_details_shielded_transaction_fee)
+            amountTextView.visibility = View.VISIBLE
+            amountTextView.text =
+                amountTextView.context.getString(R.string.account_details_shielded_transaction_fee)
         }
 
         fun showDecryptedValueOfEncryptedAmount() {
             //show decrypted value of encrypted amount
             lockImageView.visibility = View.VISIBLE
             totalTextView.visibility = View.GONE
-            costTextView.visibility = View.GONE
             amountTextView.visibility = View.GONE
             //...for now
         }
 
         fun hideCostLine() {
-            costTextView.visibility = View.GONE
             amountTextView.visibility = View.GONE
         }
 
 
+        @SuppressLint("SetTextI18n")
         fun showCostLineWithAmounts() {
             // Subtotal and cost
             if (ta.subtotal != null && ta.cost != null) {
-                costTextView.visibility = View.VISIBLE
                 amountTextView.visibility = View.VISIBLE
 
                 var cost = ta.cost
                 var costPrefix = ""
+                val textBuilder = SpannableStringBuilder()
+                val amountText =
+                    "${CurrencyUtil.formatGTU(ta.subtotal, withGStroke = true)} - "
+                val costText by lazy {
+                    "$costPrefix${
+                        CurrencyUtil.formatGTU(
+                            cost, withGStroke = true
+                        )
+                    } ${amountTextView.context.getString(R.string.account_details_fee)}"
+                }
 
                 if (ta.transactionStatus == TransactionStatus.RECEIVED ||
                     (ta.transactionStatus == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Ambiguous)
                 ) {
-                    amountTextView.setTextColor(colorBlack)
-                    costTextView.setTextColor(colorBlue)
                     costPrefix = "~"
+                    textBuilder.append(getColorSpan(amountText, colorBlack))
+                    textBuilder.append(getColorSpan(costText, colorBlue))
                 } else if (ta.transactionStatus == TransactionStatus.ABSENT) {
-                    amountTextView.setTextColor(colorGrey)
-                    costTextView.setTextColor(colorGrey)
                     costPrefix = "~"
+                    textBuilder.append(getColorSpan(amountText, colorGrey))
+                    textBuilder.append(getColorSpan(costText, colorGrey))
                 } else if (ta.outcome == TransactionOutcome.Reject) {
-                    amountTextView.setTextColor(colorGrey)
-                    costTextView.setTextColor(colorBlack)
+                    textBuilder.append(getColorSpan(amountText, colorGrey))
+                    textBuilder.append(getColorSpan(costText, colorBlack))
                 } else {
-                    amountTextView.setTextColor(colorBlack)
-                    costTextView.setTextColor(colorBlack)
+                    textBuilder.append(getColorSpan(amountText, colorBlack))
+                    textBuilder.append(getColorSpan(costText, colorBlack))
                 }
 
-                amountTextView.text =
-                    "${CurrencyUtil.formatGTU(ta.subtotal, withGStroke = true)} - "
-                costTextView.text = "$costPrefix${
-                    CurrencyUtil.formatGTU(
-                        cost, withGStroke = true
-                    )
-                } ${costTextView.context.getString(R.string.account_details_fee)}"
+                amountTextView.setText(textBuilder, TextView.BufferType.SPANNABLE)
             } else {
-                costTextView.visibility = View.GONE
                 amountTextView.visibility = View.GONE
             }
-
         }
 
         //Clear first
@@ -252,6 +255,17 @@ object TransactionViewHelper {
             )
         } else {
             statusImageView.setImageDrawable(null)
+        }
+    }
+
+    private fun getColorSpan(text: String, color: Int): SpannableString {
+        return SpannableString(text).apply {
+            setSpan(
+                ForegroundColorSpan(color),
+                0,
+                text.length,
+                0
+            )
         }
     }
 
