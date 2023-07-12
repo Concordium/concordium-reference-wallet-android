@@ -67,9 +67,7 @@ class TransactionDetailsActivity : BaseActivity() {
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[TransactionDetailsViewModel::class.java]
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
-            waiting?.let {
-                showWaiting(waiting)
-            }
+             showWaiting(waiting)
         })
         viewModel.errorLiveData.observe(
             this,
@@ -144,18 +142,17 @@ class TransactionDetailsActivity : BaseActivity() {
 
         viewModel.viewModelScope.launch {
             TransactionViewHelper.show(
-                accountUpdater,
-                ta,
-                binding.transaction.titleTextview,
-                binding.transaction.subheaderTextview,
-                binding.transaction.totalTextview,
-                binding.transaction.costTextview,
-                binding.transaction.memoTextview,
-                binding.transaction.amountTextview,
-                binding.transaction.alertImageview,
-                binding.transaction.statusImageview,
-                binding.transaction.lockImageview,
-                viewModel.isShieldedAccount,
+                accountUpdater = accountUpdater,
+                ta = ta,
+                titleTextView = binding.transaction.titleTextview,
+                subHeaderTextView = binding.transaction.subheaderTextview,
+                totalTextView = binding.transaction.totalTextview,
+                memoTextView = binding.transaction.memoTextview,
+                amountTextView = binding.transaction.amountTextview,
+                alertImageView = binding.transaction.alertImageview,
+                statusImageView = binding.transaction.statusImageview,
+                lockImageView = binding.transaction.lockImageview,
+                isShieldedAccount = viewModel.isShieldedAccount,
                 showDate = true
             )
         }
@@ -199,7 +196,7 @@ class TransactionDetailsActivity : BaseActivity() {
                     viewModel.addressLookup(ta.fromAddress, ta.fromAddressTitle)
                 )
             )
-            binding.fromAddressLayout.setValue(ta.fromAddress, true)
+            binding.fromAddressLayout.setValue(ta.fromAddress, false)
         } else {
             val origin = ta.origin
             val type = origin?.type
@@ -213,7 +210,7 @@ class TransactionDetailsActivity : BaseActivity() {
                             viewModel.addressLookup(ta.fromAddress, ta.fromAddressTitle)
                         )
                     )
-                    binding.fromAddressLayout.setValue(origin.address, true)
+                    binding.fromAddressLayout.setValue(origin.address, false)
                 }
             }
         }
@@ -228,7 +225,7 @@ class TransactionDetailsActivity : BaseActivity() {
                     viewModel.addressLookup(ta.toAddress, ta.toAddressTitle)
                 )
             )
-            binding.toAddressLayout.setValue(ta.toAddress, true)
+            binding.toAddressLayout.setValue(ta.toAddress, false)
         } else {
             binding.toAddressLayout.visibility = View.GONE
         }
@@ -249,13 +246,13 @@ class TransactionDetailsActivity : BaseActivity() {
             binding.blockHashLayout.visibility = View.VISIBLE
             binding.blockHashLayout.setValue(
                 getString(R.string.transaction_details_block_hash_submitted),
-                true
+                false
             )
         } else if (ta.transactionStatus == TransactionStatus.ABSENT) {
             binding.blockHashLayout.visibility = View.VISIBLE
             binding.blockHashLayout.setValue(
                 getString(R.string.transaction_details_block_hash_failed),
-                true
+                false
             )
         } else {
             val blockHashes = ta.blockHashes
