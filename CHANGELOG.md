@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove election difficulty from expected chain parameters. This does not
   affect wallet functionality.
-
+- changed "You can add more tokens from the Manage menu." -> "To add more tokens, tap Manage." and added item decorator for divider in TokensFragment.kt
 
 ## [1.2.0]
 

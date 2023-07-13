@@ -40,6 +40,7 @@
     <color name="background_edit_text_grey">#FBFDFD</color>
 
     <color name="background_release">#D9EFFC</color>
+    <color name="background_transparent">#00FFFFFF</color>
 
     <!--    Redesign Colors-->
     <color name="text_black_redesign">#181817</color>
