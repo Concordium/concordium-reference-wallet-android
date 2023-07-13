@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fixed end destination when exiting add/remove watched tokens.
 - fixed item overlap issues with transaction details screen
 
+### Changed
+
+- changed "You can add more tokens from the Manage menu." -> "To add more tokens, tap Manage." and added item decorator for divider in TokensFragment.kt
+
 ## [1.2.0]
 
 ### Added
