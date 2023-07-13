@@ -11,6 +11,8 @@ import com.concordium.wallet.databinding.FragmentDialogContractAddressBinding
 import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.util.KeyboardUtil
+import com.concordium.wallet.util.hideKeyboard
+
 
 class ContractAddressFragment : TokensBaseFragment() {
     private var _binding: FragmentDialogContractAddressBinding? = null
@@ -65,6 +67,10 @@ class ContractAddressFragment : TokensBaseFragment() {
             } else {
                 false
             }
+        }
+
+        binding.contractAddress.onFocusChangeListener = View.OnFocusChangeListener { _, hasFocus ->
+            if (hasFocus.not()) requireActivity().hideKeyboard(binding.contractAddress)
         }
     }
 
