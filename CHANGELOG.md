@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fixed end destination when exiting add/remove watched tokens.
 - fixed item overlap issues with transaction details screen
 
 ### Changed
