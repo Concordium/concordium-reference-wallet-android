@@ -73,6 +73,7 @@
         android:text="@string/cis_add_more"
         android:textAlignment="center"
         android:visibility="gone"
+        android:layout_marginTop="@dimen/list_item_horizontal_margin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/content"
