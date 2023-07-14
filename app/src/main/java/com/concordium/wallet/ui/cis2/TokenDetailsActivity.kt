@@ -82,6 +82,7 @@ class TokenDetailsActivity : BaseActivity() {
             setContractIndexAndSubIndex(token)
             setTokenId(token.token)
             token.tokenMetadata?.let { tokenMetadata ->
+                setName(tokenMetadata)
                 setImage(tokenMetadata)
                 setOwnership(token, tokenMetadata)
                 setDescription(tokenMetadata)
@@ -153,6 +154,11 @@ class TokenDetailsActivity : BaseActivity() {
                 binding.includeAbout.contractIndex.text = tokenIndex
             }
         }
+    }
+
+    private fun setName(tokenMetadata: TokenMetadata) {
+        binding.includeAbout.nameAndIconHolder.visibility = View.VISIBLE
+        binding.includeAbout.name.text = tokenMetadata.name
     }
 
     private fun setImage(tokenMetadata: TokenMetadata) {
