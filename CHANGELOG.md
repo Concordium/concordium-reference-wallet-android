@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   affect wallet functionality.
 - changed "You can add more tokens from the Manage menu." -> "To add more tokens, tap Manage." and added item decorator for divider in TokensFragment.kt
 
+### Changed
+
+- Removed the ability to select other tokens when transferring from TokenDetailsActivity
+
 ## [1.2.0]
 
 ### Added
