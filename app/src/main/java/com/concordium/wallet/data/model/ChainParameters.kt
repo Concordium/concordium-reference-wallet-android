@@ -13,7 +13,6 @@ data class ChainParameters(
     val delegatorCooldown: Long,
     val bakingCommissionLPool: Double,
     val accountCreationLimit: Int,
-    val electionDifficulty: Double,
     val minimumEquityCapital: String,
     val bakingCommissionRange: BakingCommissionRange,
     val finalizationCommissionRange: FinalizationCommissionRange,

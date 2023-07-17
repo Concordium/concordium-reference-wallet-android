@@ -43,6 +43,7 @@ class SendTokenActivity : BaseActivity() {
     companion object {
         const val ACCOUNT = "ACCOUNT"
         const val TOKEN = "TOKEN"
+        const val SEND_ONLY_SELECTED_TOKEN = "SEND_ONLY_SELECTED_TOKEN"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +52,7 @@ class SendTokenActivity : BaseActivity() {
         setContentView(binding.root)
         viewModel.sendTokenData.account = intent.getSerializable(ACCOUNT, Account::class.java)
         viewModel.chooseToken.postValue(intent.getSerializable(TOKEN, Token::class.java))
+        viewModel.sendOnlySelectedToken = intent.getBooleanExtra(SEND_ONLY_SELECTED_TOKEN, false)
         initObservers()
         initViews()
         enableSend()
@@ -109,9 +111,15 @@ class SendTokenActivity : BaseActivity() {
     }
 
     private fun initializeSearchToken() {
-        binding.searchToken.searchToken.setOnClickListener {
-            searchTokenBottomSheet = SearchTokenBottomSheet.newInstance(viewModel, viewModelTokens)
-            searchTokenBottomSheet?.show(supportFragmentManager, "")
+        if (viewModel.sendOnlySelectedToken) {
+            binding.searchToken.searchIcon.visibility = View.INVISIBLE
+        } else {
+            binding.searchToken.searchIcon.visibility = View.VISIBLE
+            binding.searchToken.searchToken.setOnClickListener {
+                searchTokenBottomSheet =
+                    SearchTokenBottomSheet.newInstance(viewModel, viewModelTokens)
+                searchTokenBottomSheet?.show(supportFragmentManager, "")
+            }
         }
     }
 
