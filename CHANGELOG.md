@@ -13,12 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fixed item overlap issues with transaction details screen
 - Removed all tokens with balance < 0 when selecting tokens for transfer 
 - Removed token thumbnail and added name in token details activity
+- transfer token flow now ends in the proper place
 
 ### Changed
 
 - Remove election difficulty from expected chain parameters. This does not
   affect wallet functionality.
 - changed "You can add more tokens from the Manage menu." -> "To add more tokens, tap Manage." and added item decorator for divider in TokensFragment.kt
+
+### Changed
+
+- Removed the ability to select other tokens when transferring from TokenDetailsActivity
 
 ## [1.2.0]
 

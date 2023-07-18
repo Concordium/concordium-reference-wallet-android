@@ -9,7 +9,7 @@ import com.concordium.wallet.CBORUtil
 import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivitySendTokenReceiptBinding
-import com.concordium.wallet.ui.MainActivity
+import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DATA
 import com.concordium.wallet.util.getSerializable
@@ -28,7 +28,11 @@ class SendTokenReceiptActivity : BaseActivity() {
         viewModel.sendTokenData = intent.getSerializable(SEND_TOKEN_DATA, SendTokenData::class.java)
         binding = ActivitySendTokenReceiptBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.cis_send_funds)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.cis_send_funds
+        )
         initViews()
         initObservers()
         viewModel.loadTransactionFee()
@@ -40,12 +44,14 @@ class SendTokenReceiptActivity : BaseActivity() {
     }
 
     private fun initViews() {
-        binding.sender.text = viewModel.sendTokenData.account?.name.plus("\n\n").plus(viewModel.sendTokenData.account?.address)
-        binding.amount.text = CurrencyUtil.formatGTU(viewModel.sendTokenData.amount, viewModel.sendTokenData.token)
+        binding.sender.text = viewModel.sendTokenData.account?.name.plus("\n\n")
+            .plus(viewModel.sendTokenData.account?.address)
+        binding.amount.text =
+            CurrencyUtil.formatGTU(viewModel.sendTokenData.amount, viewModel.sendTokenData.token)
         binding.receiver.text = viewModel.sendTokenData.receiver
         viewModel.sendTokenData.receiverName?.let {
             binding.receiverName.visibility = View.VISIBLE
-            binding.receiverName.text= it
+            binding.receiverName.text = it
         }
         CoroutineScope(Dispatchers.Default).launch {
             runOnUiThread {
@@ -88,9 +94,9 @@ class SendTokenReceiptActivity : BaseActivity() {
     }
 
     private fun onFinish() {
-        finish()
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val intent = Intent(this, AccountDetailsActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
         startActivity(intent)
     }
 
@@ -110,24 +116,28 @@ class SendTokenReceiptActivity : BaseActivity() {
 
         viewModel.showAuthentication.observe(this) {
             showAuthentication(authenticateText(), object : AuthenticationCallback {
-                override fun getCipherForBiometrics() : Cipher? {
+                override fun getCipherForBiometrics(): Cipher? {
                     return viewModel.getCipherForBiometrics()
                 }
+
                 override fun onCorrectPassword(password: String) {
                     viewModel.continueWithPassword(password)
                 }
+
                 override fun onCipher(cipher: Cipher) {
                     viewModel.checkLogin(cipher)
                 }
+
                 override fun onCancelled() {
                     binding.sendFunds.isEnabled = true
                 }
             })
         }
 
-        viewModel.transactionReady.observe(this) {submissionId ->
-            binding.includeTransactionSubmittedNo.transactionSubmittedDivider.visibility = View.VISIBLE
-            binding.includeTransactionSubmittedNo.transactionSubmittedId.let {view ->
+        viewModel.transactionReady.observe(this) { submissionId ->
+            binding.includeTransactionSubmittedNo.transactionSubmittedDivider.visibility =
+                View.VISIBLE
+            binding.includeTransactionSubmittedNo.transactionSubmittedId.let { view ->
                 view.visibility = View.VISIBLE
                 view.text = submissionId
             }
