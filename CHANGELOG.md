@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fixed end destination when exiting add/remove watched tokens.
 - fixed item overlap issues with transaction details screen
 - Removed all tokens with balance < 0 when selecting tokens for transfer 
+- Removed token thumbnail and added name in token details activity
+- transfer token flow now ends in the proper place
 
 ### Changed
 

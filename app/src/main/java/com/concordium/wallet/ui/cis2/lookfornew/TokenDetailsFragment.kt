@@ -148,24 +148,6 @@ class TokenDetailsFragment : TokensBaseFragment() {
                 }
             }
         }
-
-        tokenMetadata.thumbnail?.url?.let {
-            if (it.isNotBlank()) {
-                binding.details.icon.visibility = View.VISIBLE
-                Glide.with(this)
-                    .load(it)
-                    .placeholder(R.drawable.ic_token_loading_image)
-                    .override(iconSize)
-                    .fitCenter()
-                    .error(R.drawable.ic_token_no_image)
-                    .into(binding.details.icon)
-            } else {
-                binding.details.apply {
-                    icon.visibility = View.GONE
-                    icon.setImageResource(android.R.color.transparent)
-                }
-            }
-        }
     }
 
     private fun setTicker(tokenMetadata: TokenMetadata) {
