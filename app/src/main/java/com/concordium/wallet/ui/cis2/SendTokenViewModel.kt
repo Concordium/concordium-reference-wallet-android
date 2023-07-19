@@ -24,13 +24,15 @@ import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.AccountBalance
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.AccountNonce
-import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.GlobalParamsWrapper
 import com.concordium.wallet.data.model.InputEncryptedAmount
 import com.concordium.wallet.data.model.SubmissionData
 import com.concordium.wallet.data.model.Token
+import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
-import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.model.TransactionType
+import com.concordium.wallet.data.model.TransferSubmissionStatus
+import com.concordium.wallet.data.room.Transfer
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.data.walletconnect.ContractAddress
 import com.concordium.wallet.data.walletconnect.Payload
@@ -45,28 +47,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.Serializable
 import java.math.BigInteger
+import java.util.Date
 import javax.crypto.Cipher
-
-@Suppress("SerialVersionUIDInSerializableClass")
-data class SendTokenData(
-    var token: Token? = null,
-    var account: Account? = null,
-    var amount: BigInteger = BigInteger.ZERO,
-    var receiver: String = "",
-    var receiverName: String? = null,
-    var fee: BigInteger? = null,
-    var max: BigInteger? = null,
-    var memo: String? = null,
-    var energy: Long? = null,
-    var accountNonce: AccountNonce? = null,
-    var expiry: Long? = null,
-    var createTransferInput: CreateTransferInput? = null,
-    var createTransferOutput: CreateTransferOutput? = null,
-    var receiverPublicKey: String? = null,
-    var globalParams: GlobalParams? = null,
-    var accountBalance: AccountBalance? = null,
-    var newSelfEncryptedAmount: String? = null
-) : Serializable
 
 @Suppress("SerialVersionUIDInSerializableClass")
 class SendTokenViewModel(application: Application) : AndroidViewModel(application), Serializable {
@@ -81,6 +63,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     private var accountNonceRequest: BackendRequest<AccountNonce>? = null
     private var globalParamsRequest: BackendRequest<GlobalParamsWrapper>? = null
     private var submitTransaction: BackendRequest<SubmissionData>? = null
+    private var transferSubmissionStatusRequest: BackendRequest<TransferSubmissionStatus>? = null
     private var accountBalanceRequest: BackendRequest<AccountBalance>? = null
 
     var sendTokenData = SendTokenData()
@@ -112,6 +95,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         globalParamsRequest?.dispose()
         submitTransaction?.dispose()
         accountBalanceRequest?.dispose()
+        transferSubmissionStatusRequest?.dispose()
     }
 
     fun loadTokens(accountAddress: String) {
@@ -551,9 +535,9 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         submitTransaction?.dispose()
         submitTransaction = proxyRepository.submitTransfer(createTransferOutput,
             {
+                sendTokenData.submissionId = it.submissionId
+                submissionStatus(it.submissionId)
                 println("LC -> submitTransaction SUCCESS = ${it.submissionId}")
-                waiting.postValue(false)
-                transactionReady.postValue(it.submissionId)
             },
             {
                 println("LC -> submitTransaction ERROR ${it.stackTraceToString()}")
@@ -563,9 +547,86 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         )
     }
 
+    private fun submissionStatus(submissionId: String) {
+        waiting.value = true
+        transferSubmissionStatusRequest?.dispose()
+        transferSubmissionStatusRequest = proxyRepository.getTransferSubmissionStatus(submissionId,
+            {
+                sendTokenData.transferSubmissionStatus = it
+                accountUpdater.updateEncryptedAmount(
+                    it,
+                    submissionId,
+                    sendTokenData.amount.toString()
+                )
+                finishTransferCreation(submissionId)
+                // Do not disable waiting state yet
+            },
+            {
+                handleBackendError(it)
+                waiting.postValue(false)
+            }
+        )
+    }
+
+
     private fun handleBackendError(throwable: Throwable) {
         Log.e("Backend request failed", throwable)
         errorInt.postValue(BackendErrorHandler.getExceptionStringRes(throwable))
+    }
+
+    private fun saveNewTransfer(transfer: Transfer) = viewModelScope.launch {
+        transferRepository.insert(transfer)
+    }
+
+    private fun finishTransferCreation(submissionId: String) {
+        val amount = sendTokenData.amount
+        val toAddress = sendTokenData.receiver
+        val memo = sendTokenData.memo
+        val transferSubmissionStatus = sendTokenData.transferSubmissionStatus
+        val expiry = sendTokenData.expiry
+        val cost = sendTokenData.fee
+
+        if (amount == null || toAddress == null || submissionId == null ||
+            transferSubmissionStatus == null || expiry == null || cost == null
+        ) {
+            waiting.value = false
+            return
+        }
+        val createdAt = Date().time
+        var newStartIndex: Int = 0
+        sendTokenData.createTransferInput?.let {
+            newStartIndex = it.inputEncryptedAmount?.aggIndex ?: 0
+        }
+
+        val transfer = Transfer(
+            0,
+            sendTokenData.account?.id ?: -1,
+            amount,
+            cost,
+            sendTokenData.account?.address.orEmpty(),
+            toAddress,
+            expiry,
+            memo,
+            createdAt,
+            submissionId,
+            transferSubmissionStatus.status,
+            transferSubmissionStatus.outcome ?: TransactionOutcome.UNKNOWN,
+            if (isTransferToSameAccount()) {
+                TransactionType.TRANSFERTOENCRYPTED
+            } else {
+                TransactionType.TRANSFERTOPUBLIC
+            },
+            null,
+            newStartIndex,
+            sendTokenData.accountNonce
+        )
+        waiting.postValue(false)
+        saveNewTransfer(transfer)
+        transactionReady.postValue(submissionId)
+    }
+
+    fun isTransferToSameAccount(): Boolean {
+        return sendTokenData.account?.address == sendTokenData.receiver
     }
 
     private suspend fun calculateInputEncryptedAmount(): InputEncryptedAmount? {
