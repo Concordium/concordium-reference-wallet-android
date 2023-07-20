@@ -199,7 +199,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         if (sendTokenData.token!!.isCCDToken) {
             waiting.postValue(true)
             viewModelScope.launch {
-                getTransferCostCCD()
+                getCCDTransferCost()
             }
             return
         }
@@ -223,7 +223,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 waiting.postValue(false)
                 errorInt.postValue(R.string.app_error_lib)
             } else {
-                getTransferCost(serializeTokenTransferParametersOutput)
+                getTokenTransferCost(serializeTokenTransferParametersOutput)
             }
         }
     }
@@ -246,7 +246,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    private fun getTransferCostCCD() {
+    private fun getCCDTransferCost() {
         proxyRepository.getTransferCost(
             type = ProxyRepository.SIMPLE_TRANSFER,
             memoSize = if (sendTokenData.memo == null) null else sendTokenData.memo!!.length / 2,
@@ -268,7 +268,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         )
     }
 
-    private fun getTransferCost(serializeTokenTransferParametersOutput: SerializeTokenTransferParametersOutput) {
+    private fun getTokenTransferCost(serializeTokenTransferParametersOutput: SerializeTokenTransferParametersOutput) {
         if (sendTokenData.account == null || sendTokenData.token == null) {
             errorInt.postValue(R.string.app_error_general)
             return
@@ -363,7 +363,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             val credentialsOutput =
                 App.appCore.gson.fromJson(decryptedJson, StorageAccountData::class.java)
             if (decryptedJson != null) {
-                getAccountEncryptedKey(credentialsOutput)
+                createTransaction(credentialsOutput)
             } else {
                 errorInt.postValue(R.string.app_error_encryption)
                 waiting.postValue(false)
@@ -371,62 +371,48 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    private suspend fun getAccountEncryptedKey(credentialsOutput: StorageAccountData) {
-        proxyRepository.getAccountEncryptedKey(
-            sendTokenData.receiver,
-            {
-                sendTokenData.receiverPublicKey = it.accountEncryptionKey
-                if (sendTokenData.token!!.isCCDToken)
-                    viewModelScope.launch {
-                        createTransactionCCD(
-                            credentialsOutput.accountKeys,
-                            credentialsOutput.encryptionSecretKey
-                        )
-                    }
-                else
-                    createTransaction(credentialsOutput.accountKeys)
-            },
-            {
-                waiting.postValue(false)
-                handleBackendError(it)
+    private suspend fun createTransaction(credentialsOutput: StorageAccountData) {
+        sendTokenData.expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
+
+        if (sendTokenData.token!!.isCCDToken)
+            viewModelScope.launch {
+                createCCDTransaction(
+                    credentialsOutput.accountKeys
+                )
             }
-        )
+        else
+            createTokenTransaction(credentialsOutput.accountKeys)
     }
 
-    private suspend fun createTransactionCCD(keys: AccountData, encryptionSecretKey: String) {
+    private suspend fun createCCDTransaction(keys: AccountData) {
         val toAddress = sendTokenData.receiver
         val nonce = sendTokenData.accountNonce
         val amount = sendTokenData.amount
         val energy = sendTokenData.energy
         val memo = sendTokenData.memo
+        val expiry = sendTokenData.expiry
 
-        if (nonce == null || energy == null) {
+        if (nonce == null || energy == null || expiry == null) {
             errorInt.postValue(R.string.app_error_general)
             waiting.postValue(false)
             return
         }
 
-        sendTokenData.expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
-
         val transferInput = CreateTransferInput(
             sendTokenData.account!!.address,
             keys,
             toAddress,
-            sendTokenData.expiry!!,
+            expiry,
             amount.toString(),
             energy,
             nonce.nonce,
             memo,
-            sendTokenData.globalParams,
-            sendTokenData.receiverPublicKey,
-            encryptionSecretKey,
-            calculateInputEncryptedAmount(),
             null,
             null,
-            null
+            null,
+            null,
+            null,
         )
-
-        sendTokenData.createTransferInput = transferInput
 
         val output =
             App.appCore.cryptoLibrary.createTransfer(transferInput, CryptoLibrary.REGULAR_TRANSFER)
@@ -438,57 +424,28 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             sendTokenData.createTransferOutput = output
 
             viewModelScope.launch {
-                if (output.addedSelfEncryptedAmount != null) {
-                    sendTokenData.account!!.finalizedEncryptedBalance?.let { encBalance ->
-                        val newEncryptedAmount = App.appCore.cryptoLibrary.combineEncryptedAmounts(
-                            output.addedSelfEncryptedAmount,
-                            encBalance.selfAmount
-                        ).toString()
-                        sendTokenData.newSelfEncryptedAmount = newEncryptedAmount
-                        val oldDecryptedAmount =
-                            accountUpdater.lookupMappedAmount(encBalance.selfAmount)
-                        oldDecryptedAmount?.let {
-                            accountUpdater.saveDecryptedAmount(
-                                newEncryptedAmount,
-                                (it.toBigInteger() + amount).toString()
-                            )
-                        }
-                    }
-                }
-                if (output.remaining != null) {
-                    sendTokenData.newSelfEncryptedAmount = output.remaining
-                    val remainingAmount =
-                        accountUpdater.decryptAndSaveAmount(encryptionSecretKey, output.remaining)
-
-                    sendTokenData.account!!.finalizedEncryptedBalance?.let { encBalance ->
-                        val oldDecryptedAmount =
-                            accountUpdater.lookupMappedAmount(encBalance.selfAmount)
-                        oldDecryptedAmount?.let {
-                            accountUpdater.saveDecryptedAmount(
-                                output.remaining,
-                                remainingAmount.toString()
-                            )
-                        }
-                    }
-                }
                 submitTransaction(output)
             }
         }
     }
 
-    private fun createTransaction(keys: AccountData) {
-        if (sendTokenData.account == null || sendTokenData.token == null || sendTokenData.energy == null || sendTokenData.accountNonce == null) {
+    private fun createTokenTransaction(keys: AccountData) {
+        val account = sendTokenData.account;
+        val token = sendTokenData.token;
+        val energy = sendTokenData.energy;
+        val accountNonce = sendTokenData.accountNonce;
+        val expiry = sendTokenData.expiry;
+
+        if (account == null || token == null || energy == null || accountNonce == null || expiry == null) {
             errorInt.postValue(R.string.app_error_general)
             return
         }
 
-        val expiry = (DateTimeUtil.nowPlusMinutes(10).time) / 1000
-
         viewModelScope.launch {
             val serializeTokenTransferParametersInput = SerializeTokenTransferParametersInput(
-                sendTokenData.token!!.token,
+                token.token,
                 sendTokenData.amount.toString(),
-                sendTokenData.account!!.address,
+                account.address,
                 sendTokenData.receiver
             )
             val serializeTokenTransferParametersOutput =
@@ -499,17 +456,17 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 errorInt.postValue(R.string.app_error_lib)
             } else {
                 val payload = Payload(
-                    ContractAddress(sendTokenData.token!!.contractIndex.toInt(), 0),
+                    ContractAddress(token.contractIndex.toInt(), 0),
                     "0",
-                    sendTokenData.energy!!,
+                    energy,
                     serializeTokenTransferParametersOutput.parameter,
-                    sendTokenData.token!!.contractName + ".transfer"
+                    token.contractName + ".transfer"
                 )
                 val accountTransactionInput = CreateAccountTransactionInput(
                     expiry.toInt(),
-                    sendTokenData.account!!.address,
+                    account.address,
                     keys,
-                    sendTokenData.accountNonce!!.nonce,
+                    accountNonce.nonce,
                     payload,
                     "Update"
                 )
@@ -536,30 +493,8 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         submitTransaction = proxyRepository.submitTransfer(createTransferOutput,
             {
                 sendTokenData.submissionId = it.submissionId
-                submissionStatus(it.submissionId)
-                println("LC -> submitTransaction SUCCESS = ${it.submissionId}")
-            },
-            {
-                println("LC -> submitTransaction ERROR ${it.stackTraceToString()}")
-                handleBackendError(it)
+                finishTransferCreation(it.submissionId)
                 waiting.postValue(false)
-            }
-        )
-    }
-
-    private fun submissionStatus(submissionId: String) {
-        waiting.value = true
-        transferSubmissionStatusRequest?.dispose()
-        transferSubmissionStatusRequest = proxyRepository.getTransferSubmissionStatus(submissionId,
-            {
-                sendTokenData.transferSubmissionStatus = it
-                accountUpdater.updateEncryptedAmount(
-                    it,
-                    submissionId,
-                    sendTokenData.amount.toString()
-                )
-                finishTransferCreation(submissionId)
-                // Do not disable waiting state yet
             },
             {
                 handleBackendError(it)
@@ -567,7 +502,6 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             }
         )
     }
-
 
     private fun handleBackendError(throwable: Throwable) {
         Log.e("Backend request failed", throwable)
@@ -578,25 +512,31 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         transferRepository.insert(transfer)
     }
 
+    private fun getTransactionType(isCCDTransfer: Boolean, hasMemo: Boolean): TransactionType {
+        if (!isCCDTransfer) {
+            return TransactionType.UPDATE
+        }
+        if (hasMemo) {
+            return TransactionType.TRANSFERWITHMEMO
+        }
+        return TransactionType.TRANSFER
+    }
+
     private fun finishTransferCreation(submissionId: String) {
-        val amount = sendTokenData.amount
         val toAddress = sendTokenData.receiver
         val memo = sendTokenData.memo
-        val transferSubmissionStatus = sendTokenData.transferSubmissionStatus
         val expiry = sendTokenData.expiry
         val cost = sendTokenData.fee
 
-        if (amount == null || toAddress == null || submissionId == null ||
-            transferSubmissionStatus == null || expiry == null || cost == null
-        ) {
+        if (expiry == null || cost == null) {
             waiting.value = false
             return
         }
         val createdAt = Date().time
         var newStartIndex: Int = 0
-        sendTokenData.createTransferInput?.let {
-            newStartIndex = it.inputEncryptedAmount?.aggIndex ?: 0
-        }
+        val isCCDTransfer = sendTokenData.token!!.isCCDToken
+
+        val amount = if (isCCDTransfer) sendTokenData.amount else BigInteger.ZERO
 
         val transfer = Transfer(
             0,
@@ -609,13 +549,9 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             memo,
             createdAt,
             submissionId,
-            transferSubmissionStatus.status,
-            transferSubmissionStatus.outcome ?: TransactionOutcome.UNKNOWN,
-            if (isTransferToSameAccount()) {
-                TransactionType.TRANSFERTOENCRYPTED
-            } else {
-                TransactionType.TRANSFERTOPUBLIC
-            },
+            TransactionStatus.UNKNOWN,
+            TransactionOutcome.UNKNOWN,
+            getTransactionType(isCCDTransfer, memo != null),
             null,
             newStartIndex,
             sendTokenData.accountNonce
@@ -623,78 +559,5 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         waiting.postValue(false)
         saveNewTransfer(transfer)
         transactionReady.postValue(submissionId)
-    }
-
-    fun isTransferToSameAccount(): Boolean {
-        return sendTokenData.account?.address == sendTokenData.receiver
-    }
-
-    private suspend fun calculateInputEncryptedAmount(): InputEncryptedAmount? {
-        if (sendTokenData.account == null)
-            return null
-
-        val lastNounceToInclude = sendTokenData.accountBalance?.finalizedBalance?.accountNonce ?: -2
-
-        val allTransfers = transferRepository.getAllByAccountId(sendTokenData.account!!.id)
-        val unfinalisedTransfers = allTransfers.filter {
-            it.transactionStatus != TransactionStatus.FINALIZED && (it.nonce?.nonce
-                ?: -1) >= lastNounceToInclude
-        }
-
-        val aggEncryptedAmount = if (unfinalisedTransfers.isNotEmpty()) {
-            val lastTransaction =
-                unfinalisedTransfers.maxWithOrNull { a, b -> a.id.compareTo(b.id) }
-            if (lastTransaction != null) {
-                sendTokenData.accountBalance?.finalizedBalance?.let { accountBalanceInfo ->
-                    val incomingAmounts =
-                        accountBalanceInfo.accountEncryptedAmount.incomingAmounts.filter { incomingAmount ->
-                            accountUpdater.lookupMappedAmount(incomingAmount) != null
-                        }
-                    var agg = lastTransaction.newSelfEncryptedAmount ?: ""
-                    for (i in lastTransaction.newStartIndex until accountBalanceInfo.accountEncryptedAmount.startIndex + incomingAmounts.count()) {
-                        agg = App.appCore.cryptoLibrary.combineEncryptedAmounts(
-                            agg,
-                            incomingAmounts[i]
-                        ).toString()
-                    }
-                    agg
-                } ?: ""
-            } else {
-                ""
-            }
-        } else {
-            sendTokenData.accountBalance?.finalizedBalance?.let {
-                var agg = it.accountEncryptedAmount.selfAmount
-                it.accountEncryptedAmount.incomingAmounts.forEach { incomingAmount ->
-                    if (accountUpdater.lookupMappedAmount(incomingAmount) != null) {
-                        agg = App.appCore.cryptoLibrary.combineEncryptedAmounts(agg, incomingAmount)
-                            .toString()
-                    }
-                }
-                agg
-            } ?: ""
-        }
-
-        val aggAmount = sendTokenData.accountBalance?.finalizedBalance?.let { accountBalanceInfo ->
-            var agg: BigInteger =
-                accountUpdater.lookupMappedAmount(accountBalanceInfo.accountEncryptedAmount.selfAmount)
-                    ?.toBigInteger() ?: BigInteger.ZERO
-            accountBalanceInfo.accountEncryptedAmount.incomingAmounts.forEach { incomingAmount ->
-                agg += accountUpdater.lookupMappedAmount(incomingAmount)?.toBigInteger()
-                    ?: BigInteger.ZERO
-            }
-            unfinalisedTransfers.forEach { transfer ->
-                agg -= transfer.amount
-            }
-            agg
-        } ?: ""
-
-        val index = sendTokenData.accountBalance?.finalizedBalance?.let {
-            it.accountEncryptedAmount.startIndex + it.accountEncryptedAmount.incomingAmounts.count { key ->
-                accountUpdater.lookupMappedAmount(key) != null
-            }
-        } ?: 0
-
-        return InputEncryptedAmount(aggEncryptedAmount, aggAmount.toString(), index)
     }
 }

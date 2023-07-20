@@ -161,7 +161,7 @@ object TransactionViewHelper {
 
                 // simpleTransfer (handle as before)
                 // transferToSecret (as simpleTransfer)
-                if (ta.isSimpleTransfer() || ta.isTransferToSecret()) {
+                if (ta.isSimpleTransfer() || ta.isTransferToSecret() || ta.isSmartContractUpdate()) {
                     setTotalView(ta.getTotalAmountForRegular())
                     showCostLineWithAmounts()
                 } else
