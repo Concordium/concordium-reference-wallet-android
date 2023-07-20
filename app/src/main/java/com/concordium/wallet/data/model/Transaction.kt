@@ -46,7 +46,7 @@ data class Transaction(
     }
 
     fun isSimpleTransfer(): Boolean {
-        return details?.type == TransactionType.TRANSFER
+        return details?.type == TransactionType.TRANSFER || details?.type == TransactionType.TRANSFERWITHMEMO
     }
 
     fun isTransferToSecret(): Boolean {
@@ -61,10 +61,13 @@ data class Transaction(
         return details?.type == TransactionType.ENCRYPTEDAMOUNTTRANSFER || details?.type == TransactionType.ENCRYPTEDAMOUNTTRANSFERWITHMEMO
     }
 
+    fun isSmartContractUpdate(): Boolean {
+        return details?.type == TransactionType.UPDATE
+    }
+
     fun isOriginSelf(): Boolean {
         return origin?.type == TransactionOriginType.Self
     }
-
 
     fun getTotalAmountForRegular(): BigInteger {
         if (transactionStatus == TransactionStatus.ABSENT) {

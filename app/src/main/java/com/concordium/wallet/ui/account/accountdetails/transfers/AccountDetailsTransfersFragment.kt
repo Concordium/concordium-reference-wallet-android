@@ -127,7 +127,7 @@ class AccountDetailsTransfersFragment : Fragment() {
             if (accountDetailsViewModel.isShielded) {
                 if (!transaction.isRemoteTransaction()) {
                     if (transaction.details != null) {
-                        if (transaction.details.type == TransactionType.TRANSFER || transaction.details.type == TransactionType.TRANSFERTOENCRYPTED) {
+                        if (transaction.details.type == TransactionType.TRANSFER || transaction.details.type == TransactionType.TRANSFERTOENCRYPTED || transaction.details.type == TransactionType.UPDATE) {
                             result = false
                         }
                     }
