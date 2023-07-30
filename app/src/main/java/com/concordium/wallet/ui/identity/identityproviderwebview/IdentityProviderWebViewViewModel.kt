@@ -220,7 +220,6 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
                     override fun onResponse(call: Call<String>, response: Response<String>) {
                         val foundError = response.errorBody()?.string()
                             ?.contains(CreateIdentityError.ID_PUB.errorMessage) == true
-                                && response.body() == null
                         if (foundError) {
                             _createIdentityError.value = CreateIdentityError.ID_PUB
                         } else {
@@ -231,6 +230,7 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
 
                     override fun onFailure(call: Call<String>, t: Throwable) {
                         _createIdentityError.value = CreateIdentityError.UNKNOWN
+                        _createIdentity.value = true
                     }
                 })
         }

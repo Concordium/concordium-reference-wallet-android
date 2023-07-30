@@ -231,7 +231,7 @@ class IdentityProviderWebViewActivity : BaseActivity() {
         }
     }
 
-    fun showIdPubErrorDialog() {
+    private fun showIdPubErrorDialog() {
         binding.apply {
             alertDialog.visibility = View.VISIBLE
 

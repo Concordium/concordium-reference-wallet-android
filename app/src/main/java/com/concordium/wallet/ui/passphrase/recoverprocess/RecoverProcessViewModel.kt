@@ -27,7 +27,9 @@ import com.concordium.wallet.util.toBigInteger
 import com.google.gson.JsonArray
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.Serializable
@@ -358,17 +360,17 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         return percent
     }
 
-    private fun accountsPercent(): Int {
+    private suspend fun accountsPercent(): Int {
         if (accountGaps.size == 0) {
             progressAccounts.postValue(0)
             return 0
         }
-        var accounts = 0
-        val gapsIterator = accountGaps.values.iterator()
-        while (gapsIterator.hasNext()) {
-            val gap = gapsIterator.next()
-            accounts += ACCOUNT_GAP_MAX - gap
+        val result = viewModelScope.async {
+            accountGaps.values.toList().reduce { acc: Int, value: Int ->
+                ACCOUNT_GAP_MAX - value
+            }
         }
+        var accounts = result.await()
         val total = accountGaps.size * ACCOUNT_GAP_MAX
         accounts = total - accounts
         val percent = (accounts * 100) / total
