@@ -219,7 +219,6 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
                 .enqueue(object : retrofit2.Callback<String> {
                     override fun onResponse(call: Call<String>, response: Response<String>) {
                         val response = response.errorBody()?.string()
-
                         when {
                             response?.contains(CreateIdentityError.NONE.message) == true -> {
                                 _createIdentityError.value = CreateIdentityError.NONE
