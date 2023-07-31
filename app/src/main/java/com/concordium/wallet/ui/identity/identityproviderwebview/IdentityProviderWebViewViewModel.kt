@@ -215,7 +215,7 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
 
     fun startIdentityCreation() {
         viewModelScope.launch(Dispatchers.IO) {
-            App.appCore.getProxyBackend().checkIdentityProviderErrors(getIdentityProviderUrl())
+            App.appCore.getProxyBackend().checkIdentityProvider(getIdentityProviderUrl())
                 .enqueue(object : retrofit2.Callback<String> {
                     override fun onResponse(call: Call<String>, response: Response<String>) {
                         val foundError = response.errorBody()?.string()

@@ -130,5 +130,5 @@ interface ProxyBackend {
     ): Call<CIS2TokensBalances>
 
     @GET
-    fun checkIdentityProviderErrors(@Url url: String): Call<String>
+    fun checkIdentityProvider(@Url url: String): Call<String>
 }

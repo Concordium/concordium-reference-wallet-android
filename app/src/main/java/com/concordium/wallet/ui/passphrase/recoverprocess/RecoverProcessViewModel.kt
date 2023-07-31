@@ -17,9 +17,19 @@ import com.concordium.wallet.data.cryptolib.CreateCredentialInputV1
 import com.concordium.wallet.data.cryptolib.CreateCredentialOutputV1
 import com.concordium.wallet.data.cryptolib.GenerateRecoveryRequestInput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.GlobalParamsWrapper
+import com.concordium.wallet.data.model.IdentityObject
+import com.concordium.wallet.data.model.IdentityProvider
+import com.concordium.wallet.data.model.IdentityStatus
+import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
+import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.preferences.AuthPreferences
-import com.concordium.wallet.data.room.*
+import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.Identity
+import com.concordium.wallet.data.room.IdentityDao
+import com.concordium.wallet.data.room.IdentityWithAccounts
+import com.concordium.wallet.data.room.Recipient
+import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.passphrase.recoverprocess.retrofit.IdentityProviderApiInstance
 import com.concordium.wallet.util.DateTimeUtil
@@ -29,7 +39,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.Serializable
@@ -366,7 +375,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
             return 0
         }
         val result = viewModelScope.async {
-            accountGaps.values.toList().reduce { acc: Int, value: Int ->
+            accountGaps.values.toList().fold(0) { acc: Int, value: Int ->
                 ACCOUNT_GAP_MAX - value
             }
         }
