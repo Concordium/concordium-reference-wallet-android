@@ -376,7 +376,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         }
         val result = viewModelScope.async {
             accountGaps.values.toList().fold(0) { acc: Int, value: Int ->
-                ACCOUNT_GAP_MAX - value
+                acc + ACCOUNT_GAP_MAX - value
             }
         }
         var accounts = result.await()

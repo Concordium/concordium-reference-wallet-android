@@ -218,13 +218,21 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
             App.appCore.getProxyBackend().checkIdentityProvider(getIdentityProviderUrl())
                 .enqueue(object : retrofit2.Callback<String> {
                     override fun onResponse(call: Call<String>, response: Response<String>) {
-                        val foundError = response.errorBody()?.string()
-                            ?.contains(CreateIdentityError.ID_PUB.errorMessage) == true
-                        if (foundError) {
-                            _createIdentityError.value = CreateIdentityError.ID_PUB
-                        } else {
-                            _createIdentityError.value = CreateIdentityError.NONE
-                            _createIdentity.value = true
+                        val response = response.errorBody()?.string()
+
+                        when {
+                            response?.contains(CreateIdentityError.NONE.message) == true -> {
+                                _createIdentityError.value = CreateIdentityError.NONE
+                                _createIdentity.value = true
+                            }
+
+                            response?.contains(CreateIdentityError.ID_PUB.message) == true -> _createIdentityError.value =
+                                CreateIdentityError.ID_PUB
+
+                            else -> {
+                                _createIdentityError.value = CreateIdentityError.UNKNOWN
+                                _createIdentity.value = true
+                            }
                         }
                     }
 
