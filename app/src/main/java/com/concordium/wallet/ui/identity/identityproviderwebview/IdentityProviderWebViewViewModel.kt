@@ -29,7 +29,11 @@ import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Response
+
 
 class IdentityProviderWebViewViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
@@ -59,6 +63,14 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
     private val _gotoFailedLiveData = MutableLiveData<Event<Pair<Boolean, BackendError?>>>()
     val gotoFailedLiveData: LiveData<Event<Pair<Boolean, BackendError?>>>
         get() = _gotoFailedLiveData
+
+    private val _createIdentity = MutableLiveData(false)
+    val createIdentity: LiveData<Boolean>
+        get() = _createIdentity
+
+    private val _createIdentityError = MutableLiveData(CreateIdentityError.NONE)
+    val createIdentityError: LiveData<CreateIdentityError>
+        get() = _createIdentityError
 
     lateinit var identityCreationData: IdentityCreationData
     private val gson = App.appCore.gson
@@ -199,5 +211,35 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
                 handleBackendError(it)
             }
         )
+    }
+
+    fun startIdentityCreation() {
+        viewModelScope.launch(Dispatchers.IO) {
+            App.appCore.getProxyBackend().checkIdentityProvider(getIdentityProviderUrl())
+                .enqueue(object : retrofit2.Callback<String> {
+                    override fun onResponse(call: Call<String>, response: Response<String>) {
+                        val response = response.errorBody()?.string()
+                        when {
+                            response?.contains(CreateIdentityError.NONE.message) == true -> {
+                                _createIdentityError.value = CreateIdentityError.NONE
+                                _createIdentity.value = true
+                            }
+
+                            response?.contains(CreateIdentityError.ID_PUB.message) == true -> _createIdentityError.value =
+                                CreateIdentityError.ID_PUB
+
+                            else -> {
+                                _createIdentityError.value = CreateIdentityError.UNKNOWN
+                                _createIdentity.value = true
+                            }
+                        }
+                    }
+
+                    override fun onFailure(call: Call<String>, t: Throwable) {
+                        _createIdentityError.value = CreateIdentityError.UNKNOWN
+                        _createIdentity.value = true
+                    }
+                })
+        }
     }
 }

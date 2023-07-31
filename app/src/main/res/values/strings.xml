@@ -1087,5 +1087,10 @@
 
     <string name="show_raw_metadata">Show raw metadata</string>
 
+    //id pub identity error
+    <string name="id_pub_error_title">Create new Identity Error</string>
+    <string name="id_pub_error_description">You must recover your wallet in Wallet settings before creating a new identity</string>
+    <string name="id_pub_error_ok_button">Ok</string>
+    <string name="id_pub_error_settings_button">Go to Wallet Settings</string>
     Show raw metadata
 </resources>
