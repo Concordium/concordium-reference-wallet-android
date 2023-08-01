@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed token thumbnail and added name in token details activity
 - transfer token flow now ends in the proper place
 - fixed issue where ID pub duplicated id error showed
+- incorrect CCD token balance if some amount is shielded
 
 ### Changed
 
