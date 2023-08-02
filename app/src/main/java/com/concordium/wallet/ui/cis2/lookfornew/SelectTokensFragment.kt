@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.concordium.wallet.R
@@ -65,11 +66,19 @@ class SelectTokensFragment : TokensBaseFragment() {
     }
 
     private fun initViews() {
-        binding.tokensFound.layoutManager = LinearLayoutManager(activity)
+        val layoutManager = LinearLayoutManager(activity)
+        binding.tokensFound.layoutManager = layoutManager
         tokensAddAdapter =
             TokensAddAdapter(requireActivity(), showCheckBox = true, dataSet = arrayOf())
         tokensAddAdapter.also { binding.tokensFound.adapter = it }
         tokensAddAdapter.dataSet = _viewModel.tokens.toTypedArray()
+        binding.tokensFound.addItemDecoration(
+            DividerItemDecoration(
+                requireContext(),
+                layoutManager.orientation
+            )
+        )
+
 
         binding.tokensFound.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -114,7 +123,7 @@ class SelectTokensFragment : TokensBaseFragment() {
             }
         })
 
-        binding.search.setOnQueryTextFocusChangeListener  { _, hasFocus ->
+        binding.search.setOnQueryTextFocusChangeListener { _, hasFocus ->
             if (hasFocus.not()) requireActivity().hideKeyboard(binding.search)
         }
 
