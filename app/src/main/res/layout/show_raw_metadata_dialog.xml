@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/theme_white"
+    android:clickable="true">
+
+    <ImageButton
+        android:id="@+id/closeDialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/theme_white"
+        android:src="@drawable/ic_close_cross"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/theme_grey" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/closeDialog">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/thumbnailTitle"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/show_raw_metadata_thumbnail"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/thumbnailValue"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="16dp"
+                android:textAlignment="viewStart"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/thumbnailTitle"
+                tools:text="Some Example value" />
+
+            <TextView
+                android:id="@+id/displayTitle"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/show_raw_metadata_display"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/thumbnailValue" />
+
+            <TextView
+                android:id="@+id/displayValue"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="16dp"
+                android:textAlignment="viewStart"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/displayTitle"
+                tools:text="Some Example value" />
+
+            <TextView
+                android:id="@+id/nameTitle"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/show_raw_metadata_name"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/displayValue" />
+
+            <TextView
+                android:id="@+id/nameValue"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="16dp"
+                android:textAlignment="viewStart"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/nameTitle"
+                tools:text="Some Example value" />
+
+            <TextView
+                android:id="@+id/decimalTitle"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/show_raw_metadata_decimals"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/nameValue" />
+
+            <TextView
+                android:id="@+id/decimalValue"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="16dp"
+                android:textAlignment="viewStart"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/decimalTitle"
+                tools:text="Some Example value" />
+
+            <TextView
+                android:id="@+id/descriptionTitle"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/show_raw_metadata_description"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/decimalValue" />
+
+            <TextView
+                android:id="@+id/descriptionValue"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="16dp"
+                android:textAlignment="viewStart"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/descriptionTitle"
+                tools:text="Some Example value" />
+
+            <TextView
+                android:id="@+id/symbolTitle"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/show_raw_metadata_symbol"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/descriptionValue" />
+
+            <TextView
+                android:id="@+id/symbolValue"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="16dp"
+                android:textAlignment="viewStart"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/symbolTitle"
+                tools:text="Some Example value" />
+
+            <TextView
+                android:id="@+id/uniqueTitle"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/show_raw_metadata_unique"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/symbolValue" />
+
+            <TextView
+                android:id="@+id/uniqueValue"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="16dp"
+                android:textAlignment="viewStart"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/uniqueTitle"
+                tools:text="Some Example value" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

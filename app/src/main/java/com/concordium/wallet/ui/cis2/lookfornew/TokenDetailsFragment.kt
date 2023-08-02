@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.cis2.lookfornew
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +13,6 @@ import com.concordium.wallet.databinding.FragmentDialogTokenDetailsBinding
 import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.util.UnitConvertUtil
-import com.google.gson.GsonBuilder
 import java.math.BigInteger
 
 class TokenDetailsFragment : TokensBaseFragment() {
@@ -171,16 +169,55 @@ class TokenDetailsFragment : TokensBaseFragment() {
     }
 
     private fun showMetadata(tokenMetadata: TokenMetadata) {
+        binding.apply {
+            showRawMetadataDialogRoot.visibility = View.GONE
+            showRawMetadataDialogRoot.setOnClickListener {
+                showRawMetadataDialogRoot.visibility = View.GONE
+            }
+
+            showRawMetadataDialogContainer.closeDialog.setOnClickListener {
+                showRawMetadataDialogRoot.visibility = View.GONE
+            }
+        }
         binding.details.showRawMetadataHolder.setOnClickListener {
-            val gson = GsonBuilder()
-                .setPrettyPrinting()
-                .disableHtmlEscaping()
-                .create()
-            val builder = AlertDialog.Builder(requireContext())
-            builder.setMessage(gson.toJson(tokenMetadata))
-            builder.setPositiveButton(getString(R.string.error_database_close)) { _, _ -> }
-            builder.setCancelable(true)
-            builder.create().show()
+
+            binding.showRawMetadataDialogContainer.thumbnailTitle.visibility =
+                if (tokenMetadata.thumbnail != null) View.VISIBLE else View.GONE
+            binding.showRawMetadataDialogContainer.thumbnailValue.visibility =
+                if (tokenMetadata.thumbnail != null) View.VISIBLE else View.GONE
+            tokenMetadata.thumbnail?.let { thumbnail ->
+                binding.showRawMetadataDialogContainer.thumbnailValue.text = thumbnail.url
+            }
+
+            binding.showRawMetadataDialogContainer.displayTitle.visibility =
+                if (tokenMetadata.display != null) View.VISIBLE else View.GONE
+            binding.showRawMetadataDialogContainer.displayValue.visibility =
+                if (tokenMetadata.display != null) View.VISIBLE else View.GONE
+            tokenMetadata.display?.let { display ->
+                binding.showRawMetadataDialogContainer.displayValue.text = display.url
+            }
+
+            binding.showRawMetadataDialogContainer.nameValue.text = tokenMetadata.name
+
+            binding.showRawMetadataDialogContainer.decimalValue.text =
+                tokenMetadata.decimals.toString()
+
+            binding.showRawMetadataDialogContainer.descriptionValue.text =
+                tokenMetadata.description
+
+            binding.showRawMetadataDialogContainer.symbolTitle.visibility =
+                if (tokenMetadata.symbol != null) View.VISIBLE else View.GONE
+            binding.showRawMetadataDialogContainer.symbolValue.visibility =
+                if (tokenMetadata.symbol != null) View.VISIBLE else View.GONE
+            tokenMetadata.symbol?.let { symbol ->
+                binding.showRawMetadataDialogContainer.symbolValue.text = symbol
+            }
+
+            binding.showRawMetadataDialogContainer.uniqueValue.text =
+                tokenMetadata.unique.toString()
+
+
+            binding.showRawMetadataDialogRoot.visibility = View.VISIBLE
         }
     }
 }

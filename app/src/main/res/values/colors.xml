@@ -47,4 +47,6 @@
     <color name="button_disabled_background">#A6A6A6</color>
     <color name="loading_background">#7AFFFFFF</color>
 
+    <color name="show_raw_metadata_background">#33000000</color>
+
 </resources>

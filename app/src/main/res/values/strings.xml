@@ -1092,5 +1092,13 @@
     <string name="id_pub_error_description">You must recover your wallet in Wallet settings before creating a new identity</string>
     <string name="id_pub_error_ok_button">Ok</string>
     <string name="id_pub_error_settings_button">Go to Wallet Settings</string>
-    Show raw metadata
+
+    <string name="show_raw_metadata_thumbnail">Thumbnail</string>
+    <string name="show_raw_metadata_display">Display</string>
+    <string name="show_raw_metadata_name">Name</string>
+    <string name="show_raw_metadata_decimals">Decimals</string>
+    <string name="show_raw_metadata_description">Description</string>
+    <string name="show_raw_metadata_symbol">Symbol</string>
+    <string name="show_raw_metadata_unique">Unique</string>
+
 </resources>

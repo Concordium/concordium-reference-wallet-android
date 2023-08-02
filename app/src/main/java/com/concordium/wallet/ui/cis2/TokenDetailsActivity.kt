@@ -18,9 +18,6 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.UnitConvertUtil
 import com.concordium.wallet.util.getSerializable
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import org.json.JSONObject
 import java.math.BigInteger
 
 class TokenDetailsActivity : BaseActivity() {
@@ -89,7 +86,7 @@ class TokenDetailsActivity : BaseActivity() {
                 setDescription(tokenMetadata)
                 setTicker(tokenMetadata)
                 setDecimals(tokenMetadata)
-                showMatadata(tokenMetadata)
+                showMetadata(tokenMetadata)
             }
         }
     }
@@ -202,17 +199,56 @@ class TokenDetailsActivity : BaseActivity() {
         binding.includeProgress.progressBar.visibility = if (waiting) View.VISIBLE else View.GONE
     }
 
-    private fun showMatadata(tokenMetadata: TokenMetadata) {
+    private fun showMetadata(tokenMetadata: TokenMetadata) {
+        binding.apply {
+            showRawMetadataDialogRoot.visibility = View.GONE
+            showRawMetadataDialogRoot.setOnClickListener {
+                showRawMetadataDialogRoot.visibility = View.GONE
+            }
+
+            showRawMetadataDialogContainer.closeDialog.setOnClickListener {
+                showRawMetadataDialogRoot.visibility = View.GONE
+            }
+        }
         binding.includeAbout.showRawMetadataHolder.setOnClickListener {
-            val gson = GsonBuilder()
-                .setPrettyPrinting()
-                .disableHtmlEscaping()
-                .create()
-            val builder = AlertDialog.Builder(this)
-            builder.setMessage(gson.toJson(tokenMetadata))
-            builder.setPositiveButton(getString(R.string.error_database_close)) { _, _ -> }
-            builder.setCancelable(true)
-            builder.create().show()
+
+            binding.showRawMetadataDialogContainer.thumbnailTitle.visibility =
+                if (tokenMetadata.thumbnail != null) View.VISIBLE else View.GONE
+            binding.showRawMetadataDialogContainer.thumbnailValue.visibility =
+                if (tokenMetadata.thumbnail != null) View.VISIBLE else View.GONE
+            tokenMetadata.thumbnail?.let { thumbnail ->
+                binding.showRawMetadataDialogContainer.thumbnailValue.text = thumbnail.url
+            }
+
+            binding.showRawMetadataDialogContainer.displayTitle.visibility =
+                if (tokenMetadata.display != null) View.VISIBLE else View.GONE
+            binding.showRawMetadataDialogContainer.displayValue.visibility =
+                if (tokenMetadata.display != null) View.VISIBLE else View.GONE
+            tokenMetadata.display?.let { display ->
+                binding.showRawMetadataDialogContainer.displayValue.text = display.url
+            }
+
+            binding.showRawMetadataDialogContainer.nameValue.text = tokenMetadata.name
+
+            binding.showRawMetadataDialogContainer.decimalValue.text =
+                tokenMetadata.decimals.toString()
+
+            binding.showRawMetadataDialogContainer.descriptionValue.text =
+                tokenMetadata.description
+
+            binding.showRawMetadataDialogContainer.symbolTitle.visibility =
+                if (tokenMetadata.symbol != null) View.VISIBLE else View.GONE
+            binding.showRawMetadataDialogContainer.symbolValue.visibility =
+                if (tokenMetadata.symbol != null) View.VISIBLE else View.GONE
+            tokenMetadata.symbol?.let { symbol ->
+                binding.showRawMetadataDialogContainer.symbolValue.text = symbol
+            }
+
+            binding.showRawMetadataDialogContainer.uniqueValue.text =
+                tokenMetadata.unique.toString()
+
+
+            binding.showRawMetadataDialogRoot.visibility = View.VISIBLE
         }
     }
 }
