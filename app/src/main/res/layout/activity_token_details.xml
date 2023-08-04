@@ -44,7 +44,7 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/showRawMetadataDialogRoot"
+        android:id="@+id/show_raw_metadata_dialog_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="56dp"
@@ -57,8 +57,8 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <include
-            android:id="@+id/showRawMetadataDialogContainer"
-            layout="@layout/show_raw_metadata_dialog" />
+            android:id="@+id/show_raw_metadata_dialog_container"
+            layout="@layout/view_show_raw_metadata_dialog" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
