@@ -12,6 +12,7 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentDialogTokenDetailsBinding
 import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
+import com.concordium.wallet.ui.cis2.setMetadataDialog
 import com.concordium.wallet.util.UnitConvertUtil
 import java.math.BigInteger
 
@@ -65,7 +66,12 @@ class TokenDetailsFragment : TokensBaseFragment() {
                 setContractIndexAndSubIndex(token)
                 setDecimals(tokenMetadata)
                 setTicker(tokenMetadata)
-                showMetadata(tokenMetadata)
+                setMetadataDialog(
+                    tokenMetadata,
+                    binding.showRawMetadataDialogRoot,
+                    binding.showRawMetadataDialogContainer,
+                    binding.details.showRawMetadataHolder
+                )
             }
         }
     }
@@ -178,46 +184,46 @@ class TokenDetailsFragment : TokensBaseFragment() {
             showRawMetadataDialogContainer.closeDialog.setOnClickListener {
                 showRawMetadataDialogRoot.visibility = View.GONE
             }
-        }
-        binding.details.showRawMetadataHolder.setOnClickListener {
+            details.showRawMetadataHolder.setOnClickListener {
 
-            binding.showRawMetadataDialogContainer.thumbnailTitle.visibility =
-                if (tokenMetadata.thumbnail != null) View.VISIBLE else View.GONE
-            binding.showRawMetadataDialogContainer.thumbnailValue.visibility =
-                if (tokenMetadata.thumbnail != null) View.VISIBLE else View.GONE
-            tokenMetadata.thumbnail?.let { thumbnail ->
-                binding.showRawMetadataDialogContainer.thumbnailValue.text = thumbnail.url
+                showRawMetadataDialogContainer.thumbnailTitle.visibility =
+                    if (tokenMetadata.thumbnail != null) View.VISIBLE else View.GONE
+                showRawMetadataDialogContainer.thumbnailValue.visibility =
+                    if (tokenMetadata.thumbnail != null) View.VISIBLE else View.GONE
+                tokenMetadata.thumbnail?.let { thumbnail ->
+                    binding.showRawMetadataDialogContainer.thumbnailValue.text = thumbnail.url
+                }
+
+                showRawMetadataDialogContainer.displayTitle.visibility =
+                    if (tokenMetadata.display != null) View.VISIBLE else View.GONE
+                showRawMetadataDialogContainer.displayValue.visibility =
+                    if (tokenMetadata.display != null) View.VISIBLE else View.GONE
+                tokenMetadata.display?.let { display ->
+                    showRawMetadataDialogContainer.displayValue.text = display.url
+                }
+
+                showRawMetadataDialogContainer.nameValue.text = tokenMetadata.name
+
+                showRawMetadataDialogContainer.decimalValue.text =
+                    tokenMetadata.decimals.toString()
+
+                showRawMetadataDialogContainer.descriptionValue.text =
+                    tokenMetadata.description
+
+                showRawMetadataDialogContainer.symbolTitle.visibility =
+                    if (tokenMetadata.symbol != null) View.VISIBLE else View.GONE
+                showRawMetadataDialogContainer.symbolValue.visibility =
+                    if (tokenMetadata.symbol != null) View.VISIBLE else View.GONE
+                tokenMetadata.symbol?.let { symbol ->
+                    binding.showRawMetadataDialogContainer.symbolValue.text = symbol
+                }
+
+                showRawMetadataDialogContainer.uniqueValue.text =
+                    tokenMetadata.unique.toString()
+
+
+                showRawMetadataDialogRoot.visibility = View.VISIBLE
             }
-
-            binding.showRawMetadataDialogContainer.displayTitle.visibility =
-                if (tokenMetadata.display != null) View.VISIBLE else View.GONE
-            binding.showRawMetadataDialogContainer.displayValue.visibility =
-                if (tokenMetadata.display != null) View.VISIBLE else View.GONE
-            tokenMetadata.display?.let { display ->
-                binding.showRawMetadataDialogContainer.displayValue.text = display.url
-            }
-
-            binding.showRawMetadataDialogContainer.nameValue.text = tokenMetadata.name
-
-            binding.showRawMetadataDialogContainer.decimalValue.text =
-                tokenMetadata.decimals.toString()
-
-            binding.showRawMetadataDialogContainer.descriptionValue.text =
-                tokenMetadata.description
-
-            binding.showRawMetadataDialogContainer.symbolTitle.visibility =
-                if (tokenMetadata.symbol != null) View.VISIBLE else View.GONE
-            binding.showRawMetadataDialogContainer.symbolValue.visibility =
-                if (tokenMetadata.symbol != null) View.VISIBLE else View.GONE
-            tokenMetadata.symbol?.let { symbol ->
-                binding.showRawMetadataDialogContainer.symbolValue.text = symbol
-            }
-
-            binding.showRawMetadataDialogContainer.uniqueValue.text =
-                tokenMetadata.unique.toString()
-
-
-            binding.showRawMetadataDialogRoot.visibility = View.VISIBLE
         }
     }
 }

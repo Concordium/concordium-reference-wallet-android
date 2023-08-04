@@ -48,11 +48,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="56dp"
-        android:background="@color/show_raw_metadata_background"
+        android:background="@color/background_show_raw_metadata"
         android:clickable="true"
         android:focusable="true"
         android:padding="36dp"
-        android:visibility="gone">
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <include
             android:id="@+id/showRawMetadataDialogContainer"
