@@ -4,25 +4,45 @@
     android:id="@+id/content"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <include
         android:id="@+id/details"
         layout="@layout/activity_token_details_about"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        app:layout_constraintBottom_toTopOf="@+id/back_to_list"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/back_to_list" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/back_to_list"
         style="@style/Button.Standard.Intro"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/details"
-        android:layout_margin="@dimen/activity_horizontal_margin"
         android:layout_width="match_parent"
-        android:text="@string/cis_back_to_list" />
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:text="@string/cis_back_to_list"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/details" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/show_raw_metadata_dialog_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background_show_raw_metadata"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="28dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <include
+            android:id="@+id/show_raw_metadata_dialog_container"
+            layout="@layout/view_show_raw_metadata_dialog" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
