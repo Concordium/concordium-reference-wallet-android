@@ -2,12 +2,12 @@ package com.concordium.wallet.ui.cis2
 
 import android.view.View
 import com.concordium.wallet.data.model.TokenMetadata
-import com.concordium.wallet.databinding.ShowRawMetadataDialogBinding
+import com.concordium.wallet.databinding.ViewShowRawMetadataDialogBinding
 
 fun setMetadataDialog(
     tokenMetadata: TokenMetadata,
     dialogRoot: View,
-    dialogBinding: ShowRawMetadataDialogBinding,
+    dialogBinding: ViewShowRawMetadataDialogBinding,
     openButton: View,
 ) {
     dialogRoot.visibility = View.GONE
