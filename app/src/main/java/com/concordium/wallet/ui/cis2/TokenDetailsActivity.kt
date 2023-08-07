@@ -18,9 +18,6 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.UnitConvertUtil
 import com.concordium.wallet.util.getSerializable
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import org.json.JSONObject
 import java.math.BigInteger
 
 class TokenDetailsActivity : BaseActivity() {
@@ -66,6 +63,7 @@ class TokenDetailsActivity : BaseActivity() {
             val intent = Intent(this, SendTokenActivity::class.java)
             intent.putExtra(SendTokenActivity.ACCOUNT, viewModel.tokenData.account)
             intent.putExtra(SendTokenActivity.TOKEN, viewModel.tokenData.selectedToken)
+            intent.putExtra(SendTokenActivity.SEND_ONLY_SELECTED_TOKEN, true)
             startActivity(intent)
         }
         binding.includeButtons.receive.setOnClickListener {
@@ -82,12 +80,18 @@ class TokenDetailsActivity : BaseActivity() {
             setContractIndexAndSubIndex(token)
             setTokenId(token.token)
             token.tokenMetadata?.let { tokenMetadata ->
+                setName(tokenMetadata)
                 setImage(tokenMetadata)
                 setOwnership(token, tokenMetadata)
                 setDescription(tokenMetadata)
                 setTicker(tokenMetadata)
                 setDecimals(tokenMetadata)
-                showMatadata(tokenMetadata)
+                setMetadataDialog(
+                    tokenMetadata,
+                    binding.showRawMetadataDialogRoot,
+                    binding.showRawMetadataDialogContainer,
+                    binding.includeAbout.showRawMetadataHolder
+                )
             }
         }
     }
@@ -155,6 +159,11 @@ class TokenDetailsActivity : BaseActivity() {
         }
     }
 
+    private fun setName(tokenMetadata: TokenMetadata) {
+        binding.includeAbout.nameAndIconHolder.visibility = View.VISIBLE
+        binding.includeAbout.name.text = tokenMetadata.name
+    }
+
     private fun setImage(tokenMetadata: TokenMetadata) {
         if (!tokenMetadata.display?.url.isNullOrBlank()) {
             binding.includeAbout.imageHolder.visibility = View.VISIBLE
@@ -193,19 +202,5 @@ class TokenDetailsActivity : BaseActivity() {
 
     private fun showWaiting(waiting: Boolean) {
         binding.includeProgress.progressBar.visibility = if (waiting) View.VISIBLE else View.GONE
-    }
-
-    private fun showMatadata(tokenMetadata: TokenMetadata) {
-        binding.includeAbout.showRawMetadataHolder.setOnClickListener {
-            val gson = GsonBuilder()
-                .setPrettyPrinting()
-                .disableHtmlEscaping()
-                .create()
-            val builder = AlertDialog.Builder(this)
-            builder.setMessage(gson.toJson(tokenMetadata))
-            builder.setPositiveButton(getString(R.string.error_database_close)) { _, _ -> }
-            builder.setCancelable(true)
-            builder.create().show()
-        }
     }
 }

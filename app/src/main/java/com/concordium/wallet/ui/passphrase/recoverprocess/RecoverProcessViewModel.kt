@@ -17,9 +17,19 @@ import com.concordium.wallet.data.cryptolib.CreateCredentialInputV1
 import com.concordium.wallet.data.cryptolib.CreateCredentialOutputV1
 import com.concordium.wallet.data.cryptolib.GenerateRecoveryRequestInput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.GlobalParamsWrapper
+import com.concordium.wallet.data.model.IdentityObject
+import com.concordium.wallet.data.model.IdentityProvider
+import com.concordium.wallet.data.model.IdentityStatus
+import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
+import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.preferences.AuthPreferences
-import com.concordium.wallet.data.room.*
+import com.concordium.wallet.data.room.Account
+import com.concordium.wallet.data.room.Identity
+import com.concordium.wallet.data.room.IdentityDao
+import com.concordium.wallet.data.room.IdentityWithAccounts
+import com.concordium.wallet.data.room.Recipient
+import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.ui.passphrase.recoverprocess.retrofit.IdentityProviderApiInstance
 import com.concordium.wallet.util.DateTimeUtil
@@ -27,6 +37,7 @@ import com.concordium.wallet.util.toBigInteger
 import com.google.gson.JsonArray
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -358,17 +369,17 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
         return percent
     }
 
-    private fun accountsPercent(): Int {
+    private suspend fun accountsPercent(): Int {
         if (accountGaps.size == 0) {
             progressAccounts.postValue(0)
             return 0
         }
-        var accounts = 0
-        val gapsIterator = accountGaps.values.iterator()
-        while (gapsIterator.hasNext()) {
-            val gap = gapsIterator.next()
-            accounts += ACCOUNT_GAP_MAX - gap
+        val result = viewModelScope.async {
+            accountGaps.values.toList().fold(0) { acc: Int, value: Int ->
+                acc + ACCOUNT_GAP_MAX - value
+            }
         }
+        var accounts = result.await()
         val total = accountGaps.size * ACCOUNT_GAP_MAX
         accounts = total - accounts
         val percent = (accounts * 100) / total

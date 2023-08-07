@@ -49,7 +49,6 @@ class TransactionAdapter(
                             binding.titleTextview,
                             binding.subheaderTextview,
                             binding.totalTextview,
-                            binding.costTextview,
                             binding.memoTextview,
                             binding.amountTextview,
                             binding.alertImageview,

@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.cis2.lookfornew
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,8 +12,8 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.FragmentDialogTokenDetailsBinding
 import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
+import com.concordium.wallet.ui.cis2.setMetadataDialog
 import com.concordium.wallet.util.UnitConvertUtil
-import com.google.gson.GsonBuilder
 import java.math.BigInteger
 
 class TokenDetailsFragment : TokensBaseFragment() {
@@ -67,7 +66,12 @@ class TokenDetailsFragment : TokensBaseFragment() {
                 setContractIndexAndSubIndex(token)
                 setDecimals(tokenMetadata)
                 setTicker(tokenMetadata)
-                showMetadata(tokenMetadata)
+                setMetadataDialog(
+                    tokenMetadata,
+                    binding.showRawMetadataDialogRoot,
+                    binding.showRawMetadataDialogContainer,
+                    binding.details.showRawMetadataHolder
+                )
             }
         }
     }
@@ -148,24 +152,6 @@ class TokenDetailsFragment : TokensBaseFragment() {
                 }
             }
         }
-
-        tokenMetadata.thumbnail?.url?.let {
-            if (it.isNotBlank()) {
-                binding.details.icon.visibility = View.VISIBLE
-                Glide.with(this)
-                    .load(it)
-                    .placeholder(R.drawable.ic_token_loading_image)
-                    .override(iconSize)
-                    .fitCenter()
-                    .error(R.drawable.ic_token_no_image)
-                    .into(binding.details.icon)
-            } else {
-                binding.details.apply {
-                    icon.visibility = View.GONE
-                    icon.setImageResource(android.R.color.transparent)
-                }
-            }
-        }
     }
 
     private fun setTicker(tokenMetadata: TokenMetadata) {
@@ -185,20 +171,6 @@ class TokenDetailsFragment : TokensBaseFragment() {
         } else {
             binding.details.decimalsHolder.visibility = View.GONE
             binding.details.decimals.text = ""
-        }
-    }
-
-    private fun showMetadata(tokenMetadata: TokenMetadata) {
-        binding.details.showRawMetadataHolder.setOnClickListener {
-            val gson = GsonBuilder()
-                .setPrettyPrinting()
-                .disableHtmlEscaping()
-                .create()
-            val builder = AlertDialog.Builder(requireContext())
-            builder.setMessage(gson.toJson(tokenMetadata))
-            builder.setPositiveButton(getString(R.string.error_database_close)) { _, _ -> }
-            builder.setCancelable(true)
-            builder.create().show()
         }
     }
 }

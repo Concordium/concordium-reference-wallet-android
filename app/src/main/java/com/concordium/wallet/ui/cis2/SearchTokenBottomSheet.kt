@@ -4,13 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.databinding.DialogSearchTokenBinding
 import com.concordium.wallet.ui.base.BaseBottomSheetDialogFragment
 import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DATA
-import com.concordium.wallet.util.Log
+import java.math.BigInteger
 
 class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
     private var _binding: DialogSearchTokenBinding? = null
@@ -57,6 +56,7 @@ class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
             override fun onRowClick(token: Token) {
                 _viewModel.chooseToken.postValue(token)
             }
+
             override fun onCheckBoxClick(token: Token) {
             }
         })
@@ -67,13 +67,16 @@ class SearchTokenBottomSheet : BaseBottomSheetDialogFragment() {
             showWaiting(waiting)
         }
         _viewModel.tokens.observe(this) { tokens ->
-            tokensAccountDetailsAdapter.dataSet = tokens.toTypedArray()
+            tokensAccountDetailsAdapter.dataSet =
+                tokens.filter { it.totalBalance > BigInteger.ZERO }.toTypedArray()
+
             tokensAccountDetailsAdapter.notifyDataSetChanged()
             _viewModelTokens.tokens = tokens as MutableList<Token>
             _viewModelTokens.loadTokensBalances()
         }
         _viewModelTokens.tokenBalances.observe(viewLifecycleOwner) {
-            tokensAccountDetailsAdapter.dataSet = _viewModelTokens.tokens.toTypedArray()
+            tokensAccountDetailsAdapter.dataSet =
+                _viewModelTokens.tokens.filter { it.totalBalance > BigInteger.ZERO }.toTypedArray()
             tokensAccountDetailsAdapter.notifyDataSetChanged()
         }
     }

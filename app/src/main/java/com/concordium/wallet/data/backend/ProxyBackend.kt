@@ -128,4 +128,7 @@ interface ProxyBackend {
         @Path("accountAddress") accountAddress: String,
         @Query("tokenId") tokenId: String
     ): Call<CIS2TokensBalances>
+
+    @GET
+    fun checkIdentityProvider(@Url url: String): Call<String>
 }

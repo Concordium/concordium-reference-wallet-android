@@ -78,26 +78,11 @@
                         style="@style/TextView.Standard"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/icon"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        tools:text="Global Transaction Unit" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/icon"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:paddingEnd="8dp"
-                        android:visibility="gone"
-                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        tools:src="@drawable/ic_icon_qr"
-                        tools:tint="@color/theme_blue"
-                        tools:visibility="visible" />
+                        tools:text="Global Transaction Unit" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -312,6 +297,7 @@
                     style="@style/TextView.Standard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/text_green"
                     android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                     android:layout_marginVertical="@dimen/activity_vertical_margin_half"
                     android:text="@string/show_raw_metadata" />
