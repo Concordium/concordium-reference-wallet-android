@@ -220,12 +220,12 @@ class IdentityProviderWebViewViewModel(application: Application) : AndroidViewMo
                     override fun onResponse(call: Call<String>, response: Response<String>) {
                         val response = response.errorBody()?.string()
                         when {
-                            response?.contains(CreateIdentityError.NONE.message) == true -> {
+                            CreateIdentityError.NONE.containsStatusMessage(response) -> {
                                 _createIdentityError.value = CreateIdentityError.NONE
                                 _createIdentity.value = true
                             }
 
-                            response?.contains(CreateIdentityError.ID_PUB.message) == true -> _createIdentityError.value =
+                            CreateIdentityError.ID_PUB.containsStatusMessage(response) -> _createIdentityError.value =
                                 CreateIdentityError.ID_PUB
 
                             else -> {
