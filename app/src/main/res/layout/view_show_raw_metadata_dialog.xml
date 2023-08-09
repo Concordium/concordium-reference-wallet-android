@@ -225,9 +225,8 @@
 
             <View
                 android:id="@+id/bottomPadding"
-                android:layout_width="10dp"
+                android:layout_width="0dp"
                 android:layout_height="40dp"
-                android:background="@color/text_red"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/unique_value" />
