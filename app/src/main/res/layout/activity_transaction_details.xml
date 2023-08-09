@@ -87,7 +87,7 @@
 
                         <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
                             android:id="@+id/from_address_layout"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             app:entry_title="@string/transaction_details_from_address"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -96,7 +96,7 @@
 
                         <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
                             android:id="@+id/to_address_layout"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             app:entry_title="@string/transaction_details_to_address"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -105,7 +105,7 @@
 
                         <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
                             android:id="@+id/transaction_hash_layout"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             app:entry_title="@string/transaction_details_transaction_hash"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -114,7 +114,7 @@
 
                         <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
                             android:id="@+id/block_hash_layout"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             app:entry_title="@string/transaction_details_block_hash"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -123,7 +123,7 @@
 
                         <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
                             android:id="@+id/details_layout"
-                            android:layout_width="match_parent"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             app:entry_title="@string/transaction_details_details"
                             app:layout_constraintEnd_toEndOf="parent"

@@ -235,7 +235,7 @@ class TransactionDetailsActivity : BaseActivity() {
         val transactionHash = ta.transactionHash
         if (transactionHash != null) {
             binding.transactionHashLayout.visibility = View.VISIBLE
-            binding.transactionHashLayout.setValue(transactionHash, true)
+            binding.transactionHashLayout.setValue(transactionHash, false)
         } else {
             binding.transactionHashLayout.visibility = View.GONE
         }
@@ -267,7 +267,7 @@ class TransactionDetailsActivity : BaseActivity() {
                     blockHashesString.append(blockHash)
                     isFirst = false
                 }
-                binding.blockHashLayout.setValue(blockHashesString.toString(), true)
+                binding.blockHashLayout.setValue(blockHashesString.toString(), false)
             } else {
                 binding.blockHashLayout.visibility = View.GONE
             }
