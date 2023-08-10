@@ -84,11 +84,11 @@ class SetupWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
     private fun initObservers() {
         viewModel.validate.observe(this) { success ->
             if (success) {
-                showAuthentication(this) { password ->
+                showAuthentication(activity = this, authenticated = { password ->
                     password?.let {
                         viewModel.setSeedPhrase(password)
                     }
-                }
+                })
             }
         }
 
