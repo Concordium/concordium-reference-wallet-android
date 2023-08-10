@@ -5,7 +5,8 @@ enum class CreateIdentityError(val statusList: List<String> = emptyList()) {
     ID_PUB(
         listOf(
             "Duplicate id_cred_pub",
-            "idCredPub already exists"
+            "idCredPub already exists",
+            "Duplicate%20idCredPub"
         )
     ),
     UNKNOWN

@@ -37,11 +37,11 @@ class RecoverWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl()
         if (BuildConfig.DEBUG) {
             binding.toolbarLayout.toolbarTitle.isClickable = true
             binding.toolbarLayout.toolbarTitle.setOnClickListener {
-                showAuthentication(this) { password ->
+                showAuthentication(activity = this, authenticated = { password ->
                     password?.let {
                         viewModel.setPredefinedPhraseForTesting(it)
                     }
-                }
+                })
             }
         }
     }
@@ -90,11 +90,11 @@ class RecoverWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl()
 
     private fun initObservers() {
         viewModel.seed.observe(this) { seed ->
-            showAuthentication(this) { password ->
+            showAuthentication(activity = this, authenticated = { password ->
                 password?.let {
                     viewModel.setSeedPhrase(seed, password)
                 }
-            }
+            })
         }
         viewModel.saveSeed.observe(this) { saveSuccess ->
             if (saveSuccess) {
