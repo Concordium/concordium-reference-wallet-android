@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - transfer token flow now ends in the proper place
 - fixed issue where ID pub duplicated id error showed
 - show raw metadata button now has green colour to indicate its clickable
+- keyboard not being shown when the auth dialog is opened
 
 ### Changed
 
