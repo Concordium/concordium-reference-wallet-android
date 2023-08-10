@@ -13,20 +13,31 @@ import kotlinx.coroutines.launch
 import javax.crypto.Cipher
 
 interface AuthDelegate {
-    fun showAuthentication(activity: AppCompatActivity, authenticated: (String?) -> Unit)
+    fun showAuthentication(
+        activity: AppCompatActivity,
+        authenticated: (String?) -> Unit,
+        onCanceled: () -> Unit = {}
+    )
 }
 
 class AuthDelegateImpl : AuthDelegate {
-    override fun showAuthentication(activity: AppCompatActivity, authenticated: (String?) -> Unit) {
+    override fun showAuthentication(
+        activity: AppCompatActivity,
+        authenticated: (String?) -> Unit,
+        onCanceled: () -> Unit,
+    ) {
         if (App.appCore.getCurrentAuthenticationManager().useBiometrics()) {
-            showBiometrics(activity, authenticated)
+            showBiometrics(activity, authenticated, onCanceled)
         } else {
-            showPasswordDialog(activity, authenticated)
+            showPasswordDialog(activity, authenticated, onCanceled)
         }
     }
 
-    private fun showBiometrics(activity: AppCompatActivity, authenticated: (String?) -> Unit) {
-        val biometricPrompt = createBiometricPrompt(activity, authenticated)
+    private fun showBiometrics(
+        activity: AppCompatActivity, authenticated: (String?) -> Unit,
+        onCanceled: () -> Unit,
+    ) {
+        val biometricPrompt = createBiometricPrompt(activity, authenticated, onCanceled)
 
         val promptInfo = createPromptInfo(activity)
 
@@ -37,7 +48,10 @@ class AuthDelegateImpl : AuthDelegate {
         }
     }
 
-    private fun showPasswordDialog(activity: AppCompatActivity, authenticated: (String?) -> Unit) {
+    private fun showPasswordDialog(
+        activity: AppCompatActivity, authenticated: (String?) -> Unit,
+        onCanceled: () -> Unit,
+    ) {
         val dialogFragment = AuthenticationDialogFragment()
         dialogFragment.setCallback(object : AuthenticationDialogFragment.Callback {
             override fun onCorrectPassword(password: String) {
@@ -45,6 +59,7 @@ class AuthDelegateImpl : AuthDelegate {
             }
 
             override fun onCancelled() {
+                onCanceled()
             }
         })
         dialogFragment.show(
@@ -55,13 +70,14 @@ class AuthDelegateImpl : AuthDelegate {
 
     private fun createBiometricPrompt(
         activity: AppCompatActivity,
-        authenticated: (String?) -> Unit
+        authenticated: (String?) -> Unit,
+        onCanceled: () -> Unit,
     ): BiometricPrompt {
         val executor = ContextCompat.getMainExecutor(activity)
 
         val callback = object : BiometricPromptCallback() {
             override fun onNegativeButtonClicked() {
-                showPasswordDialog(activity, authenticated)
+                showPasswordDialog(activity, authenticated, onCanceled)
             }
 
             override fun onAuthenticationSucceeded(cipher: Cipher) {
@@ -73,6 +89,7 @@ class AuthDelegateImpl : AuthDelegate {
             }
 
             override fun onUserCancelled() {
+                onCanceled()
             }
         }
 
