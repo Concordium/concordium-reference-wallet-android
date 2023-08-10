@@ -6,14 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/list_item"
-    android:minHeight="@dimen/list_item_height">
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_middle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5" />
+    android:backgroundTint="@color/transaction_background"
+    android:minHeight="@dimen/list_item_height"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp">
 
     <ImageView
         android:id="@+id/alert_imageview"
@@ -29,27 +25,39 @@
         tools:visibility="visible" />
 
 
-    <TextView
-        android:id="@+id/title_textview"
-        style="@style/TextView.ListItemHeader"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/header_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/list_item_horizontal_margin"
-        android:layout_marginTop="5dp"
-        app:layout_constraintEnd_toEndOf="@id/guideline_middle"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/alert_imageview"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="JohnDoelooooooooooooooooooooooo12345678" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/total_textview"
-        style="@style/TextView.ListItemHeader"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="5dp"
-        app:layout_constraintEnd_toEndOf="@id/guideline"
-        app:layout_constraintStart_toEndOf="@id/title_textview"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="- Ͼ1000000000000.65" />
+        <TextView
+            android:id="@+id/title_textview"
+            style="@style/TextView.ListItemHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/list_item_horizontal_margin"
+            app:layout_constraintEnd_toStartOf="@id/total_textview"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="JohnDoelooooooooooooooooooooooo12345678" />
+
+        <TextView
+            android:id="@+id/total_textview"
+            style="@style/TextView.ListItemHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="textEnd"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.448"
+            app:layout_constraintStart_toEndOf="@id/title_textview"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="- Ͼ1000000000000.65" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/subheader_layout"
@@ -58,7 +66,7 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/alert_imageview"
-        app:layout_constraintTop_toBottomOf="@id/total_textview">
+        app:layout_constraintTop_toBottomOf="@id/header_container">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_middle_sub_header"
@@ -84,8 +92,8 @@
             android:id="@+id/status_imageview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_time"
             android:layout_marginStart="6dp"
+            android:src="@drawable/ic_time"
             app:layout_constraintBottom_toBottomOf="@id/subheader_textview"
             app:layout_constraintStart_toEndOf="@id/subheader_textview"
             app:layout_constraintTop_toTopOf="@id/subheader_textview"
@@ -98,11 +106,9 @@
             style="@style/TextView.ListItemSubHeaderNotSingleLine"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/activity_horizontal_margin_quarter"
-            android:layout_marginEnd="24dp"
             android:textAlignment="textEnd"
             android:textColor="@color/text_gray_1"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/lock_imageview"
             app:layout_constraintStart_toEndOf="@id/guideline_middle_sub_header"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Ͼ1.30 + very very very very very very long text here "
@@ -113,17 +119,14 @@
             style="@style/Image"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_centerInParent="true"
             android:contentDescription="@null"
             android:src="@drawable/ic_lock"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@id/subheader_textview"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/amount_textview"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/amount_textview"
             app:tint="@color/text_gray_1"
             tools:visibility="visible" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
