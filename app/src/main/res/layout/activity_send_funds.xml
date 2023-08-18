@@ -144,7 +144,7 @@
                     <com.concordium.wallet.uicore.view.AmountEditText
                         android:id="@+id/amount_edittext"
                         style="@style/TextView.BlueValueHuge"
-                        android:background="@color/theme_white"
+                        android:background="@null"
                         android:digits="0123456789.,"
                         android:drawablePadding="10dp"
                         android:drawableTint="@color/theme_component"

@@ -5,6 +5,8 @@ import com.concordium.wallet.data.model.ArsInfo
 import com.concordium.wallet.data.model.BakerKeys
 import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.IdentityProviderInfo
+import com.concordium.wallet.data.cryptolib.SerializeTokenTransferParametersInput
+import com.concordium.wallet.data.cryptolib.SerializeTokenTransferParametersOutput
 
 interface CryptoLibrary {
     companion object {
@@ -41,5 +43,7 @@ interface CryptoLibrary {
 
     suspend fun signMessage(signMessageInput: SignMessageInput): SignMessageOutput?
 
+    suspend fun serializeTokenTransferParameters(serializeTokenTransferParametersInput: SerializeTokenTransferParametersInput): SerializeTokenTransferParametersOutput?
+    
     suspend fun parameterToJson(parameterToJsonInput: ParameterToJsonInput): String?
 }

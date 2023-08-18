@@ -103,14 +103,16 @@ class RecoverProcessActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl(
     }
 
     private fun startScanning() {
-        showAuthentication(this) { password ->
+        showAuthentication(this, { password ->
             password?.let {
                 passwordSet = true
                 runOnUiThread {
                     scanningView(password)
                 }
             }
-        }
+        }, {
+            finish()
+        })
     }
 
     private fun scanningView(password: String) {

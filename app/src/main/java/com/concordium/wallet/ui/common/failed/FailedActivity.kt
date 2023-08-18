@@ -60,6 +60,7 @@ class FailedActivity : BaseActivity() {
             FailedViewModel.Source.Identity -> {
                 setActionBarTitle(R.string.identity_confirmed_title)
                 binding.errorTitleTextview.setText(R.string.identity_confirmed_failed)
+                binding.confirmButton.isEnabled = true
             }
             FailedViewModel.Source.Account -> {
                 setActionBarTitle(R.string.new_account_confirmed_title)

@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.USE_BIOMETRIC" /> <!-- Protection level: normal -->
     <uses-permission android:name="android.permission.CAMERA" /> <!-- Protection level: dangerous -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <uses-feature
         android:name="android.hardware.camera.any"
@@ -35,19 +36,21 @@
         android:theme="@style/AppTheme.NoActionBar">
         <activity
             android:name=".ui.MainActivity"
-            android:alwaysRetainTaskState="true"
-            android:exported="true"
-            android:launchMode="singleTop"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar.Launcher">
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar.Launcher"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="wc" />
             </intent-filter>
         </activity>
@@ -55,6 +58,7 @@
             android:name=".ui.walletconnect.WalletConnectService"
             android:enabled="true"
             android:exported="false" />
+
         <activity
             android:name=".onboarding.ui.OnboardingActivity"
             android:exported="true"
@@ -161,10 +165,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.passphrase.recover.ExportSeedPhraseActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.passphrase.recover.RecoverWalletActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
@@ -182,8 +182,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.walletconnect.WalletConnectActivity"
-            android:alwaysRetainTaskState="true"
             android:launchMode="singleTop"
+            android:alwaysRetainTaskState="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.auth.login.AuthLoginActivity"
@@ -229,12 +229,13 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.identity.identityproviderwebview.IdentityProviderWebViewActivity"
-            android:exported="true"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.identity.identityproviderlist.IdentityProviderListActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:exported="true">
             <intent-filter android:label="schemefilter">
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- Accepts URIs that begin with "concordiumwallet://identity-issuer” -->
@@ -343,18 +344,31 @@
             android:launchMode="singleTop"
             android:parentActivityName=".ui.more.SettingsActivity"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name=".ui.more.export.ExportTransactionLogActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".ui.more.SettingsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.cis2.TokenDetailsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.cis2.SendTokenActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.cis2.SendTokenReceiptActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}"
+            android:grantUriPermissions="true"
             android:exported="false"
-            android:grantUriPermissions="true">
-
+            android:authorities="${applicationId}">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_provider_paths"/>
-
         </provider>
     </application>
-
 </manifest>

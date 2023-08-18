@@ -46,8 +46,8 @@ class TransferDaoUnitTest {
         val transfer = Transfer(
             1,
             1,
-            100,
-            20,
+            100.toBigInteger(),
+            20.toBigInteger(),
             "0",
             "0",
             1901176193,
@@ -90,8 +90,8 @@ class TransferDaoUnitTest {
         return Transfer(
             0,
             1,
-            100,
-            20,
+            100.toBigInteger(),
+            20.toBigInteger(),
             "0",
             "0",
             1901176193,

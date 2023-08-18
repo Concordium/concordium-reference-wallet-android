@@ -13,57 +13,83 @@ import kotlinx.coroutines.launch
 import javax.crypto.Cipher
 
 interface AuthDelegate {
-    fun showAuthentication(activity: AppCompatActivity, authenticated: (String?) -> Unit)
+    fun showAuthentication(
+        activity: AppCompatActivity,
+        authenticated: (String?) -> Unit,
+        onCanceled: () -> Unit = {}
+    )
 }
 
 class AuthDelegateImpl : AuthDelegate {
-    override fun showAuthentication(activity: AppCompatActivity, authenticated: (String?) -> Unit) {
+    override fun showAuthentication(
+        activity: AppCompatActivity,
+        authenticated: (String?) -> Unit,
+        onCanceled: () -> Unit,
+    ) {
         if (App.appCore.getCurrentAuthenticationManager().useBiometrics()) {
-            showBiometrics(activity, authenticated)
+            showBiometrics(activity, authenticated, onCanceled)
         } else {
-            showPasswordDialog(activity, authenticated)
+            showPasswordDialog(activity, authenticated, onCanceled)
         }
     }
 
-    private fun showBiometrics(activity: AppCompatActivity, authenticated: (String?) -> Unit) {
-        val biometricPrompt = createBiometricPrompt(activity, authenticated)
+    private fun showBiometrics(
+        activity: AppCompatActivity, authenticated: (String?) -> Unit,
+        onCanceled: () -> Unit,
+    ) {
+        val biometricPrompt = createBiometricPrompt(activity, authenticated, onCanceled)
 
         val promptInfo = createPromptInfo(activity)
 
-        val cipher = App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
+        val cipher =
+            App.appCore.getCurrentAuthenticationManager().initBiometricsCipherForDecryption()
         if (cipher != null) {
             biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
         }
     }
 
-    private fun showPasswordDialog(activity: AppCompatActivity, authenticated: (String?) -> Unit) {
+    private fun showPasswordDialog(
+        activity: AppCompatActivity, authenticated: (String?) -> Unit,
+        onCanceled: () -> Unit,
+    ) {
         val dialogFragment = AuthenticationDialogFragment()
         dialogFragment.setCallback(object : AuthenticationDialogFragment.Callback {
             override fun onCorrectPassword(password: String) {
                 authenticated(password)
             }
+
             override fun onCancelled() {
+                onCanceled()
             }
         })
-        dialogFragment.show(activity.supportFragmentManager, AuthenticationDialogFragment.AUTH_DIALOG_TAG)
+        dialogFragment.show(
+            activity.supportFragmentManager,
+            AuthenticationDialogFragment.AUTH_DIALOG_TAG
+        )
     }
 
-    private fun createBiometricPrompt(activity: AppCompatActivity, authenticated: (String?) -> Unit): BiometricPrompt {
+    private fun createBiometricPrompt(
+        activity: AppCompatActivity,
+        authenticated: (String?) -> Unit,
+        onCanceled: () -> Unit,
+    ): BiometricPrompt {
         val executor = ContextCompat.getMainExecutor(activity)
 
         val callback = object : BiometricPromptCallback() {
             override fun onNegativeButtonClicked() {
-                showPasswordDialog(activity, authenticated)
+                showPasswordDialog(activity, authenticated, onCanceled)
             }
 
             override fun onAuthenticationSucceeded(cipher: Cipher) {
                 CoroutineScope(Dispatchers.IO).launch {
-                    val password = App.appCore.getCurrentAuthenticationManager().checkPasswordInBackground(cipher)
+                    val password = App.appCore.getCurrentAuthenticationManager()
+                        .checkPasswordInBackground(cipher)
                     authenticated(password)
                 }
             }
 
             override fun onUserCancelled() {
+                onCanceled()
             }
         }
 
@@ -75,7 +101,13 @@ class AuthDelegateImpl : AuthDelegate {
             .setTitle(activity.getString(R.string.auth_login_biometrics_dialog_title))
             .setSubtitle(activity.getString(R.string.auth_login_biometrics_dialog_subtitle))
             .setConfirmationRequired(true)
-            .setNegativeButtonText(activity.getString(if (App.appCore.getCurrentAuthenticationManager().usePasscode()) R.string.auth_login_biometrics_dialog_cancel_passcode else R.string.auth_login_biometrics_dialog_cancel_password))
+            .setNegativeButtonText(
+                activity.getString(
+                    if (App.appCore.getCurrentAuthenticationManager()
+                            .usePasscode()
+                    ) R.string.auth_login_biometrics_dialog_cancel_passcode else R.string.auth_login_biometrics_dialog_cancel_password
+                )
+            )
             .build()
     }
 }

@@ -39,7 +39,11 @@ class TransactionDetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTransactionDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setupActionBar(binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.transaction_details_title)
+        setupActionBar(
+            binding.toolbarLayout.toolbar,
+            binding.toolbarLayout.toolbarTitle,
+            R.string.transaction_details_title
+        )
 
         val account = intent.extras!!.getSerializable(EXTRA_ACCOUNT) as Account
         val transaction = intent.extras!!.getSerializable(EXTRA_TRANSACTION) as Transaction
@@ -63,9 +67,7 @@ class TransactionDetailsActivity : BaseActivity() {
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[TransactionDetailsViewModel::class.java]
         viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
-            waiting?.let {
-                showWaiting(waiting)
-            }
+             showWaiting(waiting)
         })
         viewModel.errorLiveData.observe(
             this,
@@ -96,10 +98,14 @@ class TransactionDetailsActivity : BaseActivity() {
 
         val onClickListener = object : TransactionDetailsEntryView.OnCopyClickListener {
             override fun onCopyClicked(title: String, value: String) {
-                val clipboard: ClipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+                val clipboard: ClipboardManager =
+                    getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
                 val clip = ClipData.newPlainText(title, value)
                 clipboard.setPrimaryClip(clip)
-                popup.showSnackbar(binding.rootLayout, getString(R.string.transaction_details_value_copied, title))
+                popup.showSnackbar(
+                    binding.rootLayout,
+                    getString(R.string.transaction_details_value_copied, title)
+                )
             }
         }
         binding.fromAddressLayout.enableCopy(onClickListener)
@@ -136,18 +142,17 @@ class TransactionDetailsActivity : BaseActivity() {
 
         viewModel.viewModelScope.launch {
             TransactionViewHelper.show(
-                accountUpdater,
-                ta,
-                binding.transaction.titleTextview,
-                binding.transaction.subheaderTextview,
-                binding.transaction.totalTextview,
-                binding.transaction.costTextview,
-                binding.transaction.memoTextview,
-                binding.transaction.amountTextview,
-                binding.transaction.alertImageview,
-                binding.transaction.statusImageview,
-                binding.transaction.lockImageview,
-                viewModel.isShieldedAccount,
+                accountUpdater = accountUpdater,
+                ta = ta,
+                titleTextView = binding.transaction.titleTextview,
+                subHeaderTextView = binding.transaction.subheaderTextview,
+                totalTextView = binding.transaction.totalTextview,
+                memoTextView = binding.transaction.memoTextview,
+                amountTextView = binding.transaction.amountTextview,
+                alertImageView = binding.transaction.alertImageview,
+                statusImageView = binding.transaction.statusImageview,
+                lockImageView = binding.transaction.lockImageview,
+                isShieldedAccount = viewModel.isShieldedAccount,
                 showDate = true
             )
         }
@@ -191,7 +196,7 @@ class TransactionDetailsActivity : BaseActivity() {
                     viewModel.addressLookup(ta.fromAddress, ta.fromAddressTitle)
                 )
             )
-            binding.fromAddressLayout.setValue(ta.fromAddress, true)
+            binding.fromAddressLayout.setValue(ta.fromAddress, false)
         } else {
             val origin = ta.origin
             val type = origin?.type
@@ -205,7 +210,7 @@ class TransactionDetailsActivity : BaseActivity() {
                             viewModel.addressLookup(ta.fromAddress, ta.fromAddressTitle)
                         )
                     )
-                    binding.fromAddressLayout.setValue(origin.address, true)
+                    binding.fromAddressLayout.setValue(origin.address, false)
                 }
             }
         }
@@ -220,7 +225,7 @@ class TransactionDetailsActivity : BaseActivity() {
                     viewModel.addressLookup(ta.toAddress, ta.toAddressTitle)
                 )
             )
-            binding.toAddressLayout.setValue(ta.toAddress, true)
+            binding.toAddressLayout.setValue(ta.toAddress, false)
         } else {
             binding.toAddressLayout.visibility = View.GONE
         }
@@ -230,7 +235,7 @@ class TransactionDetailsActivity : BaseActivity() {
         val transactionHash = ta.transactionHash
         if (transactionHash != null) {
             binding.transactionHashLayout.visibility = View.VISIBLE
-            binding.transactionHashLayout.setValue(transactionHash, true)
+            binding.transactionHashLayout.setValue(transactionHash, false)
         } else {
             binding.transactionHashLayout.visibility = View.GONE
         }
@@ -239,10 +244,16 @@ class TransactionDetailsActivity : BaseActivity() {
     private fun showBlockHashes(ta: Transaction) {
         if (ta.transactionStatus == TransactionStatus.RECEIVED) {
             binding.blockHashLayout.visibility = View.VISIBLE
-            binding.blockHashLayout.setValue(getString(R.string.transaction_details_block_hash_submitted), true)
+            binding.blockHashLayout.setValue(
+                getString(R.string.transaction_details_block_hash_submitted),
+                false
+            )
         } else if (ta.transactionStatus == TransactionStatus.ABSENT) {
             binding.blockHashLayout.visibility = View.VISIBLE
-            binding.blockHashLayout.setValue(getString(R.string.transaction_details_block_hash_failed), true)
+            binding.blockHashLayout.setValue(
+                getString(R.string.transaction_details_block_hash_failed),
+                false
+            )
         } else {
             val blockHashes = ta.blockHashes
             if (blockHashes != null && blockHashes.isNotEmpty()) {
@@ -256,7 +267,7 @@ class TransactionDetailsActivity : BaseActivity() {
                     blockHashesString.append(blockHash)
                     isFirst = false
                 }
-                binding.blockHashLayout.setValue(blockHashesString.toString(), true)
+                binding.blockHashLayout.setValue(blockHashesString.toString(), false)
             } else {
                 binding.blockHashLayout.visibility = View.GONE
             }

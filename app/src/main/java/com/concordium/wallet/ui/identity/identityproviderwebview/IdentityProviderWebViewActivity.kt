@@ -22,6 +22,7 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.failed.FailedActivity
 import com.concordium.wallet.ui.common.failed.FailedViewModel
 import com.concordium.wallet.ui.identity.identityconfirmed.IdentityConfirmedActivity
+import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessActivity
 import com.google.gson.Gson
 import java.util.*
 
@@ -119,7 +120,8 @@ class IdentityProviderWebViewActivity : BaseActivity() {
                 viewModel.initialize(tempData)
                 initViews()
                 if (!viewModel.useTemporaryBackend) {
-                    showChromeCustomTab(viewModel.getIdentityProviderUrl())
+                    showWaiting(true)
+                    viewModel.startIdentityCreation()
                 }
             }
         }
@@ -184,6 +186,43 @@ class IdentityProviderWebViewActivity : BaseActivity() {
                     }
                 }
             })
+
+        viewModel.createIdentity.observe(this) {
+            if (it) {
+                showWaiting(false)
+                showChromeCustomTab(viewModel.getIdentityProviderUrl())
+            }
+        }
+
+        viewModel.createIdentityError.observe(this) {
+            when (it) {
+                CreateIdentityError.ID_PUB -> {
+                    showWaiting(false)
+                    showIdPubErrorDialog()
+                }
+
+                CreateIdentityError.NONE, CreateIdentityError.UNKNOWN -> Unit
+            }
+        }
+    }
+
+    private fun showIdPubErrorDialog() {
+        binding.apply {
+            alertDialog.visibility = View.VISIBLE
+
+            okButton.setOnClickListener {
+                alertDialog.visibility = View.GONE
+                finish()
+            }
+            settingsButton.setOnClickListener {
+                val intent = Intent(applicationContext, RecoverProcessActivity::class.java)
+                intent.putExtra(RecoverProcessActivity.SHOW_FOR_FIRST_RECOVERY, false)
+                startActivity(intent)
+
+                alertDialog.visibility = View.GONE
+                finish()
+            }
+        }
     }
 
     fun initViews() {

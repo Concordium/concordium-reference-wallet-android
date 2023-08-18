@@ -8,34 +8,27 @@
     android:paddingBottom="@dimen/section_vertical"
     tools:visibility="visible">
 
-    <View
-        android:id="@+id/divider"
-        style="@style/Divider"
-        android:layout_width="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
+    <ImageButton
         android:id="@+id/copy_imageview"
-        style="@style/Image"
-        android:layout_width="44dp"
-        android:layout_height="45dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/background_transparent"
         android:paddingHorizontal="16dp"
-        android:paddingVertical="15dp"
-        android:src="@drawable/ic_icon_copy"
+        android:src="@drawable/ic_copy"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/value_textview" />
 
     <TextView
         android:id="@+id/title_textview"
         style="@style/TextView.Standard.Light"
         android:layout_width="0dp"
-        android:layout_marginLeft="@dimen/list_item_horizontal_margin"
+        android:layout_marginStart="@dimen/list_item_horizontal_margin"
         android:layout_marginTop="@dimen/section_vertical"
-        app:layout_constraintEnd_toStartOf="@id/copy_imageview"
+        android:layout_marginEnd="@dimen/list_item_horizontal_margin"
+        android:textColor="@color/text_gray_1"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/transaction_details_block_hash" />
 
     <TextView
@@ -44,8 +37,7 @@
         android:layout_width="0dp"
         android:layout_marginLeft="@dimen/list_item_horizontal_margin"
         android:layout_marginTop="@dimen/section_internal"
-        android:layout_marginRight="@dimen/list_item_horizontal_margin"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/copy_imageview"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title_textview"
         tools:text="3uVGUijtdD5JLJmmf3Q4pqe1y4H3PHfW469GphtprZuTfTRxex3uVGUijtdD5JLJmmf3Q4pqe\n\n3uVGUijtdD5JLJmmf3Q4pqe1y4H3PHfW469GphtprZuTfTRxex3uVGUijtdD5JLJmmf3Q4pqe" />

@@ -10,6 +10,7 @@ import com.concordium.wallet.databinding.ActivityDelegationRemoveBinding
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.util.UnitConvertUtil
+import java.math.BigInteger
 
 class DelegationRemoveActivity : BaseDelegationBakerActivity() {
     private lateinit var binding: ActivityDelegationRemoveBinding
@@ -60,7 +61,7 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity() {
     }
 
     private fun validate() {
-        if (viewModel.atDisposal() < (viewModel.bakerDelegationData.cost ?: 0)) {
+        if (viewModel.atDisposal() < (viewModel.bakerDelegationData.cost ?: BigInteger.ZERO)) {
             showNotEnoughFunds()
         } else {
             if (viewModel.bakerDelegationData.isBakerPool) {
@@ -68,7 +69,7 @@ class DelegationRemoveActivity : BaseDelegationBakerActivity() {
                     viewModel.setPoolID(it.toString())
                 }
             }
-            viewModel.bakerDelegationData.amount = 0
+            viewModel.bakerDelegationData.amount = BigInteger.ZERO
             viewModel.prepareTransaction()
         }
     }

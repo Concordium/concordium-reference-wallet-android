@@ -12,7 +12,6 @@ import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.databinding.ActivityRecipientBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
-import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.uicore.afterTextChanged
 import com.concordium.wallet.util.KeyboardUtil
 
@@ -78,10 +77,10 @@ class RecipientActivity : BaseActivity() {
                 }
             }
         })
-        viewModel.gotoBackToSendFundsLiveData.observe(this, object : EventObserver<Boolean>() {
+        viewModel.gotoBackToSendLiveData.observe(this, object : EventObserver<Boolean>() {
             override fun onUnhandledEvent(value: Boolean) {
                 if (value) {
-                    goBackToSendFunds(viewModel.recipient)
+                    goBackWithRecipient(viewModel.recipient)
                 }
             }
         })
@@ -148,11 +147,11 @@ class RecipientActivity : BaseActivity() {
         }
     }
 
-    private fun goBackToSendFunds(recipient: Recipient) {
-        val intent = Intent(this, SendFundsActivity::class.java)
-        intent.putExtra(SendFundsActivity.EXTRA_RECIPIENT, recipient)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        startActivity(intent)
+    private fun goBackWithRecipient(recipient: Recipient) {
+        val intent = Intent()
+        intent.putExtra(EXTRA_RECIPIENT, recipient)
+        setResult(Activity.RESULT_OK, intent)
+        finish()
     }
 
     private val getResultScanQr =

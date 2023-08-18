@@ -4,9 +4,10 @@ import androidx.room.*
 import com.concordium.wallet.App
 import com.concordium.wallet.data.model.*
 import com.concordium.wallet.data.room.typeconverter.AccountTypeConverters
+import com.concordium.wallet.util.toBigInteger
 import com.google.gson.JsonObject
 import java.io.Serializable
-import kotlin.math.max
+import java.math.BigInteger
 
 @Entity(tableName = "account_table", indices = [Index(value = ["address"], unique = true)])
 @TypeConverters(AccountTypeConverters::class)
@@ -36,19 +37,19 @@ data class Account(
     var credential: CredentialWrapper?,
 
     @ColumnInfo(name = "finalized_balance")
-    var finalizedBalance: Long = 0,
+    var finalizedBalance: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "current_balance")
-    var currentBalance: Long = 0,
+    var currentBalance: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "total_balance")
-    var totalBalance: Long = 0,
+    var totalBalance: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "total_unshielded_balance")
-    var totalUnshieldedBalance: Long = 0,
+    var totalUnshieldedBalance: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "total_shielded_balance")
-    var totalShieldedBalance: Long = 0,
+    var totalShieldedBalance: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "finalized_encrypted_balance")
     var finalizedEncryptedBalance: AccountEncryptedAmount?,
@@ -60,10 +61,10 @@ data class Account(
     var encryptedBalanceStatus: ShieldedAccountEncryptionStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
 
     @ColumnInfo(name = "total_staked")
-    var totalStaked: Long = 0,
+    var totalStaked: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "total_at_disposal")
-    var totalAtDisposal: Long = 0,
+    var totalAtDisposal: BigInteger = BigInteger.ZERO,
 
     @ColumnInfo(name = "read_only")
     var readOnly: Boolean = false,
@@ -84,7 +85,8 @@ data class Account(
     var accountIndex: Int? = null,
 
     @ColumnInfo(name = "cred_number")
-    var credNumber: Int) : Serializable {
+    var credNumber: Int
+) : Serializable {
 
     companion object {
         fun getDefaultName(address: String): String {
@@ -105,7 +107,9 @@ data class Account(
         if (credentialValueJsonObject["type"]?.asString == "initial") {
             return true
         }
-        if (credentialValueJsonObject.getAsJsonObject("credential")?.get("type")?.asString == "initial")
+        if (credentialValueJsonObject.getAsJsonObject("credential")
+                ?.get("type")?.asString == "initial"
+        )
             return true
         return false
     }
@@ -126,21 +130,18 @@ data class Account(
         return accountDelegation != null
     }
 
-    fun getAtDisposalWithoutStakedOrScheduled(totalBalance: Long): Long {
-        val stakedAmount: Long = accountDelegation?.stakedAmount?.toLong() ?: accountBaker?.stakedAmount?.toLong() ?: 0
-        val scheduledTotal: Long = finalizedAccountReleaseSchedule?.total?.toLong() ?: 0
-        val subtract = if (stakedAmount in 1..scheduledTotal)
+    fun getAtDisposalWithoutStakedOrScheduled(totalBalance: BigInteger): BigInteger {
+        val stakedAmount: BigInteger = accountDelegation?.stakedAmount?.toBigInteger()
+            ?: accountBaker?.stakedAmount?.toBigInteger() ?: BigInteger.ZERO
+        val scheduledTotal: BigInteger = finalizedAccountReleaseSchedule?.total.toBigInteger()
+        val subtract: BigInteger = if (stakedAmount in BigInteger.ONE..scheduledTotal)
             scheduledTotal
-        else if (stakedAmount > 0 && stakedAmount > scheduledTotal)
+        else if (stakedAmount.signum() > 0 && stakedAmount > scheduledTotal)
             stakedAmount
-        else if (stakedAmount == 0L && scheduledTotal > 0)
+        else if (stakedAmount.signum() == 0 && scheduledTotal.signum() > 0)
             scheduledTotal
         else
-            0
-        return max(totalBalance - subtract, 0)
-    }
-
-    fun getAtDisposal(): Long {
-        return finalizedBalance - (finalizedAccountReleaseSchedule?.total?.toLong() ?: 0)
+            BigInteger.ZERO
+        return BigInteger.ZERO.max(totalBalance - subtract)
     }
 }

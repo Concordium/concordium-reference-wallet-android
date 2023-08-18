@@ -5,6 +5,8 @@ import com.concordium.wallet.data.model.ShieldedAccountEncryptionStatus
 import com.concordium.wallet.data.model.TransactionOriginType
 import com.concordium.wallet.data.model.TransactionOutcome
 import com.concordium.wallet.data.model.TransactionStatus
+import com.concordium.wallet.util.toBigInteger
+import java.math.BigInteger
 
 class GlobalTypeConverters {
 
@@ -70,4 +72,13 @@ class GlobalTypeConverters {
         return status.code
     }
 
+    @TypeConverter
+    fun bigIntegerToString(value: BigInteger?): String? {
+        return value?.toString()
+    }
+
+    @TypeConverter
+    fun stringToBigInteger(value: String?): BigInteger? {
+        return value?.toBigInteger()
+    }
 }

@@ -38,11 +38,11 @@ tasks.withType(Test) {
     jacoco.excludes = ['jdk.internal.*']
 }
 
-def versionBuildNumberSequential = 34
+def versionBuildNumberSequential = 45
 
 def versionBuildNumberMajor = 1
-def versionBuildNumberMinor = 1
-def versionBuildNumberPatch = 7
+def versionBuildNumberMinor = 2
+def versionBuildNumberPatch = 1
 
 task printVersionName {
     doLast {
@@ -375,6 +375,11 @@ dependencies {
     implementation("com.walletconnect:android-core:1.5.0")
     implementation("com.walletconnect:sign:2.3.0")
 
+    implementation 'com.github.bumptech.glide:glide:4.14.2'
+    kapt 'com.github.bumptech.glide:compiler:4.14.2'
+    implementation 'com.caverock:androidsvg-aar:1.4'
+
+    
     implementation 'com.github.matomo-org:matomo-sdk-android:4.1.4'
 
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.10")

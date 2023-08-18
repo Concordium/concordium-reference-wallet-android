@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/Layout.Root">
+    style="@style/Layout.Root"
+    android:keepScreenOn="true">
 
     <include
         android:id="@+id/toolbar_layout"
@@ -16,10 +17,11 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginVertical="@dimen/activity_vertical_margin"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/nothing_to_recover_buttons"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_layout"
-        app:layout_constraintBottom_toTopOf="@+id/nothing_to_recover_buttons">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_layout">
+
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
@@ -32,21 +34,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintStart_toStartOf="parent">
+
         <Button
             android:id="@+id/tryAgainButton"
             style="@style/Button.Standard.Intro"
             android:layout_width="0dp"
             android:layout_weight="0.5"
+            android:text="@string/pass_phrase_recover_process_try_again"
             android:visibility="gone"
-            tools:visibility="visible"
-            android:text="@string/pass_phrase_recover_process_try_again" />
+            tools:visibility="visible" />
+
         <Button
             android:id="@+id/continueButton"
             style="@style/Button.Standard.Intro"

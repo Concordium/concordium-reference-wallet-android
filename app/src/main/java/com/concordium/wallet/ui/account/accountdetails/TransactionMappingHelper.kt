@@ -39,6 +39,8 @@ class TransactionMappingHelper(
             transaction.title = ctx.getString(R.string.account_delegation_pending)
         } else if (transaction.isBakerTransfer()) {
             transaction.title = ctx.getString(R.string.account_baking_pending)
+        } else if (transaction.isSmartContractUpdate()) {
+            transaction.title = ctx.getString(R.string.account_smart_contract_update_pending)
         } else {
             // ...else transfer is always outgoing, so just use toAddress
             val recipientResult = findRecipientOrUseAddress(transfer.toAddress)

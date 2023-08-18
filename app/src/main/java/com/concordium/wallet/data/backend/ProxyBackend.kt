@@ -42,7 +42,7 @@ interface ProxyBackend {
     fun transferCost(
         @Query("type") type: String? = null,
         @Query("memoSize") memoSize: Int? = null,
-        @Query("amount") amount: Long? = null,
+        @Query("amount") amount: String? = null,
         @Query("restake") restake: Boolean? = null,
         @Query("lPool") lPool: String? = null,
         @Query("target") target: String? = null,
@@ -95,4 +95,37 @@ interface ProxyBackend {
 
     @GET("v0/accEncryptionKey/{accountAddress}")
     fun getAccountEncryptedKey(@Path("accountAddress") accountAddress: String): Call<AccountKeyData>
+
+    @GET("v0/CIS2Tokens/{index}/{subIndex}")
+    fun cis2Tokens(
+        @Path("index") index: String,
+        @Path("subIndex") subIndex: String,
+        @Query("from") from: String? = null,
+        @Query("limit") limit: Int? = null
+    ): Call<CIS2Tokens>
+
+    @GET("v0/CIS2TokenMetadata/{index}/{subIndex}")
+    fun cis2TokenMetadata(
+        @Path("index") index: String,
+        @Path("subIndex") subIndex: String,
+        @Query("tokenId") tokenId: String
+    ): Call<CIS2TokensMetadata>
+
+    @GET("v0/CIS2TokenMetadata/{index}/{subIndex}")
+    suspend fun cis2TokenMetadataSuspended(
+        @Path("index") index: String,
+        @Path("subIndex") subIndex: String,
+        @Query("tokenId") tokenId: String
+    ): CIS2TokensMetadata
+
+    @GET("v0/CIS2TokenBalance/{index}/{subIndex}/{accountAddress}")
+    fun cis2TokenBalance(
+        @Path("index") index: String,
+        @Path("subIndex") subIndex: String,
+        @Path("accountAddress") accountAddress: String,
+        @Query("tokenId") tokenId: String
+    ): Call<CIS2TokensBalances>
+
+    @GET
+    fun checkIdentityProvider(@Url url: String): Call<String>
 }

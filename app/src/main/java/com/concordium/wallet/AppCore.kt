@@ -7,6 +7,7 @@ import com.concordium.wallet.core.authentication.Session
 import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.core.crypto.CryptoLibraryMock
 import com.concordium.wallet.core.crypto.CryptoLibraryReal
+import com.concordium.wallet.core.gson.BigIntegerTypeAdapter
 import com.concordium.wallet.core.gson.RawJsonTypeAdapter
 import com.concordium.wallet.data.backend.ProxyBackend
 import com.concordium.wallet.data.backend.ProxyBackendConfig
@@ -15,6 +16,7 @@ import com.concordium.wallet.data.room.Identity
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.Cookie
+import java.math.BigInteger
 
 class AppCore(val context: Context) {
 
@@ -43,6 +45,7 @@ class AppCore(val context: Context) {
     private fun initializeGson(): Gson {
         val gsonBuilder = GsonBuilder()
         gsonBuilder.registerTypeAdapter(RawJson::class.java, RawJsonTypeAdapter())
+        gsonBuilder.registerTypeAdapter(BigInteger::class.java, BigIntegerTypeAdapter())
         return gsonBuilder.create()
     }
 

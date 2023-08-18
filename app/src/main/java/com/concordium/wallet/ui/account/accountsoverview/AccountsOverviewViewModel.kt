@@ -24,6 +24,7 @@ import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.launch
+import java.math.BigInteger
 
 class AccountsOverviewViewModel(application: Application) : AndroidViewModel(application) {
     private val _waitingLiveData = MutableLiveData<Boolean>()
@@ -93,7 +94,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             override fun onNewAccountFinalized(accountName: String) {
                 viewModelScope.launch {
                     _newFinalizedAccountLiveData.value = accountName
-                    App.appCore.session.setAccountsBackedUp(false)
                 }
             }
 
@@ -108,7 +108,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         viewModelScope.launch {
             proxyRepository.getAppSettings(App.appCore.getAppVersion(),
                 {
-                _appSettingsLiveData.value = it
+                    _appSettingsLiveData.value = it
                 },
                 {
                     Log.d("appSettings failed")
@@ -123,7 +123,12 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             poolIds.forEach { poolId ->
                 proxyRepository.getBakerPool(poolId,
                     { bakerPoolStatus ->
-                        poolStatuses.add(Pair(poolId, bakerPoolStatus.bakerStakePendingChange.pendingChangeType))
+                        poolStatuses.add(
+                            Pair(
+                                poolId,
+                                bakerPoolStatus.bakerStakePendingChange.pendingChangeType
+                            )
+                        )
                         if (poolStatuses.count() == poolIds.count())
                             _poolStatusesLiveData.value = poolStatuses
                     }, {
@@ -147,18 +152,16 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         viewModelScope.launch {
 
             val doneIdentityCount = identityRepository.getAllDone().count()
-            if(doneIdentityCount > 0){
+            if (doneIdentityCount > 0) {
                 _identityLiveData.value = State.VALID_IDENTITIES
-            }
-            else {
+            } else {
                 _identityLiveData.value = State.NO_IDENTITIES
             }
 
             val identitiesPending = identityRepository.getAllPending()
-            if(!identitiesPending.isNullOrEmpty()){
+            if (!identitiesPending.isNullOrEmpty()) {
                 _pendingIdentityForWarningLiveData.value = identitiesPending.first()
-            }
-            else{
+            } else {
                 _pendingIdentityForWarningLiveData.value = null
             }
 
@@ -166,7 +169,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             if (identityCount == 0) {
                 _stateLiveData.value = State.NO_IDENTITIES
                 // Set balance, because we know it will be 0
-                _totalBalanceLiveData.value = TotalBalancesData(0L, 0L, 0L, false)
+                _totalBalanceLiveData.value = TotalBalancesData(BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, false)
                 if(notifyWaitingLiveData){
                     _waitingLiveData.value = false
                 }
@@ -175,13 +178,13 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                 if (accountCount == 0) {
                     _stateLiveData.value = State.NO_ACCOUNTS
                     // Set balance, because we know it will be 0
-                    _totalBalanceLiveData.value = TotalBalancesData(0L, 0L, 0L, false)
+                    _totalBalanceLiveData.value = TotalBalancesData(BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, false)
                     if(notifyWaitingLiveData){
                         _waitingLiveData.value = false
                     }
                 } else {
                     _stateLiveData.value = State.DEFAULT
-                    if(notifyWaitingLiveData){
+                    if (notifyWaitingLiveData) {
                         _waitingLiveData.value = false
                     }
                     updateSubmissionStatesAndBalances(notifyWaitingLiveData)
@@ -198,15 +201,17 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             val transferRepository = TransferRepository(transferDao)
             val transferList = transferRepository.getAllByAccountId(account.id)
             for (transfer in transferList) {
-                if (transfer.transactionType == TransactionType.LOCAL_DELEGATION) hasPendingDelegationTransactions = true
-                if (transfer.transactionType == TransactionType.LOCAL_BAKER) hasPendingBakingTransactions = true
+                if (transfer.transactionType == TransactionType.LOCAL_DELEGATION) hasPendingDelegationTransactions =
+                    true
+                if (transfer.transactionType == TransactionType.LOCAL_BAKER) hasPendingBakingTransactions =
+                    true
             }
             localTransfersLoaded.value = account
         }
     }
 
     private fun updateSubmissionStatesAndBalances(notifyWaitingLiveData: Boolean = true) {
-        if(notifyWaitingLiveData){
+        if (notifyWaitingLiveData) {
             _waitingLiveData.value = true
         }
         accountUpdater.updateForAllAccounts()
@@ -225,13 +230,13 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         object : CountDownTimer(Long.MAX_VALUE, BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC * 1000) {
             private var first = true
             override fun onTick(millisUntilFinished: Long) {
-                if(first){ //ignore first tick
+                if (first) { //ignore first tick
                     first = false
                     return
                 }
-                if(isRegularUpdateNeeded()){
+                if (isRegularUpdateNeeded()) {
                     updateState(false)
-                   // Log.d("Tick.....")
+                    // Log.d("Tick.....")
                 }
             }
 
@@ -242,7 +247,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
 
     private fun isRegularUpdateNeeded(): Boolean {
         this.accountRepository.allAccountsWithIdentity.value?.forEach { accountWithIdentity ->
-            if(accountWithIdentity.account.transactionStatus != TransactionStatus.FINALIZED){
+            if (accountWithIdentity.account.transactionStatus != TransactionStatus.FINALIZED) {
                 return true
             }
         }

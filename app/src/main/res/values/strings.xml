@@ -18,6 +18,7 @@
     <string name="app_version">Version %1$s</string>
     <string name="app_version_about">%1$s</string>
     <string name="app_gstroke">Ͼ</string>
+    <string name="backend_error_transaction_rejected">Transaction rejected</string>
 
     <!-- Dialogs -->
     <string name="dialog_ok">Okay</string>
@@ -705,6 +706,7 @@
     <string name="account_details_shielded_transaction_fee">Shielded transaction fee</string>
     <string name="account_delegation_pending">Configure delegation</string>
     <string name="account_baking_pending">Configure baker</string>
+    <string name="account_smart_contract_update_pending">Invoke smart contract</string>
     <string name="account_details_empty_identity_data">This account has no identity data revealed.</string>
     <string name="account_details_title_shielded_balance">%1$s shielded balance</string>
     <string name="account_details_title_regular_balance">%1$s balance</string>
@@ -848,6 +850,8 @@
     <string name="wallet_connect_preparing_connection">Preparing connection…</string>
     <string name="wallet_connect_timeout_dialog_title">Could not connect</string>
     <string name="wallet_connect_timeout_dialog_content">The QR code seems to be expired. Please generate a new one and try again.</string>
+    <string name="wallet_connect_service_running">WalletConnect session open…</string>
+    <string name="wallet_connect_stop_service">Stop service</string>
 
     <!-- ***** More ***** -->
 
@@ -926,6 +930,7 @@
     <string name="account_details_menu_decrypt">Decrypt</string>
     <string name="account_details_menu_change_name">Change account name</string>
     <string name="account_details_menu_export_key">Export private key</string>
+    <string name="account_details_menu_export_transaction_log">Export transaction logs</string>
     <string name="account_details_delegation_with_baker_pool">Delegation with baker pool %1$s</string>
     <string name="account_details_delegation_with_passive_pool">Passive delegation</string>
     <string name="account_details_stake_with_baker">Stake with baker %1$s</string>
@@ -947,7 +952,6 @@
     <string name="account_total_details_disposal">Balance total</string>
     <string name="account_shielded_total_details_disposal">Shielded balance total of %1$s</string>
 
-    <string name="accounts_overview_readonly_desc">This account is imported without keys, and is read only</string>
     <string name="transactions_filters_show_rewards">Show rewards</string>
     <string name="transactions_filters_show_finalizations_rewards">Show finalizations rewards</string>
     <string name="change_password_initial_error">Data could not be decrypted</string>
@@ -995,6 +999,79 @@
     <string name="export_account_keys_copied">Copied</string>
     <string name="export_account_keys_to_file">Export to file</string>
     <string name="export_account_keys_file_exported">File exported</string>
+
+    <string name="export_transaction_log_title">Export transaction logs</string>
+    <string name="export_transaction_log_description">Transaction logs of an account can be generated and saved via %1$s\n\nIf your account contains a lot of transactions, it may take a moment for CCDScan to prepare the file. Once the logs are ready, they will be downloaded to your device as a CSV file. Please note that if the account has a lot of transactions, the file size can be quite large.\n\nYou can also visit %1$s and manually generate your transaction logs from a desktop browser.</string>
+    <string name="export_transaction_log_save">Save transaction logs</string>
+    <string name="export_transaction_log_done">Done</string>
+    <string name="export_transaction_log_generating">Generating transaction logs, please hold on.</string>
+    <string name="export_transaction_log_saved">The transaction logs have been saved.</string>
+    <string name="export_transaction_log_failed">Failed to download transaction logs</string>
+    <string name="export_transaction_log_progress">%1$s/%2$s KB downloaded</string>
+    <string name="export_transaction_log_downloading">Downloading transaction logs.</string>
+
+    <string name="cis_tab_fungible">Fungible</string>
+    <string name="cis_tab_collectibles">Collectibles</string>
+    <string name="cis_tab_manage">Manage</string>
+    <string name="cis_find_tokens_title">Enter a contract index to look for tokens.</string>
+    <string name="cis_token_details_title">%1$s balance on %2$s</string>
+    <string name="cis_find_tokens_hint">Contract index</string>
+    <string name="cis_look_for_tokens">Look for tokens</string>
+    <string name="cis_select_tokens_title">Please select the tokens you want to add from the contract.</string>
+    <string name="cis_add_tokens">Add tokens</string>
+    <string name="cis_update_tokens">Update tokens</string>
+    <string name="cis_find_tokens_none">This contract has no tokens.</string>
+    <string name="cis_find_tokens_invalid_index">Invalid contract index</string>
+    <string name="cis_find_tokens_metadata_error">Unable to load metadata</string>
+    <string name="cis_find_tokens_invalid_checksum">Token metadata has an invalid checksum</string>
+    <string name="cis_search">Search for token ID</string>
+    <string name="cis_send_funds">Send funds</string>
+    <string name="cis_currently_available_amounts">Currently available amounts:</string>
+    <string name="cis_token_balance">%1$s Balance:</string>
+    <string name="cis_at_disposal">CCD available:</string>
+    <string name="cis_max">Max</string>
+    <string name="cis_paste_receiver_address">Paste receiver address here, or use one of the options below</string>
+    <string name="cis_paste">Paste</string>
+    <string name="cis_address_book">Address book</string>
+    <string name="cis_scan_qr">Scan QR</string>
+    <string name="cis_optional_add_memo">Optional: Add memo</string>
+    <string name="cis_memo">Memo</string>
+    <string name="cis_receipt_confirm">Are you sure you want to make the following transaction?</string>
+    <string name="cis_transaction_send_funds">Transaction: Send funds</string>
+    <string name="cis_transaction_send_tokens">Transaction: Send tokens</string>
+    <string name="cis_sender">Sender</string>
+    <string name="cis_amount">Amount</string>
+    <string name="cis_token">Token</string>
+    <string name="cis_token_id">Token ID</string>
+    <string name="cis_receiver">Receiver</string>
+    <string name="cis_finish">Finish</string>
+    <string name="cis_back">Back</string>
+    <string name="cis_estimated_fee">Estimated transaction fee:\n%1$s</string>
+    <string name="cis_back_to_list">Back to list</string>
+    <string name="cis_invalid_account_address">Invalid account address</string>
+    <string name="cis_enter_receiver_address">Please enter a receiver address</string>
+    <string name="cis_about_token">About token</string>
+    <string name="cis_name_and_icon">Name and icon</string>
+    <string name="cis_image">Image</string>
+    <string name="cis_description">Description</string>
+    <string name="cis_contract_index">Contract index, subindex</string>
+    <string name="cis_decimals">Decimals</string>
+    <string name="cis_ownership">Ownership</string>
+    <string name="cis_owned">Owned</string>
+    <string name="cis_not_owned">Not owned</string>
+    <string name="cis_no_tokens_found">No tokens found.</string>
+    <string name="cis_no_tokens_selected">You haven\'t selected any tokens.</string>
+    <string name="cis_tokens_updated">Token list updated</string>
+    <string name="cis_tokens_not_updated">No updates made to token list</string>
+    <string name="cis_no_collectibles_added">No collectibles have been added to this account yet.</string>
+    <string name="cis_add_more">To add more tokens, tap Manage.</string>
+    <string name="cis_delete_token">Don’t show token in wallet</string>
+    <string name="cis_delete_dialog_title">Confirm Delete!</string>
+    <string name="cis_delete_dialog_content">Delete Token from wallet?</string>
+    <string name="cis_delete_dialog_confirm">Delete</string>
+    <string name="cis_delete_dialog_cancel">Cancel</string>
+    <string name="cis_search_balance">Your balance: %1$s</string>
+
     <string name="wallet_connect_transaction_parsing_error">Error parsing the request!</string>
 
     <string name="terms_and_conditions_title">Before you begin</string>
@@ -1008,8 +1085,19 @@
     <string name="terms_and_conditions_approve_pattern">terms and conditions.</string>
     <string name="unexpected_error">Unexpected error occurred, please restart the application</string>
 
-    <string name="view_seed_phrase">View secret recovery phrase</string>
-    <string name="export_seed_phrase_title">Secret recovery phrase</string>
-    <string name="export_seed_phrase_done">Done</string>
-    <string name="export_seed_phrase_error">Error while loading seed Phrase</string>
+    <string name="show_raw_metadata">Show raw metadata</string>
+
+    //id pub identity error
+    <string name="id_pub_error_title">Create new Identity Error</string>
+    <string name="id_pub_error_description">You must recover your wallet in Wallet settings before creating a new identity</string>
+    <string name="id_pub_error_ok_button">Ok</string>
+    <string name="id_pub_error_settings_button">Go to Wallet Settings</string>
+
+    <string name="show_raw_metadata_thumbnail">Thumbnail</string>
+    <string name="show_raw_metadata_display">Display</string>
+    <string name="show_raw_metadata_name">Name</string>
+    <string name="show_raw_metadata_decimals">Decimals</string>
+    <string name="show_raw_metadata_description">Description</string>
+    <string name="show_raw_metadata_symbol">Symbol</string>
+    <string name="show_raw_metadata_unique">Unique</string>
 </resources>
