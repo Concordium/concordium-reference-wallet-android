@@ -31,9 +31,9 @@ class ExportPassPhraseFragment : BaseBindingFragment<FragmentExportPassPhraseRev
 
         setupViewModel()
         viewDataBinding.llTapToReveal.setOnClickListener {
-            showAuthentication(requireActivity() as AppCompatActivity) { password ->
+            showAuthentication(requireActivity() as AppCompatActivity, { password ->
                 crossFade()
-            }
+            }, {})
         }
     }
 

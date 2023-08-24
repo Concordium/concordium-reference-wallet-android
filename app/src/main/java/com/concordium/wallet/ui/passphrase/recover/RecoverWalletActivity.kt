@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.concordium.wallet.BuildConfig
@@ -16,10 +15,11 @@ import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
 import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessActivity
 import com.concordium.wallet.util.KeyboardUtil
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class RecoverWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl() {
     private lateinit var binding: ActivityRecoverWalletBinding
-    private lateinit var viewModel: PassPhraseRecoverViewModel
+    private val viewModel: PassPhraseRecoverViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +30,6 @@ class RecoverWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl()
             binding.toolbarLayout.toolbarTitle,
             R.string.pass_phrase_recover_title
         )
-        initializeViewModel()
         initViews()
         initObservers()
 
@@ -49,13 +48,6 @@ class RecoverWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl()
     override fun onBackPressed() {
         if (binding.pager.currentItem != 2)
             super.onBackPressed()
-    }
-
-    private fun initializeViewModel() {
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
-        )[PassPhraseRecoverViewModel::class.java]
     }
 
     private fun initViews() {
@@ -115,7 +107,7 @@ class RecoverWalletActivity : BaseActivity(), AuthDelegate by AuthDelegateImpl()
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> PassPhraseRecoverExplainFragment()
-                1 -> PassPhraseRecoverInputFragment.newInstance(viewModel)
+                1 -> PassPhraseRecoverInputFragment()
                 2 -> PassPhraseRecoverSuccessFragment()
                 else -> Fragment()
             }

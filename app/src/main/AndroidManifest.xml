@@ -81,6 +81,10 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.passphrase.recover.ExportSeedPhraseActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />#
+        <activity
             android:name=".ui.identity.identitycreate.IdentityIntroFlow"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />

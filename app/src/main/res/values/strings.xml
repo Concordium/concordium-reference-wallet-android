@@ -1100,4 +1100,9 @@
     <string name="show_raw_metadata_description">Description</string>
     <string name="show_raw_metadata_symbol">Symbol</string>
     <string name="show_raw_metadata_unique">Unique</string>
+
+    <string name="view_seed_phrase">View secret recovery phrase</string>
+    <string name="export_seed_phrase_title">Secret recovery phrase</string>
+    <string name="export_seed_phrase_done">Done</string>
+    <string name="export_seed_phrase_error">Error while loading seed Phrase</string>
 </resources>
