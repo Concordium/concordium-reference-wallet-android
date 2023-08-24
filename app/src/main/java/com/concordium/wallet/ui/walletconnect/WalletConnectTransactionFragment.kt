@@ -58,9 +58,7 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
                 account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance),
                 true
             )
-            val line1 = account.address.substring(0, account.address.length / 2)
-            val line2 = account.address.substring(account.address.length / 2)
-            binding.accountToSendFrom.text = "${account.name}\n\n$line1\n$line2"
+            binding.accountToSendFrom.text = account.address
         }
 
 
