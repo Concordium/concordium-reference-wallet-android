@@ -91,16 +91,16 @@ object TransactionViewHelper {
                 amountTextView.visibility = View.VISIBLE
 
                 var cost = ta.cost
-                var costPrefix = ""
+                var costPrefix = "-"
                 val textBuilder = SpannableStringBuilder()
                 val amountText =
-                    "${CurrencyUtil.formatGTU(ta.subtotal, withGStroke = true)} - "
+                    "${CurrencyUtil.formatGTU(ta.subtotal, withGStroke = true)}"
                 val costText by lazy {
-                    "$costPrefix${
+                    "\n${amountTextView.context.getString(R.string.account_details_fee)} $costPrefix${
                         CurrencyUtil.formatGTU(
                             cost, withGStroke = true
                         )
-                    } ${amountTextView.context.getString(R.string.account_details_fee)}"
+                    }"
                 }
 
                 if (ta.transactionStatus == TransactionStatus.RECEIVED ||
