@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.backend.BackendRequest
+import com.concordium.wallet.core.backend.TransactionSimulationException
 import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.AccountContractRepository
@@ -25,7 +26,6 @@ import com.concordium.wallet.data.model.AccountBalance
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.GlobalParamsWrapper
-import com.concordium.wallet.data.model.InputEncryptedAmount
 import com.concordium.wallet.data.model.SubmissionData
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TransactionOutcome
@@ -251,15 +251,20 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             type = ProxyRepository.SIMPLE_TRANSFER,
             memoSize = if (sendTokenData.memo == null) null else sendTokenData.memo!!.length / 2,
             success = {
-                sendTokenData.energy = it.energy
-                sendTokenData.fee = it.cost.toBigInteger()
-                sendTokenData.account?.let { account ->
-                    sendTokenData.max =
-                        account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) -
-                                (sendTokenData.fee ?: BigInteger.ZERO)
+                if (it.success == false) {
+                    waiting.postValue(false)
+                    handleBackendError(TransactionSimulationException())
+                } else {
+                    sendTokenData.energy = it.energy
+                    sendTokenData.fee = it.cost.toBigInteger()
+                    sendTokenData.account?.let { account ->
+                        sendTokenData.max =
+                            account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) -
+                                    (sendTokenData.fee ?: BigInteger.ZERO)
+                    }
+                    waiting.postValue(false)
+                    feeReady.postValue(sendTokenData.fee)
                 }
-                waiting.postValue(false)
-                feeReady.postValue(sendTokenData.fee)
             },
             failure = {
                 waiting.postValue(false)
