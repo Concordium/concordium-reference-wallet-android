@@ -311,10 +311,11 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     val unselectedTokenIds =
                         updatedTokens.filter { it.isSelected.not() }.map { it.token }
                     when {
-                        existingContractTokenIds
-                            .any { unselectedTokenIds.contains(it) } -> anyChanges = true
+                        existingContractTokenIds.any { unselectedTokenIds.contains(it) } ->
+                            anyChanges = true
 
-                        selectedTokens.map { it.token } != existingContractTokenIds ->
+                        selectedTokens.map { it.token }
+                            .containsAll(existingContractTokenIds).not() ->
                             anyChanges = true
                     }
 
