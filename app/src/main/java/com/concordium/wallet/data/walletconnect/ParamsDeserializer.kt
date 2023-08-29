@@ -45,18 +45,23 @@ class ParamsDeserializer : JsonDeserializer<Params?> {
 
         if (schemaElement.isJsonObject) {
             return try {
-                val schema: Schema = context.deserialize(schemaElement, Schema::class.java)
+                val schema: Schema.ValueSchema =
+                    context.deserialize(schemaElement, Schema.ValueSchema::class.java)
                 if (schema.type == null || schema.value == null) {
                     return null
                 }
                 return schema
             } catch (ex: JsonParseException) {
-                null
+                try {
+                    return context.deserialize(schemaElement, Schema.BrokenSchema::class.java)
+                } catch (ex: JsonParseException) {
+                    return null
+                }
             }
         }
 
         return try {
-            Schema(type = "module", value = schemaElement.asString)
+            Schema.ValueSchema(type = "module", value = schemaElement.asString)
         } catch (ex: ClassCastException) {
             null
         } catch (ex: IllegalStateException) {

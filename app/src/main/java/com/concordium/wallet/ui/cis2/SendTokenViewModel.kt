@@ -465,7 +465,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             if (serializeTokenTransferParametersOutput == null) {
                 errorInt.postValue(R.string.app_error_lib)
             } else {
-                val payload = Payload(
+                val payload = Payload.ComplexPayload(
                     ContractAddress(token.contractIndex.toInt(), 0),
                     "0",
                     energy,

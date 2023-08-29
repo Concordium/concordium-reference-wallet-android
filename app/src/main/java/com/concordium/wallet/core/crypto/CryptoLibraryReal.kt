@@ -44,6 +44,7 @@ import com.concordium.wallet.data.model.ArsInfo
 import com.concordium.wallet.data.model.BakerKeys
 import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.IdentityProviderInfo
+import com.concordium.wallet.data.walletconnect.Payload
 import com.concordium.wallet.util.Log
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -213,7 +214,10 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
 
     override suspend fun createAccountTransaction(createAccountTransactionInput: CreateAccountTransactionInput): CreateAccountTransactionOutput? =
         withContext(Dispatchers.Default) {
-            val input = gson.toJson(createAccountTransactionInput)
+            var input = gson.toJson(createAccountTransactionInput)
+            if (createAccountTransactionInput.payload is Payload.SimplePayload)
+                input = input.replace("toAddress", "to")
+
             loadWalletLib()
             val result = create_account_transaction(input)
             Log.d("Output (Code ${result.result}): ${result.output}")
@@ -247,7 +251,10 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
             val result = serialize_token_transfer_parameters(input)
             Log.d("Output (Code ${result.result}): ${result.output}")
             if (result.result == CryptoLibrary.SUCCESS) {
-                return@withContext gson.fromJson(result.output, SerializeTokenTransferParametersOutput::class.java)
+                return@withContext gson.fromJson(
+                    result.output,
+                    SerializeTokenTransferParametersOutput::class.java
+                )
             }
             Log.e("CryptoLib failed")
             return@withContext null

@@ -14,14 +14,18 @@ data class Params(
     var schema: Schema?
 ) : Serializable {
     fun parsePayload(): Payload? {
+        val gson = GsonBuilder()
+            .registerTypeAdapterFactory(NullableTypeAdapterFactory())
+            .create()
         return try {
-            val gson = GsonBuilder()
-                .registerTypeAdapterFactory(NullableTypeAdapterFactory())
-                .create()
-            gson.fromJson(payload, Payload::class.java)
-        } catch (ex: java.lang.Exception) {
-            Log.e(ex.toString())
-            null
+            gson.fromJson(payload, Payload.ComplexPayload::class.java)
+        } catch (ex: Exception) {
+            try {
+                gson.fromJson(payload, Payload.SimplePayload::class.java)
+            } catch (ex: Exception) {
+                Log.e(ex.toString())
+                null
+            }
         }
     }
 }
