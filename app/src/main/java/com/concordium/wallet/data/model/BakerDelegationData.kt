@@ -27,7 +27,7 @@ data class BakerDelegationData(
 
     var transferSubmissionStatus: TransferSubmissionStatus? = null
     var submissionId: String? = null
-    var energy: Long? = null
+    var energy: BigInteger? = null
     var accountNonce: AccountNonce? = null
     var amount: BigInteger? = null
     var chainParameters: ChainParameters? = null

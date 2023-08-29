@@ -12,7 +12,11 @@ import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.cryptolib.*
+import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
+import com.concordium.wallet.data.cryptolib.CreateTransferOutput
+import com.concordium.wallet.data.cryptolib.ParameterToJsonInput
+import com.concordium.wallet.data.cryptolib.SignMessageInput
+import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.SubmissionData
@@ -43,7 +47,7 @@ import javax.crypto.Cipher
 data class WalletConnectData(
     var account: Account? = null,
     var wcUri: String? = null,
-    var energy: Long? = null,
+    var energy: BigInteger? = null,
     var cost: BigInteger? = null,
     var isTransaction: Boolean = true
 ) : Serializable
@@ -259,7 +263,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             return
         }
 
-        payload.maxEnergy = walletConnectData.energy ?: 0
+        payload.maxEnergy = walletConnectData.energy ?: BigInteger.ZERO
         val accountTransactionInput = CreateAccountTransactionInput(
             expiry.toInt(),
             from,

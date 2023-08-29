@@ -21,7 +21,7 @@ data class SendTokenData(
     var fee: BigInteger? = null,
     var max: BigInteger? = null,
     var memo: String? = null,
-    var energy: Long? = null,
+    var energy: BigInteger? = null,
     var accountNonce: AccountNonce? = null,
     var expiry: Long? = null,
     var createTransferInput: CreateTransferInput? = null,
