@@ -44,6 +44,7 @@ class SendTokenActivity : BaseActivity() {
         const val ACCOUNT = "ACCOUNT"
         const val TOKEN = "TOKEN"
         const val SEND_ONLY_SELECTED_TOKEN = "SEND_ONLY_SELECTED_TOKEN"
+        const val FLOW_STATE = "FlowFinished"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +57,12 @@ class SendTokenActivity : BaseActivity() {
         initObservers()
         initViews()
         enableSend()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent?.getBooleanExtra(FLOW_STATE, false) == true)
+            onBackPressedDispatcher.onBackPressed()
     }
 
     override fun onResume() {

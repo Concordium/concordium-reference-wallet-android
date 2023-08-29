@@ -9,7 +9,6 @@ import com.concordium.wallet.CBORUtil
 import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivitySendTokenReceiptBinding
-import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.cis2.SendTokenViewModel.Companion.SEND_TOKEN_DATA
 import com.concordium.wallet.util.getSerializable
@@ -94,8 +93,9 @@ class SendTokenReceiptActivity : BaseActivity() {
     }
 
     private fun onFinish() {
-        val intent = Intent(this, AccountDetailsActivity::class.java).apply {
+        val intent = Intent(this, SendTokenActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            putExtra(SendTokenActivity.FLOW_STATE, true)
         }
         startActivity(intent)
     }
