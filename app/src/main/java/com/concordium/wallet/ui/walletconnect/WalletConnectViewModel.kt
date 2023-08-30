@@ -158,8 +158,9 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     fun loadTransactionFee() {
         binder?.getSessionRequestParams()?.parsePayload()?.let { payload ->
             when (payload) {
-                is Payload.ComplexPayload -> {
-                    proxyRepository.getTransferCost(type = "update",
+                is Payload.UpdateTransaction -> {
+                    proxyRepository.getTransferCost(
+                        type = "update",
                         amount = payload.amount.toBigInteger(),
                         sender = walletConnectData.account!!.address,
                         contractIndex = payload.address.index,
@@ -177,7 +178,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                     )
                 }
 
-                is Payload.SimplePayload -> {
+                is Payload.SimpleTransaction -> {
                     proxyRepository.getTransferCost(
                         type = ProxyRepository.SIMPLE_TRANSFER,
                         memoSize = null,
@@ -199,9 +200,9 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         val payload = binder?.getSessionRequestParams()?.parsePayload()
         val amount =
             when (payload) {
-                is Payload.ComplexPayload -> payload.amount.toBigInteger()
+                is Payload.UpdateTransaction -> payload.amount.toBigInteger()
 
-                is Payload.SimplePayload -> payload.amount.toBigInteger()
+                is Payload.SimpleTransaction -> payload.amount.toBigInteger()
 
                 else -> BigInteger.ZERO
             }
@@ -290,7 +291,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             errorInt.postValue(R.string.app_error_lib)
             return
         }
-        if (payload is Payload.ComplexPayload) payload.maxEnergy = walletConnectData.energy ?: 0
+        if (payload is Payload.UpdateTransaction) payload.maxEnergy = walletConnectData.energy ?: 0
         val accountTransactionInput = CreateAccountTransactionInput(
             expiry.toInt(),
             from,
@@ -328,7 +329,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         binder?.getSessionRequestParams()?.let { params ->
             val payloadObj = params.parsePayload()
             val schema = params.schema
-            if (payloadObj != null && schema != null && payloadObj is Payload.ComplexPayload) {
+            if (payloadObj != null && schema != null && payloadObj is Payload.UpdateTransaction) {
                 CoroutineScope(Dispatchers.IO).launch {
                     val jsonMessage = App.appCore.cryptoLibrary.parameterToJson(
                         ParameterToJsonInput(

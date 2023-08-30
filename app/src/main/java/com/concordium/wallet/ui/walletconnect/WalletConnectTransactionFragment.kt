@@ -76,7 +76,7 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
 
                 requestParams.parsePayload()?.let { payload ->
                     when (payload) {
-                        is Payload.ComplexPayload -> {
+                        is Payload.UpdateTransaction -> {
                             setComplexPayloadVisibility()
                             binding.amount.text = CurrencyUtil.formatGTU(
                                 payload.amount, true
@@ -87,7 +87,7 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
                             binding.contractFeature.text = payload.receiveName
                         }
 
-                        is Payload.SimplePayload -> {
+                        is Payload.SimpleTransaction -> {
                             setSimplePayloadVisibility()
                             binding.amount.text = CurrencyUtil.formatGTU(
                                 payload.amount, true

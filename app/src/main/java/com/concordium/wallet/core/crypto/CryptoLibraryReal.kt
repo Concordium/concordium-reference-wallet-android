@@ -215,7 +215,7 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
     override suspend fun createAccountTransaction(createAccountTransactionInput: CreateAccountTransactionInput): CreateAccountTransactionOutput? =
         withContext(Dispatchers.Default) {
             var input = gson.toJson(createAccountTransactionInput)
-            if (createAccountTransactionInput.payload is Payload.SimplePayload)
+            if (createAccountTransactionInput.payload is Payload.SimpleTransaction)
                 input = input.replace("toAddress", "to")
 
             loadWalletLib()

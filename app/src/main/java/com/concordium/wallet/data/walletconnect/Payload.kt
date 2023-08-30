@@ -4,7 +4,7 @@ import java.math.BigInteger
 
 sealed interface Payload {
 
-    data class ComplexPayload(
+    data class UpdateTransaction(
         val address: ContractAddress,
         val amount: String,
         var maxEnergy: BigInteger,
@@ -12,7 +12,7 @@ sealed interface Payload {
         val receiveName: String
     ) : Payload
 
-    data class SimplePayload(
+    data class SimpleTransaction(
         val amount: String,
         val toAddress: String
     ) : Payload

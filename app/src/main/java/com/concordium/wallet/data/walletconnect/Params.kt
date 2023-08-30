@@ -18,10 +18,10 @@ data class Params(
             .registerTypeAdapterFactory(NullableTypeAdapterFactory())
             .create()
         return try {
-            gson.fromJson(payload, Payload.ComplexPayload::class.java)
+            gson.fromJson(payload, Payload.UpdateTransaction::class.java)
         } catch (ex: Exception) {
             try {
-                gson.fromJson(payload, Payload.SimplePayload::class.java)
+                gson.fromJson(payload, Payload.SimpleTransaction::class.java)
             } catch (ex: Exception) {
                 Log.e(ex.toString())
                 null
