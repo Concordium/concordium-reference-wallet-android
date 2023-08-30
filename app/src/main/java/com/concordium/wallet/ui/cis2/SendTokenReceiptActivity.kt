@@ -95,7 +95,7 @@ class SendTokenReceiptActivity : BaseActivity() {
     private fun onFinish() {
         val intent = Intent(this, SendTokenActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            putExtra(SendTokenActivity.FLOW_STATE, true)
+            putExtra(SendTokenActivity.TOKEN_TRANSFER_FLOW_FINISHED, true)
         }
         startActivity(intent)
     }
