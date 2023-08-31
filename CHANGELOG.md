@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - fixed button's text cut off on sign screen if longer text used
+- fixed the app crashing if sending funds from the main screen
+- fixed an when comparing 2 unsorted lists resulting in wrong message when managing tokens
+
 ### Changed
 
 ## [1.2.1]
