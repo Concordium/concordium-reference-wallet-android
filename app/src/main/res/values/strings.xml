@@ -697,7 +697,7 @@
     <string name="account_details_identity_data_title">Identity Data</string>
     <string name="account_details_retry_button">Retry account creation</string>
     <string name="account_details_remove_button">Remove account from wallet</string>
-    <string name="account_details_fee">fee</string>
+    <string name="account_details_fee">Fee:</string>
     <string name="account_details_header_today">Today</string>
     <string name="account_details_header_yesterday">Yesterday</string>
     <string name="account_details_gtu_drop_header">TESTNET CCD DROP</string>

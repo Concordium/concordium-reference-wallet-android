@@ -91,26 +91,26 @@ object TransactionViewHelper {
                 amountTextView.visibility = View.VISIBLE
 
                 var cost = ta.cost
-                var costPrefix = ""
+                var feePrefix = "-"
                 val textBuilder = SpannableStringBuilder()
                 val amountText =
-                    "${CurrencyUtil.formatGTU(ta.subtotal, withGStroke = true)} - "
+                    "${CurrencyUtil.formatGTU(ta.subtotal, withGStroke = true)}"
                 val costText by lazy {
-                    "$costPrefix${
+                    "\n${amountTextView.context.getString(R.string.account_details_fee)} $feePrefix${
                         CurrencyUtil.formatGTU(
                             cost, withGStroke = true
                         )
-                    } ${amountTextView.context.getString(R.string.account_details_fee)}"
+                    }"
                 }
 
                 if (ta.transactionStatus == TransactionStatus.RECEIVED ||
                     (ta.transactionStatus == TransactionStatus.COMMITTED && ta.outcome == TransactionOutcome.Ambiguous)
                 ) {
-                    costPrefix = "~"
+                    feePrefix = "~"
                     textBuilder.append(getColorSpan(amountText, colorBlack))
                     textBuilder.append(getColorSpan(costText, colorBlue))
                 } else if (ta.transactionStatus == TransactionStatus.ABSENT) {
-                    costPrefix = "~"
+                    feePrefix = "~"
                     textBuilder.append(getColorSpan(amountText, colorGrey))
                     textBuilder.append(getColorSpan(costText, colorGrey))
                 } else if (ta.outcome == TransactionOutcome.Reject) {
