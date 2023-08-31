@@ -111,7 +111,7 @@
             app:layout_constraintEnd_toStartOf="@id/lock_imageview"
             app:layout_constraintStart_toEndOf="@id/guideline_middle_sub_header"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Ͼ1.30 + very very very very very very long text here "
+            tools:text="Ͼ1.30 \n+ very very very very very very long text here "
             tools:visibility="visible" />
 
         <ImageView
