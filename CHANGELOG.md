@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+### Fixed
+- fixed an when comparing 2 unsorted lists resulting in wrong message when managing tokens
+
+### Changed
+
+## [1.2.1]
+
 ### Fixed
 
 - fixed end destination when exiting add/remove watched tokens.
@@ -25,9 +34,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   added item decorator for divider in TokensFragment.kt
 - changed max line size for token name. added separator for recycler
 - Added new UI for raw metadata dialog
-
-### Changed
-
 - Removed the ability to select other tokens when transferring from TokenDetailsActivity
 
 ## [1.2.0]
