@@ -14,6 +14,7 @@
     <string name="app_error_backend_unknown_sockettimeout_exception">Connection to server timed out. Please check the internet connection.</string>
     <string name="app_error_backend_internal_server">Cannot establish communication with the server.</string>
     <string name="app_error_backend_unknown_error_code">Cannot establish communication with the server.</string>
+    <string name="app_error_backend_transaction_simulation_failed">Simulation of transfer failed, unable to proceed.</string>
     <string name="app_error_backend_unknown2">Unknown backend error</string>
     <string name="app_version">Version %1$s</string>
     <string name="app_version_about">%1$s</string>
@@ -697,7 +698,7 @@
     <string name="account_details_identity_data_title">Identity Data</string>
     <string name="account_details_retry_button">Retry account creation</string>
     <string name="account_details_remove_button">Remove account from wallet</string>
-    <string name="account_details_fee">fee</string>
+    <string name="account_details_fee">Fee:</string>
     <string name="account_details_header_today">Today</string>
     <string name="account_details_header_yesterday">Yesterday</string>
     <string name="account_details_gtu_drop_header">TESTNET CCD DROP</string>
@@ -844,7 +845,7 @@
     <string name="wallet_connect_message_vote">Message: Vote</string>
     <string name="wallet_connect_message_content">Message content</string>
     <string name="wallet_connect_message_reject">Reject</string>
-    <string name="wallet_connect_message_sign_and_return">Sign &amp; Return</string>
+    <string name="wallet_connect_message_sign_and_return">Sign</string>
     <string name="wallet_connect_message_signed">The message has been signed and returned.</string>
     <string name="wallet_connect_insufficient_funds">Insufficient funds</string>
     <string name="wallet_connect_preparing_connection">Preparing connection…</string>

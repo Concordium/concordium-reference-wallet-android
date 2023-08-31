@@ -4,6 +4,7 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.backend.BackendError
 import com.concordium.wallet.core.backend.BackendErrorException
 import com.concordium.wallet.core.backend.ErrorParser
+import com.concordium.wallet.core.backend.TransactionSimulationException
 import com.concordium.wallet.util.Log
 import kotlinx.coroutines.CancellationException
 import retrofit2.HttpException
@@ -15,22 +16,16 @@ object BackendErrorHandler {
 
     fun getExceptionStringRes(e: Throwable): Int {
         when (e) {
-            is UnknownHostException -> {
-                // Default situation when no internet connection
-                return R.string.app_error_backend_unknown_host_exception
-            }
+            // Default situation when no internet connection
+            is UnknownHostException -> return R.string.app_error_backend_unknown_host_exception
 
-            is ConnectException -> {
-                return R.string.app_error_backend_connect_exception
-            }
+            is ConnectException -> return R.string.app_error_backend_connect_exception
 
-            is SocketTimeoutException -> {
-                return R.string.app_error_backend_unknown_sockettimeout_exception
-            }
+            is SocketTimeoutException -> return R.string.app_error_backend_unknown_sockettimeout_exception
 
-            is BackendErrorException -> {
-                return getExceptionStringRes(e)
-            }
+            is BackendErrorException -> return getExceptionStringRes(e)
+
+            is TransactionSimulationException -> return R.string.app_error_backend_transaction_simulation_failed
 
             else -> {
                 Log.e("Exception from backend communication", e)
