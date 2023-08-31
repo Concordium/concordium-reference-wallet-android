@@ -287,20 +287,20 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
     private val supportedEvents = listOf("accounts_changed", "chain_changed")
     private val supportedMethods = listOf("sign_and_send_transaction", "sign_message")
     override fun onSessionProposal(sessionProposal: Sign.Model.SessionProposal) {
-        val ccdNamespace = sessionProposal.requiredNamespaces[expectedNamespaceKey]
-        if (ccdNamespace?.chains != supportedChains) {
+        val ccdNetwork = sessionProposal.requiredNamespaces[expectedNamespaceKey]
+        if (ccdNetwork?.chains != supportedChains) {
             EventBus.getDefault()
-                .post(RejectError("Expected namespaces:${supportedChains} but got ${ccdNamespace?.chains}"))
+                .post(RejectError("Expected namespaces:${supportedChains} but got ${ccdNetwork?.chains}"))
             return
         }
-        if (supportedEvents.containsAll(ccdNamespace.events).not()) {
+        if (supportedEvents.containsAll(ccdNetwork.events).not()) {
             EventBus.getDefault()
-                .post(RejectError("Expected subset of events ${supportedEvents} but got ${ccdNamespace.events}"))
+                .post(RejectError("Expected subset of events ${supportedEvents} but got ${ccdNetwork.events}"))
             return
         }
-        if (supportedMethods.containsAll(ccdNamespace.methods).not()) {
+        if (supportedMethods.containsAll(ccdNetwork.methods).not()) {
             EventBus.getDefault()
-                .post(RejectError("Expected subset of methods ${supportedEvents} but got ${ccdNamespace.events}"))
+                .post(RejectError("Expected subset of methods ${supportedEvents} but got ${ccdNetwork.events}"))
             return
         }
 
