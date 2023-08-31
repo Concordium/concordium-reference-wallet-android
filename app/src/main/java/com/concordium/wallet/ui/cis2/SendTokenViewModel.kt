@@ -289,10 +289,15 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             receiveName = sendTokenData.token!!.contractName + ".transfer",
             parameter = serializeTokenTransferParametersOutput.parameter,
             success = {
-                sendTokenData.energy = it.energy
-                sendTokenData.fee = it.cost.toBigInteger()
-                waiting.postValue(false)
-                feeReady.postValue(sendTokenData.fee)
+                if (it.success == false) {
+                    waiting.postValue(false)
+                    handleBackendError(TransactionSimulationException())
+                } else {
+                    sendTokenData.energy = it.energy
+                    sendTokenData.fee = it.cost.toBigInteger()
+                    waiting.postValue(false)
+                    feeReady.postValue(sendTokenData.fee)
+                }
             },
             failure = {
                 waiting.postValue(false)
