@@ -7,9 +7,9 @@ sealed class Schema {
     ) : Schema()
 
     /**
-     * For unknown reasons sometimes the schema comes in bad format, after some research it looks
-     * like a broken buffer issue, in order to not crash and successfully handle transactions
-     * we handle this specific case
+     * In some cases the buffer object in Java Script has been serialized directly, instead of first
+     * converting the buffer object to a hex string and thereafter converting the string to a
+     * byte array.
      */
     data class BrokenSchema(
         val type: String?,
