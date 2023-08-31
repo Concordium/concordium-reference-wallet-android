@@ -14,6 +14,7 @@
     <string name="app_error_backend_unknown_sockettimeout_exception">Connection to server timed out. Please check the internet connection.</string>
     <string name="app_error_backend_internal_server">Cannot establish communication with the server.</string>
     <string name="app_error_backend_unknown_error_code">Cannot establish communication with the server.</string>
+    <string name="app_error_backend_transaction_simulation_failed">Simulation of transfer failed, unable to proceed.</string>
     <string name="app_error_backend_unknown2">Unknown backend error</string>
     <string name="app_version">Version %1$s</string>
     <string name="app_version_about">%1$s</string>
