@@ -5,6 +5,3 @@ class BackendErrorException(val error: BackendError) : Exception("Response error
         return "Response error: $error"
     }
 }
-
-class TransactionSimulationException() :
-    Exception("Simulation of transfer failed, unable to proceed.")
