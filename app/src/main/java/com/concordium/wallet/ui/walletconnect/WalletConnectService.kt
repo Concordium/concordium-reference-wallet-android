@@ -282,15 +282,15 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
     }
 
 
-    private val expectedNamespaceKey = "ccd"
-    private val supportedChains = listOf("$expectedNamespaceKey:${BuildConfig.EXPORT_CHAIN}")
+    private val expectedNetworkKey = "ccd"
+    private val supportedChains = listOf("$expectedNetworkKey:${BuildConfig.EXPORT_CHAIN}")
     private val supportedEvents = listOf("accounts_changed", "chain_changed")
     private val supportedMethods = listOf("sign_and_send_transaction", "sign_message")
     override fun onSessionProposal(sessionProposal: Sign.Model.SessionProposal) {
-        val ccdNetwork = sessionProposal.requiredNamespaces[expectedNamespaceKey]
+        val ccdNetwork = sessionProposal.requiredNamespaces[expectedNetworkKey]
         if (ccdNetwork?.chains != supportedChains) {
             EventBus.getDefault()
-                .post(RejectError("Expected namespaces:${supportedChains} but got ${ccdNetwork?.chains}"))
+                .post(RejectError("Expected Network:${supportedChains} but got ${ccdNetwork?.chains}"))
             return
         }
         if (supportedEvents.containsAll(ccdNetwork.events).not()) {
