@@ -292,7 +292,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             return
         }
         if (payload is Payload.ContractUpdateTransaction) payload.maxEnergy =
-            walletConnectData.energy ?: 0
+            walletConnectData.energy ?: BigInteger.ZERO
         val accountTransactionInput = CreateAccountTransactionInput(
             expiry.toInt(),
             from,
