@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fixed an when comparing 2 unsorted lists resulting in wrong message when managing tokens
 
 ### Changed
+- improved WC pairing error handling
 - Improved error message when transfer entrypoint fails
 
 ## [1.2.1]
