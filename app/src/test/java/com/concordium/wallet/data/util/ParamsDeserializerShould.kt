@@ -2,6 +2,7 @@ package com.concordium.wallet.data.util
 
 import com.concordium.wallet.data.walletconnect.Params
 import com.concordium.wallet.data.walletconnect.ParamsDeserializer
+import com.concordium.wallet.data.walletconnect.Schema
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import org.junit.Assert
@@ -25,8 +26,8 @@ class ParamsDeserializerShould {
         val paramsFromObjectSchema = getParameters(paramsWithSchemaAsObject)
 
         Assert.assertEquals(
-            paramsFromStringSchema?.schema?.value,
-            paramsFromObjectSchema?.schema?.value
+            (paramsFromStringSchema?.schema as? Schema.ValueSchema)?.value,
+            (paramsFromStringSchema?.schema as? Schema.ValueSchema)?.value
         )
     }
 
@@ -42,7 +43,7 @@ class ParamsDeserializerShould {
         val paramsFromStringSchema = getParameters(paramsWithSchemaAsString)
 
         Assert.assertEquals(
-            paramsFromStringSchema?.schema?.value,
+            (paramsFromStringSchema?.schema as? Schema.ValueSchema)?.value,
             expectedOutput
         )
     }
@@ -58,7 +59,7 @@ class ParamsDeserializerShould {
         val paramsFromObjectSchema = getParameters(paramsWithSchemaAsObject)
 
         Assert.assertEquals(
-            paramsFromObjectSchema?.schema?.value,
+            (paramsFromObjectSchema?.schema as? Schema.ValueSchema)?.value,
             expectedOutput
         )
     }
