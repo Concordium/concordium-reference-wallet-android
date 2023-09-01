@@ -54,7 +54,6 @@ class WalletConnectPairFragment : WalletConnectBaseFragment() {
                 showTimeOut()
             }
         }.start()
-
     }
 
     override fun onDestroyView() {
@@ -83,6 +82,12 @@ class WalletConnectPairFragment : WalletConnectBaseFragment() {
     }
 
     private fun initObservers() {
+        _viewModel.errorString.observe(viewLifecycleOwner) {
+            if (it.contains("Expected")) {
+                showConnectionRejectedDialog(it)
+                _viewModel.disconnect()
+            }
+        }
         _viewModel.serviceName.observe(viewLifecycleOwner) { serviceName ->
             serviceName?.let {
                 binding.serviceName.text = serviceName
@@ -103,6 +108,21 @@ class WalletConnectPairFragment : WalletConnectBaseFragment() {
         val builder = AlertDialog.Builder(context)
         builder.setTitle(R.string.wallet_connect_timeout_dialog_title)
         builder.setMessage(getString(R.string.wallet_connect_timeout_dialog_content))
+
+        builder.setNegativeButton(getString(R.string.wallet_connect_connection_lost_okay)) { dialog, _ ->
+            dialog.dismiss()
+            binding.decline.isEnabled = false
+            _viewModel.rejectSession()
+            _viewModel.decline.postValue(true)
+        }
+        builder.setCancelable(false)
+        builder.create().show()
+    }
+
+    private fun showConnectionRejectedDialog(errorMessage: String) {
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle(R.string.wallet_connect_timeout_dialog_title)
+        builder.setMessage(errorMessage)
 
         builder.setNegativeButton(getString(R.string.wallet_connect_connection_lost_okay)) { dialog, _ ->
             dialog.dismiss()

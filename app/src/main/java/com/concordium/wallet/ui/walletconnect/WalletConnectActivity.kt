@@ -142,7 +142,9 @@ class WalletConnectActivity : BaseActivity() {
             Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
         }
         viewModel.errorString.observe(this) {
-            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            if (it.contains("Expected").not()) {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            }
         }
         viewModel.chooseAccount.observe(this) { accountWithIdentity ->
             viewModel.walletConnectData.account = accountWithIdentity.account
