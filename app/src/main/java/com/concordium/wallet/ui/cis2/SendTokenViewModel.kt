@@ -453,11 +453,11 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     private fun createTokenTransaction(keys: AccountData) {
-        val account = sendTokenData.account;
-        val token = sendTokenData.token;
-        val energy = sendTokenData.energy;
-        val accountNonce = sendTokenData.accountNonce;
-        val expiry = sendTokenData.expiry;
+        val account = sendTokenData.account
+        val token = sendTokenData.token
+        val energy = sendTokenData.energy
+        val accountNonce = sendTokenData.accountNonce
+        val expiry = sendTokenData.expiry
 
         if (account == null || token == null || energy == null || accountNonce == null || expiry == null) {
             errorInt.postValue(R.string.app_error_general)
@@ -481,7 +481,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 val payload = Payload.ContractUpdateTransaction(
                     ContractAddress(token.contractIndex.toInt(), 0),
                     "0",
-                    energy,
+                    energy.toInt(),
                     serializeTokenTransferParametersOutput.parameter,
                     token.contractName + ".transfer"
                 )

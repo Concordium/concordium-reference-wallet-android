@@ -1,13 +1,11 @@
 package com.concordium.wallet.data.walletconnect
 
-import java.math.BigInteger
-
 sealed interface Payload {
 
     data class ContractUpdateTransaction(
         val address: ContractAddress,
         val amount: String,
-        var maxEnergy: BigInteger,
+        var maxEnergy: Int,
         val message: String,
         val receiveName: String
     ) : Payload
@@ -16,6 +14,4 @@ sealed interface Payload {
         val amount: String,
         val toAddress: String
     ) : Payload
-
 }
-
