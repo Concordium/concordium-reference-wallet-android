@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fixed button's text cut off on sign screen if longer text used
 - fixed the app crashing if sending funds from the main screen
 - fixed an when comparing 2 unsorted lists resulting in wrong message when managing tokens
+- Fixed wallet connect service crash caused by intent redeliver policy when restarting the
+  WalletConnectService
 
 ### Changed
 - improved WC pairing error handling
