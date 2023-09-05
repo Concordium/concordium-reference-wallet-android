@@ -233,8 +233,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
 
     private fun validateReceiverAddress() {
         if (sendTokenData.receiver.isEmpty()) return
-        val cosik = sendTokenData.receiver
-        proxyRepository.getAccountBalance(accountAddress = cosik, success = {
+        proxyRepository.getAccountBalance(accountAddress = sendTokenData.receiver, success = {
             isReceiverAddressValid.value = true
         }, failure = {
             errorInt.postValue(R.string.cis_receiver_address_error)
