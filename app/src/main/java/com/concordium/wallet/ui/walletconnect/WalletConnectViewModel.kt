@@ -76,6 +76,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     val transactionFee: MutableLiveData<BigInteger> by lazy { MutableLiveData<BigInteger>() }
     val messagedSignedOkay: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isAuthenticationCanceled: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
     val messageSignedSuccess: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val messageSignedError: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
@@ -452,5 +453,13 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(rejectError: RejectError) {
         errorString.postValue(rejectError.message)
+    }
+
+    fun authenticationCanceled() {
+        isAuthenticationCanceled.value = true
+    }
+
+    fun authenticationCanceledEventConsumed() {
+        isAuthenticationCanceled.value = false
     }
 }

@@ -204,6 +204,7 @@ class WalletConnectActivity : BaseActivity() {
                 }
 
                 override fun onCancelled() {
+                    viewModel.authenticationCanceled()
                 }
             })
         }
