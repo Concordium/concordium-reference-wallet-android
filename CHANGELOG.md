@@ -10,13 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Fixed
+
 - fixed button's text cut off on sign screen if longer text used
 - fixed the app crashing if sending funds from the main screen
 - fixed an when comparing 2 unsorted lists resulting in wrong message when managing tokens
-- Fixed scenario where after canceled authentication buttons would not enable in
+- fixed scenario where after canceled authentication buttons would not enable in
   WalletConnectMessageFragment.kt
 
 ### Changed
+
 - improved WC pairing error handling
 - Improved error message when transfer entrypoint fails
 
