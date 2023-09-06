@@ -6,7 +6,6 @@ import com.concordium.wallet.data.model.DelegationTarget
 import com.concordium.wallet.data.model.GlobalParams
 import com.concordium.wallet.data.model.InputEncryptedAmount
 import java.io.Serializable
-import java.math.BigInteger
 
 data class CreateTransferInput(
     val from: String,
@@ -14,7 +13,7 @@ data class CreateTransferInput(
     val to: String?,
     val expiry: Long,
     val amount: String?,
-    val energy: BigInteger,
+    val energy: Int,
     val nonce: Int,
     val memo: String?,
     val global: GlobalParams?,

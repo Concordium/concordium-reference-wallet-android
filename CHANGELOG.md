@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fixed an when comparing 2 unsorted lists resulting in wrong message when managing tokens
 - fixed scenario where after canceled authentication buttons would not enable in
   WalletConnectMessageFragment.kt
+- Fixed wallet connect service crash caused by intent redeliver policy when restarting the
+  WalletConnectService
 
 ### Changed
 

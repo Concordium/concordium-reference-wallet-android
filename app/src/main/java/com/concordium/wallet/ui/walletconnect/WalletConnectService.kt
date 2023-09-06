@@ -111,7 +111,7 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
             stopSelf()
         }
 
-        return START_STICKY
+        return START_REDELIVER_INTENT
     }
 
     override fun onBind(intent: Intent): IBinder {

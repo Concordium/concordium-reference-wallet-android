@@ -74,6 +74,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     val feeReady: MutableLiveData<BigInteger?> by lazy { MutableLiveData<BigInteger?>() }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isReceiverAddressValid: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
 
     var sendOnlySelectedToken: Boolean = false
 
@@ -193,6 +194,8 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun loadTransactionFee() {
+        validateReceiverAddress()
+
         if (sendTokenData.token == null)
             return
 
@@ -226,6 +229,16 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 getTokenTransferCost(serializeTokenTransferParametersOutput)
             }
         }
+    }
+
+    private fun validateReceiverAddress() {
+        if (sendTokenData.receiver.isEmpty()) return
+        proxyRepository.getAccountBalance(accountAddress = sendTokenData.receiver, success = {
+            isReceiverAddressValid.value = true
+        }, failure = {
+            errorInt.postValue(R.string.cis_receiver_address_error)
+            isReceiverAddressValid.value = false
+        })
     }
 
     fun hasEnoughFunds(): Boolean {
@@ -414,7 +427,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             toAddress,
             expiry,
             amount.toString(),
-            energy,
+            energy.toInt(),
             nonce.nonce,
             memo,
             null,
@@ -440,11 +453,11 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     private fun createTokenTransaction(keys: AccountData) {
-        val account = sendTokenData.account;
-        val token = sendTokenData.token;
-        val energy = sendTokenData.energy;
-        val accountNonce = sendTokenData.accountNonce;
-        val expiry = sendTokenData.expiry;
+        val account = sendTokenData.account
+        val token = sendTokenData.token
+        val energy = sendTokenData.energy
+        val accountNonce = sendTokenData.accountNonce
+        val expiry = sendTokenData.expiry
 
         if (account == null || token == null || energy == null || accountNonce == null || expiry == null) {
             errorInt.postValue(R.string.app_error_general)
@@ -468,7 +481,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 val payload = Payload.ContractUpdateTransaction(
                     ContractAddress(token.contractIndex.toInt(), 0),
                     "0",
-                    energy,
+                    energy.toInt(),
                     serializeTokenTransferParametersOutput.parameter,
                     token.contractName + ".transfer"
                 )

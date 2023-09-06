@@ -176,6 +176,7 @@ class SendTokenActivity : BaseActivity() {
                     && viewModel.sendTokenData.fee != null
                     && viewModel.hasEnoughFunds()
                     && viewModel.sendTokenData.receiver.isNotEmpty()
+                    && viewModel.isReceiverAddressValid.value == true
         return binding.send.isEnabled
     }
 

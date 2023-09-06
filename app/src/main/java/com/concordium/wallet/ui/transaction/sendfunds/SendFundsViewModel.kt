@@ -373,7 +373,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             toAddress,
             expiry,
             amount.toString(),
-            energy,
+            energy.toInt(),
             nonce.nonce,
             memo,
             tempData.globalParams,
