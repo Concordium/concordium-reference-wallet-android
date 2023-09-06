@@ -74,6 +74,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     val feeReady: MutableLiveData<BigInteger?> by lazy { MutableLiveData<BigInteger?>() }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isReceiverAddressValid: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
 
     var sendOnlySelectedToken: Boolean = false
 
@@ -193,6 +194,8 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun loadTransactionFee() {
+        validateReceiverAddress()
+
         if (sendTokenData.token == null)
             return
 
@@ -226,6 +229,16 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 getTokenTransferCost(serializeTokenTransferParametersOutput)
             }
         }
+    }
+
+    private fun validateReceiverAddress() {
+        if (sendTokenData.receiver.isEmpty()) return
+        proxyRepository.getAccountBalance(accountAddress = sendTokenData.receiver, success = {
+            isReceiverAddressValid.value = true
+        }, failure = {
+            errorInt.postValue(R.string.cis_receiver_address_error)
+            isReceiverAddressValid.value = false
+        })
     }
 
     fun hasEnoughFunds(): Boolean {
@@ -414,7 +427,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             toAddress,
             expiry,
             amount.toString(),
-            energy,
+            energy.toInt(),
             nonce.nonce,
             memo,
             null,
