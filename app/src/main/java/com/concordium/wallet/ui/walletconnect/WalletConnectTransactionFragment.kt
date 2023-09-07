@@ -105,7 +105,6 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
             _viewModel.reject.postValue(true)
         }
         binding.submit.setOnClickListener {
-            binding.submit.isEnabled = false
             _viewModel.prepareTransaction()
         }
     }
