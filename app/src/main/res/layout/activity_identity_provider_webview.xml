@@ -75,21 +75,21 @@
                 app:layout_constraintTop_toBottomOf="@id/titleText" />
 
             <Button
-                android:id="@+id/okButton"
+                android:id="@+id/closeButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="32dp"
                 android:layout_marginTop="24dp"
                 android:background="@drawable/button_rounded_default"
                 android:backgroundTint="#48A2AE"
-                android:text="@string/id_pub_error_ok_button"
+                android:text="@string/id_pub_error_close_button"
                 android:textColor="@color/theme_white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/titleDescription" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/settingsButton"
+                android:id="@+id/restoreButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="32dp"
@@ -100,13 +100,13 @@
                 android:focusable="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/okButton">
+                app:layout_constraintTop_toBottomOf="@id/closeButton">
 
                 <TextView
                     android:id="@+id/settingsButtonText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/id_pub_error_settings_button"
+                    android:text="@string/id_pub_error_restore_button"
                     android:textColor="#48A2AE"
                     app:layout_constraintBottom_toBottomOf="@id/settingsButtonImage"
                     app:layout_constraintEnd_toStartOf="@id/settingsButtonImage"
