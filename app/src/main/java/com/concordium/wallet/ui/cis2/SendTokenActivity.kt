@@ -135,6 +135,7 @@ class SendTokenActivity : BaseActivity() {
             viewModel.sendTokenData.amount =
                 CurrencyUtil.toGTUValue(it.toString(), viewModel.sendTokenData.token)
                     ?: BigInteger.ZERO
+            binding.contractAddressError.visibility = View.GONE
             viewModel.loadTransactionFee()
             enableSend()
         }
@@ -378,6 +379,10 @@ class SendTokenActivity : BaseActivity() {
         }
         viewModel.errorInt.observe(this) {
             Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
+        }
+        viewModel.addressErrorInt.observe(this) {
+            binding.contractAddressError.text = getString(it)
+            binding.contractAddressError.visibility = View.VISIBLE
         }
     }
 
