@@ -73,6 +73,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     val transactionReady: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val feeReady: MutableLiveData<BigInteger?> by lazy { MutableLiveData<BigInteger?>() }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    val addressErrorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
     val isReceiverAddressValid: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
 
@@ -234,9 +235,13 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     private fun validateReceiverAddress() {
         if (sendTokenData.receiver.isEmpty()) return
         proxyRepository.getAccountBalance(accountAddress = sendTokenData.receiver, success = {
-            isReceiverAddressValid.value = true
+            isReceiverAddressValid.value =
+                if (it.currentBalance == null && it.finalizedBalance == null) {
+                    addressErrorInt.postValue(R.string.cis_receiver_address_error)
+                    false
+                } else true
         }, failure = {
-            errorInt.postValue(R.string.cis_receiver_address_error)
+            addressErrorInt.postValue(R.string.cis_receiver_address_error)
             isReceiverAddressValid.value = false
         })
     }
