@@ -461,6 +461,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         val account = sendTokenData.account
         val token = sendTokenData.token
         val energy = sendTokenData.energy
+        val maxContractExecutionEnergy = sendTokenData.maxContractExecutionEnergy
         val accountNonce = sendTokenData.accountNonce
         val expiry = sendTokenData.expiry
 
@@ -487,6 +488,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                     ContractAddress(token.contractIndex.toInt(), 0),
                     "0",
                     energy.toInt(),
+                    maxContractExecutionEnergy ?: 0,
                     serializeTokenTransferParametersOutput.parameter,
                     token.contractName + ".transfer"
                 )

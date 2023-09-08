@@ -6,6 +6,7 @@ sealed interface Payload {
         val address: ContractAddress,
         val amount: String,
         var maxEnergy: Int,
+        var maxContractExecutionEnergy: Int,
         val message: String,
         val receiveName: String
     ) : Payload
