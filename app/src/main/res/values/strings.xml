@@ -1106,5 +1106,5 @@
     <string name="view_seed_phrase">View secret recovery phrase</string>
     <string name="export_seed_phrase_title">Secret recovery phrase</string>
     <string name="export_seed_phrase_done">Done</string>
-    <string name="export_seed_phrase_error">Error while loading seed Phrase</string>
+    <string name="export_seed_phrase_error">Error while loading secret recovery phrase</string>
 </resources>

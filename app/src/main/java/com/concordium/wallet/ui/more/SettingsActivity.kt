@@ -50,10 +50,10 @@ class SettingsActivity : BaseActivity() {
         )
         initViews()
 
-        setUpViewModel()
+        observeState()
     }
 
-    private fun setUpViewModel() {
+    private fun observeState() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 passPhraseViewModel.state.collect { state ->

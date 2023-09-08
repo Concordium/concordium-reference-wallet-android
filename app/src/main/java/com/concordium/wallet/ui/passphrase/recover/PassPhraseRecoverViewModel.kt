@@ -85,10 +85,6 @@ class PassPhraseRecoverViewModel(
             seedPhrase,
             password
         )
-        saveSeedPhrase(seedPhrase)
-    }
-
-    private fun saveSeedPhrase(seedPhrase: String) {
         viewModelScope.launch {
             authenticationRepository.saveSeedPhase(seedPhrase)
         }

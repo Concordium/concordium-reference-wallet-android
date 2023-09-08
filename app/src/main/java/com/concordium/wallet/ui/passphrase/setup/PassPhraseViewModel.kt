@@ -66,18 +66,13 @@ class PassPhraseViewModel(
     }
 
     fun setSeedPhrase(password: String) = viewModelScope.launch {
+        val generatedPhrase = generatedPhrase()
         _saveSeedLiveData.value = AuthPreferences(getApplication()).tryToSetEncryptedSeedPhrase(
-            generatedPhrase(),
+            generatedPhrase,
             password
         )
-        saveSeedPhrase()
-    }
-
-    fun getSeedPhase() = authenticationRepository.getSeedPhase()
-
-    private fun saveSeedPhrase() {
         viewModelScope.launch {
-            authenticationRepository.saveSeedPhase(generatedPhrase())
+            authenticationRepository.saveSeedPhase(generatedPhrase)
         }
     }
 }
