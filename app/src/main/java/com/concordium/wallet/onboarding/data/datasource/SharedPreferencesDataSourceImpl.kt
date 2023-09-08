@@ -8,9 +8,14 @@ class SharedPreferencesDataSourceImpl(private val prefs: SharedPreferences) : Sh
 
     companion object {
         private const val TERMS_AND_CONDITIONS_VERSION_ACCEPTED_KEY = "TermsAndConditionsAccepted"
+        private const val SEED_PHRASE_KEY = "SeedPhrase"
     }
 
     override var termsAndConditionsVersionAccepted: String
         get() = prefs.getString(TERMS_AND_CONDITIONS_VERSION_ACCEPTED_KEY, String.Empty)!!
         set(value) = prefs.edit { putString(TERMS_AND_CONDITIONS_VERSION_ACCEPTED_KEY, value) }
+
+    override var seedPhrase: String
+        get() = prefs.getString(SEED_PHRASE_KEY, String.Empty)!!
+        set(value) = prefs.edit { putString(SEED_PHRASE_KEY, value) }
 }

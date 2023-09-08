@@ -8,33 +8,27 @@ import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentPassPhraseInputBinding
 import com.concordium.wallet.ui.passphrase.common.WordsPickedBaseListAdapter
-import com.concordium.wallet.ui.passphrase.setup.PassPhraseViewModel.Companion.PASS_PHRASE_DATA
 import com.concordium.wallet.ui.passphrase.setup.PassPhraseViewModel.Companion.WORD_COUNT
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 import java.util.*
 import kotlin.concurrent.schedule
 import kotlin.random.Random
 
-class PassPhraseInputFragment : PassPhraseBaseFragment() {
+class PassPhraseInputFragment : Fragment() {
     private var _binding: FragmentPassPhraseInputBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: PassPhraseViewModel by activityViewModel()
+
     private lateinit var arrayAdapter: WordsPickedListAdapter
     private var allSuggestions = mutableMapOf<Int, Array<CharArray?>>()
     private var isEditing = false
     private var snapTimer: Timer? = null
     private var listViewHasFocus = false
     private var listViewScrollState = AbsListView.OnScrollListener.SCROLL_STATE_IDLE
-
-    companion object {
-        @JvmStatic
-        fun newInstance(viewModel: PassPhraseViewModel) = PassPhraseInputFragment().apply {
-            arguments = Bundle().apply {
-                putSerializable(PASS_PHRASE_DATA, viewModel)
-            }
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -8,11 +8,14 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.bip39.Mnemonics
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.preferences.AuthPreferences
+import com.concordium.wallet.data.repository.AuthenticationRepository
 import com.concordium.wallet.ui.passphrase.common.WordsPickedBaseListAdapter
 import kotlinx.coroutines.launch
-import java.io.Serializable
 
-class PassPhraseViewModel(application: Application) : AndroidViewModel(application), Serializable {
+class PassPhraseViewModel(
+    application: Application,
+    private val authenticationRepository: AuthenticationRepository
+) : AndroidViewModel(application) {
     var mnemonicCodeToConfirm = listOf<CharArray>()
     var wordsPicked = arrayOfNulls<String>(WORD_COUNT + (WordsPickedBaseListAdapter.OFFSET * 2) + 1)
 
@@ -63,9 +66,13 @@ class PassPhraseViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     fun setSeedPhrase(password: String) = viewModelScope.launch {
+        val generatedPhrase = generatedPhrase()
         _saveSeedLiveData.value = AuthPreferences(getApplication()).tryToSetEncryptedSeedPhrase(
-            generatedPhrase(),
+            generatedPhrase,
             password
         )
+        viewModelScope.launch {
+            authenticationRepository.saveSeedPhase(generatedPhrase)
+        }
     }
 }

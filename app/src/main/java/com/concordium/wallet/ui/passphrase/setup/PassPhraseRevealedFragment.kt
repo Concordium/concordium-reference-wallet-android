@@ -9,22 +9,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentPassPhraseRevealBinding
-import com.concordium.wallet.ui.passphrase.setup.PassPhraseViewModel.Companion.PASS_PHRASE_DATA
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
-class PassPhraseRevealedFragment : PassPhraseBaseFragment() {
+class PassPhraseRevealedFragment : Fragment() {
     private var _binding: FragmentPassPhraseRevealBinding? = null
     private val binding get() = _binding!!
 
-    companion object {
-        @JvmStatic
-        fun newInstance(viewModel: PassPhraseViewModel) = PassPhraseRevealedFragment().apply {
-            arguments = Bundle().apply {
-                putSerializable(PASS_PHRASE_DATA, viewModel)
-            }
-        }
-    }
+    private val viewModel: PassPhraseViewModel by activityViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,

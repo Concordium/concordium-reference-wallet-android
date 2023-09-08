@@ -36,11 +36,11 @@
         android:theme="@style/AppTheme.NoActionBar">
         <activity
             android:name=".ui.MainActivity"
-            android:screenOrientation="portrait"
             android:alwaysRetainTaskState="true"
+            android:exported="true"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar.Launcher"
-            android:exported="true">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar.Launcher">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -165,6 +165,10 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.passphrase.recover.ExportSeedPhraseActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.passphrase.recover.RecoverWalletActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
@@ -182,8 +186,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.walletconnect.WalletConnectActivity"
-            android:launchMode="singleTop"
             android:alwaysRetainTaskState="true"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.auth.login.AuthLoginActivity"
@@ -229,10 +233,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.identity.identityproviderwebview.IdentityProviderWebViewActivity"
+            android:exported="true"
             android:launchMode="singleTop"
             android:parentActivityName=".ui.identity.identityproviderlist.IdentityProviderListActivity"
-            android:screenOrientation="portrait"
-            android:exported="true">
+            android:screenOrientation="portrait">
             <intent-filter android:label="schemefilter">
                 <action android:name="android.intent.action.VIEW" />
 
@@ -361,14 +365,16 @@
             android:name=".ui.cis2.SendTokenReceiptActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:grantUriPermissions="true"
+            android:authorities="${applicationId}"
             android:exported="false"
-            android:authorities="${applicationId}">
+            android:grantUriPermissions="true">
+
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_provider_paths"/>
+                android:resource="@xml/file_provider_paths" />
         </provider>
     </application>
 </manifest>
