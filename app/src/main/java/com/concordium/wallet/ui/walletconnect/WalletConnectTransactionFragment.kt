@@ -143,7 +143,7 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
                 R.string.wallet_connect_transaction_estimated_transaction_fee,
                 CurrencyUtil.formatGTU(fee)
             )
-            binding.maxEnergyAllowed.text = "${_viewModel.walletConnectData.energy} NRG"
+            binding.maxEnergyAllowed.text = "${_viewModel.walletConnectData.maxEnergy} NRG"
             if (_viewModel.hasEnoughFunds())
                 binding.submit.isEnabled = true
             else {

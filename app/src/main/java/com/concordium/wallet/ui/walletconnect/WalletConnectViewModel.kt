@@ -49,6 +49,7 @@ data class WalletConnectData(
     var account: Account? = null,
     var wcUri: String? = null,
     var energy: BigInteger? = null,
+    var maxEnergy: Int? = null,
     var cost: BigInteger? = null,
     var isTransaction: Boolean = true
 ) : Serializable
@@ -168,8 +169,10 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                         receiveName = payload.receiveName,
                         parameter = payload.message,
                         success = {
-                            walletConnectData.energy = it.energy
+                            walletConnectData.maxEnergy =
+                                if (payload.maxEnergy != 0) payload.maxEnergy else payload.maxContractExecutionEnergy
                             walletConnectData.cost = it.cost.toBigInteger()
+                            walletConnectData.energy = it.energy
                             transactionFee.postValue(walletConnectData.cost)
                         },
                         failure = {
@@ -291,8 +294,10 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             errorInt.postValue(R.string.app_error_lib)
             return
         }
-        if (payload is Payload.ContractUpdateTransaction) payload.maxEnergy =
-            walletConnectData.energy?.toInt() ?: 0
+        if (payload is Payload.ContractUpdateTransaction) {
+            payload.maxEnergy = walletConnectData.energy?.toInt() ?: 0
+            payload.maxContractExecutionEnergy = walletConnectData.maxEnergy ?: 0
+        }
         val accountTransactionInput = CreateAccountTransactionInput(
             expiry.toInt(),
             from,
