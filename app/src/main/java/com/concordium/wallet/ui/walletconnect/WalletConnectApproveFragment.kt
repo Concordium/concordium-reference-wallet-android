@@ -164,9 +164,8 @@ class WalletConnectApproveFragment : WalletConnectBaseFragment() {
     }
 
     private fun gotoMain() {
-        val intent = Intent(activity, MainActivity::class.java).apply {
+        startActivity(Intent(activity, MainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        }
-        startActivity(intent)
+        })
     }
 }
