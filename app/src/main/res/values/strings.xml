@@ -1072,7 +1072,7 @@
     <string name="cis_delete_dialog_confirm">Delete</string>
     <string name="cis_delete_dialog_cancel">Cancel</string>
     <string name="cis_search_balance">Your balance: %1$s</string>
-    <string name="cis_receiver_address_error">The Recipient address does not exist on network</string>
+    <string name="cis_receiver_address_error">The recipient is not registered on the chain</string>
 
     <string name="wallet_connect_transaction_parsing_error">Error parsing the request!</string>
 
