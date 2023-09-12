@@ -241,6 +241,8 @@
                 android:gravity="center"
                 android:text="@string/send_funds_error_insufficient_funds"
                 android:visibility="gone"
+                android:paddingBottom="6dp"
+                tools:text="@string/cis_receiver_address_error"
                 tools:visibility="visible" />
 
             <LinearLayout
