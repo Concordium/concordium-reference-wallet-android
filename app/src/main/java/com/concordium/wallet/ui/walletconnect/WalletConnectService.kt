@@ -300,7 +300,7 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
         }
         if (supportedMethods.containsAll(ccdNetwork.methods).not()) {
             EventBus.getDefault()
-                .post(RejectError("Expected subset of methods ${supportedEvents} but got ${ccdNetwork.events}"))
+                .post(RejectError("Expected subset of methods ${supportedMethods} but got ${ccdNetwork.methods}"))
             return
         }
 

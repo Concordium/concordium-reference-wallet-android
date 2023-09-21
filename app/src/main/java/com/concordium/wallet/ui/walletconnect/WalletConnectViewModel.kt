@@ -48,8 +48,8 @@ import javax.crypto.Cipher
 data class WalletConnectData(
     var account: Account? = null,
     var wcUri: String? = null,
-    var energy: BigInteger? = null,
-    var maxEnergy: Int? = null,
+    var energy: Long? = null,
+    var maxEnergy: Long? = null,
     var cost: BigInteger? = null,
     var isTransaction: Boolean = true
 ) : Serializable
@@ -170,7 +170,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                         parameter = payload.message,
                         success = {
                             walletConnectData.maxEnergy =
-                                if (payload.maxEnergy != 0) payload.maxEnergy else payload.maxContractExecutionEnergy
+                                if (payload.maxEnergy != 0L) payload.maxEnergy else payload.maxContractExecutionEnergy
                             walletConnectData.cost = it.cost.toBigInteger()
                             walletConnectData.energy = it.energy
                             transactionFee.postValue(walletConnectData.cost)
@@ -295,7 +295,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             return
         }
         if (payload is Payload.ContractUpdateTransaction) {
-            payload.maxEnergy = walletConnectData.energy?.toInt() ?: 0
+            payload.maxEnergy = walletConnectData.energy ?: 0
             payload.maxContractExecutionEnergy = walletConnectData.maxEnergy ?: 0
         }
         val accountTransactionInput = CreateAccountTransactionInput(
