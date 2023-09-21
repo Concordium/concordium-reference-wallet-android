@@ -5,8 +5,8 @@ sealed interface Payload {
     data class ContractUpdateTransaction(
         val address: ContractAddress,
         val amount: String,
-        var maxEnergy: Int,
-        var maxContractExecutionEnergy: Int,
+        var maxEnergy: Long,
+        var maxContractExecutionEnergy: Long,
         val message: String,
         val receiveName: String
     ) : Payload

@@ -487,8 +487,8 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                 val payload = Payload.ContractUpdateTransaction(
                     ContractAddress(token.contractIndex.toInt(), 0),
                     "0",
-                    energy.toInt(),
-                    maxContractExecutionEnergy ?: 0,
+                    energy,
+                    maxContractExecutionEnergy ?: 0L,
                     serializeTokenTransferParametersOutput.parameter,
                     token.contractName + ".transfer"
                 )

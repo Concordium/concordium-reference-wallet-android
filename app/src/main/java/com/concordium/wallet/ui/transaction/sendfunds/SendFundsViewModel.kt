@@ -147,7 +147,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
         var accountNonce: AccountNonce? = null
         var toAddress: String? = null
         var amount: BigInteger? = null
-        var energy: BigInteger? = null
+        var energy: Long? = null
         var submissionId: String? = null
         var transferSubmissionStatus: TransferSubmissionStatus? = null
         var expiry: Long? = null
