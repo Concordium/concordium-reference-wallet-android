@@ -488,7 +488,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                     ContractAddress(token.contractIndex.toInt(), 0),
                     "0",
                     energy,
-                    maxContractExecutionEnergy ?: 0L,
+                    maxContractExecutionEnergy ?: energy,
                     serializeTokenTransferParametersOutput.parameter,
                     token.contractName + ".transfer"
                 )

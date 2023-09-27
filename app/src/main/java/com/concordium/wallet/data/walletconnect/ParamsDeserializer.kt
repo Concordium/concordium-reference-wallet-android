@@ -41,7 +41,7 @@ class ParamsDeserializer : JsonDeserializer<Params?> {
         context: JsonDeserializationContext,
         schemaElement: JsonElement?
     ): Schema? {
-        if (schemaElement == null) return null
+        if (schemaElement == null || schemaElement.isJsonNull) return null
 
         if (schemaElement.isJsonObject) {
             return try {
