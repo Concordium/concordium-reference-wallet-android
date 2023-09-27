@@ -107,7 +107,7 @@ class SendTokenActivity : BaseActivity() {
     private fun send() {
         val receiver = binding.receiver.text.toString()
         if (receiver.isEmpty()) {
-            binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.text_pink))
+            binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.redesign_negative_light))
             binding.contractAddressError.text = getString(R.string.cis_enter_receiver_address)
             binding.contractAddressError.visibility = View.VISIBLE
         } else {
@@ -294,7 +294,7 @@ class SendTokenActivity : BaseActivity() {
     }
 
     private fun receiverAddressSet() {
-        binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.text_blue))
+        binding.receiver.setTextColor(ContextCompat.getColor(this, R.color.redesign_accent))
         binding.contractAddressError.visibility = View.GONE
         viewModel.sendTokenData.receiver = binding.receiver.text.toString()
         viewModel.loadTransactionFee()
@@ -358,22 +358,22 @@ class SendTokenActivity : BaseActivity() {
             if (!viewModel.hasEnoughFunds()) {
                 binding.feeError.visibility = View.VISIBLE
                 if (viewModel.sendTokenData.token != null && viewModel.sendTokenData.token!!.isCCDToken) {
-                    binding.balanceTitle.setTextColor(getColor(R.color.text_black))
-                    binding.balance.setTextColor(getColor(R.color.text_black))
-                    binding.atDisposalTitle.setTextColor(getColor(R.color.text_pink))
-                    binding.atDisposal.setTextColor(getColor(R.color.text_pink))
+                    binding.balanceTitle.setTextColor(getColor(R.color.theme_black))
+                    binding.balance.setTextColor(getColor(R.color.theme_black))
+                    binding.atDisposalTitle.setTextColor(getColor(R.color.redesign_negative_light))
+                    binding.atDisposal.setTextColor(getColor(R.color.redesign_negative_light))
                 } else {
-                    binding.balanceTitle.setTextColor(getColor(R.color.text_pink))
-                    binding.balance.setTextColor(getColor(R.color.text_pink))
-                    binding.atDisposalTitle.setTextColor(getColor(R.color.text_black))
-                    binding.atDisposal.setTextColor(getColor(R.color.text_black))
+                    binding.balanceTitle.setTextColor(getColor(R.color.redesign_negative_light))
+                    binding.balance.setTextColor(getColor(R.color.redesign_negative_light))
+                    binding.atDisposalTitle.setTextColor(getColor(R.color.theme_black))
+                    binding.atDisposal.setTextColor(getColor(R.color.theme_black))
                 }
             } else {
                 binding.feeError.visibility = View.GONE
-                binding.balanceTitle.setTextColor(getColor(R.color.text_black))
-                binding.balance.setTextColor(getColor(R.color.text_black))
-                binding.atDisposalTitle.setTextColor(getColor(R.color.text_black))
-                binding.atDisposal.setTextColor(getColor(R.color.text_black))
+                binding.balanceTitle.setTextColor(getColor(R.color.theme_black))
+                binding.balance.setTextColor(getColor(R.color.theme_black))
+                binding.atDisposalTitle.setTextColor(getColor(R.color.theme_black))
+                binding.atDisposal.setTextColor(getColor(R.color.theme_black))
             }
             enableSend()
         }

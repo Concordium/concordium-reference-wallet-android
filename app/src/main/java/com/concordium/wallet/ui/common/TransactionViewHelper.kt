@@ -35,10 +35,10 @@ object TransactionViewHelper {
         showDate: Boolean = false,
         decryptCallback: OnClickListenerInterface? = null
     ) {
-        val colorBlack = ContextCompat.getColor(totalTextView.context, R.color.text_black)
-        val colorGreen = ContextCompat.getColor(totalTextView.context, R.color.text_green)
-        val colorGrey = ContextCompat.getColor(totalTextView.context, R.color.text_grey)
-        val colorBlue = ContextCompat.getColor(totalTextView.context, R.color.text_blue)
+        val colorBlack = ContextCompat.getColor(totalTextView.context, R.color.theme_black)
+        val colorGreen = ContextCompat.getColor(totalTextView.context, R.color.redesign_positive)
+        val colorGrey = ContextCompat.getColor(totalTextView.context, R.color.redesign_off_primary)
+        val colorBlue = ContextCompat.getColor(totalTextView.context, R.color.redesign_accent)
 
 
         // Title

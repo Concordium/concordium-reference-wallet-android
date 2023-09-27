@@ -39,7 +39,7 @@
             android:paddingStart="5dp"
             android:maxWidth="100dp"
             android:layout_gravity="right"
-            android:textColor="@color/text_grey"
+            android:textColor="@color/redesign_off_primary"
             android:gravity="right"
             tools:text="Nellie" />
     </LinearLayout>
@@ -54,7 +54,7 @@
             android:id="@+id/status_text"
             style="@style/TextView.ListItemHeader"
             android:paddingStart="5dp"
-            android:textColor="@color/text_grey"
+            android:textColor="@color/redesign_off_primary"
             android:layout_width="wrap_content"
             android:text="@string/view_account_delegating" />
 
@@ -64,7 +64,7 @@
             android:layout_width="14dp"
             android:layout_height="14dp"
             android:layout_margin="4dp"
-            android:tint="@color/text_grey"
+            android:tint="@color/redesign_off_primary"
             android:src="@drawable/ic_delegating" />
     </LinearLayout>
 

@@ -32,7 +32,7 @@
                         android:src="@drawable/ic_pending"
                         android:layout_margin="10dp"
                         android:layout_gravity="center"
-                        android:tint="@color/theme_blue" />
+                        android:tint="@color/redesign_accent" />
 
                     <TextView
                         android:id="@+id/identity_pending_tv"
@@ -119,7 +119,7 @@
                         <TextView
                             style="@style/TextView.BalanceInfo"
                             android:layout_gravity="center_vertical"
-                            android:textColor="@color/theme_blue"
+                            android:textColor="@color/redesign_accent"
                             android:layout_marginLeft="3dp"
                             android:textSize="24dp"
                             android:text="+" />
@@ -131,7 +131,7 @@
                             android:src="@drawable/ic_shielded_icon"
                             android:layout_marginLeft="3dp"
                             android:layout_gravity="center_vertical"
-                            android:tint="@color/theme_blue" />
+                            android:tint="@color/redesign_accent" />
 
                     </LinearLayout>
                 </LinearLayout>
@@ -187,7 +187,7 @@
                                 android:src="@drawable/ic_shielded_icon"
                                 android:layout_marginLeft="6dp"
                                 android:layout_gravity="center_vertical"
-                                android:tint="@color/theme_blue" />
+                                android:tint="@color/redesign_accent" />
                         </LinearLayout>
                     </LinearLayout>
 

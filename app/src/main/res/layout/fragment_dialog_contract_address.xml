@@ -35,8 +35,8 @@
         android:minHeight="64dp"
         android:padding="@dimen/activity_horizontal_margin"
         android:singleLine="true"
-        android:textColor="@color/text_blue"
-        android:textColorHint="@color/text_blue"
+        android:textColor="@color/redesign_accent"
+        android:textColorHint="@color/redesign_accent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title" />

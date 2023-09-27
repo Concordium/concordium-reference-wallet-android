@@ -119,13 +119,13 @@ class ContractAddressFragment : TokensBaseFragment() {
                 binding.contractAddress.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
-                        R.color.text_blue
+                        R.color.redesign_accent
                     )
                 )
                 binding.contractAddress.setHintTextColor(
                     ContextCompat.getColor(
                         requireContext(),
-                        R.color.text_blue
+                        R.color.redesign_accent
                     )
                 )
                 binding.contractAddress.background =
@@ -137,13 +137,13 @@ class ContractAddressFragment : TokensBaseFragment() {
                 binding.contractAddress.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
-                        R.color.text_pink
+                        R.color.redesign_negative_light
                     )
                 )
                 binding.contractAddress.setHintTextColor(
                     ContextCompat.getColor(
                         requireContext(),
-                        R.color.text_pink
+                        R.color.redesign_negative_light
                     )
                 )
                 binding.contractAddress.background =
