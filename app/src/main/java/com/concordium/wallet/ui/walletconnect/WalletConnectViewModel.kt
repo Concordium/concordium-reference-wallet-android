@@ -43,6 +43,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.Serializable
 import java.math.BigInteger
+import java.util.Locale
 import javax.crypto.Cipher
 
 data class WalletConnectData(
@@ -304,7 +305,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             keys,
             this.accountNonce?.nonce ?: -1,
             payload,
-            type
+            type.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
         )
 
         val accountTransactionOutput =

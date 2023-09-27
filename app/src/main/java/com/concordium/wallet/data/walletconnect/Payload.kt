@@ -1,7 +1,6 @@
 package com.concordium.wallet.data.walletconnect
 
 sealed interface Payload {
-
     data class ContractUpdateTransaction(
         val address: ContractAddress,
         val amount: String,
