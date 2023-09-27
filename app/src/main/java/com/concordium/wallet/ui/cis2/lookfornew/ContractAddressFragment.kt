@@ -13,7 +13,6 @@ import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.util.KeyboardUtil
 import com.concordium.wallet.util.hideKeyboard
 
-
 class ContractAddressFragment : TokensBaseFragment() {
     private var _binding: FragmentDialogContractAddressBinding? = null
     private val binding get() = _binding!!
@@ -76,8 +75,11 @@ class ContractAddressFragment : TokensBaseFragment() {
 
     private fun initObservers() {
         _viewModel.lookForTokens.observe(viewLifecycleOwner) { result ->
-            showWaiting(false)
             showOrHideError(result)
+        }
+
+        _viewModel.waiting.observe(viewLifecycleOwner) {
+            showWaiting(it)
         }
     }
 

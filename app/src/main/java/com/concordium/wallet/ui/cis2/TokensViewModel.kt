@@ -171,6 +171,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     handleBackendError(it)
                     allowToLoadMore = true
                 })
+            waiting.postValue(true)
         }
     }
 
