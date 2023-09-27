@@ -406,7 +406,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="0.33"
                         android:gravity="center"
-                        android:background="@color/theme_accent"
+                        android:background="@color/redesign_accent"
                         android:orientation="vertical">
                         <TextView
                             android:id="@+id/tab_collectibles_text"

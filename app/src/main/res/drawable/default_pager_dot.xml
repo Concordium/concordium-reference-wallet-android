@@ -7,7 +7,7 @@
             android:thickness="@dimen/indicator_size"
             android:useLevel="false">
             <stroke
-                android:color="@color/theme_blue"
+                android:color="@color/redesign_accent"
                 android:width="1dp"></stroke>
         </shape>
     </item>

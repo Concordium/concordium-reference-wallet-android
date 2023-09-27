@@ -48,7 +48,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
-                    android:textColor="@color/text_black"
+                    android:textColor="@color/theme_black"
                     android:layout_gravity="right"
                     android:gravity="right"
                     android:text="G23.333" />

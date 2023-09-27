@@ -120,7 +120,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_gravity="center"
                     android:padding="10dp"
-                    android:textColor="@color/text_white"
+                    android:textColor="@color/theme_white"
                     android:text="@string/send_funds_send_all" />
 
                 <LinearLayout
@@ -242,7 +242,7 @@
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginStart="16dp"
                                 android:src="@drawable/ic_lup"
-                                app:tint="@color/text_white" />
+                                app:tint="@color/theme_white" />
 
                             <TextView
                                 android:id="@+id/select_recipient_textview"
@@ -255,7 +255,7 @@
                                 android:layout_weight="1"
                                 android:background="@null"
                                 android:gravity="center"
-                                android:textColor="@color/text_white"
+                                android:textColor="@color/theme_white"
                                 android:text="@string/send_funds_select_address_book" />
                         </LinearLayout>
 
@@ -278,7 +278,7 @@
                                 android:layout_gravity="center_vertical"
                                 android:layout_marginStart="16dp"
                                 android:src="@drawable/background_q_r"
-                                app:tint="@color/text_white" />
+                                app:tint="@color/theme_white" />
 
                             <TextView
                                 style="@style/TextView.Standard"
@@ -290,7 +290,7 @@
                                 android:layout_weight="1"
                                 android:background="@null"
                                 android:gravity="center"
-                                android:textColor="@color/text_white"
+                                android:textColor="@color/theme_white"
                                 android:text="@string/send_funds_select_scan_qr" />
                         </LinearLayout>
                     </LinearLayout>
@@ -330,7 +330,7 @@
                             android:layout_weight="1"
                             android:background="@null"
                             android:gravity="center"
-                            android:textColor="@color/text_blue"
+                            android:textColor="@color/redesign_accent"
                             android:text="@string/send_funds_optional_add_memo" />
 
                         <ImageView

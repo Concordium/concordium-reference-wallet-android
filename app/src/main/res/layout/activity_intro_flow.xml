@@ -60,7 +60,7 @@
             android:layout_height="2dp"
             android:layout_centerInParent="true"
             android:layout_above="@+id/pagers_tab_layout"
-            android:background="@color/theme_light_blue" />
+            android:background="@color/redesign_accent_60" />
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/pagers_tab_layout"
@@ -100,7 +100,7 @@
                 style="@style/Button.Standard.Intro"
                 android:layout_alignParentEnd="true"
                 android:drawableEnd="@drawable/ic_button_next"
-                android:drawableTint="@color/text_white"
+                android:drawableTint="@color/theme_white"
                 android:text="@string/shielding_intro_next" />
 
             <Button

@@ -39,7 +39,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/about_support"
                     style="@style/TextView.Medium"
-                    android:textColor="@color/text_black" />
+                    android:textColor="@color/theme_black" />
 
                 <TextView
                     android:id="@+id/about_support_text"
@@ -48,7 +48,7 @@
                     android:layout_marginTop="15dp"
                     android:text="@string/about_support_text"
                     style="@style/TextView.Small"
-                    android:textColor="@color/text_grey" />
+                    android:textColor="@color/redesign_off_primary" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -56,7 +56,7 @@
                     android:text="@string/about_contact"
                     android:layout_marginTop="30dp"
                     style="@style/TextView.Medium"
-                    android:textColor="@color/text_black" />
+                    android:textColor="@color/redesign_off_primary" />
 
                 <TextView
                     android:id="@+id/about_contact_text"
@@ -65,7 +65,7 @@
                     android:layout_marginTop="15dp"
                     android:text="@string/about_contact_text"
                     style="@style/TextView.Small"
-                    android:textColor="@color/text_grey" />
+                    android:textColor="@color/redesign_off_primary" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -73,7 +73,7 @@
                     android:text="@string/about_version"
                     android:layout_marginTop="30dp"
                     style="@style/TextView.Medium"
-                    android:textColor="@color/text_black" />
+                    android:textColor="@color/theme_black" />
 
                 <TextView
                     android:id="@+id/about_version_text"
@@ -82,7 +82,7 @@
                     android:layout_marginTop="15dp"
                     tools:text="x.y.z"
                     style="@style/TextView.Small"
-                    android:textColor="@color/text_grey" />
+                    android:textColor="@color/redesign_off_primary" />
 
             </LinearLayout>
         </ScrollView>

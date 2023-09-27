@@ -2,9 +2,9 @@
 <resources>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light">
-        <item name="colorPrimary">@color/theme_primary</item>
-        <item name="colorPrimaryDark">@color/theme_primary_dark</item>
-        <item name="colorAccent">@color/theme_accent</item>
+        <item name="colorPrimary">@color/redesign_primary</item>
+        <item name="colorPrimaryDark">@color/redesign_primary_dark</item>
+        <item name="colorAccent">@color/redesign_accent</item>
         <item name="android:windowSplashScreenBackground">@color/theme_black</item>
     </style>
 </resources>

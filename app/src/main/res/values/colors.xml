@@ -2,22 +2,19 @@
 <resources>
 
     <!-- Theme - Primary -->
-    <color name="theme_primary">#FFFFFF</color>
-    <color name="theme_primary_dark">#000000</color>
-    <color name="theme_accent">#4486ab</color>
+    <!--    <color name="theme_primary">#FFFFFF</color>-->
+    <!--    <color name="theme_primary_dark">#000000</color>-->
+    <!--    <color name="theme_accent">#4486ab</color>-->
 
     <color name="theme_white">#ffffff</color>
     <color name="theme_black">#000000</color>
     <color name="theme_light_grey">#FBFDFD</color>
     <color name="theme_grey">#979797</color>
-    <color name="theme_blue">#4486AB</color>
-    <color name="theme_dark_blue">#325D76</color>
-    <color name="theme_light_blue">#D9EFFC</color>
 
     <!-- Theme - Secondary -->
-    <color name="theme_component">@color/theme_accent</color>
-    <color name="theme_component_selected">@color/theme_dark_blue</color>
-    <color name="theme_component_pressed">#68a7ca</color>
+    <color name="theme_component">@color/redesign_accent</color>
+    <color name="theme_component_selected">@color/redesign_primary_dark</color>
+    <color name="theme_component_pressed">@color/redesign_accent_80</color>
     <color name="theme_component_disabled">#66325D76</color>
     <color name="theme_component_disabled_alpha_one">#30444F</color>
     <color name="theme_component_grey">#979797</color>
@@ -26,13 +23,13 @@
     <color name="theme_component_background_disabled">#F5F5F5</color>
 
     <!-- Text -->
-    <color name="text_white">#ffffff</color>
+<!--    <color name="text_white">#ffffff</color>
     <color name="text_black">#000000</color>
     <color name="text_grey">#979797</color>
     <color name="text_blue">#4486ab</color>
     <color name="text_red">#fe0000</color>
     <color name="text_pink">#FF8A8A</color>
-    <color name="text_green">#00BF94</color>
+    <color name="text_green">#00BF94</color>-->
 
     <!-- Backgrounds -->
     <color name="background_light_blue">#f2f9ff</color>
@@ -50,5 +47,42 @@
     <color name="transaction_background">#F2F2F2</color>
     <color name="text_gray_1">#B2B2B2</color>
 
+    <color name="redesign_primary">#FFFFFF</color>
+    <color name="redesign_off_primary">#EBF0F0</color>
+
+    <color name="redesign_primary_dark">#052535</color>
+    <color name="redesign_primary_dark_80">#013243</color>
+    <color name="redesign_primary_dark_60">#01475F</color>
+    <color name="redesign_primary_dark_40">#005A78</color>
+    <color name="redesign_primary_dark_20">#337B93</color>
+    <color name="redesign_primary_dark_10">#7FACBB</color>
+
+    <color name="redesign_accent">#48A2AE</color>
+    <color name="redesign_accent_80">#6DB5BE</color>
+    <color name="redesign_accent_60">#91C7CE</color>
+    <color name="redesign_accent_40">#B6DADF</color>
+    <color name="redesign_accent_20">#DAECEF</color>
+    <color name="redesign_accent_10">#ECF6F7</color>
+    <color name="redesign_accent_5">#F6FAFB</color>
+
+    <color name="redesign_negative_dark">#AB2B2B</color>
+    <color name="redesign_negative">#DC5050</color>
+    <color name="redesign_negative_light">#E87E90</color>
+
+    <color name="redesign_positive_dark">#189E46</color>
+    <color name="redesign_positive">#33C364</color>
+    <color name="redesign_positive_light">#8BE7AA</color>
+
+    <color name="redesign_warning_dark">#C89E0A</color>
+    <color name="redesign_warning">#FBCD29</color>
+    <color name="redesign_warning_light">#F6DB9A</color>
+
+    <color name="redesign_info_dark">#075CAB</color>
+    <color name="redesign_info">#2485DF</color>
+    <color name="redesign_info_light">#65A4DD</color>
+
+    <color name="redesign_help_dark">#53198E</color>
+    <color name="redesign_help">#7939BA</color>
+    <color name="redesign_help_light">#B37CDF</color>
 
 </resources>
