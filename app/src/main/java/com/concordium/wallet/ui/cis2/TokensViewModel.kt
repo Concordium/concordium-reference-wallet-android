@@ -57,6 +57,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val chooseTokenInfo: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val waiting: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val contactAddressLoading: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
     private val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val lookForTokens: MutableLiveData<Int> by lazy { MutableLiveData<Int>(TOKENS_NOT_LOADED) }
     val addTokenDestination: MutableLiveData<TokenSelectedDestination> by lazy {
@@ -155,6 +156,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     if (cis2Tokens.tokens.isEmpty()) {
                         lookForTokens.postValue(TOKENS_EMPTY)
                         allowToLoadMore = true
+                        contactAddressLoading.postValue(false)
                     } else {
                         CoroutineScope(Dispatchers.IO).launch {
                             val metadata = async { loadTokensMetadataUrls(cis2Tokens.tokens) }
@@ -163,6 +165,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                             if (isSuccess)
                                 lookForTokens.postValue(TOKENS_OK)
                             allowToLoadMore = true
+                            contactAddressLoading.postValue(false)
                         }
                     }
                 },
@@ -170,8 +173,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     lookForTokens.postValue(TOKENS_INVALID_INDEX)
                     handleBackendError(it)
                     allowToLoadMore = true
+                    contactAddressLoading.postValue(false)
                 })
-            waiting.postValue(true)
         }
     }
 

@@ -48,6 +48,11 @@ class ContractAddressFragment : TokensBaseFragment() {
         _binding = null
     }
 
+    override fun onResume() {
+        super.onResume()
+        showProgressBar(_viewModel.contactAddressLoading.value ?: false)
+    }
+
     private fun initViews() {
         binding.look.setOnClickListener {
             lookForTokens()
@@ -78,23 +83,23 @@ class ContractAddressFragment : TokensBaseFragment() {
             showOrHideError(result)
         }
 
-        _viewModel.waiting.observe(viewLifecycleOwner) {
-            showWaiting(it)
+        _viewModel.contactAddressLoading.observe(viewLifecycleOwner) {
+            showProgressBar(it)
         }
     }
 
     private fun lookForTokens() {
-        showWaiting(true)
+        showProgressBar(true)
         _viewModel.tokenData.contractIndex = binding.contractAddress.text.toString()
         if (binding.contractAddress.text.isNotBlank()) {
             _viewModel.tokens.clear()
             _viewModel.lookForTokens(_viewModel.tokenData.account!!.address)
         } else {
-            showWaiting(false)
+            showProgressBar(false)
         }
     }
 
-    private fun showWaiting(waiting: Boolean) {
+    private fun showProgressBar(waiting: Boolean) {
         if (waiting) {
             binding.look.isEnabled = false
             binding.contractAddress.isEnabled = false
