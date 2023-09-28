@@ -51,20 +51,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/contract_address"
-        tools:text="@string/cis_find_tokens_error"
+        tools:text="cis_find_tokens_error"
         tools:visibility="visible" />
 
-    <androidx.appcompat.widget.AppCompatImageView
+    <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/pending"
-        android:layout_width="110dp"
-        android:layout_height="110dp"
-        android:src="@drawable/ic_logo_icon_pending"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/look"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        app:indicatorColor="@color/theme_accent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/contract_address"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:trackCornerRadius="4dp"
+        tools:progress="60" />
 
     <Button
         android:id="@+id/look"

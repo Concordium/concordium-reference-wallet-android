@@ -13,7 +13,6 @@ import com.concordium.wallet.ui.cis2.TokensViewModel
 import com.concordium.wallet.util.KeyboardUtil
 import com.concordium.wallet.util.hideKeyboard
 
-
 class ContractAddressFragment : TokensBaseFragment() {
     private var _binding: FragmentDialogContractAddressBinding? = null
     private val binding get() = _binding!!
@@ -49,6 +48,11 @@ class ContractAddressFragment : TokensBaseFragment() {
         _binding = null
     }
 
+    override fun onResume() {
+        super.onResume()
+        showProgressBar(_viewModel.contactAddressLoading.value ?: false)
+    }
+
     private fun initViews() {
         binding.look.setOnClickListener {
             lookForTokens()
@@ -76,23 +80,26 @@ class ContractAddressFragment : TokensBaseFragment() {
 
     private fun initObservers() {
         _viewModel.lookForTokens.observe(viewLifecycleOwner) { result ->
-            showWaiting(false)
             showOrHideError(result)
+        }
+
+        _viewModel.contactAddressLoading.observe(viewLifecycleOwner) {
+            showProgressBar(it)
         }
     }
 
     private fun lookForTokens() {
-        showWaiting(true)
+        showProgressBar(true)
         _viewModel.tokenData.contractIndex = binding.contractAddress.text.toString()
         if (binding.contractAddress.text.isNotBlank()) {
             _viewModel.tokens.clear()
             _viewModel.lookForTokens(_viewModel.tokenData.account!!.address)
         } else {
-            showWaiting(false)
+            showProgressBar(false)
         }
     }
 
-    private fun showWaiting(waiting: Boolean) {
+    private fun showProgressBar(waiting: Boolean) {
         if (waiting) {
             binding.look.isEnabled = false
             binding.contractAddress.isEnabled = false
