@@ -32,7 +32,7 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="CircularProgress" parent="Theme.AppCompat.Light">
-        <item name="colorAccent">@color/theme_component</item>
+        <item name="colorAccent">@color/redesign_accent</item>
     </style>
 
     <!--
@@ -53,7 +53,7 @@
     <style name="Layout.Root">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="android:background">@color/theme_white</item>
+        <item name="android:background">@color/white</item>
     </style>
 
     <style name="Layout.Root.Transparent">
@@ -69,7 +69,7 @@
     <style name="Layout.CardButton">
         <item name="android:layout_height">100dp</item>
         <item name="android:background">@drawable/button_standard</item>
-        <item name="android:textColor">@color/theme_white</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:elevation">0dp</item>
     </style>
 
@@ -115,7 +115,7 @@
     <style name="TextView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/theme_black</item>
+        <item name="android:textColor">@color/black</item>
         <item name="android:textStyle">normal</item>
     </style>
 
@@ -133,7 +133,7 @@
     </style>
 
     <style name="TextView.Standard.White">
-        <item name="android:textColor">@color/theme_white</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="TextView.Standard.Light">
@@ -178,7 +178,7 @@
 
     <style name="TextView.Standard.RegisterDelegationReceipt">
         <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/theme_black</item>
+        <item name="android:textColor">@color/black</item>
         <item name="android:gravity">center</item>
     </style>
 
@@ -259,7 +259,7 @@
 
     <style name="TextView.CardButton" parent="TextView.SingleLine">
         <item name="android:textAllCaps">true</item>
-        <item name="android:textColor">@color/theme_white</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:textSize">13sp</item>
         <item name="android:textStyle">normal</item>
     </style>
@@ -275,7 +275,7 @@
     </style>
 
     <style name="TextView.WarningOnDark">
-        <item name="android:textColor">@color/theme_white</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">16sp</item>
     </style>
@@ -298,7 +298,7 @@
     <style name="TextView.BalanceInfo">
         <item name="android:letterSpacing">0.0</item>
         <item name="android:textSize">11sp</item>
-        <item name="android:textColor">@color/theme_white</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="TextView.TotalBalanceDetails">
@@ -312,22 +312,22 @@
     <style name="TextView.BlueValueHuge">
         <item name="android:textSize">24sp</item>
         <item name="android:textStyle">normal</item>
-        <item name="android:textColor">@color/theme_component</item>
+        <item name="android:textColor">@color/redesign_accent</item>
     </style>
 
     <style name="TextView.BlueTiny">
         <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/theme_component</item>
+        <item name="android:textColor">@color/redesign_accent</item>
     </style>
 
     <style name="TextView.BlueRegular">
         <item name="android:textSize">17sp</item>
-        <item name="android:textColor">@color/theme_component</item>
+        <item name="android:textColor">@color/redesign_accent</item>
     </style>
 
     <style name="TextView.BlueHeader">
         <item name="android:textSize">24sp</item>
-        <item name="android:textColor">@color/theme_component</item>
+        <item name="android:textColor">@color/redesign_accent</item>
     </style>
 
     <style name="TextView.MoreMenuItem" parent="TextView.SingleLine">
@@ -364,14 +364,14 @@
 
     <style name="EditText.AuthOnDark">
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/theme_white</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:textColorHint">@color/redesign_off_primary</item>
         <item name="android:backgroundTint">@color/theme_component_grey</item>
     </style>
 
     <style name="EditText.Digit">
         <item name="android:layout_width">45dp</item>
-        <item name="android:textColor">@color/theme_white</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:maxLength">1</item>
         <item name="android:cursorVisible">false</item>
         <item name="android:gravity">center_horizontal</item>
@@ -391,7 +391,7 @@
         <item name="android:background">@drawable/button_standard</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:letterSpacing">0.02</item>
-        <item name="android:textColor">@color/theme_white</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:textSize">18sp</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>
@@ -452,7 +452,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:letterSpacing">0.02</item>
-        <item name="android:textColor">@color/theme_white</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:textSize">14sp</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>
@@ -503,7 +503,7 @@
     </style>
 
     <style name="CheckBox.Standard">
-        <item name="android:textColor">@color/theme_black</item>
+        <item name="android:textColor">@color/black</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">16sp</item>
     </style>
@@ -563,7 +563,7 @@
         <item name="android:background">@drawable/button_standard_redesign</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:letterSpacing">0.02</item>
-        <item name="android:textColor">@color/theme_white</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:textSize">18sp</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">end</item>

@@ -52,7 +52,7 @@
                         android:layout_margin="10dp"
                         android:layout_gravity="center"
                         android:clickable="true"
-                        android:tint="@color/theme_black" />
+                        android:tint="@color/black" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </LinearLayout>

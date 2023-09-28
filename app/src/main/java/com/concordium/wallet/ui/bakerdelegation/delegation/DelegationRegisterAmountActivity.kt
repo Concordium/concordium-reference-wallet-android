@@ -39,8 +39,8 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             binding.poolLimitTitle.setTextColor(getColor(R.color.redesign_negative_light))
             binding.poolLimit.setTextColor(getColor(R.color.redesign_negative_light))
         } else {
-            binding.poolLimitTitle.setTextColor(getColor(R.color.theme_black))
-            binding.poolLimit.setTextColor(getColor(R.color.theme_black))
+            binding.poolLimitTitle.setTextColor(getColor(R.color.black))
+            binding.poolLimit.setTextColor(getColor(R.color.black))
         }
         if (stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED_COOLDOWN) {
             binding.delegationAmountTitle.setTextColor(getColor(R.color.redesign_negative_light))
@@ -50,10 +50,10 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
 
     override fun hideError() {
         binding.amount.setTextColor(getColor(R.color.redesign_accent))
-        binding.poolLimitTitle.setTextColor(getColor(R.color.theme_black))
-        binding.poolLimit.setTextColor(getColor(R.color.theme_black))
-        binding.delegationAmountTitle.setTextColor(getColor(R.color.theme_black))
-        binding.delegationAmount.setTextColor(getColor(R.color.theme_black))
+        binding.poolLimitTitle.setTextColor(getColor(R.color.black))
+        binding.poolLimit.setTextColor(getColor(R.color.black))
+        binding.delegationAmountTitle.setTextColor(getColor(R.color.black))
+        binding.delegationAmount.setTextColor(getColor(R.color.black))
         binding.amountError.visibility = View.INVISIBLE
     }
 

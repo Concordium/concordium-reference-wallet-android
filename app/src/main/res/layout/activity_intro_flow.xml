@@ -100,7 +100,7 @@
                 style="@style/Button.Standard.Intro"
                 android:layout_alignParentEnd="true"
                 android:drawableEnd="@drawable/ic_button_next"
-                android:drawableTint="@color/theme_white"
+                android:drawableTint="@color/white"
                 android:text="@string/shielding_intro_next" />
 
             <Button

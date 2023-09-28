@@ -187,7 +187,7 @@
                                 android:paddingVertical="@dimen/activity_vertical_margin"
                                 android:scaleType="fitCenter"
                                 android:src="@drawable/ic_lup"
-                                android:tint="@color/theme_white" />
+                                android:tint="@color/white" />
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView.Standard.White"
@@ -202,7 +202,7 @@
                         <View
                             android:layout_width="1dp"
                             android:layout_height="match_parent"
-                            android:background="@color/theme_white" />
+                            android:background="@color/white" />
 
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:id="@+id/scan_qr"
@@ -218,7 +218,7 @@
                                 android:paddingVertical="@dimen/activity_vertical_margin"
                                 android:scaleType="fitCenter"
                                 android:src="@drawable/ic_recipient_address_qr"
-                                android:tint="@color/theme_white" />
+                                android:tint="@color/white" />
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView.Standard.White"

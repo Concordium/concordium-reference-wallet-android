@@ -39,7 +39,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/theme_component"
+                    android:textColor="@color/redesign_accent"
                     android:textSize="15sp"
                     android:text="@string/account_release_schedule_locked_amount" />
 
@@ -48,7 +48,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textSize="15sp"
-                    android:textColor="@color/theme_black"
+                    android:textColor="@color/black"
                     android:layout_gravity="right"
                     android:gravity="right"
                     android:text="G23.333" />

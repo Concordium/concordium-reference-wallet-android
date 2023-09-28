@@ -94,7 +94,7 @@ class AccountQRCodeActivity : BaseActivity() {
 
     fun generateQR(qrCodeContent: String): Bitmap? {
         try {
-            var color = getColor(R.color.theme_component)
+            var color = getColor(R.color.redesign_accent)
             val writer = QRCodeWriter()
             val bitMatrix: BitMatrix =
                 writer.encode(qrCodeContent, BarcodeFormat.QR_CODE, 512, 512)

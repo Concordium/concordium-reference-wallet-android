@@ -39,7 +39,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/about_support"
                     style="@style/TextView.Medium"
-                    android:textColor="@color/theme_black" />
+                    android:textColor="@color/black" />
 
                 <TextView
                     android:id="@+id/about_support_text"
@@ -73,7 +73,7 @@
                     android:text="@string/about_version"
                     android:layout_marginTop="30dp"
                     style="@style/TextView.Medium"
-                    android:textColor="@color/theme_black" />
+                    android:textColor="@color/black" />
 
                 <TextView
                     android:id="@+id/about_version_text"

@@ -50,7 +50,7 @@ class AccountItemView(context: Context, attrs: AttributeSet?) : LinearLayout(con
             if (account.readOnly) resources.getColor(
                 R.color.theme_component_background_disabled,
                 null
-            ) else resources.getColor(R.color.theme_white, null)
+            ) else resources.getColor(R.color.white, null)
         )
 
         this.isEnabled = !account.readOnly
@@ -77,7 +77,7 @@ class AccountItemView(context: Context, attrs: AttributeSet?) : LinearLayout(con
             if (accountWithIdentity.account.readOnly) resources.getColor(
                 R.color.theme_component_background_disabled,
                 null
-            ) else resources.getColor(R.color.theme_white, null)
+            ) else resources.getColor(R.color.white, null)
         )
 
         this.isEnabled = !accountWithIdentity.account.readOnly

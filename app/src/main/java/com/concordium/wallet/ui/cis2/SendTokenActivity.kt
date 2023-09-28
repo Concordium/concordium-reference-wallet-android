@@ -358,22 +358,22 @@ class SendTokenActivity : BaseActivity() {
             if (!viewModel.hasEnoughFunds()) {
                 binding.feeError.visibility = View.VISIBLE
                 if (viewModel.sendTokenData.token != null && viewModel.sendTokenData.token!!.isCCDToken) {
-                    binding.balanceTitle.setTextColor(getColor(R.color.theme_black))
-                    binding.balance.setTextColor(getColor(R.color.theme_black))
+                    binding.balanceTitle.setTextColor(getColor(R.color.black))
+                    binding.balance.setTextColor(getColor(R.color.black))
                     binding.atDisposalTitle.setTextColor(getColor(R.color.redesign_negative_light))
                     binding.atDisposal.setTextColor(getColor(R.color.redesign_negative_light))
                 } else {
                     binding.balanceTitle.setTextColor(getColor(R.color.redesign_negative_light))
                     binding.balance.setTextColor(getColor(R.color.redesign_negative_light))
-                    binding.atDisposalTitle.setTextColor(getColor(R.color.theme_black))
-                    binding.atDisposal.setTextColor(getColor(R.color.theme_black))
+                    binding.atDisposalTitle.setTextColor(getColor(R.color.black))
+                    binding.atDisposal.setTextColor(getColor(R.color.black))
                 }
             } else {
                 binding.feeError.visibility = View.GONE
-                binding.balanceTitle.setTextColor(getColor(R.color.theme_black))
-                binding.balance.setTextColor(getColor(R.color.theme_black))
-                binding.atDisposalTitle.setTextColor(getColor(R.color.theme_black))
-                binding.atDisposal.setTextColor(getColor(R.color.theme_black))
+                binding.balanceTitle.setTextColor(getColor(R.color.black))
+                binding.balance.setTextColor(getColor(R.color.black))
+                binding.atDisposalTitle.setTextColor(getColor(R.color.black))
+                binding.atDisposal.setTextColor(getColor(R.color.black))
             }
             enableSend()
         }

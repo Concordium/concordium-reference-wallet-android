@@ -5,6 +5,6 @@
         <item name="colorPrimary">@color/redesign_primary</item>
         <item name="colorPrimaryDark">@color/redesign_primary_dark</item>
         <item name="colorAccent">@color/redesign_accent</item>
-        <item name="android:windowSplashScreenBackground">@color/theme_black</item>
+        <item name="android:windowSplashScreenBackground">@color/black</item>
     </style>
 </resources>
