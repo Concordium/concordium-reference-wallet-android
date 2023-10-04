@@ -1,11 +1,15 @@
 package com.concordium.wallet.ui.walletconnect
 
-import android.app.*
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.data.walletconnect.Params
 import com.concordium.wallet.data.walletconnect.ParamsDeserializer
@@ -85,8 +89,14 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent!!.action == START_FOREGROUND_ACTION) {
-            val channel = NotificationChannel("WalletConnect", "WalletConnect Channel", NotificationManager.IMPORTANCE_HIGH)
-            (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(channel)
+            val channel = NotificationChannel(
+                "WalletConnect",
+                "WalletConnect Channel",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+            (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(
+                channel
+            )
 
             val notification: Notification = NotificationCompat.Builder(this, "WalletConnect")
                 .setContentTitle(getString(R.string.app_name))
@@ -101,7 +111,7 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
             stopSelf()
         }
 
-        return START_STICKY
+        return START_REDELIVER_INTENT
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -271,7 +281,29 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
         EventBus.getDefault().post(ConnectionState(false))
     }
 
+
+    private val expectedNetworkKey = "ccd"
+    private val supportedChains = listOf("$expectedNetworkKey:${BuildConfig.EXPORT_CHAIN}")
+    private val supportedEvents = listOf("accounts_changed", "chain_changed")
+    private val supportedMethods = listOf("sign_and_send_transaction", "sign_message")
     override fun onSessionProposal(sessionProposal: Sign.Model.SessionProposal) {
+        val ccdNetwork = sessionProposal.requiredNamespaces[expectedNetworkKey]
+        if (ccdNetwork?.chains != supportedChains) {
+            EventBus.getDefault()
+                .post(RejectError("Expected Network:${supportedChains} but got ${ccdNetwork?.chains}"))
+            return
+        }
+        if (supportedEvents.containsAll(ccdNetwork.events).not()) {
+            EventBus.getDefault()
+                .post(RejectError("Expected subset of events ${supportedEvents} but got ${ccdNetwork.events}"))
+            return
+        }
+        if (supportedMethods.containsAll(ccdNetwork.methods).not()) {
+            EventBus.getDefault()
+                .post(RejectError("Expected subset of methods ${supportedMethods} but got ${ccdNetwork.methods}"))
+            return
+        }
+
         println("LC -> onSessionProposal")
         this.sessionProposal = sessionProposal
         val firstNameSpace = sessionProposal.requiredNamespaces.entries.firstOrNull()

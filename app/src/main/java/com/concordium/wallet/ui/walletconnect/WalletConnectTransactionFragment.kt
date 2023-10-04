@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.concordium.wallet.R
 import com.concordium.wallet.data.util.CurrencyUtil
+import com.concordium.wallet.data.walletconnect.Payload
 import com.concordium.wallet.databinding.FragmentWalletConnectTransactionBinding
 import com.concordium.wallet.ui.walletconnect.WalletConnectViewModel.Companion.WALLET_CONNECT_DATA
 
@@ -58,9 +59,7 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
                 account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance),
                 true
             )
-            val line1 = account.address.substring(0, account.address.length / 2)
-            val line2 = account.address.substring(account.address.length / 2)
-            binding.accountToSendFrom.text = "${account.name}\n\n$line1\n$line2"
+            binding.accountToSendFrom.text = account.address
         }
 
 
@@ -76,13 +75,26 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
             } else {
 
                 requestParams.parsePayload()?.let { payload ->
-                    binding.amount.text = CurrencyUtil.formatGTU(
-                        payload.amount, true
-                    )
-                    payload.address.let {
-                        binding.contractAddress.text = "${it.index} (${it.subIndex})"
+                    when (payload) {
+                        is Payload.ContractUpdateTransaction -> {
+                            setComplexPayloadVisibility()
+                            binding.amount.text = CurrencyUtil.formatGTU(
+                                payload.amount, true
+                            )
+                            payload.address.let {
+                                binding.contractAddress.text = "${it.index} (${it.subIndex})"
+                            }
+                            binding.contractFeature.text = payload.receiveName
+                        }
+
+                        is Payload.AccountTransaction -> {
+                            setSimplePayloadVisibility()
+                            binding.amount.text = CurrencyUtil.formatGTU(
+                                payload.amount, true
+                            )
+                            binding.receiverAddress.text = payload.toAddress
+                        }
                     }
-                    binding.contractFeature.text = payload.receiveName
                 }
             }
         }
@@ -93,8 +105,35 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
             _viewModel.reject.postValue(true)
         }
         binding.submit.setOnClickListener {
-            binding.submit.isEnabled = false
             _viewModel.prepareTransaction()
+        }
+    }
+
+    private fun setComplexPayloadVisibility() {
+        binding.apply {
+            contractTitle.visibility = View.VISIBLE
+            contractAddress.visibility = View.VISIBLE
+            contractFunctionTitle.visibility = View.VISIBLE
+            contractFeature.visibility = View.VISIBLE
+            maxEnergyAllowedTitle.visibility = View.VISIBLE
+            maxEnergyAllowed.visibility = View.VISIBLE
+
+            receiverTitle.visibility = View.GONE
+            receiverAddress.visibility = View.GONE
+        }
+    }
+
+    private fun setSimplePayloadVisibility() {
+        binding.apply {
+            contractTitle.visibility = View.GONE
+            contractAddress.visibility = View.GONE
+            contractFunctionTitle.visibility = View.GONE
+            contractFeature.visibility = View.GONE
+            maxEnergyAllowedTitle.visibility = View.GONE
+            maxEnergyAllowed.visibility = View.GONE
+
+            receiverTitle.visibility = View.VISIBLE
+            receiverAddress.visibility = View.VISIBLE
         }
     }
 
@@ -104,7 +143,7 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
                 R.string.wallet_connect_transaction_estimated_transaction_fee,
                 CurrencyUtil.formatGTU(fee)
             )
-            binding.maxEnergyAllowed.text = "${_viewModel.walletConnectData.energy} NRG"
+            binding.maxEnergyAllowed.text = "${_viewModel.walletConnectData.maxEnergy} NRG"
             if (_viewModel.hasEnoughFunds())
                 binding.submit.isEnabled = true
             else {

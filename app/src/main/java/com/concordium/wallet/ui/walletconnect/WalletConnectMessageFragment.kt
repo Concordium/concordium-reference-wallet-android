@@ -67,7 +67,6 @@ class WalletConnectMessageFragment : WalletConnectBaseFragment() {
             _viewModel.reject.postValue(true)
         }
         binding.sign.setOnClickListener {
-            binding.sign.isEnabled = false
             _viewModel.prepareMessage()
         }
     }

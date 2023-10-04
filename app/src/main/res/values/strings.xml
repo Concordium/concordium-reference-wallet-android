@@ -14,6 +14,7 @@
     <string name="app_error_backend_unknown_sockettimeout_exception">Connection to server timed out. Please check the internet connection.</string>
     <string name="app_error_backend_internal_server">Cannot establish communication with the server.</string>
     <string name="app_error_backend_unknown_error_code">Cannot establish communication with the server.</string>
+    <string name="app_error_backend_transaction_simulation_failed">Simulation of transfer failed, unable to proceed.</string>
     <string name="app_error_backend_unknown2">Unknown backend error</string>
     <string name="app_version">Version %1$s</string>
     <string name="app_version_about">%1$s</string>
@@ -699,7 +700,7 @@
     <string name="account_details_identity_data_title">Identity Data</string>
     <string name="account_details_retry_button">Retry account creation</string>
     <string name="account_details_remove_button">Remove account from wallet</string>
-    <string name="account_details_fee">fee</string>
+    <string name="account_details_fee">Fee:</string>
     <string name="account_details_header_today">Today</string>
     <string name="account_details_header_yesterday">Yesterday</string>
     <string name="account_details_gtu_drop_header">TESTNET CCD DROP</string>
@@ -846,7 +847,7 @@
     <string name="wallet_connect_message_vote">Message: Vote</string>
     <string name="wallet_connect_message_content">Message content</string>
     <string name="wallet_connect_message_reject">Reject</string>
-    <string name="wallet_connect_message_sign_and_return">Sign &amp; Return</string>
+    <string name="wallet_connect_message_sign_and_return">Sign</string>
     <string name="wallet_connect_message_signed">The message has been signed and returned.</string>
     <string name="wallet_connect_insufficient_funds">Insufficient funds</string>
     <string name="wallet_connect_preparing_connection">Preparing connection…</string>
@@ -1073,6 +1074,7 @@
     <string name="cis_delete_dialog_confirm">Delete</string>
     <string name="cis_delete_dialog_cancel">Cancel</string>
     <string name="cis_search_balance">Your balance: %1$s</string>
+    <string name="cis_receiver_address_error">The recipient is not registered on the chain</string>
 
     <string name="wallet_connect_transaction_parsing_error">Error parsing the request!</string>
 
@@ -1092,8 +1094,8 @@
     //id pub identity error
     <string name="id_pub_error_title">Create new Identity Error</string>
     <string name="id_pub_error_description">You must recover your wallet in Wallet settings before creating a new identity</string>
-    <string name="id_pub_error_ok_button">Ok</string>
-    <string name="id_pub_error_settings_button">Go to Wallet Settings</string>
+    <string name="id_pub_error_close_button">Close</string>
+    <string name="id_pub_error_restore_button">Restore</string>
 
     <string name="show_raw_metadata_thumbnail">Thumbnail</string>
     <string name="show_raw_metadata_display">Display</string>
@@ -1102,4 +1104,9 @@
     <string name="show_raw_metadata_description">Description</string>
     <string name="show_raw_metadata_symbol">Symbol</string>
     <string name="show_raw_metadata_unique">Unique</string>
+
+    <string name="view_seed_phrase">View secret recovery phrase</string>
+    <string name="export_seed_phrase_title">Secret recovery phrase</string>
+    <string name="export_seed_phrase_done">Done</string>
+    <string name="export_seed_phrase_error">Error while loading secret recovery phrase</string>
 </resources>

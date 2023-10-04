@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/list_item"
+    android:backgroundTint="@color/transaction_background"
     android:minHeight="@dimen/list_item_height"
     android:paddingTop="16dp"
     android:paddingBottom="16dp">

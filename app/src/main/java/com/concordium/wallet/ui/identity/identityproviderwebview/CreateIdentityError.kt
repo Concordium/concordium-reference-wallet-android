@@ -1,7 +1,22 @@
 package com.concordium.wallet.ui.identity.identityproviderwebview
 
-import com.walletconnect.util.Empty
+enum class CreateIdentityError(val statusList: List<String> = emptyList()) {
+    NONE(listOf("code:200")),
+    ID_PUB(
+        listOf(
+            "Duplicate id_cred_pub",
+            "idCredPub already exists",
+            "Duplicate%20idCredPub"
+        )
+    ),
+    UNKNOWN
+}
 
-enum class CreateIdentityError(val message: String = String.Empty) {
-    NONE("code:200"), ID_PUB("Duplicate id_cred_pub"), UNKNOWN
+fun String?.containsStatusError(statusError: CreateIdentityError): Boolean {
+    if (this == null) return false
+
+    statusError.statusList.forEach {
+        if (contains(it)) return true
+    }
+    return false
 }

@@ -8,6 +8,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.concordium.wallet.AppConfig
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
@@ -18,8 +21,13 @@ import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewAc
 import com.concordium.wallet.ui.more.about.AboutActivity
 import com.concordium.wallet.ui.more.alterpassword.AlterPasswordActivity
 import com.concordium.wallet.ui.more.dev.DevActivity
+import com.concordium.wallet.ui.passphrase.recover.ExportPassPhraseViewModel
+import com.concordium.wallet.ui.passphrase.recover.ExportSeedPhraseActivity
+import com.concordium.wallet.ui.passphrase.recover.ExportSeedPhraseState
 import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessActivity
 import com.concordium.wallet.ui.recipient.recipientlist.RecipientListActivity
+import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import kotlin.system.exitProcess
 
@@ -27,6 +35,9 @@ class SettingsActivity : BaseActivity() {
     private lateinit var binding: ActivitySettingsBinding
 
     private var versionNumberPressedCount = 0
+
+    private val passPhraseViewModel: ExportPassPhraseViewModel by
+    viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +49,21 @@ class SettingsActivity : BaseActivity() {
             R.string.more_overview_title
         )
         initViews()
+
+        observeState()
+    }
+
+    private fun observeState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                passPhraseViewModel.state.collect { state ->
+                    if (state is ExportSeedPhraseState.Success) {
+                        binding.viewSeedPhraseLayout.visibility =
+                            View.VISIBLE
+                    }
+                }
+            }
+        }
     }
 
     private fun initViews() {
@@ -60,6 +86,10 @@ class SettingsActivity : BaseActivity() {
 
         binding.recoverLayout.setOnClickListener {
             recover()
+        }
+
+        binding.viewSeedPhraseLayout.setOnClickListener {
+            showSeedPhrase()
         }
 
         binding.aboutLayout.setOnClickListener {
@@ -139,6 +169,10 @@ class SettingsActivity : BaseActivity() {
         val intent = Intent(this, RecoverProcessActivity::class.java)
         intent.putExtra(RecoverProcessActivity.SHOW_FOR_FIRST_RECOVERY, false)
         startActivity(intent)
+    }
+
+    private fun showSeedPhrase() {
+        startActivity(Intent(this, ExportSeedPhraseActivity::class.java))
     }
 
     private fun about() {

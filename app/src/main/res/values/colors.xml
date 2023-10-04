@@ -47,5 +47,8 @@
     <color name="text_black_redesign">#181817</color>
     <color name="button_disabled_background">#A6A6A6</color>
     <color name="loading_background">#7AFFFFFF</color>
+    <color name="transaction_background">#F2F2F2</color>
+    <color name="text_gray_1">#B2B2B2</color>
+
 
 </resources>

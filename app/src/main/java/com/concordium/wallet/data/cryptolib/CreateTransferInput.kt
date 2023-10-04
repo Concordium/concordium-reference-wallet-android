@@ -1,6 +1,10 @@
 package com.concordium.wallet.data.cryptolib
 
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.AccountData
+import com.concordium.wallet.data.model.BakerKeys
+import com.concordium.wallet.data.model.DelegationTarget
+import com.concordium.wallet.data.model.GlobalParams
+import com.concordium.wallet.data.model.InputEncryptedAmount
 import java.io.Serializable
 
 data class CreateTransferInput(
@@ -9,7 +13,7 @@ data class CreateTransferInput(
     val to: String?,
     val expiry: Long,
     val amount: String?,
-    val energy: Long,
+    val energy: Int,
     val nonce: Int,
     val memo: String?,
     val global: GlobalParams?,

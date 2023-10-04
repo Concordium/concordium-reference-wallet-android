@@ -22,7 +22,17 @@ import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.CreateTransferInput
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.AccountBalance
+import com.concordium.wallet.data.model.AccountData
+import com.concordium.wallet.data.model.AccountNonce
+import com.concordium.wallet.data.model.GlobalParams
+import com.concordium.wallet.data.model.GlobalParamsWrapper
+import com.concordium.wallet.data.model.InputEncryptedAmount
+import com.concordium.wallet.data.model.SubmissionData
+import com.concordium.wallet.data.model.TransactionOutcome
+import com.concordium.wallet.data.model.TransactionStatus
+import com.concordium.wallet.data.model.TransactionType
+import com.concordium.wallet.data.model.TransferSubmissionStatus
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.preferences.SharedPreferencesKeys
 import com.concordium.wallet.data.room.Account
@@ -38,7 +48,7 @@ import com.concordium.wallet.util.toBigInteger
 import com.concordium.wallet.util.toHex
 import kotlinx.coroutines.launch
 import java.math.BigInteger
-import java.util.*
+import java.util.Date
 import javax.crypto.Cipher
 
 class SendFundsViewModel(application: Application) : AndroidViewModel(application) {
@@ -363,7 +373,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             toAddress,
             expiry,
             amount.toString(),
-            energy,
+            energy.toInt(),
             nonce.nonce,
             memo,
             tempData.globalParams,

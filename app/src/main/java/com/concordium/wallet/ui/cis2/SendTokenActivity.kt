@@ -44,6 +44,7 @@ class SendTokenActivity : BaseActivity() {
         const val ACCOUNT = "ACCOUNT"
         const val TOKEN = "TOKEN"
         const val SEND_ONLY_SELECTED_TOKEN = "SEND_ONLY_SELECTED_TOKEN"
+        const val TOKEN_TRANSFER_FLOW_FINISHED = "TOKEN_TRANSFER_FLOW_FINISHED"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +57,12 @@ class SendTokenActivity : BaseActivity() {
         initObservers()
         initViews()
         enableSend()
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        if (intent?.getBooleanExtra(TOKEN_TRANSFER_FLOW_FINISHED, false) == true)
+            onBackPressedDispatcher.onBackPressed()
     }
 
     override fun onResume() {
@@ -128,6 +135,7 @@ class SendTokenActivity : BaseActivity() {
             viewModel.sendTokenData.amount =
                 CurrencyUtil.toGTUValue(it.toString(), viewModel.sendTokenData.token)
                     ?: BigInteger.ZERO
+            binding.contractAddressError.visibility = View.GONE
             viewModel.loadTransactionFee()
             enableSend()
         }
@@ -169,6 +177,7 @@ class SendTokenActivity : BaseActivity() {
                     && viewModel.sendTokenData.fee != null
                     && viewModel.hasEnoughFunds()
                     && viewModel.sendTokenData.receiver.isNotEmpty()
+                    && viewModel.isReceiverAddressValid.value == true
         return binding.send.isEnabled
     }
 
@@ -370,6 +379,10 @@ class SendTokenActivity : BaseActivity() {
         }
         viewModel.errorInt.observe(this) {
             Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
+        }
+        viewModel.addressErrorInt.observe(this) {
+            binding.contractAddressError.text = getString(it)
+            binding.contractAddressError.visibility = View.VISIBLE
         }
     }
 

@@ -22,6 +22,7 @@ data class SendTokenData(
     var max: BigInteger? = null,
     var memo: String? = null,
     var energy: Long? = null,
+    var maxContractExecutionEnergy: Long? = null,
     var accountNonce: AccountNonce? = null,
     var expiry: Long? = null,
     var createTransferInput: CreateTransferInput? = null,

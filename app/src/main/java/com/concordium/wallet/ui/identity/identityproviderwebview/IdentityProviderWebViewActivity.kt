@@ -235,11 +235,11 @@ class IdentityProviderWebViewActivity : BaseActivity() {
         binding.apply {
             alertDialog.visibility = View.VISIBLE
 
-            okButton.setOnClickListener {
+            closeButton.setOnClickListener {
                 alertDialog.visibility = View.GONE
                 finish()
             }
-            settingsButton.setOnClickListener {
+            restoreButton.setOnClickListener {
                 val intent = Intent(applicationContext, RecoverProcessActivity::class.java)
                 intent.putExtra(RecoverProcessActivity.SHOW_FOR_FIRST_RECOVERY, false)
                 startActivity(intent)

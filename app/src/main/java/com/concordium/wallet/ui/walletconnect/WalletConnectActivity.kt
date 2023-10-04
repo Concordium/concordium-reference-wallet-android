@@ -142,7 +142,9 @@ class WalletConnectActivity : BaseActivity() {
             Toast.makeText(this, getString(it), Toast.LENGTH_SHORT).show()
         }
         viewModel.errorString.observe(this) {
-            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            if (it.contains("Expected").not()) {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            }
         }
         viewModel.chooseAccount.observe(this) { accountWithIdentity ->
             viewModel.walletConnectData.account = accountWithIdentity.account
@@ -287,9 +289,8 @@ class WalletConnectActivity : BaseActivity() {
     }
 
     private fun gotoMain() {
-        finish()
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        startActivity(intent)
+        startActivity(Intent(this, MainActivity::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        })
     }
 }

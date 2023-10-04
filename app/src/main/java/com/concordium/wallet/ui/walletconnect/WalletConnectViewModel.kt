@@ -12,13 +12,18 @@ import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.cryptolib.*
+import com.concordium.wallet.data.cryptolib.CreateAccountTransactionInput
+import com.concordium.wallet.data.cryptolib.CreateTransferOutput
+import com.concordium.wallet.data.cryptolib.ParameterToJsonInput
+import com.concordium.wallet.data.cryptolib.SignMessageInput
+import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.SubmissionData
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.data.walletconnect.Payload
 import com.concordium.wallet.data.walletconnect.TransactionError
 import com.concordium.wallet.data.walletconnect.TransactionSuccess
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
@@ -38,12 +43,14 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.Serializable
 import java.math.BigInteger
+import java.util.Locale
 import javax.crypto.Cipher
 
 data class WalletConnectData(
     var account: Account? = null,
     var wcUri: String? = null,
     var energy: Long? = null,
+    var maxEnergy: Long? = null,
     var cost: BigInteger? = null,
     var isTransaction: Boolean = true
 ) : Serializable
@@ -152,27 +159,57 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
 
     fun loadTransactionFee() {
         binder?.getSessionRequestParams()?.parsePayload()?.let { payload ->
-            proxyRepository.getTransferCost(type = "update",
-                amount = payload.amount.toBigInteger(),
-                sender = walletConnectData.account!!.address,
-                contractIndex = payload.address.index,
-                contractSubindex = payload.address.subIndex,
-                receiveName = payload.receiveName,
-                parameter = payload.message,
-                success = {
-                    walletConnectData.energy = it.energy
-                    walletConnectData.cost = it.cost.toBigInteger()
-                    transactionFee.postValue(walletConnectData.cost)
-                },
-                failure = {
-                    handleBackendError(it)
+            when (payload) {
+                is Payload.ContractUpdateTransaction -> {
+                    proxyRepository.getTransferCost(
+                        type = "update",
+                        amount = payload.amount.toBigInteger(),
+                        sender = walletConnectData.account!!.address,
+                        contractIndex = payload.address.index,
+                        contractSubindex = payload.address.subIndex,
+                        receiveName = payload.receiveName,
+                        parameter = payload.message,
+                        success = {
+                            walletConnectData.maxEnergy =
+                                if (payload.maxEnergy != 0L) payload.maxEnergy else payload.maxContractExecutionEnergy
+                            walletConnectData.cost = it.cost.toBigInteger()
+                            walletConnectData.energy = it.energy
+                            transactionFee.postValue(walletConnectData.cost)
+                        },
+                        failure = {
+                            handleBackendError(it)
+                        }
+                    )
                 }
-            )
+
+                is Payload.AccountTransaction -> {
+                    proxyRepository.getTransferCost(
+                        type = ProxyRepository.SIMPLE_TRANSFER,
+                        memoSize = null,
+                        success = {
+                            walletConnectData.energy = it.energy
+                            walletConnectData.cost = it.cost.toBigInteger()
+                            transactionFee.postValue(walletConnectData.cost)
+                        },
+                        failure = {
+                            handleBackendError(it)
+                        }
+                    )
+                }
+            }
         }
     }
 
     fun hasEnoughFunds(): Boolean {
-        val amount = binder?.getSessionRequestParams()?.parsePayload()?.amount?.toBigInteger()
+        val payload = binder?.getSessionRequestParams()?.parsePayload()
+        val amount =
+            when (payload) {
+                is Payload.ContractUpdateTransaction -> payload.amount.toBigInteger()
+
+                is Payload.AccountTransaction -> payload.amount.toBigInteger()
+
+                else -> BigInteger.ZERO
+            }
         val fee = walletConnectData.cost
         if (amount != null && fee != null) {
             walletConnectData.account?.totalUnshieldedBalance?.let { totalUnshieldedBalance ->
@@ -258,15 +295,17 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
             errorInt.postValue(R.string.app_error_lib)
             return
         }
-
-        payload.maxEnergy = walletConnectData.energy ?: 0
+        if (payload is Payload.ContractUpdateTransaction) {
+            payload.maxEnergy = walletConnectData.energy ?: 0
+            payload.maxContractExecutionEnergy = walletConnectData.maxEnergy ?: 0
+        }
         val accountTransactionInput = CreateAccountTransactionInput(
             expiry.toInt(),
             from,
             keys,
             this.accountNonce?.nonce ?: -1,
             payload,
-            type
+            type.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
         )
 
         val accountTransactionOutput =
@@ -297,7 +336,7 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         binder?.getSessionRequestParams()?.let { params ->
             val payloadObj = params.parsePayload()
             val schema = params.schema
-            if (payloadObj != null && schema != null) {
+            if (payloadObj != null && schema != null && payloadObj is Payload.ContractUpdateTransaction) {
                 CoroutineScope(Dispatchers.IO).launch {
                     val jsonMessage = App.appCore.cryptoLibrary.parameterToJson(
                         ParameterToJsonInput(

@@ -31,24 +31,23 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/content_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:visibility="visible">
+                android:layout_height="wrap_content">
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardview"
-                    style="@style/Layout.CardView"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
                     android:layout_marginTop="@dimen/activity_vertical_margin_half"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
                     android:layout_marginBottom="@dimen/activity_vertical_margin_half"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
+                    app:cardCornerRadius="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_goneMarginBottom="@dimen/activity_vertical_margin">
 
-                    <LinearLayout
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp"
@@ -56,9 +55,11 @@
 
                         <include
                             android:id="@+id/transaction"
-                            layout="@layout/item_transaction"
+                            layout="@layout/item_transaction_gray"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <LinearLayout
@@ -66,9 +67,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/transaction"
                             tools:visibility="visible">
-
-                            <View style="@style/Divider" />
 
                             <TextView
                                 android:id="@+id/message_textview"
@@ -81,36 +83,54 @@
                                 android:gravity="center"
                                 tools:text="Error message for api - this can be long - dafljdsf dksjf dsfj sdfjsdf dlsfj sdkfj sdfdskf " />
 
-                            <View style="@style/Divider" />
-
                         </LinearLayout>
 
                         <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
                             android:id="@+id/from_address_layout"
-                            style="@style/Layout"
-                            app:entry_title="@string/transaction_details_from_address" />
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:entry_title="@string/transaction_details_from_address"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/message_layout" />
 
                         <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
                             android:id="@+id/to_address_layout"
-                            style="@style/Layout"
-                            app:entry_title="@string/transaction_details_to_address" />
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:entry_title="@string/transaction_details_to_address"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/from_address_layout" />
 
                         <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
                             android:id="@+id/transaction_hash_layout"
-                            style="@style/Layout"
-                            app:entry_title="@string/transaction_details_transaction_hash" />
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:entry_title="@string/transaction_details_transaction_hash"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/to_address_layout" />
 
                         <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
                             android:id="@+id/block_hash_layout"
-                            style="@style/Layout"
-                            app:entry_title="@string/transaction_details_block_hash" />
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:entry_title="@string/transaction_details_block_hash"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/transaction_hash_layout" />
 
                         <com.concordium.wallet.ui.transaction.transactiondetails.TransactionDetailsEntryView
                             android:id="@+id/details_layout"
-                            style="@style/Layout"
-                            app:entry_title="@string/transaction_details_details" />
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:entry_title="@string/transaction_details_details"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/block_hash_layout" />
 
-                    </LinearLayout>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </androidx.cardview.widget.CardView>
 
@@ -127,8 +147,9 @@
         </ScrollView>
 
         <include
+            android:id="@+id/include_progress"
             layout="@layout/progress"
-            android:id="@+id/include_progress" />
+            tools:visibility="gone" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

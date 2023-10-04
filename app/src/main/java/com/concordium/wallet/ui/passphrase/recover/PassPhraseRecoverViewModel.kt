@@ -9,13 +9,17 @@ import cash.z.ecc.android.bip39.Mnemonics
 import cash.z.ecc.android.bip39.toSeed
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.data.preferences.AuthPreferences
+import com.concordium.wallet.data.repository.AuthenticationRepository
 import com.concordium.wallet.ui.passphrase.common.WordsPickedBaseListAdapter
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.toHex
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(application) {
+class PassPhraseRecoverViewModel(
+    application: Application,
+    private val authenticationRepository: AuthenticationRepository
+) : AndroidViewModel(application) {
     var wordsPicked = arrayOfNulls<String>(WORD_COUNT + (WordsPickedBaseListAdapter.OFFSET * 2) + 1)
     var allWords = listOf<String>()
 
@@ -76,10 +80,13 @@ class PassPhraseRecoverViewModel(application: Application) : AndroidViewModel(ap
         _validateLiveData.value = success
     }
 
-    fun setSeedPhrase(seed: String, password: String) = viewModelScope.launch {
+    fun setSeedPhrase(seedPhrase: String, password: String) = viewModelScope.launch {
         _saveSeedLiveData.value = AuthPreferences(getApplication()).tryToSetEncryptedSeedPhrase(
-            seed,
+            seedPhrase,
             password
         )
+        viewModelScope.launch {
+            authenticationRepository.saveSeedPhase(seedPhrase)
+        }
     }
 }

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.backend.BackendRequest
+import com.concordium.wallet.core.backend.TransactionSimulationException
 import com.concordium.wallet.core.crypto.CryptoLibrary
 import com.concordium.wallet.core.security.KeystoreEncryptionException
 import com.concordium.wallet.data.AccountContractRepository
@@ -25,7 +26,6 @@ import com.concordium.wallet.data.model.AccountBalance
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.GlobalParamsWrapper
-import com.concordium.wallet.data.model.InputEncryptedAmount
 import com.concordium.wallet.data.model.SubmissionData
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TransactionOutcome
@@ -73,7 +73,9 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     val transactionReady: MutableLiveData<String> by lazy { MutableLiveData<String>() }
     val feeReady: MutableLiveData<BigInteger?> by lazy { MutableLiveData<BigInteger?>() }
     val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
+    val addressErrorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val showAuthentication: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
+    val isReceiverAddressValid: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
 
     var sendOnlySelectedToken: Boolean = false
 
@@ -193,6 +195,8 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun loadTransactionFee() {
+        validateReceiverAddress()
+
         if (sendTokenData.token == null)
             return
 
@@ -228,6 +232,20 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    private fun validateReceiverAddress() {
+        if (sendTokenData.receiver.isEmpty()) return
+        proxyRepository.getAccountBalance(accountAddress = sendTokenData.receiver, success = {
+            isReceiverAddressValid.value =
+                if (it.currentBalance == null && it.finalizedBalance == null) {
+                    addressErrorInt.postValue(R.string.cis_receiver_address_error)
+                    false
+                } else true
+        }, failure = {
+            addressErrorInt.postValue(R.string.cis_receiver_address_error)
+            isReceiverAddressValid.value = false
+        })
+    }
+
     fun hasEnoughFunds(): Boolean {
         if (sendTokenData.token == null)
             return false
@@ -251,15 +269,20 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             type = ProxyRepository.SIMPLE_TRANSFER,
             memoSize = if (sendTokenData.memo == null) null else sendTokenData.memo!!.length / 2,
             success = {
-                sendTokenData.energy = it.energy
-                sendTokenData.fee = it.cost.toBigInteger()
-                sendTokenData.account?.let { account ->
-                    sendTokenData.max =
-                        account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) -
-                                (sendTokenData.fee ?: BigInteger.ZERO)
+                if (it.success == false) {
+                    waiting.postValue(false)
+                    handleBackendError(TransactionSimulationException())
+                } else {
+                    sendTokenData.energy = it.energy
+                    sendTokenData.fee = it.cost.toBigInteger()
+                    sendTokenData.account?.let { account ->
+                        sendTokenData.max =
+                            account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) -
+                                    (sendTokenData.fee ?: BigInteger.ZERO)
+                    }
+                    waiting.postValue(false)
+                    feeReady.postValue(sendTokenData.fee)
                 }
-                waiting.postValue(false)
-                feeReady.postValue(sendTokenData.fee)
             },
             failure = {
                 waiting.postValue(false)
@@ -284,10 +307,15 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             receiveName = sendTokenData.token!!.contractName + ".transfer",
             parameter = serializeTokenTransferParametersOutput.parameter,
             success = {
-                sendTokenData.energy = it.energy
-                sendTokenData.fee = it.cost.toBigInteger()
-                waiting.postValue(false)
-                feeReady.postValue(sendTokenData.fee)
+                if (it.success == false) {
+                    waiting.postValue(false)
+                    handleBackendError(TransactionSimulationException())
+                } else {
+                    sendTokenData.energy = it.energy
+                    sendTokenData.fee = it.cost.toBigInteger()
+                    waiting.postValue(false)
+                    feeReady.postValue(sendTokenData.fee)
+                }
             },
             failure = {
                 waiting.postValue(false)
@@ -404,7 +432,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             toAddress,
             expiry,
             amount.toString(),
-            energy,
+            energy.toInt(),
             nonce.nonce,
             memo,
             null,
@@ -430,11 +458,12 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     private fun createTokenTransaction(keys: AccountData) {
-        val account = sendTokenData.account;
-        val token = sendTokenData.token;
-        val energy = sendTokenData.energy;
-        val accountNonce = sendTokenData.accountNonce;
-        val expiry = sendTokenData.expiry;
+        val account = sendTokenData.account
+        val token = sendTokenData.token
+        val energy = sendTokenData.energy
+        val maxContractExecutionEnergy = sendTokenData.maxContractExecutionEnergy
+        val accountNonce = sendTokenData.accountNonce
+        val expiry = sendTokenData.expiry
 
         if (account == null || token == null || energy == null || accountNonce == null || expiry == null) {
             errorInt.postValue(R.string.app_error_general)
@@ -455,10 +484,11 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
             if (serializeTokenTransferParametersOutput == null) {
                 errorInt.postValue(R.string.app_error_lib)
             } else {
-                val payload = Payload(
+                val payload = Payload.ContractUpdateTransaction(
                     ContractAddress(token.contractIndex.toInt(), 0),
                     "0",
                     energy,
+                    maxContractExecutionEnergy ?: energy,
                     serializeTokenTransferParametersOutput.parameter,
                     token.contractName + ".transfer"
                 )
