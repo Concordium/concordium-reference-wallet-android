@@ -66,15 +66,6 @@
     <color name="theme_divider">#CCCCCC</color>
     <color name="theme_component_background_disabled">#F5F5F5</color>
 
-    <!-- Text -->
-<!--    <color name="text_white">#ffffff</color>
-    <color name="text_black">#000000</color>
-    <color name="text_grey">#979797</color>
-    <color name="text_blue">#4486ab</color>
-    <color name="text_red">#fe0000</color>
-    <color name="text_pink">#FF8A8A</color>
-    <color name="text_green">#00BF94</color>-->
-
     <!-- Backgrounds -->
     <color name="background_light_blue">#f2f9ff</color>
     <color name="background_light_red">#fb9c9c</color>
