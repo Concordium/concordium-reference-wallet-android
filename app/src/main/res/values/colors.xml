@@ -45,20 +45,11 @@
     <color name="transaction_background">#F2F2F2</color>
     <color name="text_gray_1">#B2B2B2</color>
 
-    <!-- Theme - Primary -->
-    <!--    <color name="theme_primary">#FFFFFF</color>-->
-    <!--    <color name="theme_primary_dark">#000000</color>-->
-    <!--    <color name="theme_accent">#4486ab</color>-->
-
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="light_grey">#FBFDFD</color>
     <color name="grey">#979797</color>
 
-    <!-- Theme - Secondary -->
-<!--    <color name="theme_component">@color/redesign_accent</color>-->
-<!--    <color name="theme_component_selected">@color/redesign_primary_dark</color>-->
-<!--    <color name="theme_component_pressed">@color/redesign_accent_80</color>-->
     <color name="theme_component_disabled">#66325D76</color>
     <color name="theme_component_disabled_alpha_one">#30444F</color>
     <color name="theme_component_grey">#979797</color>
