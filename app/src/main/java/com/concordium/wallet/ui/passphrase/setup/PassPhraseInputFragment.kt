@@ -242,10 +242,10 @@ class PassPhraseInputFragment : Fragment() {
     private fun setColorsSuggestion(tvSuggestion: TextView) {
         if (tvSuggestion.text != null && tvSuggestion.text.toString() == viewModel.wordsPicked[arrayAdapter.currentPosition]) {
             tvSuggestion.isSelected = true
-            tvSuggestion.setTextColor(ContextCompat.getColor(requireContext(), R.color.theme_white))
+            tvSuggestion.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
         } else {
             tvSuggestion.isSelected = false
-            tvSuggestion.setTextColor(ContextCompat.getColor(requireContext(), R.color.theme_black))
+            tvSuggestion.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
         }
     }
 

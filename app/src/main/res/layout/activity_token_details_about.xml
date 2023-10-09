@@ -28,13 +28,13 @@
                 android:paddingVertical="@dimen/activity_vertical_margin_half"
                 android:text="@string/cis_about_token"
                 android:textAlignment="center"
-                android:textColor="@color/text_blue" />
+                android:textColor="@color/redesign_accent" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/activity_vertical_margin_half"
                 android:layout_marginHorizontal="1dp"
-                android:background="@color/theme_light_blue" />
+                android:background="@color/redesign_accent_60" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/image_holder"
@@ -54,7 +54,7 @@
                     android:layout_marginBottom="@dimen/activity_vertical_margin_half"
                     android:scaleType="fitCenter"
                     tools:src="@drawable/ic_icon_qr"
-                    tools:tint="@color/theme_blue" />
+                    tools:tint="@color/redesign_accent" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -297,7 +297,7 @@
                     style="@style/TextView.Standard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/text_green"
+                    android:textColor="@color/redesign_positive"
                     android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                     android:layout_marginVertical="@dimen/activity_vertical_margin_half"
                     android:text="@string/show_raw_metadata" />
@@ -316,7 +316,7 @@
         android:clickable="true"
         android:focusable="true"
         android:text="@string/cis_delete_token"
-        android:textColor="@color/text_pink"
+        android:textColor="@color/redesign_negative_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

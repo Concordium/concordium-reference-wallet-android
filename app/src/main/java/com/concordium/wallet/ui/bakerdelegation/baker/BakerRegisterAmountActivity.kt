@@ -190,12 +190,12 @@ class BakerRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity() 
     }
 
     override fun showError(stakeError: StakeAmountInputValidator.StakeError?) {
-        binding.amount.setTextColor(getColor(R.color.text_pink))
+        binding.amount.setTextColor(getColor(R.color.redesign_negative_light))
         binding.amountError.visibility = View.VISIBLE
     }
 
     override fun hideError() {
-        binding.amount.setTextColor(getColor(R.color.theme_blue))
+        binding.amount.setTextColor(getColor(R.color.redesign_accent))
         binding.amountError.visibility = View.INVISIBLE
     }
 

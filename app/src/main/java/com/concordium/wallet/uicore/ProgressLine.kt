@@ -12,7 +12,7 @@ class ProgressLine : View {
     private var filled = 1
     private var numberOfDots = 4
     private val paint = Paint().apply {
-        color = ResourcesCompat.getColor(resources, R.color.theme_black, null)
+        color = ResourcesCompat.getColor(resources, R.color.black, null)
         isAntiAlias = true
         isDither = true
         style = Paint.Style.STROKE

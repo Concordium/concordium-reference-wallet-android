@@ -62,19 +62,19 @@ class WordsPickedRecoverListAdapter(
                 holder.binding.tvPosition.setTextColor(
                     ContextCompat.getColor(
                         context,
-                        R.color.theme_white
+                        R.color.white
                     )
                 )
                 holder.binding.etTitle.setTextColor(
                     ContextCompat.getColor(
                         context,
-                        R.color.theme_white
+                        R.color.white
                     )
                 )
                 holder.binding.tvTitle.setTextColor(
                     ContextCompat.getColor(
                         context,
-                        R.color.theme_white
+                        R.color.white
                     )
                 )
                 holder.binding.rlBorder.elevation = 0f
@@ -109,19 +109,19 @@ class WordsPickedRecoverListAdapter(
             holder.binding.tvPosition.setTextColor(
                 ContextCompat.getColor(
                     context,
-                    R.color.theme_black
+                    R.color.black
                 )
             )
             holder.binding.etTitle.setTextColor(
                 ContextCompat.getColor(
                     context,
-                    R.color.theme_black
+                    R.color.black
                 )
             )
             holder.binding.tvTitle.setTextColor(
                 ContextCompat.getColor(
                     context,
-                    R.color.theme_black
+                    R.color.black
                 )
             )
             holder.binding.rlBorder.background =

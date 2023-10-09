@@ -33,7 +33,7 @@ class DelegationStatusActivity : StatusActivity(R.string.delegation_status_title
                         addContent(
                             getString(R.string.delegation_status_pool_deregistered) + "\n" + dateStr,
                             "",
-                            R.color.text_pink
+                            R.color.redesign_negative_light
                         )
                     }
                 }

@@ -61,7 +61,7 @@
                     android:layout_marginTop="@dimen/section_gtu_drop"
                     android:layout_marginRight="@dimen/section_gtu_drop"
                     android:text="@string/account_details_gtu_drop_header"
-                    android:textColor="@color/text_blue" />
+                    android:textColor="@color/redesign_accent" />
 
                 <TextView
                     style="@style/TextView.InfoMedium"

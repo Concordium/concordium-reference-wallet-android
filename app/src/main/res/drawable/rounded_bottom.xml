@@ -4,7 +4,7 @@
         <shape android:shape="rectangle">
             <corners android:topLeftRadius="0dp" android:topRightRadius="0dp"
                 android:bottomLeftRadius="10dp" android:bottomRightRadius="10dp" />
-            <solid android:color="@color/theme_blue" />
+            <solid android:color="@color/redesign_accent" />
         </shape>
     </item>
 </layer-list>

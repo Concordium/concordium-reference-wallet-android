@@ -4,8 +4,8 @@
         <shape android:shape="rectangle">
             <corners android:topLeftRadius="10dp" android:topRightRadius="10dp"
                 android:bottomLeftRadius="10dp" android:bottomRightRadius="10dp" />
-            <stroke android:width="2dp" android:color="@color/theme_accent" />
-            <solid android:color="@color/theme_light_grey" />
+            <stroke android:width="2dp" android:color="@color/redesign_accent" />
+            <solid android:color="@color/light_grey" />
         </shape>
     </item>
 </layer-list>

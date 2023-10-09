@@ -37,5 +37,5 @@
         android:padding="12dp"
         android:scaleType="fitStart"
         android:src="@drawable/ic_lup"
-        android:tint="@color/theme_grey" />
+        android:tint="@color/grey" />
 </androidx.appcompat.widget.LinearLayoutCompat>

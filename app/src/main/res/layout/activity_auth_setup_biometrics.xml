@@ -67,7 +67,7 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/instruction_textview"
-                    app:tint="@color/theme_white" />
+                    app:tint="@color/white" />
 
                 <LinearLayout
                     android:id="@+id/button_layout"

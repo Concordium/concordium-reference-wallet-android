@@ -24,12 +24,12 @@
             android:paddingVertical="@dimen/activity_vertical_margin"
             android:src="@drawable/ic_send"
             android:scaleType="fitCenter"
-            android:tint="@color/theme_white" />
+            android:tint="@color/white" />
 
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:background="@color/theme_white" />
+            android:background="@color/white" />
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/receive"
@@ -40,7 +40,7 @@
             android:paddingVertical="@dimen/activity_vertical_margin"
             android:src="@drawable/ic_recipient_address_qr"
             android:scaleType="fitCenter"
-            android:tint="@color/theme_white" />
+            android:tint="@color/white" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 </androidx.cardview.widget.CardView>
 
