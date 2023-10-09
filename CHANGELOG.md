@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+### Changed
+- Changed all colors to align with new color scheme.
+
+## [1.3.0]
 
 ### Fixed
 
