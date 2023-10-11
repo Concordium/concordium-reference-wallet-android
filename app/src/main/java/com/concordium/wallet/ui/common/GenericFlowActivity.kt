@@ -125,10 +125,10 @@ abstract class GenericFlowActivity(private val titleId: Int) : BaseActivity() {
     //************************************************************
 
     private fun updateButtons() {
-        setBackButtonDrawableArrow(ContextCompat.getColor(applicationContext, R.color.text_white))
+        setBackButtonDrawableArrow(ContextCompat.getColor(applicationContext, R.color.white))
         binding.createIdentIntroBack.background =
             AppCompatResources.getDrawable(this, R.drawable.button_standard)
-        binding.createIdentIntroBack.setTextColor(ContextCompat.getColor(this, R.color.text_white))
+        binding.createIdentIntroBack.setTextColor(ContextCompat.getColor(this, R.color.white))
         if (binding.pager.currentItem == 0 && getMaxPages() == 1) {
             binding.createIdentIntroSkip.visibility = View.GONE
             binding.createIdentIntroContinue.visibility = View.VISIBLE
@@ -156,7 +156,7 @@ abstract class GenericFlowActivity(private val titleId: Int) : BaseActivity() {
             setBackButtonDrawableArrow(
                 ContextCompat.getColor(
                     applicationContext,
-                    R.color.text_grey
+                    R.color.redesign_off_primary
                 )
             )
             binding.createIdentIntroBack.background =
@@ -164,7 +164,7 @@ abstract class GenericFlowActivity(private val titleId: Int) : BaseActivity() {
             binding.createIdentIntroBack.setTextColor(
                 ContextCompat.getColor(
                     this,
-                    R.color.text_grey
+                    R.color.redesign_off_primary
                 )
             )
             binding.createIdentIntroNext.visibility = View.GONE

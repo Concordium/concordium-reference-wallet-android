@@ -67,8 +67,8 @@
                             android:layout_marginTop="@dimen/activity_content_margin"
                             android:layout_marginHorizontal="@dimen/activity_content_margin"
                             android:gravity="center"
-                            android:textColorHint="@color/text_grey"
-                            android:textColor="@color/text_blue"
+                            android:textColorHint="@color/redesign_off_primary"
+                            android:textColor="@color/redesign_accent"
                             android:inputType="textUri"
                             android:hint="@string/baker_registration_open_url_hint" />
                     </LinearLayout>

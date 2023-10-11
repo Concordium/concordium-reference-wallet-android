@@ -11,7 +11,7 @@
             <corners android:radius="8dp" />
             <stroke
                 android:width="2dp"
-                android:color="@color/theme_blue" />
+                android:color="@color/redesign_accent" />
             <solid android:color="#FFFFFF" />
         </shape>
     </item>

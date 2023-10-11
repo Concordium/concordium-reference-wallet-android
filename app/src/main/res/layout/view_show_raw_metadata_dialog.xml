@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginBottom="80dp"
-    android:background="@color/theme_white"
+    android:background="@color/white"
     android:clickable="true">
 
     <ImageButton
@@ -14,11 +14,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:backgroundTint="@color/theme_white"
+        android:backgroundTint="@color/white"
         android:src="@drawable/ic_close_cross"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/theme_grey" />
+        app:tint="@color/grey" />
 
     <ScrollView
         android:layout_width="match_parent"

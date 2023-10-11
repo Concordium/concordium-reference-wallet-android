@@ -13,7 +13,7 @@
         android:layout_alignParentTop="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/text_black"
+        android:textColor="@color/black"
         tools:text="12-12-2020 13:40" />
 
     <LinearLayout
@@ -27,7 +27,7 @@
         android:id="@+id/amount"
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
-        android:textColor="@color/text_black"
+        android:textColor="@color/black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="G123.0004" />

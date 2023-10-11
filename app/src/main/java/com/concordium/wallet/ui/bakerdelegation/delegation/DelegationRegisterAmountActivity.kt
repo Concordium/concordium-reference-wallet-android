@@ -33,27 +33,27 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
     }
 
     override fun showError(stakeError: StakeAmountInputValidator.StakeError?) {
-        binding.amount.setTextColor(getColor(R.color.text_pink))
+        binding.amount.setTextColor(getColor(R.color.redesign_negative_light))
         binding.amountError.visibility = View.VISIBLE
         if (stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED || stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED_COOLDOWN) {
-            binding.poolLimitTitle.setTextColor(getColor(R.color.text_pink))
-            binding.poolLimit.setTextColor(getColor(R.color.text_pink))
+            binding.poolLimitTitle.setTextColor(getColor(R.color.redesign_negative_light))
+            binding.poolLimit.setTextColor(getColor(R.color.redesign_negative_light))
         } else {
-            binding.poolLimitTitle.setTextColor(getColor(R.color.text_black))
-            binding.poolLimit.setTextColor(getColor(R.color.text_black))
+            binding.poolLimitTitle.setTextColor(getColor(R.color.black))
+            binding.poolLimit.setTextColor(getColor(R.color.black))
         }
         if (stakeError == StakeAmountInputValidator.StakeError.POOL_LIMIT_REACHED_COOLDOWN) {
-            binding.delegationAmountTitle.setTextColor(getColor(R.color.text_pink))
-            binding.delegationAmount.setTextColor(getColor(R.color.text_pink))
+            binding.delegationAmountTitle.setTextColor(getColor(R.color.redesign_negative_light))
+            binding.delegationAmount.setTextColor(getColor(R.color.redesign_negative_light))
         }
     }
 
     override fun hideError() {
-        binding.amount.setTextColor(getColor(R.color.theme_blue))
-        binding.poolLimitTitle.setTextColor(getColor(R.color.text_black))
-        binding.poolLimit.setTextColor(getColor(R.color.text_black))
-        binding.delegationAmountTitle.setTextColor(getColor(R.color.text_black))
-        binding.delegationAmount.setTextColor(getColor(R.color.text_black))
+        binding.amount.setTextColor(getColor(R.color.redesign_accent))
+        binding.poolLimitTitle.setTextColor(getColor(R.color.black))
+        binding.poolLimit.setTextColor(getColor(R.color.black))
+        binding.delegationAmountTitle.setTextColor(getColor(R.color.black))
+        binding.delegationAmount.setTextColor(getColor(R.color.black))
         binding.amountError.visibility = View.INVISIBLE
     }
 

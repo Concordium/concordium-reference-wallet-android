@@ -44,12 +44,12 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity() {
     }
 
     fun showError() {
-        binding.poolId.setTextColor(getColor(R.color.text_pink))
+        binding.poolId.setTextColor(getColor(R.color.redesign_negative_light))
         binding.poolIdError.visibility = View.VISIBLE
     }
 
     private fun hideError() {
-        binding.poolId.setTextColor(getColor(R.color.theme_blue))
+        binding.poolId.setTextColor(getColor(R.color.redesign_accent))
         binding.poolIdError.visibility = View.INVISIBLE
     }
 

@@ -152,8 +152,8 @@
                         android:paddingHorizontal="@dimen/activity_horizontal_margin"
                         android:paddingTop="@dimen/activity_horizontal_margin"
                         android:text="@string/recipient_address"
-                        android:textColor="@color/text_blue"
-                        android:textColorHint="@color/text_blue"
+                        android:textColor="@color/redesign_accent"
+                        android:textColorHint="@color/redesign_accent"
                         android:visibility="gone"
                         tools:visibility="visible" />
 
@@ -165,8 +165,8 @@
                         android:gravity="center_horizontal"
                         android:hint="@string/cis_paste_receiver_address"
                         android:padding="@dimen/activity_horizontal_margin"
-                        android:textColor="@color/text_blue"
-                        android:textColorHint="@color/text_blue" />
+                        android:textColor="@color/redesign_accent"
+                        android:textColorHint="@color/redesign_accent" />
 
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:layout_width="match_parent"
@@ -187,7 +187,7 @@
                                 android:paddingVertical="@dimen/activity_vertical_margin"
                                 android:scaleType="fitCenter"
                                 android:src="@drawable/ic_lup"
-                                android:tint="@color/theme_white" />
+                                android:tint="@color/white" />
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView.Standard.White"
@@ -202,7 +202,7 @@
                         <View
                             android:layout_width="1dp"
                             android:layout_height="match_parent"
-                            android:background="@color/theme_white" />
+                            android:background="@color/white" />
 
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:id="@+id/scan_qr"
@@ -218,7 +218,7 @@
                                 android:paddingVertical="@dimen/activity_vertical_margin"
                                 android:scaleType="fitCenter"
                                 android:src="@drawable/ic_recipient_address_qr"
-                                android:tint="@color/theme_white" />
+                                android:tint="@color/white" />
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 style="@style/TextView.Standard.White"
@@ -266,7 +266,7 @@
                     android:clickable="true"
                     android:gravity="center"
                     android:text="@string/cis_optional_add_memo"
-                    android:textColor="@color/text_blue" />
+                    android:textColor="@color/redesign_accent" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/memo_clear"

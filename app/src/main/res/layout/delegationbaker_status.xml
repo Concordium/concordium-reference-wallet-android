@@ -59,7 +59,7 @@
                             android:layout_width="@dimen/logo_size_small"
                             android:layout_height="@dimen/logo_size_small"
                             android:layout_margin="5dp"
-                            app:tint="@color/text_blue"
+                            app:tint="@color/redesign_accent"
                             tools:src="@drawable/ic_logo_icon_pending" />
 
                         <TextView

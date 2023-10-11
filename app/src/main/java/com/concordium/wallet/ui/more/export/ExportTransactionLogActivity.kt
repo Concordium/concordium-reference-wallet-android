@@ -82,8 +82,8 @@ class ExportTransactionLogActivity : BaseActivity() {
                 }
                 is FileDownloadScreenState.Failed -> {
                     binding.description.text = getString(R.string.export_transaction_log_failed)
-                    binding.description.setTextColor(getColor(R.color.text_pink))
-                    binding.downloadProgress.progressDrawable.setColorFilter(ContextCompat.getColor(this, R.color.text_pink), PorterDuff.Mode.MULTIPLY)
+                    binding.description.setTextColor(getColor(R.color.redesign_negative_light))
+                    binding.downloadProgress.progressDrawable.setColorFilter(ContextCompat.getColor(this, R.color.redesign_negative_light), PorterDuff.Mode.MULTIPLY)
                     binding.bytesProgress.visibility = View.GONE
                     binding.statusImageview.visibility = View.GONE
                     binding.done.isEnabled = true

@@ -40,7 +40,7 @@
                     android:maxWidth="100dp"
                     android:maxLines="1"
                     android:layout_gravity="end"
-                    android:textColor="@color/text_grey"
+                    android:textColor="@color/redesign_off_primary"
                     android:gravity="end"
                     tools:text="Nellie" />
             </LinearLayout>

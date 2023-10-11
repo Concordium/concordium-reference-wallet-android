@@ -347,7 +347,7 @@ class IdentityProviderWebViewActivity : BaseActivity() {
     private fun launchChromeCustomTab(url: String, forceChromeBrowser: Boolean = false) {
         val customTabBuilder = CustomTabsIntent.Builder()
         val colorSchemeParams = CustomTabColorSchemeParams.Builder()
-            .setToolbarColor(ContextCompat.getColor(this, R.color.theme_white))
+            .setToolbarColor(ContextCompat.getColor(this, R.color.white))
             .build()
         customTabBuilder.setDefaultColorSchemeParams(colorSchemeParams)
         val customTabsIntent = customTabBuilder.build()

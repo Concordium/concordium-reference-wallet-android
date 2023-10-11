@@ -39,7 +39,7 @@
         android:layout_below="@id/password_edittext"
         android:layout_marginStart="4dp"
         android:layout_marginLeft="10dp"
-        android:textColor="@color/text_red"
+        android:textColor="@color/redesign_negative"
         android:textSize="14dp"
         tools:text="@string/auth_dialog_password_error" />
 
