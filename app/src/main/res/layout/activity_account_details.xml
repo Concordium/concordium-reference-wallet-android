@@ -172,7 +172,7 @@
                                 style="@style/TextView.Small"
                                 android:gravity="center"
                                 android:text="@string/account_details_toggle_balance"
-                                android:textColor="@color/theme_white" />
+                                android:textColor="@color/white" />
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -187,14 +187,14 @@
                                     android:layout_width="0dp"
                                     android:layout_height="2dp"
                                     android:layout_weight="0.4"
-                                    android:background="@color/theme_white" />
+                                    android:background="@color/white" />
                                 <View
                                     android:layout_width="0dp"
                                     android:layout_height="2dp"
                                     android:layout_weight="0.3" />
                             </androidx.appcompat.widget.LinearLayoutCompat>
                         </androidx.appcompat.widget.LinearLayoutCompat>
-                        <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/theme_white" />
+                        <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/white" />
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:id="@+id/toggle_shielded"
                             android:layout_width="0dp"
@@ -209,7 +209,7 @@
                                 style="@style/TextView.Small"
                                 android:gravity="center"
                                 android:text="@string/account_details_toggle_shielded"
-                                android:textColor="@color/theme_white" />
+                                android:textColor="@color/white" />
                             <androidx.appcompat.widget.LinearLayoutCompat
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -226,7 +226,7 @@
                                     android:layout_weight="0.4"
                                     android:visibility="gone"
                                     tools:visibility="visible"
-                                    android:background="@color/theme_white" />
+                                    android:background="@color/white" />
                                 <View
                                     android:layout_width="0dp"
                                     android:layout_height="2dp"
@@ -280,11 +280,11 @@
                                 android:layout_margin="15dp"
                                 android:scaleType="fitCenter"
                                 android:layout_centerInParent="true"
-                                android:tint="@color/theme_white"
+                                android:tint="@color/white"
                                 android:src="@drawable/ic_icon_send_shielded"
                                 android:gravity="center" />
                         </RelativeLayout>
-                        <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/theme_white" />
+                        <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/white" />
                         <RelativeLayout
                             android:id="@+id/unshield"
                             android:layout_width="0dp"
@@ -298,11 +298,11 @@
                                 android:layout_margin="15dp"
                                 android:scaleType="fitCenter"
                                 android:layout_centerInParent="true"
-                                android:tint="@color/theme_white"
+                                android:tint="@color/white"
                                 android:src="@drawable/ic_unshield"
                                 android:gravity="center" />
                         </RelativeLayout>
-                        <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/theme_white" />
+                        <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/white" />
                         <RelativeLayout
                             android:id="@+id/receive"
                             android:layout_width="0dp"
@@ -322,7 +322,7 @@
                                 android:gravity="center"
                                 android:scaleType="fitCenter"
                                 android:src="@drawable/ic_icon_qr"
-                                android:tint="@color/theme_white" />
+                                android:tint="@color/white" />
                         </RelativeLayout>
                     </androidx.appcompat.widget.LinearLayoutCompat>
                 </androidx.cardview.widget.CardView>
@@ -377,7 +377,7 @@
                             android:textStyle="bold"
                             android:gravity="center"
                             android:text="@string/cis_tab_fungible"
-                            android:textColor="@color/theme_white" />
+                            android:textColor="@color/white" />
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -392,21 +392,21 @@
                                 android:layout_width="0dp"
                                 android:layout_height="2dp"
                                 android:layout_weight="0.4"
-                                android:background="@color/theme_white" />
+                                android:background="@color/white" />
                             <View
                                 android:layout_width="0dp"
                                 android:layout_height="2dp"
                                 android:layout_weight="0.3" />
                         </androidx.appcompat.widget.LinearLayoutCompat>
                     </androidx.appcompat.widget.LinearLayoutCompat>
-                    <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/theme_white" />
+                    <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/white" />
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:id="@+id/tab_collectibles"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.33"
                         android:gravity="center"
-                        android:background="@color/theme_accent"
+                        android:background="@color/redesign_accent"
                         android:orientation="vertical">
                         <TextView
                             android:id="@+id/tab_collectibles_text"
@@ -415,7 +415,7 @@
                             style="@style/TextView.Small"
                             android:gravity="center"
                             android:text="@string/cis_tab_collectibles"
-                            android:textColor="@color/theme_white" />
+                            android:textColor="@color/white" />
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -431,14 +431,14 @@
                                 android:layout_height="2dp"
                                 android:layout_weight="0.4"
                                 android:visibility="gone"
-                                android:background="@color/theme_white" />
+                                android:background="@color/white" />
                             <View
                                 android:layout_width="0dp"
                                 android:layout_height="2dp"
                                 android:layout_weight="0.3" />
                         </androidx.appcompat.widget.LinearLayoutCompat>
                     </androidx.appcompat.widget.LinearLayoutCompat>
-                    <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/theme_white" />
+                    <View android:layout_width="1dp" android:layout_height="match_parent" android:background="@color/white" />
                     <androidx.appcompat.widget.LinearLayoutCompat
                         android:id="@+id/tab_add_new"
                         android:layout_width="0dp"
@@ -452,7 +452,7 @@
                             android:layout_height="wrap_content"
                             style="@style/TextView.Small"
                             android:text="@string/cis_tab_manage"
-                            android:textColor="@color/theme_white" />
+                            android:textColor="@color/white" />
                         <androidx.appcompat.widget.LinearLayoutCompat
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

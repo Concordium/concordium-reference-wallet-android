@@ -83,7 +83,7 @@
                 android:background="@drawable/button_rounded_default"
                 android:backgroundTint="#48A2AE"
                 android:text="@string/id_pub_error_close_button"
-                android:textColor="@color/theme_white"
+                android:textColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/titleDescription" />

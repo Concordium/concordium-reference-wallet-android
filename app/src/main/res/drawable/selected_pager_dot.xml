@@ -6,7 +6,7 @@
             android:shape="ring"
             android:thickness="@dimen/indicator_size"
             android:useLevel="false">
-            <solid android:color="@color/theme_blue" />
+            <solid android:color="@color/redesign_accent" />
         </shape>
     </item>
 </layer-list>

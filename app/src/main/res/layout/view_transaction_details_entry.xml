@@ -35,7 +35,7 @@
         android:id="@+id/value_textview"
         style="@style/TextView.Standard.Small"
         android:layout_width="0dp"
-        android:layout_marginLeft="@dimen/list_item_horizontal_margin"
+        android:layout_marginHorizontal="@dimen/list_item_horizontal_margin"
         android:layout_marginTop="@dimen/section_internal"
         app:layout_constraintEnd_toStartOf="@id/copy_imageview"
         app:layout_constraintStart_toStartOf="parent"

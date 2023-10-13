@@ -48,13 +48,13 @@ class WordsPickedListAdapter(private val context: Context, private val arrayList
                 holder.binding.tvPosition.setTextColor(
                     ContextCompat.getColor(
                         context,
-                        R.color.theme_white
+                        R.color.white
                     )
                 )
                 holder.binding.tvTitle.setTextColor(
                     ContextCompat.getColor(
                         context,
-                        R.color.theme_white
+                        R.color.white
                     )
                 )
                 holder.binding.rlBorder.elevation = 0f
@@ -88,7 +88,7 @@ class WordsPickedListAdapter(private val context: Context, private val arrayList
             holder.binding.tvPosition.setTextColor(
                 ContextCompat.getColor(
                     context,
-                    R.color.theme_black
+                    R.color.black
                 )
             )
             holder.binding.rlBorder.background =

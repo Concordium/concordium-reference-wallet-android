@@ -49,7 +49,7 @@
             tools:visibility="visible"
             android:layout_marginHorizontal="@dimen/activity_vertical_margin_extended"
             android:layout_marginTop="@dimen/activity_vertical_margin_extended"
-            android:foregroundTint="@color/theme_grey"
+            android:foregroundTint="@color/grey"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/description" />

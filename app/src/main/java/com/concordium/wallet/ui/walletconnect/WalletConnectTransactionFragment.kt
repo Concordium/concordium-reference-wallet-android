@@ -151,31 +151,31 @@ class WalletConnectTransactionFragment : WalletConnectBaseFragment() {
                 binding.atDisposalTitle.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
-                        R.color.text_pink
+                        R.color.redesign_negative_light
                     )
                 )
                 binding.atDisposal.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
-                        R.color.text_pink
+                        R.color.redesign_negative_light
                     )
                 )
                 binding.amountTitle.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
-                        R.color.text_pink
+                        R.color.redesign_negative_light
                     )
                 )
                 binding.amount.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
-                        R.color.text_pink
+                        R.color.redesign_negative_light
                     )
                 )
                 binding.estimatedTransactionFee.setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
-                        R.color.text_pink
+                        R.color.redesign_negative_light
                     )
                 )
             }

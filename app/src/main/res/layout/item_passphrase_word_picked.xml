@@ -16,7 +16,7 @@
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="2dp"
-            android:textColor="@color/theme_black"
+            android:textColor="@color/black"
             android:gravity="center_vertical|end"
             style="@style/TextView.Mono"
             tools:text="88." />

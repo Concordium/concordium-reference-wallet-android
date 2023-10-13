@@ -7,7 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+### Changed
+
+- Changed application colours to align with new designs.
+
+### Fixed
+
+- WalletConnect: Fix parsing of "broken" schema format for contract update transactions.
+
+## [1.3.0]
 
 ### Fixed
 

@@ -132,7 +132,7 @@ class BakerStatusActivity : StatusActivity(R.string.baker_status_title) {
 
         if (viewModel.isInCoolDown()) {
             menuView.menuItemStopBaking.isEnabled = false
-            menuView.menuItemStopBaking.setTextColor(getColor(R.color.text_grey))
+            menuView.menuItemStopBaking.setTextColor(getColor(R.color.redesign_off_primary))
         } else {
             menuView.menuItemStopBaking.setOnClickListener {
                 gotoBakerRemoveIntroFlow()

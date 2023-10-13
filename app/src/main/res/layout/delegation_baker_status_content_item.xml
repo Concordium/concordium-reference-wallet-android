@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     tools:layout_width="match_parent"
     tools:layout_height="match_parent"
-    tools:background="@color/theme_black"
+    tools:background="@color/black"
     android:paddingLeft="@dimen/account_release_schedule_inner_list_padding_sides"
     android:paddingRight="@dimen/account_release_schedule_inner_list_padding_sides"
     android:paddingTop="@dimen/account_release_schedule_inner_list_padding_top_bottom"
