@@ -17,8 +17,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/create_identity_flow_top_margin"
-            android:layout_below="@+id/toolbar_layout">
+            android:layout_below="@+id/toolbar_layout"
+            android:layout_marginTop="@dimen/create_identity_flow_top_margin">
 
             <ScrollView
                 android:layout_width="wrap_content"
@@ -49,9 +49,9 @@
                             android:id="@+id/baker_options"
                             android:layout_width="307dp"
                             android:layout_height="@dimen/segmented_control_height"
+                            android:layout_gravity="center"
                             android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-                            android:layout_marginVertical="@dimen/activity_content_margin"
-                            android:layout_gravity="center" />
+                            android:layout_marginVertical="@dimen/activity_content_margin" />
                     </LinearLayout>
 
                     <RelativeLayout
@@ -60,9 +60,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/activity_vertical_margin"
                         android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
+                        android:orientation="horizontal"
                         android:paddingTop="10dp"
-                        android:paddingBottom="10dp"
-                        android:orientation="horizontal">
+                        android:paddingBottom="10dp">
 
                         <Button
                             android:id="@+id/baker_registration_continue"
@@ -70,11 +70,8 @@
                             android:layout_width="match_parent"
                             android:text="@string/baker_registration_continue" />
                     </RelativeLayout>
-
                 </LinearLayout>
             </ScrollView>
-
         </RelativeLayout>
     </RelativeLayout>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

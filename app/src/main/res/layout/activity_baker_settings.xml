@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    style="@style/Layout.Root">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/toolbar_layout"
+            layout="@layout/app_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbar_layout"
+            android:layout_marginTop="@dimen/create_identity_flow_top_margin">
+
+            <ScrollView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/title"
+                        style="@style/TextView.Standard"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                        android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
+                        android:text="@string/baker_pool_settings_explain"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/transactionFeeTitle"
+                        style="@style/TextView.Standard"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin_double"
+                        android:layout_marginVertical="@dimen/activity_horizontal_margin_double"
+                        android:text="@string/baker_pool_settings_fee_explain"
+                        android:textAlignment="center"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/title" />
+
+                    <TextView
+                        android:id="@+id/transactionFeeMin"
+                        style="@style/TextView.Standard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@id/transactionFeeSlider"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/transactionFeeSlider"
+                        tools:text="Min:\n20.00%" />
+
+                    <TextView
+                        android:id="@+id/transactionFeeMax"
+                        style="@style/TextView.Standard"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@id/transactionFeeSlider"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/transactionFeeSlider"
+                        tools:text="Max:\n20.00%" />
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/transactionFeeSlider"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin_quarter"
+                        android:layout_marginTop="@dimen/activity_horizontal_margin"
+                        app:layout_constraintEnd_toStartOf="@id/transactionFeeMax"
+                        app:layout_constraintStart_toEndOf="@id/transactionFeeMin"
+                        app:layout_constraintTop_toBottomOf="@id/transactionFeeTitle" />
+
+                    <TextView
+                        android:id="@+id/bakingTitle"
+                        style="@style/TextView.Standard"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin_double"
+                        android:layout_marginTop="@dimen/activity_horizontal_margin_double"
+                        android:text="@string/baker_pool_settings_baking_explain"
+                        android:textAlignment="center"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/transactionFeeSlider" />
+
+                    <TextView
+                        android:id="@+id/bakingMin"
+                        style="@style/TextView.Standard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@id/bakingSlider"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/bakingSlider"
+                        tools:text="Min:\n20.00%" />
+
+                    <TextView
+                        android:id="@+id/bakingMax"
+                        style="@style/TextView.Standard"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@id/bakingSlider"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/bakingSlider"
+                        tools:text="Max:\n20.00%" />
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/bakingSlider"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin_quarter"
+                        android:layout_marginTop="@dimen/activity_horizontal_margin"
+                        app:layout_constraintEnd_toStartOf="@id/bakingMax"
+                        app:layout_constraintStart_toEndOf="@id/bakingMin"
+                        app:layout_constraintTop_toBottomOf="@id/bakingTitle" />
+
+                    <TextView
+                        android:id="@+id/rewardTitle"
+                        style="@style/TextView.Standard"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                        android:layout_marginTop="@dimen/activity_horizontal_margin_double"
+                        android:text="@string/baker_pool_settings_reward_explain"
+                        android:textAlignment="center"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/bakingSlider" />
+
+                    <TextView
+                        android:id="@+id/rewardMin"
+                        style="@style/TextView.Standard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@id/rewardSlider"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/rewardSlider"
+                        tools:text="Min:\n20.00%" />
+
+                    <TextView
+                        android:id="@+id/rewardMax"
+                        style="@style/TextView.Standard"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="@id/rewardSlider"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/rewardSlider"
+                        tools:text="Max:\n20.00%" />
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/rewardSlider"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin_quarter"
+                        android:layout_marginTop="@dimen/activity_horizontal_margin"
+                        app:layout_constraintEnd_toStartOf="@id/rewardMax"
+                        app:layout_constraintStart_toEndOf="@id/rewardMin"
+                        app:layout_constraintTop_toBottomOf="@id/rewardTitle" />
+
+                    <Button
+                        android:id="@+id/baker_registration_continue"
+                        style="@style/Button.Standard"
+                        android:layout_width="match_parent"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                        android:layout_marginBottom="@dimen/activity_horizontal_margin"
+                        android:text="@string/baker_registration_continue"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </ScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

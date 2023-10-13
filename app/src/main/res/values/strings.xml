@@ -388,6 +388,10 @@
 
     <string name="baker_registration_title">Register baker</string>
     <string name="baker_registration_explain">You have the option to open your baker as a pool for others to delegate their CCD to.\n\nIf you choose to open your pool, other people will be able to delegate CCDs to your baking pool.\n\nYou can also keep the pool closed, if you want only your own CCDs to be staked.</string>
+    <string name="baker_pool_settings_explain">When you open your baker as a pool, you earn\ncommissions of stake delegated to your pool from\nother accounts:</string>
+    <string name="baker_pool_settings_fee_explain">Transaction fee commission</string>
+    <string name="baker_pool_settings_baking_explain">Baking reward commission</string>
+    <string name="baker_pool_settings_reward_explain">Finalization reward commission</string>
     <string name="baker_registration_open">Open for delegation</string>
     <string name="baker_registration_close">Close for delegation</string>
     <string name="baker_registration_continue">Continue</string>
