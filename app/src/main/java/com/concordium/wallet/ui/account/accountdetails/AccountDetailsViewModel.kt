@@ -20,7 +20,12 @@ import com.concordium.wallet.data.TransferRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.cryptolib.DecryptAmountInput
 import com.concordium.wallet.data.cryptolib.StorageAccountData
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.BakerDelegationData
+import com.concordium.wallet.data.model.RemoteTransaction
+import com.concordium.wallet.data.model.Transaction
+import com.concordium.wallet.data.model.TransactionOutcome
+import com.concordium.wallet.data.model.TransactionStatus
+import com.concordium.wallet.data.model.TransactionType
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.Transfer
@@ -39,7 +44,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import java.math.BigInteger
-import java.util.*
+import java.util.Date
 import javax.crypto.Cipher
 
 class AccountDetailsViewModel(application: Application) : AndroidViewModel(application) {
@@ -241,6 +246,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 _waitingLiveData.value = true
             }
             viewModelScope.launch {
+                updateAccountFromRepository()
                 accountUpdater.updateForAccount(account)
                 val type =
                     if (account.accountDelegation != null) ProxyRepository.UPDATE_DELEGATION else ProxyRepository.REGISTER_BAKER
@@ -266,10 +272,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 )
                 getLocalTransfers()
                 viewModelScope.launch {
-                    accountRepository.findById(account.id)?.let { accountCandidate ->
-                        account = accountCandidate
-                        _accountUpdatedLiveData.value = true
-                    }
+                    updateAccountFromRepository()
+                    _accountUpdatedLiveData.value = true
                 }
             }
 
@@ -283,6 +287,12 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
                 _errorLiveData.value = Event(stringRes)
             }
         })
+    }
+
+    private suspend fun updateAccountFromRepository() {
+        accountRepository.findById(account.id)?.let { accountCandidate ->
+            account = accountCandidate
+        }
     }
 
     private fun getIncludeRewards(): String {
@@ -484,6 +494,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         viewModelScope.launch {
             if (!transfersOnly) {
                 clearTransactionListState()
+                updateAccountFromRepository()
                 accountUpdater.decryptEncryptedAmounts(secretKey, account)
                 accountUpdater.decryptAllUndecryptedAmounts(secretKey)
                 accountUpdater.updateForAccount(account)

@@ -1,11 +1,13 @@
 package com.concordium.wallet.uicore.dialog
 
+import android.app.Dialog
 import android.os.Bundle
 import android.text.InputType
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
@@ -75,6 +77,15 @@ class AuthenticationDialogFragment : DialogFragment(), TextView.OnEditorActionLi
         binding.cancelButton.setOnClickListener {
             callback?.onCancelled()
             dismiss()
+        }
+        binding.includeDialogAuthenticationContent.passwordEdittext.requestFocus()
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return super.onCreateDialog(savedInstanceState).apply {
+            // The correct input mode needs to be set
+            // for the keyboard to be shown automatically.
+            window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         }
     }
 
