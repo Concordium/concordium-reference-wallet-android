@@ -40,6 +40,7 @@ import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.TokenUtil
 import com.concordium.wallet.util.toBigInteger
 import com.concordium.wallet.util.toHex
 import kotlinx.coroutines.CoroutineScope
@@ -331,20 +332,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         val atDisposal =
             account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
                 ?: BigInteger.ZERO
-        return Token(
-            "",
-            "CCD",
-            "",
-            null,
-            false,
-            "",
-            "",
-            true,
-            (account?.totalBalance ?: BigInteger.ZERO),
-            atDisposal,
-            "",
-            "CCD"
-        )
+        return TokenUtil.getCCDToken(account)
     }
 
     fun getCipherForBiometrics(): Cipher? {

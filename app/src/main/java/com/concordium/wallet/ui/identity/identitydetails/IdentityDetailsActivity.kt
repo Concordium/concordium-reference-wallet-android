@@ -92,8 +92,8 @@ class IdentityDetailsActivity : BaseActivity() {
 
     private fun showChangeNameDialog() {
         val builder: AlertDialog.Builder = AlertDialog.Builder(this)
-        builder.setTitle(getString(R.string.account_details_change_name_popup_title))
-        builder.setMessage(getString(R.string.account_details_change_name_popup_subtitle))
+        builder.setTitle(getString(R.string.identity_details_change_name_popup_title))
+        builder.setMessage(getString(R.string.identity_details_change_name_popup_subtitle))
         val input = AppCompatEditText(this)
         input.hint = viewModel.identity.name
         input.inputType = InputType.TYPE_CLASS_TEXT
