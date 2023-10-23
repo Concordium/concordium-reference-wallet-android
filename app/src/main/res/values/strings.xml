@@ -598,7 +598,7 @@
     <string name="identity_details_title">Identity</string>
     <string name="identity_details_attribute_header">Identity data</string>
     <string name="identity_details_change_name_popup_title">Change identity name</string>
-    <string name="identity_details_change_name_popup_subtitle">Enter the new identity name here.</string>
+    <string name="identity_details_change_name_popup_subtitle">You can enter the new identity name here.</string>
 
     <!-- Identity create -->
     <string name="identity_create_identity_provider_header">Choosing an identity provider</string>

@@ -329,9 +329,6 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
         val accountRepository =
             AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
         val account = accountRepository.findByAddress(accountAddress)
-        val atDisposal =
-            account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
-                ?: BigInteger.ZERO
         return TokenUtil.getCCDToken(account)
     }
 
