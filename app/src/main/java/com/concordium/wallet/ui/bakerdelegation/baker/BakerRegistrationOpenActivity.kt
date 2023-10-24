@@ -54,19 +54,8 @@ class BakerRegistrationOpenActivity : BaseDelegationBakerActivity() {
         binding.bakerRegistrationOpenContinue.setOnClickListener {
             KeyboardUtil.hideKeyboard(this)
             viewModel.bakerDelegationData.metadataUrl = binding.openUrl.text?.toString()
-            validate()
+            gotoNextPage()
         }
-    }
-
-    private fun validate() {
-        var gotoNextPage = false
-        if (viewModel.bakerDelegationData.oldMetadataUrl != viewModel.bakerDelegationData.metadataUrl ||
-            viewModel.bakerDelegationData.oldOpenStatus != viewModel.bakerDelegationData.bakerPoolInfo?.openStatus
-        )
-            gotoNextPage = true
-
-        if (gotoNextPage) gotoNextPage()
-        else showNoChange()
     }
 
     private fun gotoNextPage() {

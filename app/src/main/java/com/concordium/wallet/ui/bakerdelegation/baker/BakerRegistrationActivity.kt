@@ -57,7 +57,7 @@ class BakerRegistrationActivity : BaseDelegationBakerActivity() {
             if (viewModel.bakerDelegationData.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_ALL)
                 Intent(this, BakerRegistrationCloseActivity::class.java)
             else
-                Intent(this, BakerRegistrationOpenActivity::class.java)
+                Intent(this, BakerPoolSettingsActivity::class.java)
         intent.putExtra(
             DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA,
             viewModel.bakerDelegationData

@@ -555,12 +555,12 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         val bakerKeys =
             if (bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.bakerKeys
 
-        val transactionFeeCommission =
-            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.transactionCommissionRange?.max else null
+        val transactionFeeCommission =//todo change to selected rates.
+            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.transactionCommissionRate else null
         val bakingRewardCommission =
-            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.bakingCommissionRange?.max else null
+            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.bakingCommissionRate else null
         val finalizationRewardCommission =
-            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.finalizationCommissionRange?.max else null
+            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.finalizationCommissionRate else null
 
         val transferInput = CreateTransferInput(
             from,
@@ -804,4 +804,15 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO
     ) ?: BigInteger.ZERO
 
+    fun setSelectedCommissionRates(
+        transactionRate: Double?,
+        bakingRate: Double?,
+        rewardRate: Double?
+    ) {
+        bakerDelegationData.chainParameters = bakerDelegationData.chainParameters?.copy(
+            bakingCommissionRate = bakingRate,
+            transactionCommissionRate = transactionRate,
+            finalizationCommissionRate = rewardRate
+        )
+    }
 }

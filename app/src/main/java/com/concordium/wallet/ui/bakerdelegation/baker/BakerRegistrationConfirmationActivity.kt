@@ -38,13 +38,14 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
 
     override fun initViews() {
         super.initViews()
-        viewModel.chainParametersLoadedLiveData.observe(this, Observer { success ->
-            success?.let {
-                loadFee()
-            }
-        })
+//        viewModel.chainParametersLoadedLiveData.observe(this, Observer { success ->
+//            success?.let {
+//                loadFee()
+//            }
+//        })
         showWaiting(binding.includeProgress.progressLayout, true)
-        viewModel.loadChainParameters()
+        loadFee()
+//        viewModel.loadChainParameters()//todo remove me
     }
 
     private fun loadFee() {

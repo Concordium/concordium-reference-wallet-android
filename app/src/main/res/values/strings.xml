@@ -1111,4 +1111,7 @@
     <string name="export_seed_phrase_title">Secret recovery phrase</string>
     <string name="export_seed_phrase_done">Done</string>
     <string name="export_seed_phrase_error">Error while loading secret recovery phrase</string>
+
+    <string name="baking_pool_range_min">Min:\n%1$s</string>
+    <string name="baking_pool_range_max">Max:\n%1$s</string>
 </resources>

@@ -61,6 +61,19 @@
                         app:layout_constraintTop_toBottomOf="@id/title" />
 
                     <TextView
+                        android:id="@+id/transactionFeeValue"
+                        style="@style/TextView.InfoMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin_double"
+                        android:layout_marginTop="@dimen/activity_horizontal_margin_half"
+                        tools:text="10%"
+                        android:textAlignment="center"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/transactionFeeTitle" />
+
+                    <TextView
                         android:id="@+id/transactionFeeMin"
                         style="@style/TextView.Standard"
                         android:layout_width="wrap_content"
@@ -84,15 +97,22 @@
                         app:layout_constraintTop_toTopOf="@id/transactionFeeSlider"
                         tools:text="Max:\n20.00%" />
 
-                    <com.google.android.material.slider.Slider
+                    <SeekBar
                         android:id="@+id/transactionFeeSlider"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/activity_horizontal_margin_quarter"
-                        android:layout_marginTop="@dimen/activity_horizontal_margin"
+                        android:layout_marginTop="@dimen/activity_horizontal_margin_quarter"
                         app:layout_constraintEnd_toStartOf="@id/transactionFeeMax"
                         app:layout_constraintStart_toEndOf="@id/transactionFeeMin"
-                        app:layout_constraintTop_toBottomOf="@id/transactionFeeTitle" />
+                        app:layout_constraintTop_toBottomOf="@id/transactionFeeValue" />
+
+                    <androidx.constraintlayout.widget.Group
+                        android:id="@+id/transactionFeeGroup"
+                        android:layout_width="wrap_content"
+                        tools:visibility="visible"
+                        app:constraint_referenced_ids="transactionFeeMin,transactionFeeMax,transactionFeeSlider"
+                        android:layout_height="wrap_content"/>
 
                     <TextView
                         android:id="@+id/bakingTitle"
@@ -106,6 +126,19 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/transactionFeeSlider" />
+
+                    <TextView
+                        android:id="@+id/bakingValue"
+                        style="@style/TextView.InfoMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin_double"
+                        android:layout_marginTop="@dimen/activity_horizontal_margin_half"
+                        tools:text="10%"
+                        android:textAlignment="center"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/bakingTitle" />
 
                     <TextView
                         android:id="@+id/bakingMin"
@@ -131,15 +164,22 @@
                         app:layout_constraintTop_toTopOf="@id/bakingSlider"
                         tools:text="Max:\n20.00%" />
 
-                    <com.google.android.material.slider.Slider
+                    <SeekBar
                         android:id="@+id/bakingSlider"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/activity_horizontal_margin_quarter"
-                        android:layout_marginTop="@dimen/activity_horizontal_margin"
+                        android:layout_marginTop="@dimen/activity_horizontal_margin_quarter"
                         app:layout_constraintEnd_toStartOf="@id/bakingMax"
                         app:layout_constraintStart_toEndOf="@id/bakingMin"
-                        app:layout_constraintTop_toBottomOf="@id/bakingTitle" />
+                        app:layout_constraintTop_toBottomOf="@id/bakingValue" />
+
+                    <androidx.constraintlayout.widget.Group
+                        android:id="@+id/bakingGroup"
+                        android:layout_width="wrap_content"
+                        tools:visibility="visible"
+                        app:constraint_referenced_ids="bakingMin,bakingMax,bakingSlider"
+                        android:layout_height="wrap_content"/>
 
                     <TextView
                         android:id="@+id/rewardTitle"
@@ -153,6 +193,19 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/bakingSlider" />
+
+                    <TextView
+                        android:id="@+id/rewardValue"
+                        style="@style/TextView.InfoMedium"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin_double"
+                        android:layout_marginTop="@dimen/activity_horizontal_margin_half"
+                        tools:text="10%"
+                        android:textAlignment="center"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/rewardTitle" />
 
                     <TextView
                         android:id="@+id/rewardMin"
@@ -178,15 +231,22 @@
                         app:layout_constraintTop_toTopOf="@id/rewardSlider"
                         tools:text="Max:\n20.00%" />
 
-                    <com.google.android.material.slider.Slider
+                    <SeekBar
                         android:id="@+id/rewardSlider"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/activity_horizontal_margin_quarter"
-                        android:layout_marginTop="@dimen/activity_horizontal_margin"
+                        android:layout_marginTop="@dimen/activity_horizontal_margin_quarter"
                         app:layout_constraintEnd_toStartOf="@id/rewardMax"
                         app:layout_constraintStart_toEndOf="@id/rewardMin"
-                        app:layout_constraintTop_toBottomOf="@id/rewardTitle" />
+                        app:layout_constraintTop_toBottomOf="@id/rewardValue" />
+
+                    <androidx.constraintlayout.widget.Group
+                        android:id="@+id/rewardGroup"
+                        android:layout_width="wrap_content"
+                        tools:visibility="visible"
+                        app:constraint_referenced_ids="rewardMin,rewardMax,rewardSlider"
+                        android:layout_height="wrap_content"/>
 
                     <Button
                         android:id="@+id/baker_registration_continue"
