@@ -36,7 +36,6 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
         }
     }
 
-    private val RATE_RANGE_FRACTION_MULTIPLAYER = 100000
     private fun setCommissionRates() {
         val chainParams = viewModel.bakerDelegationData.chainParameters ?: return
         binding.apply {
@@ -48,6 +47,8 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
         }
     }
 
+    private val RATE_RANGE_FRACTION_MULTIPLAYER = 100000
+
     private fun ActivityBakerSettingsBinding.setRewardRates(rewardRange: FinalizationCommissionRange) {
         if (rewardRange.min != rewardRange.max) {
             rewardGroup.visibility = View.VISIBLE
@@ -55,10 +56,9 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
             rewardMax.text = getMaxRangeText(rewardRange.max)
             rewardSlider.apply {
                 isEnabled = true
-                max = (rewardRange.max * RATE_RANGE_FRACTION_MULTIPLAYER).toInt()
-                min = (rewardRange.min * RATE_RANGE_FRACTION_MULTIPLAYER).toInt()
-                progress =
-                    ((rewardRange.max - (rewardRange.max - rewardRange.min) / 2) * RATE_RANGE_FRACTION_MULTIPLAYER).roundToInt()
+                max = getSliderRangeValue(rewardRange.max)
+                min = getSliderRangeValue(rewardRange.min)
+                progress = getSliderDefaultProgressValue(rewardRange.max, rewardRange.min)
                 rewardValue.text = getPercentageStringFromProgress(progress)
 
                 setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -88,10 +88,9 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
             bakingMax.text = getMaxRangeText(bakingRange.max)
             bakingSlider.apply {
                 isEnabled = true
-                max = (bakingRange.max * RATE_RANGE_FRACTION_MULTIPLAYER).toInt()
-                min = (bakingRange.min * RATE_RANGE_FRACTION_MULTIPLAYER).toInt()
-                progress =
-                    ((bakingRange.max - (bakingRange.max - bakingRange.min) / 2) * RATE_RANGE_FRACTION_MULTIPLAYER).roundToInt()
+                max = getSliderRangeValue(bakingRange.max)
+                min = getSliderRangeValue(bakingRange.min)
+                progress = getSliderDefaultProgressValue(bakingRange.max, bakingRange.min)
                 bakingValue.text = getPercentageStringFromProgress(progress)
 
                 setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -123,10 +122,9 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
             transactionFeeMax.text = getMaxRangeText(transactionRange.max)
             transactionFeeSlider.apply {
                 isEnabled = true
-                max = (transactionRange.max * RATE_RANGE_FRACTION_MULTIPLAYER).toInt()
-                min = (transactionRange.min * RATE_RANGE_FRACTION_MULTIPLAYER).toInt()
-                progress =
-                    ((transactionRange.max - (transactionRange.max - transactionRange.min) / 2) * RATE_RANGE_FRACTION_MULTIPLAYER).roundToInt()
+                max = getSliderRangeValue(transactionRange.max)
+                min = getSliderRangeValue(transactionRange.min)
+                progress = getSliderDefaultProgressValue(transactionRange.max, transactionRange.min)
                 transactionFeeValue.text = getPercentageStringFromProgress(progress)
 
                 setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -149,15 +147,19 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
         }
     }
 
+    private fun getSliderRangeValue(value: Double): Int =
+        (value * RATE_RANGE_FRACTION_MULTIPLAYER).toInt()
+
+    private fun getSliderDefaultProgressValue(max: Double, min: Double) =
+        ((max - (max - min) / 2) * RATE_RANGE_FRACTION_MULTIPLAYER).roundToInt()
+
     private fun getPercentageStringFromProgress(progress: Int) =
         "${valueAsPercentageString(progress.toDouble() / 1000)}%"
 
     private fun getPercentageString(value: Double) = "${valueAsPercentageString(value * 100)}%"
 
 
-    private fun valueAsPercentageString(value: Double) = String.format(
-        "%.3f", value
-    )
+    private fun valueAsPercentageString(value: Double) = String.format("%.3f", value)
 
     private fun getMinRangeText(value: Double) = "${
         resources.getString(
@@ -185,9 +187,21 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
         val rewardRange = chainParams?.finalizationCommissionRange
 
         viewModel.setSelectedCommissionRates(
-            if (transactionRange != null && transactionRange.min != transactionRange.max) binding.transactionFeeSlider.progress.toDouble() / 100 else transactionRange?.max,
-            if (bakingRange != null && bakingRange.min != bakingRange.max) binding.bakingSlider.progress.toDouble() / 100 else bakingRange?.max,
-            if (rewardRange != null && rewardRange.min != rewardRange.max) binding.rewardSlider.progress.toDouble() / 100 else rewardRange?.max,
+            transactionRate = if (transactionRange != null && transactionRange.min != transactionRange.max) {
+                binding.transactionFeeSlider.progress.toDouble() / 100
+            } else {
+                transactionRange?.max
+            },
+            bakingRate = if (bakingRange != null && bakingRange.min != bakingRange.max) {
+                binding.bakingSlider.progress.toDouble() / 100
+            } else {
+                bakingRange?.max
+            },
+            rewardRate = if (rewardRange != null && rewardRange.min != rewardRange.max) {
+                binding.rewardSlider.progress.toDouble() / 100
+            } else {
+                rewardRange?.max
+            },
         )
 
         val intent = Intent(this, BakerRegistrationOpenActivity::class.java)

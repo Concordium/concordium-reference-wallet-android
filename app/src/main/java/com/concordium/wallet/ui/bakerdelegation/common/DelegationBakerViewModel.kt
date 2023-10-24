@@ -555,7 +555,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         val bakerKeys =
             if (bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.bakerKeys
 
-        val transactionFeeCommission =//todo change to selected rates.
+        val transactionFeeCommission =
             if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.transactionCommissionRate else null
         val bakingRewardCommission =
             if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.bakingCommissionRate else null

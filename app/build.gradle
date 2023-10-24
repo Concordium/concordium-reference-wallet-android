@@ -358,8 +358,6 @@ dependencies {
     // Crypto library
     implementation project(":mobile_wallet_lib-release")
 
-    //seekbar
-    implementation 'com.github.hearsilent:DiscreteSlider:1.2.1'
 
     // Test
     testImplementation 'junit:junit:4.13.2'
