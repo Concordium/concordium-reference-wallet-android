@@ -47,7 +47,7 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
         }
     }
 
-    private val RATE_RANGE_FRACTION_MULTIPLAYER = 100000
+    private val RATE_RANGE_FRACTION_MULTIPLIER = 100000
 
     private fun ActivityBakerSettingsBinding.setRewardRates(rewardRange: FinalizationCommissionRange) {
         if (rewardRange.min != rewardRange.max) {
@@ -58,7 +58,7 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
                 isEnabled = true
                 max = getSliderRangeValue(rewardRange.max)
                 min = getSliderRangeValue(rewardRange.min)
-                progress = getSliderDefaultProgressValue(rewardRange.max, rewardRange.min)
+                progress = getSliderDefaultProgressValue(rewardRange.max)
                 rewardValue.text = getPercentageStringFromProgress(progress)
 
                 setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -90,7 +90,7 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
                 isEnabled = true
                 max = getSliderRangeValue(bakingRange.max)
                 min = getSliderRangeValue(bakingRange.min)
-                progress = getSliderDefaultProgressValue(bakingRange.max, bakingRange.min)
+                progress = getSliderDefaultProgressValue(bakingRange.max)
                 bakingValue.text = getPercentageStringFromProgress(progress)
 
                 setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -124,7 +124,7 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
                 isEnabled = true
                 max = getSliderRangeValue(transactionRange.max)
                 min = getSliderRangeValue(transactionRange.min)
-                progress = getSliderDefaultProgressValue(transactionRange.max, transactionRange.min)
+                progress = getSliderDefaultProgressValue(transactionRange.max)
                 transactionFeeValue.text = getPercentageStringFromProgress(progress)
 
                 setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -148,10 +148,10 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
     }
 
     private fun getSliderRangeValue(value: Double): Int =
-        (value * RATE_RANGE_FRACTION_MULTIPLAYER).toInt()
+        (value * RATE_RANGE_FRACTION_MULTIPLIER).toInt()
 
-    private fun getSliderDefaultProgressValue(max: Double, min: Double) =
-        ((max - (max - min) / 2) * RATE_RANGE_FRACTION_MULTIPLAYER).roundToInt()
+    private fun getSliderDefaultProgressValue(max: Double) =
+        (max * RATE_RANGE_FRACTION_MULTIPLIER).roundToInt()
 
     private fun getPercentageStringFromProgress(progress: Int) =
         "${valueAsPercentageString(progress.toDouble() / 1000)}%"
