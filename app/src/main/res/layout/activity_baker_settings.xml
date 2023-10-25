@@ -33,7 +33,9 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true">
 
                     <TextView
                         android:id="@+id/title"
@@ -60,18 +62,21 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/title" />
 
-                    <TextView
+                    <EditText
                         android:id="@+id/transactionFeeValue"
-                        style="@style/TextView.InfoMedium"
+                        style="@style/TextView.SingleLine"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/activity_horizontal_margin_double"
                         android:layout_marginTop="@dimen/activity_horizontal_margin_half"
-                        tools:text="10%"
+                        android:background="@color/background_transparent"
+                        android:inputType="numberDecimal"
+                        android:maxLength="8"
                         android:textAlignment="center"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/transactionFeeTitle" />
+                        app:layout_constraintTop_toBottomOf="@id/transactionFeeTitle"
+                        tools:text="10%" />
 
                     <TextView
                         android:id="@+id/transactionFeeMin"
@@ -110,9 +115,9 @@
                     <androidx.constraintlayout.widget.Group
                         android:id="@+id/transactionFeeGroup"
                         android:layout_width="wrap_content"
-                        tools:visibility="visible"
+                        android:layout_height="wrap_content"
                         app:constraint_referenced_ids="transactionFeeMin,transactionFeeMax,transactionFeeSlider"
-                        android:layout_height="wrap_content"/>
+                        tools:visibility="visible" />
 
                     <TextView
                         android:id="@+id/bakingTitle"
@@ -127,18 +132,21 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/transactionFeeSlider" />
 
-                    <TextView
+                    <EditText
                         android:id="@+id/bakingValue"
-                        style="@style/TextView.InfoMedium"
+                        style="@style/TextView.SingleLine"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/activity_horizontal_margin_double"
                         android:layout_marginTop="@dimen/activity_horizontal_margin_half"
-                        tools:text="10%"
+                        android:background="@color/background_transparent"
+                        android:inputType="numberDecimal"
+                        android:maxLength="8"
                         android:textAlignment="center"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/bakingTitle" />
+                        app:layout_constraintTop_toBottomOf="@id/bakingTitle"
+                        tools:text="10%" />
 
                     <TextView
                         android:id="@+id/bakingMin"
@@ -177,9 +185,9 @@
                     <androidx.constraintlayout.widget.Group
                         android:id="@+id/bakingGroup"
                         android:layout_width="wrap_content"
-                        tools:visibility="visible"
+                        android:layout_height="wrap_content"
                         app:constraint_referenced_ids="bakingMin,bakingMax,bakingSlider"
-                        android:layout_height="wrap_content"/>
+                        tools:visibility="visible" />
 
                     <TextView
                         android:id="@+id/rewardTitle"
@@ -194,18 +202,21 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/bakingSlider" />
 
-                    <TextView
+                    <EditText
                         android:id="@+id/rewardValue"
-                        style="@style/TextView.InfoMedium"
+                        style="@style/TextView.SingleLine"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/activity_horizontal_margin_double"
                         android:layout_marginTop="@dimen/activity_horizontal_margin_half"
-                        tools:text="10%"
+                        android:background="@color/background_transparent"
+                        android:inputType="numberDecimal"
+                        android:maxLength="8"
                         android:textAlignment="center"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/rewardTitle" />
+                        app:layout_constraintTop_toBottomOf="@id/rewardTitle"
+                        tools:text="10%" />
 
                     <TextView
                         android:id="@+id/rewardMin"
@@ -244,9 +255,9 @@
                     <androidx.constraintlayout.widget.Group
                         android:id="@+id/rewardGroup"
                         android:layout_width="wrap_content"
-                        tools:visibility="visible"
+                        android:layout_height="wrap_content"
                         app:constraint_referenced_ids="rewardMin,rewardMax,rewardSlider"
-                        android:layout_height="wrap_content"/>
+                        tools:visibility="visible" />
 
                     <Button
                         android:id="@+id/baker_registration_continue"
