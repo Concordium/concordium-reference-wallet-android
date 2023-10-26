@@ -61,7 +61,10 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
 
         initializeViews()
 
-        intent?.data?.let { if (it.toString().startsWith("wc")) wcUri = it.toString() }
+        intent?.data?.let {
+            if (it.toString().startsWith("wc") || it.toString().startsWith("concordiumwallet")
+            ) wcUri = it.toString()
+        }
 
         // If we're being restored from a previous state,
         // then we don't want to add fragments and should return or else
@@ -70,7 +73,8 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
             return
         } else {
             intent?.data?.let {
-                if (it.toString().startsWith("wc")) {
+                if (it.toString().startsWith("wc") || it.toString().startsWith("concordiumwallet")
+                ) {
                     wcUri = it.toString()
                     if (App.appCore.session.isLoggedIn.value == true && AuthPreferences(this).hasSeedPhrase()) {
                         gotoWalletConnect()
@@ -171,7 +175,7 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         intent?.data?.let {
-            if (it.toString().startsWith("wc")) {
+            if (it.toString().startsWith("wc") || it.toString().startsWith("concordiumwallet")) {
                 wcUri = it.toString()
                 if (App.appCore.session.isLoggedIn.value == true && AuthPreferences(this).hasSeedPhrase()) {
                     gotoWalletConnect()

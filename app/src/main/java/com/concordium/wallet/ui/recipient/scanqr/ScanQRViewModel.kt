@@ -46,6 +46,7 @@ class ScanQRViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun checkQrWalletConnect(qrInfo: String): Boolean {
-        return qrInfo.isNotBlank() && qrInfo.lowercase().startsWith("wc:")
+        return qrInfo.isNotBlank() && (qrInfo.lowercase().startsWith("wc:") || qrInfo.lowercase()
+            .startsWith("concordiumwallet:"))
     }
 }
