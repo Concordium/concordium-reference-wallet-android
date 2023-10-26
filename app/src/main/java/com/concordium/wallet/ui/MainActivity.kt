@@ -62,7 +62,8 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
         initializeViews()
 
         intent?.data?.let {
-            if (it.toString().startsWith("wc") || it.toString().startsWith("concordiumwallet")
+            if (it.toString().startsWith("wc") || it.toString()
+                    .startsWith("concordiumwallet")
             ) wcUri = it.toString()
         }
 
@@ -73,7 +74,8 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
             return
         } else {
             intent?.data?.let {
-                if (it.toString().startsWith("wc") || it.toString().startsWith("concordiumwallet")
+                if (it.toString().startsWith("wc") || it.toString()
+                        .startsWith("concordiumwallet")
                 ) {
                     wcUri = it.toString()
                     if (App.appCore.session.isLoggedIn.value == true && AuthPreferences(this).hasSeedPhrase()) {
@@ -92,9 +94,7 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
 
     private fun setupToolbar() {
         setupActionBar(
-            binding.toolbarLayout.toolbar,
-            binding.toolbarLayout.toolbarTitle,
-            R.string.main_title
+            binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.main_title
         )
         supportActionBar?.setCustomView(R.layout.app_toolbar_main)
         binding.toolbarLayout.settingsContainer.setOnClickListener {
@@ -198,8 +198,7 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
 
     private fun initializeViewModel() {
         viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+            this, ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[MainViewModel::class.java]
 
         viewModel.titleLiveData.observe(this) { title ->
@@ -213,8 +212,7 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
             }
         }
         viewModel.newFinalizedAccountLiveData.observe(this) { newAccount ->
-            newAccount?.let {
-            }
+            newAccount?.let {}
         }
         viewModel.showTermsAndConditions.observe(this) { shouldShowTermsAndConditions ->
             if (shouldShowTermsAndConditions) {
@@ -257,8 +255,7 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
                 wcUri = ""
                 getResultWalletNotSetupIntroTerms.launch(
                     Intent(
-                        this,
-                        WalletNotSetupActivity::class.java
+                        this, WalletNotSetupActivity::class.java
                     )
                 )
             } else {
@@ -266,30 +263,30 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
             }
         } else if (App.appCore.session.hasSetupPassword) {
             if (wcUri.isNotBlank()) {
-                if (AuthPreferences(this).hasSeedPhrase())
-                    getResultAuthLogin.launch(Intent(this, AuthLoginActivity::class.java))
+                if (AuthPreferences(this).hasSeedPhrase()) getResultAuthLogin.launch(
+                    Intent(
+                        this,
+                        AuthLoginActivity::class.java
+                    )
+                )
                 else {
                     wcUri = ""
                     getResultWalletNotSetupPassPhrase.launch(
                         Intent(
-                            this,
-                            WalletNotSetupActivity::class.java
+                            this, WalletNotSetupActivity::class.java
                         )
                     )
                 }
-            } else
-                startActivity(Intent(this, AuthLoginActivity::class.java))
+            } else startActivity(Intent(this, AuthLoginActivity::class.java))
         } else {
             if (wcUri.isNotBlank()) {
                 wcUri = ""
                 getResultWalletNotSetupAuthSetup.launch(
                     Intent(
-                        this,
-                        WalletNotSetupActivity::class.java
+                        this, WalletNotSetupActivity::class.java
                     )
                 )
-            } else
-                startActivity(Intent(this, AuthSetupActivity::class.java))
+            } else startActivity(Intent(this, AuthSetupActivity::class.java))
         }
     }
 
