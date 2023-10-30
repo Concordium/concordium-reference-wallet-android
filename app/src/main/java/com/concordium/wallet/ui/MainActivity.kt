@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.TypedValue
 import androidx.activity.result.contract.ActivityResultContracts
@@ -62,9 +63,7 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
         initializeViews()
 
         intent?.data?.let {
-            if (it.toString().startsWith("wc") || it.toString()
-                    .startsWith("concordiumwallet")
-            ) wcUri = it.toString()
+            if (it.containsHandleDeeplinkScheme()) wcUri = it.toString()
         }
 
         // If we're being restored from a previous state,
@@ -74,9 +73,7 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
             return
         } else {
             intent?.data?.let {
-                if (it.toString().startsWith("wc") || it.toString()
-                        .startsWith("concordiumwallet")
-                ) {
+                if (it.containsHandleDeeplinkScheme()) {
                     wcUri = it.toString()
                     if (App.appCore.session.isLoggedIn.value == true && AuthPreferences(this).hasSeedPhrase()) {
                         gotoWalletConnect()
@@ -175,7 +172,7 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         intent?.data?.let {
-            if (it.toString().startsWith("wc") || it.toString().startsWith("concordiumwallet")) {
+            if (it.containsHandleDeeplinkScheme()) {
                 wcUri = it.toString()
                 if (App.appCore.session.isLoggedIn.value == true && AuthPreferences(this).hasSeedPhrase()) {
                     gotoWalletConnect()
@@ -325,4 +322,7 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
         val hashOld = App.appCore.session.getTermsHashed()
         return hashNew != hashOld
     }
+
+    private fun Uri.containsHandleDeeplinkScheme() =
+        toString().run { startsWith("wc") || startsWith("concordiumwallet") }
 }
