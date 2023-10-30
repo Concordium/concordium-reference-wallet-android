@@ -70,7 +70,7 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
                 isEnabled = true
                 max = getSliderRangeValue(transactionRange.max)
                 min = getSliderRangeValue(transactionRange.min)
-                progress = getSliderDefaultProgressValue(transactionRange.max)
+                progress = getSliderDefaultProgressValue(transactionRange.max, viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.commissionRates?.transactionCommission)
                 transactionFeeValue.setText(getPercentageStringFromProgress(progress))
 
                 setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -109,7 +109,7 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
                 isEnabled = true
                 max = getSliderRangeValue(bakingRange.max)
                 min = getSliderRangeValue(bakingRange.min)
-                progress = getSliderDefaultProgressValue(bakingRange.max)
+                progress = getSliderDefaultProgressValue(bakingRange.max, viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.commissionRates?.bakingCommission)
                 bakingValue.setText(getPercentageStringFromProgress(progress))
 
 
@@ -149,7 +149,7 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
                 isEnabled = true
                 max = getSliderRangeValue(rewardRange.max)
                 min = getSliderRangeValue(rewardRange.min)
-                progress = getSliderDefaultProgressValue(rewardRange.max)
+                progress = getSliderDefaultProgressValue(rewardRange.max, viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.commissionRates?.finalizationCommission)
                 rewardValue.setText(getPercentageStringFromProgress(progress))
 
                 setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -180,8 +180,8 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
     private fun getSliderRangeValue(value: Double): Int =
         (value * RATE_RANGE_FRACTION_MULTIPLIER).toInt()
 
-    private fun getSliderDefaultProgressValue(max: Double) =
-        (max * RATE_RANGE_FRACTION_MULTIPLIER).roundToInt()
+    private fun getSliderDefaultProgressValue(max: Double, current: Double?) =
+        if (current != null) (current * RATE_RANGE_FRACTION_MULTIPLIER).roundToInt() else (max * RATE_RANGE_FRACTION_MULTIPLIER).roundToInt()
 
     private fun getPercentageStringFromProgress(progress: Int) =
         "${valueAsPercentageString(progress.toDouble() / 1000)} %"
