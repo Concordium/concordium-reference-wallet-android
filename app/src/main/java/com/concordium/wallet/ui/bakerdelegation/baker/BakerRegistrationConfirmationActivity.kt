@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.bakerdelegation.baker
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
@@ -203,14 +204,23 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun showCommissionRates() {
         binding.apply {
             transactionFeeStatus.text =
-                "${viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate.toString()} %"
+                "${
+                    viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate?.times(
+                        100
+                    )
+                } %"
             bakingStatus.text =
-                "${viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate.toString()} %"
+                "${viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate?.times(100)} %"
             finalizationRewardStatus.text =
-                "${viewModel.bakerDelegationData.chainParameters?.finalizationCommissionRate.toString()} %"
+                "${
+                    viewModel.bakerDelegationData.chainParameters?.finalizationCommissionRate?.times(
+                        100
+                    )
+                } %"
         }
     }
 

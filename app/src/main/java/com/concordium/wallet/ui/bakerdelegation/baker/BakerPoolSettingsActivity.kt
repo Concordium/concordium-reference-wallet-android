@@ -93,6 +93,7 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
             }
         } else {
             transactionFeeGroup.visibility = View.GONE
+            transactionFeeValue.isEnabled = false
             transactionFeeValue.setText(getPercentageString(transactionRange.max))
         }
     }
@@ -132,6 +133,7 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
             }
         } else {
             bakingGroup.visibility = View.GONE
+            bakingValue.isEnabled = false
             bakingValue.setText(getPercentageString(bakingRange.max))
         }
     }
@@ -170,6 +172,7 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
             }
         } else {
             rewardGroup.visibility = View.GONE
+            rewardValue.isEnabled = false
             rewardValue.setText(getPercentageString(rewardRange.max))
         }
     }

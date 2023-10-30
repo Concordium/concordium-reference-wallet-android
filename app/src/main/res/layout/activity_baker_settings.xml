@@ -211,7 +211,7 @@
                         android:layout_marginTop="@dimen/activity_horizontal_margin_half"
                         android:background="@color/background_transparent"
                         android:inputType="numberDecimal"
-                        android:maxLength="8"
+                        android:maxLength="9"
                         android:textAlignment="center"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
