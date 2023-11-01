@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
 import android.widget.Toast
+import androidx.core.widget.doOnTextChanged
 import com.concordium.wallet.R
 import com.concordium.wallet.data.model.BakingCommissionRange
 import com.concordium.wallet.data.model.FinalizationCommissionRange
@@ -70,7 +71,10 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
                 isEnabled = true
                 max = getSliderRangeValue(transactionRange.max)
                 min = getSliderRangeValue(transactionRange.min)
-                progress = getSliderDefaultProgressValue(transactionRange.max, viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.commissionRates?.transactionCommission)
+                progress = getSliderDefaultProgressValue(
+                    transactionRange.max,
+                    viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.commissionRates?.transactionCommission
+                )
                 transactionFeeValue.setText(getPercentageStringFromProgress(progress))
 
                 setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -109,7 +113,10 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
                 isEnabled = true
                 max = getSliderRangeValue(bakingRange.max)
                 min = getSliderRangeValue(bakingRange.min)
-                progress = getSliderDefaultProgressValue(bakingRange.max, viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.commissionRates?.bakingCommission)
+                progress = getSliderDefaultProgressValue(
+                    bakingRange.max,
+                    viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.commissionRates?.bakingCommission
+                )
                 bakingValue.setText(getPercentageStringFromProgress(progress))
 
 
@@ -144,18 +151,29 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
             rewardMin.text = getMinRangeText(rewardRange.min)
             rewardMax.text = getMaxRangeText(rewardRange.max)
             rewardValue.addSuffix("%")
+            rewardValue.doOnTextChanged { text, _, _, _ ->
+                val value = text?.toString()?.drop(2)?.toDouble() ?: 0.0
+                if (value in rewardRange.min..rewardRange.max) {
+                    rewardSlider.progress = getSliderRangeValue(value)
+                }
+            }
 
             rewardSlider.apply {
                 isEnabled = true
                 max = getSliderRangeValue(rewardRange.max)
                 min = getSliderRangeValue(rewardRange.min)
-                progress = getSliderDefaultProgressValue(rewardRange.max, viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.commissionRates?.finalizationCommission)
+                progress = getSliderDefaultProgressValue(
+                    rewardRange.max,
+                    viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.commissionRates?.finalizationCommission
+                )
                 rewardValue.setText(getPercentageStringFromProgress(progress))
 
                 setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                     override fun onProgressChanged(
                         seekBar: SeekBar?, progress: Int, fromUser: Boolean
                     ) {
+                        if (getPercentageStringFromProgress(progress) == rewardValue.text.toString()) return
+
                         rewardValue.setText(getPercentageStringFromProgress(progress))
                         if (rewardValue.hasFocus()) {
                             rewardValue.clearFocus()
