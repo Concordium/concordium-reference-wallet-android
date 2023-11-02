@@ -49,8 +49,6 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
             setTransactionRates(chainParams.transactionCommissionRange)
 
             setBakingRates(chainParams.bakingCommissionRange)
-
-            setRewardRates(chainParams.finalizationCommissionRange)
         }
     }
 
@@ -138,45 +136,6 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
         }
     }
 
-    private fun ActivityBakerSettingsBinding.setRewardRates(rewardRange: FinalizationCommissionRange) {
-        if (rewardRange.min != rewardRange.max) {
-            rewardGroup.visibility = View.VISIBLE
-            rewardMin.text = getMinRangeText(rewardRange.min)
-            rewardMax.text = getMaxRangeText(rewardRange.max)
-            rewardValue.addSuffix("%")
-
-            rewardSlider.apply {
-                isEnabled = true
-                max = getSliderRangeValue(rewardRange.max)
-                min = getSliderRangeValue(rewardRange.min)
-                progress = getSliderDefaultProgressValue(rewardRange.max, viewModel.bakerDelegationData.account?.accountBaker?.bakerPoolInfo?.commissionRates?.finalizationCommission)
-                rewardValue.setText(getPercentageStringFromProgress(progress))
-
-                setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                    override fun onProgressChanged(
-                        seekBar: SeekBar?, progress: Int, fromUser: Boolean
-                    ) {
-                        rewardValue.setText(getPercentageStringFromProgress(progress))
-                        if (rewardValue.hasFocus()) {
-                            rewardValue.clearFocus()
-                            hideKeyboard(rootLayout)
-                        }
-                    }
-
-                    override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                    }
-
-                    override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                    }
-                })
-            }
-        } else {
-            rewardGroup.visibility = View.GONE
-            rewardValue.isEnabled = false
-            rewardValue.setText(getPercentageString(rewardRange.max))
-        }
-    }
-
     private fun getSliderRangeValue(value: Double): Int =
         (value * RATE_RANGE_FRACTION_MULTIPLIER).toInt()
 
@@ -220,14 +179,11 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
             chainParams?.transactionCommissionRange
                 ?: return showErrorMessage(getString(R.string.app_error_lib))
         val bakingRange = chainParams.bakingCommissionRange
-        val rewardRange = chainParams.finalizationCommissionRange
 
         val selectedTransactionRate =
             binding.transactionFeeValue.getTextWithoutSuffix("%").toDouble() / 100
         val selectedBakingRate =
             binding.bakingValue.getTextWithoutSuffix("%").toDouble() / 100
-        val selectedRewardRate =
-            binding.rewardValue.getTextWithoutSuffix("%").toDouble() / 100
 
         if (selectedTransactionRate !in transactionRange.min..transactionRange.max) {
             showErrorMessage(getString(R.string.baking_commission_rate_error_transaction_not_in_range))
@@ -237,15 +193,10 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
             showErrorMessage(getString(R.string.baking_commission_rate_error_baking_not_in_range))
             return
         }
-        if (selectedRewardRate !in rewardRange.min..rewardRange.max) {
-            showErrorMessage(getString(R.string.baking_commission_rate_error_reward_not_in_range))
-            return
-        }
 
         viewModel.setSelectedCommissionRates(
             transactionRate = selectedTransactionRate.truncateDecimals(5),
             bakingRate = selectedBakingRate.truncateDecimals(5),
-            rewardRate = selectedRewardRate.truncateDecimals(5),
         )
 
         val intent = Intent(this, BakerRegistrationOpenActivity::class.java)

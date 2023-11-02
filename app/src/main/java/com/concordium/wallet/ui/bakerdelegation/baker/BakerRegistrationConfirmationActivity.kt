@@ -215,12 +215,6 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
                 } %"
             bakingStatus.text =
                 "${viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate?.times(100)} %"
-            finalizationRewardStatus.text =
-                "${
-                    viewModel.bakerDelegationData.chainParameters?.finalizationCommissionRate?.times(
-                        100
-                    )
-                } %"
         }
     }
 

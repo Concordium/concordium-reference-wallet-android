@@ -560,7 +560,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         val bakingRewardCommission =
             if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.bakingCommissionRate else null
         val finalizationRewardCommission =
-            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.finalizationCommissionRate else null
+            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.finalizationCommissionRange?.max else null
 
         val transferInput = CreateTransferInput(
             from,
@@ -807,12 +807,10 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     fun setSelectedCommissionRates(
         transactionRate: Double?,
         bakingRate: Double?,
-        rewardRate: Double?
     ) {
         bakerDelegationData.chainParameters = bakerDelegationData.chainParameters?.copy(
             bakingCommissionRate = bakingRate,
             transactionCommissionRate = transactionRate,
-            finalizationCommissionRate = rewardRate
         )
     }
 }
