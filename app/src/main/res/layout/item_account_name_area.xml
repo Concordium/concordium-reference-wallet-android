@@ -54,15 +54,37 @@
             android:paddingStart="5dp"
             android:textColor="@color/text_grey"
             android:layout_width="wrap_content"
-            android:text="@string/view_account_delegating" />
-        <ImageView
-            android:id="@+id/status_icon"
+            android:text="@string/view_account_delegating"
+        />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/delegating_icon"
+            style="@style/Image"
+            android:layout_width="70dp"
+            android:layout_height="19dp"
+            android:layout_margin="4dp"
+            android:src="@drawable/ic_delegating"
+            android:visibility="gone"
+        />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/baking_icon"
+            style="@style/Image"
+            android:layout_width="66dp"
+            android:layout_height="19dp"
+            android:layout_margin="4dp"
+            android:src="@drawable/ic_baking"
+            android:visibility="gone"
+        />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/read_only_icon"
             style="@style/Image"
             android:layout_width="14dp"
             android:layout_height="14dp"
             android:layout_margin="4dp"
-            android:src="@drawable/ic_delegating"
-            app:tint="@color/text_grey" />
+            android:src="@drawable/ic_read_only"
+            app:tint="@color/text_grey"
+            android:visibility="gone"
+        />
+
     </LinearLayout>
 
 </LinearLayout>

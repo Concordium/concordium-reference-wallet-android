@@ -29,23 +29,22 @@ class AccountItemNameAreaView(context: Context, attrs: AttributeSet?): LinearLay
         status_imageview.visibility = if (accountWithIdentitiy.account.transactionStatus == TransactionStatus.FINALIZED) View.GONE else View.VISIBLE
         name_textview.text = accountWithIdentitiy.account.getAccountName()
 
-        status_icon.visibility = View.VISIBLE
-        status_text.visibility = View.VISIBLE
+        status_text.visibility = View.GONE
+        baking_icon.visibility = View.GONE
+        delegating_icon.visibility = View.GONE
+        read_only_icon.visibility = View.GONE
+
         if (accountWithIdentitiy.account.isBaking()) {
-            status_icon.setImageResource(R.drawable.ic_baking)
-            status_text.text = context.getString(R.string.view_account_baking)
+            baking_icon.visibility = View.VISIBLE
         } else if (accountWithIdentitiy.account.isDelegating()) {
-            status_icon.setImageResource(R.drawable.ic_delegating)
-            status_text.text = context.getString(R.string.view_account_delegating)
+            delegating_icon.visibility = View.VISIBLE
         } else if (accountWithIdentitiy.account.readOnly) {
-            status_icon.setImageResource(R.drawable.ic_read_only)
+            read_only_icon.visibility = View.GONE
+            status_text.visibility = View.VISIBLE
             status_text.text = context.getString(R.string.view_account_read_only)
-        } else {
-            status_icon.visibility = View.GONE
-            if (accountWithIdentitiy.account.isInitial())
-                status_text.text = context.getString(R.string.view_account_initial)
-            else
-                status_text.visibility = View.GONE
+        } else if (accountWithIdentitiy.account.isInitial()) {
+            status_text.visibility = View.VISIBLE
+            status_text.text = context.getString(R.string.view_account_initial)
         }
 
         account_identity_name.text = context.getString(R.string.view_account_name_container,accountWithIdentitiy.identity.name)
