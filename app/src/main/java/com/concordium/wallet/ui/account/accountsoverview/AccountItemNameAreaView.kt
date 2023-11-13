@@ -33,23 +33,22 @@ class AccountItemNameAreaView(context: Context, attrs: AttributeSet?) :
             if (accountWithIdentitiy.account.transactionStatus == TransactionStatus.FINALIZED) View.GONE else View.VISIBLE
         binding.nameTextview.text = accountWithIdentitiy.account.getAccountName()
 
-        binding.statusIcon.visibility = View.VISIBLE
-        binding.statusText.visibility = View.VISIBLE
+        binding.statusText.visibility = View.GONE
+        binding.bakingIcon.visibility = View.GONE
+        binding.delegatingIcon.visibility = View.GONE
+        binding.readOnlyIcon.visibility = View.GONE
+
         if (accountWithIdentitiy.account.isBaking()) {
-            binding.statusIcon.setImageResource(R.drawable.ic_baking)
-            binding.statusText.text = context.getString(R.string.view_account_baking)
+            binding.bakingIcon.visibility = View.VISIBLE
         } else if (accountWithIdentitiy.account.isDelegating()) {
-            binding.statusIcon.setImageResource(R.drawable.ic_delegating)
-            binding.statusText.text = context.getString(R.string.view_account_delegating)
+            binding.delegatingIcon.visibility = View.VISIBLE
         } else if (accountWithIdentitiy.account.readOnly) {
-            binding.statusIcon.setImageResource(R.drawable.ic_read_only)
+            binding.statusText.visibility = View.VISIBLE
             binding.statusText.text = context.getString(R.string.view_account_read_only)
-        } else {
-            binding.statusIcon.visibility = View.GONE
-            if (accountWithIdentitiy.account.isInitial())
-                binding.statusText.text = context.getString(R.string.view_account_initial)
-            else
-                binding.statusText.visibility = View.GONE
+            binding.readOnlyIcon.visibility = View.VISIBLE
+        } else if (accountWithIdentitiy.account.isInitial()) {
+            binding.statusText.visibility = View.VISIBLE
+            binding.statusText.text = context.getString(R.string.view_account_initial)
         }
 
         binding.accountIdentityName.text = context.getString(
@@ -75,6 +74,8 @@ class AccountItemNameAreaView(context: Context, attrs: AttributeSet?) :
         binding.nameTextview.text = identityName
         binding.accountIdentityName.text = accountName
         binding.statusText.text = context.getString(R.string.view_account_initial)
-        binding.statusIcon.visibility = View.GONE
+        binding.bakingIcon.visibility = View.GONE
+        binding.delegatingIcon.visibility = View.GONE
+        binding.readOnlyIcon.visibility = View.GONE
     }
 }

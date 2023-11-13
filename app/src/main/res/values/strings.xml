@@ -40,7 +40,7 @@
     <!-- AccountView -->
     <string name="view_account_initial">Initial</string>
     <string name="view_account_read_only">Read-only</string>
-    <string name="view_account_baking">Baking</string>
+    <string name="view_account_baking">Validation</string>
     <string name="view_account_delegating">Delegating</string>
     <string name="view_account_name_container">(%1$s)</string>
 
@@ -107,12 +107,12 @@
 <p>You are solely responsible for safekeeping your passwords, PINs, account keys, encryption keys, identity, and any other codes you use to access the Concordium Wallet for Mobile or any information, CCD, or voucher. If you lose access to the Concordium Wallet for Mobile, private keys, or identity, and you have not separately stored a backup of your accounts and the corresponding password(s), or your personal recovery phrase, you acknowledge and agree that any coins or tokens you have associated with that account will become inaccessible.</p>
 <p>Please note: If you have chosen to use assistants based on speech recognition (e.g., Siri) or patterns of use, this means that information about your use of Concordium Wallet for Mobile, including recipients, amounts, and messages, is sent to the provider of the assistant. Your own use of any assistant determines what information is sent. Concordium Wallet for Mobile does not send any information.</p>
 
-<h1>Baking and Delegation</h1>
-<p>Node runners are awarded CCD for running nodes on the Concordium blockchain through a process called baking. Other CCD holders can be rewarded for supporting this process through delegation. The Concordium Wallet for Mobile supports management of baking and delegation. Each account can only have one baking or delegation process active at any given time.</p>
-<p>While engaged in baking or delegation, the allocated CCD will remain in the account in a locked form. Termination of baking and delegation activates a cool-down period, where baking and delegation is still active, however, the CCDs will not be available in the wallet until the cool-down period is over. Read more about baking and delegation on developer.concordium.software</p>
-<p>When activating, managing and terminating baking and delegation blockchain transaction fees apply. You should always ensure you have sufficient CCD in your available balance to cover these fees.</p>
-<p>When activating baking and delegation from the Concordium Wallet for Mobile you acknowledge and understand how these features work and that historic performance is not a guarantee for future performance.</p>
-<p>Concordium Software does not assume any responsibility for the amount of rewards generated from baking and delegation.   </p>
+<h1>Validation and Delegation</h1>
+<p>Node runners are awarded CCD for running nodes on the Concordium blockchain through a process called validation. Other CCD holders can be rewarded for supporting this process through delegation. The Concordium Wallet for Mobile supports management of validation and delegation. Each account can only have one validation or delegation process active at any given time.</p>
+<p>While engaged in validation or delegation, the allocated CCD will remain in the account in a locked form. Termination of validation and delegation activates a cool-down period, where validation and delegation is still active, however, the CCDs will not be available in the wallet until the cool-down period is over. Read more about validation and delegation on developer.concordium.software</p>
+<p>When activating, managing and terminating validation and delegation blockchain transaction fees apply. You should always ensure you have sufficient CCD in your available balance to cover these fees.</p>
+<p>When activating validation and delegation from the Concordium Wallet for Mobile you acknowledge and understand how these features work and that historic performance is not a guarantee for future performance.</p>
+<p>Concordium Software does not assume any responsibility for the amount of rewards generated from validation and delegation.   </p>
 
 <h1>Term</h1>
 <p>This agreement will apply between you and Concordium Software from your download of the Concordium Wallet for Mobile, and until you have completely removed the Concordium Wallet for Mobile in its entirety from your device.</p>
@@ -216,14 +216,14 @@
     <string name="pass_phrase_recover_process_identity_name_prefix">Identity</string>
 
     <string name="earn_title">Earning rewards</string>
-    <string name="earn_subtitle">There are two options for earning rewards on Concordium: Baking and delegation.</string>
-    <string name="earn_baker_title">Baking</string>
-    <string name="earn_baker_description">As a baker you participate in the network by baking blocks on the Concordium network. This requires a minimum of %1$s CCD and access to a dedicated node.</string>
+    <string name="earn_subtitle">There are two options for earning rewards on Concordium: Validation and delegation.</string>
+    <string name="earn_baker_title">Validation</string>
+    <string name="earn_baker_description">As a validator you participate in the network by producing blocks on the Concordium network. This requires a minimum of %1$s CCD and access to a dedicated node.</string>
     <string name="earn_delegation_title">Delegation</string>
-    <string name="earn_delegation_description">If you don\'t have access to your own node you may delegate your stake to one of the other bakers. There is no minimum amount of CCD required when delegating.</string>
-    <string name="earn_description">Choose the option that suits you below to learn more.\n\nNOTE: A single account cannot both be a baker and delegator, but it is possible to stop one and change to the other.</string>
+    <string name="earn_delegation_description">If you don\'t have access to your own node you may delegate your stake to one of the other validators. There is no minimum amount of CCD required when delegating.</string>
+    <string name="earn_description">Choose the option that suits you below to learn more.\n\nNOTE: A single account cannot both be a validator and delegator, but it is possible to stop one and change to the other.</string>
     <string name="earn_delegation_button">Continue to delegation setup</string>
-    <string name="earn_baker_button">Continue to baker setup</string>
+    <string name="earn_baker_button">Continue to validator setup</string>
 
     <!-- Identity intro flow -->
     <string name="identity_intro_flow_title">Introduction</string>
@@ -236,7 +236,7 @@
     <string name="delegation_intro_flow_title">Delegation</string>
     <string name="delegation_intro_subtitle1">Delegation</string>
     <string name="delegation_intro_subtitle2">Delegation models</string>
-    <string name="delegation_intro_subtitle3">Baker pools</string>
+    <string name="delegation_intro_subtitle3">Staking pools</string>
     <string name="delegation_intro_subtitle4">Passive delegation</string>
     <string name="delegation_intro_subtitle5">Pay days</string>
     <string name="delegation_intro_subtitle6">Lock-in and cool-downs</string>
@@ -261,7 +261,7 @@
     <string name="delegation_status_waiting_to_finalize">Waiting for transaction to finalize</string>
     <string name="delegation_status_new_amount">New delegation amount</string>
     <string name="delegation_status_effective_time">%1$s at %2$s</string>
-    <string name="delegation_status_pool_deregistered">This pool has been deregistered, and will stop baking on</string>
+    <string name="delegation_status_pool_deregistered">This pool has been deregistered, and will stop validation on</string>
 
     <string name="delegation_register_delegation_title">Register delegation</string>
     <string name="delegation_update_delegation_title">Update delegation</string>
@@ -277,19 +277,19 @@
     <string name="delegation_status_content_delegation_will_be_stopped">The delegation will be stopped, and the delegation amount will be unlocked on the public balance of the account.</string>
 
     <string name="delegation_register_delegation_intro">You can delegate to an open pool of your choice, or you can stake using passive delegation.</string>
-    <string name="delegation_register_delegation_desc">If you don\'t already know which baker pool you want to delegate an amount to, you can look for one here:\n\n<a href="https://ccdscan.io/staking">https://ccdscan.io/staking</a></string>
-    <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific baker pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a baker node.\n\nFor more info you can visit\n\n<a href="https://developer.concordium.software/en/mainnet/net/concepts/concepts-delegation.html">developer.concordium.software</a></string>
-    <string name="delegation_register_delegation_pool_id_hint">Enter baker pool ID</string>
-    <string name="delegation_register_delegation_pool_id_hint_update">Optional: New baker pool ID</string>
-    <string name="delegation_update_delegation_pool_id_baker">Current target: Baker id %1$s</string>
+    <string name="delegation_register_delegation_desc">If you don\'t already know which staking pool you want to delegate an amount to, you can look for one here:\n\n<a href="https://ccdscan.io/staking">https://ccdscan.io/staking</a></string>
+    <string name="delegation_register_delegation_desc_passive">Passive delegation is an alternative to delegation to a specific staking pool that has lower rewards. With passive delegation you do not have to worry about the uptime or quality of a validator node.\n\nFor more info you can visit\n\n<a href="https://developer.concordium.software/en/mainnet/net/concepts/concepts-delegation.html">developer.concordium.software</a></string>
+    <string name="delegation_register_delegation_pool_id_hint">Enter staking pool ID</string>
+    <string name="delegation_register_delegation_pool_id_hint_update">Optional: New staking pool ID</string>
+    <string name="delegation_update_delegation_pool_id_baker">Current target: Validator id %1$s</string>
     <string name="delegation_update_delegation_pool_id__passive">Current target: Passive </string>
 
-    <string name="delegation_register_delegation_pool_baker">Baker</string>
+    <string name="delegation_register_delegation_pool_baker">Validator</string>
     <string name="delegation_register_delegation_passive">Passive</string>
     <string name="delegation_register_delegation_passive_long">Passive delegation</string>
     <string name="delegation_register_delegation_continue">Continue</string>
 
-    <string name="delegation_register_delegation_pool_id_error">Invalid target baker pool ID</string>
+    <string name="delegation_register_delegation_pool_id_error">Invalid target staking pool ID</string>
     <string name="delegation_register_delegation_pool_id_closed">This pool is closed</string>
 
     <string name="delegation_register_delegation_yes_restake">Yes, restake</string>
@@ -380,19 +380,19 @@
     <string name="delegation_amount_too_large_while_in_cooldown">Your delegation amount is too large for this pool.</string>
 
 
-    <!-- Baker intro -->
-    <string name="baker_intro_flow_title">Become a baker</string>
-    <string name="baker_intro_subtitle1">Become a baker</string>
+    <!-- Validator intro -->
+    <string name="baker_intro_flow_title">Become a validator</string>
+    <string name="baker_intro_subtitle1">Become a validator</string>
     <string name="baker_intro_subtitle2">The node</string>
     <string name="baker_intro_subtitle3">Opening a pool</string>
 
-    <string name="baker_registration_title">Register baker</string>
-    <string name="baker_registration_explain">You have the option to open your baker as a pool for others to delegate their CCD to.\n\nIf you choose to open your pool, other people will be able to delegate CCDs to your baking pool.\n\nYou can also keep the pool closed, if you want only your own CCDs to be staked.</string>
+    <string name="baker_registration_title">Register validator</string>
+    <string name="baker_registration_explain">You have the option to open your validator as a pool for others to delegate their CCD to.\n\nIf you choose to open your pool, other people will be able to delegate CCDs to your staking pool.\n\nYou can also keep the pool closed, if you want only your own CCDs to be staked.</string>
     <string name="baker_registration_open">Open for delegation</string>
     <string name="baker_registration_close">Close for delegation</string>
     <string name="baker_registration_continue">Continue</string>
-    <string name="baker_registration_export">Export baker keys</string>
-    <string name="baker_registration_export_explain">Your new baker keys have been generated. Before you can continue, you must export and save them. The keys will have to be added to the baker node.\n\nNOTICE: Besides exporting the keys, you will have to finish and submit the transaction afterwards for the baker to be registered.</string>
+    <string name="baker_registration_export">Export validator keys</string>
+    <string name="baker_registration_export_explain">Your new validator keys have been generated. Before you can continue, you must export and save them. The keys will have to be added to the validator node.\n\nNOTICE: Besides exporting the keys, you will have to finish and submit the transaction afterwards for the validator to be registered.</string>
     <string name="baker_registration_export_election_verify_key">Election verify key</string>
     <string name="baker_registration_export_signature_verify_key">Signature verify key</string>
     <string name="baker_registration_export_aggregation_verify_key">Aggregation verify key</string>
@@ -400,22 +400,22 @@
     <string name="baker_registration_export_notice_message">This is your only chance to export and save the keys.\n\nThey cannot be recreated, so you will have to generate new keys and register them with a transaction, if you lose these.</string>
     <string name="baker_registration_export_notice_ok">Okay</string>
 
-    <string name="baker_registration_open_title">Add baker</string>
-    <string name="baker_registration_open_explain">You can choose to add a URL with metadata about your baker. Leave it blank if you don’t have any.\n\nYou can read more about the metadata URL on\n\n<a href="https://developer.concordium.software">developer.concordium.software</a></string>
+    <string name="baker_registration_open_title">Add validator</string>
+    <string name="baker_registration_open_explain">You can choose to add a URL with metadata about your validator. Leave it blank if you don’t have any.\n\nYou can read more about the metadata URL on\n\n<a href="https://developer.concordium.software">developer.concordium.software</a></string>
     <string name="baker_registration_open_continue">Continue</string>
     <string name="baker_registration_open_url_hint">Paste your metadata URL here</string>
 
-    <string name="baker_status_title">Baker status</string>
-    <string name="baker_status_register_baker">Register baker</string>
-    <string name="baker_status_no_baker_title">This account has no baker registered.</string>
-    <string name="baker_status_no_baker">This account has no baker registered. You can register a baker with the button below.</string>
-    <string name="baker_status_update_baker_settings">Update baker settings</string>
-    <string name="baker_status_baker_waiting_title">Waiting for baker transaction to finalize.</string>
+    <string name="baker_status_title">Validator status</string>
+    <string name="baker_status_register_baker">Register validator</string>
+    <string name="baker_status_no_baker_title">This account has no validator registered.</string>
+    <string name="baker_status_no_baker">This account has no validator registered. You can register a validator with the button below.</string>
+    <string name="baker_status_update_baker_settings">Update validator settings</string>
+    <string name="baker_status_baker_waiting_title">Waiting for validator transaction to finalize.</string>
     <string name="baker_status_baker_waiting">Waiting for transaction to finalize.</string>
-    <string name="baker_status_baker_registered_title">Your baker is registered.</string>
-    <string name="baker_status_baker_account">Baker account</string>
-    <string name="baker_status_baker_stake">Baker stake</string>
-    <string name="baker_status_baker_id">Baker ID</string>
+    <string name="baker_status_baker_registered_title">Your validator is registered.</string>
+    <string name="baker_status_baker_account">Validator account</string>
+    <string name="baker_status_baker_stake">Validator stake</string>
+    <string name="baker_status_baker_id">Validator ID</string>
     <string name="baker_status_baker_rewards_will_be">Rewards will be</string>
     <string name="baker_status_baker_added_to_stake">Added to stake</string>
     <string name="baker_status_baker_at_disposal">Added to disposable amount</string>
@@ -424,30 +424,30 @@
     <string name="baker_status_baker_delegation_pool_status_closed">Closed for delegation</string>
     <string name="baker_status_baker_delegation_pool_status_closed_for_new">Closed for new delegation</string>
     <string name="baker_status_baker_metadata_url">Metadata URL</string>
-    <string name="baker_status_baker_effective_remove">The baker will be deregistered, and the stake will be unlocked on the public balance of the account.</string>
+    <string name="baker_status_baker_effective_remove">The validator will be deregistered, and the stake will be unlocked on the public balance of the account.</string>
     <string name="baker_status_baker_effective_time">%1$s at %2$s</string>
     <string name="baker_status_baker_take_effect_on">The following changes will take effect on</string>
-    <string name="baker_status_baker_stake_lowered_to">Baker stake will be lowered to</string>
+    <string name="baker_status_baker_stake_lowered_to">Validator stake will be lowered to</string>
 
-    <string name="baker_registration_amount_title">Register baker</string>
-    <string name="baker_registration_amount_explain">Do you want to automatically add your baking rewards to your baker stake?\n\nIf you choose to not restake your rewards, the amounts will be at disposal on your account balance at each pay day.</string>
-    <string name="baker_registration_amount_current_stake_title">Baker stake:</string>
+    <string name="baker_registration_amount_title">Register validator</string>
+    <string name="baker_registration_amount_explain">Do you want to automatically add your rewards to your validator stake?\n\nIf you choose to not restake your rewards, the amounts will be at disposal on your account balance at each pay day.</string>
+    <string name="baker_registration_amount_current_stake_title">Validator stake:</string>
     <string name="baker_registration_amount_enter_stake_title">Enter the amount you want to stake</string>
 
-    <string name="baker_registration_update_amount_title">Update baker stake</string>
+    <string name="baker_registration_update_amount_title">Update validator stake</string>
     <string name="baker_more_than_95_title">Warning</string>
-    <string name="baker_more_than_95_message">You are about to lock more than 95% of your total balance in a baker stake.\n\nIf you don’t have enough unlocked CCD at your disposal, you might not be able to pay future transaction fees.</string>
+    <string name="baker_more_than_95_message">You are about to lock more than 95% of your total balance in a validator stake.\n\nIf you don’t have enough unlocked CCD at your disposal, you might not be able to pay future transaction fees.</string>
     <string name="baker_more_than_95_continue">Continue</string>
-    <string name="baker_more_than_95_new_stake">Enter new baker stake</string>
+    <string name="baker_more_than_95_new_stake">Enter new validator stake</string>
     <string name="baker_registration_update_amount_estimated_transaction_fee_range">Estimated transaction fee:\nϾ%1$s - Ͼ%2$s</string>
     <string name="baker_registration_update_amount_estimated_transaction_fee_single">Estimated transaction fee:\nϾ%1$s</string>
-    <string name="baker_update_enter_new_stake">Enter your new total baker stake</string>
+    <string name="baker_update_enter_new_stake">Enter your new total validator stake</string>
 
-    <string name="baker_registration_confirmation_title">Register baker</string>
-    <string name="baker_registration_confirmation_explain">You are about to submit a register baker transaction that locks some of your funds in a stake. If you want to unlock the stake again, there will be a cool-down period.</string>
-    <string name="baker_register_confirmation_receipt_title">Transaction: Register baker</string>
-    <string name="baker_register_confirmation_receipt_account_to_bake_from">Account to register as baker</string>
-    <string name="baker_register_confirmation_receipt_amount_to_bake">Baker stake</string>
+    <string name="baker_registration_confirmation_title">Register validator</string>
+    <string name="baker_registration_confirmation_explain">You are about to submit a register validator transaction that locks some of your funds in a stake. If you want to unlock the stake again, there will be a cool-down period.</string>
+    <string name="baker_register_confirmation_receipt_title">Transaction: Register validator</string>
+    <string name="baker_register_confirmation_receipt_account_to_bake_from">Account to register as validator</string>
+    <string name="baker_register_confirmation_receipt_amount_to_bake">Validator stake</string>
     <string name="baker_register_confirmation_receipt_rewards_will_be">Rewards will be</string>
     <string name="baker_register_confirmation_receipt_pool_status">Delegation pool status</string>
     <string name="baker_register_confirmation_receipt_pool_status_open">Open for delegation</string>
@@ -460,39 +460,39 @@
     <string name="baker_register_confirmation_receipt_added_to_delegation_amount">Added to stake</string>
     <string name="baker_register_confirmation_receipt_at_disposal">Added to disposable amount</string>
     <string name="baker_register_confirmation_receipt_meta_data_url">Metadata URL</string>
-    <string name="baker_register_transaction_failed">Your baking transaction failed:\n\n%1$s\n\nDo you want to try again?</string>
-    <string name="baker_registration_confirmation_remove_title">Stop baking</string>
-    <string name="baker_registration_confirmation_remove_are_you_sure">Are you sure you want to make the following transaction to stop baking?</string>
-    <string name="baker_registration_confirmation_remove_transaction">Transaction: Stop baking</string>
-    <string name="baker_registration_confirmation_remove_account_to_stop">Account to stop baking</string>
-    <string name="baker_registration_confirmation_submit">Submit baker transaction</string>
-    <string name="baker_registration_confirmation_update_keys_title">Update baker keys</string>
+    <string name="baker_register_transaction_failed">Your validation transaction failed:\n\n%1$s\n\nDo you want to try again?</string>
+    <string name="baker_registration_confirmation_remove_title">Stop validation</string>
+    <string name="baker_registration_confirmation_remove_are_you_sure">Are you sure you want to make the following transaction to stop validation?</string>
+    <string name="baker_registration_confirmation_remove_transaction">Transaction: Stop validation</string>
+    <string name="baker_registration_confirmation_remove_account_to_stop">Account to stop validation</string>
+    <string name="baker_registration_confirmation_submit">Submit validator transaction</string>
+    <string name="baker_registration_confirmation_update_keys_title">Update validator keys</string>
     <string name="baker_registration_confirmation_update_pool_title">Update pool settings</string>
-    <string name="baker_registration_confirmation_update_stake_title">Update baker stake</string>
-    <string name="baker_registration_confirmation_update_keys_transaction_title">Transaction: Update baker keys</string>
+    <string name="baker_registration_confirmation_update_stake_title">Update validator stake</string>
+    <string name="baker_registration_confirmation_update_keys_transaction_title">Transaction: Update validator keys</string>
     <string name="baker_registration_confirmation_update_pool_transaction_title">Transaction: Update pool settings</string>
-    <string name="baker_registration_confirmation_update_stake_transaction_title">Transaction: Update baker stake</string>
-    <string name="baker_registration_confirmation_update_affected_account">Affected baker account</string>
-    <string name="baker_registration_confirmation_update_stake_update">Account to make baker update</string>
-    <string name="baker_registration_confirmation_update_stake_update_decrease_explain">You are about to submit a transaction that lowers your baker stake. Lowering your stake has a cool-down period, meaning it will not take effect immediately.\n\nThe baker cannot be removed and the stake cannot be changed until the cool-down is over.</string>
+    <string name="baker_registration_confirmation_update_stake_transaction_title">Transaction: Update validator stake</string>
+    <string name="baker_registration_confirmation_update_affected_account">Affected validator account</string>
+    <string name="baker_registration_confirmation_update_stake_update">Account to make validator update</string>
+    <string name="baker_registration_confirmation_update_stake_update_decrease_explain">You are about to submit a transaction that lowers your validator stake. Lowering your stake has a cool-down period, meaning it will not take effect immediately.\n\nThe validator cannot be removed and the stake cannot be changed until the cool-down is over.</string>
 
-    <string name="baker_update_intro_flow_title">Baking</string>
-    <string name="baker_update_intro_subtitle1">Updating baker settings</string>
-    <string name="baker_update_intro_subtitle2">Update baker stake</string>
+    <string name="baker_update_intro_flow_title">Validation</string>
+    <string name="baker_update_intro_subtitle1">Updating validator settings</string>
+    <string name="baker_update_intro_subtitle2">Update validator stake</string>
     <string name="baker_update_intro_subtitle3" tools:ignore="TypographyFractions">Update pool settings (1/2)</string>
     <string name="baker_update_intro_subtitle4">Update pool settings (2/2)</string>
-    <string name="baker_update_intro_subtitle5">Update baker keys</string>
+    <string name="baker_update_intro_subtitle5">Update validator keys</string>
 
-    <string name="baker_remove_intro_flow_title">Baking</string>
-    <string name="baker_remove_intro_subtitle1">Stop baking</string>
+    <string name="baker_remove_intro_flow_title">Validation</string>
+    <string name="baker_remove_intro_subtitle1">Stop validation</string>
 
-    <string name="update_baker_settings_menu_update_baker_stake">Update baker stake</string>
+    <string name="update_baker_settings_menu_update_baker_stake">Update validator stake</string>
     <string name="update_baker_settings_menu_update_pool_settings">Update pool settings</string>
-    <string name="update_baker_settings_menu_update_baker_keys">Update baker keys</string>
-    <string name="update_baker_settings_menu_stop_baking">Stop baking</string>
+    <string name="update_baker_settings_menu_update_baker_keys">Update validator keys</string>
+    <string name="update_baker_settings_menu_stop_baking">Stop validation</string>
 
     <string name="baker_update_pool_settings_title">Update pool settings</string>
-    <string name="baker_update_pool_settings_explain">You have the option to open your baker as a pool for others to delegate their CCD to.\n\nIf you choose to open your pool, other people will be able to delegate CCDs to your baking pool.\n\nIf your pool is already open, you can also close it for new delegators, or you can close it for delegation completely.</string>
+    <string name="baker_update_pool_settings_explain">You have the option to open your validator as a pool for others to delegate their CCD to.\n\nIf you choose to open your pool, other people will be able to delegate CCDs to your staking pool.\n\nIf your pool is already open, you can also close it for new delegators, or you can close it for delegation completely.</string>
     <string name="baker_update_pool_settings_current_status_open">Current status: Open</string>
     <string name="baker_update_pool_settings_current_status_closed">Current status: Closed</string>
     <string name="baker_update_pool_settings_current_status_closed_for_new">Current status: Closed for new</string>
@@ -505,21 +505,21 @@
     <string name="baker_update_pool_settings_url_removed">Metadata URL removed</string>
 
     <string name="baker_notice_title">Notice</string>
-    <string name="baker_notice_message">Once your transaction has successfully finalized, the baker registration will take effect from the next pay day.\n\nRemember to restart your node with the baker keys.</string>
-    <string name="baker_notice_message_update_increase">Once your transaction has successfully finalized, the baker update will take effect from the next pay day.</string>
+    <string name="baker_notice_message">Once your transaction has successfully finalized, the validator registration will take effect from the next pay day.\n\nRemember to restart your node with the validator keys.</string>
+    <string name="baker_notice_message_update_increase">Once your transaction has successfully finalized, the validator update will take effect from the next pay day.</string>
     <plurals name="baker_notice_message_update_decrease">
-        <item quantity="one">Your decrease of the baker stake will take effect at the next pay day after a cool-down of %d day.\n\nOnce the transaction has finalized, you can see the time of the release on the baker status screen.</item>
-        <item quantity="other">Your decrease of the baker stake will take effect at the next pay day after a cool-down of %d days.\n\nOnce the transaction has finalized, you can see the time of the release on the baker status screen.</item>
+        <item quantity="one">Your decrease of the validator stake will take effect at the next pay day after a cool-down of %d day.\n\nOnce the transaction has finalized, you can see the time of the release on the validator status screen.</item>
+        <item quantity="other">Your decrease of the validator stake will take effect at the next pay day after a cool-down of %d days.\n\nOnce the transaction has finalized, you can see the time of the release on the validator status screen.</item>
     </plurals>
     <string name="baker_notice_message_update_pool">Once your transaction has successfully finalized, the pool settings update will take effect from the next pay day.</string>
-    <string name="baker_notice_message_update_keys">Once your transaction has successfully finalized, the new baker keys will take effect from the next pay day.\n\nThis means the node should be restarted with the new keys, as close to the next pay day as possible.</string>
+    <string name="baker_notice_message_update_keys">Once your transaction has successfully finalized, the new validator keys will take effect from the next pay day.\n\nThis means the node should be restarted with the new keys, as close to the next pay day as possible.</string>
     <plurals name="baker_notice_message_remove">
-        <item quantity="one">Your baker will stop at the next pay day after a cool-down of %d day.\n\nOnce the transaction has finalized, you can see the estimated time on the baker status screen.</item>
-        <item quantity="other">Your baker will stop at the next pay day after a cool-down of %d days.\n\nOnce the transaction has finalized, you can see the estimated time on the baker status screen.</item>
+        <item quantity="one">Your validator will stop at the next pay day after a cool-down of %d day.\n\nOnce the transaction has finalized, you can see the estimated time on the validator status screen.</item>
+        <item quantity="other">Your validator will stop at the next pay day after a cool-down of %d days.\n\nOnce the transaction has finalized, you can see the estimated time on the validator status screen.</item>
     </plurals>
     <string name="baker_notice_ok">Okay</string>
 
-    <string name="baker_update_keys_settings_title">Update baker keys</string>
+    <string name="baker_update_keys_settings_title">Update validator keys</string>
     <string name="baker_keys_saved_local">Your backup has been saved to local storage.</string>
 
     <!-- ***** Auth ***** -->
@@ -708,7 +708,7 @@
     <string name="account_details_gtu_drop_button">Request 2000CCD</string>
     <string name="account_details_shielded_transaction_fee">Shielded transaction fee</string>
     <string name="account_delegation_pending">Configure delegation</string>
-    <string name="account_baking_pending">Configure baker</string>
+    <string name="account_baking_pending">Configure validator</string>
     <string name="account_smart_contract_update_pending">Invoke smart contract</string>
     <string name="account_details_empty_identity_data">This account has no identity data revealed.</string>
     <string name="account_details_title_shielded_balance">%1$s shielded balance</string>
@@ -925,7 +925,7 @@
     <string name="error_database_close">Close</string>
 
     <string name="accounts_overview_total_details_disposal">Total currently at disposal</string>
-    <string name="accounts_overview_total_details_staked_no_id">Stake with baker</string>
+    <string name="accounts_overview_total_details_staked_no_id">Stake with validator</string>
     <string name="account_details_menu_release_schedule">Release schedule</string>
     <string name="account_details_menu_transfer_filter">Transfer filters</string>
     <string name="account_details_menu_show_shielded">Show shielded balance</string>
@@ -934,9 +934,9 @@
     <string name="account_details_menu_change_name">Change account name</string>
     <string name="account_details_menu_export_key">Export private key</string>
     <string name="account_details_menu_export_transaction_log">Export transaction logs</string>
-    <string name="account_details_delegation_with_baker_pool">Delegation with baker pool %1$s</string>
+    <string name="account_details_delegation_with_baker_pool">Delegation with staking pool %1$s</string>
     <string name="account_details_delegation_with_passive_pool">Passive delegation</string>
-    <string name="account_details_stake_with_baker">Stake with baker %1$s</string>
+    <string name="account_details_stake_with_baker">Stake with validator %1$s</string>
 
     <string name="account_details_change_name_popup_title">Change account name</string>
     <string name="account_details_change_name_popup_subtitle">You can enter the new account name here.</string>
