@@ -54,9 +54,28 @@ class BakerRegistrationOpenActivity : BaseDelegationBakerActivity() {
         binding.bakerRegistrationOpenContinue.setOnClickListener {
             KeyboardUtil.hideKeyboard(this)
             viewModel.bakerDelegationData.metadataUrl = binding.openUrl.text?.toString()
-            gotoNextPage()
+            validate()
         }
     }
+
+    private fun validate() {
+        val gotoNextPage =
+            if (viewModel.bakerDelegationData.oldMetadataUrl != viewModel.bakerDelegationData.metadataUrl ||
+                viewModel.bakerDelegationData.oldOpenStatus != viewModel.bakerDelegationData.bakerPoolInfo?.openStatus
+            ) {
+                true
+            } else if (viewModel.bakerDelegationData.oldCommissionRates?.transactionCommission != viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate ||
+                viewModel.bakerDelegationData.oldCommissionRates?.bakingCommission != viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate
+            ) {
+                true
+            } else {
+                false
+            }
+
+        if (gotoNextPage) gotoNextPage()
+        else showNoChange()
+    }
+
 
     private fun gotoNextPage() {
         val intent = if (viewModel.bakerDelegationData.type == UPDATE_BAKER_POOL) {

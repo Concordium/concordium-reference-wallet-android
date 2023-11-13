@@ -6,6 +6,7 @@ import android.text.TextWatcher
 import android.widget.EditText
 
 fun EditText.getTextWithoutSuffix(suffix: String) = text.toString().replace(" $suffix", "")
+fun CharSequence.getTextWithoutSuffix(suffix: String) = toString().replace(" $suffix", "")
 
 fun EditText.addSuffix(suffix: String) {
     val editText = this

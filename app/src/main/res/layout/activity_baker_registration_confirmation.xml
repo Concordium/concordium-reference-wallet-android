@@ -169,20 +169,6 @@
                                     tools:text="10%" />
 
                                 <TextView
-                                    android:id="@+id/finalization_reward_title"
-                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/baker_pool_settings_reward_explain" />
-
-                                <TextView
-                                    android:id="@+id/finalization_reward_status"
-                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    tools:text="10%" />
-
-                                <TextView
                                     android:id="@+id/meta_data_url_title"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"

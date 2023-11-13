@@ -1116,6 +1116,6 @@
     <string name="baking_pool_range_max">Max:\n%1$s</string>
 
     <string name="baking_commission_rate_error_transaction_not_in_range">Transaction fee is out of specified range</string>
+    <string name="baking_commission_rate_error_parse">Could not parse value, please enter a correct amount in range</string>
     <string name="baking_commission_rate_error_baking_not_in_range">Baking reward is out of specified range</string>
-    <string name="baking_commission_rate_error_reward_not_in_range">Finalization reward is out of specified range</string>
 </resources>

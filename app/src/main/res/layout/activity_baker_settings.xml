@@ -71,7 +71,8 @@
                         android:layout_marginTop="@dimen/activity_horizontal_margin_half"
                         android:background="@color/background_transparent"
                         android:inputType="numberDecimal"
-                        android:maxLength="8"
+                        android:imeOptions="actionDone"
+                        android:maxLength="50"
                         android:textAlignment="center"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -108,6 +109,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/activity_horizontal_margin_quarter"
                         android:layout_marginTop="@dimen/activity_horizontal_margin_quarter"
+                        android:clickable="true"
+                        android:focusable="true"
                         app:layout_constraintEnd_toStartOf="@id/transactionFeeMax"
                         app:layout_constraintStart_toEndOf="@id/transactionFeeMin"
                         app:layout_constraintTop_toBottomOf="@id/transactionFeeValue" />
@@ -141,7 +144,7 @@
                         android:layout_marginTop="@dimen/activity_horizontal_margin_half"
                         android:background="@color/background_transparent"
                         android:inputType="numberDecimal"
-                        android:maxLength="8"
+                        android:maxLength="15"
                         android:textAlignment="center"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -187,76 +190,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:constraint_referenced_ids="bakingMin,bakingMax,bakingSlider"
-                        tools:visibility="visible" />
-
-                    <TextView
-                        android:id="@+id/rewardTitle"
-                        style="@style/TextView.Standard"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-                        android:layout_marginTop="@dimen/activity_horizontal_margin_double"
-                        android:text="@string/baker_pool_settings_reward_explain"
-                        android:textAlignment="center"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/bakingSlider" />
-
-                    <EditText
-                        android:id="@+id/rewardValue"
-                        style="@style/TextView.SingleLine"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin_double"
-                        android:layout_marginTop="@dimen/activity_horizontal_margin_half"
-                        android:background="@color/background_transparent"
-                        android:inputType="numberDecimal"
-                        android:maxLength="9"
-                        android:textAlignment="center"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/rewardTitle"
-                        tools:text="10%" />
-
-                    <TextView
-                        android:id="@+id/rewardMin"
-                        style="@style/TextView.Standard"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-                        android:textAlignment="center"
-                        app:layout_constraintBottom_toBottomOf="@id/rewardSlider"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/rewardSlider"
-                        tools:text="Min:\n20.00%" />
-
-                    <TextView
-                        android:id="@+id/rewardMax"
-                        style="@style/TextView.Standard"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
-                        android:textAlignment="center"
-                        app:layout_constraintBottom_toBottomOf="@id/rewardSlider"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/rewardSlider"
-                        tools:text="Max:\n20.00%" />
-
-                    <SeekBar
-                        android:id="@+id/rewardSlider"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/activity_horizontal_margin_quarter"
-                        android:layout_marginTop="@dimen/activity_horizontal_margin_quarter"
-                        app:layout_constraintEnd_toStartOf="@id/rewardMax"
-                        app:layout_constraintStart_toEndOf="@id/rewardMin"
-                        app:layout_constraintTop_toBottomOf="@id/rewardValue" />
-
-                    <androidx.constraintlayout.widget.Group
-                        android:id="@+id/rewardGroup"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:constraint_referenced_ids="rewardMin,rewardMax,rewardSlider"
                         tools:visibility="visible" />
 
                     <Button

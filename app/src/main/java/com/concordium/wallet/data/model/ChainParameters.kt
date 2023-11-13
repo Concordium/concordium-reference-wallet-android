@@ -16,8 +16,7 @@ data class ChainParameters(
     val minimumEquityCapital: String,
     val bakingCommissionRange: BakingCommissionRange,
     val bakingCommissionRate: Double? = null,
-    val finalizationCommissionRange: FinalizationCommissionRange,
-    val finalizationCommissionRate: Double? = null,
     val transactionCommissionRange: TransactionCommissionRange,
     val transactionCommissionRate: Double? = null,
+    val finalizationCommissionRange: FinalizationCommissionRange,
 ) : Serializable
