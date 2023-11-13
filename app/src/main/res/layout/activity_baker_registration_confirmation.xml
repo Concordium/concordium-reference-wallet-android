@@ -141,6 +141,34 @@
                                     tools:text="@string/baker_register_confirmation_receipt_pool_status_closed" />
 
                                 <TextView
+                                    android:id="@+id/transaction_fee_title"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/baker_pool_settings_fee_explain" />
+
+                                <TextView
+                                    android:id="@+id/transaction_fee_status"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:text="10%" />
+
+                                <TextView
+                                    android:id="@+id/baking_title"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/baker_pool_settings_baking_explain" />
+
+                                <TextView
+                                    android:id="@+id/baking_status"
+                                    style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    tools:text="10%" />
+
+                                <TextView
                                     android:id="@+id/meta_data_url_title"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
