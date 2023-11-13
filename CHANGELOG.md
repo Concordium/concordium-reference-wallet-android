@@ -8,7 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
+
 - Changed application colours to align with new designs.
+- Renamed baker/baking to validator/validation.
+
+### Fixed
+
+- WalletConnect: Fix parsing of "broken" schema format for contract update transactions.
+- Fix incorrect text in the identity name dialog
+- Fix not renaming account from the settings.
+- incorrect CCD token balance if some amount is shielded
+- keyboard not being shown when the auth dialog is opened
 
 ## [1.3.0]
 

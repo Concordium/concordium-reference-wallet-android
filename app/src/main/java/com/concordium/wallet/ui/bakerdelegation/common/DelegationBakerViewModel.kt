@@ -71,7 +71,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     private var transferSubmissionStatusRequest: BackendRequest<TransferSubmissionStatus>? = null
 
     companion object {
-        const val FILE_NAME_BAKER_KEYS = "baker-credentials.json"
+        const val FILE_NAME_BAKER_KEYS = "validator-credentials.json"
         const val EXTRA_DELEGATION_BAKER_DATA = "EXTRA_DELEGATION_BAKER_DATA"
         const val AMOUNT_TOO_LARGE_FOR_POOL = -100
         const val AMOUNT_TOO_LARGE_FOR_POOL_COOLDOWN = -200
