@@ -46,7 +46,7 @@ class ProgressLine : View {
         }
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         paint.strokeWidth = height / 5f
@@ -59,7 +59,7 @@ class ProgressLine : View {
         val dotRadius = (height.toFloat() / 2) - (lineThickness / 2)
         val dotSpacing = (width - (height * numberOfDots)).toFloat() / (numberOfDots - 1)
 
-        canvas?.let {
+        canvas.let {
             for (i in 1..numberOfDots) {
                 if (i <= filled)
                     paint.style = Paint.Style.FILL_AND_STROKE

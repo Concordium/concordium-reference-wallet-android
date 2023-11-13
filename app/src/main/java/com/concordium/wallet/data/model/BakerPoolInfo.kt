@@ -4,7 +4,9 @@ import java.io.Serializable
 
 data class BakerPoolInfo(
     val openStatus: String,
-    val metadataUrl: String? = null
+    val metadataUrl: String? = null,
+    val commissionRates: CommissionRates? = null
+
 ) : Serializable {
     companion object {
         val OPEN_STATUS_OPEN_FOR_ALL = "openForAll"

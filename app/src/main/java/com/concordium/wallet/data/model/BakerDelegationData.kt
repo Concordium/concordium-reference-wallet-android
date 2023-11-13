@@ -46,6 +46,7 @@ data class BakerDelegationData(
     var oldDelegationTargetPoolId: Long? = null
     var oldMetadataUrl: String? = null
     var oldOpenStatus: String? = null
+    var oldCommissionRates: CommissionRates? = null
 
     fun isBakerFlow(): Boolean {
         return type == REGISTER_BAKER || type == UPDATE_BAKER_STAKE || type == UPDATE_BAKER_POOL || type == UPDATE_BAKER_KEYS || type == REMOVE_BAKER || type == CONFIGURE_BAKER

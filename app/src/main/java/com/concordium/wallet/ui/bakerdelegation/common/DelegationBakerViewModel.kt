@@ -556,12 +556,11 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
             if (bakerDelegationData.type == REMOVE_BAKER) null else bakerDelegationData.bakerKeys
 
         val transactionFeeCommission =
-            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.transactionCommissionRange?.max else null
+            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL) bakerDelegationData.chainParameters?.transactionCommissionRate else null
         val bakingRewardCommission =
-            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.bakingCommissionRange?.max else null
+            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL) bakerDelegationData.chainParameters?.bakingCommissionRate else null
         val finalizationRewardCommission =
-            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER) bakerDelegationData.chainParameters?.finalizationCommissionRange?.max else null
-
+            if (bakerDelegationData.type == REGISTER_BAKER || bakerDelegationData.type == CONFIGURE_BAKER || bakerDelegationData.type == UPDATE_BAKER_POOL) bakerDelegationData.chainParameters?.finalizationCommissionRange?.max else null
         val transferInput = CreateTransferInput(
             from,
             keys,
@@ -804,4 +803,13 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO
     ) ?: BigInteger.ZERO
 
+    fun setSelectedCommissionRates(
+        transactionRate: Double?,
+        bakingRate: Double?,
+    ) {
+        bakerDelegationData.chainParameters = bakerDelegationData.chainParameters?.copy(
+            bakingCommissionRate = bakingRate,
+            transactionCommissionRate = transactionRate,
+        )
+    }
 }

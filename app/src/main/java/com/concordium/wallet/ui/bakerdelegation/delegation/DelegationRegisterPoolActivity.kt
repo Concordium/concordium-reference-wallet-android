@@ -189,8 +189,9 @@ class DelegationRegisterPoolActivity : BaseDelegationBakerActivity() {
     private fun onContinueClicked() {
         if (viewModel.isBakerPool() && viewModel.getPoolId()
                 .isEmpty() && getExistingPoolIdText().isNotEmpty()
-        )
+        ) {
             viewModel.setPoolID(getExistingPoolIdText())
+        }
         viewModel.validatePoolId()
     }
 

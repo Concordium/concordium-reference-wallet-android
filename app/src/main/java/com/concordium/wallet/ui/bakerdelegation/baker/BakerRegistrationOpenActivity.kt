@@ -59,15 +59,23 @@ class BakerRegistrationOpenActivity : BaseDelegationBakerActivity() {
     }
 
     private fun validate() {
-        var gotoNextPage = false
-        if (viewModel.bakerDelegationData.oldMetadataUrl != viewModel.bakerDelegationData.metadataUrl ||
-            viewModel.bakerDelegationData.oldOpenStatus != viewModel.bakerDelegationData.bakerPoolInfo?.openStatus
-        )
-            gotoNextPage = true
+        val gotoNextPage =
+            if (viewModel.bakerDelegationData.oldMetadataUrl != viewModel.bakerDelegationData.metadataUrl ||
+                viewModel.bakerDelegationData.oldOpenStatus != viewModel.bakerDelegationData.bakerPoolInfo?.openStatus
+            ) {
+                true
+            } else if (viewModel.bakerDelegationData.oldCommissionRates?.transactionCommission != viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate ||
+                viewModel.bakerDelegationData.oldCommissionRates?.bakingCommission != viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate
+            ) {
+                true
+            } else {
+                false
+            }
 
         if (gotoNextPage) gotoNextPage()
         else showNoChange()
     }
+
 
     private fun gotoNextPage() {
         val intent = if (viewModel.bakerDelegationData.type == UPDATE_BAKER_POOL) {

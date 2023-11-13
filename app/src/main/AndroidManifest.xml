@@ -7,7 +7,8 @@
     <uses-permission android:name="android.permission.USE_BIOMETRIC" /> <!-- Protection level: normal -->
     <uses-permission android:name="android.permission.CAMERA" /> <!-- Protection level: dangerous -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING" />
 
     <uses-feature
         android:name="android.hardware.camera.any"
@@ -57,7 +58,8 @@
         <service
             android:name=".ui.walletconnect.WalletConnectService"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="false"
+            android:foregroundServiceType="remoteMessaging" />
 
         <activity
             android:name=".onboarding.ui.OnboardingActivity"
@@ -138,6 +140,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.bakerdelegation.baker.BakerRegistrationOpenActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.bakerdelegation.baker.BakerPoolSettingsActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity

@@ -73,10 +73,9 @@
         android:gravity="center"
         android:text="@string/cis_no_tokens_selected"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/button_container"
+        app:layout_constraintBottom_toTopOf="@id/button_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tokens_found"
         tools:visibility="visible" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
