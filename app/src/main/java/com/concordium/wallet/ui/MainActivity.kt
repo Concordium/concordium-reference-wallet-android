@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.TypedValue
 import androidx.activity.result.contract.ActivityResultContracts
@@ -61,7 +62,9 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
 
         initializeViews()
 
-        intent?.data?.let { if (it.toString().startsWith("wc")) wcUri = it.toString() }
+        intent?.data?.let {
+            if (it.containsHandleDeeplinkScheme()) wcUri = it.toString()
+        }
 
         // If we're being restored from a previous state,
         // then we don't want to add fragments and should return or else
@@ -70,7 +73,7 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
             return
         } else {
             intent?.data?.let {
-                if (it.toString().startsWith("wc")) {
+                if (it.containsHandleDeeplinkScheme()) {
                     wcUri = it.toString()
                     if (App.appCore.session.isLoggedIn.value == true && AuthPreferences(this).hasSeedPhrase()) {
                         gotoWalletConnect()
@@ -88,9 +91,7 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
 
     private fun setupToolbar() {
         setupActionBar(
-            binding.toolbarLayout.toolbar,
-            binding.toolbarLayout.toolbarTitle,
-            R.string.main_title
+            binding.toolbarLayout.toolbar, binding.toolbarLayout.toolbarTitle, R.string.main_title
         )
         supportActionBar?.setCustomView(R.layout.app_toolbar_main)
         binding.toolbarLayout.settingsContainer.setOnClickListener {
@@ -171,7 +172,7 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         intent?.data?.let {
-            if (it.toString().startsWith("wc")) {
+            if (it.containsHandleDeeplinkScheme()) {
                 wcUri = it.toString()
                 if (App.appCore.session.isLoggedIn.value == true && AuthPreferences(this).hasSeedPhrase()) {
                     gotoWalletConnect()
@@ -194,8 +195,7 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
 
     private fun initializeViewModel() {
         viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+            this, ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[MainViewModel::class.java]
 
         viewModel.titleLiveData.observe(this) { title ->
@@ -209,8 +209,7 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
             }
         }
         viewModel.newFinalizedAccountLiveData.observe(this) { newAccount ->
-            newAccount?.let {
-            }
+            newAccount?.let {}
         }
         viewModel.showTermsAndConditions.observe(this) { shouldShowTermsAndConditions ->
             if (shouldShowTermsAndConditions) {
@@ -253,8 +252,7 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
                 wcUri = ""
                 getResultWalletNotSetupIntroTerms.launch(
                     Intent(
-                        this,
-                        WalletNotSetupActivity::class.java
+                        this, WalletNotSetupActivity::class.java
                     )
                 )
             } else {
@@ -262,30 +260,30 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
             }
         } else if (App.appCore.session.hasSetupPassword) {
             if (wcUri.isNotBlank()) {
-                if (AuthPreferences(this).hasSeedPhrase())
-                    getResultAuthLogin.launch(Intent(this, AuthLoginActivity::class.java))
+                if (AuthPreferences(this).hasSeedPhrase()) getResultAuthLogin.launch(
+                    Intent(
+                        this,
+                        AuthLoginActivity::class.java
+                    )
+                )
                 else {
                     wcUri = ""
                     getResultWalletNotSetupPassPhrase.launch(
                         Intent(
-                            this,
-                            WalletNotSetupActivity::class.java
+                            this, WalletNotSetupActivity::class.java
                         )
                     )
                 }
-            } else
-                startActivity(Intent(this, AuthLoginActivity::class.java))
+            } else startActivity(Intent(this, AuthLoginActivity::class.java))
         } else {
             if (wcUri.isNotBlank()) {
                 wcUri = ""
                 getResultWalletNotSetupAuthSetup.launch(
                     Intent(
-                        this,
-                        WalletNotSetupActivity::class.java
+                        this, WalletNotSetupActivity::class.java
                     )
                 )
-            } else
-                startActivity(Intent(this, AuthSetupActivity::class.java))
+            } else startActivity(Intent(this, AuthSetupActivity::class.java))
         }
     }
 
@@ -324,4 +322,7 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
         val hashOld = App.appCore.session.getTermsHashed()
         return hashNew != hashOld
     }
+
+    private fun Uri.containsHandleDeeplinkScheme() =
+        toString().run { startsWith("wc") || startsWith("concordiumwallet") }
 }
