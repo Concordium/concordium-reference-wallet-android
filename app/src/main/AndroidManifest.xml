@@ -155,6 +155,7 @@
         <activity
             android:name=".ui.bakerdelegation.baker.BakerPoolSettingsActivity"
             android:launchMode="singleTop"
+            android:windowSoftInputMode="adjustPan|stateHidden"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.bakerdelegation.baker.BakerStatusActivity"

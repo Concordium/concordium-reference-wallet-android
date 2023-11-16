@@ -16,7 +16,7 @@ import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.util.addSuffix
 import com.concordium.wallet.util.getTextWithoutSuffix
 import com.concordium.wallet.util.hideKeyboard
-import com.concordium.wallet.util.truncateDecimals
+import com.concordium.wallet.util.roundToDecimalPlace
 import com.google.android.material.snackbar.Snackbar
 import kotlin.math.roundToInt
 
@@ -251,8 +251,8 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
         }
 
         viewModel.setSelectedCommissionRates(
-            transactionRate = selectedTransactionRate.truncateDecimals(5),
-            bakingRate = selectedBakingRate.truncateDecimals(5),
+            transactionRate = selectedTransactionRate.roundToDecimalPlace(5),
+            bakingRate = selectedBakingRate.roundToDecimalPlace(5),
         )
 
         val intent = Intent(this, BakerRegistrationOpenActivity::class.java)

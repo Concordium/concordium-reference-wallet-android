@@ -1,7 +1,7 @@
 package com.concordium.wallet.util
 
-import kotlin.math.floor
-import kotlin.math.pow
+import java.math.BigDecimal
+import java.math.RoundingMode
 
-fun Double.truncateDecimals(decimalPoint: Int): Double =
-    floor(this * 10.0.pow(decimalPoint)) / 10.0.pow(decimalPoint)
+fun Double.roundToDecimalPlace(numberOfDecimalPlaces: Int) =
+    BigDecimal(this).setScale(numberOfDecimalPlaces, RoundingMode.DOWN).toDouble()
