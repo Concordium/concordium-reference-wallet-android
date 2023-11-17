@@ -208,11 +208,11 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
         binding.apply {
             transactionFeeStatus.text = "${
                 viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate
-                    ?.times(100)?.roundToDecimalPlace(5) ?: 0.0
+                    ?.times(100)?.roundToDecimalPlace(3) ?: 0.0
             } %"
             bakingStatus.text = "${
                 viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate
-                    ?.times(100)?.roundToDecimalPlace(5) ?: 0.0
+                    ?.times(100)?.roundToDecimalPlace(3) ?: 0.0
             } %"
         }
     }
