@@ -16,6 +16,7 @@ import com.concordium.wallet.databinding.ActivityBakerRegistrationConfirmationBi
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.util.UnitConvertUtil
+import com.concordium.wallet.util.dropAfterDecimalPlaces
 import com.concordium.wallet.util.toBigInteger
 import java.math.BigInteger
 
@@ -37,8 +38,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
     }
 
     override fun onBackPressed() {
-        if (!receiptMode)
-            super.onBackPressed()
+        if (!receiptMode) super.onBackPressed()
     }
 
     override fun initViews() {
@@ -176,8 +176,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
             binding.delegationAmountConfirmationTitle.visibility = View.VISIBLE
             binding.bakerAmountConfirmation.visibility = View.VISIBLE
             binding.bakerAmountConfirmation.text = CurrencyUtil.formatGTU(
-                viewModel.bakerDelegationData.amount ?: BigInteger.ZERO,
-                true
+                viewModel.bakerDelegationData.amount ?: BigInteger.ZERO, true
             )
         }
     }
@@ -207,14 +206,14 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
     @SuppressLint("SetTextI18n")
     private fun showCommissionRates() {
         binding.apply {
-            transactionFeeStatus.text =
-                "${
-                    viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate?.times(
-                        100
-                    )
-                } %"
-            bakingStatus.text =
-                "${viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate?.times(100)} %"
+            transactionFeeStatus.text = "${
+                viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate
+                    ?.times(100)?.dropAfterDecimalPlaces(3) ?: 0.0
+            } %"
+            bakingStatus.text = "${
+                viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate
+                    ?.times(100)?.dropAfterDecimalPlaces(3) ?: 0.0
+            } %"
         }
     }
 
@@ -284,9 +283,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
                 viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0
             )
             noticeMessage = resources.getQuantityString(
-                R.plurals.baker_notice_message_update_decrease,
-                gracePeriod,
-                gracePeriod
+                R.plurals.baker_notice_message_update_decrease, gracePeriod, gracePeriod
             )
         } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount
                 ?: BigInteger.ZERO) == (viewModel.bakerDelegationData.amount ?: BigInteger.ZERO)
@@ -301,9 +298,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
                 viewModel.bakerDelegationData.chainParameters?.poolOwnerCooldown ?: 0
             )
             noticeMessage = resources.getQuantityString(
-                R.plurals.baker_notice_message_remove,
-                gracePeriod,
-                gracePeriod
+                R.plurals.baker_notice_message_remove, gracePeriod, gracePeriod
             )
         }
 
@@ -322,8 +317,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
         val messageFromWalletProxy = getString(value)
         builder.setMessage(
             getString(
-                R.string.baker_register_transaction_failed,
-                messageFromWalletProxy
+                R.string.baker_register_transaction_failed, messageFromWalletProxy
             )
         )
         builder.setPositiveButton(getString(R.string.delegation_register_delegation_failed_try_again)) { dialog, _ ->
