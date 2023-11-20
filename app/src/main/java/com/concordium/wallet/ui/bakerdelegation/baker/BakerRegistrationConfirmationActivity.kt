@@ -16,7 +16,7 @@ import com.concordium.wallet.databinding.ActivityBakerRegistrationConfirmationBi
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.util.UnitConvertUtil
-import com.concordium.wallet.util.roundToDecimalPlace
+import com.concordium.wallet.util.dropAfterDecimalPlaces
 import com.concordium.wallet.util.toBigInteger
 import java.math.BigInteger
 
@@ -208,11 +208,11 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
         binding.apply {
             transactionFeeStatus.text = "${
                 viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate
-                    ?.times(100)?.roundToDecimalPlace(3) ?: 0.0
+                    ?.times(100)?.dropAfterDecimalPlaces(3) ?: 0.0
             } %"
             bakingStatus.text = "${
                 viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate
-                    ?.times(100)?.roundToDecimalPlace(3) ?: 0.0
+                    ?.times(100)?.dropAfterDecimalPlaces(3) ?: 0.0
             } %"
         }
     }

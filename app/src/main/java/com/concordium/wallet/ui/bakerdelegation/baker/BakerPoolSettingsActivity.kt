@@ -14,9 +14,9 @@ import com.concordium.wallet.databinding.ActivityBakerSettingsBinding
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.util.addSuffix
+import com.concordium.wallet.util.dropAfterDecimalPlaces
 import com.concordium.wallet.util.getTextWithoutSuffix
 import com.concordium.wallet.util.hideKeyboard
-import com.concordium.wallet.util.roundToDecimalPlace
 import com.google.android.material.snackbar.Snackbar
 import kotlin.math.roundToInt
 
@@ -237,9 +237,18 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
         val bakingRange = chainParams.bakingCommissionRange
 
         val selectedTransactionRate =
-            binding.transactionFeeValue.getTextWithoutSuffix(COMMISION_RATE_SUFFIX).toDouble() / 100
+            ("." + binding.transactionFeeValue
+                .getTextWithoutSuffix(COMMISION_RATE_SUFFIX)
+                .replace(".", "")
+                .replace(",", "")
+                    ).toDouble()
+
         val selectedBakingRate =
-            binding.bakingValue.getTextWithoutSuffix(COMMISION_RATE_SUFFIX).toDouble() / 100
+            ("." + binding.bakingValue
+                .getTextWithoutSuffix(COMMISION_RATE_SUFFIX)
+                .replace(".", "")
+                .replace(",", "")
+                    ).toDouble()
 
         if (selectedTransactionRate !in transactionRange.min..transactionRange.max) {
             showErrorMessage(getString(R.string.baking_commission_rate_error_transaction_not_in_range))
@@ -251,8 +260,8 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
         }
 
         viewModel.setSelectedCommissionRates(
-            transactionRate = selectedTransactionRate.roundToDecimalPlace(5),
-            bakingRate = selectedBakingRate.roundToDecimalPlace(5),
+            transactionRate = selectedTransactionRate.dropAfterDecimalPlaces(5),
+            bakingRate = selectedBakingRate.dropAfterDecimalPlaces(5),
         )
 
         val intent = Intent(this, BakerRegistrationOpenActivity::class.java)
