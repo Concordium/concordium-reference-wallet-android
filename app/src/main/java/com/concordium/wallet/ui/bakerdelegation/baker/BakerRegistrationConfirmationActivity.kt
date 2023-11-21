@@ -206,14 +206,25 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
     @SuppressLint("SetTextI18n")
     private fun showCommissionRates() {
         binding.apply {
-            transactionFeeStatus.text = "${
-                viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate
-                    ?.times(100)?.dropAfterDecimalPlaces(3) ?: 0.0
-            } %"
-            bakingStatus.text = "${
-                viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate
-                    ?.times(100)?.dropAfterDecimalPlaces(3) ?: 0.0
-            } %"
+            if (viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate != null) {
+                transactionFeeStatus.text = "${
+                    viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate
+                        ?.times(100)?.dropAfterDecimalPlaces(3) ?: 0.0
+                } %"
+            } else {
+                transactionFeeTitle.visibility = View.GONE
+                transactionFeeStatus.visibility = View.GONE
+            }
+
+            if (viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate != null) {
+                bakingStatus.text = "${
+                    viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate
+                        ?.times(100)?.dropAfterDecimalPlaces(3) ?: 0.0
+                } %"
+            } else {
+                bakingTitle.visibility = View.GONE
+                bakingStatus.visibility = View.GONE
+            }
         }
     }
 
