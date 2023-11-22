@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Binder
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
@@ -134,10 +135,19 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
     }
 
     private fun pairWC(wcUri: String) {
-
-        println("LC -> CALL PAIR $wcUri")
+        if (matchesURLScheme(wcUri).not()) {
+            EventBus.getDefault()
+                .post(RejectError("Provided parameters do not match the expected URL, please restart the connection."))
+            return
+        }
+        val uriPrams = getConnectionParams(wcUri).ifEmpty {
+            EventBus.getDefault()
+                .post(RejectError("Provided parameters are empty, please restart the connection.\n"))
+            return
+        }
+        println("LC -> CALL PAIR params:$uriPrams")
         if (CoreClient.Pairing.getPairings().isEmpty()) {
-            val pairingParams = Core.Params.Pair(wcUri)
+            val pairingParams = Core.Params.Pair(uriPrams)
             println("LC -> PAIR IS EMPTY")
 
             CoreClient.Pairing.pair(pairingParams) { error ->
@@ -161,6 +171,23 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
             CoreClient.Pairing.pair(pairingParams) { error ->
                 println("LC -> PAIR ERROR ${throwableRemoveLineBreaks(error.throwable)}")
                 EventBus.getDefault().post(PairError(error.throwable.message ?: ""))
+            }
+        }
+    }
+
+    private fun matchesURLScheme(wcUri: String): Boolean =
+        Regex("wc|concordiumwallet://wc").containsMatchIn(wcUri)
+
+    private fun getConnectionParams(wcUri: String): String {
+        return when {
+            wcUri.startsWith("wc:") -> wcUri
+            else -> {
+                try {
+                    Uri.parse(wcUri)
+                        .getQueryParameters("uri").first()
+                } catch (e: RuntimeException) {
+                    ""
+                }
             }
         }
     }
