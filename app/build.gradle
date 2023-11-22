@@ -40,7 +40,7 @@ tasks.withType(Test) {
     jacoco.excludes = ['jdk.internal.*']
 }
 
-def versionBuildNumberSequential = 58
+def versionBuildNumberSequential = 60
 
 def versionBuildNumberMajor = 1
 def versionBuildNumberMinor = 5

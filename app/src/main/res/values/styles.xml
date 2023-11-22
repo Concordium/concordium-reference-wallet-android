@@ -359,7 +359,6 @@
         <item name="android:elevation">0dp</item>
         <item name="android:fontFamily">monospace</item>
         <item name="android:textColorHint">@color/redesign_primary</item>
-        <item name="android:textColor">@color/redesign_primary</item>
     </style>
 
     <style name="EditText.AuthOnDark">
