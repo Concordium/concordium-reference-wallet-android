@@ -140,14 +140,16 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
                 .post(RejectError("Provided parameters do not match the expected URL, please restart the connection."))
             return
         }
-        val uriPrams = getConnectionParams(wcUri).ifEmpty {
+        val uriParams = getConnectionParams(wcUri)
+        if (uriParams == null) {
             EventBus.getDefault()
                 .post(RejectError("Provided parameters are empty, please restart the connection.\n"))
             return
         }
-        println("LC -> CALL PAIR params:$uriPrams")
+
+        println("LC -> CALL PAIR params:$uriParams")
         if (CoreClient.Pairing.getPairings().isEmpty()) {
-            val pairingParams = Core.Params.Pair(uriPrams)
+            val pairingParams = Core.Params.Pair(uriParams)
             println("LC -> PAIR IS EMPTY")
 
             CoreClient.Pairing.pair(pairingParams) { error ->
@@ -178,16 +180,15 @@ class WalletConnectService : Service(), SignClient.WalletDelegate, CoreClient.Co
     private fun matchesURLScheme(wcUri: String): Boolean =
         Regex("wc|concordiumwallet://wc").containsMatchIn(wcUri)
 
-    private fun getConnectionParams(wcUri: String): String {
-        return when {
-            wcUri.startsWith("wc:") -> wcUri
-            else -> {
-                try {
-                    Uri.parse(wcUri)
-                        .getQueryParameters("uri").first()
-                } catch (e: RuntimeException) {
-                    ""
-                }
+    private fun getConnectionParams(wcUri: String): String? = when {
+        wcUri.startsWith("wc:") -> wcUri
+        else -> {
+            try {
+                Uri.parse(wcUri).getQueryParameter("uri")
+            } catch (e: UnsupportedOperationException) {
+                null
+            } catch (e: NullPointerException) {
+                null
             }
         }
     }
