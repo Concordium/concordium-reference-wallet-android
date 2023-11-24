@@ -181,7 +181,6 @@ class MainActivity : BaseActivity(), IdentityStatusDelegate by IdentityStatusDel
                 }
             }
         }
-        Result.success()
     }
 
     override fun onPause() {
