@@ -206,6 +206,11 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun showCommissionRates() {
+        if (viewModel.commissionRatesHasChanged().not()) {
+            hideCommissionRates()
+            return
+        }
+
         binding.apply {
             if (viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate != null) {
                 transactionFeeTitle.visibility = View.VISIBLE
