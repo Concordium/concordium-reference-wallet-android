@@ -236,19 +236,32 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
         )
         val bakingRange = chainParams.bakingCommissionRange
 
-        val selectedTransactionRate =
-            ("." + binding.transactionFeeValue
-                .getTextWithoutSuffix(COMMISION_RATE_SUFFIX)
-                .replace(".", "")
-                .replace(",", "")
-                    ).toDouble()
+        var selectedTransactionRate =
+            binding.transactionFeeValue.getTextWithoutSuffix(COMMISION_RATE_SUFFIX)
+                .replace(",", ".").toDouble()
 
-        val selectedBakingRate =
-            ("." + binding.bakingValue
-                .getTextWithoutSuffix(COMMISION_RATE_SUFFIX)
-                .replace(".", "")
-                .replace(",", "")
-                    ).toDouble()
+        selectedTransactionRate = when (selectedTransactionRate) {
+            transactionRange.max * 100 -> transactionRange.max
+            transactionRange.min * 100 -> transactionRange.min
+            else -> {
+                ("." + binding.transactionFeeValue.getTextWithoutSuffix(COMMISION_RATE_SUFFIX)
+                    .replace(",", ".")).toDouble()
+            }
+        }
+
+        var selectedBakingRate =
+            binding.bakingValue.getTextWithoutSuffix(COMMISION_RATE_SUFFIX)
+                .replace(",", ".").toDouble()
+
+        selectedBakingRate = when (selectedBakingRate) {
+            bakingRange.max * 100 -> bakingRange.max
+            bakingRange.min * 100 -> bakingRange.min
+            else -> {
+                ("." + binding.bakingValue.getTextWithoutSuffix(COMMISION_RATE_SUFFIX)
+                    .replace(",", ".")).toDouble()
+            }
+        }
+
 
         if (selectedTransactionRate !in transactionRange.min..transactionRange.max) {
             showErrorMessage(getString(R.string.baking_commission_rate_error_transaction_not_in_range))

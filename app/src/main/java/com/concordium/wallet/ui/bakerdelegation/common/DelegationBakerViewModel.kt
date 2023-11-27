@@ -144,6 +144,11 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         else bakerDelegationData.metadataUrl != bakerDelegationData.oldMetadataUrl
     }
 
+    fun commissionRatesHasChanged(): Boolean =
+        bakerDelegationData.oldCommissionRates?.bakingCommission != bakerDelegationData.chainParameters?.bakingCommissionRate ||
+                bakerDelegationData.oldCommissionRates?.transactionCommission != bakerDelegationData.chainParameters?.transactionCommissionRate
+
+
     fun openStatusHasChanged(): Boolean {
         return bakerDelegationData.bakerPoolInfo?.openStatus != bakerDelegationData.oldOpenStatus
     }
