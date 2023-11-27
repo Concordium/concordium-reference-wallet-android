@@ -169,6 +169,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
             getString(R.string.baker_registration_confirmation_remove_transaction)
         binding.accountToBakeTitle.text =
             getString(R.string.baker_registration_confirmation_remove_account_to_stop)
+        hideCommissionRates()
     }
 
     private fun showAmount() {
@@ -207,6 +208,8 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
     private fun showCommissionRates() {
         binding.apply {
             if (viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate != null) {
+                transactionFeeTitle.visibility = View.VISIBLE
+                transactionFeeStatus.visibility = View.VISIBLE
                 transactionFeeStatus.text = "${
                     viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate
                         ?.times(100)?.dropAfterDecimalPlaces(3) ?: 0.0
@@ -217,6 +220,8 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
             }
 
             if (viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate != null) {
+                bakingTitle.visibility = View.VISIBLE
+                bakingStatus.visibility = View.VISIBLE
                 bakingStatus.text = "${
                     viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate
                         ?.times(100)?.dropAfterDecimalPlaces(3) ?: 0.0
@@ -225,6 +230,15 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
                 bakingTitle.visibility = View.GONE
                 bakingStatus.visibility = View.GONE
             }
+        }
+    }
+
+    private fun hideCommissionRates() {
+        binding.apply {
+            transactionFeeTitle.visibility = View.GONE
+            transactionFeeStatus.visibility = View.GONE
+            bakingTitle.visibility = View.GONE
+            bakingStatus.visibility = View.GONE
         }
     }
 
