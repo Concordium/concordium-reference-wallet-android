@@ -103,7 +103,7 @@
                         tools:text="10%" />
 
                     <Button
-                        android:id="@+id/baker_registration_continue"
+                        android:id="@+id/bakerRegistrationContinue"
                         style="@style/Button.Standard"
                         android:layout_width="match_parent"
                         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"

@@ -1,5 +1,6 @@
 package com.concordium.wallet.ui.bakerdelegation.baker
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.view.View
 import androidx.lifecycle.Observer
@@ -13,12 +14,40 @@ import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.util.UnitConvertUtil
-import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.*
-import kotlinx.android.synthetic.main.transaction_submitted_header.*
-import kotlinx.android.synthetic.main.transaction_submitted_no.*
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.account_to_bake_from
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.account_to_bake_title
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.aggregation_verify_key
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.aggregation_verify_key_title
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.baker_amount_confirmation
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.baking_status
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.baking_title
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.delegation_amount_confirmation_title
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.delegation_transaction_title
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.election_verify_key
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.election_verify_key_title
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.estimated_transaction_fee
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.grace_period
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.meta_data_url
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.meta_data_url_title
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.pool_status
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.pool_status_title
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.rewards_will_be
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.rewards_will_be_title
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.signature_verify_key
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.signature_verify_key_title
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.submit_baker_finish
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.submit_baker_transaction
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.transaction_fee_status
+import kotlinx.android.synthetic.main.activity_baker_registration_confirmation.transaction_fee_title
+import kotlinx.android.synthetic.main.transaction_submitted_header.transaction_submitted
+import kotlinx.android.synthetic.main.transaction_submitted_no.transaction_submitted_divider
+import kotlinx.android.synthetic.main.transaction_submitted_no.transaction_submitted_id
 
 class BakerRegistrationConfirmationActivity :
-    BaseDelegationBakerActivity(R.layout.activity_baker_registration_confirmation, R.string.baker_registration_confirmation_title) {
+    BaseDelegationBakerActivity(
+        R.layout.activity_baker_registration_confirmation,
+        R.string.baker_registration_confirmation_title
+    ) {
 
     private var receiptMode = false
 
@@ -44,7 +73,10 @@ class BakerRegistrationConfirmationActivity :
                 response?.first?.let {
                     showWaiting(false)
                     updateViews()
-                    estimated_transaction_fee.text = getString(R.string.delegation_register_delegation_amount_estimated_transaction_fee, CurrencyUtil.formatGTU(it))
+                    estimated_transaction_fee.text = getString(
+                        R.string.delegation_register_delegation_amount_estimated_transaction_fee,
+                        CurrencyUtil.formatGTU(it)
+                    )
                 }
             }
         })
@@ -54,23 +86,29 @@ class BakerRegistrationConfirmationActivity :
     private fun updateViews() {
 
         submit_baker_transaction.text = getString(R.string.baker_registration_confirmation_submit)
-        account_to_bake_from.text = (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n").plus(viewModel.bakerDelegationData.account?.address ?: "")
+        account_to_bake_from.text = (viewModel.bakerDelegationData.account?.name ?: "").plus("\n\n")
+            .plus(viewModel.bakerDelegationData.account?.address ?: "")
         estimated_transaction_fee.visibility = View.VISIBLE
 
         when (viewModel.bakerDelegationData.type) {
             REGISTER_BAKER -> {
                 updateViewsRegisterBaker()
             }
+
             UPDATE_BAKER_KEYS -> {
-                viewModel.bakerDelegationData.amount = viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount?.toLong() ?: 0
+                viewModel.bakerDelegationData.amount =
+                    viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount?.toLong() ?: 0
                 updateViewsUpdateBakerKeys()
             }
+
             UPDATE_BAKER_POOL -> {
                 updateViewsUpdateBakerPool()
             }
+
             UPDATE_BAKER_STAKE -> {
                 updateViewsUpdateBakerStake()
             }
+
             REMOVE_BAKER -> {
                 updateViewsRemoveBaker()
             }
@@ -97,36 +135,46 @@ class BakerRegistrationConfirmationActivity :
     private fun updateViewsRegisterBaker() {
         setActionBarTitle(R.string.baker_registration_confirmation_title)
         grace_period.text = getString(R.string.baker_registration_confirmation_explain)
-        delegation_transaction_title.text = getString(R.string.baker_register_confirmation_receipt_title)
+        delegation_transaction_title.text =
+            getString(R.string.baker_register_confirmation_receipt_title)
         showAmount()
         showRewards()
         showPoolStatus()
         showMetaUrl()
+        showCommissionRates()
         showKeys()
     }
 
     private fun updateViewsUpdateBakerKeys() {
         setActionBarTitle(R.string.baker_registration_confirmation_update_keys_title)
         grace_period.visibility = View.GONE
-        delegation_transaction_title.text = getString(R.string.baker_registration_confirmation_update_keys_transaction_title)
-        account_to_bake_title.text = getString(R.string.baker_registration_confirmation_update_affected_account)
+        delegation_transaction_title.text =
+            getString(R.string.baker_registration_confirmation_update_keys_transaction_title)
+        account_to_bake_title.text =
+            getString(R.string.baker_registration_confirmation_update_affected_account)
         showKeys()
     }
 
     private fun updateViewsUpdateBakerPool() {
         setActionBarTitle(R.string.baker_registration_confirmation_update_pool_title)
-        delegation_transaction_title.text = getString(R.string.baker_registration_confirmation_update_pool_transaction_title)
-        account_to_bake_title.text = getString(R.string.baker_registration_confirmation_update_affected_account)
+        delegation_transaction_title.text =
+            getString(R.string.baker_registration_confirmation_update_pool_transaction_title)
+        account_to_bake_title.text =
+            getString(R.string.baker_registration_confirmation_update_affected_account)
         showPoolStatus()
         showMetaUrl()
+        showCommissionRates()
     }
 
     private fun updateViewsUpdateBakerStake() {
         setActionBarTitle(R.string.baker_registration_confirmation_update_stake_title)
-        if (viewModel.isUpdateDecreaseAmount()) grace_period.text = getString(R.string.baker_registration_confirmation_update_stake_update_decrease_explain)
+        if (viewModel.isUpdateDecreaseAmount()) grace_period.text =
+            getString(R.string.baker_registration_confirmation_update_stake_update_decrease_explain)
         else grace_period.visibility = View.GONE
-        delegation_transaction_title.text = getString(R.string.baker_registration_confirmation_update_stake_transaction_title)
-        account_to_bake_title.text = getString(R.string.baker_registration_confirmation_update_stake_update)
+        delegation_transaction_title.text =
+            getString(R.string.baker_registration_confirmation_update_stake_transaction_title)
+        account_to_bake_title.text =
+            getString(R.string.baker_registration_confirmation_update_stake_update)
         showAmount()
         showRewards()
     }
@@ -134,15 +182,18 @@ class BakerRegistrationConfirmationActivity :
     private fun updateViewsRemoveBaker() {
         setActionBarTitle(R.string.baker_registration_confirmation_remove_title)
         grace_period.text = getString(R.string.baker_registration_confirmation_remove_are_you_sure)
-        delegation_transaction_title.text = getString(R.string.baker_registration_confirmation_remove_transaction)
-        account_to_bake_title.text = getString(R.string.baker_registration_confirmation_remove_account_to_stop)
+        delegation_transaction_title.text =
+            getString(R.string.baker_registration_confirmation_remove_transaction)
+        account_to_bake_title.text =
+            getString(R.string.baker_registration_confirmation_remove_account_to_stop)
     }
 
     private fun showAmount() {
         if (viewModel.stakedAmountHasChanged()) {
             delegation_amount_confirmation_title.visibility = View.VISIBLE
             baker_amount_confirmation.visibility = View.VISIBLE
-            baker_amount_confirmation.text = CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
+            baker_amount_confirmation.text =
+                CurrencyUtil.formatGTU(viewModel.bakerDelegationData.amount ?: 0, true)
         }
     }
 
@@ -150,7 +201,10 @@ class BakerRegistrationConfirmationActivity :
         if (viewModel.restakeHasChanged()) {
             rewards_will_be_title.visibility = View.VISIBLE
             rewards_will_be.visibility = View.VISIBLE
-            rewards_will_be.text = if (viewModel.bakerDelegationData.restake) getString(R.string.baker_register_confirmation_receipt_added_to_delegation_amount) else getString(R.string.baker_register_confirmation_receipt_at_disposal)
+            rewards_will_be.text =
+                if (viewModel.bakerDelegationData.restake) getString(R.string.baker_register_confirmation_receipt_added_to_delegation_amount) else getString(
+                    R.string.baker_register_confirmation_receipt_at_disposal
+                )
         }
     }
 
@@ -158,7 +212,10 @@ class BakerRegistrationConfirmationActivity :
         if (viewModel.openStatusHasChanged()) {
             pool_status_title.visibility = View.VISIBLE
             pool_status.visibility = View.VISIBLE
-            pool_status.text = if (viewModel.isOpenBaker()) getString(R.string.baker_register_confirmation_receipt_pool_status_open) else getString(R.string.baker_register_confirmation_receipt_pool_status_closed)
+            pool_status.text =
+                if (viewModel.isOpenBaker()) getString(R.string.baker_register_confirmation_receipt_pool_status_open) else getString(
+                    R.string.baker_register_confirmation_receipt_pool_status_closed
+                )
         }
     }
 
@@ -178,8 +235,39 @@ class BakerRegistrationConfirmationActivity :
         if (viewModel.metadataUrlHasChanged()) {
             meta_data_url_title.visibility = View.VISIBLE
             meta_data_url.visibility = View.VISIBLE
-            if ((viewModel.bakerDelegationData.metadataUrl?.length ?: 0) > 0) meta_data_url.text = viewModel.bakerDelegationData.metadataUrl
+            if ((viewModel.bakerDelegationData.metadataUrl?.length ?: 0) > 0) meta_data_url.text =
+                viewModel.bakerDelegationData.metadataUrl
             else meta_data_url.text = getString(R.string.baker_update_pool_settings_url_removed)
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun showCommissionRates() {
+        if (viewModel.bakerDelegationData.chainParameters != null) {
+            transaction_fee_title.visibility = View.VISIBLE
+            transaction_fee_status.visibility = View.VISIBLE
+            baking_title.visibility = View.VISIBLE
+            baking_status.visibility = View.VISIBLE
+
+            val chainParams = viewModel.bakerDelegationData.chainParameters
+            transaction_fee_status.text =
+                "${
+                    viewModel.getTransactionRate(
+                        chainParams?.transactionCommissionRange?.max ?: 0.0,
+                        chainParams?.transactionCommissionRange?.min ?: 0.0
+                    ) * 100
+                }%"
+            baking_status.text = "${
+                viewModel.getTransactionRate(
+                    chainParams?.bakingCommissionRange?.max ?: 0.0,
+                    chainParams?.bakingCommissionRange?.min ?: 0.0
+                ) * 100
+            }%"
+        } else {
+            transaction_fee_title.visibility = View.GONE
+            transaction_fee_status.visibility = View.GONE
+            baking_title.visibility = View.GONE
+            baking_status.visibility = View.GONE
         }
     }
 
@@ -211,20 +299,38 @@ class BakerRegistrationConfirmationActivity :
 
         var noticeMessage = getString(R.string.baker_notice_message)
 
-        if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount ?: 0) < (viewModel.bakerDelegationData.amount ?: 0)) {
+        if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount
+                ?: 0) < (viewModel.bakerDelegationData.amount ?: 0)
+        ) {
             noticeMessage = getString(R.string.baker_notice_message_update_increase)
-        }  else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount ?: 0) > (viewModel.bakerDelegationData.amount ?: 0)) {
-            val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0)
-            noticeMessage = resources.getQuantityString(R.plurals.baker_notice_message_update_decrease, gracePeriod, gracePeriod)
-        } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount ?: 0) == (viewModel.bakerDelegationData.amount ?: 0)) {
+        } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount
+                ?: 0) > (viewModel.bakerDelegationData.amount ?: 0)
+        ) {
+            val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(
+                viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0
+            )
+            noticeMessage = resources.getQuantityString(
+                R.plurals.baker_notice_message_update_decrease,
+                gracePeriod,
+                gracePeriod
+            )
+        } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_STAKE && (viewModel.bakerDelegationData.oldStakedAmount
+                ?: 0) == (viewModel.bakerDelegationData.amount ?: 0)
+        ) {
             noticeMessage = getString(R.string.baker_notice_message_update_pool)
         } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_POOL) {
             noticeMessage = getString(R.string.baker_notice_message_update_pool)
         } else if (viewModel.bakerDelegationData.type == UPDATE_BAKER_KEYS) {
             noticeMessage = getString(R.string.baker_notice_message_update_keys)
         } else if (viewModel.bakerDelegationData.type == REMOVE_BAKER) {
-            val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0)
-            noticeMessage = resources.getQuantityString(R.plurals.baker_notice_message_remove, gracePeriod, gracePeriod)
+            val gracePeriod = UnitConvertUtil.secondsToDaysRoundedDown(
+                viewModel.bakerDelegationData.chainParameters?.delegatorCooldown ?: 0
+            )
+            noticeMessage = resources.getQuantityString(
+                R.plurals.baker_notice_message_remove,
+                gracePeriod,
+                gracePeriod
+            )
         }
 
         builder.setMessage(noticeMessage)
@@ -240,7 +346,12 @@ class BakerRegistrationConfirmationActivity :
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.delegation_register_delegation_failed_title)
         val messageFromWalletProxy = getString(value)
-        builder.setMessage(getString(R.string.baker_register_transaction_failed, messageFromWalletProxy))
+        builder.setMessage(
+            getString(
+                R.string.baker_register_transaction_failed,
+                messageFromWalletProxy
+            )
+        )
         builder.setPositiveButton(getString(R.string.delegation_register_delegation_failed_try_again)) { dialog, _ ->
             dialog.dismiss()
             onContinueClicked()

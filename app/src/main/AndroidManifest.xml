@@ -187,6 +187,10 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.bakerdelegation.baker.BakerPoolSettingsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.bakerdelegation.baker.BakerRegistrationOpenActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />

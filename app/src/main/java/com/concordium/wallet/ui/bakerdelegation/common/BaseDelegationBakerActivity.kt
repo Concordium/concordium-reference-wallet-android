@@ -11,8 +11,8 @@ import com.concordium.wallet.data.model.BakerDelegationData
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_delegation_remove.*
-import kotlinx.android.synthetic.main.progress.*
+import kotlinx.android.synthetic.main.activity_delegation_remove.estimated_transaction_fee
+import kotlinx.android.synthetic.main.progress.progress_layout
 import javax.crypto.Cipher
 
 abstract class BaseDelegationBakerActivity(layout: Int, titleId: Int = R.string.app_name) :
@@ -87,9 +87,9 @@ abstract class BaseDelegationBakerActivity(layout: Int, titleId: Int = R.string.
 
     protected open fun showWaiting(waiting: Boolean) {
         if (waiting) {
-            progress_layout.visibility = View.VISIBLE
+            progress_layout?.visibility = View.VISIBLE
         } else {
-            progress_layout.visibility = View.GONE
+            progress_layout?.visibility = View.GONE
         }
     }
 

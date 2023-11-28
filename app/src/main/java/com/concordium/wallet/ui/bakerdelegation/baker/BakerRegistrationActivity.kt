@@ -8,12 +8,14 @@ import com.concordium.wallet.data.model.BakerPoolInfo.Companion.OPEN_STATUS_OPEN
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.uicore.view.SegmentedControlView
-import kotlinx.android.synthetic.main.activity_baker_registration.*
+import kotlinx.android.synthetic.main.activity_baker_registration.baker_options
+import kotlinx.android.synthetic.main.activity_baker_registration.baker_registration_continue
 
 class BakerRegistrationActivity :
     BaseDelegationBakerActivity(R.layout.activity_baker_registration, R.string.baker_registration_title) {
 
     override fun initViews() {
+        viewModel.loadChainParameters()
         baker_options.clearAll()
         baker_options.addControl(
             getString(R.string.baker_registration_open),
@@ -39,7 +41,7 @@ class BakerRegistrationActivity :
         val intent = if (viewModel.bakerDelegationData.bakerPoolInfo?.openStatus == OPEN_STATUS_CLOSED_FOR_ALL)
             Intent(this, BakerRegistrationCloseActivity::class.java)
         else
-            Intent(this, BakerRegistrationOpenActivity::class.java)
+            Intent(this, BakerPoolSettingsActivity::class.java)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
     }
