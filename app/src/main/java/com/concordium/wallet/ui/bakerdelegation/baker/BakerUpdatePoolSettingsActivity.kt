@@ -10,7 +10,9 @@ import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivi
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.ui.common.GenericFlowActivity
 import com.concordium.wallet.uicore.view.SegmentedControlView
-import kotlinx.android.synthetic.main.activity_baker_update_pool_settings.*
+import kotlinx.android.synthetic.main.activity_baker_update_pool_settings.pool_options
+import kotlinx.android.synthetic.main.activity_baker_update_pool_settings.pool_settings_current_status
+import kotlinx.android.synthetic.main.activity_baker_update_pool_settings.update_pool_settings_continue
 
 class BakerUpdatePoolSettingsActivity :
     BaseDelegationBakerActivity(R.layout.activity_baker_update_pool_settings, R.string.baker_update_pool_settings_title) {
@@ -59,10 +61,11 @@ class BakerUpdatePoolSettingsActivity :
         update_pool_settings_continue.setOnClickListener {
             gotoNextPage()
         }
+        viewModel.loadChainParameters()
     }
 
     private fun gotoNextPage() {
-        val intent = Intent(this, BakerRegistrationOpenActivity::class.java)
+        val intent = Intent(this, BakerPoolSettingsActivity::class.java)
         intent.putExtra(GenericFlowActivity.EXTRA_IGNORE_BACK_PRESS, false)
         intent.putExtra(DelegationBakerViewModel.EXTRA_DELEGATION_BAKER_DATA, viewModel.bakerDelegationData)
         startActivityForResultAndHistoryCheck(intent)
