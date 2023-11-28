@@ -245,7 +245,8 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
             transactionRange.min * 100 -> transactionRange.min
             else -> {
                 ("." + binding.transactionFeeValue.getTextWithoutSuffix(COMMISION_RATE_SUFFIX)
-                    .replace(",", ".")).toDouble()
+                    .replace(",", "")
+                    .replace(".", "")).toDouble()
             }
         }
 
@@ -258,7 +259,8 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
             bakingRange.min * 100 -> bakingRange.min
             else -> {
                 ("." + binding.bakingValue.getTextWithoutSuffix(COMMISION_RATE_SUFFIX)
-                    .replace(",", ".")).toDouble()
+                    .replace(",", "")
+                    .replace(".", "")).toDouble()
             }
         }
 
