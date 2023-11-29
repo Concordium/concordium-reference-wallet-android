@@ -952,7 +952,7 @@
     <string name="account_details_menu_release_schedule">Release schedule</string>
     <string name="account_details_menu_transfer_filter">Transfer filters</string>
     <string name="account_details_menu_delegation">Delegation</string>
-    <string name="account_details_menu_baking">Baking</string>
+    <string name="account_details_menu_baking">Validation</string>
     <string name="account_details_menu_show_shielded">Show shielded balance on %1$s</string>
     <string name="account_details_menu_hide_shielded">Hide shielded balance on %1$s</string>
     <string name="account_details_menu_decrypt">Decrypt</string>
