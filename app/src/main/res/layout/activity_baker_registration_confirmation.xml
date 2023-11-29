@@ -42,8 +42,8 @@
                             style="@style/TextView.Standard"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/baker_registration_confirmation_explain"
-                            android:gravity="center" />
+                            android:gravity="center"
+                            android:text="@string/baker_registration_confirmation_explain" />
 
                         <include layout="@layout/transaction_submitted_header" />
 
@@ -53,107 +53,126 @@
                             android:layout_marginTop="@dimen/activity_receipt_item_vertical_margin"
                             android:background="@drawable/receipt_background_new"
                             android:orientation="vertical">
+
                             <TextView
                                 android:id="@+id/delegation_transaction_title"
                                 style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 tools:text="@string/baker_register_confirmation_receipt_title" />
+
                             <View style="@style/Divider" />
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/activity_vertical_margin"
                                 android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
                                 android:orientation="vertical">
+
                                 <TextView
                                     android:id="@+id/account_to_bake_title"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:text="@string/baker_register_confirmation_receipt_account_to_bake_from" />
+
                                 <TextView
                                     android:id="@+id/account_to_bake_from"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     tools:text="Main\n\n14f3632ac857400d417a7277f726c43a 8ddf07184f10a429cf0759e985247c33" />
+
                                 <TextView
                                     android:id="@+id/delegation_amount_confirmation_title"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:text="@string/baker_register_confirmation_receipt_amount_to_bake"
                                     android:visibility="gone"
-                                    tools:visibility="visible"
-                                    android:text="@string/baker_register_confirmation_receipt_amount_to_bake" />
+                                    tools:visibility="visible" />
+
                                 <TextView
                                     android:id="@+id/baker_amount_confirmation"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Large"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:visibility="gone"
-                                    tools:visibility="visible"
-                                    tools:text="Ͼ100.00" />
+                                    tools:text="Ͼ100.00"
+                                    tools:visibility="visible" />
+
                                 <TextView
                                     android:id="@+id/rewards_will_be_title"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:text="@string/baker_register_confirmation_receipt_rewards_will_be"
                                     android:visibility="gone"
-                                    tools:visibility="visible"
-                                    android:text="@string/baker_register_confirmation_receipt_rewards_will_be" />
+                                    tools:visibility="visible" />
+
                                 <TextView
                                     android:id="@+id/rewards_will_be"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:visibility="gone"
-                                    tools:visibility="visible"
-                                    tools:text="@string/delegation_status_added_to_delegation_amount" />
+                                    tools:text="@string/delegation_status_added_to_delegation_amount"
+                                    tools:visibility="visible" />
+
                                 <TextView
                                     android:id="@+id/pool_status_title"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:text="@string/baker_register_confirmation_receipt_pool_status"
                                     android:visibility="gone"
-                                    tools:visibility="visible"
-                                    android:text="@string/baker_register_confirmation_receipt_pool_status" />
+                                    tools:visibility="visible" />
+
                                 <TextView
                                     android:id="@+id/pool_status"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:visibility="gone"
-                                    tools:visibility="visible"
-                                    tools:text="@string/baker_register_confirmation_receipt_pool_status_closed" />
+                                    tools:text="@string/baker_register_confirmation_receipt_pool_status_closed"
+                                    tools:visibility="visible" />
 
                                 <TextView
                                     android:id="@+id/transaction_fee_title"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="@string/baker_pool_settings_fee_explain" />
+                                    android:text="@string/baker_pool_settings_fee_explain"
+                                    android:visibility="gone"
+                                    tools:visibility="visible" />
 
                                 <TextView
                                     android:id="@+id/transaction_fee_status"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    tools:text="10%" />
+                                    android:visibility="gone"
+                                    tools:text="10%"
+                                    tools:visibility="visible" />
 
                                 <TextView
                                     android:id="@+id/baking_title"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="@string/baker_pool_settings_baking_explain" />
+                                    android:text="@string/baker_pool_settings_baking_explain"
+                                    android:visibility="gone"
+                                    tools:visibility="visible" />
 
                                 <TextView
                                     android:id="@+id/baking_status"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    tools:text="10%" />
+                                    android:visibility="gone"
+                                    tools:text="10%"
+                                    tools:visibility="visible" />
 
 
                                 <TextView
@@ -161,74 +180,83 @@
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:text="@string/baker_register_confirmation_receipt_meta_data_url"
                                     android:visibility="gone"
-                                    tools:visibility="visible"
-                                    android:text="@string/baker_register_confirmation_receipt_meta_data_url" />
+                                    tools:visibility="visible" />
+
                                 <TextView
                                     android:id="@+id/meta_data_url"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:visibility="gone"
-                                    tools:visibility="visible"
-                                    tools:text="https://example.com" />
+                                    tools:text="https://example.com"
+                                    tools:visibility="visible" />
+
                                 <TextView
                                     android:id="@+id/election_verify_key_title"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:text="@string/baker_register_confirmation_receipt_election_verify_key"
                                     android:visibility="gone"
-                                    tools:visibility="visible"
-                                    android:text="@string/baker_register_confirmation_receipt_election_verify_key" />
+                                    tools:visibility="visible" />
+
                                 <TextView
                                     android:id="@+id/election_verify_key"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:visibility="gone"
-                                    tools:visibility="visible"
-                                    tools:text="14f3632ac857400d417a7277f726c43a 8ddf07184f10a429cf0759e985247c33" />
+                                    tools:text="14f3632ac857400d417a7277f726c43a 8ddf07184f10a429cf0759e985247c33"
+                                    tools:visibility="visible" />
+
                                 <TextView
                                     android:id="@+id/signature_verify_key_title"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:text="@string/baker_register_confirmation_receipt_signature_verify_key"
                                     android:visibility="gone"
-                                    tools:visibility="visible"
-                                    android:text="@string/baker_register_confirmation_receipt_signature_verify_key" />
+                                    tools:visibility="visible" />
+
                                 <TextView
                                     android:id="@+id/signature_verify_key"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:visibility="gone"
-                                    tools:visibility="visible"
-                                    tools:text="7bb9028cc6f7202f1b72608b98ba9e4c 43e922cea3b01120eb70b7e01a623df7" />
+                                    tools:text="7bb9028cc6f7202f1b72608b98ba9e4c 43e922cea3b01120eb70b7e01a623df7"
+                                    tools:visibility="visible" />
+
                                 <TextView
                                     android:id="@+id/aggregation_verify_key_title"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Title"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
+                                    android:text="@string/baker_register_confirmation_receipt_aggregation_verify_key"
                                     android:visibility="gone"
-                                    tools:visibility="visible"
-                                    android:text="@string/baker_register_confirmation_receipt_aggregation_verify_key" />
+                                    tools:visibility="visible" />
+
                                 <TextView
                                     android:id="@+id/aggregation_verify_key"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:visibility="gone"
-                                    tools:visibility="visible"
-                                    tools:text="b9ad84290785866393b631c431616b5f 0b6a3e5665ae47b90e6a572b61b724cf 5942c68740eba94f532661396eca64cc 0e2bc00446632e2dc69fdce4a6c90481 4fa6416212d582b36551527c370f425b f43c98f50a8b2e34d9fe10f4495f1570" />
+                                    tools:text="b9ad84290785866393b631c431616b5f 0b6a3e5665ae47b90e6a572b61b724cf 5942c68740eba94f532661396eca64cc 0e2bc00446632e2dc69fdce4a6c90481 4fa6416212d582b36551527c370f425b f43c98f50a8b2e34d9fe10f4495f1570"
+                                    tools:visibility="visible" />
+
                                 <TextView
                                     android:id="@+id/estimated_transaction_fee"
                                     style="@style/TextView.Standard.RegisterDelegationReceipt.Content.Gray"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:visibility="gone"
-                                    tools:visibility="visible"
-                                    tools:text="Estimated transaction fee:\nϾ 0.0059" />
+                                    tools:text="Estimated transaction fee:\nϾ 0.0059"
+                                    tools:visibility="visible" />
                             </LinearLayout>
+
                             <include layout="@layout/transaction_submitted_no" />
                         </LinearLayout>
                     </LinearLayout>
@@ -242,24 +270,27 @@
                         android:orientation="horizontal"
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp">
+
                         <Button
                             android:id="@+id/submit_baker_transaction"
                             style="@style/Button.Standard"
                             android:layout_width="match_parent"
                             android:text="@string/baker_register_confirmation_receipt_submit_transaction" />
+
                         <Button
                             android:id="@+id/submit_baker_finish"
                             style="@style/Button.Standard"
                             android:layout_width="match_parent"
-                            android:visibility="gone"
-                            android:text="@string/baker_register_confirmation_receipt_finish" />
+                            android:text="@string/baker_register_confirmation_receipt_finish"
+                            android:visibility="gone" />
                     </RelativeLayout>
 
                 </LinearLayout>
             </ScrollView>
 
-            <include layout="@layout/progress"
-                tools:visibility="gone"/>
+            <include
+                layout="@layout/progress"
+                tools:visibility="gone" />
         </RelativeLayout>
     </RelativeLayout>
 
