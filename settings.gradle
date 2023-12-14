@@ -1,2 +1,3 @@
 include ':app', ':mobile_wallet_lib-release'
+include ':app', ':concordium-sdk'
 rootProject.name='Wallet'

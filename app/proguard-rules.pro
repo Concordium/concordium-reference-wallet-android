@@ -101,4 +101,5 @@
 
 # --- Wallet lib
 
--keep class com.concordium.mobile_wallet_lib.** { *; }
+-keep class com.concordium.mobile_wallet_lib.** { * ; }
+-keep class com.concordium.sdk.** { * ; }

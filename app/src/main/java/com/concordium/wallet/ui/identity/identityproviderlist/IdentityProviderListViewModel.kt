@@ -20,6 +20,20 @@ import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.common.BackendErrorHandler
 import kotlinx.coroutines.launch
 import javax.crypto.Cipher
+import com.concordium.wallet.data.model.GlobalParams
+ import com.concordium.wallet.data.model.IdentityContainer
+ import com.concordium.wallet.data.model.IdentityProvider
+ import com.concordium.wallet.data.model.IdentityRequest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import android.util.Log
+
+import com.concordium.sdk.Connection
+import com.concordium.sdk.ClientV2
+import com.concordium.sdk.requests.BlockQuery
+
 
 class IdentityProviderListViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: IdentityProviderRepository = IdentityProviderRepository()
@@ -93,17 +107,31 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
     fun getGlobalInfo() {
         _waitingGlobalData.value = true
         globalParamsRequest?.dispose()
-        globalParamsRequest = repository.getIGlobalInfo(
-            {
-                tempData.globalParams = it.value
-                _waitingGlobalData.value = false
-            },
-            {
-                _waitingGlobalData.value = false
-                _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(it))
-            }
-        )
+
+        val connection = Connection.newBuilder()
+                .host("127.0.0.1")
+                .port(20001)
+                .build()
+        val client = ClientV2.from(connection)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val globalInfo = client.getCryptographicParameters(BlockQuery.BEST)
+                withContext(Dispatchers.Main) {
+                 println("good")
+                 tempData.globalParams = GlobalParams(onChainCommitmentKey= globalInfo.getOnChainCommitmentKey().toHex(), bulletproofGenerators = globalInfo.getBulletproofGenerators().toHex(), genesisString= globalInfo.getGenesisString())
+                 _waitingGlobalData.value = false
+                }
+       } catch (t: Throwable) {
+                withContext(Dispatchers.Main) {
+                    println("bad")
+                    Log.e("ccd", Log.getStackTraceString(t))
+                    _waitingGlobalData.value = false
+                    _errorLiveData.value = Event(BackendErrorHandler.getExceptionStringRes(t))
+                }
+        }
     }
+}
 
     fun selectedIdentityVerificationItem(identityProvider: IdentityProvider) {
         currentIdentityProvider = identityProvider

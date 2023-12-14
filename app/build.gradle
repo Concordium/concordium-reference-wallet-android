@@ -300,6 +300,9 @@ android {
             excludes += ['META-INF/LICENSE.md']
             excludes += ['META-INF/NOTICE.md']
         }
+        pickFirst "org/apache/commons/codec/language/bm/*.txt"
+        pickFirst "org/apache/commons/codec/language/dmrules.txt"
+        pickFirst "google/protobuf/*"
     }
 }
 
@@ -328,7 +331,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
     implementation 'androidx.fragment:fragment-ktx:1.5.5'
-
+    
     // Room
     def room_version = "2.5.0"
     implementation "androidx.room:room-runtime:$room_version"
@@ -355,9 +358,15 @@ dependencies {
 
     implementation 'com.google.code.gson:gson:2.9.0'
 
+    // gRPC
+    implementation 'io.grpc:grpc-okhttp:1.60.0'
+    implementation 'io.grpc:grpc-protobuf-lite:1.60.0'
+    implementation 'io.grpc:grpc-stub:1.60.0'
+    compileOnly 'org.apache.tomcat:annotations-api:6.0.53' // necessary for Java 9+
+
     // Crypto library
     implementation project(":mobile_wallet_lib-release")
-
+    implementation project(":concordium-sdk")
 
     // Test
     testImplementation 'junit:junit:4.13.2'
@@ -382,12 +391,17 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.14.2'
     implementation 'com.caverock:androidsvg-aar:1.4'
 
-    
     implementation 'com.github.matomo-org:matomo-sdk-android:4.1.4'
 
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.8.10")
 
     implementation "androidx.security:security-crypto:1.0.0"
+
+    // Crypto library deps
+
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.10.1'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.10.1'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.10.1'
 
     // Koin is simple Dependency injection framework.
     // This dependency will help separate architectural layers and ease testing with mock objects.

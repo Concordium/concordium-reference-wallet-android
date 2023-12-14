@@ -49,8 +49,11 @@ import com.concordium.wallet.util.Log
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import com.concordium.sdk.crypto.bakertransactions.BakerKeys as BKeys;
+
 
 class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
+
     override suspend fun createIdRequestAndPrivateDataV1(
         identityProviderInfo: IdentityProviderInfo,
         arsInfo: Map<String, ArsInfo>,
@@ -157,6 +160,7 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
 
     override suspend fun generateBakerKeys(): BakerKeys? =
         withContext(Dispatchers.Default) {
+           val test = BKeys.createBakerKeys()
             loadWalletLib()
             val result = generate_baker_keys()
             Log.d("Output (Code ${result.result}): ${result.output}")
