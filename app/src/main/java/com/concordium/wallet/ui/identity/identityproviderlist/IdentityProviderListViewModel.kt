@@ -33,7 +33,7 @@ import android.util.Log
 import com.concordium.sdk.Connection
 import com.concordium.sdk.ClientV2
 import com.concordium.sdk.requests.BlockQuery
-
+import com.concordium.sdk.TLSConfig
 
 class IdentityProviderListViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: IdentityProviderRepository = IdentityProviderRepository()
@@ -109,8 +109,9 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
         globalParamsRequest?.dispose()
 
         val connection = Connection.newBuilder()
-                .host("127.0.0.1")
-                .port(20001)
+                .host("grpc.testnet.concordium.com")
+                .port(20000)
+                .useTLS(TLSConfig.auto())
                 .build()
         val client = ClientV2.from(connection)
 
