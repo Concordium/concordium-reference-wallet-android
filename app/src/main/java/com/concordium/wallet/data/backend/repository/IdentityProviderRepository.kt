@@ -15,6 +15,7 @@ import kotlinx.coroutines.Dispatchers
 import com.concordium.sdk.Connection
 import com.concordium.sdk.ClientV2
 import com.concordium.sdk.requests.BlockQuery
+import com.concordium.sdk.TLSConfig
 
 class IdentityProviderRepository {
     private val gson = App.appCore.gson
@@ -46,8 +47,9 @@ class IdentityProviderRepository {
         failure: ((Throwable) -> Unit)?
     ): BackendRequest<GlobalParamsWrapper> {
         val connection = Connection.newBuilder()
-                .host("127.0.0.1")
-                .port(20500)
+                .host("grpc.testnet.concordium.com")
+                .port(20000)
+                .useTLS(TLSConfig.auto())
                 .build()
         val client = ClientV2.from(connection)
 
@@ -55,6 +57,10 @@ class IdentityProviderRepository {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val globalInfo = client.getCryptographicParameters(BlockQuery.BEST)
+                System.out.println(globalInfo.getOnChainCommitmentKey().toHex())
+                System.out.println(globalInfo.getBulletproofGenerators().toHex())
+                System.out.println(globalInfo.getGenesisString())
+                System.out.println(globalInfo.getVersion())
                 success(GlobalParamsWrapper( v = globalInfo.getVersion(), value = GlobalParams(onChainCommitmentKey= globalInfo.getOnChainCommitmentKey().toHex(), bulletproofGenerators = globalInfo.getBulletproofGenerators().toHex(), genesisString= globalInfo.getGenesisString())))
             } catch (t: Throwable) {
                 failure?.invoke(t)

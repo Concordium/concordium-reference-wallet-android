@@ -119,7 +119,11 @@ class IdentityProviderListViewModel(application: Application) : AndroidViewModel
             try {
                 val globalInfo = client.getCryptographicParameters(BlockQuery.BEST)
                 withContext(Dispatchers.Main) {
-                 println("good")
+                    println("good")
+                    System.out.println(globalInfo.getOnChainCommitmentKey().toHex())
+                    System.out.println(globalInfo.getBulletproofGenerators().toHex())
+                    System.out.println(globalInfo.getGenesisString())
+                    System.out.println(globalInfo.getVersion())
                  tempData.globalParams = GlobalParams(onChainCommitmentKey= globalInfo.getOnChainCommitmentKey().toHex(), bulletproofGenerators = globalInfo.getBulletproofGenerators().toHex(), genesisString= globalInfo.getGenesisString())
                  _waitingGlobalData.value = false
                 }

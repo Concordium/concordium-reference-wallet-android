@@ -300,9 +300,6 @@ android {
             excludes += ['META-INF/LICENSE.md']
             excludes += ['META-INF/NOTICE.md']
         }
-        pickFirst "org/apache/commons/codec/language/bm/*.txt"
-        pickFirst "org/apache/commons/codec/language/dmrules.txt"
-        pickFirst "google/protobuf/*"
     }
 }
 
@@ -331,7 +328,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
     implementation 'androidx.fragment:fragment-ktx:1.5.5'
-    
+
     // Room
     def room_version = "2.5.0"
     implementation "androidx.room:room-runtime:$room_version"

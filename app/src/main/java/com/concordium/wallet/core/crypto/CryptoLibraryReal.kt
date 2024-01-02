@@ -160,7 +160,8 @@ class CryptoLibraryReal(val gson: Gson) : CryptoLibrary {
 
     override suspend fun generateBakerKeys(): BakerKeys? =
         withContext(Dispatchers.Default) {
-           val test = BKeys.createBakerKeys()
+        println(System.getProperty("os.name"))
+        val test = BKeys.createBakerKeys()
             loadWalletLib()
             val result = generate_baker_keys()
             Log.d("Output (Code ${result.result}): ${result.output}")
