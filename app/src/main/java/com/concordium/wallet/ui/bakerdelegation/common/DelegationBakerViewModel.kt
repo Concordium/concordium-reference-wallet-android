@@ -184,7 +184,7 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun isUpdatingDelegation(): Boolean {
-        bakerDelegationData.account?.accountDelegation?.let { return it.stakedAmount.isNotBlank() }
+        bakerDelegationData.account?.accountDelegation?.let { return it.stakedAmount != BigInteger.ZERO }
         return false
     }
 
@@ -203,10 +203,10 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
     fun atDisposal(): BigInteger {
         var staked: BigInteger = BigInteger.ZERO
         bakerDelegationData.account?.accountDelegation?.let {
-            staked = it.stakedAmount.toBigInteger()
+            staked = it.stakedAmount
         }
         bakerDelegationData.account?.accountBaker?.let {
-            staked = it.stakedAmount.toBigInteger()
+            staked = it.stakedAmount
         }
         return (bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO) - staked
     }
@@ -239,20 +239,23 @@ class DelegationBakerViewModel(application: Application) : AndroidViewModel(appl
         return bakerDelegationData.poolId
     }
 
-    fun getStakeInputMax(): String {
-        var max: Long? = null
+    fun getStakeInputMax(): BigInteger? {
+        var max: BigInteger? = null
         val allPoolTotalCapital = bakerDelegationData.passiveDelegation?.allPoolTotalCapital
-        val capitalBound: Long =
-            ((bakerDelegationData.chainParameters?.capitalBound?.times(100))?.toLong()) ?: 0
+        val capitalBound: BigInteger =
+            (bakerDelegationData.chainParameters?.capitalBound?.times(100))
+                ?.toBigDecimal()
+                ?.toBigInteger()
+                ?: BigInteger.ZERO
         if (allPoolTotalCapital != null) {
-            max = ((allPoolTotalCapital.toLongOrNull() ?: 0) * (capitalBound))
+            max = allPoolTotalCapital * capitalBound
             if (bakerDelegationData.type != REGISTER_BAKER) {
                 bakerDelegationData.bakerPoolStatus?.delegatedCapital?.let { delegatedCapital ->
-                    max -= (delegatedCapital.toLongOrNull() ?: 0)
+                    max -= delegatedCapital
                 }
             }
         }
-        return max?.div(100)?.toBigInteger()?.toLong().toString()
+        return max?.div(BigInteger.valueOf(100))
     }
 
     fun validatePoolId() {

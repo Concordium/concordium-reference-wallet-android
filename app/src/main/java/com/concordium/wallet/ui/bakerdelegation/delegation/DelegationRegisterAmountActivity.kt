@@ -14,7 +14,6 @@ import com.concordium.wallet.databinding.ActivityDelegationRegistrationAmountBin
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerRegisterAmountActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel.Companion.EXTRA_DELEGATION_BAKER_DATA
 import com.concordium.wallet.ui.bakerdelegation.common.StakeAmountInputValidator
-import com.concordium.wallet.util.toBigInteger
 import java.math.BigInteger
 
 class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivity() {
@@ -156,8 +155,9 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
 
     override fun getStakeAmountInputValidator(): StakeAmountInputValidator {
         return StakeAmountInputValidator(
-            minimumValue = if (viewModel.isUpdatingDelegation()) "0" else "1",
+            minimumValue = if (viewModel.isUpdatingDelegation()) BigInteger.ZERO else BigInteger.ONE,
             maximumValue = null,
+            oldStakedAmount = null,
             balance = viewModel.bakerDelegationData.account?.finalizedBalance ?: BigInteger.ZERO,
             atDisposal = viewModel.atDisposal(),
             currentPool = viewModel.bakerDelegationData.bakerPoolStatus?.delegatedCapital,
@@ -180,7 +180,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
         }
         if (viewModel.bakerDelegationData.type == UPDATE_DELEGATION) {
             viewModel.bakerDelegationData.oldStakedAmount =
-                viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount.toBigInteger()
+                viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount
             binding.amountDesc.text =
                 getString(R.string.delegation_update_delegation_amount_enter_amount)
             binding.amount.setText(viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount?.let {
@@ -198,7 +198,7 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
 
         val stakeAmountInputValidator = getStakeAmountInputValidator()
         val stakeError = stakeAmountInputValidator.validate(
-            CurrencyUtil.toGTUValue(binding.amount.text.toString())?.toString(),
+            CurrencyUtil.toGTUValue(binding.amount.text.toString()),
             validateFee
         )
         if (stakeError != StakeAmountInputValidator.StakeError.OK) {
@@ -212,7 +212,9 @@ class DelegationRegisterAmountActivity : BaseDelegationBakerRegisterAmountActivi
             when {
                 !hasChanges() -> showNoChange()
                 amountToStake.signum() == 0 -> showNewAmountZero()
-                amountToStake < (viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount.toBigInteger()) -> showReduceWarning()
+                amountToStake < (viewModel.bakerDelegationData.account?.accountDelegation?.stakedAmount
+                    ?: BigInteger.ZERO) -> showReduceWarning()
+
                 moreThan95Percent(amountToStake) -> show95PercentWarning()
                 else -> continueToConfirmation()
             }

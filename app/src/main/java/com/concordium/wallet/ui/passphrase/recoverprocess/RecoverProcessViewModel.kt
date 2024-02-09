@@ -303,7 +303,7 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                     finalizedEncryptedBalance = accountBalance.finalizedBalance.accountEncryptedAmount,
                     currentEncryptedBalance = accountBalance.currentBalance?.accountEncryptedAmount,
                     encryptedBalanceStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
-                    totalStaked = accountBalance.finalizedBalance.accountBaker?.stakedAmount.toBigInteger(),
+                    totalStaked = accountBalance.finalizedBalance.accountBaker?.stakedAmount ?: BigInteger.ZERO,
                     totalAtDisposal = BigInteger.ZERO,
                     readOnly = false,
                     finalizedAccountReleaseSchedule = accountBalance.finalizedBalance.accountReleaseSchedule,
