@@ -377,7 +377,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                         accountBalance.finalizedBalance?.accountReleaseSchedule
                     accountBalance.finalizedBalance?.let {
 
-                        if(it.accountBaker != null){
+                        if (it.accountBaker != null) {
                             request.account.totalStaked = it.accountBaker.stakedAmount
                         } else {
                             request.account.totalStaked = BigInteger.ZERO
