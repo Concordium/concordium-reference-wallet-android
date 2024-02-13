@@ -384,7 +384,7 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                         }
 
                         if(it.accountBaker?.bakerId != null){
-                            request.account.bakerId=it.accountBaker.bakerId.toLong()
+                            request.account.bakerId = it.accountBaker.bakerId.toLong()
                         } else {
                             request.account.bakerId = null
                         }
