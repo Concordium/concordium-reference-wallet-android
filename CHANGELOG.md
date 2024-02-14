@@ -105,3 +105,10 @@ the current minimum
 ### Added
 
 - Last release without changelog.
+
+[Unreleased]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.5.0...HEAD
+[1.5.0]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.3.0...1.5.0
+[1.3.0]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.2.1...1.3.0
+[1.2.1]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.2.0...1.2.1
+[1.2.0]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.1.8...1.2.0
+[1.1.8]: https://github.com/Concordium/concordium-reference-wallet-android/tree/1.1.8
