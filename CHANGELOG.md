@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Inability to update the validator's rewards restake preference if their stake is below
+the current minimum
+
 ## [1.5.0]
 
 ### Changed
