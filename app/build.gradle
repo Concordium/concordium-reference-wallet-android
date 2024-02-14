@@ -40,11 +40,12 @@ tasks.withType(Test) {
     jacoco.excludes = ['jdk.internal.*']
 }
 
-def versionBuildNumberSequential = 62
+def versionBuildNumberSequential = 63
 
 def versionBuildNumberMajor = 1
 def versionBuildNumberMinor = 5
-def versionBuildNumberPatch = 0
+def versionBuildNumberPatch = 1
+def versionBuildNumberMeta = "-qa.1"
 
 task printVersionName {
     doLast {
@@ -115,7 +116,7 @@ android {
         minSdkVersion 26
         targetSdkVersion 34
         versionCode versionBuildNumberSequential
-        versionName "${versionBuildNumberMajor}.${versionBuildNumberMinor}.${versionBuildNumberPatch}"
+        versionName "${versionBuildNumberMajor}.${versionBuildNumberMinor}.${versionBuildNumberPatch}${versionBuildNumberMeta}"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "BUILD_NUMBER", "\"${versionBuildNumberSequential}\"")
