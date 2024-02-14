@@ -1,12 +1,13 @@
 package com.concordium.wallet.data.model
 
 import java.io.Serializable
+import java.math.BigInteger
 
 data class PassiveDelegation(
-    val allPoolTotalCapital: String,
+    val allPoolTotalCapital: BigInteger,
     val commissionRates: CommissionRates,
-    val currentPaydayDelegatedCapital: String,
-    val currentPaydayTransactionFeesEarned: String,
-    val delegatedCapital: String,
+    val currentPaydayDelegatedCapital: BigInteger,
+    val currentPaydayTransactionFeesEarned: BigInteger,
+    val delegatedCapital: BigInteger,
     val poolType: String
 ) : Serializable

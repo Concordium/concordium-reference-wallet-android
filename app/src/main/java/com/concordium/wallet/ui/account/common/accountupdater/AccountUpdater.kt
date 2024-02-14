@@ -28,7 +28,6 @@ import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.PerformanceUtil
 import com.concordium.wallet.util.toBigInteger
-import kotlinx.coroutines.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -378,15 +377,14 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
                         accountBalance.finalizedBalance?.accountReleaseSchedule
                     accountBalance.finalizedBalance?.let {
 
-                        if (it.accountBaker != null && it.accountBaker.stakedAmount != null) {
-                            it.accountBaker.stakedAmount.toBigInteger()
-                                .let { request.account.totalStaked = it }
+                        if (it.accountBaker != null) {
+                            request.account.totalStaked = it.accountBaker.stakedAmount
                         } else {
                             request.account.totalStaked = BigInteger.ZERO
                         }
 
-                        if (it.accountBaker != null && it.accountBaker.bakerId != null) {
-                            it.accountBaker.bakerId.toLong().let { request.account.bakerId = it }
+                        if(it.accountBaker?.bakerId != null){
+                            request.account.bakerId = it.accountBaker.bakerId.toLong()
                         } else {
                             request.account.bakerId = null
                         }

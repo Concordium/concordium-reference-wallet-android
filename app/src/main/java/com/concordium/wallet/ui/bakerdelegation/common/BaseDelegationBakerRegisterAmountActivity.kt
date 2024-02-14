@@ -60,7 +60,8 @@ abstract class BaseDelegationBakerRegisterAmountActivity : BaseDelegationBakerAc
         if (amount.text.toString().isNotBlank() && amount.text.toString() != "Ͼ") {
             val stakeAmountInputValidator = getStakeAmountInputValidator()
             val stakeError = stakeAmountInputValidator.validate(
-                CurrencyUtil.toGTUValue(amount.text.toString())?.toString(), validateFee
+                CurrencyUtil.toGTUValue(amount.text.toString()),
+                validateFee
             )
             if (stakeError != StakeAmountInputValidator.StakeError.OK) {
                 amountError.text = stakeAmountInputValidator.getErrorText(this, stakeError)

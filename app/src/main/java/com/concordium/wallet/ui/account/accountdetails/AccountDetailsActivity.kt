@@ -388,9 +388,12 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
                     R.string.account_details_stake_with_baker,
                     viewModelAccountDetails.account.accountBaker?.bakerId?.toString() ?: ""
                 )
-                binding.accountsOverviewTotalDetailsBaker.text = CurrencyUtil.formatGTU(
-                    viewModelAccountDetails.account.accountBaker?.stakedAmount ?: "0", true
-                )
+                binding.accountsOverviewTotalDetailsBaker.text =
+                    CurrencyUtil.formatGTU(
+                        viewModelAccountDetails.account.accountBaker?.stakedAmount
+                            ?: BigInteger.ZERO,
+                        true
+                    )
             } else if (viewModelAccountDetails.account.isDelegating()) {
                 binding.accountsOverviewTotalDetailsStakedContainer.visibility = View.VISIBLE
                 if (viewModelAccountDetails.account.accountDelegation?.delegationTarget?.delegateType == DelegationTarget.TYPE_DELEGATE_TO_L_POOL)
@@ -402,9 +405,12 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
                         viewModelAccountDetails.account.accountDelegation?.delegationTarget?.bakerId
                             ?: ""
                     )
-                binding.accountsOverviewTotalDetailsStaked.text = CurrencyUtil.formatGTU(
-                    viewModelAccountDetails.account.accountDelegation?.stakedAmount ?: "", true
-                )
+                binding.accountsOverviewTotalDetailsStaked.text =
+                    CurrencyUtil.formatGTU(
+                        viewModelAccountDetails.account.accountDelegation?.stakedAmount
+                            ?: BigInteger.ZERO,
+                        true
+                    )
             }
         }
     }

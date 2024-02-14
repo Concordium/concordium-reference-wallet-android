@@ -7,11 +7,9 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
-import com.concordium.wallet.data.model.Schedule
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.AccountReleaseScheduleItemBinding
@@ -19,6 +17,7 @@ import com.concordium.wallet.databinding.AccountReleaseScheduleTransactionItemBi
 import com.concordium.wallet.databinding.ActivityAccountReleaseScheduleBinding
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.util.toBigInteger
+import java.math.BigInteger
 import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
@@ -78,11 +77,11 @@ class AccountReleaseScheduleActivity : BaseActivity() {
             ViewModelProvider.AndroidViewModelFactory.getInstance(application)
         )[AccountReleaseScheduleViewModel::class.java]
 
-        viewModel.waitingLiveData.observe(this, Observer<Boolean> { waiting ->
+        viewModel.waitingLiveData.observe(this) { waiting ->
             waiting?.let {
                 showWaiting(waiting)
             }
-        })
+        }
         viewModel.errorLiveData.observe(this, object : EventObserver<Int>() {
             override fun onUnhandledEvent(value: Int) {
                 showError(value)
@@ -93,10 +92,10 @@ class AccountReleaseScheduleActivity : BaseActivity() {
                 finish()
             }
         })
-        viewModel.scheduledReleasesLiveData.observe(this, Observer<List<Schedule>> { list ->
+        viewModel.scheduledReleasesLiveData.observe(this) { list ->
 
             binding.accountReleaseScheduleLockedAmount.text = CurrencyUtil.formatGTU(
-                viewModel.account.finalizedAccountReleaseSchedule?.total.toBigInteger(),
+                viewModel.account.finalizedAccountReleaseSchedule?.total ?: BigInteger.ZERO,
                 true
             )
 
@@ -136,7 +135,7 @@ class AccountReleaseScheduleActivity : BaseActivity() {
                 view.amount.text = CurrencyUtil.formatGTU(release.amount.toBigInteger(), true)
                 binding.accountReleaseScheduleList.addView(view.root)
             }
-        })
+        }
     }
 
     private fun initViews() {

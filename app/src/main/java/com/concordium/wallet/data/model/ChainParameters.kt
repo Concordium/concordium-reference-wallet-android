@@ -1,6 +1,7 @@
 package com.concordium.wallet.data.model
 
 import java.io.Serializable
+import java.math.BigInteger
 
 data class ChainParameters(
     val mintPerPayday: Double,
@@ -13,7 +14,7 @@ data class ChainParameters(
     val delegatorCooldown: Long,
     val bakingCommissionLPool: Double,
     val accountCreationLimit: Int,
-    val minimumEquityCapital: String,
+    val minimumEquityCapital: BigInteger,
     val bakingCommissionRange: BakingCommissionRange,
     val bakingCommissionRate: Double? = null,
     val transactionCommissionRange: TransactionCommissionRange,

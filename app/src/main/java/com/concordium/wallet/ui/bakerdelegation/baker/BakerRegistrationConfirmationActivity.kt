@@ -17,7 +17,6 @@ import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.util.UnitConvertUtil
 import com.concordium.wallet.util.dropAfterDecimalPlaces
-import com.concordium.wallet.util.toBigInteger
 import java.math.BigInteger
 
 class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
@@ -77,7 +76,7 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
 
             UPDATE_BAKER_KEYS -> {
                 viewModel.bakerDelegationData.amount =
-                    viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount.toBigInteger()
+                    viewModel.bakerDelegationData.account?.accountBaker?.stakedAmount
                 updateViewsUpdateBakerKeys()
             }
 
