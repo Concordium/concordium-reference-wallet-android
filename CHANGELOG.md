@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed:
+
+- Inability to add CIS-2 tokens with corrupted metadata or missing balance
+
 ## [1.5.0]
 
 ### Changed

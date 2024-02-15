@@ -408,7 +408,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     cis2TokensMetadataItem = metadataItem,
                 )
             }
-            // TODO handle incorrect metadata for some tokens.
         } catch (e: IncorrectChecksumException) {
             lookForTokens.postValue(TOKENS_INVALID_CHECKSUM)
         } catch (e: Throwable) {
