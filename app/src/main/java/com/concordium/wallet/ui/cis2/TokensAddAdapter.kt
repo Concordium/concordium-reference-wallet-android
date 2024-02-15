@@ -70,7 +70,8 @@ class TokensAddAdapter(
             }
         } ?: holder.binding.tokenIcon.setImageResource(R.drawable.ic_token_no_image)
 
-        holder.binding.title.text = tokenMetadata?.name ?: String.Empty
+        holder.binding.title.text =
+            tokenMetadata?.name ?: context.getString(R.string.cis_loading_metadata_progress)
 
         val tokenBalance = CurrencyUtil.formatGTU(
             token.totalBalance,
