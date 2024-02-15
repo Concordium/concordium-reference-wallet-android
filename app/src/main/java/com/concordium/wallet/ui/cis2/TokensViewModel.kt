@@ -152,14 +152,19 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                         token.contractIndex = tokenData.contractIndex
                         token.subIndex = tokenData.subIndex
                     }
-                    tokens.addAll(cis2Tokens.tokens)
-                    if (cis2Tokens.tokens.isEmpty()) {
+
+                    // Do not add burnt tokens (total supply 0).
+                    val filteredCis2Tokens = cis2Tokens.tokens
+                        .filter { it.totalSupply != "0" }
+
+                    tokens.addAll(filteredCis2Tokens)
+                    if (filteredCis2Tokens.isEmpty()) {
                         lookForTokens.postValue(TOKENS_EMPTY)
                         allowToLoadMore = true
                         contactAddressLoading.postValue(false)
                     } else {
                         CoroutineScope(Dispatchers.IO).launch {
-                            val metadata = async { loadTokensMetadataUrls(cis2Tokens.tokens) }
+                            val metadata = async { loadTokensMetadataUrls(filteredCis2Tokens) }
                             loadTokensBalances()
                             val isSuccess = metadata.await()
                             if (isSuccess)
