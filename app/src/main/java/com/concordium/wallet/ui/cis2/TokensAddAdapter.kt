@@ -2,8 +2,8 @@ package com.concordium.wallet.ui.cis2
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.concordium.wallet.R
@@ -81,11 +81,9 @@ class TokensAddAdapter(
         holder.binding.subTitle.text =
             context.getString(R.string.cis_search_balance, tokenBalance)
 
-        if (showCheckBox) {
-            holder.binding.selection.isChecked = token.isSelected
-        } else {
-            holder.binding.selection.visibility = View.GONE
-        }
+        // Only allow selection when the metadata is loaded.
+        holder.binding.selection.isVisible = showCheckBox && token.tokenMetadata != null
+        holder.binding.selection.isChecked = token.isSelected
 
         holder.binding.root.setOnClickListener {
             tokenClickListener?.onRowClick(token)
