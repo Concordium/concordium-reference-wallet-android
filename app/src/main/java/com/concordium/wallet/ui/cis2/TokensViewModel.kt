@@ -24,7 +24,6 @@ import com.concordium.wallet.util.toBigInteger
 import com.walletconnect.util.Empty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.io.Serializable
 import java.math.BigInteger
@@ -160,19 +159,13 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     tokens.addAll(filteredCis2Tokens)
                     if (filteredCis2Tokens.isEmpty()) {
                         lookForTokens.postValue(TOKENS_EMPTY)
-                        allowToLoadMore = true
-                        contactAddressLoading.postValue(false)
                     } else {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            val metadata = async { loadTokensMetadataUrls(filteredCis2Tokens) }
-                            loadTokensBalances()
-                            val isSuccess = metadata.await()
-                            if (isSuccess)
-                                lookForTokens.postValue(TOKENS_OK)
-                            allowToLoadMore = true
-                            contactAddressLoading.postValue(false)
-                        }
+                        loadTokensMetadata()
+                        loadTokensBalances()
+                        lookForTokens.postValue(TOKENS_OK)
                     }
+                    contactAddressLoading.postValue(false)
+                    allowToLoadMore = true
                 },
                 failure = {
                     lookForTokens.postValue(TOKENS_INVALID_INDEX)
@@ -396,8 +389,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         return TokenUtil.getCCDToken(account)
     }
 
-    private suspend fun loadTokensMetadataUrls(tokens: List<Token>): Boolean {
-        val commaSeparated = tokens.joinToString(",") { it.token }
+    private fun loadTokensMetadata() = viewModelScope.launch(Dispatchers.IO) {
+        val commaSeparated = tokens.filter { !it.isCCDToken }.joinToString(",") { it.token }
         try {
             val cis2TokensMetadata =
                 proxyRepository.getCIS2TokenMetadataSuspended(
@@ -406,35 +399,34 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     tokenIds = commaSeparated
                 )
             tokenData.contractName = cis2TokensMetadata.contractName
-            cis2TokensMetadata.metadata.forEach {
-                loadTokenMetadata(tokenData.contractIndex, tokenData.contractName, it)
+            cis2TokensMetadata.metadata.forEach { metadataItem ->
+                loadTokenMetadata(
+                    tokenToUpdate = tokens.first {
+                        it.token == metadataItem.tokenId
+                                && it.contractIndex == tokenData.contractIndex
+                    },
+                    cis2TokensMetadataItem = metadataItem,
+                )
             }
-            return true
+            // TODO handle incorrect metadata for some tokens.
         } catch (e: IncorrectChecksumException) {
             lookForTokens.postValue(TOKENS_INVALID_CHECKSUM)
-            return false
         } catch (e: Throwable) {
             lookForTokens.postValue(TOKENS_METADATA_ERROR)
-            return false
         }
     }
 
     private suspend fun loadTokenMetadata(
-        contractIndex: String,
-        contractName: String,
+        tokenToUpdate: Token,
         cis2TokensMetadataItem: CIS2TokensMetadataItem
     ) {
         if (cis2TokensMetadataItem.metadataURL.isBlank())
             return
-        val index =
-            tokens.indexOfFirst { it.token == cis2TokensMetadataItem.tokenId && it.contractIndex == contractIndex }
         val metadata = MetadataApiInstance.safeMetadataCall(
             cis2TokensMetadataItem.metadataURL,
             cis2TokensMetadataItem.metadataChecksum
         ).getOrThrow()
-        tokens[index].tokenMetadata = metadata
-        tokens[index].contractIndex = contractIndex
-        tokens[index].contractName = contractName
+        tokenToUpdate.tokenMetadata = metadata
         tokenDetails.postValue(true)
     }
 
