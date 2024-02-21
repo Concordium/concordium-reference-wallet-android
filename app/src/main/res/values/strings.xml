@@ -1079,6 +1079,7 @@
     <string name="cis_delete_dialog_cancel">Cancel</string>
     <string name="cis_search_balance">Your balance: %1$s</string>
     <string name="cis_receiver_address_error">The recipient is not registered on the chain</string>
+    <string name="cis_loading_metadata_progress">Loading metadata…</string>
 
     <string name="wallet_connect_transaction_parsing_error">Error parsing the request!</string>
 

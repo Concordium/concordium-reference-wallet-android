@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Inability to update the validator's rewards restake preference if their stake is below
-the current minimum
+- Inability to add CIS-2 tokens with corrupted metadata or missing balance
 
 ## [1.5.0]
 
