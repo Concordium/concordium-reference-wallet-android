@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.CAMERA" /> <!-- Protection level: dangerous -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_REMOTE_MESSAGING" />
 
     <uses-feature
         android:name="android.hardware.camera.any"
