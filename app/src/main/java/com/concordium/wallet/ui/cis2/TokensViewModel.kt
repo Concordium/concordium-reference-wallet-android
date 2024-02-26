@@ -4,10 +4,13 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.AccountContractRepository
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
+import com.concordium.wallet.data.model.CIS2Tokens
+import com.concordium.wallet.data.model.CIS2TokensBalances
 import com.concordium.wallet.data.model.CIS2TokensMetadataItem
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
@@ -25,8 +28,11 @@ import com.walletconnect.util.Empty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.Serializable
 import java.math.BigInteger
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 data class TokenData(
     var account: Account? = null,
@@ -72,6 +78,11 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val tokenBalances: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 
     private val proxyRepository = ProxyRepository()
+    private val contractTokensRepository: ContractTokensRepository by lazy {
+        ContractTokensRepository(
+            WalletDatabase.getDatabase(getApplication()).contractTokenDao()
+        )
+    }
 
     fun loadTokens(accountAddress: String, isFungible: Boolean) {
         waiting.postValue(true)
@@ -131,49 +142,177 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         }
 
         CoroutineScope(Dispatchers.IO).launch {
-            val contractTokensRepository = ContractTokensRepository(
-                WalletDatabase.getDatabase(getApplication()).contractTokenDao()
-            )
             val existingContractTokens =
                 contractTokensRepository.getTokens(accountAddress, tokenData.contractIndex)
             val existingTokens = existingContractTokens.map { it.tokenId }.toSet()
 
-            proxyRepository.getCIS2Tokens(
-                tokenData.contractIndex,
-                tokenData.subIndex,
-                from,
-                success = { cis2Tokens ->
-                    cis2Tokens.tokens.forEach { token ->
-                        if (existingTokens.contains(token.token)) {
-                            token.isSelected = true
-                        }
+            val pageLimit = 20
+            val pageTokens = getFullyLoadedTokensPage(
+                accountAddress = accountAddress,
+                limit = pageLimit,
+                from = from,
+            ).onEach {
+                it.isSelected = it.token in existingTokens
+            }
 
-                        token.contractIndex = tokenData.contractIndex
-                        token.subIndex = tokenData.subIndex
-                    }
+            tokens.addAll(pageTokens)
+            contactAddressLoading.postValue(false)
+            allowToLoadMore = pageTokens.size >= pageLimit
 
-                    // Do not add burnt tokens (total supply 0).
-                    val filteredCis2Tokens = cis2Tokens.tokens
-                        .filter { it.totalSupply != "0" }
-
-                    tokens.addAll(filteredCis2Tokens)
-                    if (filteredCis2Tokens.isEmpty()) {
-                        lookForTokens.postValue(TOKENS_EMPTY)
-                    } else {
-                        loadTokensMetadata()
-                        loadTokensBalances()
-                        lookForTokens.postValue(TOKENS_OK)
-                    }
-                    contactAddressLoading.postValue(false)
-                    allowToLoadMore = true
-                },
-                failure = {
-                    lookForTokens.postValue(TOKENS_INVALID_INDEX)
-                    handleBackendError(it)
-                    allowToLoadMore = true
-                    contactAddressLoading.postValue(false)
-                })
+            if (tokens.isEmpty() && !allowToLoadMore) {
+                lookForTokens.postValue(TOKENS_EMPTY)
+            } else {
+                lookForTokens.postValue(TOKENS_OK)
+            }
         }
+    }
+
+    private suspend fun getFullyLoadedTokensPage(
+        accountAddress: String,
+        limit: Int,
+        from: String? = null,
+    ): List<Token> {
+        val fullyLoadedTokens = mutableListOf<Token>()
+
+        var tokenPageCursor = from
+        var isLastTokenPage = false
+        // Load raw tokens in smaller batches to avoid unnecessary loading of metadata.
+        val tokenPageLimit = (limit / 2).coerceAtLeast(5)
+        while (fullyLoadedTokens.size < limit && !isLastTokenPage) {
+            val pageTokens = getTokensPage(
+                contractIndex = tokenData.contractIndex,
+                contractSubIndex = tokenData.subIndex,
+                limit = tokenPageLimit,
+                from = tokenPageCursor,
+            ).tokens.onEach {
+                it.contractIndex = tokenData.contractIndex
+                it.subIndex = tokenData.subIndex
+            }
+
+            isLastTokenPage = pageTokens.size < tokenPageLimit
+            tokenPageCursor = pageTokens.lastOrNull()?.id
+
+            loadTokensMetadata(pageTokens)
+            val tokensWithMetadata = pageTokens.filter { it.tokenMetadata != null }
+            loadTokensBalances(
+                tokens = tokensWithMetadata,
+                accountAddress = accountAddress,
+            )
+
+            fullyLoadedTokens.addAll(tokensWithMetadata)
+        }
+
+        return fullyLoadedTokens
+    }
+
+    // TODO make 'getCIS2Tokens' call suspend within the repository.
+    private suspend fun getTokensPage(
+        contractIndex: String,
+        contractSubIndex: String,
+        limit: Int,
+        from: String?,
+    ) = suspendCancellableCoroutine { continuation ->
+        val backendRequest: BackendRequest<CIS2Tokens> = proxyRepository.getCIS2Tokens(
+            index = contractIndex,
+            subIndex = contractSubIndex,
+            limit = limit,
+            from = from,
+            success = continuation::resume,
+            failure = continuation::resumeWithException,
+        )
+        continuation.invokeOnCancellation { backendRequest.dispose() }
+    }
+
+    private suspend fun loadTokensMetadata(tokens: List<Token>) {
+        // Load the metadata items one by one instead of batch
+        // as the batch request fails in case one of the tokens have invalid data.
+        tokens.forEach { token ->
+            try {
+                proxyRepository.getCIS2TokenMetadataSuspended(
+                    index = token.contractIndex,
+                    subIndex = token.subIndex,
+                    tokenIds = token.token,
+                )
+                    .metadata
+                    .filterNot { it.metadataURL.isBlank() }
+                    .forEach { metadataItem ->
+                        val verifiedMetadata = MetadataApiInstance.safeMetadataCall(
+                            url = metadataItem.metadataURL,
+                            checksum = metadataItem.metadataChecksum,
+                        ).getOrThrow()
+                        token.tokenMetadata = verifiedMetadata
+                    }
+            } catch (e: IncorrectChecksumException) {
+                Log.w(
+                    "Metadata checksum incorrect:\n" +
+                            "token=$token"
+                )
+            } catch (e: Throwable) {
+                Log.e(
+                    "Failed to load metadata:\n" +
+                            "token=$token", e
+                )
+            }
+        }
+    }
+
+    private suspend fun loadTokensBalances(
+        tokens: List<Token>,
+        accountAddress: String,
+    ) {
+        val tokensByContract: Map<String, List<Token>> = tokens
+            .filterNot { it.totalSupply == "0" }
+            .filterNot(Token::isCCDToken)
+            .groupBy(Token::contractIndex)
+
+        tokensByContract.forEach { (contractIndex, contractTokens) ->
+            val commaSeparatedTokenIds = contractTokens.joinToString(
+                separator = ",",
+                transform = Token::token,
+            )
+            val contractSubIndex = contractTokens.firstOrNull()?.subIndex
+                ?: return@forEach
+
+            try {
+                getTokenBalances(
+                    contractIndex = contractIndex,
+                    contractSubIndex = contractSubIndex,
+                    accountAddress = accountAddress,
+                    commaSeparatedTokenIds = commaSeparatedTokenIds,
+                ).forEach { balanceItem ->
+                    val correspondingToken = contractTokens.first {
+                        it.token == balanceItem.tokenId
+                    }
+                    correspondingToken.totalBalance = balanceItem.balance.toBigInteger()
+                }
+            } catch (e: Throwable) {
+                Log.e(
+                    "Failed to load balances:\n" +
+                            "contract=$contractIndex:$contractSubIndex,\n" +
+                            "accountAddress=$accountAddress",
+                    e
+                )
+            }
+        }
+    }
+
+    // TODO make 'getCIS2TokenBalance' call suspend within the repository.
+    private suspend fun getTokenBalances(
+        contractIndex: String,
+        contractSubIndex: String,
+        accountAddress: String,
+        commaSeparatedTokenIds: String,
+    ) = suspendCancellableCoroutine { continuation ->
+        val backendRequest: BackendRequest<CIS2TokensBalances> =
+            proxyRepository.getCIS2TokenBalance(
+                index = contractIndex,
+                subIndex = contractSubIndex,
+                tokenIds = commaSeparatedTokenIds,
+                accountAddress = accountAddress,
+                success = continuation::resume,
+                failure = continuation::resumeWithException,
+            )
+        continuation.invokeOnCancellation { backendRequest.dispose() }
     }
 
     fun toggleNewToken(token: Token) {
@@ -494,6 +633,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         tokenData.contractIndex = String.Empty
         stepPageBy.value = 0
         lookForTokens.value = TOKENS_NOT_LOADED
+        allowToLoadMore = true
     }
 
     private fun handleBackendError(throwable: Throwable) {
