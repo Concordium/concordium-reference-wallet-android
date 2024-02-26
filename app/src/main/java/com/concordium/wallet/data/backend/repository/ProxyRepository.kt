@@ -4,7 +4,22 @@ import com.concordium.wallet.App
 import com.concordium.wallet.core.backend.BackendCallback
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.AccountBalance
+import com.concordium.wallet.data.model.AccountKeyData
+import com.concordium.wallet.data.model.AccountNonce
+import com.concordium.wallet.data.model.AccountSubmissionStatus
+import com.concordium.wallet.data.model.AccountTransactions
+import com.concordium.wallet.data.model.AppSettings
+import com.concordium.wallet.data.model.BakerPoolStatus
+import com.concordium.wallet.data.model.CIS2Tokens
+import com.concordium.wallet.data.model.CIS2TokensBalances
+import com.concordium.wallet.data.model.CIS2TokensMetadata
+import com.concordium.wallet.data.model.ChainParameters
+import com.concordium.wallet.data.model.CredentialWrapper
+import com.concordium.wallet.data.model.GlobalParamsWrapper
+import com.concordium.wallet.data.model.SubmissionData
+import com.concordium.wallet.data.model.TransferCost
+import com.concordium.wallet.data.model.TransferSubmissionStatus
 import java.math.BigInteger
 
 class ProxyRepository {
@@ -383,83 +398,23 @@ class ProxyRepository {
         )
     }
 
-    fun getCIS2Tokens(
+    suspend fun getCIS2Tokens(
         index: String,
         subIndex: String,
         from: String? = null,
         limit: Int? = null,
-        success: (CIS2Tokens) -> Unit,
-        failure: ((Throwable) -> Unit)?
-    ): BackendRequest<CIS2Tokens> {
-        val call = backend.cis2Tokens(index, subIndex, from, limit)
-        call.enqueue(object : BackendCallback<CIS2Tokens>() {
-            override fun onResponseData(response: CIS2Tokens) {
-                success(response)
-            }
-
-            override fun onFailure(t: Throwable) {
-                failure?.invoke(t)
-            }
-        })
-        return BackendRequest(
-            call = call,
-            success = success,
-            failure = failure
-        )
-    }
-
-    fun getCIS2TokenMetadata(
-        index: String,
-        subIndex: String,
-        tokenIds: String,
-        success: (CIS2TokensMetadata) -> Unit,
-        failure: ((Throwable) -> Unit)?
-    ): BackendRequest<CIS2TokensMetadata> {
-        val call = backend.cis2TokenMetadata(index, subIndex, tokenIds)
-        call.enqueue(object : BackendCallback<CIS2TokensMetadata>() {
-            override fun onResponseData(response: CIS2TokensMetadata) {
-                success(response)
-            }
-
-            override fun onFailure(t: Throwable) {
-                failure?.invoke(t)
-            }
-        })
-        return BackendRequest(
-            call = call,
-            success = success,
-            failure = failure
-        )
-    }
+    ): CIS2Tokens = backend.cis2Tokens(index, subIndex, from, limit)
 
     suspend fun getCIS2TokenMetadataSuspended(
         index: String,
         subIndex: String,
         tokenIds: String,
-    ) = backend.cis2TokenMetadataSuspended(index, subIndex, tokenIds)
+    ): CIS2TokensMetadata = backend.cis2TokenMetadata(index, subIndex, tokenIds)
 
-    fun getCIS2TokenBalance(
+    suspend fun getCIS2TokenBalance(
         index: String,
         subIndex: String,
         accountAddress: String,
         tokenIds: String,
-        success: (CIS2TokensBalances) -> Unit,
-        failure: ((Throwable) -> Unit)?
-    ): BackendRequest<CIS2TokensBalances> {
-        val call = backend.cis2TokenBalance(index, subIndex, accountAddress, tokenIds)
-        call.enqueue(object : BackendCallback<CIS2TokensBalances>() {
-            override fun onResponseData(response: CIS2TokensBalances) {
-                success(response)
-            }
-
-            override fun onFailure(t: Throwable) {
-                failure?.invoke(t)
-            }
-        })
-        return BackendRequest(
-            call = call,
-            success = success,
-            failure = failure
-        )
-    }
+    ): CIS2TokensBalances = backend.cis2TokenBalance(index, subIndex, accountAddress, tokenIds)
 }

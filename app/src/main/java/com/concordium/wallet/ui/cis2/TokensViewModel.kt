@@ -4,14 +4,10 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.AccountContractRepository
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.model.CIS2Tokens
-import com.concordium.wallet.data.model.CIS2TokensBalances
-import com.concordium.wallet.data.model.CIS2TokensMetadataItem
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountContract
@@ -30,11 +26,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.Serializable
 import java.math.BigInteger
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 data class TokenData(
     var account: Account? = null,
@@ -169,6 +162,10 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    /**
+     * @return page of tokens with fully loaded metadata and balances.
+     * If its size is smaller than [limit], consider this page the last one.
+     */
     private suspend fun getFullyLoadedTokensPage(
         accountAddress: String,
         limit: Int,
@@ -180,10 +177,11 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         var isLastTokenPage = false
         // Load raw tokens in smaller batches to avoid unnecessary loading of metadata.
         val tokenPageLimit = (limit / 2).coerceAtLeast(5)
+
         while (fullyLoadedTokens.size < limit && !isLastTokenPage) {
-            val pageTokens = getTokensPage(
-                contractIndex = tokenData.contractIndex,
-                contractSubIndex = tokenData.subIndex,
+            val pageTokens = proxyRepository.getCIS2Tokens(
+                index = tokenData.contractIndex,
+                subIndex = tokenData.subIndex,
                 limit = tokenPageLimit,
                 from = tokenPageCursor,
             ).tokens.onEach {
@@ -197,7 +195,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             loadTokensMetadata(pageTokens)
             val tokensWithMetadata = pageTokens.filter { it.tokenMetadata != null }
             loadTokensBalances(
-                tokens = tokensWithMetadata,
+                tokensToUpdate = tokensWithMetadata,
                 accountAddress = accountAddress,
             )
 
@@ -207,29 +205,11 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         return fullyLoadedTokens
     }
 
-    // TODO make 'getCIS2Tokens' call suspend within the repository.
-    private suspend fun getTokensPage(
-        contractIndex: String,
-        contractSubIndex: String,
-        limit: Int,
-        from: String?,
-    ) = suspendCancellableCoroutine { continuation ->
-        val backendRequest: BackendRequest<CIS2Tokens> = proxyRepository.getCIS2Tokens(
-            index = contractIndex,
-            subIndex = contractSubIndex,
-            limit = limit,
-            from = from,
-            success = continuation::resume,
-            failure = continuation::resumeWithException,
-        )
-        continuation.invokeOnCancellation { backendRequest.dispose() }
-    }
-
-    private suspend fun loadTokensMetadata(tokens: List<Token>) {
+    private suspend fun loadTokensMetadata(tokensToUpdate: List<Token>) {
         // Load the metadata items separately instead of batch
         // as the batch request fails in case one of the tokens have invalid data.
         // Running the requests in parallel brings around 2x overall loading time cut.
-        tokens.map { token ->
+        tokensToUpdate.map { token ->
             viewModelScope.async(Dispatchers.IO) {
                 try {
                     proxyRepository.getCIS2TokenMetadataSuspended(
@@ -262,10 +242,10 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private suspend fun loadTokensBalances(
-        tokens: List<Token>,
+        tokensToUpdate: List<Token>,
         accountAddress: String,
     ) {
-        val tokensByContract: Map<String, List<Token>> = tokens
+        val tokensByContract: Map<String, List<Token>> = tokensToUpdate
             .filterNot { it.totalSupply == "0" }
             .filterNot(Token::isCCDToken)
             .groupBy(Token::contractIndex)
@@ -279,11 +259,11 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                 ?: return@forEach
 
             try {
-                getTokenBalances(
-                    contractIndex = contractIndex,
-                    contractSubIndex = contractSubIndex,
+                proxyRepository.getCIS2TokenBalance(
+                    index = contractIndex,
+                    subIndex = contractSubIndex,
                     accountAddress = accountAddress,
-                    commaSeparatedTokenIds = commaSeparatedTokenIds,
+                    tokenIds = commaSeparatedTokenIds,
                 ).forEach { balanceItem ->
                     val correspondingToken = contractTokens.first {
                         it.token == balanceItem.tokenId
@@ -299,25 +279,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                 )
             }
         }
-    }
-
-    // TODO make 'getCIS2TokenBalance' call suspend within the repository.
-    private suspend fun getTokenBalances(
-        contractIndex: String,
-        contractSubIndex: String,
-        accountAddress: String,
-        commaSeparatedTokenIds: String,
-    ) = suspendCancellableCoroutine { continuation ->
-        val backendRequest: BackendRequest<CIS2TokensBalances> =
-            proxyRepository.getCIS2TokenBalance(
-                index = contractIndex,
-                subIndex = contractSubIndex,
-                tokenIds = commaSeparatedTokenIds,
-                accountAddress = accountAddress,
-                success = continuation::resume,
-                failure = continuation::resumeWithException,
-            )
-        continuation.invokeOnCancellation { backendRequest.dispose() }
     }
 
     fun toggleNewToken(token: Token) {
@@ -533,44 +494,20 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         return TokenUtil.getCCDToken(account)
     }
 
-    private suspend fun loadTokenMetadata(
-        tokenToUpdate: Token,
-        cis2TokensMetadataItem: CIS2TokensMetadataItem
-    ) {
-        if (cis2TokensMetadataItem.metadataURL.isBlank())
-            return
-        val metadata = MetadataApiInstance.safeMetadataCall(
-            cis2TokensMetadataItem.metadataURL,
-            cis2TokensMetadataItem.metadataChecksum
-        ).getOrThrow()
-        tokenToUpdate.tokenMetadata = metadata
-        tokenDetails.postValue(true)
-    }
-
     fun loadTokensBalances() {
         if (tokenData.account == null)
             return
 
-        tokens.filter { !it.isCCDToken }.groupBy { it.contractIndex }.forEach { group ->
-            val groupTokens = group.value
-            val commaSeparated = groupTokens.joinToString(",") { it.token }
-            viewModelScope.launch {
-                proxyRepository.getCIS2TokenBalance(group.key,
-                    tokenData.subIndex,
-                    tokenData.account!!.address,
-                    commaSeparated,
-                    success = { cis2TokensBalances ->
-                        cis2TokensBalances.forEach { cis2TokenBalance ->
-                            groupTokens.firstOrNull { it.token == cis2TokenBalance.tokenId }?.totalBalance =
-                                cis2TokenBalance.balance.toBigInteger()
-                        }
-                        tokenBalances.postValue(true)
-                    },
-                    failure = {
-                        handleBackendError(it)
-                    }
-                )
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+           try {
+               loadTokensBalances(
+                   tokensToUpdate = tokens,
+                   accountAddress = tokenData.account!!.address,
+               )
+               tokenBalances.postValue(true)
+           } catch (e: Throwable) {
+               handleBackendError(e)
+           }
         }
     }
 
