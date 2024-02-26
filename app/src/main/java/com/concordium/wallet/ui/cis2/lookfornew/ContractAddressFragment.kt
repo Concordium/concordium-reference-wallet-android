@@ -156,9 +156,6 @@ class ContractAddressFragment : TokensBaseFragment() {
     private fun getTokenErrorMessage(result: Int): String {
         return when (result) {
             TokensViewModel.TOKENS_EMPTY -> getString(R.string.cis_find_tokens_none)
-            TokensViewModel.TOKENS_INVALID_INDEX -> getString(R.string.cis_find_tokens_invalid_index)
-            TokensViewModel.TOKENS_METADATA_ERROR -> getString(R.string.cis_find_tokens_metadata_error)
-            TokensViewModel.TOKENS_INVALID_CHECKSUM -> getString(R.string.cis_find_tokens_invalid_checksum)
             else -> ""
         }
     }

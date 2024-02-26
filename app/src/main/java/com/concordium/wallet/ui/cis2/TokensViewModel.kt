@@ -43,9 +43,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         const val TOKENS_NOT_LOADED = -1
         const val TOKENS_OK = 0
         const val TOKENS_EMPTY = 1
-        const val TOKENS_INVALID_INDEX = 2
-        const val TOKENS_METADATA_ERROR = 3
-        const val TOKENS_INVALID_CHECKSUM = 4
     }
 
     private var allowToLoadMore = true
