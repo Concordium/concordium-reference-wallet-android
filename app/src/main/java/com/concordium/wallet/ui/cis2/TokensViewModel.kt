@@ -125,9 +125,12 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun lookForTokens(accountAddress: String, from: String? = null) {
+    fun lookForTokens(
+        accountAddress: String,
+        from: String? = null,
+    ) = viewModelScope.launch(Dispatchers.IO) {
         if (!allowToLoadMore)
-            return
+            return@launch
 
         allowToLoadMore = false
 
@@ -136,11 +139,11 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             lookForTokens.postValue(TOKENS_NOT_LOADED)
         }
 
-        CoroutineScope(Dispatchers.IO).launch {
-            val existingContractTokens =
-                contractTokensRepository.getTokens(accountAddress, tokenData.contractIndex)
-            val existingTokens = existingContractTokens.map { it.tokenId }.toSet()
+        val existingContractTokens =
+            contractTokensRepository.getTokens(accountAddress, tokenData.contractIndex)
+        val existingTokens = existingContractTokens.map { it.tokenId }.toSet()
 
+        try {
             val pageLimit = 20
             val pageTokens = getFullyLoadedTokensPage(
                 accountAddress = accountAddress,
@@ -159,6 +162,10 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             } else {
                 lookForTokens.postValue(TOKENS_OK)
             }
+        } catch (e: Throwable) {
+            handleBackendError(e)
+            allowToLoadMore = true
+            contactAddressLoading.postValue(false)
         }
     }
 
@@ -499,15 +506,15 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             return
 
         viewModelScope.launch(Dispatchers.IO) {
-           try {
-               loadTokensBalances(
-                   tokensToUpdate = tokens,
-                   accountAddress = tokenData.account!!.address,
-               )
-               tokenBalances.postValue(true)
-           } catch (e: Throwable) {
-               handleBackendError(e)
-           }
+            try {
+                loadTokensBalances(
+                    tokensToUpdate = tokens,
+                    accountAddress = tokenData.account!!.address,
+                )
+                tokenBalances.postValue(true)
+            } catch (e: Throwable) {
+                handleBackendError(e)
+            }
         }
     }
 
