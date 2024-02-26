@@ -27,6 +27,8 @@ import com.concordium.wallet.util.toBigInteger
 import com.walletconnect.util.Empty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.io.Serializable
@@ -224,36 +226,39 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private suspend fun loadTokensMetadata(tokens: List<Token>) {
-        // Load the metadata items one by one instead of batch
+        // Load the metadata items separately instead of batch
         // as the batch request fails in case one of the tokens have invalid data.
-        tokens.forEach { token ->
-            try {
-                proxyRepository.getCIS2TokenMetadataSuspended(
-                    index = token.contractIndex,
-                    subIndex = token.subIndex,
-                    tokenIds = token.token,
-                )
-                    .metadata
-                    .filterNot { it.metadataURL.isBlank() }
-                    .forEach { metadataItem ->
-                        val verifiedMetadata = MetadataApiInstance.safeMetadataCall(
-                            url = metadataItem.metadataURL,
-                            checksum = metadataItem.metadataChecksum,
-                        ).getOrThrow()
-                        token.tokenMetadata = verifiedMetadata
-                    }
-            } catch (e: IncorrectChecksumException) {
-                Log.w(
-                    "Metadata checksum incorrect:\n" +
-                            "token=$token"
-                )
-            } catch (e: Throwable) {
-                Log.e(
-                    "Failed to load metadata:\n" +
-                            "token=$token", e
-                )
+        // Running the requests in parallel brings around 2x overall loading time cut.
+        tokens.map { token ->
+            viewModelScope.async(Dispatchers.IO) {
+                try {
+                    proxyRepository.getCIS2TokenMetadataSuspended(
+                        index = token.contractIndex,
+                        subIndex = token.subIndex,
+                        tokenIds = token.token,
+                    )
+                        .metadata
+                        .filterNot { it.metadataURL.isBlank() }
+                        .forEach { metadataItem ->
+                            val verifiedMetadata = MetadataApiInstance.safeMetadataCall(
+                                url = metadataItem.metadataURL,
+                                checksum = metadataItem.metadataChecksum,
+                            ).getOrThrow()
+                            token.tokenMetadata = verifiedMetadata
+                        }
+                } catch (e: IncorrectChecksumException) {
+                    Log.w(
+                        "Metadata checksum incorrect:\n" +
+                                "token=$token"
+                    )
+                } catch (e: Throwable) {
+                    Log.e(
+                        "Failed to load metadata:\n" +
+                                "token=$token", e
+                    )
+                }
             }
-        }
+        }.awaitAll()
     }
 
     private suspend fun loadTokensBalances(
@@ -526,32 +531,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
                 ?: BigInteger.ZERO
         return TokenUtil.getCCDToken(account)
-    }
-
-    private fun loadTokensMetadata() = viewModelScope.launch(Dispatchers.IO) {
-        val commaSeparated = tokens.filter { !it.isCCDToken }.joinToString(",") { it.token }
-        try {
-            val cis2TokensMetadata =
-                proxyRepository.getCIS2TokenMetadataSuspended(
-                    tokenData.contractIndex,
-                    tokenData.subIndex,
-                    tokenIds = commaSeparated
-                )
-            tokenData.contractName = cis2TokensMetadata.contractName
-            cis2TokensMetadata.metadata.forEach { metadataItem ->
-                loadTokenMetadata(
-                    tokenToUpdate = tokens.first {
-                        it.token == metadataItem.tokenId
-                                && it.contractIndex == tokenData.contractIndex
-                    },
-                    cis2TokensMetadataItem = metadataItem,
-                )
-            }
-        } catch (e: IncorrectChecksumException) {
-            lookForTokens.postValue(TOKENS_INVALID_CHECKSUM)
-        } catch (e: Throwable) {
-            lookForTokens.postValue(TOKENS_METADATA_ERROR)
-        }
     }
 
     private suspend fun loadTokenMetadata(
