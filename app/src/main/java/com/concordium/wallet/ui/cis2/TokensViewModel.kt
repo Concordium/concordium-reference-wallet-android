@@ -129,7 +129,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         accountAddress: String,
         from: String? = null,
     ) = viewModelScope.launch(Dispatchers.IO) {
-        if (!allowToLoadMore)
+        if (from != null && !allowToLoadMore)
             return@launch
 
         allowToLoadMore = false
