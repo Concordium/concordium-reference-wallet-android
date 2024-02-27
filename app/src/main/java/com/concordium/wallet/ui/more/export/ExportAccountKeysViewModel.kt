@@ -39,7 +39,7 @@ class ExportAccountKeysViewModel(application: Application) : AndroidViewModel(ap
                 ExportAccountKeys(
                     "concordium-browser-wallet-account",
                     account.credential?.v ?: 0,
-                    BuildConfig.ENV_NAME,
+                    BuildConfig.EXPORT_CHAIN,
                     value
                 )
             )
