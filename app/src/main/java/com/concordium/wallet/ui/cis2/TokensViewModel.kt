@@ -75,16 +75,15 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             WalletDatabase.getDatabase(getApplication()).contractTokenDao()
         )
     }
+    private val accountContractRepository: AccountContractRepository by lazy {
+        AccountContractRepository(
+            WalletDatabase.getDatabase(getApplication()).accountContractDao()
+        )
+    }
 
     fun loadTokens(accountAddress: String, isFungible: Boolean) {
         waiting.postValue(true)
         CoroutineScope(Dispatchers.IO).launch {
-            val accountContractRepository = AccountContractRepository(
-                WalletDatabase.getDatabase(getApplication()).accountContractDao()
-            )
-            val contractTokensRepository = ContractTokensRepository(
-                WalletDatabase.getDatabase(getApplication()).contractTokenDao()
-            )
             val accountContracts = accountContractRepository.find(accountAddress)
             val contractTokens = mutableListOf<ContractToken>()
             accountContracts.forEach { accountContract ->
@@ -323,9 +322,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun hasExistingTokens() {
-        val accountContractRepository = AccountContractRepository(
-            WalletDatabase.getDatabase(getApplication()).accountContractDao()
-        )
         tokenData.account?.let { account ->
             viewModelScope.launch {
                 val existingAccountContract =
@@ -347,13 +343,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun updateSearchedTokens(updatedTokens: MutableList<Token>) {
         tokenData.account?.let { account ->
-            val accountContractRepository = AccountContractRepository(
-                WalletDatabase.getDatabase(getApplication()).accountContractDao()
-            )
-            val contractTokensRepository = ContractTokensRepository(
-                WalletDatabase.getDatabase(getApplication()).contractTokenDao()
-            )
-            CoroutineScope(Dispatchers.IO).launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 var anyChanges = false
 
                 val accountContract =
@@ -408,13 +398,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     private fun updateTokens(updatedTokens: MutableList<Token>) {
         val selectedTokens = updatedTokens.filter { it.isSelected }
         tokenData.account?.let { account ->
-            val accountContractRepository = AccountContractRepository(
-                WalletDatabase.getDatabase(getApplication()).accountContractDao()
-            )
-            val contractTokensRepository = ContractTokensRepository(
-                WalletDatabase.getDatabase(getApplication()).contractTokenDao()
-            )
-            CoroutineScope(Dispatchers.IO).launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 var anyChanges = false
                 if (selectedTokens.isEmpty()) {
                     val existingContractTokens =
@@ -523,9 +507,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         val accountRepository =
             AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
         val account = accountRepository.findByAddress(accountAddress)
-        val atDisposal =
-            account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
-                ?: BigInteger.ZERO
         return TokenUtil.getCCDToken(account)
     }
 
@@ -546,16 +527,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun deleteSingleToken(accountAddress: String, contractIndex: String, tokenId: String) {
-        val contractTokensRepository = ContractTokensRepository(
-            WalletDatabase.getDatabase(getApplication()).contractTokenDao()
-        )
-        val accountContractRepository = AccountContractRepository(
-            WalletDatabase.getDatabase(getApplication()).accountContractDao()
-        )
-
-        CoroutineScope(Dispatchers.IO).launch {
-
+    fun deleteSingleToken(accountAddress: String, contractIndex: String, tokenId: String) =
+        viewModelScope.launch(Dispatchers.IO) {
             val existingContractTokens =
                 contractTokensRepository.getTokens(accountAddress, contractIndex)
 
@@ -574,7 +547,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     }
                 }
         }
-    }
 
     fun onFindTokensDialogDismissed() {
         resetLookForTokens()
