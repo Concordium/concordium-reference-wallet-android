@@ -216,7 +216,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         tokensToUpdate.map { token ->
             viewModelScope.async(Dispatchers.IO) {
                 try {
-                    proxyRepository.getCIS2TokenMetadataSuspended(
+                    proxyRepository.getCIS2TokenMetadata(
                         index = token.contractIndex,
                         subIndex = token.subIndex,
                         tokenIds = token.token,
@@ -255,33 +255,39 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             .groupBy(Token::contractIndex)
 
         tokensByContract.forEach { (contractIndex, contractTokens) ->
-            val commaSeparatedTokenIds = contractTokens.joinToString(
-                separator = ",",
-                transform = Token::token,
-            )
             val contractSubIndex = contractTokens.firstOrNull()?.subIndex
                 ?: return@forEach
 
-            try {
-                proxyRepository.getCIS2TokenBalance(
-                    index = contractIndex,
-                    subIndex = contractSubIndex,
-                    accountAddress = accountAddress,
-                    tokenIds = commaSeparatedTokenIds,
-                ).forEach { balanceItem ->
-                    val correspondingToken = contractTokens.first {
-                        it.token == balanceItem.tokenId
+            contractTokens
+                .chunked(ProxyRepository.CIS_2_TOKEN_BALANCE_MAX_TOKEN_IDS)
+                .forEach { contractTokensChunk ->
+                    val commaSeparatedChunkTokenIds = contractTokensChunk.joinToString(
+                        separator = ",",
+                        transform = Token::token,
+                    )
+
+                    try {
+                        proxyRepository.getCIS2TokenBalanceV1(
+                            index = contractIndex,
+                            subIndex = contractSubIndex,
+                            accountAddress = accountAddress,
+                            tokenIds = commaSeparatedChunkTokenIds,
+                        ).forEach { balanceItem ->
+                            val correspondingToken = contractTokens.first {
+                                it.token == balanceItem.tokenId
+                            }
+                            correspondingToken.totalBalance = balanceItem.balance.toBigInteger()
+                        }
+                    } catch (e: Throwable) {
+                        Log.e(
+                            "Failed to load balances chunk:\n" +
+                                    "contract=$contractIndex:$contractSubIndex,\n" +
+                                    "accountAddress=$accountAddress,\n" +
+                                    "chunkTokenIds=$commaSeparatedChunkTokenIds",
+                            e
+                        )
                     }
-                    correspondingToken.totalBalance = balanceItem.balance.toBigInteger()
                 }
-            } catch (e: Throwable) {
-                Log.e(
-                    "Failed to load balances:\n" +
-                            "contract=$contractIndex:$contractSubIndex,\n" +
-                            "accountAddress=$accountAddress",
-                    e
-                )
-            }
         }
     }
 

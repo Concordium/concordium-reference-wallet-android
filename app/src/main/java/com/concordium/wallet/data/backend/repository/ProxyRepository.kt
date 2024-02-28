@@ -40,6 +40,9 @@ class ProxyRepository {
         const val REMOVE_BAKER = "removeBaker"
         const val CONFIGURE_BAKER = "configureBaker"
         const val UPDATE = "update"
+
+        const val CIS_2_TOKEN_BALANCE_MAX_TOKEN_IDS = 20
+        const val CIS_2_TOKEN_METADATA_MAX_TOKEN_IDS = 20
     }
 
     fun submitCredential(
@@ -405,16 +408,32 @@ class ProxyRepository {
         limit: Int? = null,
     ): CIS2Tokens = backend.cis2Tokens(index, subIndex, from, limit)
 
-    suspend fun getCIS2TokenMetadataSuspended(
+    suspend fun getCIS2TokenMetadata(
         index: String,
         subIndex: String,
         tokenIds: String,
     ): CIS2TokensMetadata = backend.cis2TokenMetadata(index, subIndex, tokenIds)
 
-    suspend fun getCIS2TokenBalance(
+    /**
+     * @param tokenIds comma-separated token IDs, but no more than [CIS_2_TOKEN_METADATA_MAX_TOKEN_IDS]
+     *
+     * @return metadata items for tokens having it
+     */
+    suspend fun getCIS2TokenMetadataV1(
+        index: String,
+        subIndex: String,
+        tokenIds: String,
+    ): CIS2TokensMetadata = backend.cis2TokenMetadataV1(index, subIndex, tokenIds)
+
+    /**
+     * @param tokenIds comma-separated token IDs, but no more than [CIS_2_TOKEN_BALANCE_MAX_TOKEN_IDS]
+
+     * @return balance items for tokens having it
+     */
+    suspend fun getCIS2TokenBalanceV1(
         index: String,
         subIndex: String,
         accountAddress: String,
         tokenIds: String,
-    ): CIS2TokensBalances = backend.cis2TokenBalance(index, subIndex, accountAddress, tokenIds)
+    ): CIS2TokensBalances = backend.cis2TokenBalanceV1(index, subIndex, accountAddress, tokenIds)
 }
