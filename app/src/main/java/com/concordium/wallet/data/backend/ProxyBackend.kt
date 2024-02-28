@@ -107,13 +107,6 @@ interface ProxyBackend {
         @Query("limit") limit: Int? = null
     ): CIS2Tokens
 
-    @GET("v0/CIS2TokenMetadata/{index}/{subIndex}")
-    suspend fun cis2TokenMetadata(
-        @Path("index") index: String,
-        @Path("subIndex") subIndex: String,
-        @Query("tokenId") tokenId: String
-    ): CIS2TokensMetadata
-
     @GET("v1/CIS2TokenMetadata/{index}/{subIndex}")
     suspend fun cis2TokenMetadataV1(
         @Path("index") index: String,

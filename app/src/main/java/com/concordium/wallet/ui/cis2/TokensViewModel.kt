@@ -179,21 +179,18 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
         var tokenPageCursor = from
         var isLastTokenPage = false
-        // Load raw tokens in smaller batches to avoid unnecessary loading of metadata.
-        val tokenPageLimit = (limit / 2).coerceAtLeast(5)
-
         while (fullyLoadedTokens.size < limit && !isLastTokenPage) {
             val pageTokens = proxyRepository.getCIS2Tokens(
                 index = tokenData.contractIndex,
                 subIndex = tokenData.subIndex,
-                limit = tokenPageLimit,
+                limit = limit,
                 from = tokenPageCursor,
             ).tokens.onEach {
                 it.contractIndex = tokenData.contractIndex
                 it.subIndex = tokenData.subIndex
             }
 
-            isLastTokenPage = pageTokens.size < tokenPageLimit
+            isLastTokenPage = pageTokens.size < limit
             tokenPageCursor = pageTokens.lastOrNull()?.id
 
             loadTokensMetadata(pageTokens)
@@ -210,39 +207,67 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private suspend fun loadTokensMetadata(tokensToUpdate: List<Token>) {
-        // Load the metadata items separately instead of batch
-        // as the batch request fails in case one of the tokens have invalid data.
-        // Running the requests in parallel brings around 2x overall loading time cut.
-        tokensToUpdate.map { token ->
-            viewModelScope.async(Dispatchers.IO) {
-                try {
-                    proxyRepository.getCIS2TokenMetadata(
-                        index = token.contractIndex,
-                        subIndex = token.subIndex,
-                        tokenIds = token.token,
+        val tokensByContract: Map<String, List<Token>> = tokensToUpdate
+            .filterNot(Token::isCCDToken)
+            .groupBy(Token::contractIndex)
+
+        tokensByContract.forEach { (contractIndex, contractTokens) ->
+            val contractSubIndex = contractTokens.firstOrNull()?.subIndex
+                ?: return@forEach
+
+            contractTokens
+                .chunked(ProxyRepository.CIS_2_TOKEN_METADATA_MAX_TOKEN_IDS)
+                .forEach { contractTokensChunk ->
+                    val commaSeparatedChunkTokenIds = contractTokensChunk.joinToString(
+                        separator = ",",
+                        transform = Token::token,
                     )
-                        .metadata
-                        .filterNot { it.metadataURL.isBlank() }
-                        .forEach { metadataItem ->
-                            val verifiedMetadata = MetadataApiInstance.safeMetadataCall(
-                                url = metadataItem.metadataURL,
-                                checksum = metadataItem.metadataChecksum,
-                            ).getOrThrow()
-                            token.tokenMetadata = verifiedMetadata
-                        }
-                } catch (e: IncorrectChecksumException) {
-                    Log.w(
-                        "Metadata checksum incorrect:\n" +
-                                "token=$token"
-                    )
-                } catch (e: Throwable) {
-                    Log.e(
-                        "Failed to load metadata:\n" +
-                                "token=$token", e
-                    )
+
+                    try {
+                        proxyRepository.getCIS2TokenMetadataV1(
+                            index = contractIndex,
+                            subIndex = contractSubIndex,
+                            tokenIds = commaSeparatedChunkTokenIds,
+                        )
+                            .metadata
+                            .filterNot { it.metadataURL.isBlank() }
+                            // Request the actual metadata in parallel.
+                            .map { metadataItem ->
+                                viewModelScope.async(Dispatchers.IO) {
+                                    try {
+                                        val verifiedMetadata = MetadataApiInstance.safeMetadataCall(
+                                            url = metadataItem.metadataURL,
+                                            checksum = metadataItem.metadataChecksum,
+                                        ).getOrThrow()
+                                        val correspondingToken = contractTokens.first {
+                                            it.token == metadataItem.tokenId
+                                        }
+                                        correspondingToken.tokenMetadata = verifiedMetadata
+                                    } catch (e: IncorrectChecksumException) {
+                                        Log.w(
+                                            "Metadata checksum incorrect:\n" +
+                                                    "metadataItem=$metadataItem"
+                                        )
+                                    } catch (e: Throwable) {
+                                        Log.e(
+                                            "Failed to load metadata:\n" +
+                                                    "metadataItem=$metadataItem" +
+                                                    e
+                                        )
+                                    }
+                                }
+                            }
+                            .awaitAll()
+                    } catch (e: Throwable) {
+                        Log.e(
+                            "Failed to load metadata chunk:\n" +
+                                    "contract=$contractIndex:$contractSubIndex,\n" +
+                                    "chunkTokenIds=$commaSeparatedChunkTokenIds",
+                            e
+                        )
+                    }
                 }
-            }
-        }.awaitAll()
+        }
     }
 
     private suspend fun loadTokensBalances(

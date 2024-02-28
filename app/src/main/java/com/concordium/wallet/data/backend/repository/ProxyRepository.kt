@@ -408,12 +408,6 @@ class ProxyRepository {
         limit: Int? = null,
     ): CIS2Tokens = backend.cis2Tokens(index, subIndex, from, limit)
 
-    suspend fun getCIS2TokenMetadata(
-        index: String,
-        subIndex: String,
-        tokenIds: String,
-    ): CIS2TokensMetadata = backend.cis2TokenMetadata(index, subIndex, tokenIds)
-
     /**
      * @param tokenIds comma-separated token IDs, but no more than [CIS_2_TOKEN_METADATA_MAX_TOKEN_IDS]
      *
