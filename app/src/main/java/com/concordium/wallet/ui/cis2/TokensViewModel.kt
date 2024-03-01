@@ -8,7 +8,6 @@ import com.concordium.wallet.data.AccountContractRepository
 import com.concordium.wallet.data.AccountRepository
 import com.concordium.wallet.data.ContractTokensRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
-import com.concordium.wallet.data.model.CIS2TokensMetadataItem
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountContract
@@ -24,6 +23,8 @@ import com.concordium.wallet.util.toBigInteger
 import com.walletconnect.util.Empty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import java.io.Serializable
 import java.math.BigInteger
@@ -42,9 +43,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         const val TOKENS_NOT_LOADED = -1
         const val TOKENS_OK = 0
         const val TOKENS_EMPTY = 1
-        const val TOKENS_INVALID_INDEX = 2
-        const val TOKENS_METADATA_ERROR = 3
-        const val TOKENS_INVALID_CHECKSUM = 4
     }
 
     private var allowToLoadMore = true
@@ -72,16 +70,20 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val tokenBalances: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>() }
 
     private val proxyRepository = ProxyRepository()
+    private val contractTokensRepository: ContractTokensRepository by lazy {
+        ContractTokensRepository(
+            WalletDatabase.getDatabase(getApplication()).contractTokenDao()
+        )
+    }
+    private val accountContractRepository: AccountContractRepository by lazy {
+        AccountContractRepository(
+            WalletDatabase.getDatabase(getApplication()).accountContractDao()
+        )
+    }
 
     fun loadTokens(accountAddress: String, isFungible: Boolean) {
         waiting.postValue(true)
         CoroutineScope(Dispatchers.IO).launch {
-            val accountContractRepository = AccountContractRepository(
-                WalletDatabase.getDatabase(getApplication()).accountContractDao()
-            )
-            val contractTokensRepository = ContractTokensRepository(
-                WalletDatabase.getDatabase(getApplication()).contractTokenDao()
-            )
             val accountContracts = accountContractRepository.find(accountAddress)
             val contractTokens = mutableListOf<ContractToken>()
             accountContracts.forEach { accountContract ->
@@ -119,9 +121,12 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    fun lookForTokens(accountAddress: String, from: String? = null) {
-        if (!allowToLoadMore)
-            return
+    fun lookForTokens(
+        accountAddress: String,
+        from: String? = null,
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        if (from != null && !allowToLoadMore)
+            return@launch
 
         allowToLoadMore = false
 
@@ -130,49 +135,183 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
             lookForTokens.postValue(TOKENS_NOT_LOADED)
         }
 
-        CoroutineScope(Dispatchers.IO).launch {
-            val contractTokensRepository = ContractTokensRepository(
-                WalletDatabase.getDatabase(getApplication()).contractTokenDao()
+        val existingContractTokens =
+            contractTokensRepository.getTokens(accountAddress, tokenData.contractIndex)
+        val existingTokens = existingContractTokens.map { it.tokenId }.toSet()
+
+        try {
+            val pageLimit = 20
+            val pageTokens = getFullyLoadedTokensPage(
+                accountAddress = accountAddress,
+                limit = pageLimit,
+                from = from,
+            ).onEach {
+                it.isSelected = it.token in existingTokens
+            }
+
+            tokens.addAll(pageTokens)
+            contactAddressLoading.postValue(false)
+            allowToLoadMore = pageTokens.size >= pageLimit
+
+            if (tokens.isEmpty() && !allowToLoadMore) {
+                lookForTokens.postValue(TOKENS_EMPTY)
+            } else {
+                lookForTokens.postValue(TOKENS_OK)
+            }
+        } catch (e: Throwable) {
+            handleBackendError(e)
+            allowToLoadMore = true
+            contactAddressLoading.postValue(false)
+        }
+    }
+
+    /**
+     * @return page of tokens with fully loaded metadata and balances.
+     * If its size is smaller than [limit], consider this page the last one.
+     */
+    private suspend fun getFullyLoadedTokensPage(
+        accountAddress: String,
+        limit: Int,
+        from: String? = null,
+    ): List<Token> {
+        val fullyLoadedTokens = mutableListOf<Token>()
+
+        var tokenPageCursor = from
+        var isLastTokenPage = false
+        while (fullyLoadedTokens.size < limit && !isLastTokenPage) {
+            val pageTokens = proxyRepository.getCIS2Tokens(
+                index = tokenData.contractIndex,
+                subIndex = tokenData.subIndex,
+                limit = limit,
+                from = tokenPageCursor,
+            ).tokens.onEach {
+                it.contractIndex = tokenData.contractIndex
+                it.subIndex = tokenData.subIndex
+            }
+
+            isLastTokenPage = pageTokens.size < limit
+            tokenPageCursor = pageTokens.lastOrNull()?.id
+
+            loadTokensMetadata(pageTokens)
+            val tokensWithMetadata = pageTokens.filter { it.tokenMetadata != null }
+            loadTokensBalances(
+                tokensToUpdate = tokensWithMetadata,
+                accountAddress = accountAddress,
             )
-            val existingContractTokens =
-                contractTokensRepository.getTokens(accountAddress, tokenData.contractIndex)
-            val existingTokens = existingContractTokens.map { it.tokenId }.toSet()
 
-            proxyRepository.getCIS2Tokens(
-                tokenData.contractIndex,
-                tokenData.subIndex,
-                from,
-                success = { cis2Tokens ->
-                    cis2Tokens.tokens.forEach { token ->
-                        if (existingTokens.contains(token.token)) {
-                            token.isSelected = true
+            fullyLoadedTokens.addAll(tokensWithMetadata)
+        }
+
+        return fullyLoadedTokens
+    }
+
+    private suspend fun loadTokensMetadata(tokensToUpdate: List<Token>) {
+        val tokensByContract: Map<String, List<Token>> = tokensToUpdate
+            .filterNot(Token::isCCDToken)
+            .groupBy(Token::contractIndex)
+
+        tokensByContract.forEach { (contractIndex, contractTokens) ->
+            val contractSubIndex = contractTokens.firstOrNull()?.subIndex
+                ?: return@forEach
+
+            contractTokens
+                .chunked(ProxyRepository.CIS_2_TOKEN_METADATA_MAX_TOKEN_IDS)
+                .forEach { contractTokensChunk ->
+                    val commaSeparatedChunkTokenIds = contractTokensChunk.joinToString(
+                        separator = ",",
+                        transform = Token::token,
+                    )
+
+                    try {
+                        proxyRepository.getCIS2TokenMetadataV1(
+                            index = contractIndex,
+                            subIndex = contractSubIndex,
+                            tokenIds = commaSeparatedChunkTokenIds,
+                        )
+                            .metadata
+                            .filterNot { it.metadataURL.isBlank() }
+                            // Request the actual metadata in parallel.
+                            .map { metadataItem ->
+                                viewModelScope.async(Dispatchers.IO) {
+                                    try {
+                                        val verifiedMetadata = MetadataApiInstance.safeMetadataCall(
+                                            url = metadataItem.metadataURL,
+                                            checksum = metadataItem.metadataChecksum,
+                                        ).getOrThrow()
+                                        val correspondingToken = contractTokens.first {
+                                            it.token == metadataItem.tokenId
+                                        }
+                                        correspondingToken.tokenMetadata = verifiedMetadata
+                                    } catch (e: IncorrectChecksumException) {
+                                        Log.w(
+                                            "Metadata checksum incorrect:\n" +
+                                                    "metadataItem=$metadataItem"
+                                        )
+                                    } catch (e: Throwable) {
+                                        Log.e(
+                                            "Failed to load metadata:\n" +
+                                                    "metadataItem=$metadataItem" +
+                                                    e
+                                        )
+                                    }
+                                }
+                            }
+                            .awaitAll()
+                    } catch (e: Throwable) {
+                        Log.e(
+                            "Failed to load metadata chunk:\n" +
+                                    "contract=$contractIndex:$contractSubIndex,\n" +
+                                    "chunkTokenIds=$commaSeparatedChunkTokenIds",
+                            e
+                        )
+                    }
+                }
+        }
+    }
+
+    private suspend fun loadTokensBalances(
+        tokensToUpdate: List<Token>,
+        accountAddress: String,
+    ) {
+        val tokensByContract: Map<String, List<Token>> = tokensToUpdate
+            .filterNot { it.totalSupply == "0" }
+            .filterNot(Token::isCCDToken)
+            .groupBy(Token::contractIndex)
+
+        tokensByContract.forEach { (contractIndex, contractTokens) ->
+            val contractSubIndex = contractTokens.firstOrNull()?.subIndex
+                ?: return@forEach
+
+            contractTokens
+                .chunked(ProxyRepository.CIS_2_TOKEN_BALANCE_MAX_TOKEN_IDS)
+                .forEach { contractTokensChunk ->
+                    val commaSeparatedChunkTokenIds = contractTokensChunk.joinToString(
+                        separator = ",",
+                        transform = Token::token,
+                    )
+
+                    try {
+                        proxyRepository.getCIS2TokenBalanceV1(
+                            index = contractIndex,
+                            subIndex = contractSubIndex,
+                            accountAddress = accountAddress,
+                            tokenIds = commaSeparatedChunkTokenIds,
+                        ).forEach { balanceItem ->
+                            val correspondingToken = contractTokens.first {
+                                it.token == balanceItem.tokenId
+                            }
+                            correspondingToken.totalBalance = balanceItem.balance.toBigInteger()
                         }
-
-                        token.contractIndex = tokenData.contractIndex
-                        token.subIndex = tokenData.subIndex
+                    } catch (e: Throwable) {
+                        Log.e(
+                            "Failed to load balances chunk:\n" +
+                                    "contract=$contractIndex:$contractSubIndex,\n" +
+                                    "accountAddress=$accountAddress,\n" +
+                                    "chunkTokenIds=$commaSeparatedChunkTokenIds",
+                            e
+                        )
                     }
-
-                    // Do not add burnt tokens (total supply 0).
-                    val filteredCis2Tokens = cis2Tokens.tokens
-                        .filter { it.totalSupply != "0" }
-
-                    tokens.addAll(filteredCis2Tokens)
-                    if (filteredCis2Tokens.isEmpty()) {
-                        lookForTokens.postValue(TOKENS_EMPTY)
-                    } else {
-                        loadTokensMetadata()
-                        loadTokensBalances()
-                        lookForTokens.postValue(TOKENS_OK)
-                    }
-                    contactAddressLoading.postValue(false)
-                    allowToLoadMore = true
-                },
-                failure = {
-                    lookForTokens.postValue(TOKENS_INVALID_INDEX)
-                    handleBackendError(it)
-                    allowToLoadMore = true
-                    contactAddressLoading.postValue(false)
-                })
+                }
         }
     }
 
@@ -183,9 +322,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun hasExistingTokens() {
-        val accountContractRepository = AccountContractRepository(
-            WalletDatabase.getDatabase(getApplication()).accountContractDao()
-        )
         tokenData.account?.let { account ->
             viewModelScope.launch {
                 val existingAccountContract =
@@ -207,13 +343,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
     private fun updateSearchedTokens(updatedTokens: MutableList<Token>) {
         tokenData.account?.let { account ->
-            val accountContractRepository = AccountContractRepository(
-                WalletDatabase.getDatabase(getApplication()).accountContractDao()
-            )
-            val contractTokensRepository = ContractTokensRepository(
-                WalletDatabase.getDatabase(getApplication()).contractTokenDao()
-            )
-            CoroutineScope(Dispatchers.IO).launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 var anyChanges = false
 
                 val accountContract =
@@ -268,13 +398,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     private fun updateTokens(updatedTokens: MutableList<Token>) {
         val selectedTokens = updatedTokens.filter { it.isSelected }
         tokenData.account?.let { account ->
-            val accountContractRepository = AccountContractRepository(
-                WalletDatabase.getDatabase(getApplication()).accountContractDao()
-            )
-            val contractTokensRepository = ContractTokensRepository(
-                WalletDatabase.getDatabase(getApplication()).contractTokenDao()
-            )
-            CoroutineScope(Dispatchers.IO).launch {
+            viewModelScope.launch(Dispatchers.IO) {
                 var anyChanges = false
                 if (selectedTokens.isEmpty()) {
                     val existingContractTokens =
@@ -383,89 +507,28 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         val accountRepository =
             AccountRepository(WalletDatabase.getDatabase(getApplication()).accountDao())
         val account = accountRepository.findByAddress(accountAddress)
-        val atDisposal =
-            account?.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance)
-                ?: BigInteger.ZERO
         return TokenUtil.getCCDToken(account)
-    }
-
-    private fun loadTokensMetadata() = viewModelScope.launch(Dispatchers.IO) {
-        val commaSeparated = tokens.filter { !it.isCCDToken }.joinToString(",") { it.token }
-        try {
-            val cis2TokensMetadata =
-                proxyRepository.getCIS2TokenMetadataSuspended(
-                    tokenData.contractIndex,
-                    tokenData.subIndex,
-                    tokenIds = commaSeparated
-                )
-            tokenData.contractName = cis2TokensMetadata.contractName
-            cis2TokensMetadata.metadata.forEach { metadataItem ->
-                loadTokenMetadata(
-                    tokenToUpdate = tokens.first {
-                        it.token == metadataItem.tokenId
-                                && it.contractIndex == tokenData.contractIndex
-                    },
-                    cis2TokensMetadataItem = metadataItem,
-                )
-            }
-        } catch (e: IncorrectChecksumException) {
-            lookForTokens.postValue(TOKENS_INVALID_CHECKSUM)
-        } catch (e: Throwable) {
-            lookForTokens.postValue(TOKENS_METADATA_ERROR)
-        }
-    }
-
-    private suspend fun loadTokenMetadata(
-        tokenToUpdate: Token,
-        cis2TokensMetadataItem: CIS2TokensMetadataItem
-    ) {
-        if (cis2TokensMetadataItem.metadataURL.isBlank())
-            return
-        val metadata = MetadataApiInstance.safeMetadataCall(
-            cis2TokensMetadataItem.metadataURL,
-            cis2TokensMetadataItem.metadataChecksum
-        ).getOrThrow()
-        tokenToUpdate.tokenMetadata = metadata
-        tokenDetails.postValue(true)
     }
 
     fun loadTokensBalances() {
         if (tokenData.account == null)
             return
 
-        tokens.filter { !it.isCCDToken }.groupBy { it.contractIndex }.forEach { group ->
-            val groupTokens = group.value
-            val commaSeparated = groupTokens.joinToString(",") { it.token }
-            viewModelScope.launch {
-                proxyRepository.getCIS2TokenBalance(group.key,
-                    tokenData.subIndex,
-                    tokenData.account!!.address,
-                    commaSeparated,
-                    success = { cis2TokensBalances ->
-                        cis2TokensBalances.forEach { cis2TokenBalance ->
-                            groupTokens.firstOrNull { it.token == cis2TokenBalance.tokenId }?.totalBalance =
-                                cis2TokenBalance.balance.toBigInteger()
-                        }
-                        tokenBalances.postValue(true)
-                    },
-                    failure = {
-                        handleBackendError(it)
-                    }
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                loadTokensBalances(
+                    tokensToUpdate = tokens,
+                    accountAddress = tokenData.account!!.address,
                 )
+                tokenBalances.postValue(true)
+            } catch (e: Throwable) {
+                handleBackendError(e)
             }
         }
     }
 
-    fun deleteSingleToken(accountAddress: String, contractIndex: String, tokenId: String) {
-        val contractTokensRepository = ContractTokensRepository(
-            WalletDatabase.getDatabase(getApplication()).contractTokenDao()
-        )
-        val accountContractRepository = AccountContractRepository(
-            WalletDatabase.getDatabase(getApplication()).accountContractDao()
-        )
-
-        CoroutineScope(Dispatchers.IO).launch {
-
+    fun deleteSingleToken(accountAddress: String, contractIndex: String, tokenId: String) =
+        viewModelScope.launch(Dispatchers.IO) {
             val existingContractTokens =
                 contractTokensRepository.getTokens(accountAddress, contractIndex)
 
@@ -484,7 +547,6 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     }
                 }
         }
-    }
 
     fun onFindTokensDialogDismissed() {
         resetLookForTokens()
@@ -494,6 +556,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         tokenData.contractIndex = String.Empty
         stepPageBy.value = 0
         lookForTokens.value = TOKENS_NOT_LOADED
+        allowToLoadMore = true
     }
 
     private fun handleBackendError(throwable: Throwable) {

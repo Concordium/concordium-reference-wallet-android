@@ -100,34 +100,27 @@ interface ProxyBackend {
     fun getAccountEncryptedKey(@Path("accountAddress") accountAddress: String): Call<AccountKeyData>
 
     @GET("v0/CIS2Tokens/{index}/{subIndex}")
-    fun cis2Tokens(
+    suspend fun cis2Tokens(
         @Path("index") index: String,
         @Path("subIndex") subIndex: String,
         @Query("from") from: String? = null,
         @Query("limit") limit: Int? = null
-    ): Call<CIS2Tokens>
+    ): CIS2Tokens
 
-    @GET("v0/CIS2TokenMetadata/{index}/{subIndex}")
-    fun cis2TokenMetadata(
-        @Path("index") index: String,
-        @Path("subIndex") subIndex: String,
-        @Query("tokenId") tokenId: String
-    ): Call<CIS2TokensMetadata>
-
-    @GET("v0/CIS2TokenMetadata/{index}/{subIndex}")
-    suspend fun cis2TokenMetadataSuspended(
+    @GET("v1/CIS2TokenMetadata/{index}/{subIndex}")
+    suspend fun cis2TokenMetadataV1(
         @Path("index") index: String,
         @Path("subIndex") subIndex: String,
         @Query("tokenId") tokenId: String
     ): CIS2TokensMetadata
 
-    @GET("v0/CIS2TokenBalance/{index}/{subIndex}/{accountAddress}")
-    fun cis2TokenBalance(
+    @GET("v1/CIS2TokenBalance/{index}/{subIndex}/{accountAddress}")
+    suspend fun cis2TokenBalanceV1(
         @Path("index") index: String,
         @Path("subIndex") subIndex: String,
         @Path("accountAddress") accountAddress: String,
         @Query("tokenId") tokenId: String
-    ): Call<CIS2TokensBalances>
+    ): CIS2TokensBalances
 
     @GET
     fun checkIdentityProvider(@Url url: String): Call<String>
