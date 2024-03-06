@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.bakerdelegation.baker
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
@@ -16,13 +15,21 @@ import com.concordium.wallet.databinding.ActivityBakerRegistrationConfirmationBi
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.util.UnitConvertUtil
-import com.concordium.wallet.util.dropAfterDecimalPlaces
 import java.math.BigInteger
+import java.text.DecimalFormat
 
 class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
     private var receiptMode = false
 
     private lateinit var binding: ActivityBakerRegistrationConfirmationBinding
+
+    /**
+     * Formats values in range [[0.0; 1.0]].
+     */
+    private val percentFormat = (DecimalFormat.getPercentInstance() as DecimalFormat).apply {
+        minimumFractionDigits = PERCENT_FORMAT_DECIMALS
+        maximumFractionDigits = PERCENT_FORMAT_DECIMALS
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -203,7 +210,6 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
         }
     }
 
-    @SuppressLint("SetTextI18n")
     private fun showCommissionRates() {
         if (viewModel.commissionRatesHasChanged().not()) {
             hideCommissionRates()
@@ -214,10 +220,8 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
             if (viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate != null) {
                 transactionFeeTitle.visibility = View.VISIBLE
                 transactionFeeStatus.visibility = View.VISIBLE
-                transactionFeeStatus.text = "${
-                    viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate
-                        ?.times(100)?.dropAfterDecimalPlaces(3) ?: 0.0
-                } %"
+                transactionFeeStatus.text =
+                    percentFormat.format(viewModel.bakerDelegationData.chainParameters?.transactionCommissionRate)
             } else {
                 transactionFeeTitle.visibility = View.GONE
                 transactionFeeStatus.visibility = View.GONE
@@ -226,10 +230,8 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
             if (viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate != null) {
                 bakingTitle.visibility = View.VISIBLE
                 bakingStatus.visibility = View.VISIBLE
-                bakingStatus.text = "${
-                    viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate
-                        ?.times(100)?.dropAfterDecimalPlaces(3) ?: 0.0
-                } %"
+                bakingStatus.text =
+                    percentFormat.format(viewModel.bakerDelegationData.chainParameters?.bakingCommissionRate)
             } else {
                 bakingTitle.visibility = View.GONE
                 bakingStatus.visibility = View.GONE
@@ -362,5 +364,9 @@ class BakerRegistrationConfirmationActivity : BaseDelegationBakerActivity() {
     override fun showWaiting(progressLayout: View, waiting: Boolean) {
         super.showWaiting(progressLayout, waiting)
         binding.submitBakerTransaction.isEnabled = !waiting
+    }
+
+    private companion object {
+        private const val PERCENT_FORMAT_DECIMALS = 3
     }
 }
