@@ -34,7 +34,6 @@ data class TokenData(
     var selectedToken: Token? = null,
     var contractIndex: String = "",
     var subIndex: String = "0",
-    var contractName: String = ""
 ) : Serializable
 
 class TokensViewModel(application: Application) : AndroidViewModel(application) {
@@ -223,12 +222,13 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     )
 
                     try {
-                        proxyRepository.getCIS2TokenMetadataV1(
+                        val ciS2TokensMetadata = proxyRepository.getCIS2TokenMetadataV1(
                             index = contractIndex,
                             subIndex = contractSubIndex,
                             tokenIds = commaSeparatedChunkTokenIds,
                         )
-                            .metadata
+
+                        ciS2TokensMetadata.metadata
                             .filterNot { it.metadataURL.isBlank() }
                             // Request the actual metadata in parallel.
                             .map { metadataItem ->
@@ -242,6 +242,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                                             it.token == metadataItem.tokenId
                                         }
                                         correspondingToken.tokenMetadata = verifiedMetadata
+                                        correspondingToken.contractName = ciS2TokensMetadata.contractName
                                     } catch (e: IncorrectChecksumException) {
                                         Log.w(
                                             "Metadata checksum incorrect:\n" +
@@ -364,7 +365,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                     val existingContractToken =
                         contractTokensRepository.find(
                             account.address,
-                            tokenData.contractIndex,
+                            selectedToken.contractIndex,
                             selectedToken.token
                         )
 
@@ -372,12 +373,12 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                         contractTokensRepository.insert(
                             ContractToken(
                                 0,
-                                tokenData.contractIndex,
+                                selectedToken.contractIndex,
                                 selectedToken.token,
                                 account.address,
                                 !(selectedToken.tokenMetadata?.unique ?: false),
                                 selectedToken.tokenMetadata,
-                                tokenData.contractName
+                                selectedToken.contractName
                             )
                         )
                         anyChanges = true
@@ -461,19 +462,19 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                         val existingContractToken =
                             contractTokensRepository.find(
                                 account.address,
-                                tokenData.contractIndex,
+                                selectedToken.contractIndex,
                                 selectedToken.token
                             )
                         if (existingContractToken == null) {
                             contractTokensRepository.insert(
                                 ContractToken(
                                     0,
-                                    tokenData.contractIndex,
+                                    selectedToken.contractIndex,
                                     selectedToken.token,
                                     account.address,
                                     !(selectedToken.tokenMetadata?.unique ?: false),
                                     selectedToken.tokenMetadata,
-                                    tokenData.contractName
+                                    selectedToken.contractName
                                 )
                             )
                         }
