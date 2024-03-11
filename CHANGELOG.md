@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Inability to add CIS-2 tokens with corrupted metadata or missing balance
 - Writing incorrect `environment` value to the key export file
+- Inability to edit validator pool commission rates in locales with comma decimal separator
 
 ## [1.5.0]
 
