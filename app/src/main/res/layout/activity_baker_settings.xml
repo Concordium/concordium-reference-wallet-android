@@ -80,12 +80,15 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/transactionFeeTitle"
                         app:layout_constraintWidth="wrap_content"
+                        app:layout_constraintWidth_min="10dp"
                         tools:text="10" />
 
                     <TextView
+                        android:id="@+id/transactionFeeValueSuffix"
                         style="@style/TextView.SingleLine"
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
+                        android:minEms="2"
                         android:text="%"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="@id/transactionFeeValue"
@@ -164,12 +167,15 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/bakingTitle"
                         app:layout_constraintWidth="wrap_content"
+                        app:layout_constraintWidth_min="10dp"
                         tools:text="10" />
 
                     <TextView
+                        android:id="@+id/bakingValueSuffix"
                         style="@style/TextView.SingleLine"
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
+                        android:minEms="2"
                         android:text="%"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="@id/bakingValue"
