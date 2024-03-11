@@ -42,10 +42,10 @@
                         style="@style/TextView.Standard"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:textAlignment="center"
                         android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
                         android:layout_marginVertical="@dimen/activity_receipt_item_vertical_margin"
                         android:text="@string/baker_pool_settings_explain"
+                        android:textAlignment="center"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -63,22 +63,34 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/title" />
 
-                    <EditText
+                    <com.concordium.wallet.uicore.view.AmountEditText
                         android:id="@+id/transactionFeeValue"
                         style="@style/TextView.SingleLine"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/activity_horizontal_margin_double"
                         android:layout_marginTop="@dimen/activity_horizontal_margin_half"
-                        android:background="@color/background_transparent"
-                        android:inputType="numberDecimal"
+                        android:background="@null"
                         android:imeOptions="actionDone"
+                        android:inputType="numberDecimal"
                         android:maxLength="15"
                         android:textAlignment="center"
+                        android:textSize="18sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/transactionFeeTitle"
-                        tools:text="10%" />
+                        app:layout_constraintWidth="wrap_content"
+                        tools:text="10" />
+
+                    <TextView
+                        style="@style/TextView.SingleLine"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:text="%"
+                        android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="@id/transactionFeeValue"
+                        app:layout_constraintStart_toEndOf="@id/transactionFeeValue"
+                        app:layout_constraintTop_toTopOf="@id/transactionFeeValue" />
 
                     <TextView
                         android:id="@+id/transactionFeeMin"
@@ -136,7 +148,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/transactionFeeSlider" />
 
-                    <EditText
+                    <com.concordium.wallet.uicore.view.AmountEditText
                         android:id="@+id/bakingValue"
                         style="@style/TextView.SingleLine"
                         android:layout_width="0dp"
@@ -147,10 +159,22 @@
                         android:inputType="numberDecimal"
                         android:maxLength="15"
                         android:textAlignment="center"
+                        android:textSize="18sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/bakingTitle"
-                        tools:text="10%" />
+                        app:layout_constraintWidth="wrap_content"
+                        tools:text="10" />
+
+                    <TextView
+                        style="@style/TextView.SingleLine"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:text="%"
+                        android:textSize="18sp"
+                        app:layout_constraintBottom_toBottomOf="@id/bakingValue"
+                        app:layout_constraintStart_toEndOf="@id/bakingValue"
+                        app:layout_constraintTop_toTopOf="@id/bakingValue" />
 
                     <TextView
                         android:id="@+id/bakingMin"
