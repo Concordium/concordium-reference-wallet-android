@@ -372,7 +372,12 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun toggleNewToken(token: Token) {
-        tokens.firstOrNull { it.id == token.id }?.let {
+        // Update both unfiltered search result and the exact token
+        // in case the target token is in both places.
+        tokens.firstOrNull { it.token == token.token }?.let {
+            it.isSelected = it.isSelected == false
+        }
+        exactToken?.takeIf { it.token == token.token }?.let {
             it.isSelected = it.isSelected == false
         }
     }
@@ -614,6 +619,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         stepPageBy.value = 0
         lookForTokens.value = TOKENS_NOT_LOADED
         lookForExactToken.value = TOKENS_NOT_LOADED
+        exactToken = null
         allowToLoadMore = true
     }
 
