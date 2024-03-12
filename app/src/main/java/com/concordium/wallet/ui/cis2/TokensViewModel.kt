@@ -23,6 +23,7 @@ import com.concordium.wallet.util.toBigInteger
 import com.walletconnect.util.Empty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
@@ -48,7 +49,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
     var tokenData = TokenData()
     var tokens: MutableList<Token> = mutableListOf()
-    var searchedTokens: MutableList<Token> = mutableListOf()
+    var exactToken: Token? = null
 
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
     val chooseTokenInfo: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
@@ -56,6 +57,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     val contactAddressLoading: MutableLiveData<Boolean> by lazy { MutableLiveData<Boolean>(false) }
     private val errorInt: MutableLiveData<Int> by lazy { MutableLiveData<Int>() }
     val lookForTokens: MutableLiveData<Int> by lazy { MutableLiveData<Int>(TOKENS_NOT_LOADED) }
+    val lookForExactToken: MutableLiveData<Int> by lazy { MutableLiveData<Int>(TOKENS_NOT_LOADED) }
     val addTokenDestination: MutableLiveData<TokenSelectedDestination> by lazy {
         MutableLiveData<TokenSelectedDestination>(
             TokenSelectedDestination.NoChange
@@ -242,7 +244,8 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                                             it.token == metadataItem.tokenId
                                         }
                                         correspondingToken.tokenMetadata = verifiedMetadata
-                                        correspondingToken.contractName = ciS2TokensMetadata.contractName
+                                        correspondingToken.contractName =
+                                            ciS2TokensMetadata.contractName
                                     } catch (e: IncorrectChecksumException) {
                                         Log.w(
                                             "Metadata checksum incorrect:\n" +
@@ -316,6 +319,58 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
+    private var lookForExactTokenJob: Job? = null
+    fun lookForExactToken(
+        accountAddress: String,
+        apparentTokenId: String,
+    ) {
+        lookForExactTokenJob?.cancel()
+        lookForExactTokenJob = viewModelScope.launch(Dispatchers.IO) {
+            val existingContractTokens =
+                contractTokensRepository.getTokens(accountAddress, tokenData.contractIndex)
+            val existingTokens = existingContractTokens.map { it.tokenId }.toSet()
+
+            val apparentToken = Token(
+                token = apparentTokenId,
+                contractIndex = tokenData.contractIndex,
+                subIndex = tokenData.subIndex,
+                isSelected = apparentTokenId in existingTokens,
+            )
+
+            try {
+                awaitAll(
+                    async {
+                        loadTokensMetadata(listOf(apparentToken))
+                    },
+                    async {
+                        loadTokensBalances(
+                            tokensToUpdate = listOf(apparentToken),
+                            accountAddress = accountAddress,
+                        )
+                    },
+                )
+
+                if (apparentToken.tokenMetadata != null) {
+                    exactToken = apparentToken
+                    lookForExactToken.postValue(TOKENS_OK)
+                } else {
+                    exactToken = null
+                    lookForExactToken.postValue(TOKENS_EMPTY)
+                }
+            } catch (e: Throwable) {
+                handleBackendError(e)
+                exactToken = null
+                lookForExactToken.postValue(TOKENS_EMPTY)
+            }
+        }
+    }
+
+    fun dismissExactTokenLookup() {
+        lookForExactTokenJob?.cancel()
+        exactToken = null
+        lookForExactToken.value = TOKENS_NOT_LOADED
+    }
+
     fun toggleNewToken(token: Token) {
         tokens.firstOrNull { it.id == token.id }?.let {
             it.isSelected = it.isSelected == false
@@ -335,14 +390,15 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun updateWithSelectedTokens() {
-        if (searchedTokens.isNotEmpty()) {
-            updateSearchedTokens(searchedTokens)
+        val exactToken = this.exactToken
+        if (exactToken != null) {
+            updateSearchedTokens(listOf(exactToken))
         } else {
             updateTokens(tokens)
         }
     }
 
-    private fun updateSearchedTokens(updatedTokens: MutableList<Token>) {
+    private fun updateSearchedTokens(updatedTokens: Collection<Token>) {
         tokenData.account?.let { account ->
             viewModelScope.launch(Dispatchers.IO) {
                 var anyChanges = false
@@ -396,7 +452,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private fun updateTokens(updatedTokens: MutableList<Token>) {
+    private fun updateTokens(updatedTokens: Collection<Token>) {
         val selectedTokens = updatedTokens.filter { it.isSelected }
         tokenData.account?.let { account ->
             viewModelScope.launch(Dispatchers.IO) {
@@ -557,6 +613,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         tokenData.contractIndex = String.Empty
         stepPageBy.value = 0
         lookForTokens.value = TOKENS_NOT_LOADED
+        lookForExactToken.value = TOKENS_NOT_LOADED
         allowToLoadMore = true
     }
 
