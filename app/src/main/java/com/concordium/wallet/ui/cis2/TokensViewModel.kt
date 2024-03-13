@@ -397,32 +397,41 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     fun updateWithSelectedTokens() {
         val exactToken = this.exactToken
         if (exactToken != null) {
-            updateSearchedTokens(listOf(exactToken))
+            // When searched for exact token,
+            // consider selection on the unfiltered tokens list.
+            updateTokens(tokens + exactToken)
         } else {
             updateTokens(tokens)
         }
     }
 
-    private fun updateSearchedTokens(updatedTokens: Collection<Token>) {
+    private fun updateTokens(loadedTokens: Collection<Token>) {
         tokenData.account?.let { account ->
             viewModelScope.launch(Dispatchers.IO) {
                 var anyChanges = false
 
-                val accountContract =
-                    accountContractRepository.find(account.address, tokenData.contractIndex)
-                if (accountContract == null) {
-                    accountContractRepository.insert(
-                        AccountContract(
-                            0,
-                            account.address,
-                            tokenData.contractIndex
+                val selectedTokens = loadedTokens.filter { it.isSelected }
+
+                // Ensure we have an AccountContract
+                // when there are potential tokens to add.
+                if (selectedTokens.isNotEmpty()) {
+                    val accountContract =
+                        accountContractRepository.find(account.address, tokenData.contractIndex)
+                    if (accountContract == null) {
+                        accountContractRepository.insert(
+                            AccountContract(
+                                id = 0,
+                                accountAddress = account.address,
+                                contractIndex = tokenData.contractIndex,
+                            )
                         )
-                    )
-                    anyChanges = true
+
+                        anyChanges = true
+                    }
                 }
 
-                updatedTokens.forEach { selectedToken ->
-
+                // Add each selected token if missing.
+                selectedTokens.forEach { selectedToken ->
                     val existingContractToken =
                         contractTokensRepository.find(
                             account.address,
@@ -430,133 +439,71 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                             selectedToken.token
                         )
 
-                    if (existingContractToken == null && selectedToken.isSelected) {
+                    if (existingContractToken == null) {
                         contractTokensRepository.insert(
                             ContractToken(
-                                0,
-                                selectedToken.contractIndex,
-                                selectedToken.token,
-                                account.address,
-                                !(selectedToken.tokenMetadata?.unique ?: false),
-                                selectedToken.tokenMetadata,
-                                selectedToken.contractName
+                                id = 0,
+                                tokenId = selectedToken.token,
+                                contractIndex = selectedToken.contractIndex,
+                                contractName = selectedToken.contractName,
+                                accountAddress = account.address,
+                                isFungible = !(selectedToken.tokenMetadata?.unique ?: false),
+                                tokenMetadata = selectedToken.tokenMetadata,
                             )
                         )
-                        anyChanges = true
-                    }
-                    if (existingContractToken != null && !selectedToken.isSelected) {
-                        deleteSingleToken(
-                            account.address, tokenData.contractIndex,
-                            selectedToken.token
-                        )
+
                         anyChanges = true
                     }
                 }
-                updateWithSelectedTokensDone.postValue(anyChanges)
-            }
-        }
-    }
 
-    private fun updateTokens(updatedTokens: Collection<Token>) {
-        val selectedTokens = updatedTokens.filter { it.isSelected }
-        tokenData.account?.let { account ->
-            viewModelScope.launch(Dispatchers.IO) {
-                var anyChanges = false
-                if (selectedTokens.isEmpty()) {
-                    val existingContractTokens =
-                        contractTokensRepository.getTokens(account.address, tokenData.contractIndex)
-                    existingContractTokens.forEach { existingContractToken ->
-                        contractTokensRepository.delete(existingContractToken)
+                // As the loaded tokens list may be partial,
+                // we must only delete the unselected ones among loaded.
+                // Therefore, if there is an existing token but the user haven't scrolled to it
+                // in the search results, it won't be deleted.
+                val loadedNotSelectedTokenIds =
+                    loadedTokens.filterNot { it.isSelected }.mapTo(mutableSetOf()) { it.token }
+
+                // Delete each loaded not selected token.
+                loadedNotSelectedTokenIds.forEach { loadedNotSelectedTokenId ->
+                    contractTokensRepository.find(
+                        account.address,
+                        tokenData.contractIndex,
+                        loadedNotSelectedTokenId
+                    )?.also {
+                        contractTokensRepository.delete(it)
                         anyChanges = true
                     }
-                    val existingAccountContract =
-                        accountContractRepository.find(account.address, tokenData.contractIndex)
-                    if (existingAccountContract == null) {
-                        nonSelected.postValue(true)
-                    } else {
-                        accountContractRepository.delete(existingAccountContract)
-                        anyChanges = true
+                }
+
+                // If there were tokens but all of them got deleted,
+                // delete the AccountContract as well.
+                val existingContractTokens =
+                    contractTokensRepository.getTokens(account.address, tokenData.contractIndex)
+                if (existingContractTokens.isNotEmpty()
+                    && loadedNotSelectedTokenIds.size == existingContractTokens.size
+                ) {
+                    accountContractRepository.find(account.address, tokenData.contractIndex)
+                        ?.also {
+                            accountContractRepository.delete(it)
+                            anyChanges = true
+                        }
+                }
+
+                val flowEndDestination = if (anyChanges) {
+                    val numberOfNFTSelected = selectedTokens.filter {
+                        it.tokenMetadata?.unique == true
+                    }.size
+
+                    when (numberOfNFTSelected) {
+                        selectedTokens.size -> TokenSelectedDestination.NFT
+                        0 -> TokenSelectedDestination.TOKEN
+                        else -> TokenSelectedDestination.MIXED
                     }
-                    addTokenDestination.postValue(TokenSelectedDestination.MIXED)
-                    updateWithSelectedTokensDone.postValue(anyChanges)
                 } else {
-                    val accountContract =
-                        accountContractRepository.find(account.address, tokenData.contractIndex)
-                    if (accountContract == null) {
-                        accountContractRepository.insert(
-                            AccountContract(
-                                0,
-                                account.address,
-                                tokenData.contractIndex
-                            )
-                        )
-                        anyChanges = true
-                    }
-
-                    val existingContractTokens =
-                        contractTokensRepository.getTokens(account.address, tokenData.contractIndex)
-                    val existingContractTokenIds = existingContractTokens.map { it.tokenId }
-                    val unselectedTokenIds =
-                        updatedTokens.filter { it.isSelected.not() }.map { it.token }
-                    when {
-                        existingContractTokenIds.any { unselectedTokenIds.contains(it) } ->
-                            anyChanges = true
-
-                        selectedTokens.map { it.token }
-                            .containsAll(existingContractTokenIds).not() ->
-                            anyChanges = true
-                    }
-
-                    val existingNotSelectedTokenIds =
-                        existingContractTokens.map { it.tokenId }
-                            .minus(selectedTokens.map { it.token }.toSet())
-                    existingNotSelectedTokenIds.forEach { existingNotSelectedTokenId ->
-                        contractTokensRepository.find(
-                            account.address,
-                            tokenData.contractIndex,
-                            existingNotSelectedTokenId
-                        )?.let { existingNotSelectedContractToken ->
-                            contractTokensRepository.delete(existingNotSelectedContractToken)
-                        }
-                    }
-                    selectedTokens.forEach { selectedToken ->
-                        val existingContractToken =
-                            contractTokensRepository.find(
-                                account.address,
-                                selectedToken.contractIndex,
-                                selectedToken.token
-                            )
-                        if (existingContractToken == null) {
-                            contractTokensRepository.insert(
-                                ContractToken(
-                                    0,
-                                    selectedToken.contractIndex,
-                                    selectedToken.token,
-                                    account.address,
-                                    !(selectedToken.tokenMetadata?.unique ?: false),
-                                    selectedToken.tokenMetadata,
-                                    selectedToken.contractName
-                                )
-                            )
-                        }
-                    }
-
-                    val flowEndDestination = if (anyChanges) {
-                        val numberOfNFTSelected = selectedTokens.filter {
-                            it.tokenMetadata?.unique == true
-                        }.size
-
-                        when (numberOfNFTSelected) {
-                            selectedTokens.size -> TokenSelectedDestination.NFT
-                            0 -> TokenSelectedDestination.TOKEN
-                            else -> TokenSelectedDestination.MIXED
-                        }
-                    } else {
-                        TokenSelectedDestination.NoChange
-                    }
-                    addTokenDestination.postValue(flowEndDestination)
-                    updateWithSelectedTokensDone.postValue(anyChanges)
+                    TokenSelectedDestination.NoChange
                 }
+                addTokenDestination.postValue(flowEndDestination)
+                updateWithSelectedTokensDone.postValue(anyChanges)
             }
         }
     }
