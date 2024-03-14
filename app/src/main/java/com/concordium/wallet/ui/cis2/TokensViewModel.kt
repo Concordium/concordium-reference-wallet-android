@@ -49,6 +49,10 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
     var tokenData = TokenData()
     var tokens: MutableList<Token> = mutableListOf()
+
+    // Save found exact tokens to keep their selection once the search is dismissed.
+    // For example, the user can look for multiple exact tokens and toggle them one by one.
+    private val everFoundExactTokens: MutableList<Token> = mutableListOf()
     var exactToken: Token? = null
 
     val chooseToken: MutableLiveData<Token> by lazy { MutableLiveData<Token>() }
@@ -138,7 +142,11 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
 
         val existingContractTokens =
             contractTokensRepository.getTokens(accountAddress, tokenData.contractIndex)
-        val existingTokens = existingContractTokens.map { it.tokenId }.toSet()
+        val selectedTokenIds =
+            existingContractTokens.mapTo(mutableSetOf(), ContractToken::tokenId) +
+                    everFoundExactTokens.asSequence()
+                        .filter(Token::isSelected)
+                        .mapTo(mutableSetOf(), Token::token)
 
         try {
             val pageLimit = 20
@@ -147,7 +155,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                 limit = pageLimit,
                 from = from,
             ).onEach {
-                it.isSelected = it.token in existingTokens
+                it.isSelected = it.token in selectedTokenIds
             }
 
             tokens.addAll(pageTokens)
@@ -328,13 +336,17 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         lookForExactTokenJob = viewModelScope.launch(Dispatchers.IO) {
             val existingContractTokens =
                 contractTokensRepository.getTokens(accountAddress, tokenData.contractIndex)
-            val existingTokens = existingContractTokens.map { it.tokenId }.toSet()
+            val selectedTokenIds =
+                existingContractTokens.mapTo(mutableSetOf(), ContractToken::tokenId) +
+                        (tokens.asSequence() + everFoundExactTokens.asSequence())
+                            .filter(Token::isSelected)
+                            .mapTo(mutableSetOf(), Token::token)
 
             val apparentToken = Token(
                 token = apparentTokenId,
                 contractIndex = tokenData.contractIndex,
                 subIndex = tokenData.subIndex,
-                isSelected = apparentTokenId in existingTokens,
+                isSelected = apparentTokenId in selectedTokenIds,
             )
 
             try {
@@ -351,6 +363,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                 )
 
                 if (apparentToken.tokenMetadata != null) {
+                    everFoundExactTokens.add(apparentToken)
                     exactToken = apparentToken
                     lookForExactToken.postValue(TOKENS_OK)
                 } else {
@@ -372,14 +385,10 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun toggleNewToken(token: Token) {
-        // Update both unfiltered search result and the exact token
-        // in case the target token is in both places.
-        tokens.firstOrNull { it.token == token.token }?.let {
-            it.isSelected = it.isSelected == false
-        }
-        exactToken?.takeIf { it.token == token.token }?.let {
-            it.isSelected = it.isSelected == false
-        }
+        val isSelectedNow = !token.isSelected
+        (tokens.asSequence() + everFoundExactTokens.asSequence())
+            .filter { it.token == token.token }
+            .forEach { it.isSelected = isSelectedNow }
     }
 
     fun hasExistingTokens() {
@@ -395,22 +404,15 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun updateWithSelectedTokens() {
-        val exactToken = this.exactToken
-        if (exactToken != null) {
-            // When searched for exact token,
-            // consider selection on the unfiltered tokens list.
-            updateTokens(tokens + exactToken)
-        } else {
-            updateTokens(tokens)
-        }
+        updateTokens(tokens + everFoundExactTokens)
     }
 
-    private fun updateTokens(loadedTokens: Collection<Token>) {
+    private fun updateTokens(loadedTokens: Iterable<Token>) {
         tokenData.account?.let { account ->
             viewModelScope.launch(Dispatchers.IO) {
                 var anyChanges = false
 
-                val selectedTokens = loadedTokens.filter { it.isSelected }
+                val selectedTokens = loadedTokens.filter(Token::isSelected)
 
                 // Ensure we have an AccountContract
                 // when there are potential tokens to add.
@@ -460,8 +462,9 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
                 // we must only delete the unselected ones among loaded.
                 // Therefore, if there is an existing token but the user haven't scrolled to it
                 // in the search results, it won't be deleted.
-                val loadedNotSelectedTokenIds =
-                    loadedTokens.filterNot { it.isSelected }.mapTo(mutableSetOf()) { it.token }
+                val loadedNotSelectedTokenIds = loadedTokens
+                    .filterNot(Token::isSelected)
+                    .mapTo(mutableSetOf(), Token::token)
 
                 // Delete each loaded not selected token.
                 loadedNotSelectedTokenIds.forEach { loadedNotSelectedTokenId ->
@@ -566,6 +569,7 @@ class TokensViewModel(application: Application) : AndroidViewModel(application) 
         stepPageBy.value = 0
         lookForTokens.value = TOKENS_NOT_LOADED
         lookForExactToken.value = TOKENS_NOT_LOADED
+        everFoundExactTokens.clear()
         exactToken = null
         allowToLoadMore = true
     }
