@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +15,8 @@ import com.concordium.wallet.databinding.FragmentDialogSelectTokensBinding
 import com.concordium.wallet.ui.cis2.TokensAddAdapter
 import com.concordium.wallet.ui.cis2.TokensBaseFragment
 import com.concordium.wallet.ui.cis2.TokensViewModel
+import com.concordium.wallet.ui.cis2.TokensViewModel.Companion.TOKENS_EMPTY
+import com.concordium.wallet.ui.cis2.TokensViewModel.Companion.TOKENS_OK
 import com.concordium.wallet.ui.cis2.TokensViewModel.Companion.TOKEN_DATA
 import com.concordium.wallet.util.hideKeyboard
 
@@ -98,28 +101,25 @@ class SelectTokensFragment : TokensBaseFragment() {
 
         binding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                val currentFilter = query?.uppercase() ?: ""
-                tokensAddAdapter.dataSet = _viewModel.tokens.filter {
-                    it.token.uppercase() == currentFilter
-                }.toTypedArray()
-
-                binding.noTokensFound.visibility =
-                    if (tokensAddAdapter.dataSet.isEmpty()) View.VISIBLE else View.INVISIBLE
-
-                _viewModel.searchedTokens.clear()
-                _viewModel.searchedTokens.addAll(tokensAddAdapter.dataSet)
+                tokensAddAdapter.dataSet = emptyArray()
                 tokensAddAdapter.notifyDataSetChanged()
+
+                _viewModel.lookForExactToken(
+                    apparentTokenId = query?.trim() ?: "",
+                    accountAddress = _viewModel.tokenData.account!!.address,
+                )
+
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 if (newText.isNullOrBlank()) {
                     tokensAddAdapter.dataSet = _viewModel.tokens.toTypedArray()
-                    _viewModel.searchedTokens.clear()
                     tokensAddAdapter.notifyDataSetChanged()
-                    binding.noTokensFound.visibility = View.INVISIBLE
+
+                    _viewModel.dismissExactTokenLookup()
                 }
-                return false
+                return true
             }
         })
 
@@ -151,8 +151,14 @@ class SelectTokensFragment : TokensBaseFragment() {
     private fun initObservers() {
         _viewModel.lookForTokens.observe(viewLifecycleOwner) {
             tokensAddAdapter.dataSet = _viewModel.tokens.toTypedArray()
-            _viewModel.searchedTokens.clear()
             tokensAddAdapter.notifyDataSetChanged()
+        }
+        _viewModel.lookForExactToken.observe(viewLifecycleOwner) { status ->
+            binding.noTokensFound.isVisible = status == TOKENS_EMPTY
+            if (status == TOKENS_OK) {
+                tokensAddAdapter.dataSet = arrayOf(checkNotNull(_viewModel.exactToken))
+                tokensAddAdapter.notifyDataSetChanged()
+            }
         }
         _viewModel.tokenDetails.observe(viewLifecycleOwner) {
             tokensAddAdapter.dataSet = _viewModel.tokens.toTypedArray()
