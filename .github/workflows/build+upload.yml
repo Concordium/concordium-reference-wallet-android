@@ -39,20 +39,20 @@ jobs:
         run: |
           v="$(./gradlew -q printVersionName)"
           [[ "${{steps.ref.outputs.ref-name}}" = ${v}-* ]]
-      - name: "Build project and run unit tests"
-        run: ./gradlew build
-      - name: Store generated release build APK for stagenet
+      - name: "Build project bundle and run unit tests"
+        run: ./gradlew bundleRelease
+      - name: "Store generated release AAB for stagenet"
         uses: actions/upload-artifact@v3
         with:
-          name: apk-stagenet-release
-          path: "${{github.workspace}}/app/build/outputs/apk/staging/release/"
-      - name: "Store generated release build APK for testnet"
+          name: aab-stagenet-release
+          path: "${{github.workspace}}/app/build/outputs/bundle/stagingRelease/app-staging-release.aab"
+      - name: "Store generated release AAB for testnet"
         uses: actions/upload-artifact@v3
         with:
-          name: apk-testnet-release
-          path: "${{github.workspace}}/app/build/outputs/apk/prodTestNet/release/"
-      - name: "Store generated release build APK for mainnet"
+          name: aab-testnet-release
+          path: "${{github.workspace}}/app/build/outputs/bundle/prodTestNetRelease/app-prodTestNet-release.aab"
+      - name: "Store generated release AAB for mainnet"
         uses: actions/upload-artifact@v3
         with:
-          name: apk-mainnet-release
-          path: "${{github.workspace}}/app/build/outputs/apk/prodMainNet/release/"
+          name: aab-mainnet-release
+          path: "${{github.workspace}}/app/build/outputs/bundle/prodMainNetRelease/app-prodMainNet-release.aab"
