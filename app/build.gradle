@@ -43,8 +43,8 @@ tasks.withType(Test) {
 def versionBuildNumberMajor = 1
 def versionBuildNumberMinor = 5
 def versionBuildNumberPatch = 1
-def versionBuildNumberMeta = "-qa.7"
-def versionBuildNumberSequential = 69
+def versionBuildNumberMeta = ""
+def versionBuildNumberSequential = 70
 
 task printVersionName {
     doLast {

@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.5.1] - 2024-03-18
 
 ### Fixed
 - Inability to update the validator's rewards restake preference if their stake is below
@@ -110,7 +110,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Last release without changelog.
 
-[Unreleased]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.5.0...HEAD
+[Unreleased]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.5.1...HEAD
+[1.5.1]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.5.0...1.5.1
 [1.5.0]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.3.0...1.5.0
 [1.3.0]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.2.1...1.3.0
 [1.2.1]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.2.0...1.2.1
