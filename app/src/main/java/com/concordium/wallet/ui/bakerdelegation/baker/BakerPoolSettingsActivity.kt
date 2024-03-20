@@ -12,6 +12,7 @@ import com.concordium.wallet.databinding.ActivityBakerSettingsBinding
 import com.concordium.wallet.ui.bakerdelegation.common.BaseDelegationBakerActivity
 import com.concordium.wallet.ui.bakerdelegation.common.DelegationBakerViewModel
 import com.concordium.wallet.uicore.afterTextChanged
+import com.concordium.wallet.util.KeyboardUtil
 import com.concordium.wallet.util.hideKeyboard
 import java.text.DecimalFormat
 import java.text.ParseException
@@ -276,6 +277,14 @@ class BakerPoolSettingsActivity : BaseDelegationBakerActivity() {
     override fun initViews() {
         binding.bakerRegistrationContinue.setOnClickListener {
             onContinueClicked()
+        }
+        binding.transactionFeeValueSuffix.setOnClickListener {
+            KeyboardUtil.showKeyboard(this, binding.transactionFeeValue)
+            binding.transactionFeeValue.setSelection(binding.transactionFeeValue.text.length)
+        }
+        binding.bakingValueSuffix.setOnClickListener {
+            KeyboardUtil.showKeyboard(this, binding.bakingValue)
+            binding.bakingValue.setSelection(binding.bakingValue.text.length)
         }
     }
 
