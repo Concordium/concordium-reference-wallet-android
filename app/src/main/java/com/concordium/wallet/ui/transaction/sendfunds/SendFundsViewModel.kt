@@ -210,7 +210,7 @@ class SendFundsViewModel(application: Application) : AndroidViewModel(applicatio
             memoSize = if (tempData.memo == null) null else tempData.memo!!.length / 2, //div by 2 because hex takes up twice the length
             success = {
                 tempData.energy = it.energy
-                _transactionFeeLiveData.value = it.cost.toBigInteger()
+                _transactionFeeLiveData.value = it.cost
                 updateSendAllAmount()
             },
             failure = {

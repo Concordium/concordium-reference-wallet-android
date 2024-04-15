@@ -1,5 +1,6 @@
 package com.concordium.wallet.data.model
 
+import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 import java.math.BigInteger
 
@@ -20,4 +21,7 @@ data class ChainParameters(
     val transactionCommissionRange: TransactionCommissionRange,
     val transactionCommissionRate: Double? = null,
     val finalizationCommissionRange: FinalizationCommissionRange,
+    val euroPerEnergy: SimpleFraction,
+    @SerializedName("microGTUPerEuro")
+    val microGtuPerEuro: SimpleFraction,
 ) : Serializable

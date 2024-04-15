@@ -20,9 +20,11 @@ import com.concordium.wallet.data.cryptolib.StorageAccountData
 import com.concordium.wallet.data.model.AccountData
 import com.concordium.wallet.data.model.AccountNonce
 import com.concordium.wallet.data.model.SubmissionData
+import com.concordium.wallet.data.model.TransferCost
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.WalletDatabase
+import com.concordium.wallet.data.util.TransactionCostCalculator
 import com.concordium.wallet.data.walletconnect.Payload
 import com.concordium.wallet.data.walletconnect.TransactionError
 import com.concordium.wallet.data.walletconnect.TransactionSuccess
@@ -49,7 +51,6 @@ import javax.crypto.Cipher
 data class WalletConnectData(
     var account: Account? = null,
     var wcUri: String? = null,
-    var energy: Long? = null,
     var maxEnergy: Long? = null,
     var cost: BigInteger? = null,
     var isTransaction: Boolean = true
@@ -161,24 +162,37 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         binder?.getSessionRequestParams()?.parsePayload()?.let { payload ->
             when (payload) {
                 is Payload.ContractUpdateTransaction -> {
-                    proxyRepository.getTransferCost(
-                        type = "update",
-                        amount = payload.amount.toBigInteger(),
-                        sender = walletConnectData.account!!.address,
-                        contractIndex = payload.address.index,
-                        contractSubindex = payload.address.subIndex,
-                        receiveName = payload.receiveName,
-                        parameter = payload.message,
-                        success = {
-                            walletConnectData.maxEnergy =
-                                if (payload.maxEnergy != 0L) payload.maxEnergy else payload.maxContractExecutionEnergy
-                            walletConnectData.cost = it.cost.toBigInteger()
-                            walletConnectData.energy = it.energy
+                    proxyRepository.getChainParameters(
+                        success = { chainParameters ->
+                            val maxEnergy: Long =
+                                if (payload.maxEnergy != null) {
+                                    // Use the legacy total value if provided.
+                                    payload.maxEnergy
+                                } else if (payload.maxContractExecutionEnergy != null) {
+                                    // Calculate the total value locally if only the execution energy provided.
+                                    // Max energy = contract execution energy + base transaction energy.
+                                    payload.maxContractExecutionEnergy +
+                                            TransactionCostCalculator.getBaseCostEnergy(
+                                                transactionSize = TransactionCostCalculator.getContractTransactionSize(
+                                                    receiveName = payload.receiveName,
+                                                    message = payload.message,
+                                                ),
+                                            )
+                                } else {
+                                    error("The account transaction payload must contain either maxEnergy or maxContractExecutionEnergy")
+                                }
+
+                            val cost = TransferCost(
+                                energy = maxEnergy,
+                                euroPerEnergy = chainParameters.euroPerEnergy,
+                                microGTUPerEuro = chainParameters.microGtuPerEuro,
+                            )
+
+                            walletConnectData.maxEnergy = cost.energy
+                            walletConnectData.cost = cost.cost
                             transactionFee.postValue(walletConnectData.cost)
                         },
-                        failure = {
-                            handleBackendError(it)
-                        }
+                        failure = ::handleBackendError
                     )
                 }
 
@@ -187,13 +201,11 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
                         type = ProxyRepository.SIMPLE_TRANSFER,
                         memoSize = null,
                         success = {
-                            walletConnectData.energy = it.energy
-                            walletConnectData.cost = it.cost.toBigInteger()
+                            walletConnectData.maxEnergy = it.energy
+                            walletConnectData.cost = it.cost
                             transactionFee.postValue(walletConnectData.cost)
                         },
-                        failure = {
-                            handleBackendError(it)
-                        }
+                        failure = ::handleBackendError
                     )
                 }
             }
@@ -294,10 +306,6 @@ class WalletConnectViewModel(application: Application) : AndroidViewModel(applic
         if (from.isBlank() || nonce == null || payload == null || type == null) {
             errorInt.postValue(R.string.app_error_lib)
             return
-        }
-        if (payload is Payload.ContractUpdateTransaction) {
-            payload.maxEnergy = walletConnectData.energy ?: 0
-            payload.maxContractExecutionEnergy = walletConnectData.maxEnergy ?: 0
         }
         val accountTransactionInput = CreateAccountTransactionInput(
             expiry.toInt(),
