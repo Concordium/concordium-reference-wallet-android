@@ -41,7 +41,6 @@ import com.concordium.wallet.ui.common.BackendErrorHandler
 import com.concordium.wallet.util.DateTimeUtil
 import com.concordium.wallet.util.Log
 import com.concordium.wallet.util.TokenUtil
-import com.concordium.wallet.util.toBigInteger
 import com.concordium.wallet.util.toHex
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -275,7 +274,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                     handleBackendError(TransactionSimulationException())
                 } else {
                     sendTokenData.energy = it.energy
-                    sendTokenData.fee = it.cost.toBigInteger()
+                    sendTokenData.fee = it.cost
                     sendTokenData.account?.let { account ->
                         sendTokenData.max =
                             account.getAtDisposalWithoutStakedOrScheduled(account.totalUnshieldedBalance) -
@@ -313,7 +312,7 @@ class SendTokenViewModel(application: Application) : AndroidViewModel(applicatio
                     handleBackendError(TransactionSimulationException())
                 } else {
                     sendTokenData.energy = it.energy
-                    sendTokenData.fee = it.cost.toBigInteger()
+                    sendTokenData.fee = it.cost
                     waiting.postValue(false)
                     feeReady.postValue(sendTokenData.fee)
                 }

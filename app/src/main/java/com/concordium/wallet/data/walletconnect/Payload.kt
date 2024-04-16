@@ -4,8 +4,16 @@ sealed interface Payload {
     data class ContractUpdateTransaction(
         val address: ContractAddress,
         val amount: String,
-        var maxEnergy: Long,
-        var maxContractExecutionEnergy: Long,
+        /**
+         * Energy for the whole transaction including the administrative fee.
+         * Legacy field.
+         */
+        val maxEnergy: Long?,
+        /**
+         * Energy for the smart contract execution only,
+         * without the administrative transaction fee.
+         */
+        val maxContractExecutionEnergy: Long?,
         val message: String,
         val receiveName: String
     ) : Payload
