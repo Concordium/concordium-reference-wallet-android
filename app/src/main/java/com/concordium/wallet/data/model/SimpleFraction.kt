@@ -1,5 +1,6 @@
 package com.concordium.wallet.data.model
 
+import java.io.Serializable
 import java.math.BigInteger
 
 /**
@@ -10,7 +11,7 @@ import java.math.BigInteger
  *  D
  * ```
  */
-data class SimpleFraction(
+class SimpleFraction(
     val numerator: BigInteger,
     val denominator: BigInteger,
-)
+): Serializable
