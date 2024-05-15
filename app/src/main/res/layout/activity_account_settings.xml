@@ -55,62 +55,6 @@
                 style="@style/Divider" />
 
             <RelativeLayout
-                android:id="@+id/show_shielded"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/list_item_height"
-                android:background="@drawable/list_item"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/TextView.MoreMenuItem"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/activity_horizontal_margin"
-                    android:text="@string/account_details_menu_show_shielded" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="16dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_button_next"
-                    android:tint="@color/redesign_off_primary" />
-            </RelativeLayout>
-
-            <View
-                android:id="@+id/divider_show_shielded"
-                style="@style/Divider" />
-
-            <RelativeLayout
-                android:id="@+id/hide_shielded"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/list_item_height"
-                android:background="@drawable/list_item"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/TextView.MoreMenuItem"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/activity_horizontal_margin"
-                    android:text="@string/account_details_menu_hide_shielded" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="16dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_button_next"
-                    android:tint="@color/redesign_off_primary" />
-            </RelativeLayout>
-
-            <View
-                android:id="@+id/divider_hide_shielded"
-                style="@style/Divider" />
-
-            <RelativeLayout
                 android:id="@+id/release_schedule"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height"
