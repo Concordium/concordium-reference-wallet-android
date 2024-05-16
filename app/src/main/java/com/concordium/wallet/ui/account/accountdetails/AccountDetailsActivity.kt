@@ -35,8 +35,34 @@ import com.concordium.wallet.ui.bakerdelegation.delegation.introflow.DelegationC
 import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.GenericFlowActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
-import kotlinx.android.synthetic.main.activity_account_details.*
-import kotlinx.android.synthetic.main.progress.*
+import kotlinx.android.synthetic.main.activity_account_details.account_details_layout
+import kotlinx.android.synthetic.main.activity_account_details.account_details_pager
+import kotlinx.android.synthetic.main.activity_account_details.account_details_tablayout
+import kotlinx.android.synthetic.main.activity_account_details.account_remove_button
+import kotlinx.android.synthetic.main.activity_account_details.account_retry_button
+import kotlinx.android.synthetic.main.activity_account_details.account_total_details_disposal_text
+import kotlinx.android.synthetic.main.activity_account_details.accounts_overview_total_details_baker
+import kotlinx.android.synthetic.main.activity_account_details.accounts_overview_total_details_baker_container
+import kotlinx.android.synthetic.main.activity_account_details.accounts_overview_total_details_disposal
+import kotlinx.android.synthetic.main.activity_account_details.accounts_overview_total_details_disposal_container
+import kotlinx.android.synthetic.main.activity_account_details.accounts_overview_total_details_staked
+import kotlinx.android.synthetic.main.activity_account_details.accounts_overview_total_details_staked_container
+import kotlinx.android.synthetic.main.activity_account_details.accounts_overview_total_title_baker
+import kotlinx.android.synthetic.main.activity_account_details.accounts_overview_total_title_staked
+import kotlinx.android.synthetic.main.activity_account_details.address_layout
+import kotlinx.android.synthetic.main.activity_account_details.balance_textview
+import kotlinx.android.synthetic.main.activity_account_details.readonly_desc
+import kotlinx.android.synthetic.main.activity_account_details.root_layout
+import kotlinx.android.synthetic.main.activity_account_details.send_funds_layout
+import kotlinx.android.synthetic.main.activity_account_details.send_imageview
+import kotlinx.android.synthetic.main.activity_account_details.shield_funds_layout
+import kotlinx.android.synthetic.main.activity_account_details.shield_imageview
+import kotlinx.android.synthetic.main.activity_account_details.shield_textview
+import kotlinx.android.synthetic.main.activity_account_details.shielded_icon
+import kotlinx.android.synthetic.main.activity_account_details.toggle_balance
+import kotlinx.android.synthetic.main.activity_account_details.toggle_container
+import kotlinx.android.synthetic.main.activity_account_details.toggle_shielded
+import kotlinx.android.synthetic.main.progress.progress_layout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -359,24 +385,6 @@ class AccountDetailsActivity :
                     gotoTransferFilters(viewModel.account, viewModel.isShielded)
                 }
 
-                val cvShowShielded = menuView.findViewById(R.id.menu_show_shielded_container) as CardView
-                val cvShowShieldedTV = menuView.findViewById(R.id.menu_show_shielded) as TextView
-                cvShowShielded.visibility = if(viewModel.shieldingEnabledLiveData.value == true || viewModel.account.readOnly == true) View.GONE else View.VISIBLE
-                cvShowShielded.setOnClickListener {
-                    mMenuDialog?.dismiss()
-                    startShieldedIntroFlow()
-                }
-                cvShowShieldedTV.text = getString(R.string.account_details_menu_show_shielded, viewModel.account.name)
-
-                val cvHideShielded = menuView.findViewById(R.id.menu_hide_shielded_container) as CardView
-                val cvHideShieldedTV = menuView.findViewById(R.id.menu_hide_shielded) as TextView
-                cvHideShielded.visibility = if(viewModel.shieldingEnabledLiveData.value == true && viewModel.account.readOnly != true) View.VISIBLE else View.GONE
-                cvHideShielded.setOnClickListener {
-                    mMenuDialog?.dismiss()
-                    viewModel.disableShielded()
-                }
-                cvHideShieldedTV.text = getString(R.string.account_details_menu_hide_shielded, viewModel.account.name)
-
                 // Delegation
                 if (viewModel.account.isBaking() || viewModel.hasPendingBakingTransactions) {
                     (menuView.findViewById(R.id.menu_item_delegation_card) as CardView).visibility = View.GONE
@@ -398,29 +406,6 @@ class AccountDetailsActivity :
                         gotoBaking(viewModel.account)
                     }
                 }
-
-                //Decrypt option
-                val cvDecrypt = menuView.findViewById(R.id.menu_decrypt_container) as CardView
-                cvDecrypt.visibility = if(viewModel.isShielded && viewModel.hasTransactionsToDecrypt) View.VISIBLE else View.GONE
-                cvDecrypt.setOnClickListener {
-                    mMenuDialog?.dismiss()
-                    showAuthentication(null, viewModel.shouldUseBiometrics(), viewModel.usePasscode(), object : AuthenticationCallback{
-                        override fun getCipherForBiometrics() : Cipher?{
-                            return viewModel.getCipherForBiometrics()
-                        }
-                        override fun onCorrectPassword(password: String) {
-                            viewModel.continueWithPassword(password, true)
-                        }
-                        override fun onCipher(cipher: Cipher) {
-                            viewModel.checkLogin(cipher, true)
-                        }
-                        override fun onCancelled() {
-                            finish()
-                        }
-                    })
-                }
-
-
 
                 builder.setCustomTitle(menuView)
                 mMenuDialog = builder.show()
