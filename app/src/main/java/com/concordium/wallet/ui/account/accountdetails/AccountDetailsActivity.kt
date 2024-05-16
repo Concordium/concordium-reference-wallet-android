@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.account.accountdetails
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
@@ -63,10 +62,6 @@ import kotlinx.android.synthetic.main.activity_account_details.toggle_balance
 import kotlinx.android.synthetic.main.activity_account_details.toggle_container
 import kotlinx.android.synthetic.main.activity_account_details.toggle_shielded
 import kotlinx.android.synthetic.main.progress.progress_layout
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import javax.crypto.Cipher
 
 class AccountDetailsActivity :
@@ -110,26 +105,6 @@ class AccountDetailsActivity :
     override fun onDestroy() {
         super.onDestroy()
         viewModel.stopFrequentUpdater()
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUESTCODE_ENABLE_SHIELDING) {
-            if (resultCode == Activity.RESULT_OK) {
-                data?.getBooleanExtra(ShieldingIntroActivity.EXTRA_RESULT_SHIELDING_ENABLED, false)?.let { enabled ->
-                    if(enabled){
-                        viewModel.enableShielded()
-                        //Decouple from main thread allowing UI to update
-                        GlobalScope.launch(Dispatchers.Main){
-                            delay(1)
-                            viewModel.isShielded = true
-                            initViews()
-                            updateShieldEnabledUI()
-                        }
-                    }
-                }
-            }
-        }
     }
     // endregion
 
