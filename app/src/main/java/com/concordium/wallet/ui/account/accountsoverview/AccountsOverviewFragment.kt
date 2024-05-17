@@ -14,24 +14,23 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.AppSettings
 import com.concordium.wallet.data.model.BakerStakePendingChange
-import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.util.CurrencyUtil
-import com.concordium.wallet.util.TokenUtil
 import com.concordium.wallet.databinding.FragmentAccountsOverviewBinding
 import com.concordium.wallet.ui.MainViewModel
 import com.concordium.wallet.ui.account.accountdetails.AccountDetailsActivity
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
 import com.concordium.wallet.ui.base.BaseFragment
+import com.concordium.wallet.ui.cis2.SendTokenActivity
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegate
 import com.concordium.wallet.ui.common.delegates.IdentityStatusDelegateImpl
 import com.concordium.wallet.ui.identity.identitiesoverview.IdentitiesOverviewActivity
 import com.concordium.wallet.ui.identity.identityproviderlist.IdentityProviderListActivity
-import com.concordium.wallet.ui.cis2.SendTokenActivity
+import com.concordium.wallet.util.TokenUtil
 import java.math.BigInteger
 
 class AccountsOverviewFragment : BaseFragment(),
@@ -160,7 +159,6 @@ class AccountsOverviewFragment : BaseFragment(),
         viewModel.accountListLiveData.observe(this) { accountList ->
             accountList?.let {
                 accountAdapter.setData(it)
-                checkForUnencrypted(it)
                 checkForClosingPools(it)
             }
         }
@@ -291,60 +289,6 @@ class AccountsOverviewFragment : BaseFragment(),
         }
 
         viewModel.loadPoolStatuses(poolIds)
-    }
-
-    private fun checkForUnencrypted(accountList: List<AccountWithIdentity>) {
-        accountList.forEach {
-
-            val hasUnencryptedTransactions =
-                it.account.finalizedEncryptedBalance?.incomingAmounts?.isNotEmpty()
-            if ((hasUnencryptedTransactions != null && hasUnencryptedTransactions == true)
-                && it.account.transactionStatus == TransactionStatus.FINALIZED
-                && !App.appCore.session.isShieldedWarningDismissed(it.account.address)
-                && !App.appCore.session.isShieldingEnabled(it.account.address)
-                && encryptedWarningDialog == null
-            ) {
-
-                val builder = AlertDialog.Builder(context)
-                builder.setTitle(getString(R.string.account_details_shielded_warning_title))
-                builder.setMessage(
-                    getString(
-                        R.string.account_details_shielded_warning_text,
-                        it.account.name
-                    )
-                )
-                builder.setNegativeButton(
-                    getString(
-                        R.string.account_details_shielded_warning_enable,
-                        it.account.name
-                    )
-                ) { _, _ ->
-                    startShieldedIntroFlow(it.account)
-                    encryptedWarningDialog?.dismiss()
-                    encryptedWarningDialog = null
-                }
-                builder.setPositiveButton(getString(R.string.account_details_shielded_warning_dismiss)) { _, _ ->
-                    App.appCore.session.setShieldedWarningDismissed(
-                        it.account.address,
-                        true
-                    )
-                    encryptedWarningDialog?.dismiss()
-                    encryptedWarningDialog = null
-                    checkForUnencrypted(accountList) //Check for other accounts with shielded transactions
-                }
-                builder.setCancelable(true)
-                encryptedWarningDialog = builder.create()//.show()
-                encryptedWarningDialog?.show()
-            }
-        }
-    }
-
-    private fun startShieldedIntroFlow(account: Account) {
-        val intent = Intent(activity, AccountDetailsActivity::class.java)
-        intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, account)
-        intent.putExtra(AccountDetailsActivity.EXTRA_SHIELDED, false)
-        intent.putExtra(AccountDetailsActivity.EXTRA_CONTINUE_TO_SHIELD_INTRO, true)
-        startActivityForResult(intent, REQUESTCODE_ACCOUNT_DETAILS)
     }
 
     private fun initializeViews() {
