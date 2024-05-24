@@ -8,6 +8,7 @@ import android.os.Process
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
@@ -184,6 +185,16 @@ class AccountsOverviewFragment : BaseFragment(),
                     viewModel.hasPendingBakingTransactions
                 )
             }
+        }
+        viewModel.showShieldingNoticeLiveData.observe(this) {
+            childFragmentManager.fragments.forEach { fragment ->
+                if (fragment.tag == ShieldingNoticeDialogFragment.TAG && fragment is DialogFragment) {
+                    fragment.dismissAllowingStateLoss()
+                }
+            }
+
+            ShieldingNoticeDialogFragment()
+                .show(childFragmentManager, ShieldingNoticeDialogFragment.TAG)
         }
     }
 

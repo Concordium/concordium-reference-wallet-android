@@ -130,6 +130,14 @@ data class Account(
         return accountDelegation != null
     }
 
+    fun mayNeedUnshielding(): Boolean {
+        val isShieldedBalanceUnknown = encryptedBalanceStatus == ShieldedAccountEncryptionStatus.ENCRYPTED
+                || encryptedBalanceStatus == ShieldedAccountEncryptionStatus.PARTIALLYDECRYPTED
+        val isShieldedBalancePositive = encryptedBalanceStatus == ShieldedAccountEncryptionStatus.DECRYPTED
+                && totalShieldedBalance.signum() > 0
+        return isShieldedBalanceUnknown || isShieldedBalancePositive
+    }
+
     fun getAtDisposalWithoutStakedOrScheduled(totalBalance: BigInteger): BigInteger {
         val stakedAmount: BigInteger = accountDelegation?.stakedAmount
             ?: accountBaker?.stakedAmount ?: BigInteger.ZERO

@@ -14,12 +14,15 @@ import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
+import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.data.repository.AuthenticationRepository
 import com.concordium.wallet.databinding.DialogShieldingNoticeBinding
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
+import kotlinx.coroutines.delay
 import org.koin.android.ext.android.inject
 
 class ShieldingNoticeDialogFragment :
@@ -83,6 +86,12 @@ class ShieldingNoticeDialogFragment :
                 )
             }
         }
+
+        // Track showing the notice once it is visible to the user.
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            delay(500)
+            App.appCore.session.shieldingNoticeShown()
+        }
     }
 
     override fun onStart() {
@@ -99,5 +108,9 @@ class ShieldingNoticeDialogFragment :
                 )
             )
         }
+    }
+
+    companion object {
+        const val TAG = "shielding-notice"
     }
 }
