@@ -143,8 +143,7 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         this.account = account
         this.isShielded = isShielded
         getIdentityProvider()
-        // Force disable shielding.
-        _shieldingEnabledLiveData.value = false
+        _shieldingEnabledLiveData.value = App.appCore.session.isShieldingEnabled(account.address)
         Log.d("Account address: ${account.address}")
     }
 
@@ -185,8 +184,8 @@ class AccountDetailsViewModel(application: Application) : AndroidViewModel(appli
         viewModelScope.launch {
             accountRepository.findByAddress(accountAddress)?.let {
                 account = it
-                // Force disable shielding.
-                _shieldingEnabledLiveData.value = false
+                _shieldingEnabledLiveData.value =
+                    App.appCore.session.isShieldingEnabled(account.address)
                 _accountUpdatedLiveData.value = true
             }
         }

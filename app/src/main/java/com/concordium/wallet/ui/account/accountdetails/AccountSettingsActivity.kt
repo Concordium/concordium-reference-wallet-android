@@ -70,6 +70,13 @@ class AccountSettingsActivity : BaseActivity() {
         binding.transferFilter.setOnClickListener {
             gotoTransferFilters(viewModel.account)
         }
+        binding.showShielded.setOnClickListener {
+            startShieldedIntroFlow()
+        }
+        binding.hideShielded.setOnClickListener {
+            viewModel.disableShielded()
+            finish()
+        }
         binding.releaseSchedule.setOnClickListener {
             gotoAccountReleaseSchedule(viewModel.account, viewModel.isShielded)
         }
@@ -83,6 +90,14 @@ class AccountSettingsActivity : BaseActivity() {
             showChangeNameDialog()
         }
 
+        binding.showShielded.visibility =
+            if (viewModel.shieldingEnabledLiveData.value == true || viewModel.account.readOnly) View.GONE else View.VISIBLE
+        binding.dividerShowShielded.visibility =
+            if (viewModel.shieldingEnabledLiveData.value == true || viewModel.account.readOnly) View.GONE else View.VISIBLE
+        binding.hideShielded.visibility =
+            if (viewModel.shieldingEnabledLiveData.value == true && !viewModel.account.readOnly) View.VISIBLE else View.GONE
+        binding.dividerHideShielded.visibility =
+            if (viewModel.shieldingEnabledLiveData.value == true && !viewModel.account.readOnly) View.VISIBLE else View.GONE
         binding.transferFilter.visibility = if (viewModel.isShielded) View.GONE else View.VISIBLE
         binding.dividerTransferFilter.visibility =
             if (viewModel.isShielded) View.GONE else View.VISIBLE
