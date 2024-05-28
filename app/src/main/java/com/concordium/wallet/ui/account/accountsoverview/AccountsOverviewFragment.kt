@@ -12,6 +12,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
@@ -248,6 +249,17 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
         viewModel.appSettingsLiveData.observe(this, Observer { appSettings ->
             checkAppSettings(appSettings)
         })
+
+        viewModel.showShieldingNoticeLiveData.observe(this) {
+            childFragmentManager.fragments.forEach { fragment ->
+                if (fragment.tag == ShieldingNoticeDialogFragment.TAG && fragment is DialogFragment) {
+                    fragment.dismissAllowingStateLoss()
+                }
+            }
+
+            ShieldingNoticeDialogFragment()
+                .show(childFragmentManager, ShieldingNoticeDialogFragment.TAG)
+        }
     }
 
     private fun checkAppSettings(appSettings: AppSettings?) {

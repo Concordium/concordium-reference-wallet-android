@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import com.concordium.wallet.App
 import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.ui.more.export.ExportActivity
@@ -67,8 +68,7 @@ class ShieldingNoticeDialogFragment :
         // Track showing the notice once it is visible to the user.
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             delay(500)
-            // TODO
-//            App.appCore.session.shieldingNoticeShown()
+            App.appCore.session.shieldingNoticeShown()
         }
     }
 
