@@ -40,12 +40,6 @@ import retrofit2.HttpException
 import java.math.BigInteger
 
 class AccountUpdater(val application: Application, private val viewModelScope: CoroutineScope) {
-
-    companion object {
-        const val DEFAULT_EMPTY_ENCRYPTED_AMOUNT =
-            "c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-    }
-
     data class AccountSubmissionStatusRequestData(
         val deferred: Deferred<AccountSubmissionStatus>,
         val account: Account
@@ -571,14 +565,11 @@ class AccountUpdater(val application: Application, private val viewModelScope: C
         return output
     }
 
-    suspend fun lookupMappedAmount(key: String): String? {
-        if (DEFAULT_EMPTY_ENCRYPTED_AMOUNT.equals(key)) {
-            return 0.toString()
-        }
-        val result = encryptedAmountRepository.findByAddress(key)?.amount
-
-        return result
-    }
+    suspend fun lookupMappedAmount(key: String): String? =
+        if (key == AccountEncryptedAmount.DEFAULT_EMPTY_ENCRYPTED_AMOUNT)
+            "0"
+        else
+            encryptedAmountRepository.findByAddress(key)?.amount
 
     suspend fun saveDecryptedAmount(key: String, amount: String?) {
         encryptedAmountRepository.insert(EncryptedAmount(key, amount))

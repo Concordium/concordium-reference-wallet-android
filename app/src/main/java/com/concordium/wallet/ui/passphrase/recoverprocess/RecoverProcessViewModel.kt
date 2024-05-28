@@ -302,7 +302,10 @@ class RecoverProcessViewModel(application: Application) : AndroidViewModel(appli
                     totalShieldedBalance = BigInteger.ZERO,
                     finalizedEncryptedBalance = accountBalance.finalizedBalance.accountEncryptedAmount,
                     currentEncryptedBalance = accountBalance.currentBalance?.accountEncryptedAmount,
-                    encryptedBalanceStatus = ShieldedAccountEncryptionStatus.ENCRYPTED,
+                    if (accountBalance.finalizedBalance.accountEncryptedAmount.isDefaultEmpty())
+                        ShieldedAccountEncryptionStatus.DECRYPTED
+                    else
+                        ShieldedAccountEncryptionStatus.ENCRYPTED,
                     totalStaked = accountBalance.finalizedBalance.accountBaker?.stakedAmount ?: BigInteger.ZERO,
                     totalAtDisposal = BigInteger.ZERO,
                     readOnly = false,
