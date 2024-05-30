@@ -63,6 +63,10 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     val appSettingsLiveData: LiveData<AppSettings>
         get() = _appSettingsLiveData
 
+    private val _showShieldingNoticeLiveData = MutableLiveData<Event<Boolean>>()
+    val showShieldingNoticeLiveData: LiveData<Event<Boolean>>
+        get() = _showShieldingNoticeLiveData
+
     val localTransfersLoaded: MutableLiveData<Account> by lazy { MutableLiveData<Account>() }
 
     private val identityRepository: IdentityRepository
@@ -169,8 +173,9 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             if (identityCount == 0) {
                 _stateLiveData.value = State.NO_IDENTITIES
                 // Set balance, because we know it will be 0
-                _totalBalanceLiveData.value = TotalBalancesData(BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, false)
-                if(notifyWaitingLiveData){
+                _totalBalanceLiveData.value =
+                    TotalBalancesData(BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, false)
+                if (notifyWaitingLiveData) {
                     _waitingLiveData.value = false
                 }
             } else {
@@ -178,8 +183,9 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                 if (accountCount == 0) {
                     _stateLiveData.value = State.NO_ACCOUNTS
                     // Set balance, because we know it will be 0
-                    _totalBalanceLiveData.value = TotalBalancesData(BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, false)
-                    if(notifyWaitingLiveData){
+                    _totalBalanceLiveData.value =
+                        TotalBalancesData(BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, false)
+                    if (notifyWaitingLiveData) {
                         _waitingLiveData.value = false
                     }
                 } else {
@@ -188,6 +194,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                         _waitingLiveData.value = false
                     }
                     updateSubmissionStatesAndBalances(notifyWaitingLiveData)
+                    showUnshieldingNoticeIfNeeded()
                 }
             }
         }
@@ -254,5 +261,17 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         return false
     }
 
+    private fun showUnshieldingNoticeIfNeeded() = viewModelScope.launch {
+        // Show the notice once.
+        if (App.appCore.session.isShieldingNoticeShown()) {
+            return@launch
+        }
 
+        val anyAccountsMayNeedUnshielding = accountRepository.getAllDone()
+            .any(Account::mayNeedUnshielding)
+
+        if (anyAccountsMayNeedUnshielding) {
+            _showShieldingNoticeLiveData.postValue(Event(true))
+        }
+    }
 }

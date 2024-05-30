@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Sending WalletConnect transaction with 0 energy if its payload is too large
 
+### Removed
+- Shielding – you can still enable and see your shielded balance and history,
+but to unshield the funds CryptoX Concordium wallet must be used
+
 ## [1.5.1] - 2024-03-18
 
 ### Fixed

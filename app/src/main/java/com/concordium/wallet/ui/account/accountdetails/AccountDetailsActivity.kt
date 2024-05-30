@@ -518,16 +518,7 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
     private fun updateButtonsSlider() {
         if (viewModelAccountDetails.isShielded) {
             binding.buttonsSlider.visibility = View.GONE
-            binding.buttonsShielded.visibility = View.VISIBLE
-            binding.sendShielded.setOnClickListener {
-                onSendShieldedClicked()
-            }
-            binding.unshield.setOnClickListener {
-                onShieldFundsClicked()
-            }
-            binding.receive.setOnClickListener {
-                onAddressClicked()
-            }
+            // Completely hide and disable shielding actions.
             return
         }
         binding.buttonsSlider.visibility = View.VISIBLE
