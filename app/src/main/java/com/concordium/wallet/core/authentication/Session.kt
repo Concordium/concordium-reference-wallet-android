@@ -47,6 +47,14 @@ class Session {
         return filterPreferences.getHasShowFinalizationRewards(id)
     }
 
+    fun shieldingNoticeShown() {
+        authPreferences.setShieldingNoticeShown(true)
+    }
+
+    fun isShieldingNoticeShown():Boolean {
+        return authPreferences.getShieldingNoticeShown()
+    }
+
     fun hasSetupPassword(passcodeUsed: Boolean = false) {
         _isLoggedIn.value = true
         authPreferences.setHasSetupUser(true)

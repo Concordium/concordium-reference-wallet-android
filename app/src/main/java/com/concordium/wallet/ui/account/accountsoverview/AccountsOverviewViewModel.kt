@@ -14,6 +14,7 @@ import com.concordium.wallet.data.IdentityRepository
 import com.concordium.wallet.data.backend.repository.ProxyRepository
 import com.concordium.wallet.data.model.AppSettings
 import com.concordium.wallet.data.model.TransactionStatus
+import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
 import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
@@ -59,6 +60,10 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private var _appSettingsLiveData = MutableLiveData<AppSettings>()
     val appSettingsLiveData: LiveData<AppSettings>
         get() = _appSettingsLiveData
+
+    private val _showShieldingNoticeLiveData = MutableLiveData<Event<Boolean>>()
+    val showShieldingNoticeLiveData: LiveData<Event<Boolean>>
+        get() = _showShieldingNoticeLiveData
 
     private val identityRepository: IdentityRepository
     private val accountRepository: AccountRepository
@@ -180,6 +185,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                         _waitingLiveData.value = false
                     }
                     updateSubmissionStatesAndBalances(notifyWaitingLiveData)
+                    showUnshieldingNoticeIfNeeded()
                 }
             }
         }
@@ -229,5 +235,17 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         return false
     }
 
+    private fun showUnshieldingNoticeIfNeeded() = viewModelScope.launch {
+        // Show the notice once.
+        if (App.appCore.session.isShieldingNoticeShown()) {
+            return@launch
+        }
 
+        val anyAccountsMayNeedUnshielding = accountRepository.getAll()
+            .any(Account::mayNeedUnshielding)
+
+        if (anyAccountsMayNeedUnshielding) {
+            _showShieldingNoticeLiveData.postValue(Event(true))
+        }
+    }
 }

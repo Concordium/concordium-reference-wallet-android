@@ -2,12 +2,17 @@ package com.concordium.wallet.ui.account.accountsoverview
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Process
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
@@ -15,7 +20,6 @@ import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
 import com.concordium.wallet.data.model.AppSettings
 import com.concordium.wallet.data.model.BakerStakePendingChange
-import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
 import com.concordium.wallet.data.room.AccountWithIdentity
@@ -33,10 +37,26 @@ import com.concordium.wallet.ui.common.delegates.PreventIdentityCreationDelegate
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.uicore.dialog.CustomDialogFragment
-import kotlinx.android.synthetic.main.fragment_accounts_overview.*
-import kotlinx.android.synthetic.main.fragment_accounts_overview.view.*
-import kotlinx.android.synthetic.main.progress.*
-import kotlinx.android.synthetic.main.progress.view.*
+import kotlinx.android.synthetic.main.fragment_accounts_overview.accounts_overview_total_details_disposal
+import kotlinx.android.synthetic.main.fragment_accounts_overview.accounts_overview_total_details_staked
+import kotlinx.android.synthetic.main.fragment_accounts_overview.create_account_button
+import kotlinx.android.synthetic.main.fragment_accounts_overview.identity_pending
+import kotlinx.android.synthetic.main.fragment_accounts_overview.identity_pending_close
+import kotlinx.android.synthetic.main.fragment_accounts_overview.identity_pending_tv
+import kotlinx.android.synthetic.main.fragment_accounts_overview.missing_backup
+import kotlinx.android.synthetic.main.fragment_accounts_overview.no_accounts_scrollview
+import kotlinx.android.synthetic.main.fragment_accounts_overview.no_accounts_textview
+import kotlinx.android.synthetic.main.fragment_accounts_overview.no_identities_layout
+import kotlinx.android.synthetic.main.fragment_accounts_overview.root_layout
+import kotlinx.android.synthetic.main.fragment_accounts_overview.total_balance_textview
+import kotlinx.android.synthetic.main.fragment_accounts_overview.view.account_recyclerview
+import kotlinx.android.synthetic.main.fragment_accounts_overview.view.create_account_button
+import kotlinx.android.synthetic.main.fragment_accounts_overview.view.create_identity_button
+import kotlinx.android.synthetic.main.fragment_accounts_overview.view.missing_backup
+import kotlinx.android.synthetic.main.fragment_accounts_overview.view.no_accounts_textview
+import kotlinx.android.synthetic.main.fragment_accounts_overview.view.no_identities_layout
+import kotlinx.android.synthetic.main.progress.progress_layout
+import kotlinx.android.synthetic.main.progress.view.progress_layout
 
 class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate by PreventIdentityCreationDelegateImpl(), PreventAccountCreationDelegate by PreventAccountCreationDelegateImpl() {
 
@@ -209,7 +229,6 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
         viewModel.accountListLiveData.observe(this, Observer { accountList ->
             accountList?.let {
                 accountAdapter.setData(it)
-                checkForUnencrypted(it)
                 checkForClosingPools(it)
             }
         })
@@ -230,6 +249,17 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
         viewModel.appSettingsLiveData.observe(this, Observer { appSettings ->
             checkAppSettings(appSettings)
         })
+
+        viewModel.showShieldingNoticeLiveData.observe(this) {
+            childFragmentManager.fragments.forEach { fragment ->
+                if (fragment.tag == ShieldingNoticeDialogFragment.TAG && fragment is DialogFragment) {
+                    fragment.dismissAllowingStateLoss()
+                }
+            }
+
+            ShieldingNoticeDialogFragment()
+                .show(childFragmentManager, ShieldingNoticeDialogFragment.TAG)
+        }
     }
 
     private fun checkAppSettings(appSettings: AppSettings?) {
@@ -324,57 +354,6 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
         })
 
         viewModel.loadPoolStatuses(poolIds)
-    }
-
-    private fun checkForUnencrypted(accountList: List<AccountWithIdentity>) {
-        accountList.forEach {
-
-            val hasUnencryptedTransactions = it.account.finalizedEncryptedBalance?.incomingAmounts?.isNotEmpty()
-            if((hasUnencryptedTransactions != null && hasUnencryptedTransactions == true)
-                && it.account.transactionStatus == TransactionStatus.FINALIZED
-                && !App.appCore.session.isShieldedWarningDismissed(it.account.address)
-                && !App.appCore.session.isShieldingEnabled(it.account.address)
-                && encryptedWarningDialog == null){
-
-                val builder = AlertDialog.Builder(context)
-                builder.setTitle(getString(R.string.account_details_shielded_warning_title))
-                builder.setMessage(getString(R.string.account_details_shielded_warning_text, it.account.name))
-                builder.setNegativeButton(
-                    getString(R.string.account_details_shielded_warning_enable, it.account.name),
-                    object : DialogInterface.OnClickListener {
-                        override fun onClick(dialog: DialogInterface, which: Int) {
-                            startShieldedIntroFlow(it.account)
-                            encryptedWarningDialog?.dismiss()
-                            encryptedWarningDialog = null
-                        }
-                    })
-                builder.setPositiveButton(
-                    getString(R.string.account_details_shielded_warning_dismiss),
-                    object : DialogInterface.OnClickListener {
-                        override fun onClick(dialog: DialogInterface, which: Int) {
-                            App.appCore.session.setShieldedWarningDismissed(
-                                it.account.address,
-                                true
-                            )
-                            encryptedWarningDialog?.dismiss()
-                            encryptedWarningDialog = null
-                            checkForUnencrypted(accountList) //Check for other accounts with shielded transactions
-                        }
-                    })
-                builder.setCancelable(true)
-                encryptedWarningDialog = builder.create()//.show()
-                encryptedWarningDialog?.show()
-            }
-        }
-
-    }
-
-    private fun startShieldedIntroFlow(account: Account) {
-        val intent = Intent(activity, AccountDetailsActivity::class.java)
-        intent.putExtra(AccountDetailsActivity.EXTRA_ACCOUNT, account)
-        intent.putExtra(AccountDetailsActivity.EXTRA_SHIELDED, false)
-        intent.putExtra(AccountDetailsActivity.EXTRA_CONTINUE_TO_SHIELD_INTRO, true)
-        startActivityForResult(intent, REQUESTCODE_ACCOUNT_DETAILS)
     }
 
     private fun initializeViews(view: View) {

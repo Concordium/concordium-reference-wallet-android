@@ -1048,4 +1048,16 @@
     <string name="baker_pool_settings_fee_explain">Transaction fee commission</string>
     <string name="baker_pool_settings_baking_explain">Block reward commission</string>
 
+    <string name="shielding_notice_title">Transaction Shielding is going away</string>
+    <string name="shielding_notice_message">
+        We recommend that you unshield any Shielded balance today. To do so move your account to the new CryptoX Concordium wallet.\n\n
+        <b>1. Install the CryptoX Concordium wallet</b>\n
+        <b>2. Export your file</b>\n
+        <b>3. Import your file in the CryptoX wallet</b>\n\n
+        When that’s done, you will be able to unshield your Shielded balance through the CryptoX wallet, and you can safely delete this one.\n\n
+        Don’t worry, your wallet will stay here on your device until you uninstall it, but we highly encourage you to migrate today.
+    </string>
+    <string name="install_cryptox">Install CryptoX Concordium wallet</string>
+    <string name="shielding_notice_continue_with_old_wallet">Continue with the old wallet</string>
+    <string name="shielding_notice_export_file">Export your file</string>
 </resources>

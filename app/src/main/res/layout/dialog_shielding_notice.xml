@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:importantForAccessibility="no"
+                app:srcCompat="@drawable/ico_unshield" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="@string/shielding_notice_title"
+                android:textColor="#4486AB"
+                android:textSize="24sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="30dp"
+                android:gravity="center"
+                android:text="@string/shielding_notice_message"
+                android:textColor="#333333"
+                android:textSize="14sp" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="12dp" />
+
+            <Button
+                android:id="@+id/export_file_button"
+                style="@style/Button.Standard.Transparent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="12dp"
+                android:drawablePadding="4dp"
+                android:text="@string/shielding_notice_export_file"
+                android:textSize="14sp"
+                app:drawableStartCompat="@drawable/ic_download_simple" />
+
+            <Button
+                android:id="@+id/install_cryptox_button"
+                style="@style/Button.Standard"
+                android:layout_width="match_parent"
+                android:layout_marginHorizontal="36dp"
+                android:layout_marginTop="12dp"
+                android:text="@string/install_cryptox"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/continue_with_old_wallet_button"
+                style="@style/Button.Standard.Transparent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/shielding_notice_continue_with_old_wallet"
+                android:textSize="14sp" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="10dp" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</FrameLayout>

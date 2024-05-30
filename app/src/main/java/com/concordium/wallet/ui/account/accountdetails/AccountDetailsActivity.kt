@@ -249,7 +249,9 @@ class AccountDetailsActivity :
     }
 
     private fun updateShieldEnabledUI() {
-        shield_funds_layout.visibility = if(viewModel.shieldingEnabledLiveData.value == true) View.VISIBLE else View.GONE
+        // Shielding/unshielding is disabled.
+        shield_funds_layout.visibility = View.GONE
+
         toggle_container.visibility = if(viewModel.shieldingEnabledLiveData.value == true) View.VISIBLE else View.GONE
         toggle_balance.isSelected = !viewModel.isShielded
         toggle_shielded.isSelected = viewModel.isShielded
@@ -268,11 +270,12 @@ class AccountDetailsActivity :
         accounts_overview_total_details_staked_container.visibility = View.GONE
 
         if (viewModel.isShielded) {
+            // Shielding actions are disabled.
+            send_funds_container_layout.visibility = View.GONE
             accounts_overview_total_details_disposal_container.visibility = View.GONE
-            send_imageview.setImageResource(R.drawable.ic_icon_send_shielded)
-            shield_imageview.setImageResource(R.drawable.ic_unshield)
         }
         else {
+            send_funds_container_layout.visibility = View.VISIBLE
             accounts_overview_total_details_disposal_container.visibility = View.VISIBLE
             send_imageview.setImageResource(R.drawable.ic_send)
             shield_imageview.setImageResource(R.drawable.ic_shielded_icon)
