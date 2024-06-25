@@ -24,19 +24,9 @@ class AuthPreferences(val context: Context) :
         const val PREFKEY_BIOMETRIC_KEY = "PREFKEY_BIOMETRIC_KEY"
         const val PREFKEY_TERMS_HASHED = "PREFKEY_TERMS_HASHED"
         const val PREFKEY_SHIELDING_ENABLED_ = "PREFKEY_SHIELDING_ENABLED_"
-        const val PREFKEY_SHIELDED_WARNING_DISMISSED_ = "PREFKEY_SHIELDED_WARNING_DISMISSED_"
         const val PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED = "PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED_"
         const val SEED_PHRASE = "SEED_PHRASE"
         const val SEED_PHRASE_ENCRYPTED = "SEED_PHRASE_ENCRYPTED"
-        const val PREFKEY_SHIELDING_NOTICE_SHOWN = "SHIELDING_NOTICE_SHOWN"
-    }
-
-    fun setShieldingNoticeShown(value: Boolean) {
-        setBoolean(PREFKEY_SHIELDING_NOTICE_SHOWN, value)
-    }
-
-    fun getShieldingNoticeShown(): Boolean {
-        return getBoolean(PREFKEY_SHIELDING_NOTICE_SHOWN, false)
     }
 
     fun setHasSetupUser(value: Boolean) {
@@ -133,14 +123,6 @@ class AuthPreferences(val context: Context) :
 
     fun setShieldingEnabled(accountAddress: String, value: Boolean) {
         return setBoolean(PREFKEY_SHIELDING_ENABLED_ + accountAddress, value)
-    }
-
-    fun isShieldedWarningDismissed(accountAddress: String): Boolean {
-        return getBoolean(PREFKEY_SHIELDED_WARNING_DISMISSED_ + accountAddress, false)
-    }
-
-    fun setShieldedWarningDismissed(accountAddress: String, value: Boolean) {
-        return setBoolean(PREFKEY_SHIELDED_WARNING_DISMISSED_ + accountAddress, value)
     }
 
     fun setIdentityPendingWarningAcknowledged(id: Int) {
