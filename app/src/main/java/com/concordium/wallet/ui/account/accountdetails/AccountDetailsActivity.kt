@@ -15,7 +15,6 @@ import com.concordium.wallet.data.model.DelegationTarget
 import com.concordium.wallet.data.model.Token
 import com.concordium.wallet.data.model.TransactionStatus
 import com.concordium.wallet.data.room.Account
-import com.concordium.wallet.data.room.Recipient
 import com.concordium.wallet.data.util.CurrencyUtil
 import com.concordium.wallet.databinding.ActivityAccountDetailsBinding
 import com.concordium.wallet.ui.account.accountqrcode.AccountQRCodeActivity
@@ -29,7 +28,6 @@ import com.concordium.wallet.ui.cis2.lookfornew.TokenSelectedDestination
 import com.concordium.wallet.ui.common.delegates.EarnDelegate
 import com.concordium.wallet.ui.common.delegates.EarnDelegateImpl
 import com.concordium.wallet.ui.recipient.scanqr.ScanQRActivity
-import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.ui.walletconnect.WalletConnectActivity
 import com.concordium.wallet.uicore.afterMeasured
 import com.concordium.wallet.util.TokenUtil
@@ -467,29 +465,6 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         startActivity(intent)
     }
 
-    private fun onSendShieldedClicked() {
-        val intent = Intent(this, SendFundsActivity::class.java)
-        intent.putExtra(SendFundsActivity.EXTRA_SHIELDED, true)
-        intent.putExtra(SendFundsActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
-        startActivity(intent)
-    }
-
-    private fun onShieldFundsClicked() {
-        val intent = Intent(this, SendFundsActivity::class.java)
-        intent.putExtra(SendFundsActivity.EXTRA_SHIELDED, viewModelAccountDetails.isShielded)
-        intent.putExtra(SendFundsActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
-        intent.putExtra(
-            SendFundsActivity.EXTRA_RECIPIENT,
-            Recipient(
-                viewModelAccountDetails.account.id,
-                viewModelAccountDetails.account.name,
-                viewModelAccountDetails.account.address
-            )
-        )
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        startActivity(intent)
-    }
-
     private fun onAddressClicked() {
         val intent = Intent(this, AccountQRCodeActivity::class.java)
         intent.putExtra(AccountQRCodeActivity.EXTRA_ACCOUNT, viewModelAccountDetails.account)
@@ -550,11 +525,6 @@ class AccountDetailsActivity : BaseActivity(), EarnDelegate by EarnDelegateImpl(
         }
         binding.buttonsSlider.addButton(R.drawable.ic_scan, "7") {
             scan()
-        }
-        if (viewModelAccountDetails.shieldingEnabledLiveData.value == true) {
-            binding.buttonsSlider.addButton(R.drawable.ic_shielded_icon, "9") {
-                onShieldFundsClicked()
-            }
         }
         binding.buttonsSlider.addButton(R.drawable.ic_settings, "10") {
             gotoAccountSettings(false)
