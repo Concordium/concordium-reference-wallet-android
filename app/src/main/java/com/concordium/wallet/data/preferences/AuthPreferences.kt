@@ -22,15 +22,6 @@ class AuthPreferences(val context: Context) :
         val PREFKEY_SHIELDING_ENABLED_ = "PREFKEY_SHIELDING_ENABLED_"
         val PREFKEY_SHIELDED_WARNING_DISMISSED_ = "PREFKEY_SHIELDED_WARNING_DISMISSED_"
         val PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED = "PREFKEY_IDENTITY_PENDING_ACKNOWLEDGED_"
-        const val PREFKEY_SHIELDING_NOTICE_SHOWN = "SHIELDING_NOTICE_SHOWN"
-    }
-
-    fun setShieldingNoticeShown(value: Boolean) {
-        setBoolean(PREFKEY_SHIELDING_NOTICE_SHOWN, value)
-    }
-
-    fun getShieldingNoticeShown(): Boolean {
-        return getBoolean(PREFKEY_SHIELDING_NOTICE_SHOWN, false)
     }
 
     fun setHasSetupUser(value: Boolean) {
