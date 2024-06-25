@@ -25,6 +25,9 @@ class Session {
     val isLoggedIn: LiveData<Boolean>
         get() = _isLoggedIn
 
+    // The notice must be shown once per app start.
+    private var isShieldingNoticeShown = false
+
     constructor(context: Context) {
         authPreferences = AuthPreferences(context)
         hasSetupPassword = authPreferences.getHasSetupUser()
@@ -48,12 +51,11 @@ class Session {
     }
 
     fun shieldingNoticeShown() {
-        authPreferences.setShieldingNoticeShown(true)
+        isShieldingNoticeShown = true
     }
 
-    fun isShieldingNoticeShown():Boolean {
-        return authPreferences.getShieldingNoticeShown()
-    }
+    fun isShieldingNoticeShown(): Boolean =
+        isShieldingNoticeShown
 
     fun hasSetupPassword(passcodeUsed: Boolean = false) {
         _isLoggedIn.value = true
