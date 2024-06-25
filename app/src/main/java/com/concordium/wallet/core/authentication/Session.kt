@@ -22,6 +22,9 @@ class Session(context: Context) {
     val isLoggedIn: LiveData<Boolean>
         get() = _isLoggedIn
 
+    // The notice must be shown once per app start.
+    private var isShieldingNoticeShown = false
+
     fun setHasShowRewards(id: Int, value: Boolean) {
         filterPreferences.setHasShowRewards(id, value)
     }
@@ -39,12 +42,11 @@ class Session(context: Context) {
     }
 
     fun shieldingNoticeShown() {
-        authPreferences.setShieldingNoticeShown(true)
+        isShieldingNoticeShown = true
     }
 
-    fun isShieldingNoticeShown():Boolean {
-        return authPreferences.getShieldingNoticeShown()
-    }
+    fun isShieldingNoticeShown(): Boolean =
+        isShieldingNoticeShown
 
     fun hasSetupPassword(passcodeUsed: Boolean = false) {
         _isLoggedIn.value = true
@@ -116,14 +118,6 @@ class Session(context: Context) {
 
     fun setShieldingEnabled(accountAddress: String, value: Boolean) {
         return authPreferences.setShieldingEnabled(accountAddress, value)
-    }
-
-    fun isShieldedWarningDismissed(accountAddress: String): Boolean {
-        return authPreferences.isShieldedWarningDismissed(accountAddress)
-    }
-
-    fun setShieldedWarningDismissed(accountAddress: String, value: Boolean) {
-        return authPreferences.setShieldedWarningDismissed(accountAddress, value)
     }
 
     init {
