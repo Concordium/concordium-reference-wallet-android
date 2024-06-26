@@ -69,6 +69,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val accountRepository: AccountRepository
     private val accountUpdater = AccountUpdater(application, viewModelScope)
     private val proxyRepository = ProxyRepository()
+    private var isMigrationNoticeShown = false
 
     val accountListLiveData: LiveData<List<AccountWithIdentity>>
     val identityListLiveData: LiveData<List<Identity>>
@@ -104,16 +105,14 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         identityListLiveData = identityRepository.allIdentities
     }
 
-    fun loadAppSettings() {
-        viewModelScope.launch {
-            val response = proxyRepository.getAppSettings(App.appCore.getAppVersion())
-            if (response.isSuccessful) {
-                response.body()?.let {
-                    _appSettingsLiveData.value = it
-                }
-            } else {
-                Log.d("appSettings failed")
+    private suspend fun loadAppSettings() {
+        val response = proxyRepository.getAppSettings(App.appCore.getAppVersion())
+        if (response.isSuccessful) {
+            response.body()?.let {
+                _appSettingsLiveData.value = it
             }
+        } else {
+            Log.d("appSettings failed")
         }
     }
 
@@ -185,7 +184,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                         _waitingLiveData.value = false
                     }
                     updateSubmissionStatesAndBalances(notifyWaitingLiveData)
-                    showUnshieldingNoticeIfNeeded()
+                    showMigrationNoticeOnceIfNeeded()
                 }
             }
         }
@@ -235,17 +234,21 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         return false
     }
 
-    private fun showUnshieldingNoticeIfNeeded() = viewModelScope.launch {
-        // Show the notice once.
-        if (App.appCore.session.isShieldingNoticeShown()) {
+    private fun showMigrationNoticeOnceIfNeeded() = viewModelScope.launch {
+        if (isMigrationNoticeShown) {
             return@launch
         }
 
-        val anyAccountsMayNeedUnshielding = accountRepository.getAll()
-            .any(Account::mayNeedUnshielding)
-
-        if (anyAccountsMayNeedUnshielding) {
+        if (!App.appCore.session.isShieldingNoticeShown()
+            && accountRepository.getAll().any(Account::mayNeedUnshielding)
+        ) {
+            // Show the shielding notice once.
             _showShieldingNoticeLiveData.postValue(Event(true))
+        } else {
+            // Show the default notice from the app settings.
+            loadAppSettings()
         }
+
+        isMigrationNoticeShown = true
     }
 }
