@@ -9,8 +9,8 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 def versionBuildNumberMajor = 3
 def versionBuildNumberMinor = 3
 def versionBuildNumberPatch = 0
-def versionBuildNumberMeta = "-rc.2"
-def versionBuildNumberSequential = 117
+def versionBuildNumberMeta = ""
+def versionBuildNumberSequential = 118
 
 //def LOCAL_IP = getLocalIPv4()
 def LOCAL_IP = "10.0.2.2"
