@@ -1,7 +1,6 @@
 package com.concordium.wallet.ui.intro.introsetup
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.R
@@ -9,7 +8,9 @@ import com.concordium.wallet.ui.base.BaseActivity
 import com.concordium.wallet.ui.common.GenericFlowActivity
 import com.concordium.wallet.ui.intro.introflow.IntroFlowActivity
 import com.concordium.wallet.ui.more.import.ImportActivity
-import kotlinx.android.synthetic.main.activity_intro_setup.*
+import com.concordium.wallet.util.CryptoX
+import kotlinx.android.synthetic.main.activity_intro_setup.confirm_create_initial_button
+import kotlinx.android.synthetic.main.activity_intro_setup.confirm_import_button
 
 class IntroSetupActivity :
     BaseActivity(R.layout.activity_intro_setup, R.string.intro_setup_title) {
@@ -45,7 +46,7 @@ class IntroSetupActivity :
     private fun initViews() {
         hideActionBarBack(this)
         confirm_create_initial_button.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=software.concordium.mobilewallet.seedphrase.mainnet")))
+            CryptoX.openMarket(this)
         }
         confirm_import_button.setOnClickListener {
             gotoImport()
