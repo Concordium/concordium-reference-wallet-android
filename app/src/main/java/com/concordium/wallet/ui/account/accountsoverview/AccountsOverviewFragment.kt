@@ -121,9 +121,6 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
         eventListener?.let {
             App.appCore.session.addAccountsBackedUpListener(it)
         }
-
-        if (!App.appCore.appSettingsForceUpdateChecked)
-            viewModel.loadAppSettings()
     }
 
     override fun onDestroy() {
@@ -247,7 +244,7 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
         })
 
         viewModel.appSettingsLiveData.observe(this, Observer { appSettings ->
-            checkAppSettings(appSettings)
+            checkAppSettingsIfNeeded(appSettings)
         })
 
         viewModel.showShieldingNoticeLiveData.observe(this) {
@@ -262,13 +259,17 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
         }
     }
 
-    private fun checkAppSettings(appSettings: AppSettings?) {
-        appSettings?.let {
-            when (appSettings.status) {
-                AppSettings.APP_VERSION_STATUS_WARNING -> it.url?.let { url -> showAppUpdateWarning(url) }
-                AppSettings.APP_VERSION_STATUS_NEEDS_UPDATE -> it.url?.let { url -> showAppUpdateNeedsUpdate(url) }
-                else -> {}
-            }
+    private fun checkAppSettingsIfNeeded(appSettings: AppSettings) {
+        if (appSettings.url == null || App.appCore.appSettingsForceUpdateChecked) {
+            return
+        }
+
+        when (appSettings.status) {
+            AppSettings.APP_VERSION_STATUS_WARNING ->
+                showAppUpdateWarning(appSettings.url)
+            AppSettings.APP_VERSION_STATUS_NEEDS_UPDATE ->
+                showAppUpdateNeedsUpdate(appSettings.url)
+            else -> {}
         }
     }
 
