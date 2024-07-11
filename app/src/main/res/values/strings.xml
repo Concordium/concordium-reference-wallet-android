@@ -1061,6 +1061,7 @@
     <string name="continue_with_old_wallet">Continue with the old wallet</string>
     <string name="export_your_file">Export your file</string>
     <string name="sunsetting_notice_title">This wallet is going away soon</string>
+    <string name="sunsetting_notice_forced_title">New wallet is waiting</string>
     <string name="sunsetting_notice_message">
         To continue using Concordium, move your account to the new CryptoX wallet.\n\n
         <b>1. Install the CryptoX Concordium wallet</b>\n
