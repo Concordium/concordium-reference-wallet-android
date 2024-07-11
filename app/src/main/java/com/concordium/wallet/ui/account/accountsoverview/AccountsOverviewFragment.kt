@@ -257,17 +257,6 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
             ShieldingNoticeDialogFragment()
                 .show(childFragmentManager, ShieldingNoticeDialogFragment.TAG)
         }
-
-        viewModel.showSunsettingNoticeLiveData.observe(this) {
-            childFragmentManager.fragments.forEach { fragment ->
-                if (fragment.tag == SunsettingNoticeDialogFragment.TAG && fragment is DialogFragment) {
-                    fragment.dismissAllowingStateLoss()
-                }
-            }
-
-            SunsettingNoticeDialogFragment()
-                .show(childFragmentManager, SunsettingNoticeDialogFragment.TAG)
-        }
     }
 
     private fun checkAppSettingsIfNeeded(appSettings: AppSettings) {
@@ -275,12 +264,24 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
             return
         }
 
-        // App settings only left to execute the forced update.
         when (appSettings.status) {
+            AppSettings.APP_VERSION_STATUS_WARNING ->
+                showSunsettingNotice()
             AppSettings.APP_VERSION_STATUS_NEEDS_UPDATE ->
                 showAppUpdateNeedsUpdate(appSettings.url)
             else -> {}
         }
+    }
+
+    private fun showSunsettingNotice() {
+        childFragmentManager.fragments.forEach { fragment ->
+            if (fragment.tag == SunsettingNoticeDialogFragment.TAG && fragment is DialogFragment) {
+                return
+            }
+        }
+
+        SunsettingNoticeDialogFragment()
+            .showNow(childFragmentManager, SunsettingNoticeDialogFragment.TAG)
     }
 
     private fun showAppUpdateNeedsUpdate(url: String) {

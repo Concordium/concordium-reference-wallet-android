@@ -48,6 +48,7 @@ class SunsettingNoticeDialogFragment :
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             delay(500)
             App.appCore.session.sunsettingNoticeShown()
+            App.appCore.appSettingsForceUpdateChecked = true
         }
     }
 
