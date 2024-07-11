@@ -25,8 +25,9 @@ class Session {
     val isLoggedIn: LiveData<Boolean>
         get() = _isLoggedIn
 
-    // The notice must be shown once per app start.
+    // The notices must be shown once per app start.
     private var isShieldingNoticeShown = false
+    private var isSunsettingNoticeShown = false
 
     constructor(context: Context) {
         authPreferences = AuthPreferences(context)
@@ -56,6 +57,13 @@ class Session {
 
     fun isShieldingNoticeShown(): Boolean =
         isShieldingNoticeShown
+
+    fun sunsettingNoticeShown() {
+        isSunsettingNoticeShown = true
+    }
+
+    fun isSunsettingNoticeShown(): Boolean =
+        isSunsettingNoticeShown
 
     fun hasSetupPassword(passcodeUsed: Boolean = false) {
         _isLoggedIn.value = true

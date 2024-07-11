@@ -65,6 +65,10 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     val showShieldingNoticeLiveData: LiveData<Event<Boolean>>
         get() = _showShieldingNoticeLiveData
 
+    private val _showSunsettingNoticeLiveData = MutableLiveData<Event<Boolean>>()
+    val showSunsettingNoticeLiveData: LiveData<Event<Boolean>>
+        get() = _showSunsettingNoticeLiveData
+
     private val identityRepository: IdentityRepository
     private val accountRepository: AccountRepository
     private val accountUpdater = AccountUpdater(application, viewModelScope)
@@ -239,11 +243,17 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             return@launch
         }
 
-        if (!App.appCore.session.isShieldingNoticeShown()
-            && accountRepository.getAll().any(Account::mayNeedUnshielding)
-        ) {
-            // Show the shielding notice once.
-            _showShieldingNoticeLiveData.postValue(Event(true))
+        if (accountRepository.getAll().any(Account::mayNeedUnshielding)) {
+            if (!App.appCore.session.isShieldingNoticeShown()) {
+                // Show the shielding notice once.
+                _showShieldingNoticeLiveData.postValue(Event(true))
+            } else {
+                // Show the default notice from the app settings.
+                loadAppSettings()
+            }
+        } else if (!App.appCore.session.isSunsettingNoticeShown()) {
+            // Show the sunsetting notice once.
+            _showSunsettingNoticeLiveData.postValue(Event(true))
         } else {
             // Show the default notice from the app settings.
             loadAppSettings()

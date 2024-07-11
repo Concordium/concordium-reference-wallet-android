@@ -257,6 +257,17 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
             ShieldingNoticeDialogFragment()
                 .show(childFragmentManager, ShieldingNoticeDialogFragment.TAG)
         }
+
+        viewModel.showSunsettingNoticeLiveData.observe(this) {
+            childFragmentManager.fragments.forEach { fragment ->
+                if (fragment.tag == SunsettingNoticeDialogFragment.TAG && fragment is DialogFragment) {
+                    fragment.dismissAllowingStateLoss()
+                }
+            }
+
+            SunsettingNoticeDialogFragment()
+                .show(childFragmentManager, SunsettingNoticeDialogFragment.TAG)
+        }
     }
 
     private fun checkAppSettingsIfNeeded(appSettings: AppSettings) {
@@ -264,32 +275,12 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
             return
         }
 
+        // App settings only left to execute the forced update.
         when (appSettings.status) {
-            AppSettings.APP_VERSION_STATUS_WARNING ->
-                showAppUpdateWarning(appSettings.url)
             AppSettings.APP_VERSION_STATUS_NEEDS_UPDATE ->
                 showAppUpdateNeedsUpdate(appSettings.url)
             else -> {}
         }
-    }
-
-    private fun showAppUpdateWarning(url: String) {
-        if (forceUpdateDialog != null)
-            return
-
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle(R.string.force_update_warning_title)
-        builder.setMessage(getString(R.string.force_update_warning_message))
-        builder.setPositiveButton(getString(R.string.force_update_warning_update_now)) { _, _ ->
-            gotoAppStore(url)
-        }
-        builder.setNeutralButton(getString(R.string.force_update_warning_remind_me)) { dialog, _ ->
-            App.appCore.appSettingsForceUpdateChecked = true
-            dialog.dismiss()
-        }
-        builder.setCancelable(false)
-        forceUpdateDialog = builder.create()
-        forceUpdateDialog?.show()
     }
 
     private fun showAppUpdateNeedsUpdate(url: String) {

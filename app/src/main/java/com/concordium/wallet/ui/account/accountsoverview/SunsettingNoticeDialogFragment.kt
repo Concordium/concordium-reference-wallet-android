@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.dialog_shielding_notice.export_file_button
 import kotlinx.android.synthetic.main.dialog_shielding_notice.install_cryptox_button
 import kotlinx.coroutines.delay
 
-class ShieldingNoticeDialogFragment :
+class SunsettingNoticeDialogFragment :
     AppCompatDialogFragment() {
 
     override fun onCreateView(
@@ -25,7 +25,7 @@ class ShieldingNoticeDialogFragment :
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.dialog_shielding_notice, container, false)
+        return inflater.inflate(R.layout.dialog_sunsetting_notice, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,7 +47,7 @@ class ShieldingNoticeDialogFragment :
         // Track showing the notice once it is visible to the user.
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             delay(500)
-            App.appCore.session.shieldingNoticeShown()
+            App.appCore.session.sunsettingNoticeShown()
         }
     }
 
@@ -68,6 +68,6 @@ class ShieldingNoticeDialogFragment :
     }
 
     companion object {
-        const val TAG = "shielding-notice"
+        const val TAG = "sunsetting-notice"
     }
 }
