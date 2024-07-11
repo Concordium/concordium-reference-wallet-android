@@ -1040,8 +1040,8 @@
     <string name="force_update_intro_needed_message">You must update your Concordium Legacy Wallet to continue.</string>
     <string name="force_update_intro_needed_update_now">Update now</string>
 
-    <string name="force_update_intro_warning_title">Update ready</string>
-    <string name="force_update_intro_warning_message">There is a new update for the Concordium Legacy Wallet.</string>
+    <string name="force_update_intro_warning_title">This wallet is going away soon</string>
+    <string name="force_update_intro_warning_message">To continue using Concordium, move your account to the new CryptoX wallet</string>
     <string name="force_update_intro_warning_update_now">Update now</string>
     <string name="force_update_intro_warning_remind_me">Remind me next time I open the wallet</string>
     <string name="baker_pool_settings_explain">In Concordium Legacy Wallet, commission rates are locked and cannot be changed. If you wish to change the commission rates for your staking pool, you must install the Concordium Blockchain Wallet. To see how to do this, refer to the Concordium Wallet FAQ</string>
