@@ -27,7 +27,6 @@ class AppCore(val context: Context) {
     val session: Session = Session(App.appContext)
     var closingPoolsChecked = false
     var cookies: List<Cookie> = emptyList()
-    var appSettingsForceUpdateChecked = false
     var newIdentities = mutableMapOf<Int, Identity>()
 
     private val authenticationManagerGeneric: AuthenticationManager =

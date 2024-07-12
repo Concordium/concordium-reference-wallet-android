@@ -70,28 +70,8 @@ class ProxyRepository {
     suspend fun getAccountSubmissionStatusSuspended(submissionId: String) =
         backend.accountSubmissionStatusSuspended(submissionId)
 
-    fun getAppSettings(
-        version: Int,
-        success: (AppSettings) -> Unit,
-        failure: ((Throwable) -> Unit)?
-    ): BackendRequest<AppSettings> {
-        val call = backend.appSettings("android", version)
-        call.enqueue(object : BackendCallback<AppSettings>() {
-
-            override fun onResponseData(response: AppSettings) {
-                success(response)
-            }
-
-            override fun onFailure(t: Throwable) {
-                failure?.invoke(t)
-            }
-        })
-        return BackendRequest(
-            call = call,
-            success = success,
-            failure = failure
-        )
-    }
+    suspend fun getAppSettings(version: Int, ): AppSettings =
+        backend.appSettings("android", version)
 
     fun getBakerPool(
         bakerId: String,
