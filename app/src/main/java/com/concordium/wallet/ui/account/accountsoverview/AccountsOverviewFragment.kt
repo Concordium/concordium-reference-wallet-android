@@ -3,22 +3,18 @@ package com.concordium.wallet.ui.account.accountsoverview
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.os.Process
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
-import com.concordium.wallet.data.model.AppSettings
 import com.concordium.wallet.data.model.BakerStakePendingChange
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
@@ -37,6 +33,7 @@ import com.concordium.wallet.ui.common.delegates.PreventIdentityCreationDelegate
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.uicore.dialog.CustomDialogFragment
+import com.concordium.wallet.util.showSingle
 import kotlinx.android.synthetic.main.fragment_accounts_overview.accounts_overview_total_details_disposal
 import kotlinx.android.synthetic.main.fragment_accounts_overview.accounts_overview_total_details_staked
 import kotlinx.android.synthetic.main.fragment_accounts_overview.create_account_button
@@ -72,7 +69,6 @@ class AccountsOverviewFragment : BaseFragment(),
 
     private var encryptedWarningDialog: AlertDialog? = null
     private var fragmentListener: AccountsOverviewFragmentListener? = null
-    private var forceUpdateDialog: AlertDialog? = null
     private var eventListener: Preferences.Listener? = null
 
     private lateinit var viewModel: AccountsOverviewViewModel
@@ -251,80 +247,26 @@ class AccountsOverviewFragment : BaseFragment(),
             updateWarnings()
         })
 
-        viewModel.appSettingsLiveData.observe(this, Observer { appSettings ->
-            checkAppSettingsIfNeeded(appSettings)
-        })
-
-        viewModel.showShieldingNoticeLiveData.observe(this) {
-            childFragmentManager.fragments.forEach { fragment ->
-                if (fragment.tag == ShieldingNoticeDialogFragment.TAG && fragment is DialogFragment) {
-                    fragment.dismissAllowingStateLoss()
+        viewModel.showDialogLiveData.observe(this) { event ->
+            when (val dialogToShow = event.contentIfNotHandled) {
+                is AccountsOverviewViewModel.DialogToShow.Shielding -> {
+                    ShieldingNoticeDialogFragment.newInstance(
+                        cryptoXUrl = dialogToShow.cryptoXUrl,
+                    )
+                        .showSingle(childFragmentManager, ShieldingNoticeDialogFragment.TAG)
                 }
-            }
 
-            ShieldingNoticeDialogFragment()
-                .show(childFragmentManager, ShieldingNoticeDialogFragment.TAG)
-        }
-    }
+                is AccountsOverviewViewModel.DialogToShow.Sunsetting -> {
+                    SunsettingNoticeDialogFragment.newInstance(
+                        cryptoXUrl = dialogToShow.cryptoXUrl,
+                        isForced = dialogToShow.isForced,
+                    )
+                        .showSingle(childFragmentManager, SunsettingNoticeDialogFragment.TAG)
+                }
 
-    private fun checkAppSettingsIfNeeded(appSettings: AppSettings) {
-        if (appSettings.url == null || App.appCore.appSettingsForceUpdateChecked) {
-            return
-        }
-
-        when (appSettings.status) {
-            AppSettings.APP_VERSION_STATUS_WARNING ->
-                showSunsettingNotice(
-                    isForced = false,
-                )
-
-            AppSettings.APP_VERSION_STATUS_NEEDS_UPDATE ->
-                showAppUpdateNeedsUpdate(appSettings.url)
-
-            else -> {}
-        }
-    }
-
-    private fun showSunsettingNotice(isForced: Boolean) {
-        childFragmentManager.fragments.forEach { fragment ->
-            if (fragment.tag == SunsettingNoticeDialogFragment.TAG && fragment is DialogFragment) {
-                return
+                null -> {}
             }
         }
-
-        SunsettingNoticeDialogFragment
-            .newInstance(
-                isForced = isForced,
-            )
-            .showNow(childFragmentManager, SunsettingNoticeDialogFragment.TAG)
-    }
-
-    private fun showAppUpdateNeedsUpdate(url: String) {
-        if (forceUpdateDialog != null)
-            return
-
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle(R.string.force_update_needed_title)
-        builder.setMessage(getString(R.string.force_update_needed_message))
-        builder.setNeutralButton(getString(R.string.force_update_needed_update_now)) { _, _ ->
-            gotoAppStore(url)
-        }
-        builder.setPositiveButton(getString(R.string.force_update_needed_backup)) { _, _ -> gotoBackup() }
-        builder.setCancelable(false)
-        forceUpdateDialog = builder.create()
-        forceUpdateDialog?.show()
-    }
-
-    private fun gotoAppStore(url: String) {
-        if (url.isNotBlank())
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-        Process.killProcess(Process.myPid())
-    }
-
-    private fun gotoBackup() {
-        forceUpdateDialog?.dismiss()
-        forceUpdateDialog = null
-        startActivity(Intent(context, ExportActivity::class.java))
     }
 
     private fun checkForClosingPools(accountList: List<AccountWithIdentity>) {

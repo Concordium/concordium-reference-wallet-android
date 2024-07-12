@@ -12,7 +12,8 @@ import com.concordium.wallet.R
 import com.concordium.wallet.data.model.AppSettings
 import com.concordium.wallet.ui.auth.login.AuthLoginActivity
 import com.concordium.wallet.ui.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_intro_terms.*
+import kotlinx.android.synthetic.main.activity_intro_terms.confirm_button
+import kotlinx.android.synthetic.main.activity_intro_terms.info_webview
 
 class IntroTermsActivity : BaseActivity(R.layout.activity_intro_terms, R.string.terms_title) {
 
@@ -36,7 +37,7 @@ class IntroTermsActivity : BaseActivity(R.layout.activity_intro_terms, R.string.
         ).get(IntroTermsViewModel::class.java)
 
         viewModel.hasExistingWalletLiveData.observe(this, Observer { hasExistingWallet ->
-            if (!hasExistingWallet && !App.appCore.appSettingsForceUpdateChecked)
+            if (!hasExistingWallet && !App.appCore.session.isSunsettingNoticeShown())
                 viewModel.loadAppSettings()
             else
                 confirm_button.isEnabled = true
@@ -80,12 +81,12 @@ class IntroTermsActivity : BaseActivity(R.layout.activity_intro_terms, R.string.
             gotoAppStore(url)
         }
         builder.setNeutralButton(getString(R.string.force_update_intro_warning_remind_me)) { dialog, _ ->
-            App.appCore.appSettingsForceUpdateChecked = true
             dialog.dismiss()
         }
         builder.setCancelable(false)
         forceUpdateDialog = builder.create()
         forceUpdateDialog?.show()
+        App.appCore.session.sunsettingNoticeShown()
     }
 
     private fun showAppUpdateNeedsUpdate(url: String) {
@@ -101,6 +102,7 @@ class IntroTermsActivity : BaseActivity(R.layout.activity_intro_terms, R.string.
         builder.setCancelable(false)
         forceUpdateDialog = builder.create()
         forceUpdateDialog?.show()
+        App.appCore.session.sunsettingNoticeShown()
     }
 
     private fun gotoAppStore(url: String) {

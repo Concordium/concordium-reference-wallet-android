@@ -20,8 +20,9 @@ import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
-import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.CryptoX
 import kotlinx.coroutines.launch
+import retrofit2.Response
 
 class AccountsOverviewViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -57,13 +58,9 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     val poolStatusesLiveData: LiveData<List<Pair<String, String>>>
         get() = _poolStatusesLiveData
 
-    private var _appSettingsLiveData = MutableLiveData<AppSettings>()
-    val appSettingsLiveData: LiveData<AppSettings>
-        get() = _appSettingsLiveData
-
-    private val _showShieldingNoticeLiveData = MutableLiveData<Event<Boolean>>()
-    val showShieldingNoticeLiveData: LiveData<Event<Boolean>>
-        get() = _showShieldingNoticeLiveData
+    private val _showDialogLiveData = MutableLiveData<Event<out DialogToShow>>()
+    val showDialogLiveData: LiveData<Event<out DialogToShow>>
+        get() = _showDialogLiveData
 
     private val identityRepository: IdentityRepository
     private val accountRepository: AccountRepository
@@ -74,9 +71,19 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     val accountListLiveData: LiveData<List<AccountWithIdentity>>
     val identityListLiveData: LiveData<List<Identity>>
 
-
     enum class State {
         NO_IDENTITIES, NO_ACCOUNTS, DEFAULT, VALID_IDENTITIES
+    }
+
+    sealed interface DialogToShow {
+        class Shielding(
+            val cryptoXUrl: String,
+        ) : DialogToShow
+
+        class Sunsetting(
+            val cryptoXUrl: String,
+            val isForced: Boolean,
+        ) : DialogToShow
     }
 
     init {
@@ -105,24 +112,18 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         identityListLiveData = identityRepository.allIdentities
     }
 
-    private suspend fun loadAppSettings() {
-        val response = proxyRepository.getAppSettings(App.appCore.getAppVersion())
-        if (response.isSuccessful) {
-            response.body()?.let {
-                _appSettingsLiveData.value = it
-            }
-        } else {
-            Log.d("appSettings failed")
-        }
-    }
-
     fun loadPoolStatuses(poolIds: List<String>) {
         val poolStatuses: MutableList<Pair<String, String>> = mutableListOf()
         viewModelScope.launch {
             poolIds.forEach { poolId ->
                 proxyRepository.getBakerPool(poolId,
                     { bakerPoolStatus ->
-                        poolStatuses.add(Pair(poolId, bakerPoolStatus.bakerStakePendingChange.pendingChangeType))
+                        poolStatuses.add(
+                            Pair(
+                                poolId,
+                                bakerPoolStatus.bakerStakePendingChange.pendingChangeType
+                            )
+                        )
                         if (poolStatuses.count() == poolIds.count())
                             _poolStatusesLiveData.value = poolStatuses
                     }, {
@@ -146,18 +147,16 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         viewModelScope.launch {
 
             val doneIdentityCount = identityRepository.getAllDone().count()
-            if(doneIdentityCount > 0){
+            if (doneIdentityCount > 0) {
                 _identityLiveData.value = State.VALID_IDENTITIES
-            }
-            else {
+            } else {
                 _identityLiveData.value = State.NO_IDENTITIES
             }
 
             val identitiesPending = identityRepository.getAllPending()
-            if(!identitiesPending.isNullOrEmpty()){
+            if (!identitiesPending.isNullOrEmpty()) {
                 _pendingIdentityForWarningLiveData.value = identitiesPending.first()
-            }
-            else{
+            } else {
                 _pendingIdentityForWarningLiveData.value = null
             }
 
@@ -166,7 +165,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                 _stateLiveData.value = State.NO_IDENTITIES
                 // Set balance, because we know it will be 0
                 _totalBalanceLiveData.value = TotalBalancesData(0L, 0L, 0L, false)
-                if(notifyWaitingLiveData){
+                if (notifyWaitingLiveData) {
                     _waitingLiveData.value = false
                 }
             } else {
@@ -175,12 +174,12 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                     _stateLiveData.value = State.NO_ACCOUNTS
                     // Set balance, because we know it will be 0
                     _totalBalanceLiveData.value = TotalBalancesData(0L, 0L, 0L, false)
-                    if(notifyWaitingLiveData){
+                    if (notifyWaitingLiveData) {
                         _waitingLiveData.value = false
                     }
                 } else {
                     _stateLiveData.value = State.DEFAULT
-                    if(notifyWaitingLiveData){
+                    if (notifyWaitingLiveData) {
                         _waitingLiveData.value = false
                     }
                     updateSubmissionStatesAndBalances(notifyWaitingLiveData)
@@ -191,7 +190,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     }
 
     private fun updateSubmissionStatesAndBalances(notifyWaitingLiveData: Boolean = true) {
-        if(notifyWaitingLiveData){
+        if (notifyWaitingLiveData) {
             _waitingLiveData.value = true
         }
         accountUpdater.updateForAllAccounts()
@@ -210,13 +209,13 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         object : CountDownTimer(Long.MAX_VALUE, BuildConfig.ACCOUNT_UPDATE_FREQUENCY_SEC * 1000) {
             private var first = true
             override fun onTick(millisUntilFinished: Long) {
-                if(first){ //ignore first tick
+                if (first) { //ignore first tick
                     first = false
                     return
                 }
-                if(isRegularUpdateNeeded()){
+                if (isRegularUpdateNeeded()) {
                     updateState(false)
-                   // Log.d("Tick.....")
+                    // Log.d("Tick.....")
                 }
             }
 
@@ -227,7 +226,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
 
     private fun isRegularUpdateNeeded(): Boolean {
         this.accountRepository.allAccountsWithIdentity.value?.forEach { accountWithIdentity ->
-            if(accountWithIdentity.account.transactionStatus != TransactionStatus.FINALIZED){
+            if (accountWithIdentity.account.transactionStatus != TransactionStatus.FINALIZED) {
                 return true
             }
         }
@@ -239,14 +238,46 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             return@launch
         }
 
-        if (!App.appCore.session.isShieldingNoticeShown()
-            && accountRepository.getAll().any(Account::mayNeedUnshielding)
-        ) {
-            // Show the shielding notice once.
-            _showShieldingNoticeLiveData.postValue(Event(true))
-        } else {
-            // Show the default notice from the app settings.
-            loadAppSettings()
+        val appSettings = proxyRepository.getAppSettings(App.appCore.getAppVersion())
+            .takeIf(Response<*>::isSuccessful)
+            ?.body()
+
+        when (appSettings?.status) {
+            null,
+            AppSettings.APP_VERSION_STATUS_OK,
+            AppSettings.APP_VERSION_STATUS_WARNING -> {
+                if (!App.appCore.session.isShieldingNoticeShown()
+                    && accountRepository.getAll().any(Account::mayNeedUnshielding)
+                ) {
+                    _showDialogLiveData.postValue(
+                        Event(
+                            DialogToShow.Shielding(
+                                cryptoXUrl = appSettings?.url ?: CryptoX.marketWebUrl,
+                            )
+                        )
+                    )
+                } else if (!App.appCore.session.isSunsettingNoticeShown()) {
+                    _showDialogLiveData.postValue(
+                        Event(
+                            DialogToShow.Sunsetting(
+                                cryptoXUrl = appSettings?.url ?: CryptoX.marketWebUrl,
+                                isForced = false,
+                            )
+                        )
+                    )
+                }
+            }
+
+            AppSettings.APP_VERSION_STATUS_NEEDS_UPDATE -> {
+                _showDialogLiveData.postValue(
+                    Event(
+                        DialogToShow.Sunsetting(
+                            cryptoXUrl = appSettings.url ?: CryptoX.marketWebUrl,
+                            isForced = true,
+                        )
+                    )
+                )
+            }
         }
 
         isMigrationNoticeShown = true

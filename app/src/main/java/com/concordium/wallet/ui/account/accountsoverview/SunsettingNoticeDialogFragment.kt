@@ -3,6 +3,7 @@ package com.concordium.wallet.ui.account.accountsoverview
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +15,6 @@ import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.ui.more.export.ExportActivity
-import com.concordium.wallet.util.CryptoX
 import kotlinx.android.synthetic.main.dialog_sunsetting_notice.continue_with_old_wallet_button
 import kotlinx.android.synthetic.main.dialog_sunsetting_notice.export_file_button
 import kotlinx.android.synthetic.main.dialog_sunsetting_notice.extra_space
@@ -25,6 +25,9 @@ import kotlinx.coroutines.delay
 class SunsettingNoticeDialogFragment : AppCompatDialogFragment() {
     private val isForced: Boolean by lazy {
         arguments?.getBoolean(IS_FORCED_KEY, false) == true
+    }
+    private val cryptoXUrl: String by lazy {
+        requireNotNull(arguments?.getString(CRYPTOX_URL_KEY))
     }
 
     override fun onCreateView(
@@ -57,14 +60,18 @@ class SunsettingNoticeDialogFragment : AppCompatDialogFragment() {
         }
 
         install_cryptox_button.setOnClickListener {
-            CryptoX.openMarket(requireContext())
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(cryptoXUrl)
+                )
+            )
         }
 
         // Track showing the notice once it is visible to the user.
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             delay(500)
             App.appCore.session.sunsettingNoticeShown()
-            App.appCore.appSettingsForceUpdateChecked = true
         }
     }
 
@@ -94,10 +101,15 @@ class SunsettingNoticeDialogFragment : AppCompatDialogFragment() {
     companion object {
         const val TAG = "sunsetting-notice"
         private const val IS_FORCED_KEY = "is_forced"
+        private const val CRYPTOX_URL_KEY = "cryptox_url"
 
-        fun newInstance(isForced: Boolean = false) = SunsettingNoticeDialogFragment().apply {
+        fun newInstance(
+            cryptoXUrl: String,
+            isForced: Boolean = false,
+        ) = SunsettingNoticeDialogFragment().apply {
             arguments = Bundle().apply {
                 putBoolean(IS_FORCED_KEY, isForced)
+                putString(CRYPTOX_URL_KEY, cryptoXUrl)
             }
         }
     }

@@ -4,7 +4,18 @@ import com.concordium.wallet.App
 import com.concordium.wallet.core.backend.BackendCallback
 import com.concordium.wallet.core.backend.BackendRequest
 import com.concordium.wallet.data.cryptolib.CreateTransferOutput
-import com.concordium.wallet.data.model.*
+import com.concordium.wallet.data.model.AccountBalance
+import com.concordium.wallet.data.model.AccountKeyData
+import com.concordium.wallet.data.model.AccountNonce
+import com.concordium.wallet.data.model.AccountSubmissionStatus
+import com.concordium.wallet.data.model.AccountTransactions
+import com.concordium.wallet.data.model.BakerPoolStatus
+import com.concordium.wallet.data.model.ChainParameters
+import com.concordium.wallet.data.model.CredentialWrapper
+import com.concordium.wallet.data.model.GlobalParamsWrapper
+import com.concordium.wallet.data.model.SubmissionData
+import com.concordium.wallet.data.model.TransferCost
+import com.concordium.wallet.data.model.TransferSubmissionStatus
 
 class ProxyRepository() {
 
