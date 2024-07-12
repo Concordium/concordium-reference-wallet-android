@@ -238,9 +238,11 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             return@launch
         }
 
-        val appSettings = proxyRepository.getAppSettings(App.appCore.getAppVersion())
-            .takeIf(Response<*>::isSuccessful)
-            ?.body()
+        val appSettings = runCatching {
+            proxyRepository.getAppSettings(App.appCore.getAppVersion())
+                .takeIf(Response<*>::isSuccessful)
+                ?.body()
+        }.getOrNull()
 
         when (appSettings?.status) {
             null,
