@@ -248,22 +248,22 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             null,
             AppSettings.APP_VERSION_STATUS_OK,
             AppSettings.APP_VERSION_STATUS_WARNING -> {
-                if (!App.appCore.session.isShieldingNoticeShown()
+                if (!App.appCore.session.isSunsettingNoticeShown()) {
+                    _showDialogLiveData.postValue(
+                        Event(
+                            DialogToShow.Sunsetting(
+                                cryptoXUrl = appSettings?.url ?: CryptoX.marketWebUrl,
+                                isForced = false,
+                            )
+                        )
+                    )
+                } else if (!App.appCore.session.isShieldingNoticeShown()
                     && accountRepository.getAll().any(Account::mayNeedUnshielding)
                 ) {
                     _showDialogLiveData.postValue(
                         Event(
                             DialogToShow.Shielding(
                                 cryptoXUrl = appSettings?.url ?: CryptoX.marketWebUrl,
-                            )
-                        )
-                    )
-                } else if (!App.appCore.session.isSunsettingNoticeShown()) {
-                    _showDialogLiveData.postValue(
-                        Event(
-                            DialogToShow.Sunsetting(
-                                cryptoXUrl = appSettings?.url ?: CryptoX.marketWebUrl,
-                                isForced = false,
                             )
                         )
                     )
