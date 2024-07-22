@@ -1,6 +1,5 @@
 package com.concordium.wallet.ui.account.accountsoverview
 
-import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
@@ -16,7 +15,6 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
-import com.concordium.wallet.BuildConfig
 import com.concordium.wallet.R
 import com.concordium.wallet.data.repository.AuthenticationRepository
 import com.concordium.wallet.databinding.DialogShieldingNoticeBinding
@@ -32,6 +30,9 @@ class ShieldingNoticeDialogFragment :
     private lateinit var binding: DialogShieldingNoticeBinding
 
     private val authenticationRepository: AuthenticationRepository by inject()
+    private val cryptoXUrl: String by lazy {
+        requireNotNull(arguments?.getString(CRYPTOX_URL_KEY))
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,26 +66,12 @@ class ShieldingNoticeDialogFragment :
         }
 
         binding.installCryptoxButton.setOnClickListener {
-            val cryptoXPackage =
-                if (BuildConfig.ENV_NAME == "prod_testnet")
-                    "com.pioneeringtechventures.wallet.testnet"
-                else
-                    "com.pioneeringtechventures.wallet"
-
-            val intent = Intent(Intent.ACTION_VIEW).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                setData(Uri.parse("market://details?id=$cryptoXPackage"))
-            }
-            try {
-                startActivity(intent)
-            } catch (_: ActivityNotFoundException) {
-                startActivity(
-                    Intent(
-                        Intent.ACTION_VIEW,
-                        Uri.parse("https://play.google.com/store/apps/details?id=$cryptoXPackage")
-                    )
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(cryptoXUrl)
                 )
-            }
+            )
         }
 
         // Track showing the notice once it is visible to the user.
@@ -104,7 +91,7 @@ class ShieldingNoticeDialogFragment :
             setBackgroundDrawable(
                 ContextCompat.getDrawable(
                     requireContext(),
-                    R.drawable.bg_shielding_notice
+                    R.drawable.bg_deprecation_notice
                 )
             )
         }
@@ -112,5 +99,14 @@ class ShieldingNoticeDialogFragment :
 
     companion object {
         const val TAG = "shielding-notice"
+        private const val CRYPTOX_URL_KEY = "cryptox_url"
+
+        fun newInstance(
+            cryptoXUrl: String,
+        ) = ShieldingNoticeDialogFragment().apply {
+            arguments = Bundle().apply {
+                putString(CRYPTOX_URL_KEY, cryptoXUrl)
+            }
+        }
     }
 }

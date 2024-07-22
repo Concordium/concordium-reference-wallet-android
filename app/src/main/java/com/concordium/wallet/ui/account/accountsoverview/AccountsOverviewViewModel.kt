@@ -22,7 +22,7 @@ import com.concordium.wallet.data.room.Identity
 import com.concordium.wallet.data.room.WalletDatabase
 import com.concordium.wallet.ui.account.common.accountupdater.AccountUpdater
 import com.concordium.wallet.ui.account.common.accountupdater.TotalBalancesData
-import com.concordium.wallet.util.Log
+import com.concordium.wallet.util.CryptoX
 import kotlinx.coroutines.launch
 import java.math.BigInteger
 
@@ -59,13 +59,9 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     val poolStatusesLiveData: LiveData<List<Pair<String, String>>>
         get() = _poolStatusesLiveData
 
-    private var _appSettingsLiveData = MutableLiveData<AppSettings>()
-    val appSettingsLiveData: LiveData<AppSettings>
-        get() = _appSettingsLiveData
-
-    private val _showShieldingNoticeLiveData = MutableLiveData<Event<Boolean>>()
-    val showShieldingNoticeLiveData: LiveData<Event<Boolean>>
-        get() = _showShieldingNoticeLiveData
+    private val _showDialogLiveData = MutableLiveData<Event<out DialogToShow>>()
+    val showDialogLiveData: LiveData<Event<out DialogToShow>>
+        get() = _showDialogLiveData
 
     val localTransfersLoaded: MutableLiveData<Account> by lazy { MutableLiveData<Account>() }
 
@@ -73,6 +69,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
     private val accountRepository: AccountRepository
     private val accountUpdater = AccountUpdater(application, viewModelScope)
     private val proxyRepository = ProxyRepository()
+    private var isMigrationNoticeShown = false
     var hasPendingDelegationTransactions: Boolean = false
     var hasPendingBakingTransactions: Boolean = false
 
@@ -81,6 +78,17 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
 
     enum class State {
         NO_IDENTITIES, NO_ACCOUNTS, DEFAULT, VALID_IDENTITIES
+    }
+
+    sealed interface DialogToShow {
+        class Shielding(
+            val cryptoXUrl: String,
+        ) : DialogToShow
+
+        class Sunsetting(
+            val cryptoXUrl: String,
+            val isForced: Boolean,
+        ) : DialogToShow
     }
 
     init {
@@ -106,19 +114,6 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
             }
         })
         identityListLiveData = identityRepository.allIdentities
-    }
-
-    fun loadAppSettings() {
-        viewModelScope.launch {
-            proxyRepository.getAppSettings(App.appCore.getAppVersion(),
-                {
-                    _appSettingsLiveData.value = it
-                },
-                {
-                    Log.d("appSettings failed")
-                }
-            )
-        }
     }
 
     fun loadPoolStatuses(poolIds: List<String>) {
@@ -194,7 +189,7 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
                         _waitingLiveData.value = false
                     }
                     updateSubmissionStatesAndBalances(notifyWaitingLiveData)
-                    showUnshieldingNoticeIfNeeded()
+                    showMigrationNoticeOnceIfNeeded()
                 }
             }
         }
@@ -261,17 +256,53 @@ class AccountsOverviewViewModel(application: Application) : AndroidViewModel(app
         return false
     }
 
-    private fun showUnshieldingNoticeIfNeeded() = viewModelScope.launch {
-        // Show the notice once.
-        if (App.appCore.session.isShieldingNoticeShown()) {
+    private fun showMigrationNoticeOnceIfNeeded() = viewModelScope.launch {
+        if (isMigrationNoticeShown) {
             return@launch
         }
 
-        val anyAccountsMayNeedUnshielding = accountRepository.getAllDone()
-            .any(Account::mayNeedUnshielding)
+        val appSettings = runCatching {
+            proxyRepository.getAppSettings(App.appCore.getAppVersion())
+        }.getOrNull()
 
-        if (anyAccountsMayNeedUnshielding) {
-            _showShieldingNoticeLiveData.postValue(Event(true))
+        when (appSettings?.status) {
+            null,
+            AppSettings.APP_VERSION_STATUS_OK,
+            AppSettings.APP_VERSION_STATUS_WARNING -> {
+                if (!App.appCore.session.isSunsettingNoticeShown()) {
+                    _showDialogLiveData.postValue(
+                        Event(
+                            DialogToShow.Sunsetting(
+                                cryptoXUrl = appSettings?.url ?: CryptoX.marketWebUrl,
+                                isForced = false,
+                            )
+                        )
+                    )
+                } else if (!App.appCore.session.isShieldingNoticeShown()
+                    && accountRepository.getAll().any(Account::mayNeedUnshielding)
+                ) {
+                    _showDialogLiveData.postValue(
+                        Event(
+                            DialogToShow.Shielding(
+                                cryptoXUrl = appSettings?.url ?: CryptoX.marketWebUrl,
+                            )
+                        )
+                    )
+                }
+            }
+
+            AppSettings.APP_VERSION_STATUS_NEEDS_UPDATE -> {
+                _showDialogLiveData.postValue(
+                    Event(
+                        DialogToShow.Sunsetting(
+                            cryptoXUrl = appSettings.url ?: CryptoX.marketWebUrl,
+                            isForced = true,
+                        )
+                    )
+                )
+            }
         }
+
+        isMigrationNoticeShown = true
     }
 }
