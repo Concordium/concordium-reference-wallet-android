@@ -3,22 +3,18 @@ package com.concordium.wallet.ui.account.accountsoverview
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.os.Process
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.concordium.wallet.App
 import com.concordium.wallet.R
 import com.concordium.wallet.core.arch.EventObserver
-import com.concordium.wallet.data.model.AppSettings
 import com.concordium.wallet.data.model.BakerStakePendingChange
 import com.concordium.wallet.data.preferences.Preferences
 import com.concordium.wallet.data.room.Account
@@ -37,6 +33,7 @@ import com.concordium.wallet.ui.common.delegates.PreventIdentityCreationDelegate
 import com.concordium.wallet.ui.more.export.ExportActivity
 import com.concordium.wallet.ui.transaction.sendfunds.SendFundsActivity
 import com.concordium.wallet.uicore.dialog.CustomDialogFragment
+import com.concordium.wallet.util.showSingle
 import kotlinx.android.synthetic.main.fragment_accounts_overview.accounts_overview_total_details_disposal
 import kotlinx.android.synthetic.main.fragment_accounts_overview.accounts_overview_total_details_staked
 import kotlinx.android.synthetic.main.fragment_accounts_overview.create_account_button
@@ -58,7 +55,9 @@ import kotlinx.android.synthetic.main.fragment_accounts_overview.view.no_identit
 import kotlinx.android.synthetic.main.progress.progress_layout
 import kotlinx.android.synthetic.main.progress.view.progress_layout
 
-class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate by PreventIdentityCreationDelegateImpl(), PreventAccountCreationDelegate by PreventAccountCreationDelegateImpl() {
+class AccountsOverviewFragment : BaseFragment(),
+    PreventIdentityCreationDelegate by PreventIdentityCreationDelegateImpl(),
+    PreventAccountCreationDelegate by PreventAccountCreationDelegateImpl() {
 
     companion object {
         private const val REQUESTCODE_ACCOUNT_DETAILS = 2000
@@ -70,7 +69,6 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
 
     private var encryptedWarningDialog: AlertDialog? = null
     private var fragmentListener: AccountsOverviewFragmentListener? = null
-    private var forceUpdateDialog: AlertDialog? = null
     private var eventListener: Preferences.Listener? = null
 
     private lateinit var viewModel: AccountsOverviewViewModel
@@ -100,8 +98,8 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
         updateWarnings()
 
         context?.let {
-            if(App.appCore.session.shouldPromptForBackedUp(it)){
-                if(isInLayout && isVisible && !isDetached){
+            if (App.appCore.session.shouldPromptForBackedUp(it)) {
+                if (isInLayout && isVisible && !isDetached) {
                     CustomDialogFragment.showAppUpdateBackupWarningDialog(it)
                     updateWarnings()
                 }
@@ -219,8 +217,14 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
             }
         })
         viewModel.totalBalanceLiveData.observe(this, Observer<TotalBalancesData> { totalBalance ->
-            showTotalBalance(totalBalance.totalBalanceForAllAccounts, totalBalance.totalContainsEncrypted)
-            showDisposalBalance(totalBalance.totalAtDisposalForAllAccounts, totalBalance.totalContainsEncrypted)
+            showTotalBalance(
+                totalBalance.totalBalanceForAllAccounts,
+                totalBalance.totalContainsEncrypted
+            )
+            showDisposalBalance(
+                totalBalance.totalAtDisposalForAllAccounts,
+                totalBalance.totalContainsEncrypted
+            )
             showStakedBalance(totalBalance.totalStakedForAllAccounts)
         })
         viewModel.accountListLiveData.observe(this, Observer { accountList ->
@@ -243,88 +247,34 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
             updateWarnings()
         })
 
-        viewModel.appSettingsLiveData.observe(this, Observer { appSettings ->
-            checkAppSettingsIfNeeded(appSettings)
-        })
-
-        viewModel.showShieldingNoticeLiveData.observe(this) {
-            childFragmentManager.fragments.forEach { fragment ->
-                if (fragment.tag == ShieldingNoticeDialogFragment.TAG && fragment is DialogFragment) {
-                    fragment.dismissAllowingStateLoss()
+        viewModel.showDialogLiveData.observe(this) { event ->
+            when (val dialogToShow = event.contentIfNotHandled) {
+                is AccountsOverviewViewModel.DialogToShow.Shielding -> {
+                    ShieldingNoticeDialogFragment.newInstance(
+                        cryptoXUrl = dialogToShow.cryptoXUrl,
+                    )
+                        .showSingle(childFragmentManager, ShieldingNoticeDialogFragment.TAG)
                 }
+
+                is AccountsOverviewViewModel.DialogToShow.Sunsetting -> {
+                    SunsettingNoticeDialogFragment.newInstance(
+                        cryptoXUrl = dialogToShow.cryptoXUrl,
+                        isForced = dialogToShow.isForced,
+                    )
+                        .showSingle(childFragmentManager, SunsettingNoticeDialogFragment.TAG)
+                }
+
+                null -> {}
             }
-
-            ShieldingNoticeDialogFragment()
-                .show(childFragmentManager, ShieldingNoticeDialogFragment.TAG)
         }
-    }
-
-    private fun checkAppSettingsIfNeeded(appSettings: AppSettings) {
-        if (appSettings.url == null || App.appCore.appSettingsForceUpdateChecked) {
-            return
-        }
-
-        when (appSettings.status) {
-            AppSettings.APP_VERSION_STATUS_WARNING ->
-                showAppUpdateWarning(appSettings.url)
-            AppSettings.APP_VERSION_STATUS_NEEDS_UPDATE ->
-                showAppUpdateNeedsUpdate(appSettings.url)
-            else -> {}
-        }
-    }
-
-    private fun showAppUpdateWarning(url: String) {
-        if (forceUpdateDialog != null)
-            return
-
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle(R.string.force_update_warning_title)
-        builder.setMessage(getString(R.string.force_update_warning_message))
-        builder.setPositiveButton(getString(R.string.force_update_warning_update_now)) { _, _ ->
-            gotoAppStore(url)
-        }
-        builder.setNeutralButton(getString(R.string.force_update_warning_remind_me)) { dialog, _ ->
-            App.appCore.appSettingsForceUpdateChecked = true
-            dialog.dismiss()
-        }
-        builder.setCancelable(false)
-        forceUpdateDialog = builder.create()
-        forceUpdateDialog?.show()
-    }
-
-    private fun showAppUpdateNeedsUpdate(url: String) {
-        if (forceUpdateDialog != null)
-            return
-
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle(R.string.force_update_needed_title)
-        builder.setMessage(getString(R.string.force_update_needed_message))
-        builder.setNeutralButton(getString(R.string.force_update_needed_update_now)) { _, _ ->
-            gotoAppStore(url)
-        }
-        builder.setPositiveButton(getString(R.string.force_update_needed_backup)) { _, _ -> gotoBackup() }
-        builder.setCancelable(false)
-        forceUpdateDialog = builder.create()
-        forceUpdateDialog?.show()
-    }
-
-    private fun gotoAppStore(url: String) {
-        if (url.isNotBlank())
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-        Process.killProcess(Process.myPid())
-    }
-
-    private fun gotoBackup() {
-        forceUpdateDialog?.dismiss()
-        forceUpdateDialog = null
-        startActivity(Intent(context, ExportActivity::class.java))
     }
 
     private fun checkForClosingPools(accountList: List<AccountWithIdentity>) {
         if (App.appCore.closingPoolsChecked)
             return
 
-        App.appCore.closingPoolsChecked = true // avoid calling this more than once for each app cold launch
+        App.appCore.closingPoolsChecked =
+            true // avoid calling this more than once for each app cold launch
 
         val poolIds = accountList.mapNotNull { accountWithIdentity ->
             accountWithIdentity.account.accountDelegation?.delegationTarget?.bakerId?.toString()
@@ -335,7 +285,9 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
                 var affectedAccounts = ""
                 poolStatuses.forEach { poolStatus ->
                     if (poolStatus.second == BakerStakePendingChange.CHANGE_REMOVE_POOL) {
-                        val accountNames = accountList.filter { it.account.accountDelegation?.delegationTarget?.bakerId?.toString() == poolStatus.first }.map { it.account.name }
+                        val accountNames =
+                            accountList.filter { it.account.accountDelegation?.delegationTarget?.bakerId?.toString() == poolStatus.first }
+                                .map { it.account.name }
                         accountNames.forEach { accountName ->
                             if (accountName.isNotEmpty())
                                 affectedAccounts = affectedAccounts.plus("\n").plus(accountName)
@@ -345,7 +297,11 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
                 if (affectedAccounts.isNotEmpty()) {
                     val builder = AlertDialog.Builder(context)
                     builder.setTitle(R.string.accounts_overview_closing_pools_notice_title)
-                    builder.setMessage(getString(R.string.accounts_overview_closing_pools_notice_message).plus(affectedAccounts))
+                    builder.setMessage(
+                        getString(R.string.accounts_overview_closing_pools_notice_message).plus(
+                            affectedAccounts
+                        )
+                    )
                     builder.setPositiveButton(getString(R.string.accounts_overview_closing_pools_notice_ok)) { dialog, _ ->
                         dialog.dismiss()
                     }
@@ -377,7 +333,7 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
 
         eventListener = object : Preferences.Listener {
             override fun onChange() {
-                if(isInLayout && isVisible && !isDetached){
+                if (isInLayout && isVisible && !isDetached) {
                     updateWarnings()
                 }
             }
@@ -386,13 +342,14 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
         initializeList(view)
     }
 
-    private fun updateWarnings(){
+    private fun updateWarnings() {
         val ident = viewModel.pendingIdentityForWarningLiveData.value
         if (ident != null && !App.appCore.session.isIdentityPendingWarningAcknowledged(ident.id)) {
             missing_backup.visibility = View.GONE
             identity_pending.visibility = View.VISIBLE
             viewModel.pendingIdentityForWarningLiveData.value
-            identity_pending_tv.text = getString(R.string.accounts_overview_identity_pending_warning, ident.name)
+            identity_pending_tv.text =
+                getString(R.string.accounts_overview_identity_pending_warning, ident.name)
             identity_pending_close.setOnClickListener {
                 App.appCore.session.setIdentityPendingWarningAcknowledged(ident.id)
                 updateWarnings()
@@ -400,9 +357,9 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
             identity_pending.setOnClickListener {
                 fragmentListener?.identityClicked(ident)
             }
-        }
-        else{
-            missing_backup.visibility = if(App.appCore.session.isAccountsBackedUp()) View.GONE else View.VISIBLE
+        } else {
+            missing_backup.visibility =
+                if (App.appCore.session.isAccountsBackedUp()) View.GONE else View.VISIBLE
             identity_pending.visibility = View.GONE
         }
 
@@ -499,11 +456,13 @@ class AccountsOverviewFragment : BaseFragment(), PreventIdentityCreationDelegate
         total_balance_textview.text = CurrencyUtil.formatGTU(totalBalance)
         //total_balance_shielded_container.visibility = if(containsEncryptedAmount) View.VISIBLE else View.GONE
     }
+
     private fun showDisposalBalance(atDisposal: Long, containsEncryptedAmount: Boolean) {
         accounts_overview_total_details_disposal.text = CurrencyUtil.formatGTU(atDisposal, true)
         //total_balance_shielded_container.visibility = if(containsEncryptedAmount) View.VISIBLE else View.GONE
         //accounts_overview_total_details_disposal_shield.visibility = if(containsEncryptedAmount) View.VISIBLE else View.GONE
     }
+
     private fun showStakedBalance(totalBalance: Long) {
         accounts_overview_total_details_staked.text = CurrencyUtil.formatGTU(totalBalance, true)
     }

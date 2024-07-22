@@ -23,7 +23,6 @@ class AppCore(val context: Context) {
     val session: Session = Session(App.appContext)
     var closingPoolsChecked = false
     var cookies: List<Cookie> = emptyList()
-    var appSettingsForceUpdateChecked = false
 
     private val authenticationManagerGeneric: AuthenticationManager = AuthenticationManager(session.getBiometricAuthKeyName())
     private var authenticationManagerReset: AuthenticationManager = authenticationManagerGeneric

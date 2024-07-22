@@ -40,7 +40,10 @@ class IntroSetupActivity :
     //************************************************************
 
     private fun initializeViewModel() {
-        viewModel = ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application)).get(IntroSetupViewModel::class.java)
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        ).get(IntroSetupViewModel::class.java)
     }
 
     private fun initViews() {

@@ -1040,8 +1040,8 @@
     <string name="force_update_intro_needed_message">You must update your Concordium Legacy Wallet to continue.</string>
     <string name="force_update_intro_needed_update_now">Update now</string>
 
-    <string name="force_update_intro_warning_title">Update ready</string>
-    <string name="force_update_intro_warning_message">There is a new update for the Concordium Legacy Wallet.</string>
+    <string name="force_update_intro_warning_title">This wallet is going away soon</string>
+    <string name="force_update_intro_warning_message">To continue using Concordium, move your account to the new CryptoX wallet</string>
     <string name="force_update_intro_warning_update_now">Update now</string>
     <string name="force_update_intro_warning_remind_me">Remind me next time I open the wallet</string>
     <string name="baker_pool_settings_explain">In Concordium Legacy Wallet, commission rates are locked and cannot be changed. If you wish to change the commission rates for your staking pool, you must install the Concordium Blockchain Wallet. To see how to do this, refer to the Concordium Wallet FAQ</string>
@@ -1058,6 +1058,16 @@
         Don’t worry, your wallet will stay here on your device until you uninstall it, but we highly encourage you to migrate today.
     </string>
     <string name="install_cryptox">Install CryptoX Concordium wallet</string>
-    <string name="shielding_notice_continue_with_old_wallet">Continue with the old wallet</string>
-    <string name="shielding_notice_export_file">Export your file</string>
+    <string name="continue_with_old_wallet">Continue with the old wallet</string>
+    <string name="export_your_file">Export your file</string>
+    <string name="sunsetting_notice_title">This wallet is going away soon</string>
+    <string name="sunsetting_notice_forced_title">New wallet is waiting</string>
+    <string name="sunsetting_notice_message">
+        To continue using Concordium, move your account to the new CryptoX wallet.\n\n
+        <b>1. Install the CryptoX Concordium wallet</b>\n
+        <b>2. Export your file</b>\n
+        <b>3. Import your file in the CryptoX wallet</b>\n\n
+        When that’s done, your funds will be available through the CryptoX wallet, and you can safely delete this one.\n\n
+        Don’t worry, your wallet will stay here on your device until you uninstall it, but we highly encourage you to migrate today.
+    </string>
 </resources>
