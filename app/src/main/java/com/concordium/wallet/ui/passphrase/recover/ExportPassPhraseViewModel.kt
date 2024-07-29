@@ -20,14 +20,19 @@ class ExportPassPhraseViewModel(
 
     init {
         viewModelScope.launch {
-            authenticationRepository.getSeedPhase().onSuccess { result ->
-                _state.update {
-                    when {
-                        result.isNullOrBlank() -> ExportSeedPhraseState.Error(IllegalStateException("No seed phrase found"))
-                        else -> ExportSeedPhraseState.Success(result.split(String.SPACE))
+            authenticationRepository.getSeedPhase()
+                .onSuccess { phrase ->
+                    _state.update {
+                        ExportSeedPhraseState.Success(phrase.split(String.SPACE))
                     }
                 }
-            }
+                .onFailure {
+                    _state.update {
+                        ExportSeedPhraseState.Error(
+                            IllegalStateException("No seed phrase found")
+                        )
+                    }
+                }
         }
     }
 }

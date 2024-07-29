@@ -10,6 +10,8 @@ class AuthenticationRepository(
     }
 
     fun getSeedPhase() = runCatching {
-        sharedPreferences.seedPhrase
+        checkNotNull(sharedPreferences.seedPhrase.takeIf(String::isNotBlank)) {
+            "The phrase must not be blank"
+        }
     }
 }
