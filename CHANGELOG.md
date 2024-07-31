@@ -5,24 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2024-07-31
+
+### Added
+
+- Deprecation notice. This wallet is going away soon,
+  move your account to the new CryptoX wallet to continue using Concordium.
+
 ## [1.6.0] - 2024-06-26
 
 ### Fixed
+
 - Sending WalletConnect transaction with 0 energy if its payload is too large
 
 ### Removed
+
 - Shielding – you can still enable and see your shielded balance and history,
-but to unshield the funds CryptoX Concordium wallet must be used
+  but to unshield the funds CryptoX Concordium wallet must be used
 
 ## [1.5.1] - 2024-03-18
 
 ### Fixed
+
 - Inability to update the validator's rewards restake preference if their stake is below
 - Inability to add CIS-2 tokens with corrupted metadata or missing balance
 - Writing incorrect `environment` value to the key export file
 - Inability to edit validator pool commission rates in locales with comma decimal separator
 - Inability to search for CIS-2 token by ID on contracts with lots of tokens
-- When managing CIS-2 tokens, removing all of them when only unselecting the visible ones 
+- When managing CIS-2 tokens, removing all of them when only unselecting the visible ones
 
 ## [1.5.0]
 
@@ -120,10 +130,17 @@ but to unshield the funds CryptoX Concordium wallet must be used
 - Last release without changelog.
 
 [Unreleased]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.6.0...HEAD
+
 [1.6.0]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.5.1...1.6.0
+
 [1.5.1]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.5.0...1.5.1
+
 [1.5.0]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.3.0...1.5.0
+
 [1.3.0]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.2.1...1.3.0
+
 [1.2.1]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.2.0...1.2.1
+
 [1.2.0]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.1.8...1.2.0
+
 [1.1.8]: https://github.com/Concordium/concordium-reference-wallet-android/tree/1.1.8
