@@ -96,10 +96,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/list_item_height"
                 android:background="@drawable/list_item"
-                android:orientation="horizontal"
-                android:visibility="gone">
+                android:orientation="horizontal">
 
                 <TextView
+                    android:id="@+id/view_seed_phrase_label"
                     style="@style/TextView.MoreMenuItem"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"

@@ -58,8 +58,9 @@ class SettingsActivity : BaseActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 passPhraseViewModel.state.collect { state ->
                     if (state is ExportSeedPhraseState.Success) {
-                        binding.viewSeedPhraseLayout.visibility =
-                            View.VISIBLE
+                        binding.viewSeedPhraseLabel.text = getString(R.string.view_seed_phrase)
+                    } else {
+                        binding.viewSeedPhraseLabel.text = getString(R.string.view_secret_key)
                     }
                 }
             }

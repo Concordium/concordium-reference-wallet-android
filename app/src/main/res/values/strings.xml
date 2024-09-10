@@ -188,6 +188,8 @@
     <string name="pass_phrase_pick">Pick the correct suggestion on the right, for each index.</string>
     <string name="pass_phrase_incorrect">Incorrect secret recovery phrase. Please verify that each index has the right word.</string>
     <string name="pass_phrase_success">Your secret recovery phrase has been successfully setup!</string>
+    <string name="seed_disclaimer">Your wallet private key is the access key to all the funds in your wallet. Copy it and keep it safe. To avoid mistakes, do not write it down manually.</string>
+    <string name="copied">Copied</string>
 
     <string name="pass_phrase_recover_title">Recover your wallet</string>
     <string name="pass_phrase_recover_explain_title">How to recover your wallet:</string>
@@ -1108,6 +1110,7 @@
     <string name="show_raw_metadata_unique">Unique</string>
 
     <string name="view_seed_phrase">View secret recovery phrase</string>
+    <string name="view_secret_key">View secret key</string>
     <string name="export_seed_phrase_title">Secret recovery phrase</string>
     <string name="export_seed_phrase_done">Done</string>
     <string name="export_seed_phrase_error">Error while loading secret recovery phrase</string>
@@ -1130,6 +1133,8 @@
     <string name="install_cryptox">Install CryptoX Concordium wallet</string>
     <string name="continue_with_old_wallet">Continue with the old wallet</string>
     <string name="copy_your_seed_phrase">Copy your seed phrase</string>
+    <string name="copy_to_clipboard">Copy to clipboard</string>
+    <string name="show_seed">Show the wallet private key</string>
     <string name="sunsetting_notice_title">This wallet is going away soon</string>
     <string name="sunsetting_notice_forced_title">New wallet is waiting</string>
     <string name="sunsetting_notice_message">

@@ -10,7 +10,11 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.concordium.wallet.R
 import com.concordium.wallet.databinding.FragmentExportPassPhraseRevealBinding
 import com.concordium.wallet.ui.base.BaseBindingFragment
@@ -30,24 +34,26 @@ class ExportPassPhraseFragment : BaseBindingFragment<FragmentExportPassPhraseRev
         super.onViewCreated(view, savedInstanceState)
 
         setupViewModel()
-        viewDataBinding.llTapToReveal.setOnClickListener {
-            showAuthentication(requireActivity() as AppCompatActivity, { password ->
-                crossFade()
-            })
-        }
+        setupButtons()
+        observeButtonsState()
+
+        viewDataBinding.llTapToReveal.setOnClickListener { showSeedPhrase() }
+        viewDataBinding.ivSeedBlur.setOnClickListener { showSeed() }
     }
 
     private fun setupViewModel() {
         lifecycleScope.launch {
             viewModel.state.collect { state ->
                 when (state) {
-                    is ExportSeedPhraseState.Error -> Snackbar.make(
-                        viewDataBinding.root,
-                        R.string.export_seed_phrase_error,
-                        Snackbar.LENGTH_LONG
-                    ).show()
+                    is ExportSeedPhraseState.Error -> {
+                        viewDataBinding.llSeedPhrase.visibility = View.GONE
+                        viewDataBinding.clSeed.visibility = View.VISIBLE
+
+                    }
 
                     is ExportSeedPhraseState.Success -> {
+                        viewDataBinding.clSeed.visibility = View.GONE
+                        viewDataBinding.llSeedPhrase.visibility = View.VISIBLE
                         viewDataBinding.gvReveal.adapter = WordsAdapter(
                             requireContext(),
                             state.seedPhrase
@@ -60,10 +66,54 @@ class ExportPassPhraseFragment : BaseBindingFragment<FragmentExportPassPhraseRev
         }
     }
 
-    private fun crossFade() {
+    private fun setupButtons() {
+        viewDataBinding.showSeedButton.setOnClickListener { showSeed() }
+
+        viewDataBinding.copySeedButton.setOnClickListener {
+            viewDataBinding.copySeedButton.text = getString(R.string.copied)
+            viewDataBinding.copySeedButton.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                null,
+                null,
+                ContextCompat.getDrawable(requireContext(), R.drawable.ic_check),
+                null,
+            )
+        }
+
+        viewDataBinding.copySeedPhraseButton.setOnClickListener {
+            viewDataBinding.copySeedPhraseButton.text = getString(R.string.copied)
+            viewDataBinding.copySeedPhraseButton.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                null,
+                null,
+                ContextCompat.getDrawable(requireContext(), R.drawable.ic_check),
+                null,
+            )
+        }
+    }
+
+    private fun showSeed() {
+        showAuthentication(requireActivity() as AppCompatActivity, { password ->
+            crossFade(
+                viewDataBinding.ivSeedBlur,
+                viewDataBinding.clSeedLayout
+            )
+            viewModel.onShowSeedClicked()
+        })
+    }
+
+    private fun showSeedPhrase() {
+        showAuthentication(requireActivity() as AppCompatActivity, { password ->
+            crossFade(
+                viewDataBinding.llTapToReveal,
+                viewDataBinding.gvReveal
+            )
+            viewModel.onShowSeedClicked()
+        })
+    }
+
+    private fun crossFade(startView: View, targetView: View) {
         val shortAnimationDuration = 500L
         viewDataBinding.apply {
-            gvReveal.apply {
+            targetView.apply {
                 alpha = 0f
                 visibility = View.VISIBLE
                 animate()
@@ -71,14 +121,26 @@ class ExportPassPhraseFragment : BaseBindingFragment<FragmentExportPassPhraseRev
                     .setDuration(shortAnimationDuration)
                     .setListener(null)
             }
-            llTapToReveal.animate()
+            startView.animate()
                 .alpha(0f)
                 .setDuration(shortAnimationDuration)
                 .setListener(object : AnimatorListenerAdapter() {
                     override fun onAnimationEnd(animation: Animator) {
-                        llTapToReveal.visibility = View.GONE
+                        startView.visibility = View.GONE
                     }
                 })
+        }
+    }
+
+    private fun observeButtonsState() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.seedState.collect { state ->
+                    viewDataBinding.showSeedButton.isVisible = state is State.Hidden
+                    viewDataBinding.copySeedButton.isVisible = state is State.Revealed
+                    viewDataBinding.copySeedPhraseButton.isVisible = state is State.Revealed
+                }
+            }
         }
     }
 

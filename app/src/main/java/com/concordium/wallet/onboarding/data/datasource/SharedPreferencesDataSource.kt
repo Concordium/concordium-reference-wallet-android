@@ -4,4 +4,6 @@ interface SharedPreferencesDataSource {
     var termsAndConditionsVersionAccepted: String
 
     var seedPhrase: String
+
+    var seed: String
 }

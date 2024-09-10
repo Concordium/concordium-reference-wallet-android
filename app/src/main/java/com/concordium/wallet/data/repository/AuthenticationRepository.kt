@@ -14,4 +14,14 @@ class AuthenticationRepository(
             "The phrase must not be blank"
         }
     }
+
+    fun saveSeed(seed: String) = runCatching {
+        sharedPreferences.seed = seed
+    }
+
+    fun getSeed() = runCatching {
+        checkNotNull(sharedPreferences.seed.takeIf(String::isNotBlank)) {
+            "The seed must not be blank"
+        }
+    }
 }
