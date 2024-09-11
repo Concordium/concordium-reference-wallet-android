@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Deprecation notice. This wallet is going away soon,
   move your account to the new CryptoX wallet to continue using Concordium.
+- Ability to export the seed phrase and private key
 
 ## [1.6.0] - 2024-06-26
 
