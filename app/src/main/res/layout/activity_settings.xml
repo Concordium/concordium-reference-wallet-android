@@ -99,11 +99,24 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/view_seed_phrase_label"
                     style="@style/TextView.MoreMenuItem"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
                     android:text="@string/view_seed_phrase" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/view_seed_layout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/list_item_height"
+                android:background="@drawable/list_item"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/TextView.MoreMenuItem"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:text="@string/view_secret_key" />
             </LinearLayout>
 
             <View style="@style/Divider" />

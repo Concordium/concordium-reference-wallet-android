@@ -2,6 +2,7 @@ package com.concordium.wallet.onboarding.ui.di
 
 import com.concordium.wallet.data.repository.AuthenticationRepository
 import com.concordium.wallet.ui.passphrase.recover.ExportPassPhraseViewModel
+import com.concordium.wallet.ui.passphrase.recover.ExportSeedViewModel
 import com.concordium.wallet.ui.passphrase.recover.PassPhraseRecoverViewModel
 import com.concordium.wallet.ui.passphrase.setup.PassPhraseViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -36,6 +37,12 @@ private val viewModelModule = module {
         ExportPassPhraseViewModel(
             application = get(),
             authenticationRepository = get()
+        )
+    }
+
+    viewModel {
+        ExportSeedViewModel(
+            application = get()
         )
     }
 }

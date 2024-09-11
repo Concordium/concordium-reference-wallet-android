@@ -1,7 +1,7 @@
 package com.concordium.wallet.ui.passphrase.recover
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +11,6 @@ import android.widget.BaseAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -20,6 +19,7 @@ import com.concordium.wallet.databinding.FragmentExportPassPhraseRevealBinding
 import com.concordium.wallet.ui.base.BaseBindingFragment
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
+import com.concordium.wallet.util.AnimationUtil
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
@@ -38,22 +38,19 @@ class ExportPassPhraseFragment : BaseBindingFragment<FragmentExportPassPhraseRev
         observeButtonsState()
 
         viewDataBinding.llTapToReveal.setOnClickListener { showSeedPhrase() }
-        viewDataBinding.ivSeedBlur.setOnClickListener { showSeed() }
     }
 
     private fun setupViewModel() {
         lifecycleScope.launch {
             viewModel.state.collect { state ->
                 when (state) {
-                    is ExportSeedPhraseState.Error -> {
-                        viewDataBinding.llSeedPhrase.visibility = View.GONE
-                        viewDataBinding.clSeed.visibility = View.VISIBLE
-
-                    }
+                    is ExportSeedPhraseState.Error -> Snackbar.make(
+                        viewDataBinding.root,
+                        R.string.export_seed_phrase_error,
+                        Snackbar.LENGTH_LONG
+                    ).show()
 
                     is ExportSeedPhraseState.Success -> {
-                        viewDataBinding.clSeed.visibility = View.GONE
-                        viewDataBinding.llSeedPhrase.visibility = View.VISIBLE
                         viewDataBinding.gvReveal.adapter = WordsAdapter(
                             requireContext(),
                             state.seedPhrase
@@ -67,19 +64,9 @@ class ExportPassPhraseFragment : BaseBindingFragment<FragmentExportPassPhraseRev
     }
 
     private fun setupButtons() {
-        viewDataBinding.showSeedButton.setOnClickListener { showSeed() }
-
-        viewDataBinding.copySeedButton.setOnClickListener {
-            viewDataBinding.copySeedButton.text = getString(R.string.copied)
-            viewDataBinding.copySeedButton.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                null,
-                null,
-                ContextCompat.getDrawable(requireContext(), R.drawable.ic_check),
-                null,
-            )
-        }
-
         viewDataBinding.copySeedPhraseButton.setOnClickListener {
+            copyToClipboard(viewModel.seedPhraseString)
+
             viewDataBinding.copySeedPhraseButton.text = getString(R.string.copied)
             viewDataBinding.copySeedPhraseButton.setCompoundDrawablesRelativeWithIntrinsicBounds(
                 null,
@@ -90,55 +77,37 @@ class ExportPassPhraseFragment : BaseBindingFragment<FragmentExportPassPhraseRev
         }
     }
 
-    private fun showSeed() {
-        showAuthentication(requireActivity() as AppCompatActivity, { password ->
-            crossFade(
-                viewDataBinding.ivSeedBlur,
-                viewDataBinding.clSeedLayout
-            )
-            viewModel.onShowSeedClicked()
-        })
+    private fun copyToClipboard(copyString: String) {
+        val clipboardManager: ClipboardManager =
+            requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = ClipData.newPlainText(
+            getString(R.string.pass_phrase_title),
+            copyString,
+        )
+        clipboardManager.setPrimaryClip(clipData)
     }
 
     private fun showSeedPhrase() {
-        showAuthentication(requireActivity() as AppCompatActivity, { password ->
-            crossFade(
-                viewDataBinding.llTapToReveal,
-                viewDataBinding.gvReveal
-            )
-            viewModel.onShowSeedClicked()
-        })
-    }
-
-    private fun crossFade(startView: View, targetView: View) {
-        val shortAnimationDuration = 500L
-        viewDataBinding.apply {
-            targetView.apply {
-                alpha = 0f
-                visibility = View.VISIBLE
-                animate()
-                    .alpha(1f)
-                    .setDuration(shortAnimationDuration)
-                    .setListener(null)
+        showAuthentication(
+            activity = requireActivity() as AppCompatActivity,
+            authenticated = {
+                viewModel.onShowSeedClicked()
+                AnimationUtil.crossFade(
+                    viewDataBinding.llTapToReveal,
+                    viewDataBinding.gvReveal
+                )
             }
-            startView.animate()
-                .alpha(0f)
-                .setDuration(shortAnimationDuration)
-                .setListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator) {
-                        startView.visibility = View.GONE
-                    }
-                })
-        }
+        )
     }
 
     private fun observeButtonsState() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.seedState.collect { state ->
-                    viewDataBinding.showSeedButton.isVisible = state is State.Hidden
-                    viewDataBinding.copySeedButton.isVisible = state is State.Revealed
-                    viewDataBinding.copySeedPhraseButton.isVisible = state is State.Revealed
+                    when (state) {
+                        is State.Revealed -> viewDataBinding.copySeedPhraseButton.visibility = View.VISIBLE
+                        else -> viewDataBinding.copySeedPhraseButton.visibility = View.INVISIBLE
+                    }
                 }
             }
         }

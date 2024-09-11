@@ -9,7 +9,6 @@ class SharedPreferencesDataSourceImpl(private val prefs: SharedPreferences) : Sh
     companion object {
         private const val TERMS_AND_CONDITIONS_VERSION_ACCEPTED_KEY = "TermsAndConditionsAccepted"
         private const val SEED_PHRASE_KEY = "SeedPhrase"
-        private const val SEED_KEY = "SeedKey"
     }
 
     override var termsAndConditionsVersionAccepted: String
@@ -19,8 +18,4 @@ class SharedPreferencesDataSourceImpl(private val prefs: SharedPreferences) : Sh
     override var seedPhrase: String
         get() = prefs.getString(SEED_PHRASE_KEY, String.Empty)!!
         set(value) = prefs.edit { putString(SEED_PHRASE_KEY, value) }
-
-    override var seed: String
-        get() = prefs.getString(SEED_KEY, String.Empty)!!
-        set(value) = prefs.edit { putString(SEED_KEY, value) }
 }

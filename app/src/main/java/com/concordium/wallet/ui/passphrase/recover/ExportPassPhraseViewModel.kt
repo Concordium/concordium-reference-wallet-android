@@ -20,6 +20,10 @@ class ExportPassPhraseViewModel(
     private val _state = MutableStateFlow<ExportSeedPhraseState>(ExportSeedPhraseState.Loading)
     val state: StateFlow<ExportSeedPhraseState> = _state
 
+    private val _seedPhrase: MutableStateFlow<List<String>> = MutableStateFlow(emptyList())
+    val seedPhraseString: String
+        get() = _seedPhrase.value.joinToString(String.SPACE)
+
     private val showSeedMutableStateFlow: MutableStateFlow<State> = MutableStateFlow(State.Hidden)
     val seedState: Flow<State> = showSeedMutableStateFlow.asStateFlow()
 
@@ -30,6 +34,7 @@ class ExportPassPhraseViewModel(
                     _state.update {
                         ExportSeedPhraseState.Success(phrase.split(String.SPACE))
                     }
+                    _seedPhrase.update { phrase.split(String.SPACE) }
                 }
                 .onFailure {
                     _state.update {

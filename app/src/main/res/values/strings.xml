@@ -1112,6 +1112,7 @@
     <string name="view_seed_phrase">View secret recovery phrase</string>
     <string name="view_secret_key">View secret key</string>
     <string name="export_seed_phrase_title">Secret recovery phrase</string>
+    <string name="export_seed_title">Secret key</string>
     <string name="export_seed_phrase_done">Done</string>
     <string name="export_seed_phrase_error">Error while loading secret recovery phrase</string>
 
@@ -1153,4 +1154,5 @@
         When that’s done, your funds will be available through the CryptoX wallet, and you can safely delete this one.\n\n
         Don’t worry, your wallet will stay here on your device until you uninstall it, but we highly encourage you to migrate today.
     </string>
+    <string name="blur_icon">blur icon</string>
 </resources>
