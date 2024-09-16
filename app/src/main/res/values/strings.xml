@@ -1134,6 +1134,7 @@
     <string name="install_cryptox">Install CryptoX Concordium wallet</string>
     <string name="continue_with_old_wallet">Continue with the old wallet</string>
     <string name="copy_your_seed_phrase">Copy your seed phrase</string>
+    <string name="copy_wallet_private_key">Copy wallet private key</string>
     <string name="copy_to_clipboard">Copy to clipboard</string>
     <string name="show_seed">Show the wallet private key</string>
     <string name="sunsetting_notice_title">This wallet is going away soon</string>

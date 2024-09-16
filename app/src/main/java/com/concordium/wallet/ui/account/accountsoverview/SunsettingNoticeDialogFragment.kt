@@ -18,11 +18,14 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.concordium.wallet.App
 import com.concordium.wallet.R
+import com.concordium.wallet.data.preferences.AuthPreferences
 import com.concordium.wallet.data.repository.AuthenticationRepository
 import com.concordium.wallet.databinding.DialogSunsettingNoticeBinding
 import com.concordium.wallet.ui.common.delegates.AuthDelegate
 import com.concordium.wallet.ui.common.delegates.AuthDelegateImpl
+import com.concordium.wallet.util.Log
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class SunsettingNoticeDialogFragment :
@@ -62,6 +65,7 @@ class SunsettingNoticeDialogFragment :
         authenticationRepository.getSeedPhase()
             .onSuccess { phrase ->
                 binding.messageTextview.text = getText(R.string.sunsetting_notice_message)
+                binding.copySeedButton.isVisible = false
                 binding.copyPhraseButton.isVisible = true
                 binding.copyPhraseButton.setOnClickListener {
                     showAuthentication(
@@ -81,6 +85,29 @@ class SunsettingNoticeDialogFragment :
                 binding.messageTextview.text = getText(R.string.sunsetting_notice_no_phrase_message)
                 binding.copyPhraseButton.isVisible = false
                 binding.continueWithOldWalletButton.isVisible = true
+                binding.copySeedButton.isVisible = true
+                binding.copySeedButton.setOnClickListener {
+                    showAuthentication(
+                        activity = requireActivity() as AppCompatActivity,
+                        authenticated = { password ->
+                            lifecycleScope.launch {
+                                try {
+                                    val seed = AuthPreferences(requireContext())
+                                        .getSeedPhrase(password!!)
+                                    val clipboard: ClipboardManager? =
+                                        getSystemService(
+                                            requireContext(),
+                                            ClipboardManager::class.java
+                                        )
+                                    val clip = ClipData.newPlainText("Wallet private key", seed)
+                                    clipboard?.setPrimaryClip(clip)
+                                } catch (e: Exception) {
+                                    Log.e("seed_decrypt_failed", e)
+                                }
+                            }
+                        }
+                    )
+                }
                 dialog?.setCancelable(true)
             }
 
