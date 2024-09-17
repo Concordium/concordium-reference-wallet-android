@@ -58,7 +58,7 @@
                 android:id="@+id/ivSeedBlur"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:contentDescription="@string/blur_icon"
+                android:importantForAccessibility="no"
                 android:scaleType="fitXY"
                 android:src="@drawable/ic_blur"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -69,7 +69,7 @@
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="@string/blur_icon"
+                android:importantForAccessibility="no"
                 android:src="@drawable/ic_lock"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

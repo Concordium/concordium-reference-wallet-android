@@ -62,6 +62,11 @@ class SunsettingNoticeDialogFragment :
             else
                 getString(R.string.sunsetting_notice_forced_title)
 
+        binding.continueWithOldWalletButton.isVisible = !isForced
+        binding.continueWithOldWalletButton.setOnClickListener {
+            dismiss()
+        }
+
         authenticationRepository.getSeedPhase()
             .onSuccess { phrase ->
                 binding.messageTextview.text = getText(R.string.sunsetting_notice_message)
@@ -78,13 +83,11 @@ class SunsettingNoticeDialogFragment :
                         }
                     )
                 }
-                binding.continueWithOldWalletButton.isVisible = !isForced
                 dialog?.setCancelable(!isForced)
             }
             .onFailure {
                 binding.messageTextview.text = getText(R.string.sunsetting_notice_no_phrase_message)
                 binding.copyPhraseButton.isVisible = false
-                binding.continueWithOldWalletButton.isVisible = true
                 binding.copySeedButton.isVisible = true
                 binding.copySeedButton.setOnClickListener {
                     showAuthentication(
@@ -110,10 +113,6 @@ class SunsettingNoticeDialogFragment :
                 }
                 dialog?.setCancelable(true)
             }
-
-        binding.continueWithOldWalletButton.setOnClickListener {
-            dismiss()
-        }
 
         binding.installCryptoxButton.setOnClickListener {
             startActivity(

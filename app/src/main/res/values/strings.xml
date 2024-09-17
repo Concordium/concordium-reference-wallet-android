@@ -1134,11 +1134,11 @@
     <string name="install_cryptox">Install CryptoX Concordium wallet</string>
     <string name="continue_with_old_wallet">Continue with the old wallet</string>
     <string name="copy_your_seed_phrase">Copy your seed phrase</string>
-    <string name="copy_wallet_private_key">Copy wallet private key</string>
+    <string name="copy_wallet_private_key">Copy your wallet private key</string>
     <string name="copy_to_clipboard">Copy to clipboard</string>
     <string name="show_seed">Show the wallet private key</string>
     <string name="sunsetting_notice_title">This wallet is going away soon</string>
-    <string name="sunsetting_notice_forced_title">New wallet is waiting</string>
+    <string name="sunsetting_notice_forced_title">Please migrate now</string>
     <string name="sunsetting_notice_message">
         To continue using Concordium, move your account to the new CryptoX wallet.\n\n
         <b>1. Install the CryptoX Concordium wallet</b>\n
@@ -1149,11 +1149,10 @@
     </string>
     <string name="sunsetting_notice_no_phrase_message">
         To continue using Concordium, move your account to the new CryptoX wallet.\n\n
-        <b>Please find the manually written phrase backup</b>\n
-        or\n
-        <b>transfer all the funds to the new wallet manually.</b>\n\n
+        <b>1. Install the CryptoX Concordium wallet</b>\n
+        <b>2. Copy your wallet private key</b>\n
+        <b>3. Insert your wallet private key in the CryptoX wallet</b>\n\n
         When that’s done, your funds will be available through the CryptoX wallet, and you can safely delete this one.\n\n
         Don’t worry, your wallet will stay here on your device until you uninstall it, but we highly encourage you to migrate today.
     </string>
-    <string name="blur_icon">blur icon</string>
 </resources>
