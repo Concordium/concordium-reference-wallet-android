@@ -34,7 +34,7 @@ class ExportSeedFragment : BaseBindingFragment<FragmentExportSeedBinding>(),
         setupButtons()
         observeButtonsState()
 
-        viewDataBinding.ivSeedBlur.setOnClickListener { showSeed() }
+        viewDataBinding.clSeedBlur.setOnClickListener { showSeed() }
     }
 
     private fun initSeed() {
@@ -79,7 +79,7 @@ class ExportSeedFragment : BaseBindingFragment<FragmentExportSeedBinding>(),
             authenticated = { password ->
                 password?.let {viewModel.onShowSeedClicked(password) }
                 AnimationUtil.crossFade(
-                    viewDataBinding.ivSeedBlur,
+                    viewDataBinding.clSeedBlur,
                     viewDataBinding.clSeedLayout
                 )
             }

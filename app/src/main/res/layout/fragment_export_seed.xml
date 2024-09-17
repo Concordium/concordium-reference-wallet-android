@@ -44,18 +44,39 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ivSeedBlur"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clSeedBlur"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:contentDescription="@string/blur_icon"
-            android:scaleType="fitXY"
-            android:src="@drawable/ic_blur"
             app:layout_constraintBottom_toBottomOf="@id/clSeedLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvDisclaimer" />
+            app:layout_constraintTop_toBottomOf="@id/tvDisclaimer">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivSeedBlur"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="@string/blur_icon"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_blur"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/blur_icon"
+                android:src="@drawable/ic_lock"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/copy_seed_button"

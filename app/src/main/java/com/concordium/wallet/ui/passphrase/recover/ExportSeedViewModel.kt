@@ -22,7 +22,8 @@ class ExportSeedViewModel(
         "f74c4127f238a391891dd23c74cd5283f3c727b282caeba754f815dc876d8b84d3339c6892943575f0f919c99ed4b7d858df2aea68112292da4eae98e2e69410"
     )
     val seed: Flow<String> = _seedFlow.asStateFlow()
-    val seedString: String = _seedFlow.value
+    val seedString: String
+        get() = _seedFlow.value
 
     fun onShowSeedClicked(password: String) {
         viewModelScope.launch {
