@@ -44,7 +44,7 @@ def versionBuildNumberMajor = 1
 def versionBuildNumberMinor = 8
 def versionBuildNumberPatch = 0
 def versionBuildNumberMeta = ""
-def versionBuildNumberSequential = 79
+def versionBuildNumberSequential = 80
 
 task printVersionName {
     doLast {
