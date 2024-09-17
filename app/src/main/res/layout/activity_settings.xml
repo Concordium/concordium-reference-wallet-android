@@ -116,7 +116,7 @@
                     style="@style/TextView.MoreMenuItem"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="@dimen/activity_horizontal_margin"
-                    android:text="@string/view_secret_key" />
+                    android:text="@string/view_seed" />
             </LinearLayout>
 
             <View style="@style/Divider" />
