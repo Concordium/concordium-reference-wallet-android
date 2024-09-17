@@ -67,6 +67,8 @@ class SunsettingNoticeDialogFragment :
             dismiss()
         }
 
+        dialog?.setCancelable(!isForced)
+
         authenticationRepository.getSeedPhase()
             .onSuccess { phrase ->
                 binding.messageTextview.text = getText(R.string.sunsetting_notice_message)
@@ -83,7 +85,6 @@ class SunsettingNoticeDialogFragment :
                         }
                     )
                 }
-                dialog?.setCancelable(!isForced)
             }
             .onFailure {
                 binding.messageTextview.text = getText(R.string.sunsetting_notice_no_phrase_message)
@@ -111,7 +112,6 @@ class SunsettingNoticeDialogFragment :
                         }
                     )
                 }
-                dialog?.setCancelable(true)
             }
 
         binding.installCryptoxButton.setOnClickListener {
