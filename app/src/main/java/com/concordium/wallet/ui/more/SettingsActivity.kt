@@ -8,6 +8,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -22,6 +23,7 @@ import com.concordium.wallet.ui.more.about.AboutActivity
 import com.concordium.wallet.ui.more.alterpassword.AlterPasswordActivity
 import com.concordium.wallet.ui.more.dev.DevActivity
 import com.concordium.wallet.ui.passphrase.recover.ExportPassPhraseViewModel
+import com.concordium.wallet.ui.passphrase.recover.ExportSeedActivity
 import com.concordium.wallet.ui.passphrase.recover.ExportSeedPhraseActivity
 import com.concordium.wallet.ui.passphrase.recover.ExportSeedPhraseState
 import com.concordium.wallet.ui.passphrase.recoverprocess.RecoverProcessActivity
@@ -57,10 +59,8 @@ class SettingsActivity : BaseActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 passPhraseViewModel.state.collect { state ->
-                    if (state is ExportSeedPhraseState.Success) {
-                        binding.viewSeedPhraseLayout.visibility =
-                            View.VISIBLE
-                    }
+                    binding.viewSeedPhraseLayout.isVisible = state is ExportSeedPhraseState.Success
+                    binding.viewSeedLayout.isVisible = state is ExportSeedPhraseState.Error
                 }
             }
         }
@@ -90,6 +90,10 @@ class SettingsActivity : BaseActivity() {
 
         binding.viewSeedPhraseLayout.setOnClickListener {
             showSeedPhrase()
+        }
+
+        binding.viewSeedLayout.setOnClickListener {
+            showSeed()
         }
 
         binding.aboutLayout.setOnClickListener {
@@ -173,6 +177,10 @@ class SettingsActivity : BaseActivity() {
 
     private fun showSeedPhrase() {
         startActivity(Intent(this, ExportSeedPhraseActivity::class.java))
+    }
+
+    private fun showSeed() {
+        startActivity(Intent(this, ExportSeedActivity::class.java))
     }
 
     private fun about() {

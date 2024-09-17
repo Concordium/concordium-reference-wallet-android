@@ -62,4 +62,6 @@
     <!-- Text sizes  -->
     <dimen name="mono_standard">14sp</dimen>
 
+    <dimen name="seed_corner_radius">14dp</dimen>
+
 </resources>

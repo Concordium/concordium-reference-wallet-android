@@ -49,6 +49,7 @@
     <color name="black">#000000</color>
     <color name="light_grey">#FBFDFD</color>
     <color name="grey">#979797</color>
+    <color name="blue">#4484AA</color>
 
     <color name="theme_component_disabled">#66325D76</color>
     <color name="theme_component_disabled_alpha_one">#30444F</color>

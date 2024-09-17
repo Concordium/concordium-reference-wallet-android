@@ -1,0 +1,12 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="17"
+    android:viewportHeight="17">
+    <!-- 16 in Figma – 20 in XML. THIS IS FINE! -->
+    <path
+        android:pathData="M4.5,8L7.63,11L12.5,6"
+        android:strokeWidth="1.5"
+        android:strokeColor="@color/black"
+        android:strokeLineCap="round" />
+</vector>

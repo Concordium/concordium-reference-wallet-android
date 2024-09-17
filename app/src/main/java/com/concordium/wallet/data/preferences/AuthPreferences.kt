@@ -142,6 +142,9 @@ class AuthPreferences(val context: Context) :
         return setStringWithResult(SEED_PHRASE_ENCRYPTED, encryptedSeed)
     }
 
+    /**
+     * @return seed in hex format
+     */
     suspend fun getSeedPhrase(password: String): String {
         getString(SEED_PHRASE_ENCRYPTED)?.let { seedEncrypted ->
             return App.appCore.getOriginalAuthenticationManager()

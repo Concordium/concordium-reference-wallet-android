@@ -185,6 +185,10 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.passphrase.recover.ExportSeedActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.passphrase.recover.RecoverWalletActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
