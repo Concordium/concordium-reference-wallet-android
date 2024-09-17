@@ -1110,9 +1110,9 @@
     <string name="show_raw_metadata_unique">Unique</string>
 
     <string name="view_seed_phrase">View secret recovery phrase</string>
-    <string name="view_secret_key">View secret key</string>
+    <string name="view_seed">View wallet private key</string>
     <string name="export_seed_phrase_title">Secret recovery phrase</string>
-    <string name="export_seed_title">Secret key</string>
+    <string name="export_seed_title">Wallet private key</string>
     <string name="export_seed_phrase_done">Done</string>
     <string name="export_seed_phrase_error">Error while loading secret recovery phrase</string>
 
