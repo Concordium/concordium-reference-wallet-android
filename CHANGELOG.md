@@ -5,13 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2024-11-20
+
+### Added
+
+- Ability to reveal the wallet private key (seed) if the seed phrase can't be revealed
+
 ## [1.7.0] - 2024-07-31
 
 ### Added
 
 - Deprecation notice. This wallet is going away soon,
   move your account to the new CryptoX wallet to continue using Concordium.
-- Ability to reveal the wallet private key (seed) if the seed phrase can't be revealed
 
 ## [1.6.0] - 2024-06-26
 
@@ -130,7 +135,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Last release without changelog.
 
-[Unreleased]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.6.0...HEAD
+[Unreleased]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.8.0...HEAD
+
+[1.8.0]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.7.0...1.8.0
+
+[1.7.0]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.6.0...1.7.0
 
 [1.6.0]: https://github.com/Concordium/concordium-reference-wallet-android/compare/1.5.1...1.6.0
 
